@@ -3,9 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-08 |
+| Updated | 2026-10-09 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 9 Oct 2026 — Manufacturer evidence expansion
+
+Profile version 1 stores unselected product records for the published standard and corner forms named above the existing 8-inch units. Fox Blocks covers 4, 6, 8, 10, and 12. Logix covers 4, 6.25, 8, 10, and 12. Nudura covers 4, 6, 8, 10, and 12. BuildBlock straight forms cover 4, 6, and 8. BuildLock is a separate family. The five earlier Fox conflict records are unchanged. The quantity engine still calculates the existing 8-inch units only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.
 
 ## 8 Oct 2026 — Fox product records
 

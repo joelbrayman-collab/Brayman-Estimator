@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-08 |
+| Updated | 2026-10-09 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-09 — ICF manufacturer evidence expansion
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Store published standard and corner facts for Fox Blocks, Logix, Nudura, BuildBlock, and BuildLock as unselected product records. |
+| Business decision | A published figure is evidence until it is explicitly selected. Logix 6.25 stays 6.25. BuildLock is not a BuildBlock straight form. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | New records use the accepted product_records shape on profile version 1. Every new observation is not_selected. Calculation units, the quantity engine, and Contract V1 stay as they are. The five Fox conflict records are unchanged. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Add source-attributed product records from the re-read manufacturer documents. Do not select a factor, change 8-inch units, change formulas, add a dropdown, or deploy. Test, commit, and push the data and governance. Leave case files unstaged. |
+| Files expected to change | The profile registry, profile tests, and the status records. |
+| Files prohibited from changing | The quantity engine, Contract V1, routes, calculation units, case files, databases, and the live service. |
+| Implementation result | Evidence stored. No calculation factor selected. No new core is calculable. Not deployed. Not live-verified. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_icf_manufacturer_profiles.py tests/test_icf_quantity.py tests/test_calculation_result_contract_v1.py tests/test_icf_governed_estimate_path.py tests/test_calculation_estimate_mapping.py tests/test_member_count_mapper_confirmation.py` — 52 passed, 68 warnings, 9.10s, exit 0. `./venv/bin/python -m pytest -q` — 2263 passed, 11 skipped, 7048 warnings, 1153.90s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Fox 8-inch corner volumes 0.153 and 0.145 remain unselected, as do the two corbel measurements. Fox 6-inch 90-degree series-page 0.101 cubic yards and FOX-EC690 0.105 cubic yards are both stored and neither is selected. The Nudura volume table labels nominal 8 inch as 200 mm, while another sentence in the same manual says 203 mm. Fox 10 and 12 have no 45-degree row in the sources read. Logix and Nudura product codes are not in these sections. Logix section 4.4.8 per-form volumes are stored and are not written into the empty 8-inch unit field. |
+| Next approved step | ChatGPT reviews the stored evidence. Do not select a calculation factor from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
 
 ### 2026-10-08 — Fox Blocks product records
 

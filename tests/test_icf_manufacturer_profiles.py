@@ -170,13 +170,14 @@ def _observations(profile):
 def test_fox_product_records_keep_distinct_identities_and_conflicts():
     fox = get_profile("fox_blocks")
     records = fox["product_records"]
-    assert set(records) == {
+    preserved = {
         "fox_ec890",
         "fox_ec890cb",
         "fox_series_corner_8",
         "fox_bl800",
         "fox_series_corbel_8",
     }
+    assert preserved <= set(records)
     assert records["fox_ec890"]["product_code"]["value"] == "FOX-EC890"
     assert records["fox_ec890"]["variant"] == "standard_corner"
     assert records["fox_ec890cb"]["product_code"]["value"] == "FOX-EC890CB"
@@ -199,26 +200,19 @@ def test_fox_product_records_keep_distinct_identities_and_conflicts():
     assert volumes["fox_series_corner_8_concrete_volume_yd3"] == "0.145"
     assert volumes["fox_bl800_concrete_volume_yd3"] == "0.162"
     assert volumes["fox_series_corbel_8_concrete_volume_yd3"] == "0.162"
-    widths = {
-        item["measurement_type"]: item["value"]
-        for item in _observations(fox)
-        if item["unit"] == "in" and item["measurement_type"] in ("total_width", "form_width")
-    }
-    assert widths == {"total_width": "13.25", "form_width": "17.75"}
-    surfaces = {
-        item["observation_id"]: item["value"]
-        for item in _observations(fox)
-        if item["unit"] == "ft2"
-    }
-    assert surfaces["fox_bl800_outside_surface_ft2"] == "5.33"
-    assert surfaces["fox_series_corbel_8_surface_area_ft2"] == "5.61"
-    assert all(item["source_revision"] is None for item in _observations(fox))
+    assert records["fox_bl800"]["observations"]["fox_bl800_total_width_in"]["value"] == "13.25"
+    assert records["fox_series_corbel_8"]["observations"]["fox_series_corbel_8_form_width_in"]["value"] == "17.75"
+    assert records["fox_bl800"]["observations"]["fox_bl800_outside_surface_ft2"]["value"] == "5.33"
+    assert records["fox_series_corbel_8"]["observations"]["fox_series_corbel_8_surface_area_ft2"]["value"] == "5.61"
+    preserved_observations = []
+    for record_id in preserved:
+        preserved_observations.extend(records[record_id]["observations"].values())
+    assert all(item["source_revision"] is None for item in preserved_observations)
     assert all(
         item["calculation_selection"] == CALCULATION_NOT_SELECTED
         for item in _observations(fox)
     )
     assert fox["profile_version"] == "1"
-    assert "product_records" not in get_profile("logix")
     assert fox["units"]["corner_90_8"]["concrete_volume_yd3"]["value"] == "0.145"
     ledge = fox["units"]["brick_ledge_8"]
     assert ledge["form_width_in"]["value"] == "17.75"
@@ -226,6 +220,58 @@ def test_fox_product_records_keep_distinct_identities_and_conflicts():
     assert ledge["concrete_volume_yd3"]["value"] == "0.162"
     verified = engine_profile_view("fox_blocks")["verified"].values()
     assert "0.153" not in verified
+
+
+def _all_records():
+    return [
+        record
+        for profile in list_profiles()
+        for record in profile.get("product_records", {}).values()
+    ]
+
+
+def test_multi_core_evidence_keeps_exact_cores_and_separate_families():
+    records = _all_records()
+    assert len({record["record_id"] for record in records}) == len(records)
+    logix_cores = {
+        record["core_size_in"]
+        for record in get_profile("logix")["product_records"].values()
+    }
+    assert logix_cores == {"4", "6.25", "8", "10", "12"}
+    assert "6" not in logix_cores
+    buildblock = get_profile("styrorail_buildblock")["product_records"]
+    straight = [
+        record for record in buildblock.values() if record["product_family"] == "buildblock"
+    ]
+    knockdown = [
+        record for record in buildblock.values() if record["product_family"] == "buildlock"
+    ]
+    assert {record["core_size_in"] for record in straight} == {"4", "6", "8"}
+    assert {record["core_size_in"] for record in knockdown} == {"4", "6", "8", "10", "12"}
+    assert buildblock["bl_standard_10"]["product_code"]["value"] == "BL-1000"
+    assert buildblock["bb_corner_45_8"]["product_code"]["value"] == "BB-845"
+    fox = get_profile("fox_blocks")["product_records"]
+    assert fox["fox_ec690"]["observations"]["fox_ec690_concrete_volume_yd3"]["value"] == "0.105"
+    assert fox["fox_series_corner_90_6"]["observations"]["fox_series_corner_90_6_concrete_volume_yd3"]["value"] == "0.101"
+    assert "fox_series_corner_45_10" not in fox
+    assert "fox_series_corner_45_12" not in fox
+    logix_standard = get_profile("logix")["product_records"]["logix_standard_6_25"]
+    assert logix_standard["product_code"]["status"] == "NOT_ESTABLISHED"
+    assert logix_standard["observations"]["logix_standard_6_25_cavity_width_ft"]["value"] == "0.521"
+    nudura_corner = get_profile("nudura")["product_records"]["nudura_corner_90_6"]
+    assert nudura_corner["product_code"]["status"] == "NOT_ESTABLISHED"
+    assert nudura_corner["observations"]["nudura_corner_90_6_concrete_volume_yd3"]["value"] == "0.088"
+    for record in records:
+        assert record["record_id"]
+        assert record["manufacturer_id"]
+        assert record["core_size_in"]
+        for observation in record["observations"].values():
+            assert observation["calculation_selection"] == CALCULATION_NOT_SELECTED
+            assert observation["status"] == "VERIFIED_FROM_SOURCE"
+            assert observation["source_document"]
+            assert observation["source_url"]
+    assert "0.521" not in engine_profile_view("logix")["verified"].values()
+    assert "0.105" not in engine_profile_view("fox_blocks")["verified"].values()
 
 
 def test_a_selected_observation_is_refused():

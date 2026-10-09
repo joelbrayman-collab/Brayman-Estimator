@@ -5,6 +5,8 @@
 **Classification:** Brayman Construction confidential — internal platform capability  
 **Status:** Design approved in principle; implementation not authorized by this document
 
+**Subsequent status (2026-10-09 manufacturer evidence):** Profile version 1 now holds unselected product records for the published standard and corner forms of Fox Blocks, Logix, Nudura, and BuildBlock, and for BuildLock as its own family. Logix 6.25 stays 6.25. No observation is a calculation factor. The 8-inch units and the quantity engine are unchanged. Fox 8-inch corner and corbel disagreements stay unresolved. This note does not add a core dropdown or a new calculable core.
+
 **Subsequent status (2026-10-08 Fox product records):** Fox Blocks profile version 1 now keeps five product records beside the calculation units. The records store FOX-EC890, FOX-EC890CB, the series-page 8-inch corner, FOX-BL800, and the series-page 8-inch corbel, each with its own published measurements. Every observation is unselected. The 8-inch calculation units are unchanged, including the 0.145 cubic yard corner volume. The disagreements stay unresolved. A later selection must name the product record and the observation. This note does not select a factor, add a core dropdown, or change the quantity engine.
 
 **Subsequent status (2026-10-08 contract identity):** Contract V1 accepts an exact positive decimal core token, including 6.25. The 8-inch quantity engine is unchanged. This note does not authorize a core dropdown or a quantity for a core whose facts are missing.

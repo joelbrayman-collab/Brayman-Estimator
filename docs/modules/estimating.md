@@ -7,6 +7,10 @@
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `project_scope.py`, `calculation_mapping.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `calculation_result_contract.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
 | Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (scope-delivery routing + quote evidence). [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT** (QuickBooks-ready package). |
 
+## 9 Oct 2026 — Synthetic customer proposal
+
+Proposal 18 copies pricing snapshot 15. The customer PDF shows quantity 3 ea, subtotal 44.12, and grand total 49.86. Direct cost is not on that PDF. Checklist step 8 stays open. The V1 register was not rescored.
+
 ## 9 Oct 2026 — Customer print is not the priced estimate
 
 `print.pdf` on an estimate version is the desk fact sheet. It does not carry the pricing snapshot. The customer estimate is the Proposal PDF. Checklist step 8 stays open. The V1 register was not rescored.

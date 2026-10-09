@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — SYNTHETIC CUSTOMER PROPOSAL.** Proposal 18 `PROP-2026-0007` Draft. PDF grand total 49.86. Subtotal 44.12. Quantity 3 ea. Tax 5.74 is stored and included in the total; the template does not print a tax row. Snapshots 15 and 23 unchanged. Line 137 unchanged. Not sent. Checklist step 8 stays **OPEN**. Not real contractor UAT.
+
 **9 Oct 2026 — CUSTOMER PRINT IS NOT THE PRICED ESTIMATE.** The version print PDF is an unpriced desk fact sheet. The Proposal PDF is the customer-facing estimate and copies the frozen snapshot total. Version 47 has no proposal yet. The desk print was not changed. Checklist step 8 stays **OPEN**.
 
 **9 Oct 2026 — SYNTHETIC PRICED CUSTOMER TOTAL.** Project 46, estimate 41, version 47. Costing snapshot 23 is current at direct cost 37.50. Pricing snapshot 15 customer total is 49.86 under the active organization gross-margin policy. Line 137 remains 3 ea. Revisions remain 3 joists and 5 joists. The customer print PDF does not contain 49.86. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Not real contractor UAT.

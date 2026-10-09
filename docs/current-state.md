@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Synthetic customer proposal
+
+Proposal 18, `PROP-2026-0007`, is a Draft for estimate 41 version 47. It copies pricing snapshot 15. The preview and the customer PDF show subtotal 44.12 and grand total 49.86. The PDF lists quantity 3 ea. Stored tax is 5.74 and is inside the grand total. The template does not print a separate tax row. Overhead and profit on the proposal are zero. Direct cost 37.50 is not on the PDF. Costing snapshot 23 and pricing snapshot 15 are unchanged. Line 137 remains the only line at quantity 3. Construction revisions remain three joists and five joists. The proposal was not sent. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is synthetic acceptance, not real contractor UAT.
+
 ## 9 Oct 2026 — Customer print is not the priced estimate
 
 The version print at `/estimates/<id>/versions/<id>/print.pdf` is the desk fact sheet. It lists quantities and does not read the pricing snapshot. The customer-facing estimate remains the existing Proposal preview and PDF. A named-method proposal copies the frozen snapshot customer total. Estimate 41 version 47 has no proposal yet. The desk print was not changed. Checklist step 8 stays **OPEN**. The V1 register was not rescored.

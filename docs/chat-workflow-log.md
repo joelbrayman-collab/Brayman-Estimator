@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Diagram interpretation and proposal headings
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record that the lifecycle blueprint is a completeness reference, and finish the two remaining proposal headings. |
+| Business decision | The diagram does not dictate screen layout or the hub strip. A missing capability is judged against V1 governance. The proposal page should say where its estimate came from. |
+| Architectural decision | Add the clarification to the existing audit. Do not rewrite the historical findings. Change only the two proposal headings and the test that locked the old words. |
+| Prompt template used | Authorized completion and release prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | ChatGPT accepted the diagram interpretation and the two proposal headings. Test, commit, and release that exact set. |
+| Files expected to change | The workflow audit, proposal detail, its test, current-state, session handoff, and this log. |
+| Files prohibited from changing | Hub navigation, formulas, contract body, and case files. |
+| Implementation result | Clarification recorded. Proposal headings accepted. Release follows this commit. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_proposal_snapshots.py` — 7 passed, 7 warnings, 2.72s, exit 0. Full: `./venv/bin/python -m pytest -q` — 2298 passed, 11 skipped, 7148 warnings, 1144.21s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. Real contractor UAT is not open. |
+| Next approved step | Deploy this commit after the release gates, then read Proposal 18. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Contractor language live
 
 | Field | Content |

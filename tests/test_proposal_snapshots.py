@@ -221,7 +221,9 @@ def test_proposal_detail_renders_snapshot_sections(client, estimate, template):
     )
     response = client.get(f"/proposals/{proposal.id}")
     assert response.status_code == 200
-    assert b"Snapshot from Estimate Version" in response.data
+    assert b"Copied from estimate version" in response.data
+    assert b"Source estimate" in response.data
+    assert b"Estimate Snapshot" not in response.data
     assert b"General Requirements" in response.data
     assert b"Mobilization" in response.data
     assert b"Grand Total" in response.data

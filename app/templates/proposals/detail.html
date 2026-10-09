@@ -10,7 +10,7 @@
         <p class="eyebrow">Estimating</p>
         <h1>{{ proposal.title }}</h1>
         <p class="muted-copy">
-            Snapshot from Estimate Version v{{ proposal.estimate_version_number }}{% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}
+            Copied from estimate version v{{ proposal.estimate_version_number }}{% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}
         </p>
         {% if proposal_immutable %}
         <p class="muted-copy"><strong>Accepted — locked.</strong> This proposal cannot be edited. Preview and PDF remain available.</p>
@@ -90,7 +90,7 @@
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Estimate Snapshot</h2>
+    <h2>Source estimate</h2>
     <div class="form-grid">
         <div><p class="eyebrow">Estimate #</p><p>{{ proposal.estimate_number }}</p></div>
         <div>

@@ -1,5 +1,21 @@
 # V1 workflow acceptance audit — 9 October 2026
 
+## 9 Oct 2026 — diagram interpretation
+
+Joel clarified the approved Construction Platform Lifecycle Blueprint. It is a functional completeness reference. It is not a screen design, a navigation specification, or a literal flowchart of pages.
+
+Two tests apply, and they stay separate.
+
+**Functional completeness.** Use the diagram to find the intended capabilities and the handoffs between them. Compare those with the existing platform and with V1 governance. A box that governance has already left for later stays deferred. Do not promote every diagram component into V1.
+
+**Contractor usability.** Judge whether a contractor can find and finish the real task. Do not require the screens, the navigation, or the labels to copy the diagram. Do not rebuild the Project Hub so that its strip matches the diagram’s eleven stages.
+
+Under this clarification, the earlier finding that the hub strip uses different words from the eleven stages is not a defect. The historical finding stays in the UX table below. It is not a reason to redesign the hub. Usability work stays on broken handoffs, missing V1 functions, actions that are hard to find, extra navigation, and instructions a contractor cannot follow. A small wording change matters when it blocks that use.
+
+The User Guide should teach the screens the contractor actually sees. The diagram is the checklist that those capabilities were not dropped. Matching the eleven stage names is not a Guide requirement.
+
+This clarification does not change product code and does not rescore V1.
+
 ## 9 Oct 2026 — contractor language correction accepted
 
 ChatGPT accepted the wording. The hub names the internal cost breakdown, the customer estimate, and QuickBooks entry as available. QuickBooks stays hand-typed. A production Ontario contract is stated as not available. Generated contract, supplier package, proposal section, and pricing method replace the contractor-facing labels. Help uses the same generated-contract sentence. The contract document body was not edited. The operator-pack tests now require the hosted office and keep the Mac address only on the backup sheet, where it is the mirror. Focused tests: 100 passed, exit 0. Full suite: 2298 passed, 11 skipped, exit 0. Live deploy `dep-db4kubmi0phs73d30nb0` at `13544f29ee25402d9bf4059556c7b5d0a40909ab`. No migration. Checklist Step 8 stays open. The register was not rescored.

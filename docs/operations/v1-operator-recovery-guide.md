@@ -24,9 +24,9 @@ Use the live hosted platform: `https://calibryatai.onrender.com`.
 
 A real project is entered on that platform only after Joel has met the readiness gates already required. This guide does not open that work by itself.
 
-The Mac is a mirror. It is not a second office. Its file was last read on 7 October 2026 at revision `q7d8e9f0a1b2`, 3,645,440 bytes, last changed 2026-10-07 11:06:09. The hosted revision read on 9 October 2026 is `t0a1b2c3d4e5`, integrity `ok`. The served application is `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`. The Mac file was not brought to that hosted revision. It is not a current mirror.
+The Mac is a mirror. It is not a second office. On 9 October 2026 at 13:01 local, `instance/brayman_estimator.db` was checked against the hosted backup `hosted-current-2026-10-09-1258.db`. Both are revision `t0a1b2c3d4e5`, integrity `ok`, and the same SHA-256. The served application is `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`. The previous Mac file, revision `q7d8e9f0a1b2`, was kept and was not deleted.
 
-The hosted backup taken before that revision change is `pre-t0-2026-10-09-1202.db`, revision `s9f0a1b2c3d4`. The Mac backup in the log is revision `h8c9d0e1f2a3`. Neither is a current copy of the hosted office after the later synthetic work.
+The hosted backup taken before the construction-revision change remains `pre-t0-2026-10-09-1202.db`, revision `s9f0a1b2c3d4`. The 7 October Mac backup remains revision `h8c9d0e1f2a3`. Those older copies were not overwritten. The current hosted backup is the 12:58 file in the backup log.
 
 Some older practice jobs are already stored. Do not delete them. Do not use a synthetic project as the real customer job. Ask Joel which project is the real one.
 
@@ -184,7 +184,7 @@ Money shows the committed baseline after the estimate version is locked. On the 
 
 Ben does not back up the office and Ben does not restore it.
 
-Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. That sheet’s copy steps are for the Mac mirror. The working database is the hosted file. A Mac copy does not, by itself, back up the hosted office. The 7 October 2026 backup in the log is revision `h8c9d0e1f2a3`. Joel still makes a checked backup of the hosted file before a real project is typed in, and again at the end of a day a real project changed.
+Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. The working database is the hosted file. A current hosted backup was made on 9 October 2026 and is in the backup log. Joel makes another checked backup at the end of a day a real project changed. The 7 October backup remains revision `h8c9d0e1f2a3`.
 
 There is no automatic backup service. The procedure is a controlled copy. Joel makes it. The copy is checked. A second copy is kept outside the live file. The backup log records the file name.
 

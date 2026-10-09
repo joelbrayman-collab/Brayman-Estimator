@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Current hosted backup and Mac mirror
+
+The hosted database was copied with SQLite backup to `hosted-current-2026-10-09-1258.db`. Integrity `ok`. Revision `t0a1b2c3d4e5`. The Desktop second copy matches that file. The Mac mirror `instance/brayman_estimator.db` matches that same checksum. The previous Mac file, revision `q7d8e9f0a1b2`, was preserved. The earlier `pre-t0` backup was not overwritten. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.
+
 ## 9 Oct 2026 — Live platform is the working office
 
 Joel decided the hosted platform is the working office. The Mac is a mirror. The Mac file last read on 7 October 2026 is revision `q7d8e9f0a1b2` and is not verified against hosted revision `t0a1b2c3d4e5`. The hosted backup `pre-t0-2026-10-09-1202.db` is revision `s9f0a1b2c3d4` and is not a current copy of the hosted file. This decision does not open real contractor UAT. Ben’s sign-in on the hosted platform is not verified. Checklist step 8 stays **OPEN**. The V1 register was not rescored.

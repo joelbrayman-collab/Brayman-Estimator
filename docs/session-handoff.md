@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — HOSTED BACKUP AND MAC MIRROR.** Backup `hosted-current-2026-10-09-1258.db` is integrity `ok` at revision `t0a1b2c3d4e5`. The Desktop second copy and the Mac mirror match its checksum. The previous Mac file stays revision `q7d8e9f0a1b2`. The pre-t0 backup was kept. Checklist step 8 stays **OPEN**. Real contractor UAT is not opened.
+
 **9 Oct 2026 — LIVE PLATFORM IS THE WORKING OFFICE.** The hosted platform is the contractor office. The Mac is a mirror and is not current: last read revision `q7d8e9f0a1b2`, hosted revision `t0a1b2c3d4e5`. Real contractor UAT is not opened by this decision. Ben’s hosted sign-in is not verified. Checklist step 8 stays **OPEN**.
 
 **9 Oct 2026 — SYNTHETIC CUSTOMER PROPOSAL.** Proposal 18 `PROP-2026-0007` Draft. PDF grand total 49.86. Subtotal 44.12. Quantity 3 ea. Tax 5.74 is stored and included in the total; the template does not print a tax row. Snapshots 15 and 23 unchanged. Line 137 unchanged. Not sent. Checklist step 8 stays **OPEN**. Not real contractor UAT.

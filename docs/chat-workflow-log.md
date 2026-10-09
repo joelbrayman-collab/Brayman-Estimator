@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Current hosted backup and Mac mirror
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Make a current SQLite backup of the hosted office and check the Mac mirror against it. |
+| Business decision | The hosted platform remains the working office. The Mac remains a mirror. Real contractor UAT stays closed. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | Use `sqlite3 .backup` on the hosted file. Keep every older backup. Preserve the previous Mac file before replacing the mirror. Do not deploy and do not migrate. |
+| Prompt template used | Authorized backup prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Back up the current hosted database, verify it, place a second copy, and set the Mac mirror only after the previous Mac file is preserved. |
+| Files expected to change | The backup log and the operating status records. Database files stay out of git. |
+| Files prohibited from changing | Application source, case files, and the hosted live database. |
+| Implementation result | Backup `hosted-current-2026-10-09-1258.db` is integrity `ok` at revision `t0a1b2c3d4e5`. The Desktop second copy and `instance/brayman_estimator.db` share its SHA-256. The previous Mac file remains revision `q7d8e9f0a1b2`. `pre-t0-2026-10-09-1202.db` was not overwritten. |
+| Tests | Not a product suite. Integrity, revision, and the synthetic records named in the backup log were read from the backup, the second copy, the Mac mirror, and the live hosted file. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Ben’s hosted sign-in is not verified. Real contractor UAT is not open. There is still no automatic backup. |
+| Next approved step | Joel verifies Ben’s sign-in on the hosted platform before a real project is typed in. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Live platform is the working office
 
 | Field | Content |

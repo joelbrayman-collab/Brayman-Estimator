@@ -6,9 +6,9 @@ Joel does this. Ben does not.
 
 The working office is the hosted platform. Its database is the operational file. The Mac file is a mirror. See [operating-authority-2026-10-09.md](operating-authority-2026-10-09.md).
 
-The steps below copy the Mac file `instance/brayman_estimator.db`. They remain the steps for that mirror. Completing them does not back up the hosted office. The Mac file last read on 7 October 2026 is revision `q7d8e9f0a1b2`. It is not a verified current mirror of hosted revision `t0a1b2c3d4e5`.
+The steps below copy the Mac file `instance/brayman_estimator.db`. They remain the steps for that mirror. Completing them does not back up the hosted office. On 9 October 2026 at 13:01 local, that Mac file was checked as a current mirror of hosted backup `hosted-current-2026-10-09-1258.db`, revision `t0a1b2c3d4e5`.
 
-There is no automatic backup. A copy is not finished until the check says ok and a second copy exists outside that live file. Before a real project is typed on the hosted platform, Joel needs that same evidence for the hosted file: integrity `ok`, one revision line, a second copy, and one new line in the backup log. The hosted backup already on record, `pre-t0-2026-10-09-1202.db`, is revision `s9f0a1b2c3d4`. It is not a copy of the hosted file after the later synthetic work.
+There is no automatic backup. A copy is not finished until the check says ok and a second copy exists outside that live file. The current hosted backup is `hosted-current-2026-10-09-1258.db`, integrity `ok`, revision `t0a1b2c3d4e5`, with a verified Desktop second copy. The earlier hosted backup `pre-t0-2026-10-09-1202.db` remains revision `s9f0a1b2c3d4` and was not overwritten. Joel makes another checked backup at the end of a day a real project changed.
 
 Do this before the first real project is typed in, at the end of any day a real project changed, and before any change to the office file's structure. Ben never makes that structure change.
 

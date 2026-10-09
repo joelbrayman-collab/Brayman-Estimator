@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-09 hosted backup):** Checklist Step 8 remains **OPEN**. A current hosted backup and a matching Mac mirror are recorded in the backup log. The V1 register was not rescored. This note does not open real contractor UAT, close Step 8, or start Step 9.
+
 **Current status (2026-10-09 operating authority):** Checklist Step 8 remains **OPEN**. The hosted platform is the working office. The Mac is a mirror and is not verified as current. The V1 register was not rescored. This note does not open real contractor UAT, close Step 8, or start Step 9.
 
 **Current status (2026-10-09 synthetic proposal):** Checklist Step 8 remains **OPEN**. Proposal 18 is the customer PDF for the synthetic version and shows grand total 49.86. The V1 register was not rescored. This note does not close Step 8 or start Step 9.

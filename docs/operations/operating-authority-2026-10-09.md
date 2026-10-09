@@ -19,7 +19,7 @@ GitHub is the product source and the release history. It is not the office datab
 
 The Mac is a mirrored backup and a recovery resource. It is not the primary contractor office. It is not a prerequisite for live use. It is not the authority for current hosted project data.
 
-The Mac file was last read on 7 October 2026 at revision `q7d8e9f0a1b2`. It was not synchronized to the hosted revision `t0a1b2c3d4e5`. Until a later check shows the same revision and an integrity result of `ok`, the Mac file is not a current mirror.
+The Mac file was last read on 7 October 2026 at revision `q7d8e9f0a1b2`. Later the same day as this decision, a checked hosted backup was made and the Mac file was replaced with that backup. The check is in the backup log. The Mac file is a mirror of that backup. It is still not the working office.
 
 ## Four copies
 

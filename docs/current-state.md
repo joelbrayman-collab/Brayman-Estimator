@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Commercial integration accepted
+
+ChatGPT accepted the live synthetic commercial path. Project 46, estimate 41, version 47, line quantity 3, customer total 49.86, Proposal 18. The path is a saved construction revision, a confirmed member count, approved costing, frozen pricing, and the customer PDF. Checklist step 8 stays **OPEN** because generic estimating is incomplete and `SITE`, `FOUND`, and `STRUCT` stay unbound. The V1 register was not rescored. This is not real contractor UAT. Step 9 was not started.
+
 ## 9 Oct 2026 — Current hosted backup and Mac mirror
 
 The hosted database was copied with SQLite backup to `hosted-current-2026-10-09-1258.db`. Integrity `ok`. Revision `t0a1b2c3d4e5`. The Desktop second copy matches that file. The Mac mirror `instance/brayman_estimator.db` matches that same checksum. The previous Mac file, revision `q7d8e9f0a1b2`, was preserved. The earlier `pre-t0` backup was not overwritten. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.

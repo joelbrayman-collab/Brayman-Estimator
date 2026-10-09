@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — COMMERCIAL INTEGRATION ACCEPTED.** ChatGPT accepted the live synthetic path on project 46 through Proposal 18, quantity 3, total 49.86. Checklist step 8 stays **OPEN**. `SITE`, `FOUND`, and `STRUCT` stay unbound. Generic estimating stays incomplete. Real contractor UAT is not accepted. Step 9 was not started.
+
 **9 Oct 2026 — HOSTED BACKUP AND MAC MIRROR.** Backup `hosted-current-2026-10-09-1258.db` is integrity `ok` at revision `t0a1b2c3d4e5`. The Desktop second copy and the Mac mirror match its checksum. The previous Mac file stays revision `q7d8e9f0a1b2`. The pre-t0 backup was kept. Checklist step 8 stays **OPEN**. Real contractor UAT is not opened.
 
 **9 Oct 2026 — LIVE PLATFORM IS THE WORKING OFFICE.** The hosted platform is the contractor office. The Mac is a mirror and is not current: last read revision `q7d8e9f0a1b2`, hosted revision `t0a1b2c3d4e5`. Real contractor UAT is not opened by this decision. Ben’s hosted sign-in is not verified. Checklist step 8 stays **OPEN**.

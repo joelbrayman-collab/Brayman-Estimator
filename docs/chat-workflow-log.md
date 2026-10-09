@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Live construction release
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Deploy the accepted construction and ICF-infrastructure candidate and verify the hosted office. |
+| Business decision | Joel directed the approved work live. ChatGPT authorized SHA `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b` after the hosted database read `s9f0a1b2c3d4` with integrity `ok`. Checklist step 8 stays OPEN. The V1 register was not rescored. Contractor UAT is not accepted. |
+| Architectural decision | Migrate `t0a1b2c3d4e5` on the running instance before the new application starts, because the previous application does not query the new table. Auto-deploy stays off. The Mac office stays at its current revision. |
+| Prompt template used | Authorized release execution prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Back up, migrate only from `s9f0a1b2c3d4` to `t0a1b2c3d4e5`, deploy only `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, smoke the opened pages, and record the release. Do not migrate the Mac office, enable auto-deploy, close Step 8, start Step 9, or rescore V1. |
+| Files expected to change | Release records only, after the live checks. |
+| Files prohibited from changing | Application source, case files, the Mac office database. |
+| Implementation result | DEPLOYED. Live SHA `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`, finished 2026-10-09T16:10:44Z. Hosted revision `t0a1b2c3d4e5`, integrity `ok`. Backup `/opt/render/project/src/instance/backups/pre-t0-2026-10-09-1202.db`, 3,657,728 bytes, integrity `ok`, revision `s9f0a1b2c3d4`. Login, home, synthetic projects 46 and 47, and project 46 construction information returned 200. Calculation, ICF, and confirmation were not opened. No customer project was changed. LIVE VERIFIED for the pages opened. CONTRACTOR UAT ACCEPTED: no. |
+| Tests | Hosted read-only checks and office page opens named above. No new repository test run in the release step. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. A saved construction revision, Add from calculation, confirmation, costing, and the customer estimate were not walked on the live office. The Mac office remains behind the hosted revision. |
+| Next approved step | ChatGPT reviews this live release. Do not start Step 9 from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Unknown level elevation
 
 | Field | Content |

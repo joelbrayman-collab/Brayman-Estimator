@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-10-02 |
+| Updated | 2026-10-09 |
 
 ## Lifecycle
 
@@ -21,6 +21,14 @@
 12. **After implementation:** update documentation, roadmap, and handoff; update [milestones.md](milestones.md) where appropriate; update [project-state-report.md](project-state-report.md); append [architecture/manual-impact-log.md](architecture/manual-impact-log.md) when the close creates or changes a contractor-facing capability; identify the **next approved prompt** or explicitly state that none is approved.
 13. **Joel** approves the milestone.
 14. The work is committed with a descriptive message (and pushed when Joel directs).
+
+## Release completion
+
+Joel’s release rule is:
+
+IMPLEMENT → TEST → ACCEPT → COMMIT → PUSH → DEPLOY → LIVE VERIFY → CLOSE
+
+A push is not a completed release. Completed product work does not remain on `main` without an explicit authorization to wait. Backup, migration, and rollback safeguards stay with the slice. A repository-only exception requires explicit approval and a record. This rule does not rescore V1.
 
 ## CalibraytAI development response continuity
 

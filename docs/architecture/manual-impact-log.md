@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Construction information is on the website office (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | The accepted construction-information page is deployed on the website office. |
+| Product status at capture | Deployed and opened on synthetic projects. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | On the website office, a contractor can open a project and enter construction information, including a level whose elevation is still unknown. |
+| 2. When would the contractor use it? | When recording a deck on that office before the height above a known point is established. |
+| 3. What workflow will the final Manual need to teach? | Open the project, enter construction information, leave an unknown elevation blank, and save. The live confirmation through costing was not walked in this release. |
+| 4. What contractor-facing terms must be used? | Construction information. Level. Elevation. Missing facts. Unknown. |
+| 5. What screenshots / Print examples will eventually be needed? | The construction page with a blank elevation on a non-customer project. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | Blank stays unknown. The first real job stays on the Mac office until Joel says otherwise. |
+| 7. Desktop / iPhone / Print relevance | Website office in a desktop browser. The Mac office file was not changed. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Unknown level elevation (2026-10-09)
 
 | Field | Content |

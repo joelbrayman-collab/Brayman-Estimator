@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Proposal heading release stopped
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record that the accepted proposal-heading release stopped before deploy. |
+| Business decision | Do not deploy without a current hosted integrity and revision read. |
+| Architectural decision | The product commit stays on main. The live office stays on the previous SHA. No migration was attempted. The Mac mirror was not changed. |
+| Prompt template used | Authorized completion and release prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Stop if a release gate fails. |
+| Files expected to change | Current-state, session handoff, and this log. |
+| Files prohibited from changing | Application source and the hosted database. |
+| Implementation result | `1885ecf4537b133d8ef1fe58def5d2e1c3976856` is pushed. Render SSH failed twice. Deploy was not started. Live remains `dep-db4kubmi0phs73d30nb0` at `13544f29ee25402d9bf4059556c7b5d0a40909ab`. |
+| Tests | No new suite. The release suite remains 2298 passed, 11 skipped, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted integrity and revision were not read. Proposal 18 on the live office still shows the old headings. |
+| Next approved step | Repeat the hosted database read. Deploy `1885ecf` only after integrity is ok and the revision is known. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Diagram interpretation and proposal headings
 
 | Field | Content |

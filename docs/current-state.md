@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Proposal headings not deployed
+
+`1885ecf4537b133d8ef1fe58def5d2e1c3976856` is on `origin/main` and is not deployed. Hosted SSH failed twice before the release, so the database revision and integrity were not read. The live application remains `13544f29ee25402d9bf4059556c7b5d0a40909ab`, deploy `dep-db4kubmi0phs73d30nb0`. Auto-deploy stayed off. Proposal 18 was still Draft, total 49.86, and still showed Estimate Snapshot. Checklist step 8 stays **OPEN**. The V1 register was not rescored.
+
 ## 9 Oct 2026 — Diagram is a completeness reference
 
 Joel clarified that the approved lifecycle blueprint checks whether capabilities and handoffs exist. It is not a screen design and not a reason to rebuild the Project Hub into eleven stages. The earlier hub-label finding stays in the audit as history. It is not a defect under this clarification. No product code was changed for the clarification. The V1 register was not rescored.

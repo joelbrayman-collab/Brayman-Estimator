@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Contractor language live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record the live release of the accepted contractor-language correction. |
+| Business decision | The hosted office shows the accepted wording. Real contractor UAT stays closed. |
+| Architectural decision | No migration. Rollback is redeploy of `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`. The Mac mirror was not replaced. |
+| Prompt template used | Authorized regression correction and release prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | After the suite passed, deploy the exact SHA and verify the live screens. |
+| Files expected to change | Current-state, session handoff, the workflow audit, and this log. |
+| Files prohibited from changing | Application source and case files. |
+| Implementation result | Deploy `dep-db4kubmi0phs73d30nb0` is live at `13544f29ee25402d9bf4059556c7b5d0a40909ab`. Synthetic project 46 hub, contract review, and estimate 41 show the new wording. |
+| Tests | No new suite. The release suite remains 2298 passed, 11 skipped, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Proposal 18 still shows Estimate Snapshot. The supplier sentence was not rendered because project 46 has no supplier selected. Hub stage names still differ from the diagram. |
+| Next approved step | ChatGPT reviews the live wording. Do not start a new feature from this note. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Contractor language accepted and operator-pack tests corrected
 
 | Field | Content |

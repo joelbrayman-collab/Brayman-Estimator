@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Contractor language correction live
+
+The accepted wording is live as `13544f29ee25402d9bf4059556c7b5d0a40909ab`, deploy `dep-db4kubmi0phs73d30nb0`. No migration. Hosted revision stayed `t0a1b2c3d4e5`, integrity `ok`. On synthetic project 46 the hub shows the internal cost breakdown, the customer estimate, QuickBooks entry, and that a production Ontario contract is not available. Help on that hub uses the generated-contract sentence. Contract review says Generated contract and that none has been generated. Estimate 41 and version 47 say Pricing method. The supplier form sentence was not on the page because that synthetic project has no supplier selected. Proposal 18 still shows Estimate Snapshot above its sections. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.
+
 ## 9 Oct 2026 — Contractor language correction accepted
 
 ChatGPT accepted the hub and office wording. The internal cost breakdown, the customer estimate, and QuickBooks entry are described as available. A production Ontario contract is described as not available. Help matches. The operator-pack tests follow the hosted office. Focused tests: 100 passed, exit 0. Full suite: `./venv/bin/python -m pytest -q` — 2298 passed, 11 skipped, 7148 warnings, 1179.82s, exit 0. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Real contractor UAT is not accepted.

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Synthetic priced customer total
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Take the confirmed synthetic quantity through approved costing to a priced customer total. |
+| Business decision | ChatGPT already accepted the quantity walk on project 46. The cost used here is the existing FG-014 test material already on line 137. No new price, waste, labour rate, or margin was entered. Checklist step 8 stays OPEN. The V1 register was not rescored. This is not real contractor UAT. |
+| Architectural decision | Costing stayed blocked until scope delivery was confirmed. The material-category rule had already proposed that Brayman purchases the material and that the line has no labour. That proposal was confirmed. Costing approval and the existing organization pricing policy then ran through their ordinary gates. |
+| Prompt template used | Authorized live commercial-chain prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Do not repeat the quantity walk. Use authorized test pricing only. Approve costing and apply the existing organization pricing policy. Stop if no authorized price exists. Do not deploy, migrate, or close Step 8. |
+| Files expected to change | Acceptance records only. |
+| Files prohibited from changing | Application source, case files, the Mac office database, and the hosted schema. |
+| Implementation result | Costing snapshot 23 is current for version 47. Approved direct cost is 37.50 on one line. Pricing snapshot 15 uses the active organization gross-margin policy. Customer total on the version is 49.86. Line 137 remains 3 ea. Revision 1 remains 3 joists and revision 2 remains 5. The customer print PDF opened and does not contain 49.86. |
+| Tests | Live office actions and hosted read-back named above. No new repository test run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. The print PDF is not the priced customer total. No supplier price evidence and no labour evidence were present. Those warnings did not block approval. Real contractor UAT is not accepted. |
+| Next approved step | ChatGPT reviews this priced synthetic total. Do not start Step 9 from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Synthetic live construction acceptance
 
 | Field | Content |

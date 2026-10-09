@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Synthetic priced customer total
+
+The quantity walk on project 46 stays accepted. Line 137 still uses cost item `FG014-UAT-MAT`. Scope delivery for that line is confirmed as Brayman purchases the material and the line has no labour. Costing snapshot 23 is current, direct cost 37.50, one line. Pricing snapshot 15 applied the active organization gross-margin policy. The version customer total is 49.86. Line 137 remains quantity 3 ea. Construction revision 1 remains three joists and revision 2 remains five. The customer print PDF opens and does not contain 49.86. Live SHA remains `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`. Hosted revision remains `t0a1b2c3d4e5`, integrity `ok`. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.
+
 ## 9 Oct 2026 — Synthetic live construction acceptance
 
 The approved release was still live: SHA `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`, hosted revision `t0a1b2c3d4e5`, integrity `ok`. On synthetic project 46, revision 1 stored a test deck: level `level-synthetic`, elevation 4, three 2x6 joists at 8 ft, and two piers. Estimate `SYN-ACCEPT-20261009` is estimate 41, version 47, section 37. Offering that group created intake 2 and review 2. Confirming it created line 137, quantity 3 ea, and no second line. Revision 2 stores five of those joists. Revision 1 still has three, and line 137 is still quantity 3. The internal cost breakdown and the customer print opened. No pricing snapshot was applied, so the priced customer total is not on the version. No customer project was changed. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is an end-to-end synthetic acceptance. It is not real contractor UAT.

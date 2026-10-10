@@ -3,9 +3,11 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-10-09 |
+| Updated | 2026-10-10 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
+
+**10 Oct 2026 Concrete release.** Checklist step 8 stays **OPEN**. Deploy `dep-db4s587lot8c73cqlhb0` is live at `8e6bf4994dae49d28a1691e4ed659459449a51fd`. The preserved engine matches its fixtures. The office page cannot complete a calculation until it reads the Length field by its id. The V1 register was not rescored.
 
 **9 Oct 2026 standalone Concrete.** Checklist step 8 stays **OPEN**. The preserved Website Concrete engine is available in the office without a project. It is not deployed. The V1 register was not rescored.
 

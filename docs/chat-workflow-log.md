@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-09 |
+| Updated | 2026-10-10 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-10 — Concrete calculator live release
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Release the accepted standalone Concrete calculator and verify it live. |
+| Business decision | ChatGPT accepted the preserved `concrete_slab` `1.0.0` office page. |
+| Architectural decision | The formula file stayed unchanged. No migration. The Mac mirror and the public Website were not changed. |
+| Prompt template used | Accepted release prompt dated 10 October 2026. |
+| Approved Cursor prompt summary | Commit the accepted Concrete slice, push, check the hosted database, deploy that SHA, and verify the live page. |
+| Files expected to change | The accepted calculator files, then this release record. |
+| Files prohibited from changing | Stair, ICF, Website, migrations, case files, and the engine file. |
+| Implementation result | Commit `8e6bf4994dae49d28a1691e4ed659459449a51fd` is deployed as `dep-db4s587lot8c73cqlhb0`. The page opens and the live engine matches the original fixtures. Calculate fails because `form.elements.length` is the control count. |
+| Tests | The earlier node parity of 4 passed and the full suite of 2302 passed, 11 skipped, exit 0, still apply. The product files were not changed after that suite. The full suite was not repeated. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The office page cannot complete a calculation. Stair and standalone ICF are not built. A real contractor phone was not used. |
+| Next approved step | Read the Length field by its id, retest the page, and release that correction. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
 
 ### 2026-10-09 — Standalone Concrete calculator
 

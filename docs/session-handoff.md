@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**10 Oct 2026 — CONCRETE CALCULATE CORRECTION LIVE.** Deploy `dep-db4sqivlk1mc73ftd9ig` is `ee4f7b47bc2671ba8bdc7bfe55316cd420728fbe`. Live Calculate returned 14.815 yd3, 11.327 m3, 24.267 yd3, and 18.553 m3. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. Stair is still not built. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 **10 Oct 2026 — CONCRETE CALCULATE BUTTON CORRECTED.** The page reads the Length field by id. Browser proof: 14.815 yd3, 11.327 m3, 24.267 yd3, 18.553 m3. Full suite 2303 passed, 11 skipped, exit 0. The engine file was not changed. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
 
 **10 Oct 2026 — CONCRETE CALCULATOR LIVE, PAGE CALCULATION FAILED.** Deploy `dep-db4s587lot8c73cqlhb0` is `8e6bf4994dae49d28a1691e4ed659459449a51fd`. Integrity `ok`. Revision `t0a1b2c3d4e5`. The live engine matches the original fixtures. The page Calculate button fails because `form.elements.length` is the control count. Do not start Stair. The next action is to read the Length field by its id, retest the page, and release that correction. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

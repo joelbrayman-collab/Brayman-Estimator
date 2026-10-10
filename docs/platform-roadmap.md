@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**10 Oct 2026 Concrete Calculate correction live.** Checklist step 8 stays **OPEN**. Deploy `dep-db4sqivlk1mc73ftd9ig` is live at `ee4f7b47bc2671ba8bdc7bfe55316cd420728fbe`. The live page returned the four original fixture totals. The V1 register was not rescored.
+
 **10 Oct 2026 Concrete Calculate correction.** Checklist step 8 stays **OPEN**. The page reads the Length field by id. The four original fixture totals were read from the page after Calculate. The V1 register was not rescored. The release SHA is recorded after this commit.
 
 **10 Oct 2026 Concrete release.** Checklist step 8 stays **OPEN**. Deploy `dep-db4s587lot8c73cqlhb0` is live at `8e6bf4994dae49d28a1691e4ed659459449a51fd`. The preserved engine matches its fixtures. The office page cannot complete a calculation until it reads the Length field by its id. The V1 register was not rescored.

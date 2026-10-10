@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Concrete Calculate correction is live
+
+Deploy `dep-db4sqivlk1mc73ftd9ig` is live at `ee4f7b47bc2671ba8bdc7bfe55316cd420728fbe`. The page reads the Length field by id. Pressing Calculate on the live page returned standard imperial 14.815 yd3, standard metric 11.327 m3, thickened-edge imperial 24.267 yd3, and thickened-edge metric 18.553 m3. Invalid length showed “length must be a decimal number.” and a later valid calculation still worked. Integrity stayed `ok`. Revision stayed `t0a1b2c3d4e5`. Projects stayed 52, estimate lines stayed 137, and Proposal 18 stayed Draft at 49.86. The engine file was not changed. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 ## 10 Oct 2026 — Concrete Calculate button reads the Length field
 
 The page now reads each measurement with `document.getElementById`. `form.elements.length` remains the control count, and the Length input is the only control with that collision. The formula file is unchanged, SHA-256 `1ecbf25ebe924af3a4bd4d1a6288840f76f82b316ea0426ca38e8c48ac83e77a`. A browser test signs in, presses Calculate, and reads 14.815 yd3, 11.327 m3, 24.267 yd3, and 18.553 m3. Invalid length shows “length must be a decimal number.” The full suite was 2303 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

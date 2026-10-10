@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Concrete Calculate correction live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Record the live verification of the Length-field correction. |
+| Business decision | The bounded correction was released after the browser tests and the full suite passed. |
+| Architectural decision | The formula file stayed unchanged. No migration. |
+| Prompt template used | Live Calculate button correction, 10 October 2026. |
+| Approved Cursor prompt summary | Deploy the tested correction and verify the four fixture totals on the live page. |
+| Files expected to change | These release records only. |
+| Files prohibited from changing | The engine file, Stair, ICF, Website, migrations, and case files. |
+| Implementation result | Deploy `dep-db4sqivlk1mc73ftd9ig` is live at `ee4f7b47bc2671ba8bdc7bfe55316cd420728fbe`. Live Calculate returned 14.815 yd3, 11.327 m3, 24.267 yd3, and 18.553 m3. |
+| Tests | Recorded on the product commit. This record was not deployed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stair and standalone ICF are not built. A real contractor phone was not used. |
+| Next approved step | Stair remains the next calculator only when a later prompt authorizes it. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Concrete Calculate button correction
 
 | Field | Content |

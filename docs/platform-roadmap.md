@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**10 Oct 2026 Employment vs Entrepreneurship.** Checklist step 8 stays **OPEN**. The preserved Website comparison is in the office Calculators list. Full suite: 2327 passed, 11 skipped, exit 0. ChatGPT accepted it. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored.
+
 **10 Oct 2026 rectangular footing live.** Checklist step 8 stays **OPEN**. Deploy `dep-db54v0h42hec73fo3c70` is live at `8cbb8696bde494b39f59acbd6eb334e00e38b274`. One stored rectangular footing shows cubic feet, cubic yards, and cubic metres. `FOUND` stays unbound. Real-iPhone acceptance remains pending. The V1 register was not rescored.
 
 **10 Oct 2026 rectangular footing accepted.** Checklist step 8 stays **OPEN**. ChatGPT accepted one stored rectangular footing. It shows the existing cubic-foot, cubic-yard, and cubic-metre quantities. The release SHA is recorded after this commit. `FOUND` stays unbound. Real-iPhone acceptance remains pending. The V1 register was not rescored.

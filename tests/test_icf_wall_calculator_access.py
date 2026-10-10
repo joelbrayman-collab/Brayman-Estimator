@@ -86,6 +86,7 @@ def test_icf_wall_calculator_is_in_the_calculators_section():
         "Concrete calculator",
         "Stair calculator",
         "ICF wall calculator",
+        "Employment vs Entrepreneurship",
     ]
     assert NAV_SECTIONS[0]["title"] is None
 

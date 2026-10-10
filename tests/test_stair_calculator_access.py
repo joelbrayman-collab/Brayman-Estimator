@@ -71,6 +71,7 @@ def test_stair_calculator_is_in_the_calculators_section():
         "Concrete calculator",
         "Stair calculator",
         "ICF wall calculator",
+        "Employment vs Entrepreneurship",
     ]
     assert NAV_SECTIONS[0]["title"] is None
 
@@ -119,7 +120,7 @@ def test_recovered_stair_engine_diagram_and_page_tests():
     )
     assert engine.returncode == 0, engine.stdout + engine.stderr
     browser = subprocess.run(
-        [node, "--test", str(package / "tests" / "office-page-browser.mjs")],
+        [node, "--test", "--test-force-exit", str(package / "tests" / "office-page-browser.mjs")],
         cwd=package,
         check=False,
         text=True,

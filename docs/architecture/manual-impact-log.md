@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Employment vs Entrepreneurship (2026-10-10)
+
+| Field | Content |
+|-------|---------|
+| Slice | Employment vs Entrepreneurship calculator in Calculators. |
+| Product status at capture | ChatGPT accepted the Calculators page. The release SHA is recorded after this commit. Not deployed yet. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can open Employment vs Entrepreneurship from Calculators and compare employment with operating a contracting business. |
+| 2. When would the contractor use it? | When comparing take-home employment with the cost of running the business, before any project exists. |
+| 3. What workflow will the final Manual need to teach? | Sign in, open Calculators, open Employment vs Entrepreneurship, enter the original assumptions, and read the comparison. No project, client, or estimate is created. |
+| 4. What contractor-facing terms must be used? | Employment. Entrepreneurship. Working weeks. Winter protection / heat. Helper wage / hour, marked OWNER ESTIMATE. |
+| 5. What screenshots / Print examples will eventually be needed? | The comparison on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | The page is a comparison of the entered assumptions. A non-numeric entry is read as zero. The page does not recommend starting a business. |
+| 7. Desktop / iPhone / Print relevance | Checked in a browser at 390 by 844. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Rectangular footing volume live (2026-10-10)
 
 | Field | Content |

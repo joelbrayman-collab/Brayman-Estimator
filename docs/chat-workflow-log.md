@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Employment vs Entrepreneurship source recovery
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Recover the original Employment vs Entrepreneurship calculator and serve it in the contractor office. |
+| Business decision | The original Website comparison is the calculator. It is not rebuilt. |
+| Architectural decision | One preserved HTML file is the calculation authority. The office sends that file. There is no Python formula and no call to the public Website. |
+| Prompt template used | V1 Employment vs Entrepreneurship source recovery, 10 October 2026. |
+| Approved Cursor prompt summary | Verify the Version 31 archive, preserve the original page and tests, add it to Calculators, prove parity in the browser, and return evidence before release. |
+| Files expected to change | Preserved source, office route, Calculators navigation, access tests, and status records. |
+| Files prohibited from changing | The public Website, the Mac mirror, formulas in other calculators, case files, and migrations. |
+| Implementation result | ChatGPT accepted the preserved page at `/calculators/employment-vs-entrepreneurship`. No project or estimate is created. The release SHA is recorded after this commit. |
+| Tests | Recovered `node --test`: 5 passed, 0 failed. Office browser at 390 by 844 passed. `./venv/bin/python -m pytest -q` — 2327 passed, 11 skipped, 7206 warnings, 1255.36s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Accepted and not deployed yet. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | Deploy this commit and verify the live page. |
+| Next approved prompt | Employment vs Entrepreneurship accepted release, 10 October 2026. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Rectangular footing live
 
 | Field | Content |

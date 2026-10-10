@@ -113,7 +113,8 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert "Purchase Orders" not in html
     assert "Job Costing" not in html
     assert "AI Assistant" not in html
-    assert "Employment vs Entrepreneurship" not in html
+    assert 'href="/decision-tools/employment-vs-entrepreneurship"' not in html
+    assert 'href="/calculators/employment-vs-entrepreneurship"' in html
     assert 'href="/assemblies/"' in html
     assert 'href="/proposals/"' in html or 'href="/proposals"' in html
     assert 'src="/static/branding/calibraytai-logo-office.png"' in html

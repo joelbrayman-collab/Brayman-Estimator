@@ -68,6 +68,12 @@ NAV_SECTIONS = (
                 "icon": "bi-bricks",
                 "enabled": True,
             },
+            {
+                "title": "Employment vs Entrepreneurship",
+                "endpoint": "calculators.employment_vs_entrepreneurship",
+                "icon": "bi-briefcase",
+                "enabled": True,
+            },
         ),
     },
     {

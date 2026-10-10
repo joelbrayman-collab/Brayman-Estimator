@@ -360,8 +360,8 @@ def test_parked_decision_tool_stays_reachable_and_off_daily_nav(client):
     dashboard = client.get("/")
     html = dashboard.get_data(as_text=True)
     assert dashboard.status_code == 200
-    assert "Employment vs Entrepreneurship" not in html
     assert PAGE not in html
+    assert "/calculators/employment-vs-entrepreneurship" in html
     page = client.get(PAGE)
     assert page.status_code == 200
     assert "Employment vs Entrepreneurship" in page.get_data(as_text=True)

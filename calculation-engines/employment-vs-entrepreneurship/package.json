@@ -1,0 +1,9 @@
+{
+  "name": "calibraytai-employment-vs-entrepreneurship",
+  "private": true,
+  "type": "module",
+  "description": "Preserved Website Employment vs Entrepreneurship calculator. The page is not edited here.",
+  "scripts": {
+    "test:engine": "node --test website-source/tests/employment-calculator.test.mjs"
+  }
+}

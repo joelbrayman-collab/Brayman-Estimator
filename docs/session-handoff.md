@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**10 Oct 2026 — EMPLOYMENT VS ENTREPRENEURSHIP ACCEPTED FOR RELEASE.** The Version 31 page is preserved and served at `/calculators/employment-vs-entrepreneurship`. Page SHA-256 `41f449de2a148a4f26b89cf52d6e878052a97d61e341f8a3fac8b5586e5fa295`. Archive SHA-256 `c991ee6418da69a134a615a77dfa403b914cb2f90537a64c8c9896093eacc240`. Recovered tests: 5 passed. Browser proof at 390 by 844 used the preserved page. No project or estimate is created. Full suite: 2327 passed, 11 skipped, 7206 warnings, 1255.36s, exit 0. ChatGPT accepted it. The release SHA is recorded after this commit. Not deployed yet. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 **10 Oct 2026 — RECTANGULAR FOOTING LIVE.** Deploy `dep-db54v0h42hec73fo3c70` is `8cbb8696bde494b39f59acbd6eb334e00e38b274`. Synthetic project 53, 20 ft by 2 ft by 12 in, showed 40 ft3, 1.481481481481481481481481481 yd3, and 1.13267386368 m3. Revision 2 left revision 1 unchanged. No estimate line and no calculation intake were created. Concrete, Stair, and ICF still opened. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
 
 **10 Oct 2026 — RECTANGULAR FOOTING ACCEPTED FOR RELEASE.** Full suite `./venv/bin/python -m pytest -q` — 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. One footing shows cubic feet, cubic yards, and cubic metres. No waste. No estimate line. `FOUND` stays unbound. No migration. The release SHA is recorded after this commit. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

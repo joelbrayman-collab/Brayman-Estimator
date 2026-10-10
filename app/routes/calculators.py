@@ -1,14 +1,16 @@
 """Standalone contractor calculators.
 
 Concrete and Stair render the preserved Website engines in the browser.
+The Employment vs Entrepreneurship page sends the preserved Website file.
 The ICF page calls the existing 8-inch quantity service.
 This module does not write a project or an estimate.
 """
 
 import uuid
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_file
 
 from app.services.icf_manufacturer_profiles import IcfProfileError, list_profiles
 from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
@@ -35,6 +37,23 @@ def concrete():
 @calculators_bp.get("/stairs")
 def stairs():
     return render_template("calculators/stairs.html")
+
+
+_EMPLOYMENT_PAGE = (
+    Path(__file__).resolve().parents[2]
+    / "calculation-engines"
+    / "employment-vs-entrepreneurship"
+    / "website-source"
+    / "public"
+    / "employment-vs-entrepreneurship"
+    / "index.html"
+)
+
+
+@calculators_bp.get("/employment-vs-entrepreneurship")
+def employment_vs_entrepreneurship():
+    """Send the preserved page. Do not recalculate it in Python."""
+    return send_file(_EMPLOYMENT_PAGE, mimetype="text/html")
 
 
 def _whole_number(text):

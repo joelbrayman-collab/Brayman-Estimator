@@ -8,7 +8,6 @@ REMOVED_FROM_DAILY_NAV = (
     "Job Costing",
     "Reports",
     "AI Assistant",
-    "Employment vs Entrepreneurship",
     "Estimates",
     "Proposals",
     "Schedule",
@@ -81,6 +80,7 @@ def test_unfinished_items_are_not_navigation_peers():
     for label in REMOVED_FROM_DAILY_NAV:
         assert label not in titles
     assert "decision_tools.employment_vs_entrepreneurship" not in _endpoints()
+    assert "calculators.employment_vs_entrepreneurship" in _endpoints()
     assert "estimates.list_estimates" not in _endpoints()
     assert "proposals.list_proposals" not in _endpoints()
     assert "projects.list_projects" in _endpoints()

@@ -37,7 +37,7 @@ function showUnits(system) {
 }
 
 function fieldValue(name) {
-  return form.elements[name].value.trim();
+  return document.getElementById(name).value.trim();
 }
 
 function buildRun() {

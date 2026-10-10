@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
+import subprocess
 from pathlib import Path
 
 from app import create_app, db
@@ -60,6 +62,9 @@ def test_office_bundle_is_the_preserved_engine_not_a_python_formula():
     assert "rectangular_prism" not in bundle
     assert "764554857984" not in adapter
     assert "from \"./concrete-slab-1.0.0.js\"" in adapter
+    assert "document.getElementById(name)" in adapter
+    assert "form.elements[name]" not in adapter
+    assert "form.elements.length" not in adapter
 
 
 def test_concrete_calculator_requires_office_sign_in():
@@ -94,3 +99,23 @@ def test_signed_in_contractor_can_open_concrete_without_a_project():
     assert EstimateLineItem.query.count() == before
     db.session.remove()
     db.drop_all()
+
+
+def test_contractor_page_calculate_matches_the_original_fixtures():
+    node = shutil.which("node") or "/opt/homebrew/bin/node"
+    script = (
+        ROOT
+        / "calculation-engines"
+        / "concrete-slab-1.0.0"
+        / "tests"
+        / "office-page-browser.mjs"
+    )
+    completed = subprocess.run(
+        [node, "--test", str(script)],
+        cwd=ROOT,
+        check=False,
+        text=True,
+        capture_output=True,
+        timeout=120,
+    )
+    assert completed.returncode == 0, completed.stdout + completed.stderr

@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-10 Concrete Calculate correction):** Checklist Step 8 remains **OPEN**. The page reads the Length field by id and the browser test reads the four original fixture totals. The engine file was not changed. The V1 register was not rescored. This note does not close Step 8.
+
 **Current status (2026-10-10 Concrete release):** Checklist Step 8 remains **OPEN**. The preserved Concrete page is live at `8e6bf4994dae49d28a1691e4ed659459449a51fd`. The engine matches its original fixtures. The page cannot calculate because it reads the form control count instead of the Length field. Stair and standalone ICF are not in this release. The V1 register was not rescored. This note does not close Step 8.
 
 **Current status (2026-10-09 standalone Concrete):** Checklist Step 8 remains **OPEN**. The office can open the preserved `concrete_slab` `1.0.0` engine without a project. That page does not write an estimate. Stair and standalone ICF are not in this slice. The V1 register was not rescored. This note does not deploy.

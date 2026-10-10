@@ -5,10 +5,12 @@
   "description": "Preserved Website concrete_slab 1.0.0. The formula file is not edited here.",
   "scripts": {
     "build:office": "esbuild website-source/lib/calculation-engine/concrete-slab.ts --bundle --format=esm --outfile=../../app/static/js/concrete-slab-1.0.0.js",
-    "test:engine": "node --test website-source/tests/concrete-slab-engine.test.mjs tests/office-bundle-parity.mjs"
+    "test:engine": "node --test website-source/tests/concrete-slab-engine.test.mjs tests/office-bundle-parity.mjs",
+    "test:page": "node --test tests/office-page-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.27.0",
+    "playwright": "1.56.1",
     "vite": "8.0.13"
   }
 }

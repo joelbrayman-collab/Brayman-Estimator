@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Concrete Calculate button correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Make Calculate read the Length field and prove the four original fixture totals on the page. |
+| Business decision | ChatGPT accepted the live finding and authorized this correction. |
+| Architectural decision | The lookup uses the input id. The formula file stays unchanged. |
+| Prompt template used | Live Calculate button correction, 10 October 2026. |
+| Approved Cursor prompt summary | Correct the Length lookup, test the page in a browser, and release that correction if the tests pass. |
+| Files expected to change | The page script, the browser test, and these records. |
+| Files prohibited from changing | The engine file, Stair, ICF, Website, migrations, and case files. |
+| Implementation result | `document.getElementById` reads the measurements. The browser test pressed Calculate and read all four fixture totals. The release SHA is recorded after this commit. |
+| Tests | Engine: `node --test website-source/tests/concrete-slab-engine.test.mjs tests/office-bundle-parity.mjs` — 4 passed. Page: included in pytest. Full suite: `./venv/bin/python -m pytest -q` — 2303 passed, 11 skipped, 1237.56s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stair and standalone ICF are not built. A real contractor phone was not used. |
+| Next approved step | Release this commit after the hosted check. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Concrete calculator live release
 
 | Field | Content |

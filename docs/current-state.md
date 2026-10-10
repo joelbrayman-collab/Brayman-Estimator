@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Concrete Calculate button reads the Length field
+
+The page now reads each measurement with `document.getElementById`. `form.elements.length` remains the control count, and the Length input is the only control with that collision. The formula file is unchanged, SHA-256 `1ecbf25ebe924af3a4bd4d1a6288840f76f82b316ea0426ca38e8c48ac83e77a`. A browser test signs in, presses Calculate, and reads 14.815 yd3, 11.327 m3, 24.267 yd3, and 18.553 m3. Invalid length shows “length must be a decimal number.” The full suite was 2303 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 ## 10 Oct 2026 — Concrete calculator is live, and the page cannot calculate
 
 Deploy `dep-db4s587lot8c73cqlhb0` is live at `8e6bf4994dae49d28a1691e4ed659459449a51fd`. Auto-deploy stayed off. No migration ran. Hosted integrity stayed `ok` and the revision stayed `t0a1b2c3d4e5`. Projects stayed 52, estimate lines stayed 137, and Proposal 18 stayed Draft at 49.86. Anonymous `/calculators/concrete` returns to login. The signed-in page opens, and Calculators is in the sidebar. The live engine file matches the preserved `concrete_slab` `1.0.0` bundle. Calling that live engine returned the original fixture totals: standard imperial 14.815 yd3, standard metric 11.327 m3, thickened-edge imperial 24.267 yd3, and thickened-edge metric 18.553 m3. Invalid input was refused with “length must be a decimal number.” The page itself does not return those results. Its script reads `form.elements.length`, and that name is the form’s control count, so Calculate shows “Cannot read properties of undefined (reading 'trim')”. A phone-sized viewport showed the form, the button, and that error. A real contractor phone was not used. The formula file was not changed. Stair and standalone ICF are not in this release. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

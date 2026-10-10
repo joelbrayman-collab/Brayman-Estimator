@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}ICF wall calculator | Brayman Construction Platform{% endblock %}
+{% block page_title %}ICF wall calculator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <h1>ICF wall calculator</h1>
+        <p class="muted-copy">8-inch ICF wall. No project is required. Nothing is added to an estimate.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p>Enter the wall the contractor measured. This page uses the stored 8-inch manufacturer profile. Core size: 8 inches.</p>
+    {% if error %}
+    <p class="form-error" role="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" data-icf-wall-calculator>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="manufacturer_id">Manufacturer</label>
+        <select id="manufacturer_id" name="manufacturer_id" required>
+            <option value="">Choose</option>
+            {% for profile in profiles %}
+            <option value="{{ profile.manufacturer_id }}" {% if values.manufacturer_id == profile.manufacturer_id %}selected{% endif %}>{{ profile.product_system_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="net_wall_area">Net wall area (square feet)</label>
+        <input id="net_wall_area" name="net_wall_area" inputmode="decimal" value="{{ values.net_wall_area }}" required>
+        <label for="corner_90">90-degree corners</label>
+        <input id="corner_90" name="corner_90" inputmode="numeric" value="{{ values.corner_90 }}" required>
+        <p class="muted-copy">Enter 0 when the wall has none.</p>
+        <label for="corner_45">45-degree corners</label>
+        <input id="corner_45" name="corner_45" inputmode="numeric" value="{{ values.corner_45 }}" required>
+        <button type="submit">Calculate</button>
+    </form>
+</section>
+
+{% if result %}
+<section class="form-panel" data-icf-result>
+    <h2>Result</h2>
+    <p>Core size: 8 inches.</p>
+    {% if result.payload %}
+    <p>{{ result.payload.product_specification.system_name }} · {{ result.payload.product_specification.manufacturer_id }}</p>
+    <p>These quantities are not on an estimate.</p>
+    <table>
+        <thead>
+            <tr><th>Quantity</th><th>Amount</th><th>Unit</th></tr>
+        </thead>
+        <tbody>
+            {% for row in quantity_rows %}
+            <tr>
+                <td>{{ row.label }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.unit_code }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No quantity was produced. The missing fact is listed below.</p>
+    {% endif %}
+    {% if result.inputs_required %}
+    <h3>Still required</h3>
+    <ul>
+        {% for item in result.inputs_required %}
+        <li>{{ item.reason }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if result.blocked %}
+    <p>A missing manufacturer fact is not filled in here.</p>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

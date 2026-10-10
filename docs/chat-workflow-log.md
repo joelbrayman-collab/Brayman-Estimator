@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Standalone 8-inch ICF calculator
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Give the office the existing 8-inch ICF quantity service without a project. |
+| Business decision | Contractors must be able to use an approved calculator without creating a project. |
+| Architectural decision | The page calls `build_icf_standard_quantities`. It does not add an engine, a core size, or an estimate handoff. |
+| Prompt template used | Standalone 8-inch ICF, 10 October 2026. |
+| Approved Cursor prompt summary | ChatGPT accepted the page. Commit it, deploy that SHA, and verify the existing quantities on the live page. |
+| Files expected to change | The calculator route, navigation, the new page, its tests, and these records. |
+| Files prohibited from changing | The ICF engine, manufacturer profiles, Concrete, Stair formulas, Website, migrations, and case files. |
+| Implementation result | ChatGPT accepted `/calculators/wall-form`. The release SHA is recorded after this commit. |
+| Tests | `./venv/bin/python -m pytest -q` — 2317 passed, 11 skipped, 1303.51s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A real contractor phone was not used. |
+| Next approved step | Deploy the accepted SHA and verify the live page. |
+| Next approved prompt | None from this commit. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Ontario stair calculator live
 
 | Field | Content |

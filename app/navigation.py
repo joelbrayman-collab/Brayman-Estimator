@@ -62,6 +62,12 @@ NAV_SECTIONS = (
                 "icon": "bi-bar-chart-steps",
                 "enabled": True,
             },
+            {
+                "title": "ICF wall calculator",
+                "endpoint": "calculators.wall_form",
+                "icon": "bi-bricks",
+                "enabled": True,
+            },
         ),
     },
     {

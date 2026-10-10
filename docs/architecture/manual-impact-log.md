@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Standalone 8-inch ICF calculator (2026-10-10)
+
+| Field | Content |
+|-------|---------|
+| Slice | ICF wall calculator opened from Calculators, without a project. |
+| Product status at capture | ChatGPT accepted the page for release. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can calculate an 8-inch ICF wall without creating a project. Nothing is added to an estimate. |
+| 2. When would the contractor use it? | When checking form count and concrete before an estimate exists. |
+| 3. What workflow will the final Manual need to teach? | Open Calculators, then ICF wall calculator. Choose the manufacturer. Enter net wall area and both corner counts. Press Calculate. Read the quantities and any missing fact. |
+| 4. What contractor-facing terms must be used? | ICF wall calculator. Manufacturer. Net wall area. 90-degree corners. 45-degree corners. Standard forms. Concrete. Core size: 8 inches. |
+| 5. What screenshots / Print examples will eventually be needed? | The calculator and its result on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | Enter 0 when there is no corner. A missing manufacturer fact is not filled in. Rebar and labour stay outside this result. The estimate wall-form page is still the way to review a quantity onto an estimate. |
+| 7. Desktop / iPhone / Print relevance | Checked in a phone-sized browser viewport. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Ontario stair calculator (2026-10-10)
 
 | Field | Content |

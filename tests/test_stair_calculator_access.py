@@ -67,7 +67,11 @@ def test_office_bundle_is_the_preserved_stair_calculator():
 def test_stair_calculator_is_in_the_calculators_section():
     section = next(row for row in NAV_SECTIONS if row["title"] == "Calculators")
     titles = [item["title"] for item in section["links"]]
-    assert titles == ["Concrete calculator", "Stair calculator"]
+    assert titles == [
+        "Concrete calculator",
+        "Stair calculator",
+        "ICF wall calculator",
+    ]
     assert NAV_SECTIONS[0]["title"] is None
 
 

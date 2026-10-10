@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Employment vs Entrepreneurship live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Record the live Employment vs Entrepreneurship release. |
+| Business decision | The hosted office serves the preserved Website comparison from Calculators. |
+| Architectural decision | The live application is product SHA `037387cbf51e65afd88b5e44249e641f70bd72f4`. This documentation commit is not deployed. |
+| Prompt template used | Employment vs Entrepreneurship accepted release, 10 October 2026. |
+| Approved Cursor prompt summary | Commit the accepted calculator, deploy that SHA, and verify the live page. |
+| Files expected to change | Status records only. |
+| Files prohibited from changing | Product code, case files, and migrations. |
+| Implementation result | Deploy `dep-db57dlu7bikc739729p0` is live. The signed-in page matches the preserved file. Integrity `ok`. Revision `t0a1b2c3d4e5`. |
+| Tests | Full suite already recorded on the product commit: 2327 passed, 11 skipped, 7206 warnings, 1255.36s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. Framing, roofing, siding, drywall, and flooring remain blocked on a missing formula. A real contractor phone was not used. |
+| Next approved step | None from this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Employment vs Entrepreneurship source recovery
 
 | Field | Content |

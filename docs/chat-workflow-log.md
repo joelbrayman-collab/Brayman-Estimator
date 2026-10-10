@@ -43,6 +43,102 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Rectangular footing accepted for release
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Release the accepted rectangular footing after full regression. |
+| Business decision | ChatGPT accepted the existing footing. The contractor enters length, width, and thickness and reads cubic feet, cubic yards, and cubic metres. |
+| Architectural decision | Keep the existing prism and conversion. Add no waste, no estimate line, no FOUND binding, and no migration. |
+| Prompt template used | Complete rectangular footing release, 10 October 2026. |
+| Approved Cursor prompt summary | Verify the accepted code, run the full suite, commit the footing files and governance, push, deploy the exact SHA, and live-verify a synthetic 20 ft by 2 ft by 12 in footing. |
+| Files expected to change | Construction information entry, its template and route, the footing office test, and the status records. |
+| Files prohibited from changing | Concrete 1.0.0, the prism, the conversion, case files, and migrations. |
+| Implementation result | Accepted code left unchanged. Full suite passed. The release SHA is recorded after this commit. |
+| Tests | `./venv/bin/python -m pytest -q` — 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. Log `/tmp/footing-full-pytest-2026-10-10.log`. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Live verification follows this commit. Real-iPhone acceptance remains pending. Checklist step 8 stays open. The sloped thickened-edge corner solid remains unspecified. |
+| Next approved step | Deploy this commit and live-verify the synthetic footing. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-10 — Rectangular footing acceptance review and sloped-edge reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Review the uncommitted rectangular footing and identify the versioned extension for the sloped thickened edge. |
+| Business decision | The footing slice is ready for an acceptance decision. The sloped edge is not a Concrete 1.0.0 result. |
+| Architectural decision | Keep Concrete 1.0.0 unchanged. A later version needs its own variant. The slope's corner solid is not specified. |
+| Prompt template used | Rectangular footing closure and thickened-edge geometry reconciliation, 10 October 2026. |
+| Approved Cursor prompt summary | Inspect the footing implementation and tests. Compare the agreed sloped profile with Concrete 1.0.0. Do not add a formula. |
+| Files expected to change | Status records only. |
+| Files prohibited from changing | Concrete 1.0.0, the prism, the public Website, and migrations. |
+| Implementation result | Review only. Footing remains uncommitted. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_rectangular_footing_office.py tests/test_construction_model_entry_office.py tests/test_construction_purchasing_units.py tests/test_footing_volume.py` — 21 passed, 84 warnings, 11.50s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | ChatGPT has not accepted the footing. The sloped corner solid is unspecified. |
+| Next approved step | None from this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. Awaiting acceptance. |
+
+### 2026-10-10 — Thickened-edge reinforcement diagram clarification
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Record how a thickened-edge diagram may show reinforcement. |
+| Business decision | The example is two 15M bars running continuously, parallel to the slab perimeter, inside the thickened edge. |
+| Architectural decision | The diagram does not add cross bars, ties, or a grid. Cover, splices, and corner detailing stay with the engineering specification. Concrete 1.0.0 is not a reinforcement engine. |
+| Prompt template used | Thickened-edge slab reinforcement diagram clarification, 10 October 2026. |
+| Approved Cursor prompt summary | Add the two-bar rule to the geometry review. Do not change the Concrete calculation engine. Return the compatibility findings. |
+| Files expected to change | The status records only. |
+| Files prohibited from changing | Concrete 1.0.0, the office calculator formula, and the footing volume formula. |
+| Implementation result | Clarification recorded. No diagram and no engine change. |
+| Tests | Not run. No product code changed for this clarification. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The office has no thickened-edge diagram. Bar placement cannot be drawn until a specification supplies cover, splices, and corner detailing. |
+| Next approved step | None from this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. |
+
+### 2026-10-10 — Rectangular footing on construction information
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Save one rectangular footing and show the existing cubic-yard and cubic-metre quantities. |
+| Business decision | Brayman measures in feet and inches. Ready-mix concrete is ordered in cubic metres. The October 8 conversion stays the authority. |
+| Architectural decision | The footing uses `rectangular_prism_cubic_yards` and `convert` from cubic yards to cubic metres. Concrete 1.0.0 stays the slab authority. No new conversion and no estimate line. |
+| Prompt template used | Concrete measurement and rectangular footing, 10 October 2026. |
+| Approved Cursor prompt summary | Recover the existing cubic-metre conversion. Record the imperial Concrete calculator gap. Implement the one footing slice with that conversion. Do not commit until ChatGPT accepts it. |
+| Files expected to change | The construction entry, its page, the construction route, the footing tests, and these records. |
+| Files prohibited from changing | The prism formula, Concrete 1.0.0, unit conversion factors, bindings, migrations, and case files. |
+| Implementation result | Implemented and tested. A 20 ft by 2 ft by 12 in footing shows 40/27 cubic yards and the exact cubic-metre conversion. Not committed. Not deployed. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_rectangular_footing_office.py tests/test_construction_model_entry_office.py tests/test_construction_purchasing_units.py tests/test_footing_volume.py` — 21 passed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | ChatGPT has not accepted this slice. The imperial Concrete calculator does not show the supplier cubic-metre quantity. |
+| Next approved step | Accept or refuse this slice. Commit only after acceptance. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. Awaiting acceptance. |
+
 ### 2026-10-10 — V1 mobile acceptance pin and Step 8 review
 
 | Field | Content |

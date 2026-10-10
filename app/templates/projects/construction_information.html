@@ -133,8 +133,27 @@
                 {% endfor %}
             </tbody>
         </table>
+        <h2>Rectangular footing</h2>
+        <p class="muted-copy">One footing. Length and width are feet. Thickness is inches. Leave all three blank when this deck has no measured footing. A missing or invalid measurement is not saved as zero.</p>
+        <input type="hidden" name="footing_id" value="{{ form.rectangular_footing.id }}">
+        <label for="footing_length_ft">Length (feet)</label>
+        <input id="footing_length_ft" name="footing_length_ft" inputmode="decimal" value="{{ form.rectangular_footing.length_ft }}">
+        <label for="footing_width_ft">Width (feet)</label>
+        <input id="footing_width_ft" name="footing_width_ft" inputmode="decimal" value="{{ form.rectangular_footing.width_ft }}">
+        <label for="footing_thickness_in">Thickness (inches)</label>
+        <input id="footing_thickness_in" name="footing_thickness_in" inputmode="decimal" value="{{ form.rectangular_footing.thickness_in }}">
         <button type="submit" name="form_action" value="save">{% if revision %}Save a new revision{% else %}Save construction information{% endif %}</button>
     </form>
+</section>
+{% endif %}
+{% if footing_volume %}
+<section class="form-panel" data-footing-volume>
+    <h2>Footing volume</h2>
+    <p>Footing {{ footing_volume.id }}.</p>
+    <p>Length {{ footing_volume.length_ft }} ft. Width {{ footing_volume.width_ft }} ft. Thickness {{ footing_volume.thickness_in }} in.</p>
+    <p>Construction volume {{ footing_volume.cubic_yards }} yd3. {{ footing_volume.cubic_feet }} ft3. {{ footing_volume.yard_rule }}.</p>
+    <p>Supplier quantity {{ footing_volume.cubic_metres }} m3. {{ footing_volume.metre_rule }}.</p>
+    <p>No waste is added. No truck count is calculated. This quantity is not on an estimate.</p>
 </section>
 {% endif %}
 

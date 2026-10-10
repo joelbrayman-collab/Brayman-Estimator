@@ -7,6 +7,22 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Rectangular footing accepted for release
+
+ChatGPT accepted the rectangular footing after full regression. `./venv/bin/python -m pytest -q` — 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. Construction information stores one footing’s length in feet, width in feet, and thickness in inches. The page shows cubic feet, cubic yards, and cubic metres from the existing prism and the existing conversion. No waste is added. No estimate line is created. `FOUND` stays unbound. No migration. Concrete 1.0.0 was not edited. The release SHA is recorded after this commit. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
+## 10 Oct 2026 — Rectangular footing is ready for acceptance; the sloped edge is not a 1.0.0 result
+
+The rectangular footing is in the working tree and is not committed. Focused tests on 10 Oct 2026: `./venv/bin/python -m pytest -q tests/test_rectangular_footing_office.py tests/test_construction_model_entry_office.py tests/test_construction_purchasing_units.py tests/test_footing_volume.py` — 21 passed, 84 warnings, 11.50s, exit 0. `rectangular_prism_cubic_yards` and Concrete 1.0.0 were not edited. Concrete 1.0.0 file SHA-256 remains `1ecbf25ebe924af3a4bd4d1a6288840f76f82b316ea0426ca38e8c48ac83e77a`. FOUND stays unbound. No migration. The agreed thickened edge has a flat bottom and an inclined transition. Concrete 1.0.0 calculates a rectangular perimeter band. On a straight run, a 24 in by 12 in rectangle is 288 in² and the agreed 12 in flat plus 12 in slope is 216 in². The corner solid of the slope is not specified, so no new formula is authorized. The V1 register was not rescored.
+
+## 10 Oct 2026 — Thickened-edge reinforcement diagram clarification
+
+The example reinforcement in a thickened-edge diagram is two 15M bars running continuously, parallel to the perimeter edge, inside the thickened edge. The bars follow the slab perimeter. The diagram does not show transverse cross pieces, connecting bars, ties between the parallel bars, or a reinforcement grid. Bar count and bar size stay adjustable. Cover, splices, and corner detailing come from the engineering specification. Concrete 1.0.0 was not edited. It calculates the slab and the perimeter concrete band and does not calculate reinforcement. No diagram was added. The V1 register was not rescored.
+
+## 10 Oct 2026 — Rectangular footing is implemented and not yet accepted
+
+Construction information can save one rectangular footing: length in feet, width in feet, and thickness in inches. The page calls the existing `rectangular_prism_cubic_yards` and the existing `convert` from cubic yards to cubic metres. A 20 ft by 2 ft by 12 in footing is 40 cubic feet, 40/27 cubic yards, and that yard quantity times 0.9144 cubed cubic metres. The displayed quantities are exact. No waste and no truck count are added. No estimate line, material requirement, or supplier order is written. `FOUND` stays unbound. Concrete 1.0.0 was not edited. Its imperial calculator still shows cubic yards and does not show the supplier cubic-metre quantity. Focused tests: 21 passed. This slice is not committed and not deployed. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 ## 10 Oct 2026 — V1 mobile acceptance is one pending session
 
 Joel decided that real-iPhone acceptance is one final V1 session. It does not interrupt other V1 work, and a pending phone check is not a pass. Concrete, Stair, and the 8-inch ICF calculator stay live. The session covers contractor sign-in, project creation, Guided Project Setup, the Concrete calculator, the Stair calculator and diagram, the 8-inch ICF calculator, quantity confirmation, costing and estimates, the customer Proposal, the supplier workflow, Field Web, Help and Voice, and navigation and readability. None of those items is accepted on a phone. Checklist step 8 stays **OPEN**. The same review read the original Step 8 rule again. Generic estimating stays incomplete. Baseline `SITE`, `FOUND`, and `STRUCT` stay unbound. `icf_wall` remains the only Platform producer. No formula, binding, migration, or deploy came from this record. The V1 register was not rescored.

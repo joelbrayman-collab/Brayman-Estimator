@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import re
 import secrets
+from decimal import Decimal, InvalidOperation
 
+from app.services.construction_measurement import rectangular_prism_cubic_yards
 from app.services.construction_model.completeness import assess_construction_model
 from app.services.construction_model.model import (
     DOCUMENT_STATUS_ISSUED_FOR_PERMIT,
@@ -27,6 +29,7 @@ from app.services.project_construction_model import (
     load_current_revision,
     save_construction_model_revision,
 )
+from app.services.unit_conversion import convert
 
 SUPPORT_ROW_COUNT = 4
 MAX_GROUP_COUNT = 200
@@ -48,7 +51,10 @@ ROLE_CHOICES = tuple(sorted(MEMBER_ROLES))
 SUPPORT_CHOICES = tuple(sorted(SUPPORT_KINDS))
 
 _MEMBER_KEYS = frozenset({"id", "role", "member_size", "length", "provenance"})
-_SUPPORT_KEYS = frozenset({"id", "kind", "provenance"})
+_FOOTING_KEYS = ("length_ft", "width_ft", "thickness_in")
+_SUPPORT_KEYS = frozenset({"id", "kind", "provenance", *_FOOTING_KEYS})
+_FOOTING_ID = re.compile(r"^footing-[a-f0-9]{8}$")
+_POSITIVE_DECIMAL = re.compile(r"^(?:0|[1-9]\d*)(?:\.\d+)?$")
 _LEVEL_KEYS = frozenset({"id", "name", "elevation", "provenance"})
 _LENGTH_KEYS = frozenset({"value", "unit", "derived", "provenance"})
 
@@ -60,6 +66,7 @@ def empty_entry():
         "levels": [_blank_level()],
         "members": [_blank_member()],
         "supports": [_blank_support() for _ in range(SUPPORT_ROW_COUNT)],
+        "rectangular_footing": _blank_footing(),
     }
 
 
@@ -110,6 +117,23 @@ def entry_from_model(content):
         if index >= SUPPORT_ROW_COUNT:
             return None
         form["supports"][index] = group
+    footings = [
+        support
+        for support in content.get("supports") or []
+        if _is_rectangular_footing(support)
+    ]
+    if len(footings) > 1:
+        return None
+    if footings:
+        footing = footings[0]
+        if footing.get("kind") != "footing" or not _complete_footing_measures(footing):
+            return None
+        form["rectangular_footing"] = {
+            "id": footing.get("id") or "",
+            "length_ft": _show_measure(footing.get("length_ft")),
+            "width_ft": _show_measure(footing.get("width_ft")),
+            "thickness_in": _show_measure(footing.get("thickness_in")),
+        }
     return form
 
 
@@ -133,6 +157,14 @@ def model_from_entry(form):
     errors.extend(member_errors)
     supports, support_errors = _supports(form.get("supports") or [], provenance)
     errors.extend(support_errors)
+    footing, footing_errors = _rectangular_footing(
+        form.get("rectangular_footing") or {},
+        system,
+        provenance,
+    )
+    errors.extend(footing_errors)
+    if footing is not None:
+        supports.append(footing)
     if errors:
         return None, errors
     if not levels:
@@ -209,6 +241,10 @@ def _office_shape(content):
                 return False
     for support in supports:
         if not _only_keys(support, _SUPPORT_KEYS):
+            return False
+        if _is_rectangular_footing(support) and (
+            support.get("kind") != "footing" or not _complete_footing_measures(support)
+        ):
             return False
         if support.get("geometry"):
             return False
@@ -295,10 +331,74 @@ def _member_groups(members):
     return groups
 
 
+def rectangular_footing_volume(content):
+    """Read one stored rectangular footing and reuse the existing prism.
+
+    The construction quantity stays cubic yards. The supplier quantity is
+    the existing exact cubic-metre conversion. Neither quantity is rounded.
+    A slab is not read here.
+    """
+    if not isinstance(content, dict):
+        return None
+    footings = [
+        support
+        for support in content.get("supports") or []
+        if _is_rectangular_footing(support)
+    ]
+    if len(footings) != 1:
+        return None
+    footing = footings[0]
+    missing = [
+        label
+        for key, label in (
+            ("length_ft", "footing length in feet"),
+            ("width_ft", "footing width in feet"),
+            ("thickness_in", "footing thickness in inches"),
+        )
+        if footing.get(key) in (None, "")
+    ]
+    if missing or not _complete_footing_measures(footing):
+        return {
+            "id": footing.get("id") or "",
+            "cubic_yards": None,
+            "cubic_metres": None,
+            "missing": tuple(missing or ("footing length in feet", "footing width in feet", "footing thickness in inches")),
+        }
+    measured = rectangular_prism_cubic_yards(
+        footing["length_ft"],
+        footing["width_ft"],
+        footing["thickness_in"],
+    )
+    if measured is None:
+        return {
+            "id": footing.get("id") or "",
+            "cubic_yards": None,
+            "cubic_metres": None,
+            "missing": ("footing length in feet", "footing width in feet", "footing thickness in inches"),
+        }
+    metres = convert(measured["cubic_yards"], "YD3", "M3")
+    return {
+        "id": footing.get("id") or "",
+        "length_ft": footing["length_ft"],
+        "width_ft": footing["width_ft"],
+        "thickness_in": footing["thickness_in"],
+        "cubic_feet": measured["cubic_feet"],
+        "cubic_yards": measured["cubic_yards"],
+        "yard_rule": measured["rule"],
+        "cubic_metres": None if metres is None else metres["quantity"],
+        "metre_rule": None if metres is None else metres["rule"],
+        "missing": (),
+        "waste": None,
+        "truck_count": None,
+    }
+
+
 def _support_groups(supports):
     groups = []
     index = {}
     for support in supports:
+        if _is_rectangular_footing(support):
+            continue
         kind = support.get("kind") or ""
         if kind in index:
             groups[index[kind]]["count"] = str(int(groups[index[kind]]["count"]) + 1)
@@ -410,6 +510,65 @@ def _members(rows, system, provenance):
     return built, errors
 
 
+def _rectangular_footing(row, system, provenance):
+    """One explicit footing. A blank row adds nothing and invents nothing."""
+    if not isinstance(row, dict):
+        row = {}
+    texts = {key: _text(row.get(key)) for key in _FOOTING_KEYS}
+    if not any(texts.values()):
+        return None, []
+    if system != "imperial":
+        return None, ["A rectangular footing on this page is entered in feet and inches."]
+    labels = {
+        "length_ft": "footing length in feet",
+        "width_ft": "footing width in feet",
+        "thickness_in": "footing thickness in inches",
+    }
+    errors = []
+    measures = {}
+    for key, label in labels.items():
+        text = texts[key]
+        if not text:
+            errors.append(f"Enter the {label}.")
+            continue
+        if not _positive_text(text):
+            errors.append(f"Enter the {label} as a number greater than zero.")
+            continue
+        measures[key] = text
+    if errors:
+        return None, errors
+    footing_id = _text(row.get("id"))
+    if not _FOOTING_ID.match(footing_id):
+        footing_id = "footing-" + secrets.token_hex(4)
+    return {
+        "id": footing_id,
+        "kind": "footing",
+        "length_ft": measures["length_ft"],
+        "width_ft": measures["width_ft"],
+        "thickness_in": measures["thickness_in"],
+        "provenance": dict(provenance),
+    }, []
+
+
+def _is_rectangular_footing(support):
+    return isinstance(support, dict) and any(key in support for key in _FOOTING_KEYS)
+
+
+def _complete_footing_measures(support):
+    return all(_positive_text(support.get(key)) for key in _FOOTING_KEYS)
+
+
+def _positive_text(value):
+    text = _text(value)
+    if not _POSITIVE_DECIMAL.match(text):
+        return False
+    try:
+        number = Decimal(text)
+    except InvalidOperation:
+        return False
+    return number > 0
+
+
 def _supports(rows, provenance):
     built = []
     errors = []
@@ -504,3 +663,13 @@ def _blank_member():
 
 def _blank_support():
     return {"kind": "", "count": ""}
+
+
+def _blank_footing():
+    return {"id": "", "length_ft": "", "width_ft": "", "thickness_in": ""}
+
+
+def _show_measure(value):
+    if value in (None, ""):
+        return ""
+    return _text(value) or _show_number(value)

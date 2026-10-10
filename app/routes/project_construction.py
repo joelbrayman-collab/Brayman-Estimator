@@ -23,6 +23,7 @@ from app.services.construction_model_entry import (
     entry_from_model,
     new_level_row,
     new_member_row,
+    rectangular_footing_volume,
     save_office_revision,
 )
 from app.services.organizations import get_current_organization_id
@@ -103,6 +104,12 @@ def _posted_entry():
             "kind": request.form.get(f"support_kind_{index}") or "",
             "count": request.form.get(f"support_count_{index}") or "",
         }
+    form["rectangular_footing"] = {
+        "id": request.form.get("footing_id") or "",
+        "length_ft": request.form.get("footing_length_ft") or "",
+        "width_ft": request.form.get("footing_width_ft") or "",
+        "thickness_in": request.form.get("footing_thickness_in") or "",
+    }
     return form
 
 
@@ -167,6 +174,27 @@ def _groups(revision):
     return read_stored_member_quantities(copy.deepcopy(revision.content_json))
 
 
+def _exact_quantity(quantity):
+    """Show the exact quantity without trailing zeros. Do not round it."""
+    text = format(quantity, "f")
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return text
+
+
+def _footing_display(revision):
+    """Show the stored prism and the existing exact cubic-metre conversion."""
+    if revision is None:
+        return None
+    result = rectangular_footing_volume(revision.content_json)
+    if result is None or result.get("cubic_yards") is None or result.get("cubic_metres") is None:
+        return None
+    shown = dict(result)
+    for key in ("cubic_feet", "cubic_yards", "cubic_metres"):
+        shown[key] = _exact_quantity(result[key])
+    return shown
+
+
 @projects_bp.route("/<int:id>/construction", methods=["GET", "POST"])
 def construction_information(id):
     org_id, project = _project_or_404(id)
@@ -218,6 +246,7 @@ def construction_information(id):
         roles=ROLE_CHOICES,
         support_kinds=SUPPORT_CHOICES,
         elevation_unit=elevation_unit_label(form.get("measurement_system")),
+        footing_volume=_footing_display(revision),
         create_estimate_url=url_for(
             "estimates.create_estimate_route",
             project_id=project.id,

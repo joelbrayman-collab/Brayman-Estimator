@@ -2,6 +2,14 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**10 Oct 2026 — RECTANGULAR FOOTING ACCEPTED FOR RELEASE.** Full suite `./venv/bin/python -m pytest -q` — 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. One footing shows cubic feet, cubic yards, and cubic metres. No waste. No estimate line. `FOUND` stays unbound. No migration. The release SHA is recorded after this commit. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
+**10 Oct 2026 — FOOTING READY FOR ACCEPTANCE; SLOPED EDGE IS NOT 1.0.0.** Focused tests 21 passed. No commit. Concrete 1.0.0 remains a rectangular perimeter band. The agreed slope needs a new version after the corner solid is specified.
+
+**10 Oct 2026 — THICKENED-EDGE DIAGRAM CLARIFICATION.** Example reinforcement is two continuous 15M bars parallel to the perimeter, inside the thickened edge. No cross bars, ties, or grid. Count and size stay adjustable. Cover, splices, and corners follow the engineering specification. Concrete 1.0.0 was not changed. No diagram exists in the office yet.
+
+**10 Oct 2026 — RECTANGULAR FOOTING IMPLEMENTED, NOT ACCEPTED.** One footing stores length in feet, width in feet, and thickness in inches on the existing construction revision. The page shows the existing prism volume and the existing exact cubic-metre conversion. No estimate line. `FOUND` stays unbound. Focused tests: 21 passed. Not committed. Not deployed. The imperial Concrete calculator still shows cubic yards only. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 **10 Oct 2026 — V1 MOBILE ACCEPTANCE PINNED, PENDING.** Real-iPhone acceptance is one final session. It is not passed, and it does not block other V1 work. Concrete, Stair, and 8-inch ICF stay live. Checklist step 8 stays **OPEN**. `SITE`, `FOUND`, and `STRUCT` stay unbound. No formula was authorized. The V1 register was not rescored.
 
 **10 Oct 2026 — STANDALONE 8-INCH ICF LIVE.** Deploy `dep-db528aflot8c73dfb4q0` is `db2c8382602e23a3acc3455053db3dbd73c2c873`. Logix 1523 returned 37.623741 yd3. Fox Blocks 5.33 returned 0.132 yd3. StyroRail / BuildBlock 5.33 returned 0.131687 yd3. Nudura 12 returned 0.306 yd3. Fox Blocks 12.89 with one 90-degree corner returned 0.277 yd3. A StyroRail 45-degree corner stayed missing. Invalid area was refused. Concrete, Stair, and the estimate wall-form page still opened. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

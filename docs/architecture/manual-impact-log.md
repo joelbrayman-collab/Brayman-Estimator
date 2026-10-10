@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Rectangular footing volume live (2026-10-10)
+
+| Field | Content |
+|-------|---------|
+| Slice | One rectangular footing on Construction information. |
+| Product status at capture | Live at `8cbb8696bde494b39f59acbd6eb334e00e38b274`, deploy `dep-db54v0h42hec73fo3c70`. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can enter one footing’s length, width, and thickness on a project and read cubic feet, cubic yards, and cubic metres. |
+| 2. When would the contractor use it? | When a deck footing is a known rectangle and the concrete order will be in cubic metres. |
+| 3. What workflow will the final Manual need to teach? | Open the project, open Construction information, enter the three footing measurements, save, and read the volume. Nothing is added to an estimate. |
+| 4. What contractor-facing terms must be used? | Rectangular footing. Length (feet). Width (feet). Thickness (inches). Construction volume. Supplier quantity. |
+| 5. What screenshots / Print examples will eventually be needed? | The saved footing and both quantities on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | Leave all three blank when there is no measured footing. A missing or invalid measurement is not saved as zero. No waste and no truck count are calculated. |
+| 7. Desktop / iPhone / Print relevance | Checked on the live office in a desktop browser. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Rectangular footing volume accepted (2026-10-10)
 
 | Field | Content |

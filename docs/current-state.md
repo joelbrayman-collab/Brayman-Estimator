@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Rectangular footing is live
+
+Deploy `dep-db54v0h42hec73fo3c70` is live at `8cbb8696bde494b39f59acbd6eb334e00e38b274`. Auto-deploy stayed off. No migration ran. Rollback remains `dep-db528aflot8c73dfb4q0` at `db2c8382602e23a3acc3455053db3dbd73c2c873`. Synthetic project 53 stored a 20 ft by 2 ft by 12 in footing as revision 1 and showed 40 ft3, 1.481481481481481481481481481 yd3, and 1.13267386368 m3. Reopening kept those measurements. Revision 2 changed the thickness to 8 in and left revision 1, including its hash, unchanged. The footing id stayed the same. Estimate lines stayed 137. Calculation intakes stayed 2. Proposal 18 stayed Draft at 49.86. Concrete, Stair, and the ICF wall calculator still opened. Integrity stayed `ok`. Revision stayed `t0a1b2c3d4e5`. `FOUND` stays unbound. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 ## 10 Oct 2026 — Rectangular footing accepted for release
 
 ChatGPT accepted the rectangular footing after full regression. `./venv/bin/python -m pytest -q` — 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. Construction information stores one footing’s length in feet, width in feet, and thickness in inches. The page shows cubic feet, cubic yards, and cubic metres from the existing prism and the existing conversion. No waste is added. No estimate line is created. `FOUND` stays unbound. No migration. Concrete 1.0.0 was not edited. The release SHA is recorded after this commit. Real-iPhone acceptance remains pending. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

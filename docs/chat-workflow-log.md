@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Rectangular footing live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Record the live rectangular footing release. |
+| Business decision | The hosted office shows one rectangular footing in cubic feet, cubic yards, and cubic metres. |
+| Architectural decision | The live application is product SHA `8cbb8696bde494b39f59acbd6eb334e00e38b274`. This documentation commit is not deployed. |
+| Prompt template used | Complete rectangular footing release, 10 October 2026. |
+| Approved Cursor prompt summary | After live verification, record the deploy and the synthetic footing result. |
+| Files expected to change | Status records only. |
+| Files prohibited from changing | Product code, case files, and migrations. |
+| Implementation result | Deploy `dep-db54v0h42hec73fo3c70` is live. Synthetic project 53 verified. Integrity `ok`. Revision `t0a1b2c3d4e5`. |
+| Tests | Full suite already recorded on the product commit: 2322 passed, 11 skipped, 7203 warnings, 1200.51s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. `FOUND` stays unbound. Real-iPhone acceptance remains pending. The sloped thickened-edge corner solid remains unspecified. |
+| Next approved step | None from this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Rectangular footing accepted for release
 
 | Field | Content |

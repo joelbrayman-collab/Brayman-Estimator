@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-10 Ontario stair calculator live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db51l1lckfvc738kutm0` is live. The preserved stair page returned the original metric and imperial fixtures, refused a zero rise, and restored the diagram. Concrete still calculated. The V1 register was not rescored. This note does not close Step 8.
+
 **Current status (2026-10-10 Concrete Calculate correction live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db4sqivlk1mc73ftd9ig` is live. The page returned the four original fixture totals. The engine file was not changed. The V1 register was not rescored. This note does not close Step 8.
 
 **Current status (2026-10-10 Concrete Calculate correction):** Checklist Step 8 remains **OPEN**. The page reads the Length field by id and the browser test reads the four original fixture totals. The engine file was not changed. The V1 register was not rescored. This note does not close Step 8.

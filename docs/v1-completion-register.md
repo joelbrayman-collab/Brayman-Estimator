@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-10 Ontario stair calculator live):** No package was added or closed. The register was not rescored. The preserved stair page is live and returned the original fixtures. Checklist step 8 stays open.
+
 **Subsequent status (2026-10-10 Concrete Calculate correction live):** No package was added or closed. The register was not rescored. The live page returned the four original fixture totals. Checklist step 8 stays open.
 
 **Subsequent status (2026-10-10 Concrete Calculate correction):** No package was added or closed. The register was not rescored. The page reads the Length field by id. The four fixture totals were read from the page. Checklist step 8 stays open.

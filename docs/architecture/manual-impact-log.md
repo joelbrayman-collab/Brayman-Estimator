@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-09 |
+| Updated | 2026-10-10 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — Ontario stair calculator (2026-10-10)
+
+| Field | Content |
+|-------|---------|
+| Slice | Standalone office stair calculator. |
+| Product status at capture | Live at `d099aca9c487f780093558ef2c914202af7c4094`, deploy `dep-db51l1lckfvc738kutm0`. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can calculate an Ontario residential straight stair without a project. The page draws that stair. Nothing is added to an estimate. |
+| 2. When would the contractor use it? | When checking rise, run, and the stair drawing before any estimate exists. |
+| 3. What workflow will the final Manual need to teach? | Open Calculators, then Stair calculator. Enter total rise and available run. Switch Imperial or Metric. Read the profile checks and the drawing. A zero rise is refused. |
+| 4. What contractor-facing terms must be used? | Stair calculator. Total rise. Available run. Stair width. Tread thickness. Ontario Residential — V1. Within profile. |
+| 5. What screenshots / Print examples will eventually be needed? | The stair page and its drawing on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | Width and tread thickness are layout reference. The profile evaluates rise and run. The result is guidance, not permit approval. Saving stays in the browser and does not write an estimate. |
+| 7. Desktop / iPhone / Print relevance | Checked in a phone-sized browser viewport. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — Contractor language on the hub and commercial screens (2026-10-09)
 

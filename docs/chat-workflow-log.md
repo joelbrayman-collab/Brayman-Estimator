@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Ontario stair calculator live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Finish the Stair regression and release the preserved calculator. |
+| Business decision | ChatGPT authorized the bounded Stair page subject to the full suite. The suite passed, so the page was released. |
+| Architectural decision | The office page loads the recovered Website React calculator. The formula files were not edited. No migration. |
+| Prompt template used | Stair complete regression and release, 10 October 2026. |
+| Approved Cursor prompt summary | Finish the full suite, commit only the Stair files, deploy that SHA, and verify the original fixtures on the live page. |
+| Files expected to change | The Stair page, its preserved source, its tests, and these release records. |
+| Files prohibited from changing | Concrete formulas, ICF, Website, migrations, the Mac mirror, and case files. |
+| Implementation result | Deploy `dep-db51l1lckfvc738kutm0` is live at `d099aca9c487f780093558ef2c914202af7c4094`. Metric 2800 mm by 4480 mm returned 16 risers and 15 treads. Imperial 38 in by 44 in returned 5 risers and 4 treads. Concrete still returned 14.815 yd3. |
+| Tests | `./venv/bin/python -m pytest -q` — 2309 passed, 11 skipped, 1246.70s, exit 0. An earlier sandboxed run killed the browser tests and was not used as the result. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A real contractor phone was not used. Standalone ICF is not in this release. |
+| Next approved step | None from this release. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Concrete Calculate correction live
 
 | Field | Content |

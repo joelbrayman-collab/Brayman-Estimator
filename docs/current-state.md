@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Ontario stair calculator is live
+
+Deploy `dep-db51l1lckfvc738kutm0` is live at `d099aca9c487f780093558ef2c914202af7c4094`. Auto-deploy stayed off. No migration ran. The page is the recovered Website stair calculator. It opens without a project and does not write an estimate. Metric 2800 mm by 4480 mm returned 16 risers, 15 treads, 175.0 mm, and 298.7 mm, within the Ontario profile, diagram angle 32.005383. Imperial 38 in by 44 in returned 5 risers, 4 treads, 7.60 in, and 11.00 in, diagram angle 40.815084. Total rise 0 showed “Total rise must be greater than zero.” and removed the diagram. Restoring 38 brought the same diagram angle back. No uncaught page error was recorded. The live script matches the committed file, SHA-256 `cf101dc39d6cde7cd8e59d70a8548cec99935a7dc400da127c6acbaa879c71fc`. Concrete still returned 14.815 yd3 for the standard imperial fixture. Integrity stayed `ok`. Revision stayed `t0a1b2c3d4e5`. Projects stayed 52, estimate lines stayed 137, and Proposal 18 stayed Draft at 49.86. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 ## 10 Oct 2026 — Concrete Calculate correction is live
 
 Deploy `dep-db4sqivlk1mc73ftd9ig` is live at `ee4f7b47bc2671ba8bdc7bfe55316cd420728fbe`. The page reads the Length field by id. Pressing Calculate on the live page returned standard imperial 14.815 yd3, standard metric 11.327 m3, thickened-edge imperial 24.267 yd3, and thickened-edge metric 18.553 m3. Invalid length showed “length must be a decimal number.” and a later valid calculation still worked. Integrity stayed `ok`. Revision stayed `t0a1b2c3d4e5`. Projects stayed 52, estimate lines stayed 137, and Proposal 18 stayed Draft at 49.86. The engine file was not changed. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-10 V1 mobile acceptance pin):** No package was added or closed. The register was not rescored. Real-iPhone acceptance is one pending session and is not a pass. Checklist step 8 stays open. `SITE`, `FOUND`, and `STRUCT` stay unbound.
+
 **Subsequent status (2026-10-10 standalone 8-inch ICF live):** No package was added or closed. The register was not rescored. The office page is live and returned the existing 8-inch quantities. Checklist step 8 stays open.
 
 **Subsequent status (2026-10-10 standalone 8-inch ICF accepted):** No package was added or closed. The register was not rescored. ChatGPT accepted the office page for the existing 8-inch engine. Checklist step 8 stays open.

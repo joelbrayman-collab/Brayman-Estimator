@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — V1 mobile acceptance pin and Step 8 review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Pin one pending real-iPhone acceptance session and reread Checklist Step 8. |
+| Business decision | Joel consolidated real-iPhone acceptance into one final session. Pending is not passed. That pending check does not block other V1 work. |
+| Architectural decision | The original Step 8 rule stays. Generic estimating is incomplete. `SITE`, `FOUND`, and `STRUCT` stay unbound. `icf_wall` stays the only Platform producer. A Website calculator is not that binding. |
+| Prompt template used | V1 mobile acceptance pin and Step 8 completion review, 10 October 2026. |
+| Approved Cursor prompt summary | Record the pending phone session. Read the existing Step 8 requirements for generic estimating and the three unbound elements. Do not implement, deploy, migrate, or rescore. |
+| Files expected to change | The existing status records only. |
+| Files prohibited from changing | Product code, formulas, engines, Concrete, Stair, ICF, Website, migrations, and case files. |
+| Implementation result | Documentation only. The phone session is pending. Step 8 stays open. No binding was added. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Real-iPhone acceptance is pending. Generic estimating is incomplete. `SITE`, `FOUND`, and `STRUCT` have no Platform producer. |
+| Next approved step | A product decision on the next Step 8 slice. No build is authorized by this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-10 — Standalone 8-inch ICF calculator live
 
 | Field | Content |

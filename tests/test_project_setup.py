@@ -346,8 +346,10 @@ def test_setup_names_the_engine_boundary_without_writing(client, app):
     assert NOT_DERIVABLE_COPY not in sub_html
     assert _action(our_html) == f"/estimates/new?project_id={our_id}"
     assert _action(sub_html) == f"/estimates/new?project_id={sub_id}"
-    assert "calculator" not in our_html.lower()
-    assert "calculator" not in sub_html.lower()
+    our_setup = our_html[our_html.index('id="project-setup"'):]
+    sub_setup = sub_html[sub_html.index('id="project-setup"'):]
+    assert "calculator" not in our_setup.lower()
+    assert "calculator" not in sub_setup.lower()
 
     with app.app_context():
         after = resolve_start_project_walk(DEFAULT_ORGANIZATION_ID, our_id)

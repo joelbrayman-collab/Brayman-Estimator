@@ -1,0 +1,52 @@
+{
+  "contract_version": "1",
+  "result_id": "example-concrete-slab-1.0.0-generic-40x80-base-imperial",
+  "engine_id": "concrete_slab",
+  "engine_version": "1.0.0",
+  "variant": "standard",
+  "measurement_system": "imperial",
+  "inputs": [
+    {
+      "code": "length",
+      "value": "80",
+      "unit_code": "ft"
+    },
+    {
+      "code": "width",
+      "value": "40",
+      "unit_code": "ft"
+    },
+    {
+      "code": "slab_thickness",
+      "value": "6",
+      "unit_code": "in"
+    }
+  ],
+  "assumptions": [
+    {
+      "code": "waste_percent",
+      "value": "0",
+      "unit_code": "percent"
+    }
+  ],
+  "product_specification": null,
+  "components": [
+    {
+      "code": "base_slab_concrete",
+      "quantity": "59.259",
+      "unit_code": "yd3"
+    },
+    {
+      "code": "waste",
+      "quantity": "0",
+      "unit_code": "yd3"
+    }
+  ],
+  "quantities": [
+    {
+      "code": "total_concrete",
+      "quantity": "59.259",
+      "unit_code": "yd3"
+    }
+  ]
+}

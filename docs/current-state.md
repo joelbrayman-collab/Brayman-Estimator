@@ -7,6 +7,20 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 10 Oct 2026 — Standalone Concrete calculator accepted for release
+
+ChatGPT accepted the office page `/calculators/concrete`. It runs the preserved Website engine `concrete_slab` `1.0.0` in the browser. No project is required. The page does not write an estimate. The formula file is `calculation-engines/concrete-slab-1.0.0/website-source/lib/calculation-engine/concrete-slab.ts`, SHA-256 `1ecbf25ebe924af3a4bd4d1a6288840f76f82b316ea0426ca38e8c48ac83e77a`, from archive SHA-256 `c991ee6418da69a134a615a77dfa403b914cb2f90537a64c8c9896093eacc240`, Website project `appgprj_6a9095543b74819186183f9a522890e5`, Version 31, source `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. The office bundle matched that engine on every recovered fixture. Node parity was 4 passed. Full suite was 2302 passed, 11 skipped, exit 0. Stair and standalone ICF are not in this slice. The rectangular-prism slab service was not used. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
+## 9 Oct 2026 — Shared calculator source is not on this Mac
+
+The accepted Concrete and Stair formulas are in the public Website project `appgprj_6a9095543b74819186183f9a522890e5`, SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Concrete is `lib/calculation-engine/concrete-slab.ts`. That project is not checked out here. The local folder `Documents/CalibAi/Website` is not that site. Its Python `calculation_engine/concrete_slab.py` is not the accepted engine and is not to be copied into the office. No stair source file is in that folder. The pinned contract still forbids a runtime call between the Website and the Platform. A later shared package would have to carry the unchanged Website modules. That package is not authorized. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
+## 9 Oct 2026 — Contractor calculators are mandatory for V1
+
+Joel decided that the previously agreed contractor calculators are mandatory for V1. Ben and the crew will use them from day one. They are not optional, not POST-V1, and not only public Website tools. A missing office route is not proof that a calculator was deferred. A contractor must be able to calculate without creating a project. The blueprint remains a completeness reference, not a screen design.
+
+The agreed working calculators are the Concrete Calculator, the Stair Calculator, and the 8-inch ICF wall. Concrete and Stair are closed on the public Website and are not in this repository. ICF is an office page that opens only after an estimate exists. Framing, roofing, siding, drywall, and flooring stay blocked on a missing formula. That block is not an authorization to invent one. No product code changed. The V1 register was not rescored. Checklist step 8 stays **OPEN**. Implementation is not authorized.
+
 ## 9 Oct 2026 — Proposal headings live
 
 `1885ecf4537b133d8ef1fe58def5d2e1c3976856` is live as deploy `dep-db4lh9mi0phs73d511n0`. No migration. Hosted integrity `ok`. Revision stayed `t0a1b2c3d4e5`. Proposal 18, `PROP-2026-0007`, stayed Draft. Subtotal stayed 44.12 and total stayed 49.86. The page says Copied from estimate version and Source estimate. It was not sent and not signed. The Mac mirror was not replaced. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.

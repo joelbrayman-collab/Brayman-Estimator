@@ -7,6 +7,10 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**9 Oct 2026 standalone Concrete.** Checklist step 8 stays **OPEN**. The preserved Website Concrete engine is available in the office without a project. It is not deployed. The V1 register was not rescored.
+
+**9 Oct 2026 contractor calculators.** Checklist step 8 stays **OPEN**. Joel decided the previously agreed contractor calculators are mandatory for V1. Concrete and Stair stay Website formulas. The 8-inch ICF page stays inside an estimate. The five later trade engines stay blocked on a missing formula. The V1 register was not rescored. Implementation is not authorized.
+
 **9 Oct 2026 commercial integration.** Checklist step 8 stays **OPEN**. The live synthetic path through Proposal 18 is accepted. Generic estimating stays incomplete. The V1 register was not rescored. Real contractor UAT is not accepted.
 
 **9 Oct 2026 hosted backup.** Checklist step 8 stays **OPEN**. The current hosted backup and the Mac mirror match. The V1 register was not rescored. Real contractor UAT is not accepted.

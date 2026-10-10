@@ -8,6 +8,10 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-09 standalone Concrete):** No package was added or closed. The register was not rescored. The office page for preserved `concrete_slab` `1.0.0` is implemented and is not deployed. Stair and standalone ICF are not in this slice. Checklist step 8 stays open.
+
+**Subsequent status (2026-10-09 contractor calculators):** No package was added or closed. The register was not rescored. Joel decided the previously agreed contractor calculators are mandatory for V1 and are not only public Website tools. That decision does not authorize an unverified formula. Framing, roofing, siding, drywall, and flooring remain blocked on a missing formula. Checklist step 8 stays open.
+
 **Subsequent status (2026-10-09 commercial integration):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. ChatGPT accepted the live synthetic commercial path through Proposal 18. Generic estimating and the unbound `SITE`, `FOUND`, and `STRUCT` areas stay outside that acceptance. Real contractor UAT stays closed.
 
 **Subsequent status (2026-10-09 hosted backup):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. A current hosted backup was verified, and the Mac mirror matches that backup. That does not open real contractor UAT.

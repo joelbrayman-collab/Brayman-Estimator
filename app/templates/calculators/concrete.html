@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Concrete calculator | Brayman Construction Platform{% endblock %}
+{% block page_title %}Concrete calculator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <h1>Concrete calculator</h1>
+        <p class="muted-copy">Standard slab and thickened edge. No project is required. Nothing is added to an estimate.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <form data-concrete-calculator>
+        <label for="variant">Slab type</label>
+        <select id="variant" name="variant">
+            <option value="standard">Standard slab</option>
+            <option value="thickened_edge">Thickened edge</option>
+        </select>
+
+        <label for="measurement_system">Measurement</label>
+        <select id="measurement_system" name="measurement_system">
+            <option value="imperial">Imperial</option>
+            <option value="metric">Metric</option>
+        </select>
+
+        <label for="length">Length <span data-unit="plan">ft</span></label>
+        <input id="length" name="length" inputmode="decimal" autocomplete="off">
+
+        <label for="width">Width <span data-unit="plan">ft</span></label>
+        <input id="width" name="width" inputmode="decimal" autocomplete="off">
+
+        <label for="slab_thickness">Slab thickness <span data-unit="thickness">in</span></label>
+        <input id="slab_thickness" name="slab_thickness" inputmode="decimal" autocomplete="off">
+
+        <div data-concrete-edge hidden>
+            <label for="edge_width">Edge width <span data-unit="edgeWidth">ft</span></label>
+            <input id="edge_width" name="edge_width" inputmode="decimal" autocomplete="off">
+
+            <label for="edge_depth">Depth below slab <span data-unit="edgeDepth">in</span></label>
+            <input id="edge_depth" name="edge_depth" inputmode="decimal" autocomplete="off">
+        </div>
+
+        <label for="waste_percent">Waste percent</label>
+        <input id="waste_percent" name="waste_percent" inputmode="decimal" autocomplete="off">
+        <p class="muted-copy">Enter the waste allowance you want. A blank or invalid measurement is refused.</p>
+
+        <button type="submit">Calculate</button>
+    </form>
+    <p class="form-error" data-concrete-error hidden></p>
+</section>
+
+<section class="form-panel" data-concrete-result hidden></section>
+
+<script type="module" src="{{ url_for('static', filename='js/concrete-calculator-page.js') }}"></script>
+{% endblock %}

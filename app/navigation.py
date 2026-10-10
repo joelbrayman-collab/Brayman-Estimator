@@ -48,6 +48,17 @@ NAV_SECTIONS = (
         ),
     },
     {
+        "title": "Calculators",
+        "links": (
+            {
+                "title": "Concrete calculator",
+                "endpoint": "calculators.concrete",
+                "icon": "bi-calculator",
+                "enabled": True,
+            },
+        ),
+    },
+    {
         "title": COSTS_AND_PRICING_NAV_TITLE,
         "endpoint": "costs_and_pricing.index",
         "links": (

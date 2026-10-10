@@ -2,6 +2,12 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**10 Oct 2026 — CONCRETE CALCULATOR ACCEPTED FOR RELEASE.** `/calculators/concrete` uses preserved `concrete_slab` `1.0.0`. No project. No estimate line. Archive SHA-256 `c991ee6418da69a134a615a77dfa403b914cb2f90537a64c8c9896093eacc240`. Engine file SHA-256 `1ecbf25ebe924af3a4bd4d1a6288840f76f82b316ea0426ca38e8c48ac83e77a`. Node parity 4 passed. Full suite 2302 passed, 11 skipped, exit 0. Stair and standalone ICF are not in this slice. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
+**9 Oct 2026 — SHARED CALCULATOR SOURCE MISSING.** The accepted Concrete file is `lib/calculation-engine/concrete-slab.ts` in Website project `appgprj_6a9095543b74819186183f9a522890e5` at SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. That source is not on this Mac. The local Python slab file is not the authority. No stair engine file was found locally. Do not copy it into the Platform. The V1 register was not rescored. Implementation is not authorized.
+
+**9 Oct 2026 — CONTRACTOR CALCULATORS ARE MANDATORY FOR V1.** Joel decided the previously agreed calculators are day-one contractor tools, not only public Website tools. Concrete and Stair stay the Website formulas. The 8-inch ICF page stays inside an estimate. Framing, roofing, siding, drywall, and flooring still have no verified formula. No code changed. The V1 register was not rescored. Checklist step 8 stays **OPEN**. Implementation is not authorized.
+
 **9 Oct 2026 — PROPOSAL HEADINGS LIVE.** Deploy `dep-db4lh9mi0phs73d511n0` is live at `1885ecf4537b133d8ef1fe58def5d2e1c3976856`. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. Checklist step 8 stays **OPEN**. Real contractor UAT is not accepted.
 
 **9 Oct 2026 — PROPOSAL HEADINGS NOT DEPLOYED.** `1885ecf4537b133d8ef1fe58def5d2e1c3976856` is pushed and not live. Hosted SSH failed twice, so revision and integrity were not read. Live remains `13544f29ee25402d9bf4059556c7b5d0a40909ab`. Do not deploy until that read succeeds. Checklist step 8 stays **OPEN**.

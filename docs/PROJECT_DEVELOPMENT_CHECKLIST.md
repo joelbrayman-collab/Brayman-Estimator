@@ -15,6 +15,10 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-09 standalone Concrete):** Checklist Step 8 remains **OPEN**. The office can open the preserved `concrete_slab` `1.0.0` engine without a project. That page does not write an estimate. Stair and standalone ICF are not in this slice. The V1 register was not rescored. This note does not deploy.
+
+**Current status (2026-10-09 contractor calculators):** Checklist Step 8 remains **OPEN**. Joel decided the previously agreed contractor calculators are mandatory for V1. Concrete and Stair remain the closed Website calculators. The 8-inch ICF page remains inside an estimate. Framing, roofing, siding, drywall, and flooring remain blocked on a missing formula. The V1 register was not rescored. This note does not authorize a formula, a second calculator, a Website change, or an office route.
+
 **Current status (2026-10-09 commercial integration accepted):** Checklist Step 8 remains **OPEN**. ChatGPT accepted the live synthetic path on project 46: construction revisions, confirmed quantity 3, approved costing, frozen customer total 49.86, and Proposal 18. Generic estimating remains incomplete. `SITE`, `FOUND`, and `STRUCT` stay unbound. The V1 register was not rescored. This note does not close Step 8, start Step 9, or open real contractor UAT.
 
 **Current status (2026-10-09 hosted backup):** Checklist Step 8 remains **OPEN**. A current hosted backup and a matching Mac mirror are recorded in the backup log. The V1 register was not rescored. This note does not open real contractor UAT, close Step 8, or start Step 9.

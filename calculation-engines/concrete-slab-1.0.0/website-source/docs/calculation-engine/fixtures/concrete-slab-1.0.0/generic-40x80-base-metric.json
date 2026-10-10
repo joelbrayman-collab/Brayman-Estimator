@@ -1,0 +1,52 @@
+{
+  "contract_version": "1",
+  "result_id": "example-concrete-slab-1.0.0-generic-40x80-base-metric",
+  "engine_id": "concrete_slab",
+  "engine_version": "1.0.0",
+  "variant": "standard",
+  "measurement_system": "metric",
+  "inputs": [
+    {
+      "code": "length",
+      "value": "24.384",
+      "unit_code": "m"
+    },
+    {
+      "code": "width",
+      "value": "12.192",
+      "unit_code": "m"
+    },
+    {
+      "code": "slab_thickness",
+      "value": "0.1524",
+      "unit_code": "m"
+    }
+  ],
+  "assumptions": [
+    {
+      "code": "waste_percent",
+      "value": "0",
+      "unit_code": "percent"
+    }
+  ],
+  "product_specification": null,
+  "components": [
+    {
+      "code": "base_slab_concrete",
+      "quantity": "45.307",
+      "unit_code": "m3"
+    },
+    {
+      "code": "waste",
+      "quantity": "0",
+      "unit_code": "m3"
+    }
+  ],
+  "quantities": [
+    {
+      "code": "total_concrete",
+      "quantity": "45.307",
+      "unit_code": "m3"
+    }
+  ]
+}

@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Standalone Concrete calculator
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Give the contractor office the original Concrete engine without a project. |
+| Business decision | Contractor calculators are mandatory for V1. This slice is Concrete only. |
+| Architectural decision | The preserved Website file `concrete-slab.ts` remains the formula. The office browser runs a build of that file. The platform does not call the public Website and does not add a Python copy. |
+| Prompt template used | Slice 1 shared Concrete engine, 9 October 2026. |
+| Approved Cursor prompt summary | Standalone Concrete access from the recovered Version 31 engine. No Stair. No ICF change. No deploy before acceptance. |
+| Files expected to change | Preserved engine, office page, navigation, tests, and these records. |
+| Files prohibited from changing | Stair engine, ICF formulas, Website publication, migrations, and case files. |
+| Implementation result | ChatGPT accepted `/calculators/concrete`. The release SHA is recorded after this commit. |
+| Tests | Preserved engine and office bundle: `node --test website-source/tests/concrete-slab-engine.test.mjs tests/office-bundle-parity.mjs` — 4 passed. Full suite: `./venv/bin/python -m pytest -q` — 2302 passed, 11 skipped, 1127.58s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stair and standalone ICF are not built. Phone use was not tested. |
+| Next approved step | Push and release this commit after the hosted check. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-09 — Shared calculator engine boundary
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Decide how the office can use the existing Concrete and Stair formulas without a second engine. |
+| Business decision | Concrete, Stair, and 8-inch ICF remain mandatory day-one calculators. No new formula. |
+| Architectural decision | The accepted source is the public Website project at SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. It is not on this Mac. A runtime call between the sites stays forbidden. The viable method is a later package of the unchanged Website modules. The local Python slab file is not that package. |
+| Prompt template used | Shared engine boundary prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Locate the Website source. Compare sharing methods. Do not implement. |
+| Files expected to change | Current-state, session handoff, and this log. |
+| Files prohibited from changing | Application source, Website, formulas, and the local Python slab file. |
+| Implementation result | Source reported missing. No engine was copied or built. |
+| Tests | Not run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | Contract V1 forbids a runtime dependency. A service wrapper would break that rule. |
+| Unresolved issues | Stair filename inside the Website project is not recorded in this repository. Phone acceptance is not done. |
+| Next approved step | ChatGPT approval before any source recovery or office page. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-09 — Contractor calculators are mandatory for V1
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Reconcile Joel’s decision that the agreed contractor calculators are mandatory for V1. |
+| Business decision | Ben and the crew will use those calculators from day one. They are not optional, not POST-V1, and not only public Website tools. A missing office route does not mean a calculator was deferred. |
+| Architectural decision | Concrete and Stair keep the existing Website formulas. The office must not grow a second formula. The 8-inch ICF engine stays the platform authority. Framing, roofing, siding, drywall, and flooring stay blocked until a verified formula exists. No formula is authorized by this decision. |
+| Prompt template used | Governing product decision dated 9 October 2026. |
+| Approved Cursor prompt summary | Read the existing calculator commitments. Record the decision. Do not implement. |
+| Files expected to change | Current-state, session handoff, checklist, register, roadmap, workflow audit, and this log. |
+| Files prohibited from changing | Application source, Website, formulas, migrations, and case files. |
+| Implementation result | Decision recorded. No calculator was built. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | Older notes said concrete and stair enter a project only when later authorized, and the 9 October audit marked the stair office path deferred. Those notes stay as history. Joel’s decision supersedes the exclusion. |
+| Unresolved issues | No standalone office entry. Website source is not in this repository. Phone use of the office calculators is not verified. Checklist step 8 stays open. |
+| Next approved step | ChatGPT architectural approval before any calculator access work. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Proposal headings live
 
 | Field | Content |

@@ -1,0 +1,67 @@
+{
+  "contract_version": "1",
+  "result_id": "example-concrete-slab-1.0.0-thickened-edge-imperial",
+  "engine_id": "concrete_slab",
+  "engine_version": "1.0.0",
+  "variant": "thickened_edge",
+  "measurement_system": "imperial",
+  "inputs": [
+    {
+      "code": "length",
+      "value": "40",
+      "unit_code": "ft"
+    },
+    {
+      "code": "width",
+      "value": "20",
+      "unit_code": "ft"
+    },
+    {
+      "code": "slab_thickness",
+      "value": "6",
+      "unit_code": "in"
+    },
+    {
+      "code": "edge_width",
+      "value": "2",
+      "unit_code": "ft"
+    },
+    {
+      "code": "edge_depth_below_slab",
+      "value": "12",
+      "unit_code": "in"
+    }
+  ],
+  "assumptions": [
+    {
+      "code": "waste_percent",
+      "value": "5",
+      "unit_code": "percent"
+    }
+  ],
+  "product_specification": null,
+  "components": [
+    {
+      "code": "base_slab_concrete",
+      "quantity": "14.815",
+      "unit_code": "yd3"
+    },
+    {
+      "code": "thickened_edge_concrete",
+      "quantity": "8.296",
+      "unit_code": "yd3"
+    },
+    {
+      "code": "waste",
+      "quantity": "1.156",
+      "unit_code": "yd3"
+    }
+  ],
+  "quantities": [
+    {
+      "code": "total_concrete",
+      "quantity": "24.267",
+      "unit_code": "yd3"
+    }
+  ]
+}

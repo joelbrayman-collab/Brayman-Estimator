@@ -1,0 +1,64 @@
+{
+  "engine_id": "concrete_slab",
+  "engine_version": "1.0.0",
+  "contract_version": "1",
+  "contract_pin": "2903a45074df21b1c99390cb9aab68638970a2ff",
+  "cases": [
+    {
+      "file": "standard-metric.json",
+      "role": "Metric equivalent of 40 ft by 20 ft by 6 in. Waste 0.",
+      "fingerprint_sha256": "d0d070f0ce306c177f2de77b1b080067f29aad88286c677915fe6c10b00fd2eb",
+      "result_id": "example-concrete-slab-1.0.0-standard-metric",
+      "variant": "standard",
+      "measurement_system": "metric"
+    },
+    {
+      "file": "standard-imperial.json",
+      "role": "40 ft by 20 ft by 6 in. Waste 0. Equivalent of standard-metric.",
+      "fingerprint_sha256": "9a97de2f7576a7e18c2430fc725b50f865e4530e2fa0172a2d43e5988719fb41",
+      "result_id": "example-concrete-slab-1.0.0-standard-imperial",
+      "variant": "standard",
+      "measurement_system": "imperial"
+    },
+    {
+      "file": "thickened-edge-metric.json",
+      "role": "Metric equivalent of 40 ft by 20 ft by 6 in with a 2 ft by 12 in additional edge. Waste 5 percent.",
+      "fingerprint_sha256": "d0078cf06c441c2d4bde503107c3c9e500ef9d2e4cba522c52985c97a3dc64fd",
+      "result_id": "example-concrete-slab-1.0.0-thickened-edge-metric",
+      "variant": "thickened_edge",
+      "measurement_system": "metric"
+    },
+    {
+      "file": "thickened-edge-imperial.json",
+      "role": "40 ft by 20 ft by 6 in, edge 2 ft wide and 12 in below the slab. Waste 5 percent.",
+      "fingerprint_sha256": "f79bba179a19d5de3511cb6a988116d6e46af24ddde8ff96489f182452e06fb2",
+      "result_id": "example-concrete-slab-1.0.0-thickened-edge-imperial",
+      "variant": "thickened_edge",
+      "measurement_system": "imperial"
+    },
+    {
+      "file": "audit-10x8-thickened-edge-metric.json",
+      "role": "Formula audit of the pinned illustrative inputs. Does not replace that fixture.",
+      "fingerprint_sha256": "2be4aad59fa8efdc98db4d62732551a6306d33ec98b0ec03ec22505287c0f92a",
+      "result_id": "example-concrete-slab-1.0.0-audit-10x8-metric",
+      "variant": "thickened_edge",
+      "measurement_system": "metric"
+    },
+    {
+      "file": "generic-40x80-base-imperial.json",
+      "role": "Generic base slab, 80 ft by 40 ft by 6 in. Not the Speakeasy slab.",
+      "fingerprint_sha256": "43724e36177f5ef79424810ad0f0ba548acb1f692d280c846ae8c53d5ead4752",
+      "result_id": "example-concrete-slab-1.0.0-generic-40x80-base-imperial",
+      "variant": "standard",
+      "measurement_system": "imperial"
+    },
+    {
+      "file": "generic-40x80-base-metric.json",
+      "role": "Metric equivalent of the generic 80 ft by 40 ft by 6 in base. Not the Speakeasy slab.",
+      "fingerprint_sha256": "6c5f9406fa4f3ce0af0812eea70139e0d6599c66a6c7326ceb8473a4d7e0600f",
+      "result_id": "example-concrete-slab-1.0.0-generic-40x80-base-metric",
+      "variant": "standard",
+      "measurement_system": "metric"
+    }
+  ]
+}

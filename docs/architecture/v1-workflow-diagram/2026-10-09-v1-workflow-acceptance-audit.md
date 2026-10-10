@@ -1,5 +1,11 @@
 # V1 workflow acceptance audit — 9 October 2026
 
+## 9 Oct 2026 — contractor calculators are mandatory for V1
+
+Joel decided the previously agreed contractor calculators are mandatory for V1. Ben and the crew will use them from day one. They are not optional, not POST-V1, and not only public Website tools. A missing office route is not proof of deferral.
+
+This decision supersedes the earlier classification in this audit that treated the absence of a platform stair page, or a standalone concrete page, as deferral. Those rows stay below as the historical read. Concrete and Stair remain the closed Website calculators. Their formulas are not in this repository and are not to be rewritten here. The 8-inch ICF page remains an estimate page. Framing, roofing, siding, drywall, and flooring remain blocked because no verified formula exists. That block stays. No product code changed. The register was not rescored.
+
 ## 9 Oct 2026 — proposal headings live
 
 The accepted headings are live on deploy `dep-db4lh9mi0phs73d511n0` at `1885ecf4537b133d8ef1fe58def5d2e1c3976856`. Proposal 18 stayed Draft. Total stayed 49.86. No migration. The register was not rescored.

@@ -1,0 +1,16 @@
+{
+  "name": "calibraytai-stair-ontario-residential-v1",
+  "private": true,
+  "type": "module",
+  "description": "Preserved Website Ontario residential stair calculator. The formula files are not edited here.",
+  "scripts": {
+    "build:office": "esbuild office-mount.jsx --bundle --format=esm --jsx=automatic --outfile=../../app/static/js/stair-calculator.js",
+    "test:engine": "node --test website-source/tests/useful-tools-stairs.test.mjs website-source/tests/useful-tools-stairs-ui.test.mjs website-source/tests/useful-tools-stair-diagram-geometry.test.mjs tests/stair-conformance.mjs && node website-source/scripts/verify-stair-profile-evidence.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.27.0",
+    "playwright": "1.56.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  }
+}

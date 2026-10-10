@@ -56,6 +56,12 @@ NAV_SECTIONS = (
                 "icon": "bi-calculator",
                 "enabled": True,
             },
+            {
+                "title": "Stair calculator",
+                "endpoint": "calculators.stairs",
+                "icon": "bi-bar-chart-steps",
+                "enabled": True,
+            },
         ),
     },
     {

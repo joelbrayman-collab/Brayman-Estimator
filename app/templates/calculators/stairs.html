@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Stair calculator | Brayman Construction Platform{% endblock %}
+{% block page_title %}Stair calculator{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stair-calculator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <h1>Stair calculator</h1>
+        <p class="muted-copy">Ontario residential straight stair. No project is required. Nothing is added to an estimate.</p>
+    </div>
+</div>
+
+<div data-stair-calculator></div>
+<script type="module" src="{{ url_for('static', filename='js/stair-calculator.js') }}"></script>
+{% endblock %}

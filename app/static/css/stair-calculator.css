@@ -1,0 +1,203 @@
+.stair-calculator {
+    max-width: 100%;
+    color: var(--text);
+}
+
+.stair-calculator .tool-calculator-shell,
+.stair-calculator .tool-calculator-layout,
+.stair-calculator .tool-calculator-form,
+.stair-calculator .tool-calculator-output,
+.stair-calculator .tool-calculator-card {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.stair-calculator a[href="/useful-tools/"] {
+    display: none;
+}
+
+.stair-calculator .tool-calculator-toolbar,
+.stair-calculator .tool-calculator-unit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.stair-calculator .tool-calculator-unit button,
+.stair-calculator .tool-calculator-actions button {
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 1px solid var(--line, #d7d2c8);
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+}
+
+.stair-calculator .tool-calculator-unit button.active {
+    background: #1f6b4a;
+    border-color: #1f6b4a;
+    color: #fff;
+}
+
+.stair-calculator .tool-calculator-layout {
+    display: grid;
+    gap: 18px;
+}
+
+.stair-calculator .tool-calculator-card,
+.stair-calculator .tool-calculator-results,
+.stair-calculator .tool-saved {
+    padding: 16px;
+    border: 1px solid var(--line, #d7d2c8);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.stair-calculator .tool-calculator-fields {
+    display: grid;
+    gap: 12px;
+}
+
+.stair-calculator .tool-calculator-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stair-calculator .tool-calculator-input input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid var(--line, #d7d2c8);
+    border-radius: 8px;
+    font: inherit;
+}
+
+.stair-calculator .tool-profile-badge {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.stair-calculator .tool-profile-badge span,
+.stair-calculator .tool-profile-badge strong,
+.stair-calculator .tool-profile-badge small {
+    display: block;
+}
+
+.stair-calculator .tool-calculator-note,
+.stair-calculator .tool-input-error,
+.stair-calculator .tool-calculator-error {
+    margin-top: 12px;
+}
+
+.stair-calculator .tool-input-error,
+.stair-calculator .tool-calculator-error {
+    color: #8a3b32;
+    font-weight: 600;
+}
+
+.stair-calculator .tool-calculator-primary-result strong {
+    display: block;
+    font-size: 1.6rem;
+}
+
+.stair-calculator .tool-calculator-results dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+    margin: 16px 0;
+}
+
+.stair-calculator .tool-calculator-results dt {
+    color: var(--muted, #5c6570);
+    font-size: 0.85rem;
+}
+
+.stair-calculator .tool-calculator-results dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+.stair-calculator .tool-checks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stair-calculator .tool-checks li {
+    display: grid;
+    gap: 2px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line, #ece7de);
+}
+
+.stair-calculator .tool-checks li.pass strong {
+    color: #1f6b4a;
+}
+
+.stair-calculator .tool-checks li.fail strong {
+    color: #8a3b32;
+}
+
+.stair-calculator .stair-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    background: #f7f4ee;
+    border-radius: 12px;
+}
+
+.stair-calculator .stair-step-outline {
+    fill: none;
+    stroke: #2c3038;
+    stroke-width: 2;
+}
+
+.stair-calculator .stair-tread-board {
+    fill: #d8c79b;
+    stroke: #8d7344;
+}
+
+.stair-calculator .stair-riser-face {
+    fill: #cbb98a;
+}
+
+.stair-calculator .stair-stringer-body {
+    fill: #bda875;
+    stroke: #8d7344;
+}
+
+.stair-calculator .stair-upper-landing {
+    fill: #e7e1d6;
+}
+
+.stair-calculator .stair-floor-line,
+.stair-calculator .stair-extension {
+    stroke: #6b7280;
+    stroke-width: 1;
+}
+
+.stair-calculator .stair-measures text,
+.stair-calculator .stair-detail-label,
+.stair-calculator .stair-count {
+    fill: #17191d;
+    font-size: 13px;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+.stair-calculator .tool-calculator-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+@media (max-width: 720px) {
+    .stair-calculator .tool-calculator-results dl {
+        grid-template-columns: 1fr;
+    }
+}

@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**10 Oct 2026 standalone 8-inch ICF live.** Checklist step 8 stays **OPEN**. Deploy `dep-db528aflot8c73dfb4q0` is live at `db2c8382602e23a3acc3455053db3dbd73c2c873`. The page uses the existing 8-inch quantity service. The V1 register was not rescored.
+
 **10 Oct 2026 standalone 8-inch ICF accepted.** Checklist step 8 stays **OPEN**. ChatGPT accepted the Calculators page for the existing 8-inch ICF quantity service. The release SHA is recorded after this commit. The V1 register was not rescored.
 
 **10 Oct 2026 Ontario stair calculator live.** Checklist step 8 stays **OPEN**. Deploy `dep-db51l1lckfvc738kutm0` is live at `d099aca9c487f780093558ef2c914202af7c4094`. The page uses the recovered Website stair engine and diagram. The V1 register was not rescored.

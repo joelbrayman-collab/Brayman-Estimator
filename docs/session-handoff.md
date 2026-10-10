@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**10 Oct 2026 — STANDALONE 8-INCH ICF LIVE.** Deploy `dep-db528aflot8c73dfb4q0` is `db2c8382602e23a3acc3455053db3dbd73c2c873`. Logix 1523 returned 37.623741 yd3. Fox Blocks 5.33 returned 0.132 yd3. StyroRail / BuildBlock 5.33 returned 0.131687 yd3. Nudura 12 returned 0.306 yd3. Fox Blocks 12.89 with one 90-degree corner returned 0.277 yd3. A StyroRail 45-degree corner stayed missing. Invalid area was refused. Concrete, Stair, and the estimate wall-form page still opened. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 **10 Oct 2026 — STANDALONE 8-INCH ICF ACCEPTED FOR RELEASE.** `/calculators/wall-form` uses the existing quantity service. No second engine. No project and no estimate line. Full suite 2317 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
 
 **10 Oct 2026 — ONTARIO STAIR CALCULATOR LIVE.** Deploy `dep-db51l1lckfvc738kutm0` is `d099aca9c487f780093558ef2c914202af7c4094`. Metric 2800 mm by 4480 mm returned 16 risers and 15 treads. Imperial 38 in by 44 in returned 5 risers and 4 treads. Total rise 0 was refused and the diagram returned when 38 was restored. Concrete still returned 14.815 yd3. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-10 standalone 8-inch ICF live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db528aflot8c73dfb4q0` is live at `db2c8382602e23a3acc3455053db3dbd73c2c873`. The office page returned the existing 8-inch quantities and refused a missing corner fact. It does not write an estimate. The V1 register was not rescored. This note does not close Step 8.
+
 **Current status (2026-10-10 standalone 8-inch ICF accepted):** Checklist Step 8 remains **OPEN**. ChatGPT accepted the office page for the existing 8-inch ICF quantity service. That page does not write an estimate and does not replace the estimate wall-form review. The release SHA is recorded after this commit. The V1 register was not rescored. This note does not close Step 8.
 
 **Current status (2026-10-10 Ontario stair calculator live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db51l1lckfvc738kutm0` is live. The preserved stair page returned the original metric and imperial fixtures, refused a zero rise, and restored the diagram. Concrete still calculated. The V1 register was not rescored. This note does not close Step 8.

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-10 — Standalone 8-inch ICF calculator live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Release the accepted 8-inch ICF page and verify it on the hosted office. |
+| Business decision | ChatGPT accepted the standalone page. The existing quantities are the release check. |
+| Architectural decision | Deploy the accepted product SHA only. No migration. The docs record of that deploy is not a second application deploy. |
+| Prompt template used | Standalone 8-inch ICF accepted release, 10 October 2026. |
+| Approved Cursor prompt summary | Commit the accepted page, push it, deploy that SHA, and verify the existing quantities, refusals, and neighbouring calculators on the live office. |
+| Files expected to change | Governance records only, after the product commit. |
+| Files prohibited from changing | The ICF engine, manufacturer profiles, Concrete, Stair formulas, Website, migrations, and case files. |
+| Implementation result | Product SHA `db2c8382602e23a3acc3455053db3dbd73c2c873` is live as deploy `dep-db528aflot8c73dfb4q0`. Logix 1523 returned 37.623741 yd3. The other accepted fixtures matched. A missing corner and an invalid area were refused. |
+| Tests | The accepted full suite was not rerun. It remains 2317 passed, 11 skipped, 1303.51s, exit 0, on the tree that became the product commit. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A real contractor phone was not used. |
+| Next approved step | Stop. A person still has to use the page on a real phone. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. The product commit is `db2c8382602e23a3acc3455053db3dbd73c2c873`. |
+
 ### 2026-10-10 — Standalone 8-inch ICF calculator
 
 | Field | Content |

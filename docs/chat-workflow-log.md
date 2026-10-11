@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-10 |
+| Updated | 2026-10-11 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-11 — Straight wall framing is live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-11 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 11 Oct 2026 |
+| Objective | Record the live straight-wall calculator. |
+| Business decision | The accepted calculator is the live office page. Doors, windows, corners, and purchasing stay later slices. |
+| Architectural decision | Live product `8e64bdb9542cccb74431f29a8e142fbd75ce8965`, deploy `dep-db5n88nlk1mc73aj6iu0`. Rollback `dep-db57dlu7bikc739729p0`. No migration. `STRUCT` stays unbound. This documentation commit is not deployed. |
+| Prompt template used | V1 wall framing slice 1 accepted release, 11 October 2026. |
+| Approved Cursor prompt summary | Deploy the accepted SHA after hosted preflight, verify the live page, and record the result. |
+| Files expected to change | Status records only. |
+| Files prohibited from changing | The framing formula, case files, migrations, and the public Website. |
+| Implementation result | Anonymous wall framing returns to login. The signed-in 10 ft by 8 ft, 16 in fixture showed 9 studs, 72, 20, 10, 102, 80, and an 8 in short final space. The elevation positions matched. Length abc was refused and restoring 10 ft calculated again. Concrete, Stair, ICF, and Employment opened. Integrity stayed ok. Revision stayed t0a1b2c3d4e5. Projects stayed 53, estimate lines stayed 137, and Proposal 18 stayed Draft at 49.86. |
+| Tests | Not rerun. The accepted full suite remains 2339 passed, 11 skipped, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Doors and windows are the next framing slice and have no authorized formula. A real contractor phone was not used. Checklist step 8 stays open. |
+| Next approved step | Wait for the doors-and-windows formula. Do not start it from this record. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
 
 ### 2026-10-11 — Wall framing slice 1 accepted for release
 

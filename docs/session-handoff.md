@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**11 Oct 2026 — STRAIGHT WALL FRAMING LIVE.** Deploy `dep-db5n88nlk1mc73aj6iu0` is `8e64bdb9542cccb74431f29a8e142fbd75ce8965`. The 10 ft by 8 ft, 16 in fixture showed 9 studs, 72 stud feet, 20 top-plate feet, 10 bottom-plate feet, 102 total feet, 80 square feet, and an 8 in short final space. The elevation used those positions. Length `abc` was refused and restoring 10 ft calculated again. Concrete, Stair, ICF, and Employment still opened. Integrity `ok`. Revision `t0a1b2c3d4e5`. Projects 53, estimate lines 137, Proposal 18 Draft 49.86. This documentation commit is not deployed. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
+
 **11 Oct 2026 — WALL FRAMING SLICE 1 ACCEPTED FOR RELEASE.** ChatGPT accepted `/calculators/wall-framing` and the browser-process cleanup. The 10 ft fixture stays 9 studs, 102 total lineal feet, and 80 square feet. No estimate line. `STRUCT` stays unbound. Full suite already recorded: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. Not deployed yet. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.
 
 **11 Oct 2026 — WALL FRAMING REGRESSION BLOCKER CLEARED.** A browser-test timeout was killing only Node. Chrome and the office server survived. The timeout now stops that whole process tree. Targeted browser tests: 6 passed in 71.00s, exit 0. Full suite: 2339 passed, 11 skipped, 7214 warnings, 1409.50s, exit 0. The framing calculation was not changed. Not committed. Not deployed. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**.

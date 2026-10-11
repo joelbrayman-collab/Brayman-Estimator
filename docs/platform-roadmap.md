@@ -3,9 +3,11 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-10-10 |
+| Updated | 2026-10-11 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
+
+**11 Oct 2026 wall framing live.** Checklist step 8 stays **OPEN**. Deploy `dep-db5n88nlk1mc73aj6iu0` is live at `8e64bdb9542cccb74431f29a8e142fbd75ce8965`. One straight wall can be counted from Calculators. `STRUCT` stays unbound. The V1 register was not rescored.
 
 **11 Oct 2026 wall framing accepted.** Checklist step 8 stays **OPEN**. ChatGPT accepted the straight-wall calculator. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. `STRUCT` stays unbound. The V1 register was not rescored.
 

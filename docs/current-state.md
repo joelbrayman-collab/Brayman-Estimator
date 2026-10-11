@@ -3,9 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-10 |
+| Updated | 2026-10-11 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 11 Oct 2026 — Straight wall framing is live
+
+Deploy `dep-db5n88nlk1mc73aj6iu0` is live at `8e64bdb9542cccb74431f29a8e142fbd75ce8965`. Auto-deploy stayed off. No migration ran. Rollback remains `dep-db57dlu7bikc739729p0` at `037387cbf51e65afd88b5e44249e641f70bd72f4`. Anonymous `/calculators/wall-framing` returns to login. The signed-in 10 ft by 8 ft, 16 in, 2x4, 2 top, 1 bottom wall showed 9 studs, 72 lineal feet of studs, 20 lineal feet of top plates, 10 lineal feet of bottom plates, 102 total lineal feet, 80 square feet, and a short final spacing of 8 in. The elevation positions were 0, 16, 32, 48, 64, 80, 96, 112, and 120 in. Length `abc` was refused, and restoring 10 ft returned the same 9 studs. Concrete, Stair, ICF, and Employment vs Entrepreneurship still opened. A 390 by 844 viewport kept scroll width at 390 and the elevation ended at 345. Integrity stayed `ok`. Revision stayed `t0a1b2c3d4e5`. Projects stayed 53, estimate lines stayed 137, calculation intakes stayed 2, and Proposal 18 stayed Draft at 49.86. A real contractor phone was not used. The V1 register was not rescored. Checklist step 8 stays **OPEN**. This documentation commit is not deployed.
 
 ## 11 Oct 2026 — Wall framing slice 1 accepted for release
 

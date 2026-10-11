@@ -3,6 +3,7 @@
 Concrete and Stair render the preserved Website engines in the browser.
 The Employment vs Entrepreneurship page sends the preserved Website file.
 The ICF page calls the existing 8-inch quantity service.
+The wall framing page calls the straight-wall quantity function.
 This module does not write a project or an estimate.
 """
 
@@ -14,6 +15,11 @@ from flask import Blueprint, render_template, request, send_file
 
 from app.services.icf_manufacturer_profiles import IcfProfileError, list_profiles
 from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
+from app.services.wall_framing import (
+    WallFramingInputError,
+    calculate_straight_wall,
+    elevation_drawing,
+)
 
 calculators_bp = Blueprint(
     "calculators",
@@ -141,4 +147,46 @@ def wall_form():
         error=error,
         result=result,
         quantity_rows=_quantity_rows(result),
+    )
+
+
+_EMPTY_WALL = {
+    "length_ft": "",
+    "height_ft": "",
+    "spacing_in": "",
+    "stud_size": "",
+    "top_plate_count": "",
+    "bottom_plate_count": "",
+}
+
+
+def _wall_framing_values():
+    if request.method != "POST":
+        return dict(_EMPTY_WALL)
+    return {
+        key: (request.form.get(key) or "").strip()
+        for key in _EMPTY_WALL
+    }
+
+
+@calculators_bp.route("/wall-framing", methods=["GET", "POST"])
+def wall_framing():
+    """Count one straight wall. Do not open an estimate."""
+    values = _wall_framing_values()
+    error = None
+    result = None
+    drawing = None
+    if request.method == "POST":
+        try:
+            result = calculate_straight_wall(**values)
+            drawing = elevation_drawing(result)
+        except WallFramingInputError as exc:
+            error = str(exc)
+            result = None
+    return render_template(
+        "calculators/wall_framing.html",
+        values=values,
+        error=error,
+        result=result,
+        drawing=drawing,
     )

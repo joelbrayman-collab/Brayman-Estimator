@@ -14,6 +14,7 @@ from app.models.project import Project
 from app.navigation import NAV_SECTIONS
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import ensure_office_user, login_office_user
+from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "calculation-engines" / "employment-vs-entrepreneurship"
@@ -63,6 +64,7 @@ def test_employment_calculator_is_in_the_calculators_section():
         "Stair calculator",
         "ICF wall calculator",
         "Employment vs Entrepreneurship",
+        "Wall framing calculator",
     ]
 
 
@@ -113,12 +115,9 @@ def test_recovered_employment_calculator_tests():
         timeout=60,
     )
     assert engine.returncode == 0, engine.stdout + engine.stderr
-    browser = subprocess.run(
+    browser = run_node_browser_test(
         [node, "--test", "--test-force-exit", str(PACKAGE / "tests" / "office-page-browser.mjs")],
         cwd=PACKAGE,
-        check=False,
-        text=True,
-        capture_output=True,
         timeout=180,
     )
     assert browser.returncode == 0, browser.stdout + browser.stderr

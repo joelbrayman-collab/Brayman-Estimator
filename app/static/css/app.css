@@ -2410,6 +2410,39 @@ body.login-page {
     max-width: 100%;
 }
 
+[data-wall-elevation] {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+[data-wall-elevation] svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 520px) {
+    .header-left {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .header-page-title {
+        min-width: 0;
+    }
+
+    .header-company-label {
+        display: none;
+    }
+
+    .header-company {
+        width: 38px;
+        max-width: none;
+        justify-content: center;
+        padding: 0;
+    }
+}
+
 @media (max-width: 520px) {
     .drawing-requirement-actions {
         flex-direction: column;

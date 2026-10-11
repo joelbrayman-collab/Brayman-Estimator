@@ -7,6 +7,12 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**11 Oct 2026 wall framing accepted.** Checklist step 8 stays **OPEN**. ChatGPT accepted the straight-wall calculator. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. `STRUCT` stays unbound. The V1 register was not rescored.
+
+**11 Oct 2026 wall framing regression.** Checklist step 8 stays **OPEN**. Browser-test cleanup now stops Chrome and the office server when a Node test times out. Full suite: 2339 passed, 11 skipped, exit 0. The calculation was not changed. It is not deployed. The V1 register was not rescored.
+
+**10 Oct 2026 straight wall framing.** Checklist step 8 stays **OPEN**. One straight wall calculator is in the office and awaits acceptance. It does not write an estimate. `STRUCT` stays unbound. The V1 register was not rescored.
+
 **10 Oct 2026 Employment vs Entrepreneurship live.** Checklist step 8 stays **OPEN**. Deploy `dep-db57dlu7bikc739729p0` is live at `037387cbf51e65afd88b5e44249e641f70bd72f4`. The page is the preserved Website comparison. The V1 register was not rescored.
 
 **10 Oct 2026 Employment vs Entrepreneurship.** Checklist step 8 stays **OPEN**. The preserved Website comparison is in the office Calculators list. Full suite: 2327 passed, 11 skipped, exit 0. ChatGPT accepted it. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored.

@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Straight wall framing accepted (2026-10-11)
+
+| Field | Content |
+|-------|---------|
+| Slice | Straight wall framing calculator in Calculators. |
+| Product status at capture | ChatGPT accepted the slice. The release SHA is recorded after this commit. It is not deployed yet. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can enter one straight wood-framed wall and see the stud count, plate lengths, total framing length, gross wall area, and a dimensioned elevation. |
+| 2. When would the contractor use it? | When counting the framing in one straight wall before a project or an estimate exists. |
+| 3. What workflow will the final Manual need to teach? | Sign in, open Calculators, open Wall framing calculator, enter length, height, spacing, stud size, and plate counts, then choose Calculate. No project or estimate is created. |
+| 4. What contractor-facing terms must be used? | Wall length. Wall height. Stud spacing. Stud size. Top plates. Bottom plates. Short final spacing. Lineal feet. Gross wall area. |
+| 5. What screenshots / Print examples will eventually be needed? | The elevation on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | The page counts the entered wall. It does not size the wall, add waste, or choose a stock length. A missing, invalid, zero, or negative measurement is refused. |
+| 7. Desktop / iPhone / Print relevance | Checked in a desktop browser and at 390 by 844 before release. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
+### MANUAL IMPACT — Straight wall framing (2026-10-10)
+
+| Field | Content |
+|-------|---------|
+| Slice | Straight wall framing calculator in Calculators. |
+| Product status at capture | Implemented and tested. Not accepted, not committed, and not deployed. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can enter one straight wood-framed wall and see the stud count, plate lengths, total framing length, gross wall area, and a dimensioned elevation. |
+| 2. When would the contractor use it? | When counting the framing in one straight wall before a project or an estimate exists. |
+| 3. What workflow will the final Manual need to teach? | Sign in, open Calculators, open Wall framing calculator, enter length, height, spacing, stud size, and plate counts, then choose Calculate. No project or estimate is created. |
+| 4. What contractor-facing terms must be used? | Wall length. Wall height. Stud spacing. Stud size. Top plates. Bottom plates. Short final spacing. Lineal feet. Gross wall area. |
+| 5. What screenshots / Print examples will eventually be needed? | The elevation on a desktop browser and on a phone, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | The page counts the entered wall. It does not size the wall, add waste, or choose a stock length. A missing, invalid, zero, or negative measurement is refused. |
+| 7. Desktop / iPhone / Print relevance | Checked in a desktop browser and at 390 by 844. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Employment vs Entrepreneurship live (2026-10-10)
 
 | Field | Content |

@@ -8,6 +8,12 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-11 wall framing accepted):** No package was added or closed. The register was not rescored. ChatGPT accepted the straight-wall calculator. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. Checklist step 8 stays open. `STRUCT` stays unbound.
+
+**Subsequent status (2026-10-11 wall framing regression):** No package was added or closed. The register was not rescored. The full suite passed after the browser-test timeout was made to stop its whole process tree. Checklist step 8 stays open. `STRUCT` stays unbound.
+
+**Subsequent status (2026-10-10 straight wall framing):** No package was added or closed. The register was not rescored. One straight wall calculator is implemented and awaits acceptance. Checklist step 8 stays open. `STRUCT` stays unbound.
+
 **Subsequent status (2026-10-10 Employment vs Entrepreneurship live):** No package was added or closed. The register was not rescored. The preserved comparison is live at `037387cbf51e65afd88b5e44249e641f70bd72f4`, deploy `dep-db57dlu7bikc739729p0`. Checklist step 8 stays open.
 
 **Subsequent status (2026-10-10 Employment vs Entrepreneurship):** No package was added or closed. The register was not rescored. ChatGPT accepted the preserved Website comparison in the office. The release SHA is recorded after this commit. It is not deployed yet. Full suite: 2327 passed, 11 skipped, exit 0. Checklist step 8 stays open.

@@ -74,6 +74,12 @@ NAV_SECTIONS = (
                 "icon": "bi-briefcase",
                 "enabled": True,
             },
+            {
+                "title": "Wall framing calculator",
+                "endpoint": "calculators.wall_framing",
+                "icon": "bi-columns",
+                "enabled": True,
+            },
         ),
     },
     {

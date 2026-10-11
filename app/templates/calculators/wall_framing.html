@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Wall framing calculator | Brayman Construction Platform{% endblock %}
+{% block page_title %}Wall framing calculator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <h1>Wall framing calculator</h1>
+        <p class="muted-copy">Straight wood-framed wall. No project is required. Nothing is added to an estimate. No waste is added, and no stock length is chosen.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p>Enter the wall the contractor measured. This count does not size the wall.</p>
+    {% if error %}
+    <p class="form-error" role="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" data-wall-framing-calculator>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="length_ft">Wall length (feet)</label>
+        <input id="length_ft" name="length_ft" inputmode="decimal" value="{{ values.length_ft }}">
+        <label for="height_ft">Wall height (feet)</label>
+        <input id="height_ft" name="height_ft" inputmode="decimal" value="{{ values.height_ft }}">
+        <label for="spacing_in">Stud spacing (inches)</label>
+        <input id="spacing_in" name="spacing_in" inputmode="decimal" value="{{ values.spacing_in }}">
+        <label for="stud_size">Stud size</label>
+        <input id="stud_size" name="stud_size" value="{{ values.stud_size }}">
+        <label for="top_plate_count">Top plates</label>
+        <input id="top_plate_count" name="top_plate_count" inputmode="numeric" value="{{ values.top_plate_count }}">
+        <label for="bottom_plate_count">Bottom plates</label>
+        <input id="bottom_plate_count" name="bottom_plate_count" inputmode="numeric" value="{{ values.bottom_plate_count }}">
+        <button type="submit">Calculate</button>
+    </form>
+</section>
+
+{% if result %}
+<section class="form-panel" data-wall-framing-result>
+    <h2>Wall elevation</h2>
+    <div data-wall-elevation>
+        {{ drawing|safe }}
+    </div>
+    <h2>Quantities</h2>
+    <p data-stud-count>{{ result.displays.stud_count }} studs</p>
+    <p data-stud-lineal>{{ result.displays.stud_lineal_ft }} lineal feet of studs</p>
+    <p data-top-plate-lineal>{{ result.displays.top_plate_lineal_ft }} lineal feet of top plates</p>
+    <p data-bottom-plate-lineal>{{ result.displays.bottom_plate_lineal_ft }} lineal feet of bottom plates</p>
+    <p data-total-lineal>{{ result.displays.total_lineal_ft }} total lineal feet</p>
+    <p data-gross-area>{{ result.displays.gross_wall_area_sqft }} square feet gross wall area</p>
+    {% if result.displays.short_final_spacing_in %}
+    <p data-short-spacing>Short final spacing {{ result.displays.short_final_spacing_in }} in</p>
+    {% endif %}
+    <p>These quantities are not on an estimate.</p>
+</section>
+{% endif %}
+{% endblock %}

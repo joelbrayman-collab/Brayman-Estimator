@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import shutil
-import subprocess
 from pathlib import Path
 
 from app import create_app, db
 from app.models.estimate import EstimateLineItem
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import ensure_office_user, login_office_user
+from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = (
@@ -110,12 +110,9 @@ def test_contractor_page_calculate_matches_the_original_fixtures():
         / "tests"
         / "office-page-browser.mjs"
     )
-    completed = subprocess.run(
-        [node, "--test", str(script)],
+    completed = run_node_browser_test(
+        [node, "--test", "--test-force-exit", str(script)],
         cwd=ROOT,
-        check=False,
-        text=True,
-        capture_output=True,
-        timeout=120,
+        timeout=180,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr

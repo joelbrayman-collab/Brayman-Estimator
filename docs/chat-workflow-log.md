@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-11 — Wall framing slice 1 accepted for release
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-11 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 11 Oct 2026 |
+| Objective | Release the accepted straight-wall calculator. |
+| Business decision | ChatGPT accepted the standalone wall count, the dimensioned elevation, and the browser-process cleanup. |
+| Architectural decision | `stud_positions_inches` remains the only stud placement. A browser-test timeout stops Chrome and the office server. No estimate line and no `STRUCT` binding. |
+| Prompt template used | V1 wall framing slice 1 accepted release, 11 October 2026. |
+| Approved Cursor prompt summary | Commit the accepted calculator and browser-process cleanup, push, and deploy that SHA after hosted preflight. |
+| Files expected to change | Wall framing service, Calculators page, navigation, tests, browser-process cleanup, and status records. |
+| Files prohibited from changing | Case files, migrations, the public Website, and the framing formula. |
+| Implementation result | The accepted fixture and cleanup are in this commit. The release SHA is recorded after this commit. It is not deployed yet. |
+| Tests | Not rerun. Accepted targeted run: 6 passed, 71.00s, exit 0. Accepted full suite: 2339 passed, 11 skipped, 7214 warnings, 1409.50s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Doors, windows, corners, extra members, stock lengths, purchasing, waste, and estimate handoff remain later slices. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | Deploy this SHA after hosted preflight, then record the live verification. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-11 — Wall framing regression blocker
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-11 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 11 Oct 2026 |
+| Objective | Find why the full suite browser commands timed out, correct that cause, and rerun regression. |
+| Business decision | The straight-wall calculation and diagram stay as already implemented. No new framing feature. |
+| Architectural decision | A Node test timeout must stop Chrome's process group and the office server, not only the Node pid. |
+| Prompt template used | Wall framing slice 1, resolve regression blocker and release, 11 October 2026. |
+| Approved Cursor prompt summary | Identify the timeout cause from evidence, correct it if it is test infrastructure, then run the previously failing browser tests and one full regression. Do not deploy before acceptance. |
+| Files expected to change | Browser-test process cleanup and the status records. |
+| Files prohibited from changing | Framing calculations, case files, migrations, and the public Website. |
+| Implementation result | `tests/browser_process.py` stops the whole process tree on timeout. Chrome and the office server no longer survive. |
+| Tests | Targeted: 6 passed in 71.00s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2339 passed, 11 skipped, 7214 warnings, 1409.50s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Not committed and not deployed. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | ChatGPT acceptance, then commit, push, and deploy that SHA. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-10 — Straight wall framing calculator
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-10 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 10 Oct 2026 |
+| Objective | Count one straight wood-framed wall and draw it from that count. |
+| Business decision | ChatGPT accepted the basic straight-wall quantity rules. The contractor enters every measurement. This is not an engineered design. |
+| Architectural decision | `stud_positions_inches` is the only stud placement. The elevation reads those positions. Gross area uses the existing rectangular area function. No estimate line and no `STRUCT` binding. |
+| Prompt template used | V1 wall framing calculator slice 1, 10 October 2026. |
+| Approved Cursor prompt summary | Build the standalone straight-wall calculator and dimensioned elevation. Return evidence. Do not commit or deploy before acceptance. |
+| Files expected to change | Wall framing service, Calculators route and page, navigation, tests, and status records. |
+| Files prohibited from changing | Concrete, Stair, ICF, Employment, unit conversion, the prism, migrations, the public Website, and case files. |
+| Implementation result | `/calculators/wall-framing` returns the accepted 10 ft fixture and identifies the 8 in final space. The slice awaits acceptance. |
+| Tests | Focused browser and quantity tests: 14 passed, 8 warnings, 80.96s, exit 0. Full suite first run: 3 failed, 2335 passed, 11 skipped, 7214 warnings, 1631.91s, exit 1. Those three failures were browser-command timeouts and passed when rerun alone. Full suite second run: 3 failed, 2335 passed, 11 skipped, 7214 warnings, 3616.07s, exit 1. The second failures were empty browser-command timeouts, including the wall-framing browser command that had already passed alone. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Not accepted, not committed, and not deployed. Doors, windows, corners, extra members, stock lengths, purchasing, waste, and estimate handoff are later slices. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | ChatGPT accepts or refuses this slice. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. Awaiting acceptance. |
+
 ### 2026-10-10 — Employment vs Entrepreneurship live
 
 | Field | Content |

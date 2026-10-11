@@ -15,6 +15,12 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-11 wall framing accepted):** Checklist Step 8 remains **OPEN**. ChatGPT accepted one straight-wall calculator. It does not write an estimate and it does not bind `STRUCT`. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored. This note does not close Step 8.
+
+**Current status (2026-10-11 wall framing regression):** Checklist Step 8 remains **OPEN**. The browser-test timeout no longer leaves Chrome or the office server running. Full suite: 2339 passed, 11 skipped, exit 0. The straight-wall calculation was not changed. The slice is not committed and not deployed. The V1 register was not rescored. This note does not close Step 8.
+
+**Current status (2026-10-10 straight wall framing):** Checklist Step 8 remains **OPEN**. One straight wood-framed wall can be counted from Calculators without a project. It does not write an estimate and it does not bind `STRUCT`. The slice is not accepted and not deployed. The V1 register was not rescored. This note does not close Step 8.
+
 **Current status (2026-10-10 Employment vs Entrepreneurship live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db57dlu7bikc739729p0` is live at `037387cbf51e65afd88b5e44249e641f70bd72f4`. The preserved comparison opens from Calculators without a project. It does not write an estimate. Integrity stayed `ok` and the revision stayed `t0a1b2c3d4e5`. The V1 register was not rescored. This note does not close Step 8.
 
 **Current status (2026-10-10 Employment vs Entrepreneurship):** Checklist Step 8 remains **OPEN**. The original Website comparison is preserved and opens from Calculators without a project. It does not write an estimate. Full suite: 2327 passed, 11 skipped, exit 0. ChatGPT accepted it. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored. This note does not close Step 8.

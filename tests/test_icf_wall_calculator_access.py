@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import os
 import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -18,6 +17,7 @@ from app.navigation import NAV_SECTIONS
 from app.services.icf_quantity import build_icf_standard_quantities
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import ensure_office_user, login_office_user
+from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / "app" / "services" / "icf_quantity.py"
@@ -87,6 +87,7 @@ def test_icf_wall_calculator_is_in_the_calculators_section():
         "Stair calculator",
         "ICF wall calculator",
         "Employment vs Entrepreneurship",
+        "Wall framing calculator",
     ]
     assert NAV_SECTIONS[0]["title"] is None
 
@@ -193,12 +194,9 @@ def test_invalid_measurements_are_refused(app, client):
 def test_contractor_icf_page_in_the_browser():
     node = shutil.which("node") or "/opt/homebrew/bin/node"
     script = ROOT / "tests" / "icf_wall_page_browser.mjs"
-    completed = subprocess.run(
+    completed = run_node_browser_test(
         [node, "--test", str(script)],
         cwd=ROOT,
-        check=False,
-        text=True,
-        capture_output=True,
         timeout=120,
         env=os.environ.copy(),
     )

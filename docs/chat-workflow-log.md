@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-12 — Wall framing slice 2 accepted for release
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-12 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 12 Oct 2026 |
+| Objective | Release the accepted doors, windows, corners, and extra members. |
+| Business decision | ChatGPT accepted the opening rows, the sill height, the stud classification, and the entered corner and extra members. |
+| Architectural decision | `stud_positions_inches` remains the only stud placement. No estimate line and no `STRUCT` binding. |
+| Prompt template used | V1 wall framing slice 2 accepted release, 12 October 2026. |
+| Approved Cursor prompt summary | Commit the accepted calculator, push, and deploy that SHA after hosted preflight. |
+| Files expected to change | Wall framing service, page, tests, and status records. |
+| Files prohibited from changing | Case files, migrations, the public Website, and the stud-position function. |
+| Implementation result | The accepted fixture and opening rules are in this commit. The release SHA is recorded after this commit. It is not deployed yet. |
+| Tests | Not rerun. Accepted focused run: 16 passed, 10 warnings, 13.21s, exit 0. Accepted full suite: 2344 passed, 11 skipped, 7216 warnings, 1221.93s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stock lengths, waste, fasteners, labour, pricing, and estimate handoff remain later slices. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | Deploy this SHA after hosted preflight, then record the live verification. |
+| Next approved prompt | None from this record. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-12 — Wall framing slice 2 re-verified
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-12 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 12 Oct 2026 |
+| Objective | Confirm the approved Slice 2 working tree and return test evidence. |
+| Business decision | Windows require an entered sill height. Doors start at the wall base. Extra members stay contractor-entered. |
+| Architectural decision | `stud_positions_inches` stays the layout authority. No second engine. No estimate line. `STRUCT` stays unbound. |
+| Prompt template used | V1 wall framing slice 2 doors, windows, corners and extra members, 12 October 2026. |
+| Approved Cursor prompt summary | Verify the repository and live office, keep the approved Slice 2, test it, and stop before commit. |
+| Files expected to change | Status records for this verification. The calculator files were already in the working tree. |
+| Files prohibited from changing | The stud-position function, case files, migrations, and the public Website. |
+| Implementation result | `origin/main` remains `88a869d3dcdf6b67ba8899e496a843c0b443419d`. Live product remains `8e64bdb9542cccb74431f29a8e142fbd75ce8965`, deploy `dep-db5n88nlk1mc73aj6iu0`. Slice 2 is still uncommitted. |
+| Tests | Focused: 16 passed, 10 warnings, 13.21s, exit 0. `./venv/bin/python -m pytest -q` — 2344 passed, 11 skipped, 7216 warnings, 1221.93s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stock lengths, waste, fasteners, labour, pricing, and estimate handoff remain later slices. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | ChatGPT acceptance, then commit, push, and deploy the accepted SHA. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. Awaiting acceptance. |
+
+### 2026-10-11 — Wall framing slice 2 awaits acceptance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-11 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 11 Oct 2026 |
+| Objective | Add doors, windows, corners, and extra members to the existing wall calculator. |
+| Business decision | A window needs an entered sill height. A door starts at the wall base. Extra members are entered, not sized. |
+| Architectural decision | `stud_positions_inches` stays the layout authority. Opening stations are positions strictly inside an opening width. Plates and gross area stay the full wall. No estimate line and no `STRUCT` binding. |
+| Prompt template used | V1 wall framing slice 2 approved specification correction and bounded implementation, 11 October 2026. |
+| Approved Cursor prompt summary | Implement the approved opening, sill, corner, and extra-member rules on the existing calculator. Test. Do not deploy before acceptance. |
+| Files expected to change | Wall framing service, page, tests, and status records. |
+| Files prohibited from changing | The stud-position function, case files, migrations, and the public Website. |
+| Implementation result | The calculator accepts the approved rows and refuses an invalid row. Evidence is in the tests. Not accepted, not committed, and not deployed. |
+| Tests | `./venv/bin/python -m pytest -q` — 2344 passed, 11 skipped, 7216 warnings, 1211.69s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stock lengths, waste, fasteners, labour, pricing, and estimate handoff remain later slices. Checklist step 8 stays open. A real contractor phone was not used. |
+| Next approved step | ChatGPT acceptance, then commit, push, and deploy the accepted SHA. |
+| Next approved prompt | None from this record. |
+| Commit hash | Not committed. Awaiting acceptance. |
+
 ### 2026-10-11 — Straight wall framing is live
 
 | Field | Content |

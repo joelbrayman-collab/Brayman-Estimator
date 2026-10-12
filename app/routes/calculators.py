@@ -158,15 +158,55 @@ _EMPTY_WALL = {
     "top_plate_count": "",
     "bottom_plate_count": "",
 }
+_OPENING_FIELDS = (
+    ("opening_type", "opening_type"),
+    ("opening_width_in", "width_in"),
+    ("opening_height_ft", "height_ft"),
+    ("opening_position_in", "position_in"),
+    ("opening_sill_ft", "sill_ft"),
+)
+_CORNER_FIELDS = (
+    ("corner_end", "end"),
+    ("corner_count", "count"),
+    ("corner_stud_size", "stud_size"),
+    ("corner_length_ft", "length_ft"),
+)
+_MEMBER_FIELDS = (
+    ("member_kind", "kind"),
+    ("member_name", "name"),
+    ("member_count", "count"),
+    ("member_length_ft", "length_ft"),
+)
+
+
+def _form_rows(fields, minimum):
+    if request.method != "POST":
+        columns = [[] for _ in fields]
+    else:
+        columns = [request.form.getlist(form_name) for form_name, _service_key in fields]
+    count = max([minimum] + [len(column) for column in columns])
+    rows = []
+    for index in range(count):
+        rows.append(
+            {
+                service_key: (
+                    columns[column_index][index] if index < len(columns[column_index]) else ""
+                ).strip()
+                for column_index, (_form_name, service_key) in enumerate(fields)
+            }
+        )
+    return rows
 
 
 def _wall_framing_values():
     if request.method != "POST":
-        return dict(_EMPTY_WALL)
-    return {
-        key: (request.form.get(key) or "").strip()
-        for key in _EMPTY_WALL
-    }
+        wall = dict(_EMPTY_WALL)
+    else:
+        wall = {key: (request.form.get(key) or "").strip() for key in _EMPTY_WALL}
+    wall["openings"] = _form_rows(_OPENING_FIELDS, 2)
+    wall["corners"] = _form_rows(_CORNER_FIELDS, 1)
+    wall["extra_members"] = _form_rows(_MEMBER_FIELDS, 2)
+    return wall
 
 
 @calculators_bp.route("/wall-framing", methods=["GET", "POST"])
@@ -178,7 +218,17 @@ def wall_framing():
     drawing = None
     if request.method == "POST":
         try:
-            result = calculate_straight_wall(**values)
+            result = calculate_straight_wall(
+                length_ft=values["length_ft"],
+                height_ft=values["height_ft"],
+                spacing_in=values["spacing_in"],
+                stud_size=values["stud_size"],
+                top_plate_count=values["top_plate_count"],
+                bottom_plate_count=values["bottom_plate_count"],
+                openings=values["openings"],
+                corners=values["corners"],
+                extra_members=values["extra_members"],
+            )
             drawing = elevation_drawing(result)
         except WallFramingInputError as exc:
             error = str(exc)

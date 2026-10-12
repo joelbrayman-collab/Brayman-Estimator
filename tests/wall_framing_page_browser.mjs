@@ -129,7 +129,120 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     assert.ok(layout.scrollWidth <= 390, JSON.stringify(layout));
     assert.ok(layout.elevationRight <= 390, JSON.stringify(layout));
     assert.ok(layout.elevationWidth > 200, JSON.stringify(layout));
+
+    await page.fill("#stud_size", "2x4");
+    await page.fill("#top_plate_count", "2");
+    await page.selectOption("#opening_type_1", "door");
+    await page.fill("#opening_width_in_1", "32");
+    await page.fill("#opening_height_ft_1", "7");
+    await page.fill("#opening_position_in_1", "40");
+    await page.fill("#opening_sill_ft_1", "");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-remaining-count]").waitFor();
+    assert.equal(await page.locator("[data-stud-count]").innerText(), "9 original layout studs");
+    assert.equal(await page.locator("[data-remaining-count]").innerText(), "7 full-height studs");
+    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "56 lineal feet of full-height studs");
+    assert.equal(await page.locator("p[data-opening-positions]").innerText(), "Opening positions 48 in, 64 in");
+    assert.equal(await page.locator("[data-top-plate-lineal]").innerText(), "20 lineal feet of top plates");
+    assert.equal(await page.locator("[data-gross-area]").innerText(), "80 square feet gross wall area");
+    assert.equal(await page.locator("[data-total-lineal]").innerText(), "86 total lineal feet");
+    const doorSvg = page.locator("[data-wall-elevation] svg");
+    assert.equal(await doorSvg.getAttribute("data-stud-positions"), "0,16,32,48,64,80,96,112,120");
+    assert.equal(await doorSvg.getAttribute("data-opening-positions"), "48,64");
+    assert.equal(await doorSvg.getAttribute("data-full-height-positions"), "0,16,32,80,96,112,120");
+    assert.equal(await page.locator("[data-opening-type='door']").getAttribute("data-sill"), "0");
+    assert.equal(await page.locator(".stud").count(), 9);
+    assert.equal(await page.locator(".opening-station").count(), 2);
+
+    await page.selectOption("#opening_type_2", "window");
+    await page.fill("#opening_width_in_2", "16");
+    await page.fill("#opening_height_ft_2", "2");
+    await page.fill("#opening_position_in_2", "48");
+    await page.fill("#opening_sill_ft_2", "3");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[role='alert']").waitFor();
+    assert.match(await page.locator("[role='alert']").innerText(), /overlap/);
+    assert.equal(await page.locator("[data-wall-framing-result]").count(), 0);
+
+    await page.fill("#opening_position_in_2", "72");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("p[data-opening-positions]").waitFor();
+    assert.match(await page.locator("p[data-opening-positions]").innerText(), /48 in, 64 in, 80 in/);
+
+    await page.selectOption("#opening_type_2", "");
+    await page.fill("#opening_width_in_2", "");
+    await page.fill("#opening_height_ft_2", "");
+    await page.fill("#opening_position_in_2", "");
+    await page.fill("#opening_sill_ft_2", "");
+    await page.selectOption("#opening_type_1", "window");
+    await page.fill("#opening_width_in_1", "32");
+    await page.fill("#opening_height_ft_1", "3");
+    await page.fill("#opening_position_in_1", "16");
+    await page.fill("#opening_sill_ft_1", "3");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-remaining-count]").waitFor();
+    assert.equal(await page.locator("[data-remaining-count]").innerText(), "8 full-height studs");
+    assert.equal(await page.locator("p[data-opening-positions]").innerText(), "Opening positions 32 in");
+    assert.equal(await page.locator("[data-opening-type='window']").getAttribute("data-sill"), "3");
+    assert.match(await page.locator("[data-wall-framing-result]").innerText(), /unless you enter it/);
+
+    await page.fill("#opening_height_ft_1", "5");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-opening-type='window']").waitFor();
+    assert.equal(await page.locator("[data-opening-type='window']").getAttribute("data-height"), "5");
+    assert.equal(await page.locator("[data-opening-type='window']").getAttribute("data-sill"), "3");
+
+    await page.fill("#opening_height_ft_1", "6");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[role='alert']").waitFor();
+    assert.match(await page.locator("[role='alert']").innerText(), /wall height/);
+    assert.equal(await page.locator("[data-wall-framing-result]").count(), 0);
+
+    await page.fill("#opening_height_ft_1", "3");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-remaining-count]").waitFor();
+    assert.equal(await page.locator("[data-remaining-count]").innerText(), "8 full-height studs");
+
+    await page.selectOption("#opening_type_1", "");
+    await page.fill("#opening_width_in_1", "");
+    await page.fill("#opening_height_ft_1", "");
+    await page.fill("#opening_position_in_1", "");
+    await page.fill("#opening_sill_ft_1", "");
+    await page.selectOption("#corner_end_1", "left");
+    await page.fill("#corner_count_1", "2");
+    await page.fill("#corner_stud_size_1", "2x6");
+    await page.fill("#corner_length_ft_1", "8");
+    await page.selectOption("#member_kind_1", "king");
+    await page.fill("#member_count_1", "2");
+    await page.fill("#member_length_ft_1", "8");
+    await page.selectOption("#member_kind_2", "header");
+    await page.fill("#member_count_2", "1");
+    await page.fill("#member_length_ft_2", "3");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-stud-count]").waitFor();
+    assert.equal(await page.locator("[data-stud-count]").innerText(), "9 studs");
+    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "72 lineal feet of studs");
+    assert.equal(await page.locator("[data-total-lineal]").innerText(), "137 total lineal feet");
+    assert.match(await page.locator("[data-corner]").innerText(), /Left corner/);
+    assert.match(await page.locator("[data-corner]").innerText(), /16 ft/);
+    assert.match(await page.locator("[data-extra-member]").first().innerText(), /King studs/);
+
+    const extended = await page.evaluate(() => {
+      const elevation = document.querySelector("[data-wall-elevation]");
+      const box = elevation.getBoundingClientRect();
+      return {
+        innerWidth: window.innerWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        elevationRight: box.right,
+        elevationWidth: box.width,
+      };
+    });
+    assert.equal(pageErrors.length, 0, pageErrors.join("\n"));
+    assert.equal(extended.innerWidth, 390);
+    assert.ok(extended.scrollWidth <= 390, JSON.stringify(extended));
+    assert.ok(extended.elevationRight <= 390, JSON.stringify(extended));
     console.error(JSON.stringify(layout));
+    console.error(JSON.stringify(extended));
   } finally {
     if (browser) await browser.close();
     office.child.kill("SIGKILL");

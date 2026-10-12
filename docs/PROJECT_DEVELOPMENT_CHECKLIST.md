@@ -15,6 +15,12 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-12 wall framing slice 2 accepted):** Checklist Step 8 remains **OPEN**. ChatGPT accepted doors, windows, corners, and extra members on the existing wall calculator. They do not write an estimate and they do not bind `STRUCT`. Accepted full suite: 2344 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored. This note does not close Step 8.
+
+**Current status (2026-10-12 wall framing slice 2):** Checklist Step 8 remains **OPEN**. The approved Slice 2 working tree was tested again. Focused tests: 16 passed. Full suite: 2344 passed, 11 skipped, exit 0. It does not write an estimate and it does not bind `STRUCT`. It is not accepted and not deployed. The V1 register was not rescored. This note does not close Step 8.
+
+**Current status (2026-10-11 wall framing slice 2):** Checklist Step 8 remains **OPEN**. Doors, windows, corners, and extra members are in the working tree on the existing wall calculator. They do not write an estimate and they do not bind `STRUCT`. Full suite: 2344 passed, 11 skipped, exit 0. The slice is not accepted and not deployed. The V1 register was not rescored. This note does not close Step 8.
+
 **Current status (2026-10-11 wall framing live):** Checklist Step 8 remains **OPEN**. Deploy `dep-db5n88nlk1mc73aj6iu0` is live at `8e64bdb9542cccb74431f29a8e142fbd75ce8965`. The straight-wall calculator opens from Calculators. It does not write an estimate and it does not bind `STRUCT`. Integrity stayed `ok` and the revision stayed `t0a1b2c3d4e5`. The V1 register was not rescored. This note does not close Step 8.
 
 **Current status (2026-10-11 wall framing accepted):** Checklist Step 8 remains **OPEN**. ChatGPT accepted one straight-wall calculator. It does not write an estimate and it does not bind `STRUCT`. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. The V1 register was not rescored. This note does not close Step 8.

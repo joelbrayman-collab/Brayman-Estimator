@@ -7,7 +7,7 @@
 <div class="page-heading">
     <div>
         <h1>Wall framing calculator</h1>
-        <p class="muted-copy">Straight wood-framed wall. No project is required. Nothing is added to an estimate. No waste is added, and no stock length is chosen.</p>
+        <p class="muted-copy">Straight wood-framed wall. No project is required. Nothing is added to an estimate. No waste is added, and no stock length is chosen. Openings, corners, and extra members are optional.</p>
     </div>
 </div>
 
@@ -30,6 +30,63 @@
         <input id="top_plate_count" name="top_plate_count" inputmode="numeric" value="{{ values.top_plate_count }}">
         <label for="bottom_plate_count">Bottom plates</label>
         <input id="bottom_plate_count" name="bottom_plate_count" inputmode="numeric" value="{{ values.bottom_plate_count }}">
+        <p>A door starts at the bottom of the wall. A window needs a sill height. Leave a row empty if you are not using it.</p>
+        {% for opening in values.openings %}
+        <fieldset>
+            <legend>Opening {{ loop.index }}</legend>
+            <label for="opening_type_{{ loop.index }}">Opening type</label>
+            <select id="opening_type_{{ loop.index }}" name="opening_type">
+                <option value=""></option>
+                <option value="door" {% if opening.opening_type == 'door' %}selected{% endif %}>Door</option>
+                <option value="window" {% if opening.opening_type == 'window' %}selected{% endif %}>Window</option>
+            </select>
+            <label for="opening_width_in_{{ loop.index }}">Width (inches)</label>
+            <input id="opening_width_in_{{ loop.index }}" name="opening_width_in" inputmode="decimal" value="{{ opening.width_in }}">
+            <label for="opening_height_ft_{{ loop.index }}">Height (feet)</label>
+            <input id="opening_height_ft_{{ loop.index }}" name="opening_height_ft" inputmode="decimal" value="{{ opening.height_ft }}">
+            <label for="opening_position_in_{{ loop.index }}">Position from left end (inches)</label>
+            <input id="opening_position_in_{{ loop.index }}" name="opening_position_in" inputmode="decimal" value="{{ opening.position_in }}">
+            <label for="opening_sill_ft_{{ loop.index }}">Window sill height (feet)</label>
+            <input id="opening_sill_ft_{{ loop.index }}" name="opening_sill_ft" inputmode="decimal" value="{{ opening.sill_ft }}">
+        </fieldset>
+        {% endfor %}
+        {% for corner in values.corners %}
+        <fieldset>
+            <legend>Corner {{ loop.index }}</legend>
+            <label for="corner_end_{{ loop.index }}">Corner</label>
+            <select id="corner_end_{{ loop.index }}" name="corner_end">
+                <option value=""></option>
+                <option value="left" {% if corner.end == 'left' %}selected{% endif %}>Left</option>
+                <option value="right" {% if corner.end == 'right' %}selected{% endif %}>Right</option>
+            </select>
+            <label for="corner_count_{{ loop.index }}">Additional studs</label>
+            <input id="corner_count_{{ loop.index }}" name="corner_count" inputmode="numeric" value="{{ corner.count }}">
+            <label for="corner_stud_size_{{ loop.index }}">Stud size</label>
+            <input id="corner_stud_size_{{ loop.index }}" name="corner_stud_size" value="{{ corner.stud_size }}">
+            <label for="corner_length_ft_{{ loop.index }}">Member length (feet)</label>
+            <input id="corner_length_ft_{{ loop.index }}" name="corner_length_ft" inputmode="decimal" value="{{ corner.length_ft }}">
+        </fieldset>
+        {% endfor %}
+        {% for member in values.extra_members %}
+        <fieldset>
+            <legend>Extra member {{ loop.index }}</legend>
+            <label for="member_kind_{{ loop.index }}">Member</label>
+            <select id="member_kind_{{ loop.index }}" name="member_kind">
+                <option value=""></option>
+                <option value="king" {% if member.kind == 'king' %}selected{% endif %}>King stud</option>
+                <option value="jack" {% if member.kind == 'jack' %}selected{% endif %}>Jack stud</option>
+                <option value="cripple" {% if member.kind == 'cripple' %}selected{% endif %}>Cripple</option>
+                <option value="header" {% if member.kind == 'header' %}selected{% endif %}>Header</option>
+                <option value="other" {% if member.kind == 'other' %}selected{% endif %}>Other</option>
+            </select>
+            <label for="member_name_{{ loop.index }}">Other name</label>
+            <input id="member_name_{{ loop.index }}" name="member_name" value="{{ member.name }}">
+            <label for="member_count_{{ loop.index }}">Count</label>
+            <input id="member_count_{{ loop.index }}" name="member_count" inputmode="numeric" value="{{ member.count }}">
+            <label for="member_length_ft_{{ loop.index }}">Length (feet)</label>
+            <input id="member_length_ft_{{ loop.index }}" name="member_length_ft" inputmode="decimal" value="{{ member.length_ft }}">
+        </fieldset>
+        {% endfor %}
         <button type="submit">Calculate</button>
     </form>
 </section>
@@ -41,8 +98,25 @@
         {{ drawing|safe }}
     </div>
     <h2>Quantities</h2>
+    {% if result.intersecting_positions_in %}
+    <p data-stud-count>{{ result.displays.stud_count }} original layout studs</p>
+    <p data-remaining-count>{{ result.displays.remaining_stud_count }} full-height studs</p>
+    <p data-stud-lineal>{{ result.displays.remaining_stud_lineal_ft }} lineal feet of full-height studs</p>
+    <p data-opening-positions>Opening positions {{ result.displays.intersecting_positions }}</p>
+    <p>These stations meet an opening. Framing above or below a window is not included unless you enter it.</p>
+    {% else %}
     <p data-stud-count>{{ result.displays.stud_count }} studs</p>
     <p data-stud-lineal>{{ result.displays.stud_lineal_ft }} lineal feet of studs</p>
+    {% endif %}
+    {% for opening in result.openings %}
+    <p data-opening>{{ opening.display }}</p>
+    {% endfor %}
+    {% for corner in result.corners %}
+    <p data-corner>{{ corner.display }}</p>
+    {% endfor %}
+    {% for member in result.extra_members %}
+    <p data-extra-member>{{ member.display }}</p>
+    {% endfor %}
     <p data-top-plate-lineal>{{ result.displays.top_plate_lineal_ft }} lineal feet of top plates</p>
     <p data-bottom-plate-lineal>{{ result.displays.bottom_plate_lineal_ft }} lineal feet of bottom plates</p>
     <p data-total-lineal>{{ result.displays.total_lineal_ft }} total lineal feet</p>
@@ -50,6 +124,7 @@
     {% if result.displays.short_final_spacing_in %}
     <p data-short-spacing>Short final spacing {{ result.displays.short_final_spacing_in }} in</p>
     {% endif %}
+    <p>This is a quantity layout, not a purchasing takeoff.</p>
     <p>These quantities are not on an estimate.</p>
 </section>
 {% endif %}

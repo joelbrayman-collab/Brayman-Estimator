@@ -8,6 +8,12 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-12 wall framing slice 2 accepted):** No package was added or closed. The register was not rescored. ChatGPT accepted doors, windows, corners, and extra members. Full suite: 2344 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. Checklist step 8 stays open. `STRUCT` stays unbound.
+
+**Subsequent status (2026-10-12 wall framing slice 2):** No package was added or closed. The register was not rescored. The same Slice 2 working tree was tested again and still awaits acceptance. Checklist step 8 stays open. `STRUCT` stays unbound.
+
+**Subsequent status (2026-10-11 wall framing slice 2):** No package was added or closed. The register was not rescored. Doors, windows, corners, and extra members are implemented and await acceptance. Checklist step 8 stays open. `STRUCT` stays unbound.
+
 **Subsequent status (2026-10-11 wall framing live):** No package was added or closed. The register was not rescored. The straight-wall calculator is live at `8e64bdb9542cccb74431f29a8e142fbd75ce8965`, deploy `dep-db5n88nlk1mc73aj6iu0`. Checklist step 8 stays open. `STRUCT` stays unbound.
 
 **Subsequent status (2026-10-11 wall framing accepted):** No package was added or closed. The register was not rescored. ChatGPT accepted the straight-wall calculator. Full suite: 2339 passed, 11 skipped, exit 0. The release SHA is recorded after this commit. It is not deployed yet. Checklist step 8 stays open. `STRUCT` stays unbound.

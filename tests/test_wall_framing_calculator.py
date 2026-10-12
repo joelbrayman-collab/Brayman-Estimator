@@ -187,12 +187,282 @@ def test_standalone_page_calculates_without_creating_an_estimate(app, client):
     assert "80 square feet gross wall area" in body
     assert "Short final spacing 8 in" in body
     assert "These quantities are not on an estimate." in body
+    door = _post(
+        client,
+        opening_type="door",
+        opening_width_in="32",
+        opening_height_ft="7",
+        opening_position_in="40",
+    )
+    door_body = door.get_data(as_text=True)
+    assert "7 full-height studs" in door_body
+    assert "Opening positions 48 in, 64 in" in door_body
+    assert "86 total lineal feet" in door_body
+    assert "20 lineal feet of top plates" in door_body
+    assert "These stations meet an opening." in door_body
+    assert "data-wall-framing-result" in door_body
+    too_tall = _post(
+        client,
+        opening_type="window",
+        opening_width_in="32",
+        opening_height_ft="6",
+        opening_position_in="16",
+        opening_sill_ft="3",
+    )
+    assert "wall height" in too_tall.get_data(as_text=True)
+    assert "data-wall-framing-result" not in too_tall.get_data(as_text=True)
     assert (
         Project.query.count(),
         Client.query.count(),
         Estimate.query.count(),
         EstimateLineItem.query.count(),
     ) == before
+
+
+def _positions(*values):
+    return tuple(Decimal(value) for value in values)
+
+
+def _wall(**fields):
+    body = dict(FIXTURE)
+    body.update(fields)
+    return calculate_straight_wall(**body)
+
+
+def test_a_door_at_the_base_reclassifies_only_interior_studs():
+    result = _wall(
+        openings=[
+            {
+                "opening_type": "door",
+                "width_in": "32",
+                "height_ft": "7",
+                "position_in": "40",
+                "sill_ft": "",
+            }
+        ]
+    )
+    assert result["positions_in"] == stud_positions_inches("10", "16")
+    assert result["intersecting_positions_in"] == _positions(48, 64)
+    assert result["remaining_positions_in"] == _positions(0, 16, 32, 80, 96, 112, 120)
+    assert result["stud_count"] == 9
+    assert result["remaining_stud_count"] == 7
+    assert result["remaining_stud_lineal_ft"] == Decimal("56")
+    assert result["top_plate_lineal_ft"] == Decimal("20")
+    assert result["bottom_plate_lineal_ft"] == Decimal("10")
+    assert result["gross_wall_area_sqft"] == Decimal("80")
+    assert result["total_lineal_ft"] == Decimal("86")
+    assert result["openings"][0]["sill_ft"] == Decimal("0")
+    assert result["short_final_spacing_in"] == Decimal("8")
+
+
+def test_boundary_studs_stay_and_an_elevated_window_keeps_its_sill():
+    boundary = _wall(
+        openings=[
+            {
+                "opening_type": "door",
+                "width_in": "32",
+                "height_ft": "7",
+                "position_in": "32",
+                "sill_ft": "",
+            }
+        ]
+    )
+    assert boundary["intersecting_positions_in"] == _positions(48)
+    assert Decimal("32") in boundary["remaining_positions_in"]
+    assert Decimal("64") in boundary["remaining_positions_in"]
+    window = _wall(
+        openings=[
+            {
+                "opening_type": "window",
+                "width_in": "32",
+                "height_ft": "3",
+                "position_in": "16",
+                "sill_ft": "3",
+            }
+        ]
+    )
+    assert window["intersecting_positions_in"] == _positions(32)
+    assert window["remaining_stud_count"] == 8
+    assert window["remaining_stud_lineal_ft"] == Decimal("64")
+    assert window["openings"][0]["sill_ft"] == Decimal("3")
+    at_top = _wall(
+        openings=[
+            {
+                "opening_type": "window",
+                "width_in": "32",
+                "height_ft": "5",
+                "position_in": "16",
+                "sill_ft": "3",
+            }
+        ]
+    )
+    assert at_top["openings"][0]["sill_ft"] + at_top["openings"][0]["height_ft"] == Decimal("8")
+    assert at_top["intersecting_positions_in"] == _positions(32)
+
+
+def test_opening_rows_are_refused_or_kept_when_they_only_touch():
+    with pytest.raises(WallFramingInputError, match="overlap"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "door",
+                    "width_in": "32",
+                    "height_ft": "7",
+                    "position_in": "40",
+                    "sill_ft": "",
+                },
+                {
+                    "opening_type": "window",
+                    "width_in": "16",
+                    "height_ft": "2",
+                    "position_in": "48",
+                    "sill_ft": "3",
+                },
+            ]
+        )
+    touching = _wall(
+        openings=[
+            {
+                "opening_type": "door",
+                "width_in": "32",
+                "height_ft": "7",
+                "position_in": "16",
+                "sill_ft": "",
+            },
+            {
+                "opening_type": "window",
+                "width_in": "32",
+                "height_ft": "2",
+                "position_in": "48",
+                "sill_ft": "3",
+            },
+        ]
+    )
+    assert touching["intersecting_positions_in"] == _positions(32, 64)
+    assert Decimal("48") in touching["remaining_positions_in"]
+    with pytest.raises(WallFramingInputError, match="wall height"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "window",
+                    "width_in": "32",
+                    "height_ft": "6",
+                    "position_in": "16",
+                    "sill_ft": "3",
+                }
+            ]
+        )
+    with pytest.raises(WallFramingInputError, match="sill height"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "window",
+                    "width_in": "32",
+                    "height_ft": "3",
+                    "position_in": "16",
+                    "sill_ft": "",
+                }
+            ]
+        )
+    with pytest.raises(WallFramingInputError, match="wall base"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "door",
+                    "width_in": "32",
+                    "height_ft": "7",
+                    "position_in": "40",
+                    "sill_ft": "1",
+                }
+            ]
+        )
+    with pytest.raises(WallFramingInputError, match="wall length"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "door",
+                    "width_in": "30",
+                    "height_ft": "7",
+                    "position_in": "100",
+                    "sill_ft": "",
+                }
+            ]
+        )
+    with pytest.raises(WallFramingInputError, match="greater than zero"):
+        _wall(
+            openings=[
+                {
+                    "opening_type": "door",
+                    "width_in": "0",
+                    "height_ft": "7",
+                    "position_in": "40",
+                    "sill_ft": "",
+                }
+            ]
+        )
+    recovered = _wall(
+        openings=[
+            {
+                "opening_type": "door",
+                "width_in": "32",
+                "height_ft": "7",
+                "position_in": "40",
+                "sill_ft": "",
+            }
+        ]
+    )
+    assert recovered["remaining_stud_count"] == 7
+
+
+def test_corners_and_extra_members_are_explicit_lengths():
+    result = _wall(
+        corners=[{"end": "left", "count": "2", "stud_size": "2x6", "length_ft": "8"}],
+        extra_members=[
+            {"kind": "king", "name": "", "count": "2", "length_ft": "8"},
+            {"kind": "header", "name": "", "count": "1", "length_ft": "3"},
+            {"kind": "other", "name": "Sill", "count": "1", "length_ft": "3"},
+        ],
+    )
+    assert result["stud_count"] == 9
+    assert result["stud_lineal_ft"] == Decimal("72")
+    assert result["corners"][0]["lineal_ft"] == Decimal("16")
+    assert result["extra_members"][0]["lineal_ft"] == Decimal("16")
+    assert result["extra_members"][1]["lineal_ft"] == Decimal("3")
+    assert result["extra_members"][2]["label"] == "Sill"
+    assert result["total_lineal_ft"] == Decimal("140")
+    assert result["intersecting_positions_in"] == ()
+    with pytest.raises(WallFramingInputError, match="other member name"):
+        _wall(extra_members=[{"kind": "other", "name": "", "count": "1", "length_ft": "3"}])
+
+
+def test_the_extended_drawing_uses_the_calculated_geometry():
+    result = _wall(
+        openings=[
+            {
+                "opening_type": "window",
+                "width_in": "32",
+                "height_ft": "3",
+                "position_in": "16",
+                "sill_ft": "3",
+            }
+        ]
+    )
+    drawing = elevation_drawing(result)
+    listed = drawing.split('data-stud-positions="', 1)[1].split('"', 1)[0]
+    assert listed == ",".join(format(position, "f") for position in result["positions_in"])
+    openings = drawing.split('data-opening-positions="', 1)[1].split('"', 1)[0]
+    assert openings == "32"
+    full_height = drawing.split('data-full-height-positions="', 1)[1].split('"', 1)[0]
+    assert full_height == ",".join(format(position, "f") for position in result["remaining_positions_in"])
+    assert 'data-sill="3"' in drawing
+    assert 'data-height="3"' in drawing
+    assert 'data-position="16"' in drawing
+    assert drawing.count('class="stud') == result["stud_count"]
+    assert drawing.count("opening-station") == 1
+    assert "sill 3 ft" in drawing
+    plain = elevation_drawing(calculate_straight_wall(**FIXTURE))
+    assert "data-opening-positions" not in plain
+    assert plain.count('class="stud"') == 9
 
 
 def test_contractor_wall_framing_page_in_the_browser():

@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Wall framing openings accepted (2026-10-12)
+
+| Field | Content |
+|-------|---------|
+| Slice | Doors, windows, corners, and extra members on the wall framing calculator. |
+| Product status at capture | ChatGPT accepted the slice. The release SHA is recorded after this commit. It is not deployed yet. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can add doors, windows with a sill height, corner studs, and named extra members to one straight wall and see the layout count. |
+| 2. When would the contractor use it? | When the straight wall has openings or extra members and no project or estimate exists yet. |
+| 3. What workflow will the final Manual need to teach? | Open Wall framing calculator, enter the wall, add each opening or member, then choose Calculate. A door starts at the bottom. A window needs a sill height. |
+| 4. What contractor-facing terms must be used? | Opening type. Width. Height. Position from left end. Window sill height. Full-height studs. Opening positions. Corner. King stud. Jack stud. Cripple. Header. |
+| 5. What screenshots / Print examples will eventually be needed? | The elevation with a door and a window, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | The page lays out the wall. It does not size members, add waste, or choose a stock length. One invalid opening row is refused. Overlapping openings are refused. Touching edges are allowed. |
+| 7. Desktop / iPhone / Print relevance | Checked in a desktop browser and at 390 by 844 before release. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
+### MANUAL IMPACT — Wall framing openings and corners (2026-10-11)
+
+| Field | Content |
+|-------|---------|
+| Slice | Doors, windows, corners, and extra members on the wall framing calculator. |
+| Product status at capture | Implemented and tested. Not accepted, not committed, and not deployed. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | A signed-in person can add doors, windows with a sill height, corner studs, and named extra members to one straight wall and see the layout count. |
+| 2. When would the contractor use it? | When the straight wall has openings or extra members and no project or estimate exists yet. |
+| 3. What workflow will the final Manual need to teach? | Open Wall framing calculator, enter the wall, add each opening or member, then choose Calculate. A door starts at the bottom. A window needs a sill height. |
+| 4. What contractor-facing terms must be used? | Opening type. Width. Height. Position from left end. Window sill height. Full-height studs. Opening positions. Corner. King stud. Jack stud. Cripple. Header. |
+| 5. What screenshots / Print examples will eventually be needed? | The elevation with a door and a window, after a person uses a real phone. Do not capture a screenshot in this note. |
+| 6. What warnings / validation distinctions need explanation? | The page lays out the wall. It does not size members, add waste, or choose a stock length. One invalid opening row is refused. Overlapping openings are refused. Touching edges are allowed. |
+| 7. Desktop / iPhone / Print relevance | Checked in a desktop browser and at 390 by 844. A real contractor phone was not used. Print was not used. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Straight wall framing live (2026-10-11)
 
 | Field | Content |

@@ -3,9 +3,17 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-11 |
+| Updated | 2026-10-12 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 12 Oct 2026 — Wall framing slice 2 accepted for release
+
+ChatGPT accepted doors, windows, corners, and extra members on the existing wall calculator. `stud_positions_inches` is unchanged. A window keeps its entered sill height. A door starts at the wall base. The 10 ft by 8 ft, 16 in wall still returns 9 studs, 72 stud feet, 20 top-plate feet, 10 bottom-plate feet, 102 total feet, and 80 square feet when no opening is entered. A door at 40 in, 32 in wide and 7 ft high, marks stations 48 in and 64 in and leaves 7 full-height studs, 56 ft, with the same plates and area and an accounted total of 86 ft. Accepted tests were not rerun: focused 16 passed in 13.21s, and `./venv/bin/python -m pytest -q` was 2344 passed, 11 skipped, 7216 warnings, 1221.93s, exit 0. The release SHA is recorded after this commit. It is not deployed yet. Checklist step 8 stays **OPEN**. The V1 register was not rescored.
+
+## 11 Oct 2026 — Wall framing slice 2 awaits acceptance
+
+Doors, windows, corners, and named extra members are on the existing wall calculator. `stud_positions_inches` is unchanged. A window requires a sill height. A door starts at the wall base. Layout studs strictly inside an opening width are marked as opening stations and are not counted as full-height studs. Edge studs stay. Plates and gross area stay the full wall. Corners and extra members use the count and length the contractor enters. The 10 ft by 8 ft, 16 in wall with a door at 40 in, 32 in wide and 7 ft high, keeps 9 layout studs, marks 48 in and 64 in, and counts 7 full-height studs, 56 ft, with plates of 20 ft and 10 ft, area 80 sq ft, and 86 total ft. Focused calculator tests passed, including the browser. `./venv/bin/python -m pytest -q` — 2344 passed, 11 skipped, 7216 warnings, 1211.69s, exit 0. This slice is not accepted, not committed, and not deployed. Live product remains `8e64bdb9542cccb74431f29a8e142fbd75ce8965`. Checklist step 8 stays **OPEN**. The V1 register was not rescored.
 
 ## 11 Oct 2026 — Straight wall framing is live
 

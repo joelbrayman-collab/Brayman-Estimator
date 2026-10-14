@@ -1,4 +1,9 @@
-"""Supplier request PDF on the approved Brayman page, and the response intake."""
+"""Supplier request PDF on the approved Brayman page, and the response intake.
+
+These tests reproduce requests issued on the historical eight-box form (form 1).
+Those requests, their stored PDFs and their field mappings are preserved. The
+current four-box form (form 2) is tested in test_deck_takeoff_supplier_form_v2.py.
+"""
 
 from __future__ import annotations
 
@@ -45,7 +50,7 @@ SOURCE = {"project_id": 7, "construction_model_revision_number": 3, "constructio
 DARCY_FIELDS = ("sku", "product_confirmed", "unit_price", "discount", "net_price", "availability", "lead_time", "substitution")
 
 
-def _built(project_id=7, facts=None, content=None):
+def _built(project_id=7, facts=None, content=None, response_form=1):
     basis, _ = read_basis(content or with_codes(model(), {"stringer": "TEST-PT-2X12-8"}), SOURCE)
     takeoff = calculate_pool_deck_takeoff(basis, facts if facts is not None else TEST_PRODUCT)
     return build_request(
@@ -59,6 +64,7 @@ def _built(project_id=7, facts=None, content=None):
         supplier_id=2,
         supplier_location_id=4,
         issued_by="Test office",
+        response_form=response_form,
     )
 
 

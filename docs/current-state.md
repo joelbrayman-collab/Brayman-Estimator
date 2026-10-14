@@ -3,9 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-13 |
+| Updated | 2026-10-14 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 14 Oct 2026 — BMR supplier request Form 2 accepted; release branch prepared, not committed
+
+Form 2 replaces the nine response boxes on new pool-deck supplier requests with three supplier inputs — SKU, Unit cost, Discount % — and a printed "Calculated by Brayman" Total. The PDF has no JavaScript and needs no particular viewer (Apple Preview and pdf.js round trips verified). CalibraytAI is the sole calculation authority: net = round_to_cent(unit cost × (1 − discount/100)), line total = quantity × net. The Recordable Quoted Total adds only complete, eligible lines (valid SKU, unit cost, explicit discount including 0%, FINAL QUANTITY, purchasing unit, no unresolved substitution, valid identity); other quoted lines are listed with the reason and a separate provisional value. Not an approved cost; Brayman cost approval is unchanged. Substitutions are written as line number and replacement SKU under General Notes; named lines are held for review and any notes must be confirmed before recording. A response with no prices is not stored and hand entry opens. Historical nine-box requests keep their PDF, identity and mapping. No migration. Branch `supplier/form-2` from live `0edc97f`; not committed; not deployed.
 
 ## 13 Oct 2026 — Takeoff integration: catalogue migration prepared, live form math, J1 reconciliation
 

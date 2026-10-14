@@ -427,7 +427,7 @@ def _chrome(form, page_w, page_h, page_no, project_name, project_address, suppli
     form.drawRightString(page_w - 0.45 * inch, 0.16 * inch, f"Page {page_no}")
 
 
-def _closing_field(form, name, tooltip, x, y, width, height=16, read_only=False):
+def _closing_field(form, name, tooltip, x, y, width, height=16, read_only=False, maxlen=180, multiline=False):
     form.acroForm.textfield(
         name=name,
         tooltip=tooltip,
@@ -442,8 +442,8 @@ def _closing_field(form, name, tooltip, x, y, width, height=16, read_only=False)
         forceBorder=True,
         fontName="Times-Roman",
         fontSize=9,
-        maxlen=180,
-        fieldFlags="readOnly" if read_only else "",
+        maxlen=maxlen,
+        fieldFlags=" ".join(f for f in ("readOnly" if read_only else "", "multiline" if multiline else "") if f),
     )
 
 
@@ -521,6 +521,45 @@ RESPONSE_FIELDS = (
 # Calculated in the PDF itself. The supplier does not type these.
 CALCULATED_FIELDS = ("line_total",)
 
+# Form 2 (14 Oct 2026, Joel): the supplier enters the SKU, the unit cost and
+# the discount. The Total column is printed, not a field: CalibraytAI calculates
+# every line total and the grand total on the server when the PDF comes back.
+# The PDF carries no JavaScript, so any viewer that saves form fields works.
+# Requests issued before this keep form 1 above; their stored PDFs are never re-rendered.
+RESPONSE_FIELDS_V2 = (
+    ("sku", "SKU", 40),
+    ("unit_cost", "Unit cost", 20),
+    ("discount", "Discount %", 12),
+)
+RESPONSE_FORM_FIELDS = {1: RESPONSE_FIELDS, 2: RESPONSE_FIELDS_V2}
+CALCULATED_BY_BRAYMAN = "Calculated by Brayman"
+
+
+def _response_columns_v2(left: float, content_w: float):
+    no_w = 0.36 * inch
+    qty_w = 0.55 * inch
+    unit_w = 0.7 * inch
+    widths_in = (("sku", 1.75), ("unit_cost", 1.05), ("discount", 0.9))
+    total_w = 1.2 * inch
+    block = sum(w for _n, w in widths_in) * inch + total_w
+    item_w = content_w - (no_w + qty_w + unit_w + block)
+    x = left
+    cols = {"no": x}
+    x += no_w
+    cols["item"] = x
+    x += item_w
+    cols["qty"] = x
+    x += qty_w
+    cols["unit"] = x
+    x += unit_w
+    cols["block"] = x
+    fields = {}
+    for name, width in widths_in:
+        fields[name] = (x, width * inch, 1)
+        x += width * inch
+    cols["total"] = x
+    return cols, {"item": item_w, "qty": qty_w, "unit": unit_w, "total": total_w}, fields
+
 
 def _response_columns(left: float, content_w: float):
     no_w = 0.36 * inch
@@ -582,8 +621,13 @@ def render_supplier_response_request(
     request_id: str,
     project_id: int,
     contact_label: str = "Supplier contact",
+    layout: int = 2,
 ) -> bytes:
-    """The approved page with the supplier's eight response boxes on each row."""
+    """The approved page with the supplier's response boxes on each row.
+
+    Layout 2 (current): SKU, unit cost, discount %, calculated total.
+    Layout 1: the historical eight boxes, kept so earlier requests can be reproduced in tests.
+    """
     from reportlab.platypus import Paragraph
 
     buffer = BytesIO()
@@ -595,26 +639,36 @@ def render_supplier_response_request(
     form.setSubject(f"Request {request_id}")
     left = 0.4 * inch
     content_w = page_w - 0.8 * inch
-    cols, widths, fields = _response_columns(left, content_w)
+    if layout not in RESPONSE_FORM_FIELDS:
+        raise ValueError(f"Unknown supplier response layout {layout!r}.")
+    spec = RESPONSE_FORM_FIELDS[layout]
+    labels = dict((name, label) for name, label, _ in spec)
+    maxlens = dict((name, m) for name, _, m in spec)
+    cols, widths, fields = (_response_columns_v2 if layout == 2 else _response_columns)(left, content_w)
     item_style = ParagraphStyle("item", fontName="Times-Roman", fontSize=7.5, leading=9, textColor=colors.black)
     intro_style = ParagraphStyle("intro", fontName="Times-Roman", fontSize=8, leading=10, textColor=PRIMARY)
     page_no = 1
     _hidden(form, "request_id", request_id)
     _hidden(form, "request_project", str(int(project_id)))
+    if layout == 2:
+        _hidden(form, "response_form", "2")
+
+    head_h = 26 if layout == 1 else 18
 
     def paint_header(top: float) -> float:
         form.setFillColor(PRIMARY)
-        form.rect(left, top - 26, content_w, 26, fill=1, stroke=0)
+        form.rect(left, top - head_h, content_w, head_h, fill=1, stroke=0)
         form.setFillColor(colors.white)
         form.setFont("Times-Bold", 8)
         form.drawString(cols["no"] + 2, top - 11, "No.")
         form.drawString(cols["item"] + 2, top - 11, "Item")
         form.drawString(cols["qty"] + 2, top - 11, "Qty")
         form.drawString(cols["unit"] + 2, top - 11, "Unit")
-        labels = dict((name, label) for name, label, _ in RESPONSE_FIELDS)
         for name, (x, _w, tier) in fields.items():
             form.drawString(x + 2, top - (11 if tier == 1 else 22), labels[name])
-        return top - 26
+        if layout == 2:
+            form.drawString(cols["total"] + 2, top - 11, "Total")
+        return top - head_h
 
     def start_page(first: bool) -> float:
         _chrome(form, page_w, page_h, page_no, project_name, project_address, supplier_name, issued_on)
@@ -637,7 +691,7 @@ def render_supplier_response_request(
             text = f"<b>{_xml(row['status_label'])}</b><br/>{text}"
         block = Paragraph(text, item_style)
         _, text_h = block.wrap(widths["item"] - 6, 400)
-        row_h = max(48, text_h + 8)
+        row_h = max(48 if layout == 1 else 30, text_h + 8)
         if cursor - row_h < bottom:
             form.showPage()
             page_no += 1
@@ -661,7 +715,7 @@ def render_supplier_response_request(
             top_of_box = cursor - 14 - (tier - 1) * 20
             form.acroForm.textfield(
                 name=f"{name}_{number:02d}",
-                tooltip=f"{dict((n, l) for n, l, _ in RESPONSE_FIELDS)[name]} for item {number}",
+                tooltip=f"{labels[name]} for item {number}",
                 x=x + 1,
                 y=top_of_box - 17,
                 width=width - 2,
@@ -674,14 +728,20 @@ def render_supplier_response_request(
                 fontName="Times-Roman",
                 fontSize=8,
                 value="",
-                maxlen=dict((n, m) for n, _, m in RESPONSE_FIELDS)[name],
+                maxlen=maxlens[name],
                 fieldFlags="readOnly" if name in CALCULATED_FIELDS else "",
             )
+        if layout == 2:
+            # Printed, not a field: the supplier cannot type a total, and no viewer has to calculate one.
+            form.setFillColor(colors.HexColor("#6b7280"))
+            form.setFont("Times-Italic", 7.5)
+            form.drawString(cols["total"] + 4, cursor - 26, CALCULATED_BY_BRAYMAN if row.get("qty") not in (None, "", "TBD") else "Qty TBD")
+            form.setFillColor(colors.black)
         _hidden(form, f"line_key_{number:02d}", str(row["key"]))
         _hidden(form, f"line_sig_{number:02d}", str(row["signature"]))
         cursor = row_bottom
 
-    if cursor - 70 < bottom:
+    if cursor - (70 if layout == 1 else 124) < bottom:
         form.showPage()
         page_no += 1
         _chrome(form, page_w, page_h, page_no, project_name, project_address, supplier_name, issued_on)
@@ -697,20 +757,51 @@ def render_supplier_response_request(
     _closing_field(form, "valid_until", "Prices valid until", left + 6.85 * inch, cursor - 16, 1.5 * inch)
     form.setFont("Times-Bold", 9)
     form.drawString(left + 8.5 * inch, cursor - 12, "Total")
-    _closing_field(form, "grand_total", "Total of the line totals", left + 8.9 * inch, cursor - 16, content_w - 8.9 * inch, read_only=True)
+    if layout == 2:
+        form.setFillColor(colors.HexColor("#6b7280"))
+        form.setFont("Times-Italic", 8)
+        form.drawString(left + 8.9 * inch + 4, cursor - 12, CALCULATED_BY_BRAYMAN)
+    else:
+        _closing_field(form, "grand_total", "Total of the line totals", left + 8.9 * inch, cursor - 16, content_w - 8.9 * inch, read_only=True)
     cursor -= 28
     form.setFillColor(PRIMARY)
     form.setFont("Times-Roman", 9)
     form.drawString(left, cursor - 12, "General notes")
-    _closing_field(form, "general_notes", "General notes", left + 1.05 * inch, cursor - 16, content_w - 1.05 * inch, height=16)
-    form.setFont("Times-Roman", 7.5)
-    form.drawString(
-        left,
-        cursor - 30,
-        "Net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity. "
-        "The total adds every line total. Lines marked TBD have no total.",
-    )
+    if layout == 2:
+        # Taller, multi-line notes box with the substitution instruction under it.
+        _closing_field(form, "general_notes", "General notes. For a substitution: line number and replacement SKU.",
+                       left + 1.05 * inch, cursor - 40, content_w - 1.05 * inch, height=40, maxlen=1000, multiline=True)
+        form.setFont("Times-Bold", 8)
+        form.drawString(
+            left, cursor - 54,
+            "Substitutions: write the original line number and your replacement SKU, one per line, for example "
+            "\"Line 9 - replacement SKU GATE-48-BLK\".",
+        )
+        form.setFont("Times-Roman", 7.5)
+        form.drawString(
+            left, cursor - 65,
+            "Price the replacement in that line's boxes. Brayman reviews every substitution before its price is used.",
+        )
+        form.drawString(
+            left, cursor - 78,
+            "Brayman calculates each line total (quantity x unit cost less the discount, the net rounded to the cent) and the grand total when this PDF is returned. "
+            "Enter 0 for no discount; a blank discount is not zero.",
+        )
+        form.drawString(
+            left, cursor - 89,
+            "Any PDF viewer that saves form fields can be used (for example Apple Preview or Adobe Acrobat Reader). Save the PDF after typing. Prices CAD before HST.",
+        )
+    else:
+        _closing_field(form, "general_notes", "General notes", left + 1.05 * inch, cursor - 16, content_w - 1.05 * inch, height=16)
+        form.setFont("Times-Roman", 7.5)
+        form.drawString(
+            left, cursor - 30,
+            "Net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity. "
+            "The total adds every line total. Lines marked TBD have no total.",
+        )
     form.save()
+    if layout == 2:
+        return buffer.getvalue()  # no embedded JavaScript
     return _add_live_calculations(buffer.getvalue(), rows)
 
 

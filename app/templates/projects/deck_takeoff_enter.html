@@ -10,32 +10,40 @@
         <h1>Enter the supplier response</h1>
         <p class="muted-copy">
             Request {{ manifest.request_id }} to {{ manifest.supplier_name }}. Type what the supplier returned. A blank is not zero.
-            The net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity.
+            {% if form_version == 2 %}The total is Brayman's quantity × the unit cost less the discount (0 if none); a blank discount leaves it blank.
+            {% else %}The net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity.{% endif %}
         </p>
     </div>
     <div><a class="button-link" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Back to the takeoff</a></div>
 </div>
-<form method="post" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" id="supplier-response-form">
+<form method="post" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" id="supplier-response-form" data-form-version="{{ form_version }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="request_id" value="{{ manifest.request_id }}">
     <input type="hidden" name="request_project" value="{{ project.id }}">
     <div class="form-panel">
         <div style="overflow-x: auto;">
         <table class="data-table">
-            <thead><tr><th>No.</th><th>Item</th><th>Qty</th>{% for f in fields %}<th>{{ f|replace('_', ' ')|capitalize }}</th>{% endfor %}<th>Line total</th></tr></thead>
+            <thead><tr><th>No.</th><th>Item</th><th>Qty</th>{% for f in fields %}<th>{{ 'SKU' if f == 'sku' else (f|replace('_', ' ')|capitalize) }}{% if f == 'discount' %} %{% endif %}</th>{% endfor %}<th>{{ 'Total' if form_version == 2 else 'Line total' }}</th></tr></thead>
             <tbody>
             {% for line in manifest.lines %}
             {% set n = '%02d'|format(line.number) %}
-            <tr data-line="{{ n }}" data-qty="{{ line.purchasing_quantity if line.purchasing_quantity is not none else '' }}">
+            <tr data-line="{{ n }}" data-qty="{{ line.purchasing_quantity if line.purchasing_quantity is not none else '' }}" data-final="{{ 1 if line.complete else 0 }}" data-uom="{{ line.purchasing_unit or '' }}">
                 <td>{{ line.number }}<input type="hidden" name="line_key_{{ n }}" value="{{ line.key }}"><input type="hidden" name="line_sig_{{ n }}" value="{{ line.signature }}"></td>
                 <td>{{ line.description }}<div class="muted-copy">{{ line.status_label }}</div></td>
                 <td>{{ line.qty }} {{ line.purchasing_unit or '' }}</td>
-                {% for f in fields %}<td><input name="{{ f }}_{{ n }}" value="" size="8"{% if f in ('unit_price', 'discount', 'net_price') %} inputmode="decimal"{% endif %}></td>{% endfor %}
+                {% for f in fields %}<td><input name="{{ f }}_{{ n }}" value="" size="8"{% if f in ('unit_price', 'unit_cost', 'discount', 'net_price') %} inputmode="decimal"{% endif %}></td>{% endfor %}
                 <td data-line-total="{{ n }}"></td>
             </tr>
             {% endfor %}
             </tbody>
+            {% if form_version == 2 %}
+            <tfoot>
+                <tr><td colspan="{{ 3 + fields|length }}" style="text-align: right;"><strong>Recordable Quoted Total (preview; the server recalculates)</strong></td><td><strong id="grand-total"></strong></td></tr>
+                <tr><td colspan="{{ 3 + fields|length }}" style="text-align: right;">Provisional value of partial or excluded lines (not included)</td><td id="provisional-value"></td></tr>
+            </tfoot>
+            {% else %}
             <tfoot><tr><td colspan="{{ 3 + fields|length }}" style="text-align: right;"><strong>Total</strong></td><td><strong id="grand-total"></strong></td></tr></tfoot>
+            {% endif %}
         </table>
         </div>
     </div>
@@ -43,31 +51,82 @@
         <label>Supplier contact <input name="bmr_contact"></label>
         <label>Response date <input name="response_date" placeholder="YYYY-MM-DD"></label>
         <label>Prices valid until <input name="valid_until" placeholder="YYYY-MM-DD"></label>
-        <label>General notes <input name="general_notes"></label>
+        <label>General notes{% if form_version == 2 %} (substitutions: line number and replacement SKU){% endif %} <input name="general_notes"></label>
         <label>Entered by <input name="actor_display_name"></label>
         <div class="form-actions"><button type="submit">Check the response</button></div>
     </div>
 </form>
 <script>
 (function () {
-    // Same arithmetic as the PDF form. The server checks it again on import.
+    // Form 1: same arithmetic as the historical PDF form. Form 2: the server's rule, previewed. The server recalculates on import.
     var form = document.getElementById("supplier-response-form");
     function num(text, strip) {
         var clean = String(text || "").replace(strip, "");
         return clean !== "" && !isNaN(clean) ? Number(clean) : null;
     }
     function cents(value) { return (Math.round(value * 100 + 1e-7) / 100).toFixed(2); }
+    function notedLines() {
+        // Same reading as the server: "Line 9", "Item #9", "No. 9".
+        var text = (form.elements["general_notes"] || {}).value || "", found = {}, m;
+        var re = /\b(?:line|item|no\.?|#)\s*#?\s*(\d{1,3})\b/gi;
+        while ((m = re.exec(text)) !== null) { found[Number(m[1])] = true; }
+        return found;
+    }
+    function recalcV2() {
+        // Recordable Quoted Total: complete, eligible lines only. Everything else is shown as provisional.
+        var total = 0, counted = 0, provisional = 0, provCount = 0, noted = notedLines();
+        form.querySelectorAll("tr[data-line]").forEach(function (row) {
+            var n = row.getAttribute("data-line");
+            var sku = String(form.elements["sku_" + n].value || "").trim();
+            var unitText = form.elements["unit_cost_" + n].value, discText = form.elements["discount_" + n].value;
+            var unit = num(unitText, /[$,\s]/g), discount = num(discText, /[%\s]/g);
+            var cell = row.querySelector("[data-line-total]");
+            var quoted = sku !== "" || String(unitText).trim() !== "" || String(discText).trim() !== "";
+            if (!quoted) { cell.textContent = row.getAttribute("data-qty") === "" ? "Qty TBD" : ""; return; }
+            var reasons = [];
+            var unitOk = unit !== null && unit >= 0, discOk = discount !== null && discount >= 0 && discount <= 100;
+            if (String(unitText).trim() !== "" && !unitOk || String(discText).trim() !== "" && !discOk) reasons.push("Invalid pricing");
+            if (!sku) reasons.push("Missing SKU");
+            if (String(unitText).trim() === "") reasons.push("Missing unit cost");
+            if (String(discText).trim() === "") reasons.push("Blank discount");
+            var qtyText = row.getAttribute("data-qty");
+            if (qtyText === "") reasons.push("Missing or TBD quantity");
+            else if (row.getAttribute("data-final") !== "1") reasons.push("Quantity not verified");
+            if (!row.getAttribute("data-uom")) reasons.push("Missing purchasing unit");
+            if (noted[Number(n)]) reasons.push("Unresolved substitution");
+            var lineTotal = null;
+            if (unitOk && discOk && qtyText !== "") {
+                lineTotal = Number(cents((Math.round(unit * (100 - discount) + 1e-7) / 100) * Number(qtyText)));
+            }
+            if (!reasons.length && lineTotal !== null) {
+                cell.textContent = lineTotal.toFixed(2); total += lineTotal; counted += 1;
+            } else {
+                cell.textContent = (lineTotal !== null ? lineTotal.toFixed(2) + " provisional — " : "") + "not in total: " + reasons.join("; ");
+                if (lineTotal !== null) { provisional += lineTotal; provCount += 1; }
+            }
+        });
+        document.getElementById("grand-total").textContent = counted ? cents(total) : "";
+        document.getElementById("provisional-value").textContent = provCount ? cents(provisional) : "";
+    }
     function recalc() {
+        if (form.getAttribute("data-form-version") === "2") { recalcV2(); return; }
         var total = 0, counted = 0;
         form.querySelectorAll("tr[data-line]").forEach(function (row) {
             var n = row.getAttribute("data-line");
-            var unit = num(form.elements["unit_price_" + n].value, /[$,\s]/g);
+            var v2 = form.getAttribute("data-form-version") === "2";
+            var unit = num(form.elements[(v2 ? "unit_cost_" : "unit_price_") + n].value, /[$,\s]/g);
             var discount = num(form.elements["discount_" + n].value, /[%\s]/g);
-            var netField = form.elements["net_price_" + n];
-            if (unit !== null && discount !== null && discount >= 0 && discount <= 100) {
-                netField.value = (Math.round(unit * (100 - discount) + 1e-7) / 100).toFixed(2);
+            var valid = unit !== null && unit >= 0 && discount !== null && discount >= 0 && discount <= 100;
+            var net = null;
+            if (v2) {
+                net = valid ? Math.round(unit * (100 - discount) + 1e-7) / 100 : null;
+            } else {
+                var netField = form.elements["net_price_" + n];
+                if (valid) {
+                    netField.value = (Math.round(unit * (100 - discount) + 1e-7) / 100).toFixed(2);
+                }
+                net = num(netField.value, /[$,\s]/g);
             }
-            var net = num(netField.value, /[$,\s]/g);
             var qtyText = row.getAttribute("data-qty");
             var cell = row.querySelector("[data-line-total]");
             if (net !== null && qtyText !== "") {

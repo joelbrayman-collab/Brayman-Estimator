@@ -22,13 +22,15 @@ from app.services.contractor_cost_approval import (
 )
 from app.services.deck_takeoff import storage
 from app.services.deck_takeoff.intake import (
-    FIELDS,
+    NO_PRICES_WARNING,
     READY_TO_RECORD,
     SupplierResponseError,
     answers_from_values,
     read_response_pdf,
     reconcile,
     record_ready_lines,
+    response_fields,
+    response_form,
 )
 from app.services.deck_takeoff.product_facts import SCHEMA, ProductFactError, clean_product_facts
 from app.services.deck_takeoff.project import project_takeoff
@@ -169,7 +171,8 @@ def enter_response(project_id, request_id):
         abort(404)
     if manifest is None:
         abort(404)
-    return render_template("projects/deck_takeoff_enter.html", project=project, manifest=manifest, fields=FIELDS)
+    fields = [f for f in response_fields(manifest) if f != "line_total"]
+    return render_template("projects/deck_takeoff_enter.html", project=project, manifest=manifest, fields=fields, form_version=response_form(manifest))
 
 
 @deck_takeoff_bp.route("/<int:project_id>/deck-takeoff/responses", methods=["POST"])
@@ -203,6 +206,10 @@ def import_response(project_id):
     except (SupplierResponseError, storage.TakeoffStorageError) as exc:
         flash(str(exc), "error")
         return redirect(url_for("deck_takeoff.review", project_id=project.id))
+    if reconciliation.get("no_prices_found"):
+        # Nothing to price: most often a PDF viewer that did not save the typed values. Keep manual entry open.
+        flash(NO_PRICES_WARNING, "error")
+        return redirect(url_for("deck_takeoff.enter_response", project_id=project.id, request_id=reconciliation["request_id"]))
     actor = form_actor("actor_display_name") or "Office"
     record = {
         **reconciliation,
@@ -271,7 +278,13 @@ def record_response(project_id, response_id):
         return redirect(url_for("deck_takeoff.view_response", project_id=project.id, response_id=response_id))
     actor = form_actor("actor_display_name")
     try:
-        results = record_ready_lines(record, actor_display_name=actor, demo_synthetic=bool(getattr(project, "demo_synthetic", False)))
+        notes_reviewed = request.form.get("notes_reviewed") == "yes"
+        results = record_ready_lines(
+            record,
+            actor_display_name=actor,
+            demo_synthetic=bool(getattr(project, "demo_synthetic", False)),
+            notes_reviewed=notes_reviewed,
+        )
     except SupplierResponseError as exc:
         flash(str(exc), "error")
         return redirect(url_for("deck_takeoff.view_response", project_id=project.id, response_id=response_id))
@@ -286,6 +299,7 @@ def record_response(project_id, response_id):
             "request_id": record["request_id"],
             "recorded_by": actor,
             "recorded_at": datetime.utcnow().isoformat(timespec="seconds"),
+            "notes_reviewed_by": actor if record.get("notes_review_required") else None,
             "results": results,
         },
         None,

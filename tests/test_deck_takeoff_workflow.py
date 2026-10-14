@@ -171,15 +171,10 @@ def test_full_price_chain_for_every_new_category(app, client):
         values.update(
             {
                 f"sku_{n}": f"TEST-SKU-{i}",
-                f"product_confirmed_{n}": "Yes",
-                f"unit_price_{n}": "10.00",
+                f"unit_cost_{n}": "10.00",
                 f"discount_{n}": "10",
-                f"availability_{n}": "In stock",
-                f"lead_time_{n}": "2 days",
             }
         )
-        if i % 2 == 0:
-            values[f"net_price_{n}"] = "9.00"  # every other line leaves the net for the check to calculate
     returned = _fill(pdf, values)
 
     refused = client.post(
@@ -216,7 +211,7 @@ def test_full_price_chain_for_every_new_category(app, client):
     deck_fasteners = next(m for m in mapped if m.code.startswith("CAL-FAST-DECK-"))
     assert deck_fasteners.canonical_uom == "PKG"
     assert SupplierProduct.query.filter_by(sku="TEST-SKU-9").one().sales_uom == "PKG"
-    assert SupplierProductAvailabilityEvidence.query.count() == len(wanted)
+    assert SupplierProductAvailabilityEvidence.query.count() == 0  # the four-box form does not ask for availability
     assert CanonicalMaterialSupplierMap.query.count() == len(wanted)
 
     # Contractor cost review shows the resolved cost before anything is approved.
@@ -267,7 +262,7 @@ def test_full_price_chain_for_every_new_category(app, client):
 
     # A later price is new evidence. The earlier price and the approval stay.
     n = keys["lumber.2x12.brown-pressure-treated.8ft"]
-    later = _fill(pdf, {f"sku_{n}": "TEST-SKU-0", f"product_confirmed_{n}": "Yes", f"net_price_{n}": "9.50", "valid_until": LATER_VALID_UNTIL, "response_date": RESPONSE_DATE})
+    later = _fill(pdf, {f"sku_{n}": "TEST-SKU-0", f"unit_cost_{n}": "9.50", f"discount_{n}": "0", "valid_until": LATER_VALID_UNTIL, "response_date": RESPONSE_DATE})
     second = client.post(f"/projects/{project.id}/deck-takeoff/responses", data={"response_pdf": (BytesIO(later), "later.pdf")}, content_type="multipart/form-data")
     second_id = _record_id(second)
     assert second_id != response_id
@@ -291,8 +286,7 @@ def test_response_entered_by_hand_reconciles_the_same_way(app, client):
         f"line_key_{n}": fields[f"line_key_{n}"]["/V"],
         f"line_sig_{n}": fields[f"line_sig_{n}"]["/V"],
         f"sku_{n}": "BMR-2128-PT",
-        f"product_confirmed_{n}": "yes",
-        f"unit_price_{n}": "40",
+        f"unit_cost_{n}": "40",
         f"discount_{n}": "10",
         "valid_until": VALID_UNTIL,
         "actor_display_name": "Test office",

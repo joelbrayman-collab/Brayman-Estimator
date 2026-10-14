@@ -34,6 +34,8 @@ def status_label(item) -> str:
     return LABELS[item["status"]]
 
 SUPPLIER_NEEDED = "Supplier / manufacturer"
+# 2: SKU, unit cost, discount %, calculated total (14 Oct 2026). 1: the historical eight boxes.
+CURRENT_RESPONSE_FORM = 2
 GROUP_ORDER = ("Decking", "Stairs", "Fascia", "Railing", "Structure", "Foundations", "Connectors", "Fasteners", "Skirting")
 
 
@@ -118,26 +120,39 @@ def build_request(
     supplier_location_id: int,
     issued_by: str,
     issued_at: Optional[datetime] = None,
+    response_form: int = CURRENT_RESPONSE_FORM,
 ) -> Dict:
+    """Build a supplier request. ``response_form`` 2 is current; 1 reproduces a historical request."""
+    if response_form not in (1, 2):
+        raise ValueError(f"Unknown supplier response form {response_form!r}.")
     issued_at = issued_at or datetime.utcnow()
     rows = request_rows(takeoff)
-    request_id = "DTR-" + fingerprint(
-        {
-            "takeoff": takeoff["fingerprint"],
-            "project": project_id,
-            "organization": organization_id,
-            "account": contractor_supplier_account_id,
-        }
-    )[:16].upper()
+    identity = {
+        "takeoff": takeoff["fingerprint"],
+        "project": project_id,
+        "organization": organization_id,
+        "account": contractor_supplier_account_id,
+    }
+    if response_form != 1:
+        # A form-1 request keeps its original identity; the same takeoff can be issued again on form 2.
+        identity["form"] = response_form
+    request_id = "DTR-" + fingerprint(identity)[:16].upper()
     complete = sum(1 for r in rows if r["complete"])
     intro = (
         "Please provide your current contractor pricing for the materials listed below. "
         "Brayman Construction calculated every quantity, unit, and stock length on this request. "
         f"Please do not change them. Where a line asks for a product fact first, please confirm that {supplier_name} product "
         "and price it per unit; Brayman will set the final quantity.",
-        "For each line, enter the product or SKU, whether you confirm the product (Yes, or Substitute), the unit price, "
-        "the contractor discount, the net price, availability, lead time, and any substitution. "
-        "A blank is not zero. Please return this PDF to Brayman Construction.",
+        (
+            "For each line, enter your SKU, the unit cost, and the contractor discount (enter 0 if there is none). "
+            "Brayman calculates every total from its quantity when this PDF is returned. A blank discount is not zero. "
+            "For a substitution, write the original line number and your replacement SKU under General notes, "
+            "and price the replacement on that line. Please return this PDF to Brayman Construction."
+            if response_form == 2
+            else "For each line, enter the product or SKU, whether you confirm the product (Yes, or Substitute), the unit price, "
+            "the contractor discount, the net price, availability, lead time, and any substitution. "
+            "A blank is not zero. Please return this PDF to Brayman Construction."
+        ),
         f"{complete} of {len(rows)} lines have a final purchasing quantity and are marked FINAL QUANTITY. "
         "Only those lines are ready to order. Every other line is marked with what it is waiting for. Prices are CAD before HST.",
     )
@@ -150,10 +165,12 @@ def build_request(
         "rows": tuple({"number": r["number"], "item": r["item"], "status_label": r["status_label"], "qty": r["qty"], "unit": r["unit"], "key": r["key"], "signature": r["signature"]} for r in rows),
         "request_id": request_id,
         "project_id": project_id,
+        "layout": response_form,
     }
     manifest = {
         "request_id": request_id,
         "kind": "pool_deck_supplier_request",
+        "response_form": response_form,
         "organization_id": organization_id,
         "project_id": project_id,
         "supplier_id": supplier_id,

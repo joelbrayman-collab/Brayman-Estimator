@@ -17,13 +17,42 @@
     <div><a class="button-link" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Back to the takeoff</a></div>
 </div>
 
+{% if record.general_notes %}
+<div class="form-panel" data-supplier-notes>
+    <p class="eyebrow">SUPPLIER GENERAL NOTES{% if record.notes_review_required %} — BRAYMAN REVIEW REQUIRED{% endif %}</p>
+    <p style="white-space: pre-wrap;">{{ record.general_notes }}</p>
+    {% if record.notes_line_numbers %}<p class="muted-copy">Lines named: {{ record.notes_line_numbers|join(', ') }}. Those lines are held for substitution review and are not recorded from this response.</p>{% endif %}
+</div>
+{% endif %}
+
+{% if (record.response_form or 1) == 2 %}
+<div class="form-panel" data-quote-totals>
+    <p class="eyebrow">QUOTE TOTALS (CALCULATED BY CALIBRAYTAI)</p>
+    <p><strong>Recordable Quoted Total: <span data-recordable-total>{{ record.recordable_quoted_total or '0.00' }}</span></strong>
+       — {{ record.recordable_lines or 0 }} complete, eligible line{{ '' if record.recordable_lines == 1 else 's' }}. This is not an approved cost; Brayman approves costs separately.</p>
+    {% if record.excluded_lines %}
+    <p>Partial or excluded quotations: {{ record.excluded_lines }} line{{ '' if record.excluded_lines == 1 else 's' }}, listed below with the reason.
+       {% if record.provisional_value %}Provisional value of those lines (arithmetic only, <strong>not</strong> in the Recordable Quoted Total): <span data-provisional-value>{{ record.provisional_value }}</span> on {{ record.provisional_lines }} line{{ '' if record.provisional_lines == 1 else 's' }}.{% endif %}</p>
+    <table class="data-table" data-excluded-lines>
+        <thead><tr><th>No.</th><th>Item</th><th>Provisional value</th><th>Excluded because</th></tr></thead>
+        <tbody>
+        {% for row in record.rows if row.partial_quote %}
+        <tr><td>{{ row.number }}</td><td>{{ row.description }}</td><td>{{ row.line_value or '—' }}</td><td>{{ row.total_exclusions|join('; ') }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endif %}
+
 {% if record.issues %}
 <div class="form-panel"><p class="eyebrow">CHECK</p><ul>{% for i in record.issues %}<li>{{ i }}</li>{% endfor %}</ul></div>
 {% endif %}
 
 <div class="form-panel">
     <div style="overflow-x: auto;"><table class="data-table">
-        <thead><tr><th>No.</th><th>Item</th><th>Brayman qty</th><th>SKU</th><th>Confirmed</th><th>Unit price</th><th>Disc.</th><th>Net</th><th>Line value</th><th>Availability</th><th>Lead time</th><th>Status</th><th>Recording</th><th>Notes</th></tr></thead>
+        {% set v1 = (record.response_form or 1) == 1 %}
+        <thead><tr><th>No.</th><th>Item</th><th>Brayman qty</th><th>SKU</th>{% if v1 %}<th>Confirmed</th>{% endif %}<th>{{ 'Unit price' if v1 else 'Unit cost' }}</th><th>Disc.</th><th>Net</th><th>{{ 'Line value' if v1 else 'Line total' }}</th>{% if not v1 %}<th>In recordable total</th>{% endif %}{% if v1 %}<th>Availability</th><th>Lead time</th>{% endif %}<th>Status</th><th>Recording</th><th>Notes</th></tr></thead>
         <tbody>
         {% for row in record.rows %}
         <tr>
@@ -31,19 +60,21 @@
             <td>{{ row.description }}</td>
             <td>{{ row.purchasing_quantity if row.purchasing_quantity is not none else 'TBD' }} {{ row.purchasing_unit or '' }}{% if row.stock_length_ft %} × {{ row.stock_length_ft }} ft{% endif %}</td>
             <td>{{ row.answers.sku }}</td>
-            <td>{{ row.answers.product_confirmed }}</td>
+            {% if v1 %}<td>{{ row.answers.product_confirmed }}</td>{% endif %}
             <td>{{ row.unit_price or '' }}</td>
             <td>{{ row.discount_percent or '' }}</td>
             <td>{{ row.net_price or '' }}{% if row.net_source and row.net_source != 'supplier' %}<div class="muted-copy">{{ row.net_source }}</div>{% endif %}</td>
             <td>{{ row.line_value or '' }}</td>
-            <td>{{ row.answers.availability }}</td>
-            <td>{{ row.answers.lead_time }}</td>
+            {% if not v1 %}<td>{% if row.in_recordable_total %}Yes{% elif row.partial_quote %}No — {{ row.total_exclusions|join('; ') }}{% else %}—{% endif %}</td>{% endif %}
+            {% if v1 %}<td>{{ row.answers.availability }}</td>
+            <td>{{ row.answers.lead_time }}</td>{% endif %}
             <td>{{ row.status|replace('_', ' ')|lower|capitalize }}</td>
             <td>{{ (row.recording or '')|replace('_', ' ')|lower|capitalize }}</td>
             <td>{% for p in row.problems %}<div>{{ p }}</div>{% endfor %}{% if row.answers.substitution %}<div>Substitution: {{ row.answers.substitution }}</div>{% endif %}</td>
         </tr>
         {% endfor %}
         </tbody>
+        {% if not v1 and record.recordable_quoted_total %}<tfoot><tr><td colspan="7" style="text-align: right;"><strong>Recordable Quoted Total</strong></td><td><strong data-grand-total>{{ record.recordable_quoted_total }}</strong></td><td colspan="4"></td></tr></tfoot>{% endif %}
     </table></div>
 </div>
 
@@ -55,6 +86,7 @@
     <form method="post" action="{{ url_for('deck_takeoff.record_response', project_id=project.id, response_id=record.response_id) }}" class="form-grid">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Recorded by <input name="actor_display_name" value=""></label>
+        {% if record.notes_review_required %}<label><input type="checkbox" name="notes_reviewed" value="yes" required> I have read the supplier's general notes and reviewed any substitution.</label>{% endif %}
         <div class="form-actions"><button type="submit">Record the ready prices</button></div>
     </form>
 </div>
@@ -62,7 +94,7 @@
 <div class="form-panel">
     <p class="eyebrow">RECORDED</p>
     {% for rec in recorded %}
-    <p>Recorded by {{ rec.recorded_by }} on {{ rec.recorded_at }}.</p>
+    <p>Recorded by {{ rec.recorded_by }} on {{ rec.recorded_at }}.{% if rec.notes_reviewed_by %} Supplier notes reviewed by {{ rec.notes_reviewed_by }}.{% endif %}</p>
     <div style="overflow-x: auto;"><table class="data-table">
         <thead><tr><th>No.</th><th>Result</th><th>Cost review</th><th>Brayman cost approval</th></tr></thead>
         <tbody>

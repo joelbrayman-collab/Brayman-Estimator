@@ -14563,3 +14563,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Next approved step | Completed via baseline commit `29d1ba9` |
 | Next approved prompt | Superseded by Product Architecture Review (not yet created) |
 | Commit hash | `29d1ba9` (governance baseline commit includes this work) |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-14 |
+| Branch | `supplier/form-2` from `0edc97f` (live) |
+| Objective | BMR supplier request Form 2: four-column layout, no viewer dependency, Recordable Quoted Total |
+| Business decision | Joel: SKU, Unit cost, Discount %, calculated Total; round net to the cent then × quantity; blank discount is not zero; no Acrobat dependency; server is sole authority; Recordable Quoted Total = complete eligible lines only |
+| Implementation result | Form 2 renderer without JavaScript; server calculation and eligibility; substitution notes review; empty-response warning with hand entry; form 1 preserved |
+| Tests | See release report |
+| Commit hash | Not committed |
+

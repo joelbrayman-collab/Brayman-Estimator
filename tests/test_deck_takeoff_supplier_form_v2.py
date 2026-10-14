@@ -10,12 +10,17 @@ historical eight-box form keep their stored PDF and their field mapping.
 
 from __future__ import annotations
 
+import re
+import shutil
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from io import BytesIO
 
 import pytest
 from pypdf import PdfReader
+from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, NameObject
+
+import app.services.brayman_supplier_estimate as supplier_estimate
 
 from app.services.brayman_supplier_estimate import CALCULATED_BY_BRAYMAN, render_supplier_response_request
 from app.services.deck_takeoff import storage
@@ -55,6 +60,51 @@ def _v2(project_id=7, **kw):
 
 def _pdf(built):
     return render_supplier_response_request(**built["document"])
+
+
+SCRIPT_KEYS = ("/JS", "/AA", "/OpenAction")
+SCRIPT_TOKEN = re.compile(rb"/(JS|JavaScript|AA|OpenAction)(?=[\s/\[\]<>()]|$)")
+
+
+def _javascript_found(payload: bytes) -> list:
+    """Every place in the PDF that could carry a script, or [] when there is none.
+
+    Scripts can only live in PDF dictionaries (/JS, /S /JavaScript, /AA, /OpenAction,
+    the /Names /JavaScript tree). So every object number in the cross-reference table
+    is walked, and the file's syntax is also searched with stream data removed.
+
+    The whole file is not byte-searched: ReportLab ASCII85-encodes compressed page
+    content as printable text, and those bytes change with the folder the app runs
+    from (the logo's XObject name is an MD5 of its path). Under some folder names the
+    text happens to contain "/JS" without the PDF carrying any script.
+    """
+    found = []
+    syntax = re.sub(rb"stream\r?\n.*?endstream", b"stream endstream", payload, flags=re.S)
+    found += [f"syntax {m.group(0).decode()}" for m in SCRIPT_TOKEN.finditer(syntax)]
+    reader = PdfReader(BytesIO(payload), strict=True)
+    seen = set()
+
+    def walk(obj, where):
+        if isinstance(obj, IndirectObject):
+            if obj.idnum in seen:
+                return
+            seen.add(obj.idnum)
+            where, obj = f"object {obj.idnum}", obj.get_object()
+        if isinstance(obj, DictionaryObject):
+            for key, value in obj.items():
+                if key in SCRIPT_KEYS or (key == "/S" and value == "/JavaScript"):
+                    found.append(f"{where} {key}")
+                walk(value, where)
+        elif isinstance(obj, ArrayObject):
+            for value in obj:
+                walk(value, where)
+        elif isinstance(obj, NameObject) and obj == "/JavaScript":
+            found.append(f"{where} /JavaScript")
+
+    walk(reader.trailer, "trailer")
+    for number in range(1, int(reader.trailer["/Size"])):
+        walk(IndirectObject(number, 0, reader), f"object {number}")
+    return found
 
 
 def _expected(unit, discount, qty):
@@ -116,12 +166,35 @@ def test_each_material_has_three_supplier_boxes_and_a_printed_total():
 def test_the_pdf_carries_no_javascript():
     payload = _pdf(_v2())
     reader = PdfReader(BytesIO(payload))
-    assert b"/JavaScript" not in payload and b"/JS" not in payload
+    assert _javascript_found(payload) == []
+    assert b"/JavaScript" not in payload  # cannot occur in ASCII85 text, so this byte check stays exact
     assert "/CO" not in reader.trailer["/Root"]["/AcroForm"]
     for page in reader.pages:
         for ref in page.get("/Annots") or []:
             assert "/AA" not in ref.get_object()
     assert b"/NeedAppearances true" in payload  # viewers draw the typed values
+
+
+def test_the_javascript_check_finds_the_scripts_on_the_historical_form():
+    """The check is not weaker than a byte search: the eight-box form's calculation scripts are found."""
+    found = _javascript_found(_pdf(_built()))
+    assert any(f.endswith(" /AA") for f in found) and any(f.endswith(" /JS") for f in found)
+    assert any(f == "syntax /JS" for f in found)
+
+
+def test_the_pdf_carries_no_javascript_wherever_the_app_is_installed(tmp_path, monkeypatch):
+    """Form 2 has no script from any install folder (the PDF bytes vary with the folder)."""
+    logo = supplier_estimate._logo()
+    names = set()
+    for i in range(24):
+        copy = tmp_path / f"Brayman-Estimator-drawings-20261014-{150000 + i}" / "app/static/branding" / logo.name
+        copy.parent.mkdir(parents=True)
+        shutil.copy(logo, copy)
+        monkeypatch.setattr(supplier_estimate, "_logo", lambda copy=copy: copy)
+        payload = _pdf(_v2())
+        names.update(re.findall(rb"/FormXob\.[0-9a-f]+", payload))
+        assert _javascript_found(payload) == [], copy.parent.parent.parent.parent
+    assert len(names) == 24  # each folder really produced different PDF bytes
 
 
 def test_a_quantity_tbd_line_prints_qty_tbd():

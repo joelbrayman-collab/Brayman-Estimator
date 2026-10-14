@@ -19,6 +19,7 @@ from alembic.script import ScriptDirectory
 from app import create_app
 
 REVISION = "u1b2c3d4e5f6"
+NEXT = "v2c3d4e5f6a7"
 PRIOR = "t0a1b2c3d4e5"
 WATCHED = (
     "canonical_materials",
@@ -83,11 +84,12 @@ _NEW_ROW = sa.text(
 )
 
 
-def test_graph_has_one_head_at_the_takeoff_revision():
+def test_graph_has_one_head_after_the_takeoff_revision():
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
-        assert script.get_heads() == [REVISION]
+        assert script.get_heads() == [NEXT]
+        assert script.get_revision(NEXT).down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 
 

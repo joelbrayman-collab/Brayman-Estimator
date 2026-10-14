@@ -1,0 +1,171 @@
+{
+ "dimension_style": {
+  "measured_from": "model geometry only — never typed numbers",
+  "name": "ARCH",
+  "terminator": "architectural oblique tick (no arrows)",
+  "text": "feet-inches to 1/16 in, above the line, white-backed in PDF",
+  "units": "inches in model space; DXF $INSUNITS = 1"
+ },
+ "export_rules": {
+  "dxf": {
+   "deterministic": true,
+   "dimension_entities": true,
+   "dimstyle": "ARCH",
+   "hatch_patterns": {
+    "cross": "ANSI37",
+    "diag": "ANSI31",
+    "dots": "AR-SAND",
+    "earth": "EARTH",
+    "light": "ANSI31"
+   },
+   "insunits": 1,
+   "linetypes": {
+    "center": "CENTER",
+    "dashed": "DASHED",
+    "hidden": "DASHED2"
+   },
+   "version": "R2018"
+  },
+  "pdf": {
+   "creation_date": null,
+   "creator": "CalibraytAI drawing engine",
+   "deterministic": true,
+   "hatches": {
+    "cross": "xxxx",
+    "diag": "////",
+    "dots": "....",
+    "earth": "\\\\\\\\",
+    "light": "//"
+   },
+   "raster_drawing": false,
+   "vector": true,
+   "views_at_true_scale": true
+  }
+ },
+ "fills": {
+  "block": "#cbb48f",
+  "concrete": "#d6d6d6",
+  "deck": "#d9c29c",
+  "grade": "#ececec",
+  "steel": "#b9c0c8",
+  "water": "#e4eef6",
+  "wood": "#f4e9d8",
+  "wood_cut": "#e8d5b5"
+ },
+ "layers": {
+  "A-ANNO-DIMS": {
+   "colour": 7,
+   "lineweight": 18
+  },
+  "A-ANNO-NOTE": {
+   "colour": 7,
+   "lineweight": 18
+  },
+  "A-ANNO-TEXT": {
+   "colour": 7,
+   "lineweight": 18
+  },
+  "A-DECK": {
+   "colour": 32,
+   "lineweight": 25
+  },
+  "A-EXST": {
+   "colour": 8,
+   "lineweight": 35
+  },
+  "A-GUARD": {
+   "colour": 5,
+   "lineweight": 35
+  },
+  "A-PATT": {
+   "colour": 253,
+   "lineweight": 13
+  },
+  "A-STAIR": {
+   "colour": 30,
+   "lineweight": 25
+  },
+  "G-ANNO-TTLB": {
+   "colour": 7,
+   "lineweight": 25
+  },
+  "S-BEAM": {
+   "colour": 1,
+   "lineweight": 35
+  },
+  "S-COLS": {
+   "colour": 6,
+   "lineweight": 35
+  },
+  "S-FNDN": {
+   "colour": 3,
+   "lineweight": 35
+  },
+  "S-FRAM": {
+   "colour": 40,
+   "lineweight": 25
+  },
+  "S-GRID": {
+   "colour": 9,
+   "lineweight": 13
+  }
+ },
+ "line_weights": {
+  "cut": 1.1,
+  "hair": 0.18,
+  "medium": 0.45,
+  "object": 0.6,
+  "thin": 0.3
+ },
+ "sheet": {
+  "border_in": 0.3,
+  "name": "ANSI B (11x17) landscape",
+  "size_in": [
+   17.0,
+   11.0
+  ]
+ },
+ "templates": {
+  "pool_deck": {
+   "module": "app.services.drawings.deck.DeckDrawingSet",
+   "sheets": [
+    "A-1",
+    "A-2",
+    "S-1",
+    "S-2",
+    "A-3",
+    "A-4",
+    "G-1"
+   ],
+   "status": "PRELIMINARY — NOT FOR CONSTRUCTION"
+  }
+ },
+ "title_block": {
+  "fields": [
+   "status banner",
+   "logo",
+   "company (two lines)",
+   "project",
+   "address",
+   "drawing title",
+   "scale",
+   "date",
+   "sheet number",
+   "sheet n of N",
+   "drawing revision",
+   "model revision",
+   "set fingerprint"
+  ],
+  "font": "DejaVu Sans",
+  "position_in": [
+   12.25,
+   0.3
+  ],
+  "size_in": [
+   4.45,
+   2.55
+  ],
+  "status_text": "PRELIMINARY — NOT FOR CONSTRUCTION"
+ },
+ "version": "brayman-drawing-standard-1.1"
+}

@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**14 Oct 2026 — CONSTRUCTION DRAWINGS ACCEPTED; CONTROLLED RELEASE.** Joel accepted the seven-sheet D1 set (drawing standard 1.1). Release by `generated/drawings_release.sh`: native Mac regression, fresh hosted backup, migration rehearsal, push of the tested tree, deploy, migration `v2c3d4e5f6a7` applied once, hosted synthetic workflow (drawings, Project Plans, estimate, proposal, BMR Form 2). Rollback: redeploy `a24e3d2` and restore the pre-drawings backup.
+
 **14 Oct 2026 — BMR SUPPLIER FORM 2 READY FOR RELEASE AUTHORIZATION.** Branch `supplier/form-2` from `0edc97f`, supplier form only (no construction drawing files). Recordable Quoted Total rule implemented. No migration. Native Mac regression: `generated/mac_form2_release_check.sh`. Not committed. Not deployed.
 
 **13 Oct 2026 — TAKEOFF INTEGRATION READY FOR REVIEW; MIGRATION PREPARED, NOT APPLIED.** Revision `u1b2c3d4e5f6` (ADR-057 Proposed) adds DECKING, FASCIA, RAILING, GATE, FOUNDATION, CONNECTOR, FASTENER and PKG; rehearsed on a disposable mirror copy with rollback by backup. The supplier PDF now calculates net, line totals, and a total. J1 2×8 reconciles to 20 sticks with offcuts kept to their use. Head assertions in 30 test files move to `u1b2c3d4e5f6`. Linux suite 2415 passed, 11 skipped, 44 environmental. Mac suite (`generated/mac_acceptance_check.sh`), `git fsck`, and the live Render SHA are pending Joel. Do not apply the migration or deploy before acceptance.

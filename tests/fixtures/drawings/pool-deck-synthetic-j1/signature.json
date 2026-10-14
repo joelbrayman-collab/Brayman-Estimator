@@ -1,0 +1,288 @@
+{
+ "sheets": [
+  {
+   "dimensions": [
+    "10'-0\"",
+    "10'-1 1/8\"",
+    "18'-0\"",
+    "3'-0\"",
+    "3'-6\" CLEAR",
+    "3'-8\"\n4 T @ 11\"",
+    "4'-0\"",
+    "4'-0\"",
+    "5'-0\" CLEAR AT C/L",
+    "5'-1 1/8\""
+   ],
+   "items_by_layer": {
+    "Arc:A-EXST": 2,
+    "Arc:A-GUARD": 1,
+    "Dim:A-ANNO-DIMS": 10,
+    "Leader:A-ANNO-TEXT": 4,
+    "Poly:A-DECK": 2,
+    "Poly:A-EXST": 1,
+    "Poly:A-GUARD": 15,
+    "Poly:A-STAIR": 5,
+    "Poly:S-GRID": 1,
+    "Text:A-ANNO-TEXT": 3,
+    "Text:A-EXST": 1,
+    "Text:S-GRID": 1
+   },
+   "number": "A-1",
+   "tables": [
+    "DESIGN DATA (FROM CONSTRUCTION MODEL)",
+    "DRAWING INDEX"
+   ],
+   "title": "GENERAL ARRANGEMENT & DIMENSION PLAN",
+   "views": [
+    {
+     "id": "a1-plan",
+     "scale": "3/8\" = 1'-0\"",
+     "title": "GENERAL ARRANGEMENT PLAN"
+    }
+   ]
+  },
+  {
+   "dimensions": [
+    "18'-1 1/2\""
+   ],
+   "items_by_layer": {
+    "Arc:A-EXST": 2,
+    "Dim:A-ANNO-DIMS": 1,
+    "Leader:A-ANNO-TEXT": 5,
+    "Poly:A-DECK": 43,
+    "Poly:A-EXST": 1,
+    "Poly:A-STAIR": 9,
+    "Poly:S-FRAM": 1,
+    "Text:A-ANNO-TEXT": 16
+   },
+   "number": "A-2",
+   "tables": [
+    "DECK BOARD SCHEDULE (FROM TAKEOFF)"
+   ],
+   "title": "DECKING LAYOUT PLAN",
+   "views": [
+    {
+     "id": "a2-plan",
+     "scale": "3/8\" = 1'-0\"",
+     "title": "DECKING LAYOUT PLAN"
+    }
+   ]
+  },
+  {
+   "dimensions": [
+    "1'-0\"",
+    "1'-0\"",
+    "18'-0\"",
+    "2'-0\"",
+    "2'-0\"",
+    "2'-6\"",
+    "3'-0\"",
+    "3'-0\"",
+    "3'-0\"",
+    "3'-0\"",
+    "3'-0\"",
+    "3'-8\"",
+    "4'-6\""
+   ],
+   "items_by_layer": {
+    "Arc:A-EXST": 2,
+    "Circle:S-FNDN": 30,
+    "Dim:A-ANNO-DIMS": 13,
+    "Leader:A-ANNO-TEXT": 2,
+    "Poly:A-DECK": 3,
+    "Poly:A-EXST": 1,
+    "Poly:S-BEAM": 6,
+    "Poly:S-FNDN": 30,
+    "Poly:S-GRID": 14,
+    "Text:A-ANNO-TEXT": 1,
+    "Text:S-FNDN": 15
+   },
+   "number": "S-1",
+   "tables": [
+    "HELICAL PIER SCHEDULE (FROM MODEL)"
+   ],
+   "title": "HELICAL PIER & FOUNDATION PLAN",
+   "views": [
+    {
+     "id": "s1-plan",
+     "scale": "3/8\" = 1'-0\"",
+     "title": "HELICAL PIER & FOUNDATION PLAN"
+    }
+   ]
+  },
+  {
+   "dimensions": [
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "1'-4\"",
+    "18'-0\"",
+    "4\"",
+    "4\""
+   ],
+   "items_by_layer": {
+    "Arc:A-EXST": 2,
+    "Dim:A-ANNO-DIMS": 16,
+    "Leader:A-ANNO-TEXT": 8,
+    "Poly:A-EXST": 1,
+    "Poly:A-STAIR": 10,
+    "Poly:S-BEAM": 8,
+    "Poly:S-COLS": 45,
+    "Poly:S-FRAM": 58
+   },
+   "number": "S-2",
+   "tables": [
+    "FRAMING MEMBERS (MODEL)",
+    "UPPER JOIST SCHEDULE (FROM TAKEOFF)"
+   ],
+   "title": "FRAMING PLAN",
+   "views": [
+    {
+     "id": "s2-plan",
+     "scale": "3/8\" = 1'-0\"",
+     "title": "FRAMING PLAN"
+    }
+   ]
+  },
+  {
+   "dimensions": [
+    "1\" NOSING",
+    "1'-0\"",
+    "10'-0\"",
+    "11\" RUN",
+    "13/16\" GAP",
+    "3'-0\"",
+    "3'-2\" TOTAL RISE\n5 R @ 7 5/8\"",
+    "3'-8\"",
+    "3'-8\" RUN — 4 T @ 11\"",
+    "7 5/8\" RISE"
+   ],
+   "items_by_layer": {
+    "Arc:A-GUARD": 1,
+    "Dim:A-ANNO-DIMS": 10,
+    "Leader:A-ANNO-TEXT": 10,
+    "Poly:A-DECK": 4,
+    "Poly:A-EXST": 2,
+    "Poly:A-GUARD": 19,
+    "Poly:A-STAIR": 43,
+    "Poly:S-BEAM": 10,
+    "Poly:S-COLS": 3,
+    "Poly:S-FNDN": 9,
+    "Poly:S-FRAM": 2,
+    "Text:A-ANNO-TEXT": 3,
+    "Text:A-GUARD": 1,
+    "Text:A-STAIR": 4
+   },
+   "number": "A-3",
+   "tables": [
+    "STAIR DATA (FROM MODEL & TAKEOFF)",
+    "STRINGER STATIONS (MODEL)"
+   ],
+   "title": "STAIR PLAN, SECTION & DETAILS",
+   "views": [
+    {
+     "id": "a3-plan",
+     "scale": "1/4\" = 1'-0\"",
+     "title": "STAIR PLAN"
+    },
+    {
+     "id": "a3-section",
+     "scale": "1/2\" = 1'-0\"",
+     "title": "STAIR SECTION AT CENTRELINE"
+    },
+    {
+     "id": "a3-detail",
+     "scale": "1-1/2\" = 1'-0\"",
+     "title": "TREAD / RISER DETAIL"
+    }
+   ]
+  },
+  {
+   "dimensions": [
+    "10'-1 1/8\"",
+    "18'-0\"",
+    "2'-8 1/2\"\nPOST",
+    "3'-0\"",
+    "3'-6\"\nGUARD",
+    "3'-8\"",
+    "4'-2\"",
+    "4'-2\"",
+    "5'-0\" AT C/L"
+   ],
+   "items_by_layer": {
+    "Dim:A-ANNO-DIMS": 9,
+    "Leader:A-ANNO-TEXT": 8,
+    "Poly:A-DECK": 7,
+    "Poly:A-EXST": 8,
+    "Poly:A-GUARD": 106,
+    "Poly:A-STAIR": 23,
+    "Poly:S-BEAM": 15,
+    "Poly:S-COLS": 10,
+    "Poly:S-FNDN": 12,
+    "Poly:S-FRAM": 3,
+    "Text:A-ANNO-TEXT": 2,
+    "Text:A-EXST": 2,
+    "Text:A-GUARD": 2
+   },
+   "number": "A-4",
+   "tables": [],
+   "title": "ELEVATIONS & BUILDING SECTION",
+   "views": [
+    {
+     "id": "a4-front",
+     "scale": "1/4\" = 1'-0\"",
+     "title": "FRONT ELEVATION (FROM THE YARD)"
+    },
+    {
+     "id": "a4-side",
+     "scale": "1/4\" = 1'-0\"",
+     "title": "SIDE ELEVATION"
+    },
+    {
+     "id": "a4-section",
+     "scale": "3/8\" = 1'-0\"",
+     "title": "SECTION A — THROUGH THE DECK AT THE CENTRELINE"
+    }
+   ]
+  },
+  {
+   "dimensions": [],
+   "items_by_layer": {
+    "Arc:A-GUARD": 1,
+    "Circle:S-FNDN": 1,
+    "Poly:A-DECK": 1,
+    "Poly:A-EXST": 2,
+    "Poly:A-GUARD": 3,
+    "Poly:S-BEAM": 1,
+    "Poly:S-COLS": 3,
+    "Poly:S-FNDN": 2,
+    "Poly:S-FRAM": 1,
+    "Text:A-ANNO-TEXT": 9
+   },
+   "number": "G-1",
+   "tables": [
+    "DRAWING RECORD",
+    "MATERIAL SCHEDULE (CONTINUED)",
+    "MATERIAL SCHEDULE (FROM THE CALCULATED TAKEOFF)"
+   ],
+   "title": "SCHEDULES, OPEN ITEMS & NOTES",
+   "views": [
+    {
+     "id": "g1-legend",
+     "scale": "3/8\" = 1'-0\" (PLAN SYMBOLS)",
+     "title": "LEGEND"
+    }
+   ]
+  }
+ ],
+ "standard": "brayman-drawing-standard-1.1"
+}

@@ -538,6 +538,10 @@ def print_version(id, version_id):
             ("Lines", lines),
         ],
     )
+    from app.models.construction_drawing import ATTACH_ESTIMATE_VERSION
+    from app.services.construction_drawings import append_drawings, current_attachment
+
+    payload = append_drawings(payload, current_attachment(ATTACH_ESTIMATE_VERSION, version.id))
     return send_file(
         BytesIO(payload),
         mimetype="application/pdf",

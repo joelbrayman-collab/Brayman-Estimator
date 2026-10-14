@@ -384,6 +384,14 @@ def proposal_brand_logo(id):
 def download_proposal_pdf(id):
     proposal = _get_scoped_proposal_or_404(id)
     pdf_buffer = generate_proposal_pdf(proposal)
+    from io import BytesIO as _BytesIO
+
+    from app.models.construction_drawing import ATTACH_PROPOSAL
+    from app.services.construction_drawings import append_drawings, current_attachment
+
+    attachment = current_attachment(ATTACH_PROPOSAL, proposal.id)
+    if attachment is not None:
+        pdf_buffer = _BytesIO(append_drawings(pdf_buffer.getvalue(), attachment))
     filename = sanitize_pdf_filename(proposal)
     return send_file(
         pdf_buffer,

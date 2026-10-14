@@ -123,6 +123,7 @@ from app.models.labour_engine import (
 from app.models.project_work_package import ProjectWorkPackage
 from app.models.plan_generation_candidate import PlanGenerationCandidate
 from app.models.project_construction_model import ProjectConstructionModelRevision
+from app.models.construction_drawing import ConstructionDrawingAttachment, ConstructionDrawingSet
 from app.models.work_structure import (
     ProjectWorkActivity,
     ProjectWorkElement,

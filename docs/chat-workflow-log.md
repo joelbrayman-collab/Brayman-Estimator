@@ -14574,3 +14574,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Tests | See release report |
 | Commit hash | Not committed |
 
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-14 |
+| Branch | `drawings/deck-construction-drawings` on `a24e3d2` (local, uncommitted) |
+| Objective | Construction drawings: final visual acceptance and release preparation |
+| Architectural decision | ADR-058 (Proposed); drawing standard versioned in `standard.py` with accepted fixtures |
+| Implementation result | 7-sheet deck PDF + DXF; stair nosing/back gap; Project Plans; estimate, proposal and BMR attachments with revision control; Form 2 preserved |
+| Tests | See acceptance report |
+| Unresolved issues | None open in scope; engineering items stay on G-1 (PRELIMINARY — NOT FOR CONSTRUCTION) |
+| Commit hash | Release commit on `a24e3d2` (see session handoff) |
+

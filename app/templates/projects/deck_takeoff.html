@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Deck Takeoff | {{ project.name }}{% endblock %}
+{% block page_title %}Deck Takeoff{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1>Pool Deck Material Takeoff</h1>
+        <p class="muted-copy">
+            Brayman calculates. The supplier prices. Quantities come from the stored project information.
+            A missing fact stays visible on the line that needs it. Nothing here creates an estimate line.
+        </p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+{% if state.missing %}
+<div class="form-panel">
+    <p class="eyebrow">PROJECT FACTS MISSING</p>
+    <p>The takeoff is not calculated until these facts are stored on the project:</p>
+    <ul>{% for item in state.missing %}<li>{{ item }}</li>{% endfor %}</ul>
+</div>
+{% elif state.refusal %}
+<div class="form-panel">
+    <p class="eyebrow">NOT CALCULATED</p>
+    <p>{{ state.refusal }}</p>
+</div>
+{% endif %}
+
+{% if takeoff %}
+<div class="form-panel">
+    <p class="eyebrow">SOURCE</p>
+    <p>
+        Construction model revision {{ takeoff.source.construction_model_revision_number }}
+        ({{ takeoff.source.construction_model_sha256[:12] }}){% if takeoff.source.source_reference %} — {{ takeoff.source.source_reference }}{% endif %}.
+        Rule {{ takeoff.rule.id }} v{{ takeoff.rule.version }}.
+        Product facts {% if state.product_facts_record %}version {{ state.product_facts_record.version }}{% else %}not entered{% endif %}.
+        Takeoff {{ takeoff.fingerprint[:12] }}.
+    </p>
+    <p>
+        {% for status, count in takeoff.status_counts.items() %}{{ status|replace('_', ' ')|lower|capitalize }}: {{ count }}{% if not loop.last %} · {% endif %}{% endfor %}.
+        {% if takeoff.purchasing_complete %}Every purchasing quantity is final.{% else %}The purchasing schedule is not complete.{% endif %}
+    </p>
+</div>
+
+<div class="form-panel">
+    <p class="eyebrow">GEOMETRY</p>
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+        <tbody>
+        {% for key, value in takeoff.geometry.items() if key != 'upper_courses' %}
+            <tr><td>{{ key|replace('_', ' ')|capitalize }}</td><td>{{ value }}</td></tr>
+        {% endfor %}
+        {% if takeoff.geometry.upper_courses %}
+            {% for key, value in takeoff.geometry.upper_courses.items() %}
+            <tr><td>Upper courses — {{ key|replace('_', ' ') }}</td><td>{{ value }}</td></tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table></div>
+</div>
+
+<div class="form-panel">
+    <p class="eyebrow">TAKEOFF</p>
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead>
+            <tr><th>Group</th><th>Item</th><th>Quantity</th><th>Purchase</th><th>Status</th><th>Open facts</th></tr>
+        </thead>
+        <tbody>
+        {% for item in takeoff.lines %}
+            <tr>
+                <td>{{ item.group }}</td>
+                <td>
+                    {{ item.description }}
+                    {% if item.cuts %}
+                    <details><summary>Cuts and detail</summary>
+                        <ul>{% for cut in item.cuts %}<li>{% for k, v in cut.items() %}{{ k|replace('_', ' ') }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %}</li>{% endfor %}</ul>
+                    </details>
+                    {% endif %}
+                    {% if item.allocation and item.allocation.overall %}
+                    <details><summary>Stock allocation ({{ item.allocation.overall.stick_count }} sticks, waste {{ item.allocation.overall.waste_percent|round(1) }}%)</summary>
+                        <ul>{% for stick in item.allocation.overall.sticks %}<li>{{ (stick.stock_in / 12)|round(2) }} ft: {% for cut in stick.cuts %}{{ (cut.length_in / 12)|round(3) }} ft ({{ cut.label }}){% if not loop.last %} + {% endif %}{% endfor %} — offcut {{ stick.offcut_in }} in</li>{% endfor %}</ul>
+                    </details>
+                    {% endif %}
+                </td>
+                <td>{{ item.construction.quantity if item.construction.quantity is not none else '' }} {{ item.construction.unit }}</td>
+                <td>
+                    {% if item.purchasing.quantity is not none %}{{ item.purchasing.quantity }} {{ item.purchasing.unit }}{% if item.purchasing.stock_length_ft %} × {{ item.purchasing.stock_length_ft }} ft{% endif %}{% elif item.request %}TBD{% endif %}
+                </td>
+                <td>{{ item.status|replace('_', ' ')|lower|capitalize }}</td>
+                <td>{% for f in item.flags %}<div>{{ f.fact }} <span class="muted-copy">({{ f.needed_from }})</span></div>{% endfor %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+</div>
+
+<div class="form-panel">
+    <p class="eyebrow">PROJECT ITEMS</p>
+    <ul>{% for f in takeoff.project_items %}<li>{{ f.status|replace('_', ' ')|lower|capitalize }} — {{ f.fact }} ({{ f.needed_from }})</li>{% endfor %}</ul>
+</div>
+
+<div class="form-panel">
+    <p class="eyebrow">SUPPLIER REQUEST</p>
+    {% if accounts %}
+    <form method="post" action="{{ url_for('deck_takeoff.issue_request', project_id=project.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Supplier account
+            <select name="contractor_supplier_account_id">
+                {% for account in accounts %}<option value="{{ account.id }}">{{ account.supplier.legal_name }} — {{ account.supplier_location.display_name }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>Issued by <input name="actor_display_name" value=""></label>
+        <div class="form-actions"><button type="submit">Download the supplier request</button></div>
+    </form>
+    {% else %}
+    <p class="empty-state">No active supplier account for this organization.</p>
+    {% endif %}
+    {% if requests %}
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>Request</th><th>Supplier</th><th>Issued</th><th>Lines</th><th></th></tr></thead>
+        <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>{{ r.request_id }}</td><td>{{ r.supplier_name }}</td><td>{{ r.issued_at }} by {{ r.issued_by }}</td><td>{{ r.lines|length }}</td>
+            <td>
+                <a href="{{ url_for('deck_takeoff.download_request', project_id=project.id, request_id=r.request_id) }}">PDF</a> ·
+                <a href="{{ url_for('deck_takeoff.enter_response', project_id=project.id, request_id=r.request_id) }}">Enter response by hand</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Returned supplier PDF <input type="file" name="response_pdf" accept="application/pdf"></label>
+        <label>Imported by <input name="actor_display_name" value=""></label>
+        <div class="form-actions"><button type="submit">Import the supplier response</button></div>
+    </form>
+    {% endif %}
+    {% set imported = responses|selectattr('stage', 'equalto', 'IMPORTED')|list %}
+    {% if imported %}
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>Response</th><th>Request</th><th>Imported</th><th>Lines</th></tr></thead>
+        <tbody>
+        {% for r in imported %}
+        <tr>
+            <td><a href="{{ url_for('deck_takeoff.view_response', project_id=project.id, response_id=r.response_id) }}">{{ r.response_id }}</a></td>
+            <td>{{ r.request_id }}</td><td>{{ r.imported_at }} ({{ r.source }})</td>
+            <td>{% for k, v in r.summary.items() %}{{ k|replace('_', ' ')|lower }} {{ v }}{% if not loop.last %} · {% endif %}{% endfor %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="form-panel">
+    <p class="eyebrow">PRODUCT FACTS</p>
+    <p class="muted-copy">Manufacturer and installer facts. Nothing has a default. A blank stays missing. Saving keeps every earlier version.</p>
+    <form method="post" action="{{ url_for('deck_takeoff.save_facts', project_id=project.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for category, fields in schema.items() %}
+        <fieldset>
+            <legend>{{ category|capitalize }}</legend>
+            {% for name, spec in fields.items() %}
+            {% set current = (facts.get(category) or {}).get(name) %}
+            <label>{{ spec[1] }}
+                <input name="{{ category }}.{{ name }}" value="{% if current is iterable and current is not string %}{{ current|join(', ') }}{% elif current is not none %}{{ current }}{% endif %}">
+            </label>
+            {% endfor %}
+        </fieldset>
+        {% endfor %}
+        <label>Where these facts came from <input name="facts_source" value=""></label>
+        <label>Entered by <input name="actor_display_name" value=""></label>
+        <div class="form-actions"><button type="submit">Save product facts</button></div>
+    </form>
+</div>
+{% endblock %}

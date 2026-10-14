@@ -15,6 +15,8 @@ from app import create_app, db
 
 PRIOR = "s9f0a1b2c3d4"
 HEAD = "t0a1b2c3d4e5"
+# The migration graph moved on to the takeoff catalogue revision.
+GRAPH_HEAD = "u1b2c3d4e5f6"
 
 
 def _cfg(db_uri):
@@ -52,7 +54,7 @@ def test_revision_migration_upgrades_and_downgrades_on_an_isolated_database(tmp_
     with test_app.app_context():
         alembic_cfg = _cfg(db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == [HEAD]
+        assert script.get_heads() == [GRAPH_HEAD]
         revision = script.get_revision(HEAD)
         assert revision.down_revision == PRIOR
         command.upgrade(alembic_cfg, PRIOR)

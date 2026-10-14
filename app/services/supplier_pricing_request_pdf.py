@@ -41,7 +41,8 @@ CONTENT_W = PAGE_W - LEFT - RIGHT
 def render_supplier_pricing_request_pdf(request: dict) -> bytes:
     buffer = BytesIO()
     form = Canvas(buffer, pagesize=letter)
-    form.acroForm.extras["NeedAppearances"] = True
+    # PDF booleans are lower case. A Python True is written as an invalid token.
+    form.acroForm.extras["NeedAppearances"] = "true"
     form.setTitle(f"{request['project_name']} — supplier pricing request")
     form.setAuthor("Brayman Construction")
     state = {"page": 1, "cursor": 0.0}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Response | {{ project.name }}{% endblock %}
+{% block page_title %}Supplier Response{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1>Enter the supplier response</h1>
+        <p class="muted-copy">
+            Request {{ manifest.request_id }} to {{ manifest.supplier_name }}. Type what the supplier returned. A blank is not zero.
+            The net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity.
+        </p>
+    </div>
+    <div><a class="button-link" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Back to the takeoff</a></div>
+</div>
+<form method="post" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" id="supplier-response-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="request_id" value="{{ manifest.request_id }}">
+    <input type="hidden" name="request_project" value="{{ project.id }}">
+    <div class="form-panel">
+        <div style="overflow-x: auto;">
+        <table class="data-table">
+            <thead><tr><th>No.</th><th>Item</th><th>Qty</th>{% for f in fields %}<th>{{ f|replace('_', ' ')|capitalize }}</th>{% endfor %}<th>Line total</th></tr></thead>
+            <tbody>
+            {% for line in manifest.lines %}
+            {% set n = '%02d'|format(line.number) %}
+            <tr data-line="{{ n }}" data-qty="{{ line.purchasing_quantity if line.purchasing_quantity is not none else '' }}">
+                <td>{{ line.number }}<input type="hidden" name="line_key_{{ n }}" value="{{ line.key }}"><input type="hidden" name="line_sig_{{ n }}" value="{{ line.signature }}"></td>
+                <td>{{ line.description }}<div class="muted-copy">{{ line.status_label }}</div></td>
+                <td>{{ line.qty }} {{ line.purchasing_unit or '' }}</td>
+                {% for f in fields %}<td><input name="{{ f }}_{{ n }}" value="" size="8"{% if f in ('unit_price', 'discount', 'net_price') %} inputmode="decimal"{% endif %}></td>{% endfor %}
+                <td data-line-total="{{ n }}"></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot><tr><td colspan="{{ 3 + fields|length }}" style="text-align: right;"><strong>Total</strong></td><td><strong id="grand-total"></strong></td></tr></tfoot>
+        </table>
+        </div>
+    </div>
+    <div class="form-panel form-grid">
+        <label>Supplier contact <input name="bmr_contact"></label>
+        <label>Response date <input name="response_date" placeholder="YYYY-MM-DD"></label>
+        <label>Prices valid until <input name="valid_until" placeholder="YYYY-MM-DD"></label>
+        <label>General notes <input name="general_notes"></label>
+        <label>Entered by <input name="actor_display_name"></label>
+        <div class="form-actions"><button type="submit">Check the response</button></div>
+    </div>
+</form>
+<script>
+(function () {
+    // Same arithmetic as the PDF form. The server checks it again on import.
+    var form = document.getElementById("supplier-response-form");
+    function num(text, strip) {
+        var clean = String(text || "").replace(strip, "");
+        return clean !== "" && !isNaN(clean) ? Number(clean) : null;
+    }
+    function cents(value) { return (Math.round(value * 100 + 1e-7) / 100).toFixed(2); }
+    function recalc() {
+        var total = 0, counted = 0;
+        form.querySelectorAll("tr[data-line]").forEach(function (row) {
+            var n = row.getAttribute("data-line");
+            var unit = num(form.elements["unit_price_" + n].value, /[$,\s]/g);
+            var discount = num(form.elements["discount_" + n].value, /[%\s]/g);
+            var netField = form.elements["net_price_" + n];
+            if (unit !== null && discount !== null && discount >= 0 && discount <= 100) {
+                netField.value = (Math.round(unit * (100 - discount) + 1e-7) / 100).toFixed(2);
+            }
+            var net = num(netField.value, /[$,\s]/g);
+            var qtyText = row.getAttribute("data-qty");
+            var cell = row.querySelector("[data-line-total]");
+            if (net !== null && qtyText !== "") {
+                var lineTotal = Number(cents(net * Number(qtyText)));
+                cell.textContent = lineTotal.toFixed(2);
+                total += lineTotal;
+                counted += 1;
+            } else {
+                cell.textContent = qtyText === "" ? "Qty TBD" : "";
+            }
+        });
+        document.getElementById("grand-total").textContent = counted ? cents(total) : "";
+    }
+    form.addEventListener("input", recalc);
+    recalc();
+})();
+</script>
+{% endblock %}

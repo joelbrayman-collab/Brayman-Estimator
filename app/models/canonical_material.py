@@ -10,8 +10,20 @@ from app import db
 
 CANONICAL_MATERIAL_STATUSES = ("ACTIVE", "DISCONTINUED")
 CANONICAL_MATERIAL_KINDS = ("GENERIC", "SPECIFIED")
-CANONICAL_MATERIAL_UOMS = ("EA", "LF", "SF", "BF", "M3")
-CANONICAL_MATERIAL_CATEGORIES = ("DIMENSIONAL_LUMBER", "SHEET_GOODS", "CONCRETE")
+CANONICAL_MATERIAL_UOMS = ("EA", "LF", "SF", "BF", "M3", "PKG")
+# DECKING through FASTENER: revision u1b2c3d4e5f6 (pool-deck takeoff catalogue extension).
+CANONICAL_MATERIAL_CATEGORIES = (
+    "DIMENSIONAL_LUMBER",
+    "SHEET_GOODS",
+    "CONCRETE",
+    "DECKING",
+    "FASCIA",
+    "RAILING",
+    "GATE",
+    "FOUNDATION",
+    "CONNECTOR",
+    "FASTENER",
+)
 CANONICAL_MATERIAL_SUBSTITUTION_POLICIES = ("ALLOWED", "RESTRICTED", "PROHIBITED")
 
 FORBIDDEN_CANONICAL_IDENTITY_FIELDS = (
@@ -537,11 +549,12 @@ class CanonicalMaterial(db.Model):
             name="ck_canonical_materials_kind",
         ),
         db.CheckConstraint(
-            "canonical_uom IN ('EA', 'LF', 'SF', 'BF', 'M3')",
+            "canonical_uom IN ('EA', 'LF', 'SF', 'BF', 'M3', 'PKG')",
             name="ck_canonical_materials_uom",
         ),
         db.CheckConstraint(
-            "category IN ('DIMENSIONAL_LUMBER', 'SHEET_GOODS', 'CONCRETE')",
+            "category IN ('DIMENSIONAL_LUMBER', 'SHEET_GOODS', 'CONCRETE', "
+            "'DECKING', 'FASCIA', 'RAILING', 'GATE', 'FOUNDATION', 'CONNECTOR', 'FASTENER')",
             name="ck_canonical_materials_category",
         ),
         db.CheckConstraint(
@@ -592,14 +605,14 @@ class CanonicalMaterial(db.Model):
     @validates("canonical_uom")
     def _validate_uom(self, key, value):
         if value not in CANONICAL_MATERIAL_UOMS:
-            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF, or M3.")
+            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF, M3, or PKG.")
         return value
 
     @validates("category")
     def _validate_category(self, key, value):
         if value not in CANONICAL_MATERIAL_CATEGORIES:
             raise ValueError(
-                "Canonical material category must be DIMENSIONAL_LUMBER, SHEET_GOODS, or CONCRETE."
+                "Canonical material category must be one of " + ", ".join(CANONICAL_MATERIAL_CATEGORIES) + "."
             )
         return value
 

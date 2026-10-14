@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-11 |
+| Updated | 2026-10-13 |
 
 ## Purpose
 
@@ -42,6 +42,50 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-13 — Takeoff and BMR workflow final integration
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-13 |
+| Branch | main (uncommitted) |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 13 Oct 2026 |
+| Objective | Finish the contractor-to-supplier workflow: catalogue extension, full price chain to estimating, J1 reconciliation, J1 mapping, request labels, live form totals. |
+| Business decision | Joel: the supplier form calculates net price, line totals, and the total itself. |
+| Architectural decision | ADR-057 (Proposed): seven catalogue categories and PKG; takeoff-derived identities created only when a person records evidence. Revision `u1b2c3d4e5f6`, no seed rows. |
+| Prompt template used | Complete material takeoff and BMR supplier workflow — final integration and acceptance, 13 October 2026. |
+| Approved Cursor prompt summary | Complete integration, prepare and rehearse the migration, run full regression, stop before production migration or deployment. |
+| Files expected to change | Deck takeoff services, routes, templates, tests; canonical material and requirement models; new migration; tool for the J1 mapping; ADR-057; rollback and reconciliation docs; migration head constants in tests. |
+| Files prohibited from changing | Linda case files, existing calculation authorities, the public Website, hosted data. |
+| Implementation result | Implemented and tested. Migration rehearsed on a disposable copy only. Not committed. Not deployed. |
+| Tests | Linux workspace: 2415 passed, 11 skipped, 44 failed in the same 14 files (Family 05 master outside the workspace; Mac `venv` path). Mac suite pending Joel (`generated/mac_acceptance_check.sh`). |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | ADR-057 needs Joel's approval before the migration is applied (Article 8). |
+| Unresolved issues | Mac suite, git integrity, live Render SHA; manufacturer and engineering facts listed in the report. |
+| Next approved step | ChatGPT acceptance review. |
+
+### 2026-10-13 — Complete V1 material takeoff and BMR supplier pricing workflow
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-13 |
+| Branch | main (uncommitted) |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 13 Oct 2026 |
+| Objective | Calculate the complete pool-deck takeoff from governed project facts, fill the approved Brayman supplier request, and take the supplier's prices back against the same material lines. |
+| Business decision | Brayman calculates. BMR prices. CalibraytAI connects the two. Linda Bushel J1 is the acceptance case; Darcy at BMR Winchester is the recipient. |
+| Architectural decision | One authority in `app/services/deck_takeoff/` (rule `pool_deck_takeoff` v1). J1 case script kept as history. Product facts, issued requests, and supplier responses are write-once files under the instance folder. No schema change, no migration. Recording uses the existing supplier catalogue services; approval uses `record_contractor_cost_approval`. |
+| Prompt template used | Complete V1 material takeoff and BMR supplier pricing workflow, 13 October 2026 (end-to-end authorized development). |
+| Approved Cursor prompt summary | Build, test, reconcile, and integrate the whole workflow on a synthetic J1 copy; return one consolidated report; stop before commit or deployment. |
+| Files expected to change | New deck takeoff services, route, templates, tests, and module doc; the approved supplier page renderer (response boxes and the NeedAppearances fix); app blueprint registration; project hub link; status records. |
+| Files prohibited from changing | Linda Bushel case files, existing calculation engines, migrations, the public Website. |
+| Implementation result | Implemented and tested. Not committed. Not deployed. |
+| Tests | Focused deck takeoff: 95 passed. Linux-workspace full suite: 2395 passed, 11 skipped, 44 failed in 14 files, all from the Family 05 master path outside the workspace or the Mac `venv` path used by browser tests. Each failure was read: the contract and signing tests stop at MISSING_PRESENTATION_MASTER and the calculator browser tests cannot spawn `venv/bin/python`. The Mac `./venv/bin/python -m pytest -q` run is still required. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | Canonical identities for finish materials and pressure-treated lumber need an approved catalogue migration (ADR-034 / FG-014 scope). Isolated: those prices stay on the response record. |
+| Unresolved issues | Product facts from the supplier; pier, connector, guard attachment, and pool-enclosure engineering; skirting material; live product SHA not verified from this session. |
+| Next approved step | ChatGPT review of the consolidated report. |
 
 ### 2026-10-12 — Wall framing slice 2 accepted for release
 

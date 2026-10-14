@@ -3,9 +3,17 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-12 |
+| Updated | 2026-10-13 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 13 Oct 2026 — Takeoff integration: catalogue migration prepared, live form math, J1 reconciliation
+
+Revision `u1b2c3d4e5f6` (ADR-057, Proposed) adds seven catalogue categories and the `PKG` unit. Rehearsed on a disposable copy of the Mac mirror: only `alembic_version` changed, history unchanged, a `DECKING` identity priced and approved, downgrade refused with takeoff rows, backup restore exact. Not applied anywhere. Every new category now reaches supplier evidence, contractor cost review, approval, and estimate costing in the synthetic J1 test; no estimate line is created on its own. The supplier PDF calculates net price, line totals, and a total live (Acrobat Reader). Rows say whether they are final or what they wait for. J1 reconciliation: 2×8 is 20 sticks with offcuts kept to their use (J1 rule) and 18 when reused; 2×10 is 124 ft at zero kerf and 132 ft at 1/8 in; decking on the J1 test basis is 432 ft against 446 ft; every cut placed once. A dry-run J1 → construction model mapping agrees with the J1 generator. Linux-workspace full suite: 2415 passed, 11 skipped, 44 environmental failures (same 14 files). Mac suite, git integrity, and the live SHA wait on Joel. Not committed. Not deployed.
+
+## 13 Oct 2026 — Pool-deck takeoff and supplier price return implemented, not accepted
+
+`app/services/deck_takeoff/` is the single authority for the curved pool-deck takeoff (rule `pool_deck_takeoff` v1). It moves the J1 mathematics into the platform: courses split at the pool apex, curve cuts measured at the long edge, stock allocation with kerf, fascia, guard and stair-rail runs, structural cuts, piers, connectors, and fasteners. Every line carries `CALCULATED`, `PRODUCT_DEPENDENT`, `FIELD_VERIFICATION_REQUIRED`, or `ENGINEERING_REQUIRED`. Product facts have no defaults. The approved 7 Oct supplier page gains the supplier's eight response boxes and hidden line identity. A returned PDF, or a hand entry, is matched by request, line key, and signature. Ready lines append supplier price evidence through the existing services. Cost approval stays the existing gate. No estimate line is created. Synthetic J1 reproduces 116.801 sq ft, 21.624 ft, the 11 curve rows, 0.60 in corner remainder, 76 stitch bolts, 100 structural screws, and 399 board crossings. Finish materials and pressure-treated lumber have no canonical identity, so their returned prices stay on the response record. Linda's real project was not read or changed. Focused: 95 new tests passed. Full suite in the Linux workspace: 2395 passed, 11 skipped, 44 failed; the 44 are the Family 05 master outside the workspace and the Mac `venv` path used by browser tests. Not committed. Not deployed. The V1 register was not rescored. See [modules/deck-takeoff.md](modules/deck-takeoff.md).
 
 ## 12 Oct 2026 — Wall framing slice 2 accepted for release
 

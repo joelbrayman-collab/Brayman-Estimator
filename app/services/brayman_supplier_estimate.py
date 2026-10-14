@@ -48,7 +48,8 @@ def render_supplier_estimate_request(
     buffer = BytesIO()
     page_w, page_h = landscape(letter)
     form = Canvas(buffer, pagesize=landscape(letter))
-    form.acroForm.extras["NeedAppearances"] = True
+    # PDF booleans are lower case. A Python True is written as an invalid token.
+    form.acroForm.extras["NeedAppearances"] = "true"
     form.setTitle(f"{project_name} — {TITLE}")
     form.setAuthor(COMPANY)
     left = 0.4 * inch
@@ -426,7 +427,7 @@ def _chrome(form, page_w, page_h, page_no, project_name, project_address, suppli
     form.drawRightString(page_w - 0.45 * inch, 0.16 * inch, f"Page {page_no}")
 
 
-def _closing_field(form, name, tooltip, x, y, width, height=16):
+def _closing_field(form, name, tooltip, x, y, width, height=16, read_only=False):
     form.acroForm.textfield(
         name=name,
         tooltip=tooltip,
@@ -442,6 +443,7 @@ def _closing_field(form, name, tooltip, x, y, width, height=16):
         fontName="Times-Roman",
         fontSize=9,
         maxlen=180,
+        fieldFlags="readOnly" if read_only else "",
     )
 
 
@@ -492,3 +494,301 @@ def _kept(specification: str, prefixes: Sequence[str]) -> str:
 
 def _xml(text: str) -> str:
     return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+# ---------------------------------------------------------------------------
+# Supplier response fields on the approved page.
+#
+# The page, chrome, colours, fonts, table header, cream fields, and footer
+# are the approved 7 Oct 2026 page. The row gains the supplier's response
+# boxes in two tiers. Brayman's quantity, unit, and stock length are drawn
+# text, not fields, so the supplier cannot change them. Hidden read-only
+# fields carry the request and line identity back with the returned PDF.
+# ---------------------------------------------------------------------------
+
+RESPONSE_FIELDS = (
+    ("sku", "Product / SKU", 40),
+    ("product_confirmed", "Confirmed", 40),
+    ("unit_price", "Unit price", 20),
+    ("discount", "Discount %", 12),
+    ("net_price", "Net price", 20),
+    ("availability", "Availability", 60),
+    ("lead_time", "Lead time", 40),
+    ("substitution", "Substitution notes", 240),
+    ("line_total", "Line total", 20),
+)
+
+# Calculated in the PDF itself. The supplier does not type these.
+CALCULATED_FIELDS = ("line_total",)
+
+
+def _response_columns(left: float, content_w: float):
+    no_w = 0.36 * inch
+    qty_w = 0.5 * inch
+    unit_w = 0.62 * inch
+    block = 5.44 * inch
+    item_w = content_w - (no_w + qty_w + unit_w + block)
+    x = left
+    cols = {"no": x}
+    x += no_w
+    cols["item"] = x
+    x += item_w
+    cols["qty"] = x
+    x += qty_w
+    cols["unit"] = x
+    x += unit_w
+    cols["block"] = x
+    tier1 = (("sku", 1.5), ("product_confirmed", 0.9), ("unit_price", 1.0), ("discount", 0.9), ("net_price", 1.14))
+    tier2 = (("availability", 1.5), ("lead_time", 0.9), ("substitution", 2.04), ("line_total", 1.0))
+    fields = {}
+    cursor = x
+    for name, width in tier1:
+        fields[name] = (cursor, width * inch, 1)
+        cursor += width * inch
+    cursor = x
+    for name, width in tier2:
+        fields[name] = (cursor, width * inch, 2)
+        cursor += width * inch
+    widths = {"item": item_w, "qty": qty_w, "unit": unit_w}
+    return cols, widths, fields
+
+
+def _hidden(form, name: str, value: str):
+    form.acroForm.textfield(
+        name=name,
+        tooltip=name,
+        x=0,
+        y=0,
+        width=1,
+        height=1,
+        borderWidth=0,
+        fontName="Times-Roman",
+        fontSize=6,
+        value=value,
+        annotationFlags="hidden",
+        fieldFlags="readOnly",
+        maxlen=200,
+    )
+
+
+def render_supplier_response_request(
+    *,
+    project_name: str,
+    project_address: str,
+    supplier_name: str,
+    issued_on: str,
+    intro: Sequence[str],
+    rows: Sequence[Mapping],
+    request_id: str,
+    project_id: int,
+    contact_label: str = "Supplier contact",
+) -> bytes:
+    """The approved page with the supplier's eight response boxes on each row."""
+    from reportlab.platypus import Paragraph
+
+    buffer = BytesIO()
+    page_w, page_h = landscape(letter)
+    form = Canvas(buffer, pagesize=landscape(letter))
+    form.acroForm.extras["NeedAppearances"] = "true"
+    form.setTitle(f"{project_name} — {TITLE}")
+    form.setAuthor(COMPANY)
+    form.setSubject(f"Request {request_id}")
+    left = 0.4 * inch
+    content_w = page_w - 0.8 * inch
+    cols, widths, fields = _response_columns(left, content_w)
+    item_style = ParagraphStyle("item", fontName="Times-Roman", fontSize=7.5, leading=9, textColor=colors.black)
+    intro_style = ParagraphStyle("intro", fontName="Times-Roman", fontSize=8, leading=10, textColor=PRIMARY)
+    page_no = 1
+    _hidden(form, "request_id", request_id)
+    _hidden(form, "request_project", str(int(project_id)))
+
+    def paint_header(top: float) -> float:
+        form.setFillColor(PRIMARY)
+        form.rect(left, top - 26, content_w, 26, fill=1, stroke=0)
+        form.setFillColor(colors.white)
+        form.setFont("Times-Bold", 8)
+        form.drawString(cols["no"] + 2, top - 11, "No.")
+        form.drawString(cols["item"] + 2, top - 11, "Item")
+        form.drawString(cols["qty"] + 2, top - 11, "Qty")
+        form.drawString(cols["unit"] + 2, top - 11, "Unit")
+        labels = dict((name, label) for name, label, _ in RESPONSE_FIELDS)
+        for name, (x, _w, tier) in fields.items():
+            form.drawString(x + 2, top - (11 if tier == 1 else 22), labels[name])
+        return top - 26
+
+    def start_page(first: bool) -> float:
+        _chrome(form, page_w, page_h, page_no, project_name, project_address, supplier_name, issued_on)
+        top = page_h - 0.98 * inch
+        if first:
+            for text in intro:
+                block = Paragraph(_xml(text), intro_style)
+                _, height = block.wrap(content_w, 80)
+                block.drawOn(form, left, top - height)
+                top -= height + 2
+            top -= 4
+        return paint_header(top)
+
+    cursor = start_page(True)
+    bottom = 0.55 * inch
+    for row in rows:
+        number = int(row["number"])
+        text = _xml(str(row["item"]))
+        if row.get("status_label"):
+            text = f"<b>{_xml(row['status_label'])}</b><br/>{text}"
+        block = Paragraph(text, item_style)
+        _, text_h = block.wrap(widths["item"] - 6, 400)
+        row_h = max(48, text_h + 8)
+        if cursor - row_h < bottom:
+            form.showPage()
+            page_no += 1
+            cursor = start_page(False)
+        row_bottom = cursor - row_h
+        if number % 2 == 0:
+            form.setFillColor(HEAD)
+            form.rect(left, row_bottom, content_w, row_h, fill=1, stroke=0)
+        form.setStrokeColor(RULE)
+        form.setLineWidth(0.3)
+        form.rect(left, row_bottom, content_w, row_h, fill=0, stroke=1)
+        form.setFillColor(colors.black)
+        form.setFont("Times-Roman", 8)
+        form.drawString(cols["no"] + 2, cursor - 12, str(number))
+        block.drawOn(form, cols["item"] + 2, cursor - 4 - text_h)
+        form.drawString(cols["qty"] + 2, cursor - 12, str(row.get("qty") or ""))
+        unit_lines = str(row.get("unit") or "").split("\n")
+        for i, text in enumerate(unit_lines[:3]):
+            form.drawString(cols["unit"] + 2, cursor - 12 - 9 * i, text)
+        for name, (x, width, tier) in fields.items():
+            top_of_box = cursor - 14 - (tier - 1) * 20
+            form.acroForm.textfield(
+                name=f"{name}_{number:02d}",
+                tooltip=f"{dict((n, l) for n, l, _ in RESPONSE_FIELDS)[name]} for item {number}",
+                x=x + 1,
+                y=top_of_box - 17,
+                width=width - 2,
+                height=17,
+                borderWidth=0.6,
+                borderColor=PRIMARY,
+                fillColor=FIELD,
+                textColor=colors.black,
+                forceBorder=True,
+                fontName="Times-Roman",
+                fontSize=8,
+                value="",
+                maxlen=dict((n, m) for n, _, m in RESPONSE_FIELDS)[name],
+                fieldFlags="readOnly" if name in CALCULATED_FIELDS else "",
+            )
+        _hidden(form, f"line_key_{number:02d}", str(row["key"]))
+        _hidden(form, f"line_sig_{number:02d}", str(row["signature"]))
+        cursor = row_bottom
+
+    if cursor - 70 < bottom:
+        form.showPage()
+        page_no += 1
+        _chrome(form, page_w, page_h, page_no, project_name, project_address, supplier_name, issued_on)
+        cursor = page_h - 0.98 * inch
+    cursor -= 14
+    form.setFillColor(PRIMARY)
+    form.setFont("Times-Roman", 9)
+    form.drawString(left, cursor - 12, contact_label)
+    form.drawString(left + 3.5 * inch, cursor - 12, "Date")
+    form.drawString(left + 5.7 * inch, cursor - 12, "Prices valid until")
+    _closing_field(form, "bmr_contact", contact_label, left + 1.05 * inch, cursor - 16, 2.2 * inch)
+    _closing_field(form, "response_date", "Date", left + 3.95 * inch, cursor - 16, 1.5 * inch)
+    _closing_field(form, "valid_until", "Prices valid until", left + 6.85 * inch, cursor - 16, 1.5 * inch)
+    form.setFont("Times-Bold", 9)
+    form.drawString(left + 8.5 * inch, cursor - 12, "Total")
+    _closing_field(form, "grand_total", "Total of the line totals", left + 8.9 * inch, cursor - 16, content_w - 8.9 * inch, read_only=True)
+    cursor -= 28
+    form.setFillColor(PRIMARY)
+    form.setFont("Times-Roman", 9)
+    form.drawString(left, cursor - 12, "General notes")
+    _closing_field(form, "general_notes", "General notes", left + 1.05 * inch, cursor - 16, content_w - 1.05 * inch, height=16)
+    form.setFont("Times-Roman", 7.5)
+    form.drawString(
+        left,
+        cursor - 30,
+        "Net price fills in once a unit price and a discount (0 if none) are entered. Line totals use Brayman's quantity. "
+        "The total adds every line total. Lines marked TBD have no total.",
+    )
+    form.save()
+    return _add_live_calculations(buffer.getvalue(), rows)
+
+
+def _quantity_number(text) -> Optional[float]:
+    try:
+        value = float(str(text).strip())
+    except (TypeError, ValueError):
+        return None
+    return value if value >= 0 else None
+
+
+def net_price_script(n: str) -> str:
+    """Net = unit price less the discount, to the cent. Runs only when both are entered."""
+    return (
+        f'var u{n}=String(this.getField("unit_price_{n}").valueAsString).replace(/[$,\\s]/g,"");'
+        f'var d{n}=String(this.getField("discount_{n}").valueAsString).replace(/[%\\s]/g,"");'
+        f'if(u{n}!==""&&d{n}!==""&&!isNaN(u{n})&&!isNaN(d{n})&&Number(d{n})>=0&&Number(d{n})<=100)'
+        f'{{event.value=(Math.round(Number(u{n})*(100-Number(d{n}))+1e-7)/100).toFixed(2);}}'
+    )
+
+
+def line_total_script(n: str, quantity: Optional[float]) -> str:
+    if quantity is None:
+        return 'event.value="";'
+    return (
+        f'var t{n}=String(this.getField("net_price_{n}").valueAsString).replace(/[$,\\s]/g,"");'
+        f'if(t{n}!==""&&!isNaN(t{n})){{event.value=(Math.round(Number(t{n})*{quantity!r}*100+1e-7)/100).toFixed(2);}}'
+        f'else{{event.value="";}}'
+    )
+
+
+def grand_total_script(numbers) -> str:
+    names = ",".join(f'"line_total_{n}"' for n in numbers)
+    return (
+        f"var gtNames=[{names}],gt=0,gtCount=0;"
+        "for(var gi=0;gi<gtNames.length;gi++){var gs=String(this.getField(gtNames[gi]).valueAsString);"
+        'if(gs!==""&&!isNaN(gs)){gt+=Number(gs);gtCount++;}}'
+        'event.value=gtCount?(Math.round(gt*100)/100).toFixed(2):"";'
+    )
+
+
+def _add_live_calculations(payload: bytes, rows) -> bytes:
+    """Attach calculate actions and the calculation order to the form fields."""
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import ArrayObject, DictionaryObject, NameObject, TextStringObject
+
+    scripts = {}
+    numbers = []
+    for row in rows:
+        n = f"{int(row['number']):02d}"
+        numbers.append(n)
+        scripts[f"net_price_{n}"] = net_price_script(n)
+        scripts[f"line_total_{n}"] = line_total_script(n, _quantity_number(row.get("qty")))
+    scripts["grand_total"] = grand_total_script(numbers)
+    writer = PdfWriter(clone_from=PdfReader(BytesIO(payload)))
+    refs = {}
+    for page in writer.pages:
+        for annot_ref in page.get("/Annots") or []:
+            annot = annot_ref.get_object()
+            name = annot.get("/T")
+            if name in scripts:
+                annot[NameObject("/AA")] = DictionaryObject(
+                    {
+                        NameObject("/C"): DictionaryObject(
+                            {
+                                NameObject("/S"): NameObject("/JavaScript"),
+                                NameObject("/JS"): TextStringObject(scripts[name]),
+                            }
+                        )
+                    }
+                )
+                refs[name] = annot_ref
+    order = [f"net_price_{n}" for n in numbers] + [f"line_total_{n}" for n in numbers] + ["grand_total"]
+    missing = [name for name in order if name not in refs]
+    if missing:
+        raise RuntimeError(f"Calculated fields not found: {missing[:3]}")
+    acro = writer._root_object["/AcroForm"]
+    acro[NameObject("/CO")] = ArrayObject([refs[name] for name in order])
+    out = BytesIO()
+    writer.write(out)
+    return out.getvalue()

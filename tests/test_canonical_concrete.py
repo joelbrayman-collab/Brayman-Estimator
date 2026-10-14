@@ -57,6 +57,8 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 
 ACTOR = "Joel Brayman"
 HEAD = "t0a1b2c3d4e5"
+# The migration graph moved on to the takeoff catalogue revision.
+GRAPH_HEAD = "u1b2c3d4e5f6"
 PRIOR = "r8e9f0a1b2c3"
 
 
@@ -314,7 +316,7 @@ def test_concrete_identity_migration_inserts_one_row(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == [HEAD]
+        assert script.get_heads() == [GRAPH_HEAD]
         command.upgrade(alembic_cfg, PRIOR)
         engine = db.engine
         with engine.begin() as conn:

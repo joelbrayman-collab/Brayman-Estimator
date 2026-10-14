@@ -12,7 +12,7 @@ from app import db
 
 
 MATERIAL_REQUIREMENT_STATUSES = ("DRAFT", "REVIEWED")
-MATERIAL_REQUIREMENT_UOMS = ("EA", "LF", "SF", "BF", "M3")
+MATERIAL_REQUIREMENT_UOMS = ("EA", "LF", "SF", "BF", "M3", "PKG")
 MATERIAL_REQUIREMENT_SOURCE_KINDS = (
     "MANUAL",
     "DEMO_SYNTHETIC",
@@ -44,7 +44,7 @@ class MaterialRequirement(db.Model):
             name="ck_material_requirements_status",
         ),
         db.CheckConstraint(
-            "canonical_uom IN ('EA', 'LF', 'SF', 'BF', 'M3')",
+            "canonical_uom IN ('EA', 'LF', 'SF', 'BF', 'M3', 'PKG')",
             name="ck_material_requirements_uom",
         ),
         db.CheckConstraint(
@@ -100,7 +100,7 @@ class MaterialRequirement(db.Model):
     @validates("canonical_uom")
     def _validate_uom(self, key, value):
         if value not in MATERIAL_REQUIREMENT_UOMS:
-            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF, or M3.")
+            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF, M3, or PKG.")
         return value
 
     @validates("source_kind")

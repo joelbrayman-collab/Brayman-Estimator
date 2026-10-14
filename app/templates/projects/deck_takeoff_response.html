@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Response | {{ project.name }}{% endblock %}
+{% block page_title %}Supplier Response{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1>Supplier response {{ record.response_id }}</h1>
+        <p class="muted-copy">
+            Request {{ record.request_id }}. {{ record.source|capitalize }} by {{ record.imported_by }} on {{ record.imported_at }}.
+            Response date {{ record.response_date or 'not given' }}. Prices valid until {{ record.valid_until or 'not given' }}.
+            Contact {{ record.contact or 'not given' }}.
+        </p>
+    </div>
+    <div><a class="button-link" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Back to the takeoff</a></div>
+</div>
+
+{% if record.issues %}
+<div class="form-panel"><p class="eyebrow">CHECK</p><ul>{% for i in record.issues %}<li>{{ i }}</li>{% endfor %}</ul></div>
+{% endif %}
+
+<div class="form-panel">
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>No.</th><th>Item</th><th>Brayman qty</th><th>SKU</th><th>Confirmed</th><th>Unit price</th><th>Disc.</th><th>Net</th><th>Line value</th><th>Availability</th><th>Lead time</th><th>Status</th><th>Recording</th><th>Notes</th></tr></thead>
+        <tbody>
+        {% for row in record.rows %}
+        <tr>
+            <td>{{ row.number }}</td>
+            <td>{{ row.description }}</td>
+            <td>{{ row.purchasing_quantity if row.purchasing_quantity is not none else 'TBD' }} {{ row.purchasing_unit or '' }}{% if row.stock_length_ft %} × {{ row.stock_length_ft }} ft{% endif %}</td>
+            <td>{{ row.answers.sku }}</td>
+            <td>{{ row.answers.product_confirmed }}</td>
+            <td>{{ row.unit_price or '' }}</td>
+            <td>{{ row.discount_percent or '' }}</td>
+            <td>{{ row.net_price or '' }}{% if row.net_source and row.net_source != 'supplier' %}<div class="muted-copy">{{ row.net_source }}</div>{% endif %}</td>
+            <td>{{ row.line_value or '' }}</td>
+            <td>{{ row.answers.availability }}</td>
+            <td>{{ row.answers.lead_time }}</td>
+            <td>{{ row.status|replace('_', ' ')|lower|capitalize }}</td>
+            <td>{{ (row.recording or '')|replace('_', ' ')|lower|capitalize }}</td>
+            <td>{% for p in row.problems %}<div>{{ p }}</div>{% endfor %}{% if row.answers.substitution %}<div>Substitution: {{ row.answers.substitution }}</div>{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+</div>
+
+{% set recorded = followups|selectattr('stage', 'equalto', 'RECORDED')|list %}
+{% if not recorded %}
+<div class="form-panel">
+    <p class="eyebrow">RECORD</p>
+    <p>Lines marked “Ready to record” are added as supplier price evidence. Earlier prices are kept. No estimate line is created.</p>
+    <form method="post" action="{{ url_for('deck_takeoff.record_response', project_id=project.id, response_id=record.response_id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Recorded by <input name="actor_display_name" value=""></label>
+        <div class="form-actions"><button type="submit">Record the ready prices</button></div>
+    </form>
+</div>
+{% else %}
+<div class="form-panel">
+    <p class="eyebrow">RECORDED</p>
+    {% for rec in recorded %}
+    <p>Recorded by {{ rec.recorded_by }} on {{ rec.recorded_at }}.</p>
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>No.</th><th>Result</th><th>Cost review</th><th>Brayman cost approval</th></tr></thead>
+        <tbody>
+        {% for res in rec.results %}
+        <tr>
+            <td>{{ res.number }}</td>
+            <td>{% if res.recorded %}{{ res.canonical_material_code }}{% if res.canonical_identity_created %} (identity created){% endif %} · price evidence {{ res.price_evidence_id }}{% else %}{{ res.reason }}{% endif %}</td>
+            <td>
+                {% set rv = review.get(res.canonical_material_id) %}
+                {% if rv %}{{ rv.resolution|replace('_', ' ')|lower|capitalize }}{% if rv.amount is not none %}: {{ rv.amount }} {{ rv.currency }} per {{ rv.unit }}{% endif %}{% endif %}
+                {% set ap = approvals.get(res.canonical_material_id) %}
+                {% if ap %}<div class="muted-copy">Latest decision: {{ ap.status|lower }} by {{ ap.approved_by }} at {{ ap.resolved_amount }} {{ ap.currency }} per {{ ap.unit }}</div>{% endif %}
+            </td>
+            <td>
+                {% if res.recorded %}
+                <form method="post" action="{{ url_for('deck_takeoff.approve_cost', project_id=project.id, response_id=record.response_id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="canonical_material_id" value="{{ res.canonical_material_id }}">
+                    <input name="actor_display_name" placeholder="Approved by">
+                    <button type="submit" name="status" value="APPROVED">Approve cost</button>
+                    <button type="submit" name="status" value="REJECTED">Reject</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -46,3 +46,17 @@ These steps restore the Mac mirror. They do not replace the hosted office.
 ## If the office is unusable
 
 Stop. Do not create a new database. Do not run an upgrade to fix it. Do not keep typing. Restore from the last line in the backup log whose check said ok.
+
+## Restore the hosted office (Render)
+
+Joel authorizes every hosted restore. It replaces live data, so it is never routine. Rehearsed on a disposable copy on 14 Oct 2026 (see the backup log).
+
+1. Choose the backup: the last line in the backup log whose check said `ok`. Note its SHA-256.
+2. In Render, turn on maintenance mode for `Calibryatai` so nobody saves while the file is replaced.
+3. From the office Mac, open `ssh srv-dar95mh42hec73df4rug@ssh.virginia.render.com`.
+4. Keep the current file: copy `instance/brayman_estimator.db` to `instance/backups/unusable-YYYYMMDD-HHMM.db` with the SQLite backup command, not a plain copy.
+5. Check the chosen backup's SHA-256 matches the log. If the backup is only on the Mac, copy it up with `scp` first and check the SHA-256 again on the server.
+6. Restore with the SQLite backup command, from the chosen backup onto `instance/brayman_estimator.db` (Python: `sqlite3.connect(backup).backup(sqlite3.connect(live))`).
+7. Check: `PRAGMA integrity_check` prints `ok`, and the revision in `alembic_version` is the one the running code expects. If the backup is older than the code, stop and ask before running any upgrade.
+8. Restart the service from Render, turn maintenance mode off, sign in and open a recent project and its estimate.
+9. Write the restore in the backup log: time, backup used, SHA-256, integrity, revision, who authorized it.

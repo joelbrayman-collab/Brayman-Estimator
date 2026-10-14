@@ -7,8 +7,16 @@
 <div class="page-heading">
     <div>
         <h1>Wall framing calculator</h1>
+        {% if estimate %}
+        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
+        <p class="muted-copy">Count the wall, add your waste and plate stock length, then send it to this estimate's review. Nothing is added until you confirm it there.</p>
+        {% else %}
         <p class="muted-copy">Straight wood-framed wall. No project is required. Nothing is added to an estimate. No waste is added, and no stock length is chosen. Openings, corners, and extra members are optional.</p>
+        {% endif %}
     </div>
+    {% if estimate %}
+    <div><a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a></div>
+    {% endif %}
 </div>
 
 <section class="form-panel">
@@ -87,7 +95,19 @@
             <input id="member_length_ft_{{ loop.index }}" name="member_length_ft" inputmode="decimal" value="{{ member.length_ft }}">
         </fieldset>
         {% endfor %}
+        {% if estimate %}
+        <fieldset>
+            <legend>Purchasing</legend>
+            <label for="waste_percent">Waste % (enter 0 for none)</label>
+            <input id="waste_percent" name="waste_percent" inputmode="decimal" value="{{ purchase_values.waste_percent }}">
+            <label for="plate_stock_length_ft">Plate stock length (feet)</label>
+            <input id="plate_stock_length_ft" name="plate_stock_length_ft" inputmode="decimal" value="{{ purchase_values.plate_stock_length_ft }}">
+        </fieldset>
+        <button type="submit" name="action" value="calculate">Calculate</button>
+        <button type="submit" name="action" value="review">Calculate and send to the estimate review</button>
+        {% else %}
         <button type="submit">Calculate</button>
+        {% endif %}
     </form>
 </section>
 
@@ -124,8 +144,16 @@
     {% if result.displays.short_final_spacing_in %}
     <p data-short-spacing>Short final spacing {{ result.displays.short_final_spacing_in }} in</p>
     {% endif %}
+    {% if bought %}
+    <h2>To buy</h2>
+    <p data-buy-studs><strong>{{ bought.displays.studs }}</strong></p>
+    <p data-buy-plates><strong>{{ bought.displays.plates }}</strong></p>
+    {% for m in bought.members %}<p data-buy-member>{{ m.count }} × {{ m.label }} at {{ m.length_ft }} ft</p>{% endfor %}
+    <p>Not on the estimate until you send it to the review and confirm it.</p>
+    {% else %}
     <p>This is a quantity layout, not a purchasing takeoff.</p>
     <p>These quantities are not on an estimate.</p>
+    {% endif %}
 </section>
 {% endif %}
 {% endblock %}

@@ -43,6 +43,19 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-14 — V1 Master Completion Directive: reconciliation and first implementation batch
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-14 |
+| Branch | `v1/completion` from `72f125f` |
+| Authority | Joel's V1 Master Completion Directive (14 Oct 2026) |
+| Approved scope | Complete mandatory V1 requirements; no new features; escalate scope, engineering, pricing, security, migration and hosting decisions |
+| Done | Register §15 reconciliation; approved cost → estimate page (EST-08); roofing, siding, drywall, flooring and standalone footing calculators; footing and framing Contract V1 hand-offs with framing purchasing; 500 page and logging; restore rehearsal and hosted restore steps |
+| Tests | `test_approved_cost_estimate.py` (14), `test_trade_area_calculators.py` (31), `test_wall_framing_purchasing.py` (10), `test_production_error_page.py` (1); calculator menu tests updated for the 10-entry menu |
+| Decisions requested | Hosted UAT bypass (security), SITE rule, labour production rates, FOUND/STRUCT binding (migration), proposal issue rule, preserved Employment page invalid input |
+| Not done | Deployment, owner acceptance, native Mac regression |
+
 ### 2026-10-13 — Takeoff and BMR workflow final integration
 
 | Field | Content |

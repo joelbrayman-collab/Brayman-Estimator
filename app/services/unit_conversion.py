@@ -10,6 +10,8 @@ from decimal import Decimal, ROUND_HALF_UP
 
 YARD_IN_METRES = Decimal("0.9144")
 CUBIC_YARD_IN_CUBIC_METRES = YARD_IN_METRES ** 3
+FOOT_IN_METRES = Decimal("0.3048")
+SQUARE_FOOT_IN_SQUARE_METRES = FOOT_IN_METRES ** 2
 
 _ALIASES = {
     "YD3": "YD3",
@@ -18,6 +20,12 @@ _ALIASES = {
     "M3": "M3",
     "FT3": "FT3",
     "CUFT": "FT3",
+    "FT": "FT",
+    "M": "M",
+    "FT2": "FT2",
+    "SQFT": "FT2",
+    "M2": "M2",
+    "SQM": "M2",
 }
 
 # numerator / denominator. The quantity is not rounded.
@@ -28,12 +36,21 @@ _FACTORS = {
         Decimal(1),
         "cubic yards to cubic metres",
     ),
+    ("FT", "M"): (FOOT_IN_METRES, Decimal(1), "feet to metres"),
+    ("M", "FT"): (Decimal(1), FOOT_IN_METRES, "metres to feet"),
+    ("FT2", "M2"): (SQUARE_FOOT_IN_SQUARE_METRES, Decimal(1), "square feet to square metres"),
+    ("M2", "FT2"): (Decimal(1), SQUARE_FOOT_IN_SQUARE_METRES, "square metres to square feet"),
+    ("FT3", "M3"): (FOOT_IN_METRES ** 3, Decimal(1), "cubic feet to cubic metres"),
 }
 
 DISPLAY_UNIT = {
     "YD3": "yd³",
     "M3": "m³",
     "FT3": "ft³",
+    "FT": "ft",
+    "M": "m",
+    "FT2": "ft²",
+    "M2": "m²",
 }
 
 

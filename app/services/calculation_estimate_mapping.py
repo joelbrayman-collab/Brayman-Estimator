@@ -90,6 +90,7 @@ _UNIT_ALIASES = {
 _ENGINE_LABELS = {
     "concrete_slab": "Concrete slab",
     "icf_wall": "ICF wall",
+    "rectangular_footing": "Rectangular footing",
 }
 _VARIANT_LABELS = {
     "standard": "Standard",

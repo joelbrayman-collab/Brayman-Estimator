@@ -19,6 +19,8 @@
     <p>You review what was calculated. You choose the company cost or reusable work each quantity should use. Nothing is added until you confirm it.</p>
     <p class="muted-copy">Project work is chosen on Scope of work.</p>
     <p><a href="{{ url_for('estimates.wall_form_quantities', id=estimate.id, version_id=version.id) }}">ICF wall quantities</a></p>
+    <p><a href="{{ url_for('estimates.footing_quantities', id=estimate.id, version_id=version.id) }}">Footing concrete</a></p>
+    <p><a href="{{ url_for('estimates.framing_quantities', id=estimate.id, version_id=version.id) }}">Wall framing</a></p>
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">

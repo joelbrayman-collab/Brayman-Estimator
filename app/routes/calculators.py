@@ -240,3 +240,135 @@ def wall_framing():
         result=result,
         drawing=drawing,
     )
+
+
+# ---------------------------------------------------------------- area and volume calculators
+# Roofing, siding, drywall, flooring and footing use the one service in
+# app/services/trade_area.py. Each page is described here and drawn by one template.
+
+from app.services import trade_area  # noqa: E402
+
+_LEN = {"imperial": "feet", "metric": "metres"}
+
+TRADE_PAGES = {
+    "roofing": {
+        "title": "Roofing calculator",
+        "intro": "Roof area from each plane's plan size and pitch. No project is required. Nothing is added to an estimate.",
+        "groups": [
+            {"key": "planes", "legend": "Roof plane", "min": 2, "fields": [
+                ("plane_length", "length", "Plan length ({len})"), ("plane_width", "width", "Plan width ({len})"),
+                ("plane_pitch", "pitch", "Pitch (rise in 12)")]},
+        ],
+        "scalars": [("waste_percent", "Waste % (enter 0 for none)"),
+                    ("bundle_coverage", "Shingle bundle coverage ({area}, from the product)"),
+                    ("underlayment_coverage", "Underlayment roll coverage ({area}, from the product)"),
+                    ("ridge_length", "Ridge and hip length ({len})"),
+                    ("ridge_cap_coverage", "Ridge cap coverage per bundle ({len}, from the product)")],
+        "compute": lambda v: trade_area.roofing(unit_system=v["unit_system"], planes=v["planes"],
+                                                waste_percent=v["waste_percent"], bundle_coverage=v["bundle_coverage"],
+                                                underlayment_coverage=v["underlayment_coverage"],
+                                                ridge_length=v["ridge_length"], ridge_cap_coverage=v["ridge_cap_coverage"]),
+    },
+    "siding": {
+        "title": "Siding calculator",
+        "intro": "Net wall area for siding. No project is required. Nothing is added to an estimate.",
+        "groups": [
+            {"key": "walls", "legend": "Wall", "min": 4, "fields": [("wall_length", "length", "Length ({len})"), ("wall_height", "height", "Height ({len})")]},
+            {"key": "gables", "legend": "Gable (triangle)", "min": 2, "fields": [("gable_base", "base", "Base ({len})"), ("gable_height", "height", "Height at the peak ({len})")]},
+            {"key": "openings", "legend": "Opening to take off", "min": 3, "fields": [("opening_width", "width", "Width ({len})"), ("opening_height", "height", "Height ({len})"), ("opening_count", "count", "How many (blank = 1)")]},
+        ],
+        "scalars": [("waste_percent", "Waste % (enter 0 for none)"), ("piece_coverage", "Coverage per piece or box ({area}, from the product)")],
+        "compute": lambda v: trade_area.siding(unit_system=v["unit_system"], walls=v["walls"], gables=v["gables"],
+                                               openings=v["openings"], waste_percent=v["waste_percent"],
+                                               piece_coverage=v["piece_coverage"]),
+    },
+    "drywall": {
+        "title": "Drywall calculator",
+        "intro": "Board area and sheet count. No project is required. Nothing is added to an estimate.",
+        "groups": [
+            {"key": "walls", "legend": "Wall", "min": 4, "fields": [("wall_length", "length", "Length ({len})"), ("wall_height", "height", "Height ({len})")]},
+            {"key": "ceilings", "legend": "Ceiling", "min": 1, "fields": [("ceiling_length", "length", "Length ({len})"), ("ceiling_width", "width", "Width ({len})")]},
+            {"key": "openings", "legend": "Opening to take off", "min": 2, "fields": [("opening_width", "width", "Width ({len})"), ("opening_height", "height", "Height ({len})"), ("opening_count", "count", "How many (blank = 1)")]},
+        ],
+        "scalars": [("waste_percent", "Waste % (enter 0 for none)")],
+        "choices": [("sheet_size", "Sheet size", [("4x8", "4 × 8 ft"), ("4x10", "4 × 10 ft"), ("4x12", "4 × 12 ft")])],
+        "compute": lambda v: trade_area.drywall(unit_system=v["unit_system"], walls=v["walls"], ceilings=v["ceilings"],
+                                                openings=v["openings"], waste_percent=v["waste_percent"],
+                                                sheet_size=v["sheet_size"] or "4x8"),
+    },
+    "flooring": {
+        "title": "Flooring calculator",
+        "intro": "Floor area and boxes. No project is required. Nothing is added to an estimate.",
+        "groups": [
+            {"key": "rooms", "legend": "Room or area", "min": 3, "fields": [("room_length", "length", "Length ({len})"), ("room_width", "width", "Width ({len})")]},
+        ],
+        "scalars": [("waste_percent", "Waste % (enter 0 for none)"), ("box_coverage", "Coverage per box ({area}, from the product)")],
+        "compute": lambda v: trade_area.flooring(unit_system=v["unit_system"], rooms=v["rooms"],
+                                                 waste_percent=v["waste_percent"], box_coverage=v["box_coverage"]),
+    },
+    "footing": {
+        "title": "Rectangular footing calculator",
+        "intro": "Concrete for rectangular footings. No project is required. Nothing is added to an estimate.",
+        "groups": [
+            {"key": "footings", "legend": "Footing", "min": 2, "fields": [
+                ("footing_length", "length", "Length ({len})"), ("footing_width", "width", "Width ({len})"),
+                ("footing_thickness", "thickness", "Thickness ({thick})"), ("footing_count", "count", "How many (blank = 1)")]},
+        ],
+        "scalars": [("waste_percent", "Waste % (enter 0 for none)")],
+        "compute": lambda v: trade_area.footing(unit_system=v["unit_system"], footings=v["footings"],
+                                                waste_percent=v["waste_percent"]),
+    },
+}
+
+
+def _trade_values(page):
+    system = (request.form.get("unit_system") or "imperial") if request.method == "POST" else "imperial"
+    values = {"unit_system": system}
+    for name, _label in page["scalars"]:
+        values[name] = (request.form.get(name) or "").strip() if request.method == "POST" else ""
+    for name, _label, _options in page.get("choices", []):
+        values[name] = (request.form.get(name) or "").strip() if request.method == "POST" else ""
+    for group in page["groups"]:
+        values[group["key"]] = _form_rows([(form, key) for form, key, _l in group["fields"]], group["min"])
+    return values
+
+
+def _trade_page(kind):
+    page = TRADE_PAGES[kind]
+    values = _trade_values(page)
+    error = result = None
+    if request.method == "POST":
+        try:
+            result = page["compute"](values)
+        except trade_area.TradeAreaInputError as exc:
+            error = str(exc)
+    system = values["unit_system"] if values["unit_system"] in _LEN else "imperial"
+    words = {"len": _LEN[system], "area": "ft²" if system == "imperial" else "m²",
+             "thick": "inches" if system == "imperial" else "millimetres"}
+    return render_template("calculators/trade_area.html", kind=kind, page=page, values=values,
+                           error=error, result=result, words=words)
+
+
+@calculators_bp.route("/roofing", methods=["GET", "POST"])
+def roofing():
+    return _trade_page("roofing")
+
+
+@calculators_bp.route("/siding", methods=["GET", "POST"])
+def siding():
+    return _trade_page("siding")
+
+
+@calculators_bp.route("/drywall", methods=["GET", "POST"])
+def drywall():
+    return _trade_page("drywall")
+
+
+@calculators_bp.route("/flooring", methods=["GET", "POST"])
+def flooring():
+    return _trade_page("flooring")
+
+
+@calculators_bp.route("/footing", methods=["GET", "POST"])
+def footing():
+    return _trade_page("footing")

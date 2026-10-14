@@ -148,7 +148,7 @@ def test_the_drawing_uses_the_same_positions():
 def test_wall_framing_calculator_is_in_the_calculators_section():
     section = next(row for row in NAV_SECTIONS if row["title"] == "Calculators")
     titles = [item["title"] for item in section["links"]]
-    assert titles[-1] == "Wall framing calculator"
+    assert titles[4] == "Wall framing calculator"
 
 
 @pytest.mark.no_office_auth

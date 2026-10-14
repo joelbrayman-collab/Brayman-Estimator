@@ -916,6 +916,68 @@ FUNCTIONAL V1 BUILD (SECONDARY / NOT OFFICIAL SCORING):
 
 ---
 
+## 15. V1 completion reconciliation — 14 Oct 2026 (V1 Master Completion Directive)
+
+Authority: Joel's V1 Master Completion Directive, 14 Oct 2026. This section is the working completion register for V1 Development Complete. It records evidence only. It does not compute an overall percentage. Live product at reconciliation: `72f125f1a20fc743f9333c6f3dd36b42d6335a2e`, deploy `dep-db7uslk9v7es73d0a6fg`, revision `v2c3d4e5f6a7`.
+
+Classes: **LIVE VERIFIED** · **IMPLEMENTED / NOT ACCEPTED** · **PARTIALLY IMPLEMENTED** · **NOT IMPLEMENTED** · **EXTERNAL FACT REQUIRED** · **OUTSIDE APPROVED V1**. A row is complete only with implementation, tests and production verification.
+
+### 15.1 Calculators (directive §5)
+
+| ID | Requirement | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| CALC-01 | Concrete slab (standard) | LIVE VERIFIED | `calculation-engines/concrete-slab-1.0.0`, `/calculators/concrete`, `tests/test_concrete_calculator_access.py`, fixtures; live 10 Oct | No hand-off to an estimate from the page; project slab uses a separate prism (`foundation_quantity.py`) |
+| CALC-02 | Thickened-edge slab | LIVE VERIFIED | same engine, `test_thickened_edge_slab_example_is_valid` | as CALC-01 |
+| CALC-03 | Stairs (Ontario residential) | LIVE VERIFIED | `calculation-engines/stair-ontario-residential-v1`, `/calculators/stairs`, `tests/test_stair_calculator_access.py` | Geometry only; no material rule (`MISSING_RULES["stairs"]`) |
+| CALC-04 | ICF walls (8-inch) | LIVE VERIFIED | `app/services/icf_quantity.py`, `/calculators/wall-form`, `tests/test_icf_governed_estimate_path.py` | Only bound engine; imperial only; other cores need verified manufacturer facts (EXTERNAL FACT REQUIRED) |
+| CALC-05 | Rectangular footings | IMPLEMENTED / NOT ACCEPTED (standalone) | project page live 10 Oct; standalone `/calculators/footing` (`app/services/trade_area.py::footing`, feet or metres, explicit waste, ft³/yd³/m³), `tests/test_trade_area_calculators.py` | Deploy; no Contract V1 result; `FOUND` unbound |
+| CALC-06 | Wall framing | PARTIALLY IMPLEMENTED | `app/services/wall_framing.py`, `/calculators/wall-framing`, `tests/test_wall_framing_calculator.py`; slice 1 live 11 Oct, slice 2 in `afbb52b` live from 12 Oct deploys | No purchasing (stock length), no Contract V1, `STRUCT` unbound |
+| CALC-07 | Deck takeoff | LIVE VERIFIED (to supplier price) | `app/services/deck_takeoff/`, live `72f125f`, project 54 browser acceptance | Project only; takeoff lines do not become `MaterialRequirement` or estimate lines |
+| CALC-08 | Employment vs Entrepreneurship | LIVE VERIFIED | `/calculators/employment-vs-entrepreneurship`, live 10 Oct | Preserved page turns invalid input into 0 (G: invalid-input rejection) |
+| CALC-09 | Roofing | IMPLEMENTED / NOT ACCEPTED | `/calculators/roofing`; plan area × √(1+(rise/12)²) per plane; squares; explicit waste; bundles, underlayment rolls and ridge cap from product coverage; feet or metres; `tests/test_trade_area_calculators.py` | Owner acceptance of the rule; deploy |
+| CALC-10 | Siding | IMPLEMENTED / NOT ACCEPTED | `/calculators/siding`; walls + gable triangles − listed openings; explicit waste; pieces from coverage | Owner acceptance; deploy |
+| CALC-11 | Drywall | IMPLEMENTED / NOT ACCEPTED | `/calculators/drywall`; walls + ceilings − listed openings; explicit waste; 4×8, 4×10, 4×12 sheets rounded up | Owner acceptance; deploy |
+| CALC-12 | Flooring | IMPLEMENTED / NOT ACCEPTED | `/calculators/flooring`; room rectangles; perimeter; explicit waste; boxes from coverage | Owner acceptance; deploy |
+| CALC-13 | Calculator menu completeness | IMPLEMENTED / NOT ACCEPTED | `app/navigation.py` Calculators group: 10 entries | Deck takeoff stays on the project (it reads the stored construction model) |
+
+### 15.2 Construction-to-estimate (directive §4, checklist step 8)
+
+| ID | Link | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| EST-01 | Construction facts, revisions | LIVE VERIFIED | `project_construction_model.py`, `tests/test_construction_model_entry_office.py` | — |
+| EST-02 | Facts → quantities → estimate review | IMPLEMENTED / NOT ACCEPTED | ICF, stored member counts, deck takeoff; footing concrete (`/estimates/<id>/versions/<vid>/footing-quantities`, engine `rectangular_footing`) and wall framing (`…/framing-quantities`, engine `wall_framing`) now emit Contract V1 into the existing review; `tests/test_trade_area_calculators.py`, `tests/test_wall_framing_purchasing.py` | Slab (project) still uses the plain prism; deploy |
+| EST-03 | `SITE` / `FOUND` / `STRUCT` binding | NOT IMPLEMENTED | `work_structure.py` `PLATFORM_ENGINE_PRODUCERS={icf_wall}`; `start-project-implementation-plan.md` §6 | `FOUND`: footing/slab producer; `STRUCT`: deck framing count producer (already Contract V1) and wall framing; `SITE`: no governed rule (owner decision). Binding needs a migration |
+| EST-04 | Quantities → supplier pricing → estimate | IMPLEMENTED / NOT ACCEPTED | Deck: takeoff → Form 2 → approval → EST-08 page carries the FINAL purchase quantity to the estimate. Calculators: Contract V1 → review → confirmed line. `MaterialRequirement` stays the supplier-mapping record (no new writes) | — |
+| EST-05 | Purchasing quantities | IMPLEMENTED / NOT ACCEPTED | Deck stock/kerf; concrete m³; framing studs and plates from entered waste and stock length (`app/services/wall_framing_purchasing.py`); roofing, siding, drywall, flooring packages from product coverage | Deploy |
+| EST-06 | Supplier pricing (Form 2) | LIVE VERIFIED | `72f125f`; project 54: Recordable Quoted Total 623.70 | — |
+| EST-07 | Cost review / cost approval | IMPLEMENTED / NOT ACCEPTED | `contractor_cost_approval.py`, `deck_takeoff.approve_cost`, tests | Approver name is a typed field (`form_actor`) |
+| EST-08 | Approved cost → estimate line → costing snapshot | IMPLEMENTED / NOT ACCEPTED | `/estimates/<id>/versions/<vid>/approved-costs` (`app/routes/approved_costs.py`, `app/services/approved_cost_estimate.py`); uses an existing line or adds one with a confirmed quantity (deck takeoff FINAL QUANTITY offered); one line per material; approver = signed-in user; `tests/test_approved_cost_estimate.py` (14) | Deploy; live check |
+| EST-09 | Estimate pricing (GM, tax) | IMPLEMENTED / NOT ACCEPTED | `pricing_engine.py`, `tests/test_pricing_engine.py`; `docs/pricing-policy.md` ($65/h, 15% GM, HST after) | Labour hours have no production-rate source (EXTERNAL FACT REQUIRED) |
+| EST-10 | Proposal reconciles to approved cost | PARTIALLY IMPLEMENTED | `test_estimate_output_consistency.py` | Proposal can be created on the legacy stack with no costing snapshot |
+
+### 15.3 Security, data integrity, hosting (directive §12–13)
+
+| ID | Requirement | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| SEC-01 | Authentication | PARTIALLY IMPLEMENTED | `app/routes/auth.py`, `tests/test_auth_fg018.py` | Hosted UAT bypass (`CALIBRAYTAI_UAT_AUTH_BYPASS`) observed ON 14 Oct: an anonymous tab was signed in as Joel. Owner action: set the hosted password, then switch the bypass off (security setting) |
+| SEC-02 | Organization isolation | IMPLEMENTED / NOT ACCEPTED | `organizations.py`, cross-org tests | Production certification |
+| SEC-03 | Cost approval permissions | PARTIALLY IMPLEMENTED | any member may approve; roles recorded POST-V1 | Record the signed-in user as approver |
+| SEC-04 | Backup | LIVE VERIFIED | `docs/operations/v1-backup-log.md`; `pre-drawings-20261014-2103.db` | — |
+| SEC-05 | Restore | IMPLEMENTED / NOT ACCEPTED | Rehearsal passed 14 Oct on a disposable copy of `pre-drawings-20261014-2103.db` (backup log); hosted restore steps in `v1-backup-restore-checklist.md` | A live restore is only ever run with Joel's authorization |
+| SEC-06 | Production error handling | IMPLEMENTED / NOT ACCEPTED | 500 handler: rollback, logged reference, plain page (`app/templates/errors/500.html`); stderr logging for Render; `tests/test_production_error_page.py` | Deploy |
+| HOST-01 | Memory / concurrency | IMPLEMENTED / NOT ACCEPTED | One sync worker serializes requests, so drawing generations never overlap; live generation 6–8 s (< 30 s timeout) with no restart; the 22:35 UTC out-of-memory restart needed a second application process (production SSH checks are now prohibited) | A drawing render holds the office for a few seconds; a larger plan only if real use shows it |
+
+### 15.4 Contractor workflow and office modules (directive §8–9)
+
+| ID | Requirement | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| WF-01 | Sign-in, clients, projects, construction info, revisions, calculators, schedules, documents, change orders, closeout | IMPLEMENTED / NOT ACCEPTED | routes and tests listed in the 14 Oct reconciliation | Internal end-to-end browser acceptance |
+| WF-02 | Supplier response intake | PARTIALLY IMPLEMENTED | deck takeoff only | — (deck is the V1 supplier path) |
+| WF-03 | Estimates and Proposals reachable | IMPLEMENTED (by the accepted navigation design) | Reached from Home and every project; the accepted simplified menu is preserved | — |
+| WF-04 | Contract and signing | PARTIALLY IMPLEMENTED | V1-06 / V1-07 | Production signing pending counsel (EXTERNAL FACT REQUIRED) |
+
+---
+
 ## Related
 
 - [platform-roadmap.md](platform-roadmap.md)

@@ -88,6 +88,11 @@ def test_icf_wall_calculator_is_in_the_calculators_section():
         "ICF wall calculator",
         "Employment vs Entrepreneurship",
         "Wall framing calculator",
+        "Footing calculator",
+        "Roofing calculator",
+        "Siding calculator",
+        "Drywall calculator",
+        "Flooring calculator",
     ]
     assert NAV_SECTIONS[0]["title"] is None
 

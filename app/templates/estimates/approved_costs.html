@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Approved costs | {{ estimate.estimate_number }} | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Approved costs{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
+        <h1>Use approved costs on this estimate</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Back to the estimate version</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <p>These are the costs Brayman has approved from supplier prices. Using one puts that cost on the estimate line and approves this version's costing again, recorded as {{ actor or "you" }}. Nothing is added until you choose it. A supplier price that has not been approved is not shown here.</p>
+    {% if version.is_locked %}
+    <p><strong>This version is locked. Start a new version to change its costs.</strong></p>
+    {% endif %}
+</section>
+
+{% if not rows %}
+<section class="form-panel">
+    <p>No approved costs yet. Approve a supplier price on the project's Deck Takeoff page first.</p>
+</section>
+{% endif %}
+
+{% for row in rows %}
+<section class="form-panel" style="margin-bottom: 18px;">
+    <h2>{{ row.material.display_name if row.material else "Material" }}</h2>
+    <p>{{ row.approval.currency }} {{ "%.4f"|format(row.approval.resolved_amount) }} per {{ row.approval.unit }} · approved by {{ row.approval.approved_by }} on {{ row.approval.approved_at.strftime("%Y-%m-%d") }} · approval {{ row.approval.id }}{% if row.material %} · {{ row.material.code }}{% endif %}</p>
+
+    {% if row.lines %}
+    <div class="table-wrap">
+    <table>
+        <thead><tr><th>Estimate line</th><th>Quantity</th><th>Unit cost now</th><th></th></tr></thead>
+        <tbody>
+        {% for entry in row.lines %}
+        <tr>
+            <td>{{ entry.line.description }}</td>
+            <td>{{ entry.line.quantity }} {{ entry.line.unit }}</td>
+            <td>{{ "%.4f"|format(entry.line.unit_cost or 0) }}</td>
+            <td>
+                {% if entry.uses_this_approval %}
+                Uses this approved cost.
+                {% elif not entry.unit_matches %}
+                The line is in {{ entry.line.unit }}; the approved cost is per {{ row.approval.unit }}.
+                {% elif not version.is_locked %}
+                <form method="post" action="{{ url_for('approved_costs.use', id=estimate.id, version_id=version.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="approval_id" value="{{ row.approval.id }}">
+                    <input type="hidden" name="line_id" value="{{ entry.line.id }}">
+                    <button type="submit">Use the approved cost on this line</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% elif not version.is_locked %}
+    <form method="post" action="{{ url_for('approved_costs.add', id=estimate.id, version_id=version.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="approval_id" value="{{ row.approval.id }}">
+        <label>Quantity ({{ row.approval.unit }})
+            <input type="text" inputmode="decimal" name="quantity" value="{{ row.offer_prefill if row.offer_prefill is not none else '' }}" required>
+        </label>
+        {% if row.offer %}
+        <p class="field-hint">
+            {% if row.offer_prefill is not none %}
+            From the project's deck takeoff (request {{ row.offer.request_id }}): {{ row.offer.quantity }} {{ row.offer.unit }}, FINAL QUANTITY. Check it before adding.
+            {% elif row.offer.quantity is not none %}
+            The deck takeoff has {{ row.offer.quantity }} {{ row.offer.unit }}, but it is not a final quantity. Enter the quantity after it is verified.
+            {% else %}
+            The deck takeoff has no quantity for this material yet. Enter the quantity you have verified.
+            {% endif %}
+        </p>
+        {% endif %}
+        <label>Section
+            <select name="section_id">
+                <option value="">New section…</option>
+                {% for section in sections %}<option value="{{ section.id }}">{{ section.name }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>New section name (if new)
+            <input type="text" name="new_section_name" value="Materials">
+        </label>
+        <div class="form-actions"><button type="submit">Add to the estimate at the approved cost</button></div>
+    </form>
+    {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

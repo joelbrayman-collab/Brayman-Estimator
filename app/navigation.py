@@ -80,6 +80,36 @@ NAV_SECTIONS = (
                 "icon": "bi-columns",
                 "enabled": True,
             },
+            {
+                "title": "Footing calculator",
+                "endpoint": "calculators.footing",
+                "icon": "bi-bounding-box",
+                "enabled": True,
+            },
+            {
+                "title": "Roofing calculator",
+                "endpoint": "calculators.roofing",
+                "icon": "bi-house",
+                "enabled": True,
+            },
+            {
+                "title": "Siding calculator",
+                "endpoint": "calculators.siding",
+                "icon": "bi-grid-3x3",
+                "enabled": True,
+            },
+            {
+                "title": "Drywall calculator",
+                "endpoint": "calculators.drywall",
+                "icon": "bi-square",
+                "enabled": True,
+            },
+            {
+                "title": "Flooring calculator",
+                "endpoint": "calculators.flooring",
+                "icon": "bi-grid",
+                "enabled": True,
+            },
         ),
     },
     {

@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**14 Oct 2026 (evening) — V1 MASTER COMPLETION DIRECTIVE IN PROGRESS.** Register §15 is the working completion list. Repository work on branch `v1/completion` (from `72f125f`): approved cost → estimate page, roofing/siding/drywall/flooring/footing calculators, footing and framing Contract V1 hand-offs with framing purchasing, 500 page and logging, restore rehearsal. Not deployed. Next: owner decisions (bypass, SITE, labour rates, FOUND/STRUCT binding, proposal issue rule), internal browser acceptance, native Mac regression, release. Production must not run a second application process over SSH (out-of-memory restart 14 Oct 22:35 UTC).
+
 **14 Oct 2026 — CONSTRUCTION DRAWINGS ACCEPTED; CONTROLLED RELEASE.** Joel accepted the seven-sheet D1 set (drawing standard 1.1). Release by `generated/drawings_release.sh`: native Mac regression, fresh hosted backup, migration rehearsal, push of the tested tree, deploy, migration `v2c3d4e5f6a7` applied once, hosted synthetic workflow (drawings, Project Plans, estimate, proposal, BMR Form 2). Rollback: redeploy `a24e3d2` and restore the pre-drawings backup.
 
 **14 Oct 2026 — BMR SUPPLIER FORM 2 READY FOR RELEASE AUTHORIZATION.** Branch `supplier/form-2` from `0edc97f`, supplier form only (no construction drawing files). Recordable Quoted Total rule implemented. No migration. Native Mac regression: `generated/mac_form2_release_check.sh`. Not committed. Not deployed.

@@ -65,6 +65,11 @@ def test_employment_calculator_is_in_the_calculators_section():
         "ICF wall calculator",
         "Employment vs Entrepreneurship",
         "Wall framing calculator",
+        "Footing calculator",
+        "Roofing calculator",
+        "Siding calculator",
+        "Drywall calculator",
+        "Flooring calculator",
     ]
 
 

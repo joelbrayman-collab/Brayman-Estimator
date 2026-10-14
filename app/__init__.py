@@ -131,6 +131,19 @@ def _is_allowed_build_api_post() -> bool:
     return bool(_BUILD_API_POST_RE.fullmatch(request.path or ""))
 
 
+def _apply_logging(app: Flask) -> None:
+    """Send application errors and warnings to stderr, which Render keeps in its logs."""
+    import logging
+
+    if app.config.get("TESTING"):
+        return
+    if not any(isinstance(h, logging.StreamHandler) for h in app.logger.handlers):
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        app.logger.addHandler(handler)
+    app.logger.setLevel(logging.INFO)
+
+
 def _register_office_auth(app: Flask) -> None:
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
@@ -240,6 +253,29 @@ def _register_office_auth(app: Flask) -> None:
             return api_error(ERROR_METHOD_NOT_ALLOWED, 405)
         return err.get_response()
 
+    @app.errorhandler(500)
+    def handle_500(err):
+        """Production error page: the database session is rolled back, the error is
+        logged with a short reference, and the office sees plain words, not a trace."""
+        import uuid
+
+        from flask import render_template
+
+        reference = uuid.uuid4().hex[:8].upper()
+        original = getattr(err, "original_exception", None) or err
+        try:
+            db.session.rollback()
+        except Exception:  # pragma: no cover - the rollback must never hide the error page
+            pass
+        app.logger.error(
+            "Unhandled error %s on %s %s", reference, request.method, request.path, exc_info=original
+        )
+        if _is_api_request():
+            from flask import jsonify
+
+            return jsonify({"error": "Server error.", "reference": reference}), 500
+        return render_template("errors/500.html", reference=reference), 500
+
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -261,6 +297,7 @@ def create_app(config=None):
     _apply_hosted_database(app)
     _apply_secret_key(app)
     _apply_hosted_session_cookies(app)
+    _apply_logging(app)
 
     if app.config.get("TESTING"):
         app.config.setdefault("WTF_CSRF_ENABLED", False)
@@ -358,6 +395,7 @@ def create_app(config=None):
     from app.routes.supplier_package import supplier_package_bp
     from app.routes.deck_takeoff import deck_takeoff_bp
     from app.routes.construction_drawings import construction_drawings_bp
+    from app.routes.approved_costs import approved_costs_bp
     from app.routes.scope_delivery import scope_delivery_bp
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
     from app.routes.sign import sign_bp
@@ -397,6 +435,7 @@ def create_app(config=None):
     app.register_blueprint(supplier_package_bp)
     app.register_blueprint(deck_takeoff_bp)
     app.register_blueprint(construction_drawings_bp)
+    app.register_blueprint(approved_costs_bp)
     app.register_blueprint(scope_delivery_bp)
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)

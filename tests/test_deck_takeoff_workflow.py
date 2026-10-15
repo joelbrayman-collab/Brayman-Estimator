@@ -231,6 +231,8 @@ def test_full_price_chain_for_every_new_category(app, client):
         assert b"Contractor cost approved" in approved.data
     approvals = ContractorCostApproval.query.all()
     assert len(approvals) == len(mapped)
+    # SEC-03: the approver is the signed-in person; the typed name on the form is ignored.
+    assert {a.approved_by for a in approvals} == {"Office Test User"}
     assert {a.unit for a in approvals} == {"EA", "PKG"}
     assert EstimateLineItem.query.count() == estimate_lines_before  # nothing is created on its own
 

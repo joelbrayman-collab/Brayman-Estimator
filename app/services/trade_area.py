@@ -354,8 +354,9 @@ def footing_contract_v1(result: dict, result_id: str) -> dict:
     exact = result["_exact"]
     unit = "m3" if metric else "yd3"
     to = "M3" if metric else "YD3"
-    net = convert(exact["ft3"], "FT3", to)["quantity"]
-    order = convert(exact["order_ft3"], "FT3", to)["quantity"]
+    # Same precision the page shows (0.001 yd³ or m³), so the review and the page agree.
+    net = Decimal(_q(convert(exact["ft3"], "FT3", to)["quantity"], "0.001"))
+    order = Decimal(_q(convert(exact["order_ft3"], "FT3", to)["quantity"], "0.001"))
     return {
         "contract_version": "1",
         "result_id": result_id,

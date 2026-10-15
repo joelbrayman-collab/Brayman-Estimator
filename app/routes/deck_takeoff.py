@@ -14,7 +14,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, s
 from app.models import Project
 from app.models.canonical_material import CanonicalMaterial
 from app.models.supplier_catalogue import ContractorSupplierAccount
-from app.services.auth import form_actor
+from app.services.auth import form_actor, signed_in_approver
 from app.services.brayman_supplier_estimate import render_supplier_response_request
 from app.services.contractor_cost_approval import (
     ContractorCostApprovalError,
@@ -323,7 +323,7 @@ def approve_cost(project_id, response_id):
             canonical_material_id=material_id,
             contractor_supplier_account_id=record["contractor_supplier_account_id"],
             as_of=datetime.utcnow(),
-            approved_by=form_actor("actor_display_name"),
+            approved_by=signed_in_approver(),
             status=decision,
         )
     except ContractorCostApprovalError as exc:

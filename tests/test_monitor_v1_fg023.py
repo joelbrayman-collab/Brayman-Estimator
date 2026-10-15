@@ -202,6 +202,8 @@ def _add_snapshot(version, *, direct_cost, selling, tax_amount="13.00"):
 
 def _accept(estimate, version, *, title, template=None, historical=False):
     template = template or _template(f"Template {title}")
+    if not historical:
+        make_issuable(version)  # decision 3: approvals before the proposal is prepared
     proposal = create_proposal(
         estimate=estimate,
         version=version,
@@ -213,7 +215,6 @@ def _accept(estimate, version, *, title, template=None, historical=False):
         with issued_before_decision_3():
             update_proposal_status(proposal, "Accepted")
     else:
-        make_issuable(version)  # decision 3: approvals before acceptance
         update_proposal_status(proposal, "Accepted")
     db.session.refresh(proposal)
     return proposal

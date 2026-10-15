@@ -47,10 +47,7 @@
             {% endif %}
         </select>
     </label>
-    <label>
-        Reviewer *
-        <input type="text" name="reviewed_by" value="Joel Brayman" required>
-    </label>
+    {% include "partials/approver.html" %}
     <label>
         Notes
         <textarea name="review_notes" rows="3"></textarea>

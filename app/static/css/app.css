@@ -1746,6 +1746,27 @@ body.login-page {
     font-size: 1.15rem;
 }
 
+/* Joel, 15 Oct 2026: Company Calendar sits immediately below Start New Project. */
+.home-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.home-actions .home-calendar {
+    margin: 0;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .home-intro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
 .home-briefing {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -127,3 +127,17 @@ def test_crews_use_the_shared_register_without_an_action_column():
     assert ">Open<" not in html
     assert ">Settings<" not in html
     assert "data-table" not in html
+
+
+def test_company_calendar_sits_immediately_below_start_new_project():
+    """Joel, 15 Oct 2026: Company Calendar directly under + Start New Project on Home."""
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "app" / "templates" / "dashboard.html").read_text()
+    start = page.index('class="home-start"')
+    calendar = page.index('class="home-calendar"')
+    assert page.count('class="home-calendar"') == 1
+    assert start < calendar
+    between = page[start:calendar]
+    assert between.count("<a ") == 1 and between.count("</a>") == 1  # only the calendar link starts between them
+    assert page.rfind('<div class="home-actions">', 0, start) > page.rfind("</section>", 0, start)

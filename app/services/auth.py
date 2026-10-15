@@ -122,6 +122,22 @@ def current_actor_display_name(*, fallback: str = "") -> str:
     return fallback
 
 
+def signed_in_approver() -> str:
+    """SEC-03 (V1, 15 Oct 2026): approvals record the signed-in person, never a typed name.
+
+    Cost approval, pricing approval and labour-rate review are commercial authority. A
+    name typed on the form is ignored for these actions.
+    """
+    if has_request_context() and getattr(current_user, "is_authenticated", False):
+        name = (getattr(current_user, "display_name", None) or "").strip()
+        if name:
+            return name
+        email = (getattr(current_user, "email", None) or "").strip()
+        if email:
+            return email
+    raise AuthServiceError("Sign in to approve.")
+
+
 def form_actor(field_name: str, *, fallback: str = "") -> str:
     typed = (request.form.get(field_name) or "").strip()
     if typed:

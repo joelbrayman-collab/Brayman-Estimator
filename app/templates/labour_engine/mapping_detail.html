@@ -53,10 +53,7 @@
             {% endfor %}
         </select>
     </label>
-    <label>
-        Reviewer
-        <input type="text" name="reviewed_by" value="Joel Brayman" required>
-    </label>
+    {% include "partials/approver.html" %}
     <label>
         Notes
         <textarea name="review_notes" rows="3"></textarea>
@@ -66,12 +63,10 @@
     </div>
 </form>
 <form method="post" action="{{ url_for('labour_engine.reject_mapping', mapping_id=mapping.id) }}" class="form-panel">
-    <input type="hidden" name="reviewed_by" value="Joel Brayman">
     <label>Reject notes <textarea name="review_notes" rows="2"></textarea></label>
     <button type="submit">Reject mapping</button>
 </form>
 <form method="post" action="{{ url_for('labour_engine.not_labour_mapping', mapping_id=mapping.id) }}" class="form-panel">
-    <input type="hidden" name="reviewed_by" value="Joel Brayman">
     <label>Not-labour notes <textarea name="review_notes" rows="2"></textarea></label>
     <button type="submit">Mark as not labour</button>
 </form>
@@ -80,10 +75,7 @@
 <form method="post" action="{{ url_for('labour_engine.revoke_mapping', mapping_id=mapping.id) }}" class="form-panel">
     <h2>Revoke accepted mapping</h2>
     <p>Revocation is a human-governed lifecycle action. Historical source evidence is not rewritten.</p>
-    <label>
-        Reviewer *
-        <input type="text" name="reviewed_by" value="Joel Brayman" required>
-    </label>
+    {% include "partials/approver.html" %}
     <label>
         Reason *
         <textarea name="review_notes" rows="3" required></textarea>

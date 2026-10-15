@@ -55,10 +55,7 @@
             Hours / day assumption
             <input type="number" name="hours_per_day_assumption" step="0.01" min="0">
         </label>
-        <label>
-            Reviewer
-            <input type="text" name="reviewed_by" value="Joel Brayman">
-        </label>
+        {% include "partials/approver.html" %}
     </div>
     <label>
         {{ contractor_copy.SOURCE_NOTES_LABEL }}

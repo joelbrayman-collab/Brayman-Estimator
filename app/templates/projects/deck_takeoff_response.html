@@ -113,7 +113,7 @@
                 <form method="post" action="{{ url_for('deck_takeoff.approve_cost', project_id=project.id, response_id=record.response_id) }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="canonical_material_id" value="{{ res.canonical_material_id }}">
-                    <input name="actor_display_name" placeholder="Approved by">
+                    {% include "partials/approver.html" %}
                     <button type="submit" name="status" value="APPROVED">Approve cost</button>
                     <button type="submit" name="status" value="REJECTED">Reject</button>
                 </form>

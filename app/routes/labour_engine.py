@@ -30,7 +30,7 @@ from app.services.labour_engine import (
     withdraw_production_rate_standard,
     revoke_accepted_labour_task_mapping,
 )
-from app.services.auth import form_actor
+from app.services.auth import signed_in_approver
 from app.services.organizations import get_current_organization_id
 from app.presentation.contractor_copy import office_status_label
 
@@ -38,7 +38,7 @@ labour_engine_bp = Blueprint("labour_engine", __name__, url_prefix="/labour-engi
 
 
 def _actor():
-    return form_actor("reviewed_by")
+    return signed_in_approver()
 
 
 @labour_engine_bp.route("/")

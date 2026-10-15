@@ -155,8 +155,9 @@ def test_the_footing_result_is_a_valid_contract_v1_payload_with_waste_declared()
     assert payload["engine_id"] == "rectangular_footing"
     concrete = payload["quantities"][0]
     assert concrete["code"] == "concrete" and concrete["unit_code"] == "yd3"
-    # 2 x 40 ft3 = 80 ft3 = 2.962962... yd3; with 10% waste 88 ft3 = 3.259259... yd3
-    assert Decimal(concrete["quantity"]).quantize(Decimal("0.000001")) == Decimal("3.259259")
+    # 2 x 40 ft3 = 80 ft3 = 2.962962... yd3; with 10% waste 88 ft3 = 3.259259... yd3, sent at the
+    # page's precision (0.001), so the estimate review shows the same 3.259 the page shows.
+    assert concrete["quantity"] == "3.259"
     net = next(c for c in payload["components"] if c["code"] == "concrete_net")
     waste = next(c for c in payload["components"] if c["code"] == "concrete_waste")
     assert Decimal(net["quantity"]) + Decimal(waste["quantity"]) == Decimal(concrete["quantity"])
@@ -165,7 +166,7 @@ def test_the_footing_result_is_a_valid_contract_v1_payload_with_waste_declared()
                                                                                 "thickness": "300", "count": ""}],
                                                waste_percent="0"), "footing-m")
     assert validate_contract_v1(metric) == [] and metric["quantities"][0]["unit_code"] == "m3"
-    assert Decimal(metric["quantities"][0]["quantity"]).quantize(Decimal("0.000001")) == Decimal("1.080000")
+    assert Decimal(metric["quantities"][0]["quantity"]) == Decimal("1.08")
 
 
 def test_footing_concrete_goes_to_the_estimate_review_without_adding_a_line(app, client):  # noqa: F811

@@ -176,6 +176,13 @@ def suggest_routing_for_line(line_item):
     if (line_item.line_type or "") == "Allowance":
         return MATERIAL_NO_MATERIAL, LABOUR_NO_LABOUR, SUGGESTION_RULE
 
+    # Labour hours entered on the labour page (decision 2) are our crew's time at the
+    # company or project labour rate: a suggestion only; the contractor still confirms it.
+    from app.services.estimate_labour_hours import is_labour_line
+
+    if is_labour_line(line_item):
+        return MATERIAL_NO_MATERIAL, LABOUR_INTERNAL, SUGGESTION_RULE
+
     cost_item = None
     if line_item.cost_item_id:
         cost_item = db.session.get(CostItem, line_item.cost_item_id)

@@ -16,7 +16,13 @@
         {% endif %}
         <p class="muted-copy">{{ contractor_copy.DASHBOARD_LEDE }}</p>
     </div>
-    <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
+    <div class="home-actions">
+        <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
+        <a class="home-calendar" href="{{ url_for('schedule.company') }}">
+            <i class="bi bi-calendar3" aria-hidden="true"></i>
+            <span>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</span>
+        </a>
+    </div>
 </section>
 
 <section class="home-briefing" aria-label="Today, attention, and coming days">
@@ -75,8 +81,4 @@
     {% endfor %}
 </ul>
 
-<a class="home-calendar" href="{{ url_for('schedule.company') }}">
-    <i class="bi bi-calendar3" aria-hidden="true"></i>
-    <span>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</span>
-</a>
 {% endblock %}

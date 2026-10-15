@@ -116,13 +116,13 @@ def draft_proposal(estimate, template):
 
 @pytest.fixture
 def accepted_proposal(estimate, template):
+    make_issuable(estimate.current_version)  # decision 3: approvals before the proposal is prepared
     proposal = create_proposal(
         estimate=estimate,
         version=estimate.current_version,
         template=template,
         status="Draft",
     )
-    make_issuable(estimate.current_version)  # decision 3: approvals before acceptance
     update_proposal_status(proposal, "Accepted")
     return proposal
 
@@ -190,7 +190,10 @@ def test_draft_proposal_remains_editable(draft_proposal):
 
 
 def test_draft_can_transition_to_accepted(draft_proposal):
-    make_issuable(draft_proposal.estimate_version)  # decision 3
+    # Decision 3: approve, then prepare the proposal from the approved pricing.
+    make_issuable(draft_proposal.estimate_version)
+    draft_proposal = create_proposal(estimate=draft_proposal.estimate, version=draft_proposal.estimate_version,
+                                     template=draft_proposal.proposal_template, status="Draft")
     update_proposal_status(draft_proposal, "Accepted")
     db.session.refresh(draft_proposal)
     assert draft_proposal.status == "Accepted"

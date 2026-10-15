@@ -42,10 +42,7 @@
 </table>
 
 <form method="post" class="form-panel">
-    <label>
-        Human actor
-        <input type="text" name="approved_by" value="Joel Brayman" required>
-    </label>
+    {% include "partials/approver.html" %}
     <div class="form-actions">
         {% if policy.approval_status in ("DRAFT", "WITHDRAWN") %}
         <button type="submit" formaction="{{ url_for('pricing_engine.approve_policy', policy_id=policy.id) }}">Approve (human)</button>

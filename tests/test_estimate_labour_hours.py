@@ -140,3 +140,21 @@ def test_another_companys_estimate_is_not_found(app):
     url = f"/estimates/{other.id}/versions/{other.current_version_id}/labour-hours"
     assert client.get(url).status_code == 404
     assert client.post(url, data={"hours_1": "5"}).status_code == 404
+
+
+def test_labour_lines_are_suggested_as_our_crew_with_no_material_and_still_need_confirmation(app):
+    from app.services.estimate_scope_delivery import (
+        LABOUR_INTERNAL,
+        MATERIAL_NO_MATERIAL,
+        SUGGESTION_RULE,
+        suggest_routing_for_line,
+    )
+
+    _e, version, footing, _f = _version_with_items()
+    labour.save_hours(version, organization_id=DEFAULT_ORGANIZATION_ID, hours_by_item={footing.id: "3"}, actor=ACTOR)
+    line = EstimateLineItem.query.filter_by(code=f"LAB-{footing.id}").one()
+    assert suggest_routing_for_line(line) == (MATERIAL_NO_MATERIAL, LABOUR_INTERNAL, SUGGESTION_RULE)
+    # An ordinary custom line keeps the old behaviour (nothing guessed).
+    from app.services.estimate_scope_delivery import LABOUR_UNRESOLVED, MATERIAL_UNRESOLVED, SUGGESTION_NONE
+
+    assert suggest_routing_for_line(footing) == (MATERIAL_UNRESOLVED, LABOUR_UNRESOLVED, SUGGESTION_NONE)

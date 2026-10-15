@@ -45,7 +45,6 @@
             <td>
                 <form method="post" action="{{ url_for('labour_engine.suggest_mapping') }}">
                     <input type="hidden" name="historical_labour_item_id" value="{{ item.id }}">
-                    <input type="hidden" name="reviewed_by" value="Joel Brayman">
                     <select name="labour_task_id">
                         <option value="">Rule / no task yet</option>
                         {% for task in tasks %}

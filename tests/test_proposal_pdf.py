@@ -221,7 +221,11 @@ def test_pdf_detailed_pricing_visible_when_enabled(proposal):
 
 
 def test_pdf_does_not_expose_office_status(proposal):
-    make_issuable(proposal.estimate_version)  # decision 3
+    # Decision 3: approve, then prepare the proposal from the approved pricing.
+    make_issuable(proposal.estimate_version)
+    proposal = create_proposal(estimate=proposal.estimate, version=proposal.estimate_version,
+                               template=proposal.proposal_template, title=proposal.title,
+                               valid_until=proposal.valid_until)
     update_proposal_status(proposal, "Issued")
     text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
     assert "Status:" not in text

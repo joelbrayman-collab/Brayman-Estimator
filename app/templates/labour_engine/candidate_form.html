@@ -59,10 +59,7 @@
                 {% endfor %}
             </select>
         </label>
-        <label>
-            Reviewer
-            <input type="text" name="reviewed_by" value="Joel Brayman">
-        </label>
+        {% include "partials/approver.html" %}
     </div>
     <label>
         Analysis summary

@@ -37,10 +37,7 @@
             Unit of measure *
             <input type="text" name="unit_of_measure" value="{{ task.unit_of_measure if task else '' }}" required>
         </label>
-        <label>
-            Reviewer
-            <input type="text" name="reviewed_by" value="Joel Brayman">
-        </label>
+        {% include "partials/approver.html" %}
     </div>
     <label>
         Description

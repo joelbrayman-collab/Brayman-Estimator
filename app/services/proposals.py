@@ -528,6 +528,20 @@ def _require_issue_approvals(version):
     if blockers:
         raise ProposalServiceError("This proposal cannot be issued yet. " + " ".join(blockers))
 
+def _require_prices_from_current_pricing(proposal):
+    """A draft copied before the current pricing was applied cannot be issued with old prices."""
+    from app.services.estimate_output import named_method_governs
+
+    pricing = getattr(proposal.estimate_version, "pricing_snapshot", None)
+    if not proposal_issue_blockers(proposal.estimate_version) and named_method_governs(pricing):
+        if (Decimal(proposal.subtotal or 0) != Decimal(pricing.pre_tax_selling_price or 0)
+                or Decimal(proposal.total or 0) != Decimal(pricing.customer_total or 0)):
+            raise ProposalServiceError(
+                "This proposal cannot be issued yet. Its prices were copied before the current pricing "
+                "was applied. Create a new proposal from the estimate."
+            )
+
+
 def create_proposal(
     *,
     estimate,
@@ -738,6 +752,7 @@ def update_proposal(proposal, **fields):
             raise ProposalServiceError("Select a valid proposal status.")
         if status in ISSUE_STATUSES and proposal.status not in ISSUE_STATUSES:
             _require_issue_approvals(proposal.estimate_version)
+            _require_prices_from_current_pricing(proposal)
         if status == "Issued" and proposal.status != "Issued":
             proposal.issued_at = datetime.utcnow()
         proposal.status = status

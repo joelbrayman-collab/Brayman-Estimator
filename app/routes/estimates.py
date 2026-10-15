@@ -2,6 +2,7 @@ from decimal import Decimal, InvalidOperation
 
 from io import BytesIO
 
+from flask_login import current_user
 from flask import (
     Blueprint,
     abort,
@@ -52,7 +53,7 @@ from app.services.estimate_output import (
     assemble_internal_cost_breakdown,
     named_method_governs,
 )
-from app.services.auth import form_actor
+from app.services.auth import signed_in_approver
 from app.services.estimate_costing import (
     EstimateCostingError,
     approve_all_costing,
@@ -662,7 +663,7 @@ def update_pricing(id, version_id):
 )
 def apply_org_pricing(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
-    actor = form_actor("approved_by")
+    actor = signed_in_approver()
     override_id = request.form.get("pricing_policy_override_id", type=int)
     reason = request.form.get("pricing_override_reason", "").strip()
     try:
@@ -698,9 +699,9 @@ def apply_org_pricing(id, version_id):
 )
 def approve_all_costing_route(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
-    actor = form_actor("approved_by")
+    actor = signed_in_approver()
     try:
-        approve_all_costing(version, actor=actor)
+        approve_all_costing(version, actor=actor, user_id=getattr(current_user, "id", None))
         flash("Costing approved for this version.", "success")
     except EstimateCostingError as exc:
         db.session.rollback()
@@ -912,7 +913,7 @@ def edit_line_item_route(id, version_id, section_id, item_id):
             markup_percent=form["markup_percent"],
             notes=form["notes"],
             costing_override_reason=form["costing_override_reason"],
-            actor=form_actor("approved_by"),
+            actor=signed_in_approver(),
         )
     except EstimateServiceError as exc:
         flash(str(exc), "error")

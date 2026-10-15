@@ -91,10 +91,7 @@
             Tax %
             <input type="text" name="tax_percent" placeholder="13">
         </label>
-        <label>
-            Approved / created by
-            <input type="text" name="approved_by" value="Joel Brayman">
-        </label>
+        {% include "partials/approver.html" %}
     </div>
     <label>
         {{ contractor_copy.SOURCE_NOTES_LABEL }}

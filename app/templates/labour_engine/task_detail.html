@@ -29,7 +29,6 @@
 
 {% if task.status != "ARCHIVED" %}
 <form method="post" action="{{ url_for('labour_engine.archive_task', task_id=task.id) }}" class="form-panel">
-    <input type="hidden" name="reviewed_by" value="Joel Brayman">
     <button type="submit">Archive task</button>
 </form>
 {% endif %}

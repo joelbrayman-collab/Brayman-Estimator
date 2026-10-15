@@ -52,8 +52,8 @@ def test_a_priced_draft_is_free_but_cannot_be_issued_or_accepted_without_approva
 
 def test_after_costing_and_pricing_approval_the_proposal_issues(app):
     estimate = _direct_estimate("EST-D3-0002")
-    proposal = _draft(estimate)
     approve_for_issue(estimate.current_version)
+    proposal = _draft(estimate)
     assert proposal_issue_blockers(estimate.current_version) == []
     update_proposal_status(proposal, "Issued")
     update_proposal_status(proposal, "Accepted")
@@ -99,3 +99,15 @@ def test_the_status_button_explains_instead_of_failing(client, app):
     assert response.status_code == 200
     assert b"cannot be issued yet" in response.data
     assert db.session.get(Proposal, proposal.id).status == "Draft"
+
+
+def test_a_draft_copied_before_pricing_cannot_be_issued_with_its_old_prices(app):
+    estimate = _direct_estimate("EST-D3-0007")
+    early = _draft(estimate)  # prices copied before any pricing was applied
+    approve_for_issue(estimate.current_version)
+    with pytest.raises(ProposalServiceError, match="copied before the current pricing"):
+        update_proposal_status(early, "Issued")
+    db.session.rollback()
+    fresh = _draft(estimate)
+    update_proposal_status(fresh, "Issued")
+    assert fresh.total == estimate.current_version.pricing_snapshot.customer_total

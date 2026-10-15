@@ -192,7 +192,11 @@ def test_preview_uses_customer_document_language(client, proposal):
 
 
 def test_preview_does_not_expose_office_status(client, proposal):
-    make_issuable(proposal.estimate_version)  # decision 3
+    # Decision 3: approve, then prepare the proposal from the approved pricing.
+    make_issuable(proposal.estimate_version)
+    proposal = create_proposal(estimate=proposal.estimate, version=proposal.estimate_version,
+                               template=proposal.proposal_template, title=proposal.title,
+                               valid_until=proposal.valid_until)
     update_proposal_status(proposal, "Issued")
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200

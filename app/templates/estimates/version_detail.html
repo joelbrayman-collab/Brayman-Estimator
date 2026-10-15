@@ -231,10 +231,7 @@
     {% if editable %}
     <form method="post" action="{{ url_for('estimates.approve_all_costing_route', id=estimate.id, version_id=version.id) }}">
         <div class="form-grid">
-            <label>
-                Human actor
-                <input type="text" name="approved_by" value="Joel Brayman" required>
-            </label>
+            {% include "partials/approver.html" %}
         </div>
         <div class="form-actions">
             <button type="submit" {% if costing_review.block_codes %}disabled{% endif %}>{{ contractor_copy.APPROVE_ALL_COSTING_BUTTON }}</button>
@@ -314,10 +311,7 @@
         {% endif %}
         <p>Apply the resolved organization pricing policy to this draft version. Human actor required. Does not convert other estimates.</p>
         <div class="form-grid">
-            <label>
-                Human actor
-                <input type="text" name="approved_by" value="Joel Brayman" required>
-            </label>
+            {% include "partials/approver.html" %}
             <label>
                 Optional organization-approved override
                 <select name="pricing_policy_override_id">

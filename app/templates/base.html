@@ -56,6 +56,7 @@
                     <span class="header-user-avatar" aria-hidden="true">{{ current_user.display_name[:1] }}</span>
                     <span class="header-user-label">{{ current_user.display_name }}</span>
                 </span>
+                <a class="header-icon-btn" href="{{ url_for('auth.change_password') }}" aria-label="Change password" title="Change password"><i class="bi bi-key" aria-hidden="true"></i></a>
                 <form method="post" action="{{ url_for('auth.logout') }}" class="header-logout-form">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="header-icon-btn" aria-label="{{ contractor_copy.SIGN_OUT_LABEL }}" title="{{ contractor_copy.SIGN_OUT_LABEL }}">

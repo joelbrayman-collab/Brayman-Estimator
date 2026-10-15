@@ -179,7 +179,7 @@ def test_quantities_do_not_invent_packages_waste_or_labour_hours():
     assert labour["FOUND"]["hours"] is None
     assert labour["FOUND"]["existing_activity_codes"] == ("LAYOUT", "EXCAV", "FORM", "PLACE")
     assert (ICF_WALL_CODE, "ICF wall", "icf_wall", 40) in BASELINE_ELEMENTS
-    assert ("FOUND", "Foundation", None, 20) in BASELINE_ELEMENTS
+    assert ("FOUND", "Foundation", "rectangular_footing", 20) in BASELINE_ELEMENTS  # Joel's decision 4 (14 Oct 2026)
 
 
 def test_supplier_request_keeps_each_scope_and_leaves_price_blank(app):

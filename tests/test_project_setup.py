@@ -236,7 +236,7 @@ def test_each_destination_opens_the_existing_page(client, app):
 
         project = db.session.get(Project, project_id)
         _plan(project)
-        foundation = WorkElementTemplate.query.filter_by(code="FOUND", organization_id=None).one()
+        foundation = WorkElementTemplate.query.filter_by(code="SITE", organization_id=None).one()  # unbound
         confirm_package(
             organization_id=project.organization_id,
             project_id=project.id,
@@ -306,7 +306,7 @@ def _ready_for_scope(project):
 def _confirm_work(project, delivery):
     from app.models.work_structure import WorkElementTemplate
 
-    foundation = WorkElementTemplate.query.filter_by(code="FOUND", organization_id=None).one()
+    foundation = WorkElementTemplate.query.filter_by(code="SITE", organization_id=None).one()  # unbound
     confirm_package(
         organization_id=project.organization_id,
         project_id=project.id,
@@ -391,8 +391,10 @@ def test_icf_wall_is_the_only_bound_baseline_element(client, app):
         assert icf.status == "ACTIVE"
         assert icf.platform_engine_id == ICF_WALL_ENGINE_ID
         assert icf.sort_order == 40
-        for code in ("SITE", "FOUND", "STRUCT"):
-            assert _baseline(code).platform_engine_id is None
+        # Joel's decision 4 (14 Oct 2026): Foundation and Structure name their producers.
+        assert _baseline("SITE").platform_engine_id is None
+        assert _baseline("FOUND").platform_engine_id == "rectangular_footing"
+        assert _baseline("STRUCT").platform_engine_id == "wall_framing"
         payload = build_icf_standard_quantities(
             manufacturer_id="logix",
             net_wall_area_ft2="10",
@@ -488,7 +490,7 @@ def test_our_crew_icf_wall_opens_the_existing_wall_form_without_a_quantity(clien
 def test_unbound_our_crew_and_subcontract_icf_keep_the_existing_boundary(client, app):
     with app.app_context():
         cases = []
-        for code in ("SITE", "FOUND", "STRUCT"):
+        for code in ("SITE",):  # Foundation and Structure are bound since decision 4
             project = _project(name=f"{code} Crew Job")
             _ready_for_scope(project)
             confirm_package(

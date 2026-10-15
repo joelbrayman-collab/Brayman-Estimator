@@ -24,3 +24,14 @@ This folder preserves the original Website calculator. It is the calculation aut
 | Office runtime | The signed-in office route sends this HTML file. The office does not call the public Website, does not run a Python formula, and does not write a project or an estimate. |
 
 The comparison is neutral. A non-numeric entry is read as zero by the preserved `num` function. The page does not show a separate validation message.
+
+## Version 1.1 (14 Oct 2026)
+
+Joel's decision 5: invalid entries must show a clear message instead of becoming zero. `v1.1/index.html` is the office page from this date; `website-source/public/employment-vs-entrepreneurship/index.html` stays the immutable recovered reference (SHA-256 `41f449de…` unchanged).
+
+| Fact | Value |
+|------|--------|
+| File | `v1.1/index.html` |
+| SHA-256 | `4c5388482d596a9f10309903a0b17e13298af5e974f985023378de1c3c0250c3` |
+| Change | The original `calc` is renamed `calcOriginal` and is otherwise byte-for-byte the same. A new `calc` first checks every number entry and every annual cost: blank, non-numeric or negative entries are outlined, a message is shown, and the results keep the last valid calculation. Valid entries call `calcOriginal` unchanged. |
+| Proof | `tests/test_employment_calculator_v11.py`: identical results to the original for valid entry sets; refusal for blank, text and negative entries. |

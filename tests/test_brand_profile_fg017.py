@@ -50,6 +50,7 @@ from app.services.proposals import (
     update_proposal,
     update_proposal_status,
 )
+from tests.proposal_issue_support import make_issuable
 
 PNG_1X1 = (
     b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
@@ -168,6 +169,7 @@ def _make_proposal(status="Draft", org_id=DEFAULT_ORGANIZATION_ID, number=None):
     project = _make_project(org_id=org_id)
     estimate = _make_estimate(project, number=f"EST-{org_id[-4:]}-{status[:3]}")
     template = _make_template(org_id=org_id, name=f"{org_id} {status} Template")
+    make_issuable(estimate.current_version)  # decision 3: approvals before any issue
     return create_proposal(
         estimate=estimate,
         version=estimate.current_version,

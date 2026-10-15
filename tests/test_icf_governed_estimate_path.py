@@ -226,7 +226,9 @@ def test_our_crew_icf_reaches_an_estimate_line_only_after_confirmation(client, a
 def test_unbound_and_subcontract_work_do_not_open_the_icf_calculation(client, app):
     with app.app_context():
         cases = []
-        for code in ("SITE", "FOUND", "STRUCT"):
+        # Joel's decision 4 (14 Oct 2026) binds Foundation and Structure to their own
+        # producers (see test_found_struct_binding.py); they still never open ICF.
+        for code in ("SITE",):
             project = _project(f"{code} Path")
             confirm_package(
                 organization_id=project.organization_id,

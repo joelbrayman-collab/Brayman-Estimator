@@ -438,7 +438,7 @@ def test_alembic_fg035_tax_wbs_upgrade_downgrade_and_fresh(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["v2c3d4e5f6a7"]
+        assert script.get_heads() == ["w3d4e5f6a7b8"]
 
         command.upgrade(alembic_cfg, "f2a3b4c5d6e7")
         engine = db.engine
@@ -509,7 +509,7 @@ def test_alembic_fg035_tax_wbs_upgrade_downgrade_and_fresh(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["v2c3d4e5f6a7"]
+            assert [row[0] for row in heads] == ["w3d4e5f6a7b8"]
             gen = conn.execute(
                 sa.text(
                     "SELECT COUNT(*) FROM work_types "
@@ -524,11 +524,12 @@ def test_alembic_fg035_tax_wbs_upgrade_downgrade_and_fresh(tmp_path):
                 )
             ).fetchone()
             assert icf == ("ICF wall", "icf_wall")
-            unbound = conn.execute(
+            # Joel's decision 4 (14 Oct 2026, w3d4e5f6a7b8): Foundation and Structure
+            # name their producers; Site work stays unbound.
+            bindings = dict(conn.execute(
                 sa.text(
-                    "SELECT COUNT(*) FROM work_element_templates "
-                    "WHERE organization_id IS NULL AND code IN ('SITE', 'FOUND', 'STRUCT') "
-                    "AND platform_engine_id IS NOT NULL"
+                    "SELECT code, platform_engine_id FROM work_element_templates "
+                    "WHERE organization_id IS NULL AND code IN ('SITE', 'FOUND', 'STRUCT')"
                 )
-            ).scalar()
-            assert unbound == 0
+            ).fetchall())
+            assert bindings == {"SITE": None, "FOUND": "rectangular_footing", "STRUCT": "wall_framing"}

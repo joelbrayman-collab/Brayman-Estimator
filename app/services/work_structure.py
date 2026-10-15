@@ -509,12 +509,17 @@ def catalog_layer_label(row) -> str:
 ICF_WALL_CODE = "ICF"
 ICF_WALL_NAME = "ICF wall"
 ICF_WALL_ENGINE_ID = "icf_wall"
-PLATFORM_ENGINE_PRODUCERS = frozenset({ICF_WALL_ENGINE_ID})
+# Joel's decision 4 (14 Oct 2026): Foundation uses the footing quantity authority
+# and Structure the framing (and stored deck member count) authorities. Site work
+# stays contractor-entered (decision 1): no excavation or earthwork formula.
+FOOTING_ENGINE_ID = "rectangular_footing"
+FRAMING_ENGINE_ID = "wall_framing"
+PLATFORM_ENGINE_PRODUCERS = frozenset({ICF_WALL_ENGINE_ID, FOOTING_ENGINE_ID, FRAMING_ENGINE_ID})
 
 BASELINE_ELEMENTS = (
     ("SITE", "Site work", None, 10),
-    ("FOUND", "Foundation", None, 20),
-    ("STRUCT", "Structure", None, 30),
+    ("FOUND", "Foundation", FOOTING_ENGINE_ID, 20),
+    ("STRUCT", "Structure", FRAMING_ENGINE_ID, 30),
     (ICF_WALL_CODE, ICF_WALL_NAME, ICF_WALL_ENGINE_ID, 40),
 )
 

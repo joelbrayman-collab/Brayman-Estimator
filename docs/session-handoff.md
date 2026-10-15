@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**14 Oct 2026 (night) — MILESTONE 1 OWNER DECISIONS IMPLEMENTED, NOT DEPLOYED.** Decisions 1–6 done in the repository on `v1/completion` (see current-state). Migration `w3d4e5f6a7b8` (FOUND/STRUCT binding, data only) prepared and tested, not applied; head assertions moved to it. Next: native Mac regression and backup (one Mac command), Joel's approvals for the migration and production release, then deploy; after deploy Joel sets his password at the key icon and removes `CALIBRAYTAI_UAT_AUTH_BYPASS` in Render.
+
 **14 Oct 2026 (evening) — V1 MASTER COMPLETION DIRECTIVE IN PROGRESS.** Register §15 is the working completion list. Repository work on branch `v1/completion` (from `72f125f`): approved cost → estimate page, roofing/siding/drywall/flooring/footing calculators, footing and framing Contract V1 hand-offs with framing purchasing, 500 page and logging, restore rehearsal. Not deployed. Next: owner decisions (bypass, SITE, labour rates, FOUND/STRUCT binding, proposal issue rule), internal browser acceptance, native Mac regression, release. Production must not run a second application process over SSH (out-of-memory restart 14 Oct 22:35 UTC).
 
 **14 Oct 2026 — CONSTRUCTION DRAWINGS ACCEPTED; CONTROLLED RELEASE.** Joel accepted the seven-sheet D1 set (drawing standard 1.1). Release by `generated/drawings_release.sh`: native Mac regression, fresh hosted backup, migration rehearsal, push of the tested tree, deploy, migration `v2c3d4e5f6a7` applied once, hosted synthetic workflow (drawings, Project Plans, estimate, proposal, BMR Form 2). Rollback: redeploy `a24e3d2` and restore the pre-drawings backup.

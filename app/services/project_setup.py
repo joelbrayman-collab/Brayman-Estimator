@@ -31,17 +31,25 @@ from app.services.start_project_walk import (
     EVIDENCE_SCOPE_CONFIRMED,
     DRAWING_STATE_NOT_REQUIRED,
 )
-from app.services.work_structure import ICF_WALL_ENGINE_ID
+from app.services.work_structure import FOOTING_ENGINE_ID, FRAMING_ENGINE_ID, ICF_WALL_ENGINE_ID
 
 NOT_DERIVABLE_COPY = (
     "The confirmed work does not identify a governed calculation, "
-    "so no quantity is calculated from the work name."
+    "so no quantity is calculated from the work name. "
+    "Enter its quantities, allowances or subcontract costs on the estimate."
 )
 NOT_APPLICABLE_COPY = (
     "The confirmed work is subcontracted, "
     "so no crew calculation is required."
 )
 ICF_AVAILABLE_COPY = "A governed ICF wall calculation is available."
+FOOTING_AVAILABLE_COPY = "A governed footing calculation is available."
+FRAMING_AVAILABLE_COPY = "A governed framing calculation is available."
+_ENGINE_AVAILABLE_COPY = {
+    ICF_WALL_ENGINE_ID: ICF_AVAILABLE_COPY,
+    FOOTING_ENGINE_ID: FOOTING_AVAILABLE_COPY,
+    FRAMING_ENGINE_ID: FRAMING_AVAILABLE_COPY,
+}
 
 
 class ProjectSetupError(Exception):
@@ -79,7 +87,7 @@ def describe_setup(resolution) -> ProjectSetupView:
     if EVIDENCE_ENGINE_NOT_APPLICABLE in evidence:
         ready.append(NOT_APPLICABLE_COPY)
     if EVIDENCE_ENGINE_ELIGIBLE in evidence:
-        ready.append(ICF_AVAILABLE_COPY)
+        ready.append(_ENGINE_AVAILABLE_COPY.get(resolution.platform_engine_id, ICF_AVAILABLE_COPY))
     if EVIDENCE_ESTIMATE_PRESENT in evidence:
         ready.append("One estimate is ready to open.")
     if EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS in evidence:
@@ -130,6 +138,30 @@ def describe_setup(resolution) -> ProjectSetupView:
             needed = "Open the ICF wall calculation."
             label = "Open ICF wall calculation"
             endpoint = "estimates.wall_form_quantities"
+            values = {
+                "id": resolution.estimate_id,
+                "version_id": resolution.estimate_version_id,
+            }
+            anchor = None
+        elif (
+            resolution.platform_engine_id == FOOTING_ENGINE_ID
+            and resolution.estimate_version_id is not None
+        ):
+            needed = "Enter the footing sizes for the estimate."
+            label = "Open footing quantities"
+            endpoint = "estimates.footing_quantities"
+            values = {
+                "id": resolution.estimate_id,
+                "version_id": resolution.estimate_version_id,
+            }
+            anchor = None
+        elif (
+            resolution.platform_engine_id == FRAMING_ENGINE_ID
+            and resolution.estimate_version_id is not None
+        ):
+            needed = "Enter the framing (walls, or stored deck member counts) for the estimate."
+            label = "Open framing quantities"
+            endpoint = "estimates.calculation_list"
             values = {
                 "id": resolution.estimate_id,
                 "version_id": resolution.estimate_version_id,

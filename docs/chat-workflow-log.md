@@ -14598,3 +14598,13 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None open in scope; engineering items stay on G-1 (PRELIMINARY — NOT FOR CONSTRUCTION) |
 | Commit hash | Release commit on `a24e3d2` (see session handoff) |
 
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-14 |
+| Branch | `v1/completion` |
+| Objective | V1 Master Completion — Milestone 1 owner decisions 1–6 and the UAT bypass security check |
+| Business decision | Joel 14 Oct: SITE contractor-entered; labour hours at the saved company rate; priced proposals need cost and pricing approval before issue; FOUND/STRUCT bound to existing authorities, migration prepared not applied; Employment v1.1 with original preserved; trade calculators internal acceptance only |
+| Implementation result | Labour hours page and service; proposal issue rule; FOUND/STRUCT binding and migration `w3d4e5f6a7b8`; shared footing formula; browser verification of five calculators; change-password page |
+| Tests | See milestone report |
+| Commit hash | See session handoff |
+

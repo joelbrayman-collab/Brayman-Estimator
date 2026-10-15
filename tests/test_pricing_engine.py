@@ -74,6 +74,7 @@ from app.services.proposals import (
     update_proposal,
     update_proposal_status,
 )
+from tests.proposal_issue_support import issued_before_decision_3
 
 
 def _apply_priced(version, actor="Joel Brayman", **kwargs):
@@ -923,7 +924,8 @@ def test_proposal_immutability_survives_later_pricing_apply(app):
         template=template,
         status="Draft",
     )
-    update_proposal_status(proposal, "Accepted")
+    with issued_before_decision_3():  # accepted under the legacy stack, before decision 3
+        update_proposal_status(proposal, "Accepted")
     original_total = proposal.total
     original_title = proposal.title
     _true_gm_policy()

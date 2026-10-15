@@ -188,7 +188,7 @@ def test_quantity_result_does_not_invent_stock_length_waste_or_purchase_quantity
     assert result["labour"]["status"] == "CONTRACTOR_INPUT"
     assert result["labour"]["element_code"] == TASK_ELEMENT_CODE
     assert result["labour"]["activity_code"] == TASK_ACTIVITY_CODE
-    assert (TASK_ELEMENT_CODE, "Structure", None, 30) in BASELINE_ELEMENTS
+    assert (TASK_ELEMENT_CODE, "Structure", "wall_framing", 30) in BASELINE_ELEMENTS  # Joel's decision 4 (14 Oct 2026)
 
 
 def test_supplier_request_keeps_the_known_count_and_the_unresolved_joist(app):

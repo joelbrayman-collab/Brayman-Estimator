@@ -21,6 +21,7 @@ from app.services.proposals import (
     update_proposal_line_item,
     update_proposal_status,
 )
+from tests.proposal_issue_support import make_issuable
 
 
 @pytest.fixture
@@ -121,6 +122,7 @@ def accepted_proposal(estimate, template):
         template=template,
         status="Draft",
     )
+    make_issuable(estimate.current_version)  # decision 3: approvals before acceptance
     update_proposal_status(proposal, "Accepted")
     return proposal
 
@@ -188,6 +190,7 @@ def test_draft_proposal_remains_editable(draft_proposal):
 
 
 def test_draft_can_transition_to_accepted(draft_proposal):
+    make_issuable(draft_proposal.estimate_version)  # decision 3
     update_proposal_status(draft_proposal, "Accepted")
     db.session.refresh(draft_proposal)
     assert draft_proposal.status == "Accepted"

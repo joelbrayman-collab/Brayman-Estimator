@@ -32,6 +32,9 @@ def test_an_unhandled_error_shows_a_plain_page_with_a_reference(caplog):
         ensure_office_user()
         db.session.commit()
     login_office_user(client)
+    # Migration tests run alembic's fileConfig in this process, which disables loggers that
+    # already exist; the hosted web process never does that, so re-enable it here.
+    app.logger.disabled = False
     with caplog.at_level(logging.ERROR):
         response = client.get("/_boom")
     assert response.status_code == 500

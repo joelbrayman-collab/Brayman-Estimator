@@ -484,6 +484,50 @@ def snapshot_estimate_version_content(proposal, version):
         recalculate_proposal(proposal, allow_when_accepted=True)
 
 
+
+ISSUE_STATUSES = ("Issued", "Accepted")
+
+
+def proposal_issue_blockers(version):
+    """Why a priced proposal for this version cannot be issued yet (Joel, 14 Oct 2026).
+
+    A version with priced lines needs current approved costing and a current
+    pricing snapshot by a named method before its proposal is issued or accepted.
+    A version with no priced lines (for example a text-only or allowance-free
+    draft) has nothing to approve. Draft creation and editing are not affected,
+    and documents already issued are never re-checked.
+    """
+    from app.services.estimate_costing import (
+        PRICING_STATUS_CURRENT,
+        current_costing_snapshot,
+        iter_version_line_items,
+        pricing_consume_status,
+        working_matches_costing_snapshot,
+    )
+    from app.services.estimate_output import named_method_governs
+
+    priced = [line for line in iter_version_line_items(version) if Decimal(line.extended_cost or 0) != 0]
+    if not priced:
+        return []
+    blockers = []
+    costing = current_costing_snapshot(version)
+    if costing is None:
+        blockers.append("Approve the estimate's costing.")
+    elif not working_matches_costing_snapshot(version, costing):
+        blockers.append("The estimate changed after its costing was approved. Approve the costing again.")
+    pricing = getattr(version, "pricing_snapshot", None)
+    if pricing is None or not named_method_governs(pricing):
+        blockers.append("Apply the company pricing policy to the estimate.")
+    elif pricing_consume_status(version) != PRICING_STATUS_CURRENT:
+        blockers.append("The pricing is out of date. Apply the company pricing policy again.")
+    return blockers
+
+
+def _require_issue_approvals(version):
+    blockers = proposal_issue_blockers(version)
+    if blockers:
+        raise ProposalServiceError("This proposal cannot be issued yet. " + " ".join(blockers))
+
 def create_proposal(
     *,
     estimate,
@@ -518,6 +562,8 @@ def create_proposal(
     )
     if version.estimate_id != estimate.id:
         raise ProposalServiceError("Version does not belong to this estimate.")
+    if status in ISSUE_STATUSES:
+        _require_issue_approvals(version)
     if not template.is_active:
         raise ProposalServiceError(
             "Inactive proposal templates cannot be used for new proposals."
@@ -690,6 +736,8 @@ def update_proposal(proposal, **fields):
         status = fields["status"]
         if status not in PROPOSAL_STATUSES:
             raise ProposalServiceError("Select a valid proposal status.")
+        if status in ISSUE_STATUSES and proposal.status not in ISSUE_STATUSES:
+            _require_issue_approvals(proposal.estimate_version)
         if status == "Issued" and proposal.status != "Issued":
             proposal.issued_at = datetime.utcnow()
         proposal.status = status

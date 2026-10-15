@@ -42,6 +42,8 @@ from app.services.work_scope import (
 )
 from app.services.work_structure import ensure_baseline_work_catalog
 from tests.auth_fixtures import ensure_office_user
+from app.services.estimate_costing import current_costing_snapshot
+from tests.proposal_issue_support import approve_costing, make_issuable
 
 
 def _app(tmp_path):
@@ -145,11 +147,13 @@ def _baseline(project, *, direct="1000.00", selling="2000.00"):
         unit="ea",
         unit_cost=1000,
     )
+    approve_costing(version)  # decision 3: costing approved before the version is locked
     lock_version(version)
     snapshot = EstimatePricingSnapshot(
         organization_id=project.organization_id,
         estimate_version_id=version.id,
         method="TRUE_GROSS_MARGIN",
+        costing_snapshot_id=current_costing_snapshot(version).id,
         resolution_source="policy",
         requires_review=False,
         direct_cost_basis=Decimal(direct),
@@ -179,6 +183,7 @@ def _baseline(project, *, direct="1000.00", selling="2000.00"):
         status="Draft",
         title="F07 accepted",
     )
+    make_issuable(version)  # decision 3
     update_proposal_status(proposal, "Accepted")
     return estimate, version
 

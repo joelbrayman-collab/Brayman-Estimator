@@ -23,6 +23,7 @@ from app.services.proposals import (
     update_proposal,
     update_proposal_status,
 )
+from tests.proposal_issue_support import make_issuable
 
 
 def _pdf_text(pdf_bytes: bytes) -> str:
@@ -220,6 +221,7 @@ def test_pdf_detailed_pricing_visible_when_enabled(proposal):
 
 
 def test_pdf_does_not_expose_office_status(proposal):
+    make_issuable(proposal.estimate_version)  # decision 3
     update_proposal_status(proposal, "Issued")
     text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
     assert "Status:" not in text

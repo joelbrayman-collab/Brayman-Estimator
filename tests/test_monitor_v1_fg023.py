@@ -63,6 +63,8 @@ from tests.auth_fixtures import (
     login_office_user,
     logout_office_user,
 )
+from app.services.estimate_costing import current_costing_snapshot
+from tests.proposal_issue_support import approve_costing, issued_before_decision_3, make_issuable
 
 
 MIGRATION_PATH = (
@@ -168,6 +170,7 @@ def _estimate_with_line(project, *, number, quantity=2, unit_cost=100, lock=True
         unit_cost=unit_cost,
     )
     if lock:
+        approve_costing(version)  # decision 3: costing is approved before the version is locked
         lock_version(version)
     db.session.refresh(version)
     return estimate, version
@@ -178,6 +181,8 @@ def _add_snapshot(version, *, direct_cost, selling, tax_amount="13.00"):
         organization_id=version.estimate.project.organization_id,
         estimate_version_id=version.id,
         method="TRUE_GROSS_MARGIN",
+        # Pricing applied against the approved costing (decision 3 issue rule).
+        costing_snapshot_id=getattr(current_costing_snapshot(version), "id", None),
         resolution_source="policy",
         requires_review=False,
         direct_cost_basis=Decimal(direct_cost),
@@ -195,7 +200,7 @@ def _add_snapshot(version, *, direct_cost, selling, tax_amount="13.00"):
     return snapshot
 
 
-def _accept(estimate, version, *, title, template=None):
+def _accept(estimate, version, *, title, template=None, historical=False):
     template = template or _template(f"Template {title}")
     proposal = create_proposal(
         estimate=estimate,
@@ -204,7 +209,12 @@ def _accept(estimate, version, *, title, template=None):
         status="Draft",
         title=title,
     )
-    update_proposal_status(proposal, "Accepted")
+    if historical:  # a legacy acceptance from before decision 3, kept as it is
+        with issued_before_decision_3():
+            update_proposal_status(proposal, "Accepted")
+    else:
+        make_issuable(version)  # decision 3: approvals before acceptance
+        update_proposal_status(proposal, "Accepted")
     db.session.refresh(proposal)
     return proposal
 
@@ -518,7 +528,7 @@ def test_fallback_baseline_from_lines_and_accepted_proposal(app, project):
         version, overhead_percent=10, profit_percent=10, tax_percent=13
     )
     lock_version(version)
-    proposal = _accept(estimate, version, title="Accepted fallback")
+    proposal = _accept(estimate, version, title="Accepted fallback", historical=True)
     view = assemble_monitor_v1(project, project.organization_id)
     expected_dc = Decimal("200.00")
     expected_selling = as_proposal_pre_tax(proposal)

@@ -44,6 +44,7 @@ from app.services.proposals import (
     create_proposal_template,
     update_proposal,
 )
+from tests.proposal_issue_support import make_issuable
 
 
 def _pdf_text(pdf_bytes: bytes) -> str:
@@ -486,6 +487,7 @@ def test_proposal_does_not_float_with_later_estimate_edits(app):
 
 def test_accepted_proposal_immutability(app):
     estimate = _direct_estimate("EST-FG012-0014")
+    make_issuable(estimate.current_version)  # decision 3
     proposal = create_proposal(
         estimate=estimate,
         version=estimate.current_version,

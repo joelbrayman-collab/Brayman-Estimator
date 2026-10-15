@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Labour hours | {{ estimate.estimate_number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour hours{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
+        <h1>Labour hours</h1>
+    </div>
+    <div><a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Back to the estimate version</a></div>
+</div>
+<section class="form-panel" style="margin-bottom: 24px;">
+    <p>Type the labour hours for each item. Each item's labour becomes one line: hours × the labour rate. It is costed and priced like every other line.</p>
+    {% if rate_source %}<p data-rate-source><strong>{{ rate_source }}</strong></p>{% endif %}
+    {% if rate_error %}<p class="form-error" role="alert">{{ rate_error }}</p>{% endif %}
+    <p class="muted-copy">Leave an item blank to leave it alone. Enter 0 to remove its labour.</p>
+</section>
+{% if version.is_locked %}
+<section class="form-panel"><p><strong>This version is locked. Start a new version to change labour.</strong></p></section>
+{% else %}
+<form method="post" class="form-panel">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if rows %}
+    <div class="table-wrap">
+    <table>
+        <thead><tr><th>Item</th><th>Quantity</th><th>Labour hours</th></tr></thead>
+        <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.item.description }}</td>
+            <td>{{ row.item.quantity }} {{ row.item.unit }}</td>
+            <td><label class="visually-hidden" for="hours_{{ row.item.id }}">Labour hours for {{ row.item.description }}</label>
+                <input id="hours_{{ row.item.id }}" name="hours_{{ row.item.id }}" inputmode="decimal" style="max-width: 9em"
+                       value="{{ form.get('hours_' ~ row.item.id, row.hours if row.hours is not none else '') }}"></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <h2>Project labour rate (optional)</h2>
+    <p class="muted-copy">Only when this project has an authorized rate different from the company rate. A reason is required.</p>
+    <label for="override_rate">Project rate per hour</label>
+    <input id="override_rate" name="override_rate" inputmode="decimal" value="{{ form.get('override_rate', '') }}">
+    <label for="override_reason">Reason for the project rate</label>
+    <input id="override_reason" name="override_reason" value="{{ form.get('override_reason', '') }}">
+    <div class="form-actions"><button type="submit">Save labour hours</button></div>
+    {% else %}
+    <p>Add items to the estimate first.</p>
+    {% endif %}
+</form>
+{% endif %}
+{% endblock %}

@@ -126,6 +126,13 @@ def _foundation():
     return WorkElementTemplate.query.filter_by(code="FOUND", organization_id=None).one()
 
 
+def _site():
+    from app.models.work_structure import WorkElementTemplate
+
+    # Site work stays unbound (Joel's decisions 1 and 4, 14 Oct 2026).
+    return WorkElementTemplate.query.filter_by(code="SITE", organization_id=None).one()
+
+
 def _structure():
     from app.models.work_structure import WorkElementTemplate
 
@@ -304,7 +311,7 @@ def test_our_crew_scope_does_not_run_a_calculator(app):
     project = _project()
     _complete_location(project)
     _plan(project)
-    _confirm(project, DELIVERY_INTERNAL)
+    _confirm(project, DELIVERY_INTERNAL, _site())
     before = CalculationResultIntake.query.count()
     result = resolve_start_project_walk(project.organization_id, project.id)
     assert CalculationResultIntake.query.count() == before

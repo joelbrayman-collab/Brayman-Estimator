@@ -56,10 +56,21 @@ _EMPLOYMENT_PAGE = (
 )
 
 
+# Version 1.1 (14 Oct 2026): the preserved page with invalid entries refused instead of read as zero.
+# The recovered original above stays the immutable reference; valid results are identical.
+_EMPLOYMENT_PAGE_V11 = (
+    Path(__file__).resolve().parents[2]
+    / "calculation-engines"
+    / "employment-vs-entrepreneurship"
+    / "v1.1"
+    / "index.html"
+)
+
+
 @calculators_bp.get("/employment-vs-entrepreneurship")
 def employment_vs_entrepreneurship():
-    """Send the preserved page. Do not recalculate it in Python."""
-    return send_file(_EMPLOYMENT_PAGE, mimetype="text/html")
+    """Send the versioned page (1.1). Do not recalculate it in Python."""
+    return send_file(_EMPLOYMENT_PAGE_V11, mimetype="text/html")
 
 
 def _whole_number(text):

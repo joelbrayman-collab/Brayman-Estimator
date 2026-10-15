@@ -82,7 +82,7 @@ def _ready(name="Handoff Job"):
     db.session.commit()
     from app.models.work_structure import WorkElementTemplate
 
-    foundation = WorkElementTemplate.query.filter_by(code="FOUND", organization_id=None).one()
+    foundation = WorkElementTemplate.query.filter_by(code="SITE", organization_id=None).one()  # unbound (decisions 1, 4)
     confirm_package(
         organization_id=project.organization_id,
         project_id=project.id,

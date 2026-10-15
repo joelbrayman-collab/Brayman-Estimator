@@ -95,7 +95,8 @@ def test_signed_in_contractor_opens_the_preserved_page_without_a_project():
     response = client.get("/calculators/employment-vs-entrepreneurship")
     html = response.get_data(as_text=True)
     assert response.status_code == 200
-    assert hashlib.sha256(response.data).hexdigest() == PRESERVED[PAGE]
+    # Decision 5 (14 Oct 2026): the office serves version 1.1; the recovered original stays preserved.
+    assert hashlib.sha256(response.data).hexdigest() == "4c5388482d596a9f10309903a0b17e13298af5e974f985023378de1c3c0250c3"
     assert "Employment" in html
     assert "id='wage'" in html
     assert "Winter protection / heat" in html

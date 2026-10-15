@@ -20,6 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
+HEAD = "w3d4e5f6a7b8"  # decision 4 binding follows this revision
 
 
 def _config(db_path):
@@ -46,7 +47,8 @@ def test_graph_head_is_the_drawing_revision():
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
-        assert script.get_heads() == [REVISION]
+        assert script.get_heads() == [HEAD]
+        assert script.get_revision(HEAD).down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 
 

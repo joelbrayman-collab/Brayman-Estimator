@@ -223,7 +223,8 @@ def test_site_found_and_struct_stay_unbound_and_icf_stays_bound(app):
         return WorkElementTemplate.query.filter_by(code=code, organization_id=None).one()
 
     assert bound_platform_engine_id(baseline("SITE")) is None
-    assert bound_platform_engine_id(baseline("FOUND")) is None
-    assert bound_platform_engine_id(baseline("STRUCT")) is None
+    # Joel's decision 4 (14 Oct 2026): Foundation and Structure name their producers.
+    assert bound_platform_engine_id(baseline("FOUND")) == "rectangular_footing"
+    assert bound_platform_engine_id(baseline("STRUCT")) == "wall_framing"
     assert bound_platform_engine_id(baseline("ICF")) == ICF_WALL_ENGINE_ID
     assert baseline("ICF").platform_engine_id == "icf_wall"

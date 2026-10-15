@@ -7,6 +7,18 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 14 Oct 2026 (night) — Milestone 1 owner decisions implemented (V1 completion)
+
+Branch `v1/completion`. Implemented and tested in the repository, **not deployed, not owner-accepted**:
+
+- Decision 1 SITE: unbound; the setup page says to enter quantities, allowances or subcontract costs on the estimate. No earthwork formula.
+- Decision 2 labour: `/estimates/<id>/versions/<vid>/labour-hours` — hours per item at the saved company labour rate, or a project rate with a reason; one `LAB-<item>` line each, costed and priced by the existing gross margin. No hard-coded rate.
+- Decision 3 proposals: a priced proposal cannot be issued or accepted until costing is approved and current and the pricing policy is applied against it. Drafts unaffected; existing issued/accepted proposals never re-checked.
+- Decision 4 FOUND/STRUCT: bound to `rectangular_footing` / `wall_framing`; data-only migration `w3d4e5f6a7b8` prepared and tested on a disposable database, **not applied**. The standalone footing now uses the shared rectangular-prism formula.
+- Decision 5: Employment vs Entrepreneurship v1.1 served; original kept unchanged as reference.
+- Decision 6: five trade calculators verified in Chromium at 1280 px and 390 px against hand-worked figures.
+- Security: hosted UAT bypass confirmed ON by the server's own request log (cookie-less GET `/login` → 302 at 00:43:07 UTC 15 Oct). Change-password page added for the owner before the bypass is removed.
+
 ## 14 Oct 2026 (evening) — V1 completion work started (Master Completion Directive)
 
 Reconciliation recorded in [v1-completion-register.md](v1-completion-register.md) §15. Implemented and tested in the repository, **not yet deployed or owner-accepted**:

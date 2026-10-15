@@ -248,11 +248,12 @@ def test_site_found_and_struct_stay_unbound_and_icf_delivery_rules_hold(app):
     struct = baseline("STRUCT")
     icf = baseline("ICF")
     assert site.platform_engine_id is None
-    assert found.platform_engine_id is None
-    assert struct.platform_engine_id is None
+    # Joel's decision 4 (14 Oct 2026): Foundation and Structure name their producers.
+    assert found.platform_engine_id == "rectangular_footing"
+    assert struct.platform_engine_id == "wall_framing"
     assert bound_platform_engine_id(site) is None
-    assert bound_platform_engine_id(found) is None
-    assert bound_platform_engine_id(struct) is None
+    assert bound_platform_engine_id(found) == "rectangular_footing"
+    assert bound_platform_engine_id(struct) == "wall_framing"
     assert bound_platform_engine_id(icf) == ICF_WALL_ENGINE_ID
 
     def project(name):
@@ -293,8 +294,8 @@ def test_site_found_and_struct_stay_unbound_and_icf_delivery_rules_hold(app):
         return resolve_start_project_walk(row.organization_id, row.id).evidence
 
     assert EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE in evidence("Site crew", "SITE", DELIVERY_INTERNAL)
-    assert EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE in evidence("Found crew", "FOUND", DELIVERY_INTERNAL)
-    assert EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE in evidence("Struct crew", "STRUCT", DELIVERY_INTERNAL)
+    assert EVIDENCE_ENGINE_ELIGIBLE in evidence("Found crew", "FOUND", DELIVERY_INTERNAL)
+    assert EVIDENCE_ENGINE_ELIGIBLE in evidence("Struct crew", "STRUCT", DELIVERY_INTERNAL)
     our_crew = evidence("ICF crew", "ICF", DELIVERY_INTERNAL)
     assert EVIDENCE_ENGINE_ELIGIBLE in our_crew
     subcontract = evidence("ICF sub", "ICF", DELIVERY_SUBCONTRACT)

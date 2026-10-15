@@ -153,6 +153,7 @@
 <section class="form-panel" id="costing-review" style="margin-bottom: 24px;">
     <h2>{{ contractor_copy.COSTING_REVIEW_HEADING }}</h2>
     <p><a class="button-link" href="{{ url_for('approved_costs.review', id=estimate.id, version_id=version.id) }}">Use approved supplier costs on this estimate</a></p>
+    <p><a class="button-link" href="{{ url_for('estimate_labour.hours', id=estimate.id, version_id=version.id) }}">Enter labour hours</a></p>
     {% if costing_review.has_current_costing and costing_review.working_matches_current %}
     <p>Approved costing snapshot {{ costing_review.current_snapshot.id }} — direct cost ${{ "%.2f"|format(costing_review.current_snapshot.approved_direct_cost_total) }} · {{ costing_review.current_snapshot.actor_display_name }} · {{ costing_review.current_snapshot.approved_at }}.</p>
     {% elif costing_review.has_current_costing %}

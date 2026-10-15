@@ -396,6 +396,7 @@ def create_app(config=None):
     from app.routes.deck_takeoff import deck_takeoff_bp
     from app.routes.construction_drawings import construction_drawings_bp
     from app.routes.approved_costs import approved_costs_bp
+    from app.routes.estimate_labour import estimate_labour_bp
     from app.routes.scope_delivery import scope_delivery_bp
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
     from app.routes.sign import sign_bp
@@ -436,6 +437,7 @@ def create_app(config=None):
     app.register_blueprint(deck_takeoff_bp)
     app.register_blueprint(construction_drawings_bp)
     app.register_blueprint(approved_costs_bp)
+    app.register_blueprint(estimate_labour_bp)
     app.register_blueprint(scope_delivery_bp)
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)

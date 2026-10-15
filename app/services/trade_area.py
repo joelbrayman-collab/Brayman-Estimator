@@ -25,6 +25,7 @@ from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation, loc
 from typing import Dict, List, Optional, Sequence
 
 from app.services.unit_conversion import convert
+from app.services.construction_measurement import rectangular_prism_cubic_yards
 
 IMPERIAL = "imperial"
 METRIC = "metric"
@@ -299,9 +300,10 @@ def footing(*, unit_system, footings, waste_percent):
         length = _to_feet(_number(row.get("length"), f"footing {i} length"), system)
         width = _to_feet(_number(row.get("width"), f"footing {i} width"), system)
         thickness = _number(row.get("thickness"), f"footing {i} thickness")
-        thickness_ft = thickness / Decimal(12) if system == IMPERIAL else convert(thickness / Decimal(1000), "M", "FT")["quantity"]
+        thickness_in = thickness if system == IMPERIAL else thickness / Decimal("25.4")
         n = _count(row.get("count"), f"footing {i} count")
-        vol = length * width * thickness_ft * n
+        # One shared footing formula: the platform's rectangular-prism measurement.
+        vol = rectangular_prism_cubic_yards(length, width, thickness_in)["cubic_feet"] * n
         total_ft3 += vol
         rows.append({"number": i, "count": n, "ft3": _q(vol), "yd3": _q(convert(vol, "FT3", "YD3")["quantity"], "0.001"),
                      "_raw": {"length": _number(row.get("length"), "length"), "width": _number(row.get("width"), "width"),

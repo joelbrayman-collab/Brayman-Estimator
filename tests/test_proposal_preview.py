@@ -16,6 +16,7 @@ from app.services.proposals import (
     update_proposal,
     update_proposal_status,
 )
+from tests.proposal_issue_support import make_issuable
 
 
 @pytest.fixture
@@ -191,6 +192,7 @@ def test_preview_uses_customer_document_language(client, proposal):
 
 
 def test_preview_does_not_expose_office_status(client, proposal):
+    make_issuable(proposal.estimate_version)  # decision 3
     update_proposal_status(proposal, "Issued")
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200

@@ -100,10 +100,40 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await submit(page.locator("main form button[type=submit]"));
     const projectId = page.url().match(/projects\/(\d+)\/setup/)[1];
 
-    // Continue setup: drawings not required, then scope (Foundation by our crew, Site work by our crew).
-    await submit(page.getByRole("link", { name: "Choose about drawings" }));
-    await submit(page.locator(`form[action="/projects/${projectId}/drawing-requirement"] button[value=NOT_REQUIRED]`));
+    // Construction information, saved, then found again after leaving the page (save and resume).
+    await page.goto(`${base}/projects/${projectId}/construction`);
+    await page.selectOption("[name=project_document_status]", "preliminary_construction_drawing");
+    await page.selectOption("[name=measurement_system]", "imperial");
+    await page.fill("[name=level_name_0]", "Main deck");
+    await page.fill("[name=level_elevation_0]", "3");
+    await page.selectOption("[name=member_role_0]", "beam");
+    await page.fill("[name=member_size_0]", "2x10");
+    await page.fill("[name=member_length_0]", "12");
+    await page.selectOption("[name=member_length_unit_0]", "ft");
+    await page.fill("[name=member_count_0]", "4");
+    await page.selectOption("[name=support_kind_0]", "footing");
+    await page.fill("[name=support_count_0]", "6");
+    await submit(page.locator("button[name=form_action][value=save]"));
+    assert.doesNotMatch(await page.locator("main").innerText(), /was not saved/);
+    await page.goto(`${base}/`);
+    await page.goto(`${base}/projects/${projectId}/construction`);
+    assert.equal(await page.inputValue("[name=level_name_0]"), "Main deck");
+    assert.equal(await page.inputValue("[name=member_size_0]"), "2x10");
+    assert.equal(await page.inputValue("[name=member_count_0]"), "4");
+    assert.equal(await page.inputValue("[name=measurement_system]"), "imperial");
+
+    // A drawing on the project: upload, then it is listed with the project's plans.
+    const planPdf = (await import("node:fs")).readFileSync(path.join(repoRoot, "tests/fixtures/e2e/synthetic-site-plan.pdf"));
+    await page.goto(`${base}/projects/${projectId}/plans/upload`);
+    await page.setInputFiles("[name=plan_file]", { name: "e2e-synthetic-site-plan.pdf", mimeType: "application/pdf", buffer: planPdf });
+    await page.fill("[name=notes]", "Synthetic plan for the end-to-end walk");
+    await submit(page.getByRole("button", { name: "Upload" }));
+    await page.goto(`${base}/projects/${projectId}/plans`);
+    assert.match(await page.locator("main").innerText(), /e2e-synthetic-site-plan\.pdf/);
+
+    // Continue setup: the uploaded drawing counts, then scope (Foundation by our crew, Site work by our crew).
     await page.goto(`${base}/projects/${projectId}/setup`);
+    assert.match(await page.locator("main").innerText(), /A current drawing is on the project\./);
     await submit(page.getByRole("link", { name: "Open scope of work" }));
     for (const work of ["Foundation", "Site work"]) {
       await page.selectOption("[name=work_element_template_id]", { label: work });
@@ -215,6 +245,12 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.match(await flash(), /Proposal status set to "Issued"/);
     const proposalText = await page.locator("main").innerText();
     assert.ok(proposalText.includes("3546.54") || proposalText.includes("3,546.54"), "proposal total");
+
+    // The job's documents page now offers the customer proposal.
+    await page.goto(`${base}/projects/${projectId}/workflow-documents`);
+    const docs = await page.locator("main").innerText();
+    assert.match(docs, /Client Construction Proposal/);
+    assert.match(docs, /Internal Detailed Cost Breakdown/);
 
     // The customer document.
     const pdf = await ctx.request.get(`${proposalUrl}/pdf`);

@@ -112,6 +112,18 @@ self.addEventListener("fetch", function (event) {
   if (url.origin !== self.location.origin) {
     return;
   }
+  if (url.pathname === "/" && request.mode === "navigate") {
+    // The installed app opens on Home (Joel, 15 Oct 2026). Home always comes from the network and is
+    // never stored; with no connection the app shows the Field page already kept for this user.
+    event.respondWith(
+      fetch(request).catch(function () {
+        return caches.match("/field/today", { ignoreSearch: true }).then(function (cached) {
+          return cached || new Response("", { status: 504, statusText: "Offline" });
+        });
+      })
+    );
+    return;
+  }
   if (!isFieldDocument(url.pathname) && !isFieldAsset(url.pathname)) {
     return;
   }

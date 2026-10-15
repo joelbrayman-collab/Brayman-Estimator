@@ -3,7 +3,7 @@
   "short_name": "CalibraytAI",
   "description": "Plan, price and build with CalibraytAI.",
   "id": "/",
-  "start_url": "/field/today",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

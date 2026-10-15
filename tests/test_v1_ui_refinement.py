@@ -70,3 +70,26 @@ def test_the_service_worker_never_stores_office_pages():
     for office_path in ("/estimates", "/proposals", "/clients", "/projects/", "/pricing", "/account"):
         assert f'"{office_path}' not in worker
     assert "clear-field-cache" in (ROOT / "app" / "static" / "js" / "shell.js").read_text()
+
+
+def test_the_installed_app_opens_on_home_and_home_is_never_stored():
+    import json
+
+    manifest = json.loads((ROOT / "app" / "static" / "manifest.webmanifest").read_text())
+    assert manifest["start_url"] == "/"
+    worker = (ROOT / "app" / "static" / "field-sw.js").read_text()
+    home = worker[worker.index('url.pathname === "/"'):worker.index("isFieldDocument(url.pathname) &&")]
+    # Home goes to the network; offline it falls back to the Field page already kept; it is never put in the cache.
+    assert "fetch(request)" in home and 'caches.match("/field/today"' in home
+    assert "cache.put" not in home and "networkFirst" not in home
+
+
+def test_the_sign_in_page_removes_field_pages_kept_by_an_earlier_user(app):
+    response = app.test_client().get("/login")
+    page = response.get_data(as_text=True)
+    assert response.status_code == 200 and "Sign in" in page
+    assert "js/sign-in-clears-field-cache.js" in page
+    script = (ROOT / "app" / "static" / "js" / "sign-in-clears-field-cache.js").read_text()
+    assert 'indexOf("calibrayt-field-shell") === 0' in script and "caches.delete(key)" in script
+    assert 'var CACHE = "calibrayt-field-shell-' in (ROOT / "app" / "static" / "field-sw.js").read_text()
+

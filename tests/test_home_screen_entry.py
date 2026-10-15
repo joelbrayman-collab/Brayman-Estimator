@@ -43,7 +43,7 @@ def test_manifest_names_calibrayt_and_starts_at_the_office(client):
     data = response.get_json()
     assert data["name"] == "CalibraytAI"
     assert data["short_name"] == "CalibraytAI"
-    assert data["start_url"] == "/field/today"
+    assert data["start_url"] == "/"  # installed app opens on Home (Joel, 15 Oct 2026, B3)
     assert data["display"] == "standalone"
     sizes = {icon["sizes"]: icon for icon in data["icons"]}
     assert sizes["192x192"]["src"] == "/static/branding/calibraytai-app-icon-192.png"

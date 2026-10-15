@@ -14608,3 +14608,13 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Tests | See milestone report |
 | Commit hash | See session handoff |
 
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-15 |
+| Branch | `v1/completion` |
+| Objective | Continue V1: SEC-03, internal end-to-end contractor workflow acceptance, Home calendar placement |
+| Business decision | Joel 15 Oct: milestone 2 accepted; continue without routine approvals; Company Calendar below Start New Project; bypass removal a separate owner-confirmed gate |
+| Implementation result | Signed-in approver; Home order; stale-draft issue block; hub lock step; work plan from entered labour hours; end-to-end browser walk to a closed project |
+| Tests | See milestone report |
+| Commit hash | See session handoff |
+

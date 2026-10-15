@@ -7,6 +7,20 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 15 Oct 2026 — V1 milestone 3 work (after the milestone 2 release)
+
+Branch `v1/completion` after live `d3bf2ff`. Implemented and tested, **not deployed**:
+
+- SEC-03: approvals record the signed-in person (costing with user id, pricing, pricing policy, labour standards, supplier cost); typed names ignored.
+- Home: Company Calendar immediately below + Start New Project (Joel, 15 Oct).
+- Decision 3 completed: a draft copied before the current pricing cannot be issued.
+- Labour-hours lines suggested as our crew / no material in scope routing (still confirmed by the contractor).
+- Hub: lock step offered when the accepted proposal's estimate is not locked; project work can be built from entered labour hours.
+- Footing quantities reach the review at 0.001 precision.
+- End-to-end contractor workflow browser test, sign-in to closed project, on a migration-built local office.
+
+Security gate open: removal of `CALIBRAYTAI_UAT_AUTH_BYPASS` needs Joel's confirmation; no authenticated production acceptance until then.
+
 ## 14 Oct 2026 (night) — Milestone 1 owner decisions implemented (V1 completion)
 
 Branch `v1/completion`. Implemented and tested in the repository, **not deployed, not owner-accepted**:

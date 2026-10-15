@@ -14618,3 +14618,12 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Tests | See milestone report |
 | Commit hash | See session handoff |
 
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-15 |
+| Branch | `v1/completion` |
+| Objective | V1 final completion: internal acceptance, remaining gates, one visual refinement, installable app, release preparation |
+| Business decision | Joel 15 Oct: no new features; approved branding only; Calendar under Start New Project; Calculators collapsible; app installable without caching sensitive data; release only with owner authorization; V1 complete only on Joel's formal acceptance |
+| Implementation result | Approved logo; refinement stylesheet; collapsible Calculators; Home and Clients; manifest and icons; logout clears the Field cache; walk extended; register reconciled; release script prepared |
+| Tests | See final report |
+| Commit hash | See session handoff |

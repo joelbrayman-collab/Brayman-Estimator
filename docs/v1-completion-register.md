@@ -976,6 +976,33 @@ Classes: **LIVE VERIFIED** · **IMPLEMENTED / NOT ACCEPTED** · **PARTIALLY IMPL
 | WF-03 | Estimates and Proposals reachable | IMPLEMENTED (by the accepted navigation design) | Reached from Home and every project; the accepted simplified menu is preserved | — |
 | WF-04 | Contract and signing | PARTIALLY IMPLEMENTED | V1-06 / V1-07 | Production signing pending counsel (EXTERNAL FACT REQUIRED) |
 
+### 15.5 Reconciliation — 15 Oct 2026 (V1 Final Completion directive)
+
+This table supersedes the "Deploy" entries above. Production is `5753916` (milestone 3, no migration after `w3d4e5f6a7b8`). Every source file behind CALC-05…13, EST-02/05/07/08/09/10, SEC-03 and SEC-06 is present in `5753916` (checked with `git cat-file` against the release SHAs). Signed-in production acceptance after the bypass removal needs Joel to sign in; no automated signed-in production check is run.
+
+| ID | Class now | Evidence added | Still outstanding |
+|---|---|---|---|
+| CALC-05, CALC-09…12 | LIVE (5753916) / INTERNALLY ACCEPTED | shipped in `d3bf2ff`; browser checks in the native Mac regression of both releases | Owner acceptance |
+| CALC-06, CALC-08, CALC-13 | LIVE (5753916) / INTERNALLY ACCEPTED | as above; menu: 10 calculators, every one reachable from the collapsible Calculators group on desktop, icon-only and phone menus (`tests/test_v1_ui_refinement.py`) | Owner acceptance |
+| EST-02, EST-05, EST-07…10 | LIVE (5753916) / INTERNALLY ACCEPTED | end-to-end walk WF-01; in-process tests named above | Owner acceptance |
+| SEC-02 | IMPLEMENTED / INTERNALLY ACCEPTED | 15 Oct: 147 cross-organization tests across 81 files run — 146 pass; the 1 failure (`test_native_signing_sign_e_fg033::test_cross_org_cannot_see_contract_request`) is the known container-only missing contract master (Family 05), passes on the native Mac | Production certification is by the same code; no cross-company data exists in production (one company) |
+| SEC-03 | LIVE (5753916) / INTERNALLY ACCEPTED | `tests/test_sec03_signed_in_approver.py`; walk approves as the signed-in "Office Test User" | Owner acceptance |
+| SEC-05 | IMPLEMENTED / REHEARSED | 14 Oct rehearsal; each release since took a verified hosted backup (`pre-v1m2-20261015-1238.db`, `pre-v1m3-20261015-1617.db`, `pre-owner-email-20261015-1745.db`) | A live restore only with Joel's authorization |
+| SEC-06 | LIVE (5753916) | `tests/test_production_error_page.py` | — |
+| HOST-01 | LIVE / MONITORED | Render metrics 14–15 Oct: CPU ≈ 0.0002–0.004 of 0.5; memory 133–240 MB normally, peak 445 MB of 512 MB held after a drawing generation (14 Oct 23:00 – 15 Oct 12:00 UTC, no restart); requests 15 Oct: 183 (200/206/302/304) and 2 × 502 during deploy instance switches; latency metric not offered on this plan | No upgrade requested. If an out-of-memory restart recurs in real use, the evidence above supports moving to the next plan — owner approval first |
+| WF-01 | INTERNALLY ACCEPTED | walk extended 15 Oct: construction information (level, beam, footings) saved, left and resumed; a drawing PDF uploaded to the project and listed; workflow documents listed | Owner acceptance; Ben's UAT after V1 Development Complete |
+| WF-02 | IMPLEMENTED (V1 path = deck takeoff → Form 2) | project 54 live (Form 2 recordable 623.70); `tests/test_deck_takeoff_workflow.py` | — |
+| WF-04 | PARTIALLY IMPLEMENTED — EXTERNAL DEPENDENCY | Proposal acceptance and estimate locking are complete and live. Production electronic contract signing stays off until Ontario counsel approves the contract master text and the e-signature consent wording (§9.3, V1-06 / V1-07) | Counsel approval (Joel to obtain); then a separate enabling release |
+
+### 15.6 V1 visual refinement and installable app — 15 Oct 2026
+
+| ID | Requirement | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| UI-01 | Approved CalibraytAI branding | IMPLEMENTED / INTERNALLY ACCEPTED | Sidebar logo `app/static/branding/calibraytai-logo-v1-dark.png` is byte-identical to the approved `docs/branding/calibraytai-opening-v1/storyboard/approved-logo-v1-dark-reference.png`; obsolete CalibAi files removed; `tests/test_v1_ui_refinement.py`, `tests/test_product_identity_fg028.py` | Release; owner acceptance |
+| UI-02 | Typography, buttons, forms, tables, Home briefing, Clients register, mobile | IMPLEMENTED / INTERNALLY ACCEPTED | `app/static/css/v1-refinement.css`; before/after screenshots at 1280 and 390 px | Release; owner acceptance |
+| UI-03 | Collapsible Calculators | IMPLEMENTED / INTERNALLY ACCEPTED | collapsed by default, open on a calculator page with only that calculator highlighted (fixes every calculator being highlighted), remembered per browser, all 10 links reachable on desktop, icon-only and phone menus | Release |
+| PWA-01 | Installable app | IMPLEMENTED / INTERNALLY ACCEPTED | `manifest.webmanifest` (CalibraytAI, standalone, theme #000510, icons 180/192/512/maskable from the approved gold symbol); Chromium installability check: no manifest errors, no installability errors; service worker caches only the Field shell, never office pages; office and Field logout clear it; install steps in `docs/operations/install-calibraytai-app.md` | Install on a real iPhone and Android phone after release; owner decisions on Field offline pages and the start page (session handoff) |
+
 ---
 
 ## Related

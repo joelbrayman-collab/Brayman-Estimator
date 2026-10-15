@@ -7,6 +7,15 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 15 Oct 2026 (evening) — V1 final completion: UI refinement and installable app (not deployed)
+
+- Approved CalibraytAI logo `app/static/branding/calibraytai-logo-v1-dark.png` (byte-identical to the approved reference); obsolete CalibAi logo and home icon removed.
+- `app/static/css/v1-refinement.css`: typography, buttons, forms, tables, Home briefing cards with counts, Clients register card (phone: labelled cards), project pages, phone layout.
+- Sidebar Calculators group collapsible (`app/navigation.py`, `app/shell.py`, `partials/sidebar.html`, `static/js/shell.js`): closed by default, open on a calculator page, state remembered per browser; only the current calculator is highlighted.
+- Installable app: `static/manifest.webmanifest`, icons 32/180/192/512/maskable from the approved gold symbol on #000510; `field-sw.js` cache `calibrayt-field-shell-v2` (Field pages only); office logout clears it. Install steps: `docs/operations/install-calibraytai-app.md`.
+- End-to-end walk extended (construction information save/resume, drawing upload, workflow documents).
+- Register §15.5 (reconciliation) and §15.6 (UI and app rows). No migration; no model change.
+
 ## 15 Oct 2026 — V1 milestone 3 work (after the milestone 2 release)
 
 Branch `v1/completion` after live `d3bf2ff`. Implemented and tested, **not deployed**:

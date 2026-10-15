@@ -104,6 +104,7 @@ def _empty_monitor(*, actuals_state=ACTUALS_MISSING, baseline_state=BASELINE_MIS
         "gm_variance": None,
         "actuals_state": actuals_state,
         "baseline_state": baseline_state,
+        "unlocked_source": None,
         "provenance": {
             "source_estimate_version_id": None,
             "pricing_snapshot_id": None,
@@ -160,6 +161,7 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
     source_version_id = None
     snapshot_id = None
     accepted_proposal_id = None
+    unlocked_source = None
 
     if len(accepted) == 0:
         baseline_state = BASELINE_MISSING_CUSTOMER_COMMITMENT
@@ -176,6 +178,15 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
                 version = None
         if version is None or not _version_is_locked(version):
             baseline_state = BASELINE_MISSING_ORIGINAL_BASELINE
+            if version is not None:
+                # The accepted proposal's estimate exists but is not locked yet: the hub
+                # offers the existing lock step instead of a dead end (V1 workflow, 15 Oct).
+                unlocked_source = {
+                    "estimate_id": version.estimate_id,
+                    "version_id": version.id,
+                    "label": version.display_label,
+                    "estimate_number": version.estimate.estimate_number,
+                }
         else:
             snapshot = getattr(version, "pricing_snapshot", None)
             if snapshot is not None:
@@ -235,6 +246,7 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
         "gm_variance": gm_variance,
         "actuals_state": actuals_state,
         "baseline_state": baseline_state,
+        "unlocked_source": unlocked_source,
         "provenance": {
             "source_estimate_version_id": source_version_id
             if len(accepted) == 1

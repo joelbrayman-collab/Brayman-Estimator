@@ -1148,3 +1148,17 @@ def test_csrf_required_for_actuals_writes(app):
         assert ProjectDirectCostActual.query.count() == 1
         db.session.remove()
         db.drop_all()
+
+
+def test_an_accepted_proposal_on_an_unlocked_estimate_offers_the_lock_step(client, app, project):
+    """V1 workflow (15 Oct 2026): the hub offers the existing lock step instead of a dead end."""
+    estimate, version = _estimate_with_line(project, number="EST-FG023-LOCK", lock=False)
+    _accept(estimate, version, title="Accepted before locking")
+    view = assemble_monitor_v1(project, project.organization_id)
+    assert view["baseline_state"] == "MISSING_ORIGINAL_BASELINE"
+    assert view["unlocked_source"]["version_id"] == version.id
+    page = client.get(f"/projects/{project.id}").get_data(as_text=True)
+    assert f"/estimates/{estimate.id}/versions/{version.id}/lock" in page and "as the baseline" in page
+    client.post(f"/estimates/{estimate.id}/versions/{version.id}/lock")
+    after = assemble_monitor_v1(project, project.organization_id)
+    assert after["baseline_state"] == "COMPLETE" and after["unlocked_source"] is None

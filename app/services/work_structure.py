@@ -272,16 +272,37 @@ def eligible_seed_versions(project: Project, *, organization_id: Optional[str] =
         snapshots = EstimateLabourSnapshot.query.filter_by(
             estimate_version_id=version.id, organization_id=org_id
         ).count()
-        if snapshots < 1:
+        if snapshots < 1 and not _entered_labour_lines(version):
             continue
         versions.append(version)
     return versions
 
 
+def _entered_labour_lines(version: EstimateVersion):
+    """Labour hours the contractor entered per item (decision 2): the LAB-<item> lines."""
+    from app.services.estimate_labour_hours import is_labour_line
+
+    return [
+        (section, line)
+        for section in version.sections
+        for line in section.line_items
+        if is_labour_line(line) and Decimal(line.quantity or 0) > 0
+    ]
+
+
 def _version_is_seed_eligible(version: EstimateVersion) -> bool:
-    if version.status not in SEED_ELIGIBLE_VERSION_STATUSES:
+    if not version.is_locked:
         return False
-    return bool(version.is_locked)
+    if version.status in SEED_ELIGIBLE_VERSION_STATUSES:
+        return True
+    # The customer's commitment is the issued or accepted proposal priced from this
+    # locked version; the contractor does not also have to change the estimate status.
+    from app.models import Proposal
+
+    return Proposal.query.filter(
+        Proposal.estimate_version_id == version.id,
+        Proposal.status.in_(("Issued", "Accepted")),
+    ).first() is not None
 
 
 def seed_project_work_structure(
@@ -315,9 +336,13 @@ def seed_project_work_structure(
         .all()
     )
     if not snapshots:
-        raise WorkStructureError(
-            "This estimate has no labour hours to build a work plan from."
-        )
+        entered = _entered_labour_lines(version)
+        if not entered:
+            raise WorkStructureError(
+                "This estimate has no labour hours to build a work plan from."
+            )
+        _seed_from_entered_labour(project, version, entered, org_id)
+        snapshots = []
 
     grouped: dict[str, list[EstimateLabourSnapshot]] = defaultdict(list)
     for snapshot in snapshots:
@@ -381,6 +406,44 @@ def seed_project_work_structure(
             raise WorkStructureError("This project's work plan is already built.") from exc
         raise
     return seed
+
+
+def _seed_from_entered_labour(project, version, entered, org_id) -> None:
+    """One work item per estimate section, one activity per labour line, with its hours."""
+    by_section: dict[int, list] = defaultdict(list)
+    names: dict[int, str] = {}
+    for section, line in entered:
+        by_section[section.id].append(line)
+        names[section.id] = (section.name or "General").strip() or "General"
+    for element_order, (section_id, lines) in enumerate(by_section.items(), start=1):
+        element = ProjectWorkElement(
+            organization_id=org_id,
+            project_id=project.id,
+            display_name=names[section_id][:180],
+            status=WORK_STATUS_ACTIVE,
+            sort_order=element_order * 10,
+            source_kind=SOURCE_ESTIMATE_SEED,
+            estimated_hours=sum(Decimal(line.quantity or 0) for line in lines),
+            scope_origin=SCOPE_ORIGINAL,
+        )
+        db.session.add(element)
+        db.session.flush()
+        for activity_order, line in enumerate(lines, start=1):
+            db.session.add(
+                ProjectWorkActivity(
+                    organization_id=org_id,
+                    project_work_element_id=element.id,
+                    display_name=(line.description or "Labour")[:180],
+                    status=WORK_STATUS_ACTIVE,
+                    sort_order=activity_order * 10,
+                    source_kind=SOURCE_ESTIMATE_SEED,
+                    source_estimate_version_id=version.id,
+                    estimated_hours=Decimal(line.quantity or 0),
+                    quantity=Decimal(line.quantity or 0),
+                    unit="hr",
+                    scope_origin=SCOPE_ORIGINAL,
+                )
+            )
 
 
 def add_project_element(

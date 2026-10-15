@@ -45,9 +45,10 @@ const money = (text) => Number(String(text).replace(/[^0-9.-]/g, ""));
 const exe = process.env.E2E_BROWSER_EXECUTABLE;
 
 test("the contractor estimates a footing job from sign-in to an issued proposal", { timeout: 600000 }, async () => {
-  const port = await freePort();
-  const office = startOffice(port);
-  const base = `http://127.0.0.1:${port}`;
+  // E2E_BASE points at an office that is already running (development only).
+  const port = process.env.E2E_BASE ? null : await freePort();
+  const office = process.env.E2E_BASE ? { ready: Promise.resolve(), child: { kill() {} } } : startOffice(port);
+  const base = process.env.E2E_BASE || `http://127.0.0.1:${port}`;
   let browser;
   const pageErrors = [];
   try {
@@ -63,6 +64,7 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await phone.waitForURL(`${base}/`);
     for (const width of [390, 1280]) {
       await phone.setViewportSize({ width, height: 900 });
+      await phone.waitForTimeout(500); // let the side menu finish its width change
       const start = await phone.locator("a.home-start").boundingBox();
       const cal = await phone.locator("a.home-calendar").boundingBox();
       assert.ok(cal.y >= start.y + start.height - 1 && cal.y - (start.y + start.height) <= 16, `calendar below start at ${width}px`);
@@ -219,6 +221,85 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.equal(pdf.status(), 200);
     assert.equal(pdf.headers()["content-type"], "application/pdf");
     assert.equal((await pdf.body()).subarray(0, 5).toString(), "%PDF-");
+
+    // The customer accepts. The hub offers to lock the estimate as the committed baseline.
+    await page.goto(proposalUrl);
+    await page.locator('form[action$="/status"] select[name=status]').selectOption("Accepted");
+    await submit(page.locator('form[action$="/status"] button[type=submit]'));
+    await page.goto(`${base}/projects/${projectId}`);
+    await submit(page.locator("[data-lock-baseline] button"));
+    await page.goto(`${base}/projects/${projectId}`);
+    let hub = await page.locator("main").innerText();
+    assert.match(hub, /ORIGINAL ESTIMATED DIRECT COST\s+\$2667\.75/i);
+    assert.match(hub, /ORIGINAL ESTIMATED PRE-TAX SELLING PRICE\s+\$3138\.53/i);
+    assert.match(hub, /ORIGINAL ESTIMATED GM\s+15\.00%/i);
+
+    // Project work from the contractor's labour hours, then dates, time and actual cost.
+    await submit(page.getByRole("button", { name: "Build project work" }));
+    assert.match(await page.locator("main").innerText(), /Current authorized labour: 6\.00/);
+    const today = new Date();
+    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const later = new Date(today.getTime() + 2 * 86400000);
+    await page.goto(`${base}/schedule/items/new?project_id=${projectId}&next=hub`);
+    await page.selectOption("[name=project_work_element_id]", { label: "Foundation and site" });
+    await page.selectOption("[name=project_work_activity_id]", { index: 1 });
+    await page.fill("[name=scheduled_start]", iso(today));
+    await page.fill("[name=scheduled_end]", iso(later));
+    await page.fill("[name=element_scheduled_start]", iso(today));
+    await page.fill("[name=element_scheduled_end]", iso(later));
+    await page.check("[name=confirm_element_adjustment]");
+    await submit(page.getByRole("button", { name: "Set dates" }));
+    assert.doesNotMatch(await flash(), /Schedule the work item first/);
+    await page.goto(`${base}/`);
+    assert.match(await page.locator(".home-briefing").innerText(), /E2E Synthetic Footing Job/);
+    await submit(page.locator("a.home-calendar"));
+    assert.match(await page.locator("main").innerText(), /E2E Synthetic Footing Job|Foundation and site/);
+
+    await page.goto(`${base}/time/new?project_id=${projectId}&next=hub`);
+    await page.selectOption("[name=project_work_element_id]", { label: "Foundation and site" });
+    await page.selectOption("[name=project_work_activity_id]", { index: 1 });
+    await page.fill("[name=hours]", "4");
+    await submit(page.getByRole("button", { name: "Send time" }));
+    await page.goto(`${base}/projects/${projectId}`);
+    const actual = page.locator(`form[action="/projects/${projectId}/direct-cost-actuals"]`);
+    await actual.locator("[name=cost_class]").selectOption("material");
+    await actual.locator("[name=amount]").fill("800");
+    await actual.locator("[name=incurred_on]").fill(iso(today));
+    await submit(actual.locator("button[type=submit]"));
+
+    // A change order the customer approved: $600 more, before tax.
+    await page.goto(`${base}/project-controls/change-orders/new?project_id=${projectId}&next=hub`);
+    await page.fill("[name=title]", "E2E extra footing step");
+    await page.fill("[name=tax_percent]", "13");
+    await page.fill("[name=description]", "Customer asked for a step in the footing");
+    await submit(page.getByRole("button", { name: "Create Change Order" }));
+    const coUrl = page.url().split("?")[0];
+    await page.goto(`${coUrl}?tab=items`);
+    await page.fill("[name=description]", "Footing step, formed and placed");
+    await page.fill("[name=unit_price]", "600");
+    await submit(page.getByRole("button", { name: "Add Item" }));
+    await page.locator('form[action$="/status"] select[name=status]').selectOption("Approved");
+    await submit(page.locator('form[action$="/status"] button[type=submit]'));
+    await page.goto(`${base}/projects/${projectId}`);
+    hub = await page.locator("main").innerText();
+    assert.match(hub, /APPROVED\/INVOICED CO REVENUE DELTA\s+\$600\.00/i);
+    assert.match(hub, /ACTUAL DIRECT COST TO DATE\s+\$800\.00/i);
+    assert.match(hub, /Waiting for approval: 4\.00/);
+
+    // Closeout: a punch list item for the change order, completed, then the project is closed.
+    const punch = page.locator(`form[action="/projects/${projectId}/punch-list"]`);
+    await punch.locator("[name=description]").fill("Patch the footing step corner");
+    await punch.locator("[name=work_source_type]").selectOption("CHANGE_ORDER");
+    await punch.locator("[name=source_change_order_id]").selectOption({ index: 1 });
+    await submit(punch.getByRole("button", { name: "Add Punch List Item" }));
+    assert.match(await flash(), /Punch List item added/);
+    await submit(page.locator(`form[action^="/projects/${projectId}/punch-list/"][action$="/complete"] button`).first());
+    assert.match(await flash(), /marked complete/);
+    await page.goto(`${base}/projects/${projectId}/close`);
+    await submit(page.locator(`form[action="/projects/${projectId}/close"] button[type=submit]`));
+    const closed = await flash();
+    assert.ok(/closed/i.test(closed), closed);
+
     assert.deepEqual(pageErrors, []);
     assert.equal(money("$3,546.54"), 3546.54);
   } finally {

@@ -104,6 +104,13 @@
     <p><strong>{{ baseline_copy.what }}</strong></p>
     <p>{{ baseline_copy.why }}</p>
     <p>{{ baseline_copy.next }}</p>
+    {% if monitor.unlocked_source %}
+    <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=monitor.unlocked_source.estimate_id, version_id=monitor.unlocked_source.version_id) }}" data-lock-baseline>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p>The accepted proposal was priced from {{ monitor.unlocked_source.estimate_number }} {{ monitor.unlocked_source.label }}, which is not locked yet. Lock it so it becomes the committed baseline. A locked version cannot be edited; changes go in a new version.</p>
+        <button type="submit">Lock {{ monitor.unlocked_source.label }} as the baseline</button>
+    </form>
+    {% endif %}
     {% endif %}
     {% if monitor.actuals_state == "MISSING_ACTUALS" %}
     {% set actuals_copy = contractor_copy.monitor_empty_copy("MISSING_ACTUALS") %}

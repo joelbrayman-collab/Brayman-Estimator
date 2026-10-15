@@ -33,7 +33,16 @@ def main():
         cfg.set_main_option("script_location", str(ROOT / "migrations"))
         cfg.set_main_option("sqlalchemy.url", uri)
         command.upgrade(cfg, "head")
-        ensure_office_user()
+        user = ensure_office_user()
+        db.session.commit()
+        # The office user owns the company, as Joel does on the hosted office, so the
+        # owner-only steps (closing a project) are part of the walk.
+        from app.models.user import UserMembership
+        from app.services.instance_authority import set_instance_owner
+        from app.services.organizations import DEFAULT_ORGANIZATION_ID
+
+        membership = UserMembership.query.filter_by(user_id=user.id, organization_id=DEFAULT_ORGANIZATION_ID).one()
+        set_instance_owner(DEFAULT_ORGANIZATION_ID, membership.id, user.id)
         db.session.commit()
     port = int(os.environ["E2E_OFFICE_PORT"])
     print(f"READY {port}", flush=True)

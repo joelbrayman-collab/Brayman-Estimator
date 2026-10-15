@@ -130,13 +130,19 @@ test("the contractor page runs the preserved comparison", async () => {
 
     await page.locator("[data-p='today']").click();
     await page.locator("#wage").waitFor({ state: "visible" });
+    // Version 1.1 (Joel's decision 5, 14 Oct 2026): a bad entry is refused with a message and
+    // the last valid results stay; it is no longer read as 0. A real 0 is a valid entry.
+    const lastValid = await page.locator("#cur").innerText();
     await page.locator("#wage").evaluate((field) => {
       field.value = "abc";
       field.dispatchEvent(new Event("input", { bubbles: true }));
     });
-    const refused = await page.locator("#cur").innerText();
+    assert.equal(await page.locator("#cur").innerText(), lastValid);
+    assert.ok(await page.locator("#inputError").isVisible());
+    assert.equal(await page.locator("#wage").getAttribute("aria-invalid"), "true");
     await page.fill("#wage", "0");
-    assert.equal(await page.locator("#cur").innerText(), refused);
+    assert.ok(await page.locator("#inputError").isHidden());
+    assert.ok(dollars(await page.locator("#cur").innerText()) < dollars(lastValid));
     await page.fill("#wage", "45");
     assert.equal(await page.locator("#cur").innerText(), employment);
 

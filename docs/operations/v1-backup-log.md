@@ -32,3 +32,7 @@ Restore steps remain [v1-backup-restore-checklist.md](v1-backup-restore-checklis
 - Hosted backup `instance/backups/pre-v1m2-20261015-1238.db` (SQLite online backup), 4,763,648 bytes, 152 tables, revision `v2c3d4e5f6a7`, integrity ok, sha256 `82e5b9a2eb64b15ca912bf72254f1519c1927b8c66dcf60c8186e6e30b18567c`.
 - Mac copy `~/Desktop/Brayman-office-backups/pre-v1m2-20261015-1238.db`: checksum identical, integrity ok. Migration `w3d4e5f6a7b8` rehearsed on a copy: only FOUND/STRUCT bindings changed.
 
+## 15 Oct 2026 — before V1 milestone 3 release
+
+- Hosted backup `instance/backups/pre-v1m3-20261015-1617.db`, 152 tables, revision `w3d4e5f6a7b8`, integrity ok, sha256 `3721dd0e681c459ba0ad0fe1fe222da85ce59d9e9474875d44afcefbfbae0992`; Mac copy in `~/Desktop/Brayman-office-backups` identical (copied on the second attempt after a dropped connection).
+

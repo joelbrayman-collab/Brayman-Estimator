@@ -26,3 +26,9 @@ MAC MIRROR CURRENT. `instance/brayman_estimator.db` was replaced at 2026-10-09 1
 Restore steps remain [v1-backup-restore-checklist.md](v1-backup-restore-checklist.md). Restoring the Mac mirror does not replace the hosted office.
 
 2026-10-14 — RESTORE REHEARSAL PASSED on a disposable copy (no live or Mac office file touched). Backup `pre-drawings-20261014-2103.db`, SHA-256 `7063e151…` matches. Restored by the SQLite backup command: integrity `ok`, revision `u1b2c3d4e5f6`, 150 tables and 3,633 rows identical. The application read 53 projects, 47 clients, 41 estimates and 18 proposals and rendered proposal 18's PDF without writing. The forward migration to `v2c3d4e5f6a7` added only the two drawing tables. Copies deleted afterwards. Hosted restore steps added to the checklist.
+
+## 15 Oct 2026 — before V1 milestone 2 release
+
+- Hosted backup `instance/backups/pre-v1m2-20261015-1238.db` (SQLite online backup), 4,763,648 bytes, 152 tables, revision `v2c3d4e5f6a7`, integrity ok, sha256 `82e5b9a2eb64b15ca912bf72254f1519c1927b8c66dcf60c8186e6e30b18567c`.
+- Mac copy `~/Desktop/Brayman-office-backups/pre-v1m2-20261015-1238.db`: checksum identical, integrity ok. Migration `w3d4e5f6a7b8` rehearsed on a copy: only FOUND/STRUCT bindings changed.
+

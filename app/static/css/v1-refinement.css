@@ -1,0 +1,489 @@
+/* CalibraytAI V1 visual refinement (Joel, 15 Oct 2026).
+   One coordinated layer over app.css: typography, spacing, hierarchy, buttons, tables, forms,
+   Home, Clients and the collapsible Calculators group. Behaviour and navigation are unchanged. */
+
+:root {
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --ink-soft: #3a3f47;
+    --row-hover: #faf7f0;
+    --focus-ring: 0 0 0 3px rgba(199, 154, 43, 0.28);
+    --surface-line: #ece7dd;
+}
+
+/* ---------- Typography and rhythm ---------- */
+body.app-shell {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+.shell-workspace h2,
+.page-title {
+    letter-spacing: -0.015em;
+}
+
+.page-purpose,
+.muted-copy {
+    line-height: 1.55;
+}
+
+.eyebrow {
+    letter-spacing: 0.12em;
+}
+
+table td,
+table th {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Buttons ---------- */
+.button,
+button,
+.button-link,
+.button-primary,
+.home-start {
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    line-height: 1.25;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.button,
+button,
+.button-link {
+    padding: 10px 16px;
+}
+
+.button:hover,
+button:hover,
+.button-link:hover {
+    opacity: 1;
+    background-color: #b98d22;
+}
+
+.button-quiet:hover,
+.button-secondary:hover,
+a.button-secondary:hover,
+.button-destructive:hover,
+button.button-destructive:hover {
+    background-color: #f7f4ee;
+}
+
+button:disabled,
+button[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.header-icon-btn,
+.header-icon-btn:hover {
+    background-color: transparent;
+}
+
+.sidebar-collapse-btn,
+.sidebar-collapse-btn:hover {
+    background-color: transparent;
+}
+
+/* ---------- Forms ---------- */
+label {
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+input,
+select,
+textarea {
+    border-radius: var(--radius-sm);
+    border-color: #d9d3c7;
+    padding: 11px 12px;
+    color: var(--text);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: var(--focus-ring);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto;
+    margin-top: 0;
+    box-shadow: none;
+}
+
+.form-panel,
+.empty-state {
+    border-radius: var(--radius-md);
+}
+
+/* ---------- Tables ---------- */
+.data-table,
+.register-table,
+.shell-workspace table:not(.home-month):not([class*="calendar"]) {
+    border-collapse: collapse;
+}
+
+.data-table th,
+.shell-workspace table th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.data-table tbody tr:hover,
+.register-table tbody tr:hover {
+    background: var(--row-hover);
+}
+
+/* A register in a card: Clients and similar lists. */
+.register-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.register-card .register-table th,
+.register-card .register-table td {
+    padding: 14px 18px;
+}
+
+.register-card .register-table th {
+    background: #faf8f4;
+    border-bottom: 1px solid var(--border);
+}
+
+.register-card .register-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.register-card .register-table td a {
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold-soft);
+}
+
+.register-card .register-table td a:hover {
+    border-bottom-color: var(--gold);
+}
+
+.register-table td.is-number,
+.register-table th.is-number {
+    text-align: right;
+}
+
+.register-table .is-empty {
+    color: #a3a7ad;
+}
+
+.register-count {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 720px) {
+    /* Each client becomes a small card: name first, the rest labelled underneath. */
+    .register-card .register-table thead {
+        display: none;
+    }
+
+    .register-card .register-table,
+    .register-card .register-table tbody,
+    .register-card .register-table tr,
+    .register-card .register-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .register-card .register-table tr {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .register-card .register-table tbody tr:last-child {
+        border-bottom: 0;
+    }
+
+    .register-card .register-table td {
+        padding: 2px 0;
+        border: 0;
+        text-align: left;
+    }
+
+    .register-card .register-table td[data-label]::before {
+        content: attr(data-label) " ";
+        color: var(--muted);
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-right: 6px;
+    }
+
+    .register-card .register-table td:first-child {
+        font-size: 1.02rem;
+        margin-bottom: 4px;
+    }
+}
+
+/* ---------- Home ---------- */
+.home-greeting {
+    letter-spacing: -0.025em;
+}
+
+.home-briefing {
+    gap: 18px;
+    margin: 6px 0 26px;
+}
+
+.home-briefing > div {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: 18px 20px 16px;
+    min-width: 0;
+}
+
+.home-briefing h2 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.home-briefing-count {
+    min-width: 26px;
+    padding: 1px 9px;
+    border-radius: 999px;
+    background: #f3ead2;
+    color: #6d5310;
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    text-align: center;
+}
+
+.home-briefing-count.is-zero {
+    background: #f1efea;
+    color: var(--muted);
+}
+
+.home-briefing p {
+    margin: 6px 0 0;
+}
+
+.home-briefing .muted-copy {
+    font-size: 0.86rem;
+}
+
+.home-briefing ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.home-briefing li {
+    padding: 8px 0;
+    border-top: 1px solid var(--surface-line);
+}
+
+.home-briefing li:first-child {
+    border-top: 0;
+}
+
+.home-briefing li a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.home-briefing li a:hover {
+    color: #8a6a14;
+}
+
+.home-briefing h3 {
+    margin: 12px 0 2px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.home-briefing-empty {
+    color: var(--muted);
+}
+
+.home-counts {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0 18px;
+    max-width: 30rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.home-counts li:last-child a {
+    border-bottom: 0;
+}
+
+.home-counts a:hover span {
+    color: #8a6a14;
+}
+
+.home-start {
+    text-align: center;
+}
+
+.home-actions .home-calendar {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+.home-actions .home-calendar:hover {
+    background: #faf7f0;
+}
+
+@media (max-width: 960px) {
+    .home-briefing {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---------- Sidebar: approved logo and the collapsible Calculators group ---------- */
+.sidebar-logo {
+    aspect-ratio: 2500 / 1251;
+}
+
+.sidebar-collapsible > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 12px;
+    margin: 0 0 4px;
+    border-radius: var(--radius-sm);
+    user-select: none;
+}
+
+.sidebar-collapsible > summary::-webkit-details-marker {
+    display: none;
+}
+
+.sidebar-collapsible > summary:hover {
+    color: #d7dbe2;
+    background: var(--sidebar-elevated);
+}
+
+.sidebar-collapsible > summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+}
+
+.sidebar-group-icon {
+    display: none;
+    font-size: 1rem;
+}
+
+.sidebar-group-title {
+    flex: 1;
+}
+
+.sidebar-group-chevron {
+    font-size: 0.7rem;
+    transition: transform 0.15s ease;
+}
+
+.sidebar-collapsible[open] > summary .sidebar-group-chevron {
+    transform: rotate(180deg);
+}
+
+/* Icon-only sidebar: the group stays reachable through its calculator icon. */
+body[data-sidebar-collapsed="true"] .sidebar-collapsible > summary {
+    opacity: 1;
+    height: auto;
+    overflow: visible;
+    justify-content: center;
+    padding: 11px 0;
+    margin: 0 0 4px;
+}
+
+body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-icon {
+    display: inline-block;
+    color: #d7dbe2;
+}
+
+body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-title,
+body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-chevron {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    body[data-sidebar-collapsed="true"] .sidebar-collapsible > summary {
+        justify-content: flex-start;
+        padding: 8px 12px;
+    }
+
+    body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-title,
+    body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-chevron {
+        display: inline;
+    }
+}
+
+/* ---------- Project hub and pages ---------- */
+.hub-heading-actions {
+    gap: 10px;
+}
+
+.hub-heading-actions .button-link,
+.hub-heading-actions .button,
+.hub-heading-actions button {
+    padding: 9px 14px;
+    font-size: 0.92rem;
+}
+
+.form-panel + .form-panel {
+    margin-top: 18px;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 640px) {
+    .shell-workspace {
+        width: calc(100% - 32px);
+    }
+
+    .form-panel,
+    .empty-state {
+        padding: 20px 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0 16px;
+    }
+
+    .hub-heading-actions {
+        justify-content: flex-start;
+    }
+}

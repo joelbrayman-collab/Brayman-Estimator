@@ -25,8 +25,9 @@ from tests.test_permit_intelligence_fg016 import (
 
 PRODUCT_LOGO_V2 = "branding/calibraytai-logo-v2.png"
 TENANT_LOGO = "branding/brayman-construction-logo.png"
-OFFICE_LOGO = "branding/calibraytai-logo-office.png"
-OFFICE_LOGO_SHA256 = "16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8"
+# Joel, 15 Oct 2026: the sidebar shows the approved CalibraytAI V1 dark logo (the CalibAi lettering is retired).
+OFFICE_LOGO = "branding/calibraytai-logo-v1-dark.png"
+OFFICE_LOGO_SHA256 = "86a4d964cb31aa4e4fbd6360d29f77ce82dc5b8d9d5df7319b3f962f427661de"
 
 
 @pytest.fixture
@@ -131,7 +132,7 @@ def test_office_sidebar_uses_approved_dark_logo():
     css = Path("app/static/css/app.css").read_text()
     assert ".sidebar-logo" in css
     assert "object-fit: contain" in css
-    assert "aspect-ratio: 1678 / 937" in css
+    assert "aspect-ratio: 2500 / 1251" in Path("app/static/css/v1-refinement.css").read_text()
     path = Path("app/static") / OFFICE_LOGO
     assert path.is_file()
     assert hashlib.sha256(path.read_bytes()).hexdigest() == OFFICE_LOGO_SHA256

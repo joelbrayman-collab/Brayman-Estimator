@@ -30,6 +30,8 @@ def register_shell_context(app):
                     {
                         "title": section["title"],
                         "links": links,
+                        "collapsible": bool(section.get("collapsible")),
+                        "has_active": any(link["active"] for link in links),
                     }
                 )
 

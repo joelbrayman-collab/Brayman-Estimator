@@ -3,10 +3,10 @@
         <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}" aria-label="{{ product_name }} home">
             <img
                 class="sidebar-logo"
-                src="{{ url_for('static', filename='branding/calibraytai-logo-office.png') }}"
+                src="{{ url_for('static', filename='branding/calibraytai-logo-v1-dark.png') }}"
                 alt="CalibraytAI"
-                width="1678"
-                height="937"
+                width="2500"
+                height="1251"
             >
         </a>
         <button
@@ -28,6 +28,14 @@
 
     <nav class="sidebar-nav" aria-label="Application">
         {% for section in nav_sections %}
+        {% if section.collapsible %}
+        <details class="sidebar-section sidebar-collapsible" data-sidebar-group="{{ section.title|lower }}"{% if section.has_active %} open data-has-active="true"{% endif %}>
+            <summary class="sidebar-section-label sidebar-group-toggle" title="{{ section.title }}">
+                <i class="bi bi-calculator sidebar-group-icon" aria-hidden="true"></i>
+                <span class="sidebar-group-title">{{ section.title }}</span>
+                <i class="bi bi-chevron-down sidebar-group-chevron" aria-hidden="true"></i>
+            </summary>
+        {% else %}
         <div class="sidebar-section">
             {% if section.title %}
             {% if section.endpoint %}
@@ -36,6 +44,7 @@
             <p class="sidebar-section-label">{{ section.title }}</p>
             {% endif %}
             {% endif %}
+        {% endif %}
             <ul class="sidebar-nav-list">
                 {% for item in section.links %}
                 <li>
@@ -63,7 +72,7 @@
                 </li>
                 {% endfor %}
             </ul>
-        </div>
+        {% if section.collapsible %}</details>{% else %}</div>{% endif %}
         {% endfor %}
     </nav>
 

@@ -1,11 +1,11 @@
 /* Field shell only. Office, estimating, pricing, suppliers, contracts, and QuickBooks are not cached. */
-var CACHE = "calibrayt-field-shell-v1";
+var CACHE = "calibrayt-field-shell-v2";
 var PRECACHE = [
   "/static/js/field.js",
   "/static/js/contextual_help.js",
   "/static/css/field.css",
   "/static/manifest.webmanifest",
-  "/static/branding/calibrayt-home-icon-180.png",
+  "/static/branding/calibraytai-app-icon-180.png",
 ];
 
 function isFieldDocument(pathname) {
@@ -30,7 +30,7 @@ function isFieldAsset(pathname) {
     pathname === "/static/js/contextual_help.js" ||
     pathname === "/static/css/field.css" ||
     pathname === "/static/manifest.webmanifest" ||
-    pathname === "/static/branding/calibrayt-home-icon-180.png"
+    pathname === "/static/branding/calibraytai-app-icon-180.png"
   );
 }
 

@@ -1,14 +1,35 @@
 {
-  "name": "Calibrayt",
-  "short_name": "Calibrayt",
+  "name": "CalibraytAI",
+  "short_name": "CalibraytAI",
+  "description": "Plan, price and build with CalibraytAI.",
+  "id": "/",
   "start_url": "/field/today",
   "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#000510",
   "theme_color": "#000510",
   "icons": [
     {
-      "src": "/static/branding/calibrayt-home-icon-180.png",
+      "src": "/static/branding/calibraytai-app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/branding/calibraytai-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/branding/calibraytai-app-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/branding/calibraytai-app-icon-180.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"

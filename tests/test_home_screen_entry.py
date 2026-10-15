@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-ICON = ROOT / "app/static/branding/calibrayt-home-icon-180.png"
+ICON = ROOT / "app/static/branding/calibraytai-app-icon-180.png"
 FORBIDDEN = ("password", "secret", "token", "email", "@")
 
 pytestmark = pytest.mark.no_office_auth
@@ -41,18 +41,21 @@ def test_manifest_names_calibrayt_and_starts_at_the_office(client):
     assert response.status_code == 200
     assert response.mimetype == "application/manifest+json"
     data = response.get_json()
-    assert data["name"] == "Calibrayt"
-    assert data["short_name"] == "Calibrayt"
+    assert data["name"] == "CalibraytAI"
+    assert data["short_name"] == "CalibraytAI"
     assert data["start_url"] == "/field/today"
     assert data["display"] == "standalone"
-    assert data["icons"][0]["src"] == "/static/branding/calibrayt-home-icon-180.png"
+    sizes = {icon["sizes"]: icon for icon in data["icons"]}
+    assert sizes["192x192"]["src"] == "/static/branding/calibraytai-app-icon-192.png"
+    assert any(icon.get("purpose") == "maskable" for icon in data["icons"])
+    assert data["theme_color"] == data["background_color"] == "#000510"
     body = response.get_data(as_text=True).lower()
     for word in FORBIDDEN:
         assert word not in body
 
 
 def test_home_screen_icon_is_a_square_png(client):
-    response = client.get("/static/branding/calibrayt-home-icon-180.png")
+    response = client.get("/static/branding/calibraytai-app-icon-180.png")
     assert response.status_code == 200
     assert response.mimetype == "image/png"
     raw = response.data
@@ -63,9 +66,9 @@ def test_home_screen_icon_is_a_square_png(client):
 
 def test_sign_in_page_carries_home_screen_metadata(client):
     html = client.get("/login").get_data(as_text=True)
-    assert 'name="apple-mobile-web-app-title" content="Calibrayt"' in html
+    assert 'name="apple-mobile-web-app-title" content="CalibraytAI"' in html
     assert 'rel="apple-touch-icon"' in html
-    assert "calibrayt-home-icon-180.png" in html
+    assert "calibraytai-app-icon-180.png" in html
     assert 'rel="manifest"' in html
     assert "manifest.webmanifest" in html
 
@@ -73,7 +76,7 @@ def test_sign_in_page_carries_home_screen_metadata(client):
 def test_office_field_and_sign_in_share_one_metadata_partial():
     partial = (ROOT / "app/templates/partials/home_screen.html").read_text()
     assert partial.count("apple-mobile-web-app-title") == 1
-    assert 'content="Calibrayt"' in partial
+    assert 'content="CalibraytAI"' in partial
     for relative in (
         "app/templates/base.html",
         "app/templates/field/base.html",

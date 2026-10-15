@@ -49,6 +49,8 @@ NAV_SECTIONS = (
     },
     {
         "title": "Calculators",
+        # Joel, 15 Oct 2026: collapsible, closed unless a calculator is open; remembered.
+        "collapsible": True,
         "links": (
             {
                 "title": "Concrete calculator",
@@ -188,12 +190,19 @@ NAV_SECTIONS = (
 NAV_ITEMS = tuple(item for section in NAV_SECTIONS for item in section["links"])
 
 
+_NAV_ENDPOINTS = frozenset(item["endpoint"] for item in NAV_ITEMS if item.get("endpoint"))
+
+
 def is_nav_item_active(item, endpoint):
     if not endpoint or not item.get("endpoint"):
         return False
     target = item["endpoint"]
     if endpoint == target:
         return True
+    # A page that has its own menu entry highlights only that entry (one calculator,
+    # not every calculator in the same blueprint).
+    if endpoint in _NAV_ENDPOINTS:
+        return False
     # Highlight parent module for nested routes (e.g. estimates.view_version)
     prefix = target.rsplit(".", 1)[0]
     return endpoint.startswith(f"{prefix}.")

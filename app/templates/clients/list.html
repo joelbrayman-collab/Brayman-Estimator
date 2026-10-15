@@ -17,6 +17,8 @@
 {{ contextual_help(help_content.office_topic("clients")) }}
 
 {% if clients %}
+<p class="register-count">{{ clients|length }} client{{ "" if clients|length == 1 else "s" }}</p>
+<div class="register-card">
 <table class="register-table">
     <thead>
         <tr>
@@ -24,21 +26,22 @@
             <th>Company</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Projects</th>
+            <th class="is-number">Projects</th>
         </tr>
     </thead>
     <tbody>
         {% for client in clients %}
         <tr>
             <td><a href="{{ url_for('clients.edit_client', client_id=client.id) }}">{{ client.name }}</a></td>
-            <td>{{ client.company or "—" }}</td>
-            <td>{{ client.email or "—" }}</td>
-            <td>{{ client.phone or "—" }}</td>
-            <td>{{ client.projects|length }}</td>
+            <td data-label="Company"{% if not client.company %} class="is-empty"{% endif %}>{{ client.company or "—" }}</td>
+            <td data-label="Email"{% if not client.email %} class="is-empty"{% endif %}>{% if client.email %}<a href="mailto:{{ client.email }}">{{ client.email }}</a>{% else %}—{% endif %}</td>
+            <td data-label="Phone"{% if not client.phone %} class="is-empty"{% endif %}>{% if client.phone %}<a href="tel:{{ client.phone }}">{{ client.phone }}</a>{% else %}—{% endif %}</td>
+            <td data-label="Projects" class="is-number">{{ client.projects|length }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <p class="projects-empty-title">No clients yet</p>
 <p class="page-purpose">Create the first client before setting up a construction project.</p>

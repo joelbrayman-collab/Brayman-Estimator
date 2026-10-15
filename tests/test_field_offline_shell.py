@@ -42,7 +42,7 @@ def test_service_worker_is_public_and_field_only(client):
     assert response.status_code == 200
     assert "javascript" in response.mimetype
     body = response.get_data(as_text=True)
-    assert "calibrayt-field-shell-v1" in body
+    assert "calibrayt-field-shell-v2" in body
     assert "/field/today" in body
     assert "field/projects" in body
     assert "capture" in body

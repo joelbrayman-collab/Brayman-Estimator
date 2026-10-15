@@ -121,3 +121,51 @@
 
   initCollapsedState();
 })();
+
+/* Collapsible sidebar groups (Calculators). Closed by default unless the current page is
+   in the group; the person's choice is remembered in this browser. Every link stays reachable. */
+(function () {
+  document.querySelectorAll("details[data-sidebar-group]").forEach(function (group) {
+    var key = "calibraytai-sidebar-group-" + group.getAttribute("data-sidebar-group");
+    if (group.getAttribute("data-has-active") !== "true") {
+      try {
+        group.open = localStorage.getItem(key) === "open";
+      } catch (err) {
+        group.open = false;
+      }
+    }
+    group.addEventListener("toggle", function () {
+      try {
+        localStorage.setItem(key, group.open ? "open" : "closed");
+      } catch (err) {
+        /* ignore */
+      }
+    });
+  });
+})();
+
+/* Signing out of the office also empties the Field page cache on this device, so no project
+   pages stay stored after the person leaves (the same clean-up Field sign-out already does). */
+(function () {
+  document.querySelectorAll('form[action="/logout"]').forEach(function (form) {
+    form.addEventListener("submit", function (event) {
+      var controller = navigator.serviceWorker && navigator.serviceWorker.controller;
+      if (!controller || form.dataset.cacheCleared === "true") {
+        return;
+      }
+      event.preventDefault();
+      var done = function () {
+        form.dataset.cacheCleared = "true";
+        form.submit();
+      };
+      var timer = window.setTimeout(done, 1500);
+      navigator.serviceWorker.addEventListener("message", function onMessage(msg) {
+        if (!msg.data || msg.data.type !== "field-cache-cleared") return;
+        window.clearTimeout(timer);
+        navigator.serviceWorker.removeEventListener("message", onMessage);
+        done();
+      });
+      controller.postMessage({ type: "clear-field-cache" });
+    });
+  });
+})();

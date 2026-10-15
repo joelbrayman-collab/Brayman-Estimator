@@ -27,10 +27,10 @@
 
 <section class="home-briefing" aria-label="Today, attention, and coming days">
     <div>
-        <h2>{{ contractor_copy.HOME_TODAY }}</h2>
+        <h2>{{ contractor_copy.HOME_TODAY }} <span class="home-briefing-count{% if view.briefing.today_empty %} is-zero{% endif %}">{{ view.briefing.today_work|length }}</span></h2>
         <p class="muted-copy">{{ view.briefing.today_label }}</p>
         {% if view.briefing.today_empty %}
-        <p>{{ contractor_copy.HOME_TODAY_EMPTY }}</p>
+        <p class="home-briefing-empty">{{ contractor_copy.HOME_TODAY_EMPTY }}</p>
         {% else %}
         <ul>
             {% for row in view.briefing.today_work %}
@@ -40,11 +40,11 @@
         {% endif %}
     </div>
     <div>
-        <h2>{{ contractor_copy.HOME_ATTENTION_HEADING }}</h2>
+        <h2>{{ contractor_copy.HOME_ATTENTION_HEADING }}{% if not view.briefing.attention_hidden %} <span class="home-briefing-count{% if view.briefing.attention_empty %} is-zero{% endif %}">{{ view.briefing.attention|length }}</span>{% endif %}</h2>
         {% if view.briefing.attention_hidden %}
-        <p>{{ contractor_copy.HOME_ATTENTION_OFFICE }}</p>
+        <p class="home-briefing-empty">{{ contractor_copy.HOME_ATTENTION_OFFICE }}</p>
         {% elif view.briefing.attention_empty %}
-        <p>{{ contractor_copy.HOME_ATTENTION_EMPTY }}</p>
+        <p class="home-briefing-empty">{{ contractor_copy.HOME_ATTENTION_EMPTY }}</p>
         {% else %}
         <ul>
             {% for row in view.briefing.attention %}
@@ -54,9 +54,9 @@
         {% endif %}
     </div>
     <div>
-        <h2>{{ contractor_copy.HOME_COMING }}</h2>
+        <h2>{{ contractor_copy.HOME_COMING }} <span class="home-briefing-count{% if view.briefing.coming_empty %} is-zero{% endif %}">{{ view.briefing.coming|sum(attribute="work", start=[])|length }}</span></h2>
         {% if view.briefing.coming_empty %}
-        <p>{{ contractor_copy.HOME_COMING_EMPTY }}</p>
+        <p class="home-briefing-empty">{{ contractor_copy.HOME_COMING_EMPTY }}</p>
         {% else %}
         {% for day in view.briefing.coming %}
         <h3>{{ day.label }}</h3>

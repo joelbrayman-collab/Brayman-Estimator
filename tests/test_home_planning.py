@@ -117,7 +117,7 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert 'href="/calculators/employment-vs-entrepreneurship"' in html
     assert 'href="/assemblies/"' in html
     assert 'href="/proposals/"' in html or 'href="/proposals"' in html
-    assert 'src="/static/branding/calibraytai-logo-office.png"' in html
+    assert 'src="/static/branding/calibraytai-logo-v1-dark.png"' in html
     assert "calibraytai-logo-v2.png" not in html
     assert "brayman-construction-logo.png" in html
     assert "Miller Addition" not in html

@@ -372,7 +372,7 @@ def test_settings_nav_enabled_header_settings_unchanged(client):
     assert b"Settings (coming soon)" not in home.data
     assert b"Search (coming soon)" in home.data
     assert b'sidebar-logo' in home.data
-    assert b"/static/branding/calibraytai-logo-office.png" in home.data
+    assert b"/static/branding/calibraytai-logo-v1-dark.png" in home.data
     assert b"/static/branding/brayman-construction-logo.png" in home.data
 
 

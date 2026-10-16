@@ -12,32 +12,21 @@
         <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
         <p class="hub-operating-identity">{{ operating_identity }}</p>
     </div>
-    {# V1 refinement (Joel, 16 Oct 2026): one primary next action; every other existing action is kept, grouped and quieter. #}
     <div class="hub-heading-actions">
-        <div class="action-group action-group-primary">
-            {% if not project_is_closed %}
-            <a class="button" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
-            {% elif can_manage_operating_lifecycle %}
-            <a class="button" href="{{ url_for('projects.reopen_project', id=project.id) }}">{{ contractor_copy.PROJECT_REOPEN_ACTION }}</a>
-            {% endif %}
-        </div>
-        <div class="action-group" aria-label="Project information">
-            {% if project_is_closed %}
-            <a class="button button-secondary" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
-            {% endif %}
-            <a class="button button-secondary" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
-            <a class="button button-secondary" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
-            <a class="button button-secondary" href="{{ url_for('projects.construction_information', id=project.id) }}">{% if construction_revision is defined and construction_revision %}Update construction information{% else %}Enter construction information{% endif %}</a>
-        </div>
-        <div class="action-group" aria-label="More actions">
-            {% if not project_is_closed %}
-            <a class="button button-secondary" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
-            {% endif %}
-            <a class="button button-secondary desk-print" href="{{ url_for('projects.print_project', id=project.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
-            {% if can_manage_operating_lifecycle and not project_is_closed %}
-            <a class="button button-secondary" href="{{ url_for('projects.close_project', id=project.id) }}">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</a>
-            {% endif %}
-        </div>
+        <a class="button desk-print" href="{{ url_for('projects.print_project', id=project.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
+        <a class="button" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
+        <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
+        <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
+        <a class="button" href="{{ url_for('projects.construction_information', id=project.id) }}">{% if construction_revision is defined and construction_revision %}Update construction information{% else %}Enter construction information{% endif %}</a>
+        {% if not project_is_closed %}
+        <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
+        {% endif %}
+        {% if can_manage_operating_lifecycle and not project_is_closed %}
+        <a class="button" href="{{ url_for('projects.close_project', id=project.id) }}">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</a>
+        {% endif %}
+        {% if can_manage_operating_lifecycle and project_is_closed %}
+        <a class="button" href="{{ url_for('projects.reopen_project', id=project.id) }}">{{ contractor_copy.PROJECT_REOPEN_ACTION }}</a>
+        {% endif %}
     </div>
 </div>
 

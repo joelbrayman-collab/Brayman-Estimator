@@ -12,8 +12,8 @@
     </div>
 
     <div>
-        <a class="button button-secondary desk-print" href="{{ url_for('estimates.print_version', id=estimate.id, version_id=version.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
-        <a class="button button-secondary" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Back to estimate</a>
+        <a class="button desk-print" href="{{ url_for('estimates.print_version', id=estimate.id, version_id=version.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
+        <a class="button-link" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Back to estimate</a>
     </div>
 </div>
 
@@ -52,37 +52,26 @@
     <p><strong>Revision reason:</strong> {{ version.revision_reason }}</p>
     {% endif %}
 
-    {# V1 refinement (Joel, 16 Oct 2026): the next step is named from the existing costing and pricing state; every action is kept. #}
-    {% set costing_current = costing_review.has_current_costing and costing_review.working_matches_current %}
-    {% set priced_current = named_method_governs and costing_current and not costing_review.pricing_is_stale %}
-    <div class="estimate-actions">
-        <a class="button {% if priced_current %}is-primary{% else %}button-secondary{% endif %}" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
-        <span class="action-divider" aria-hidden="true"></span>
-        <a class="button button-secondary" href="{{ url_for('estimates.internal_cost_breakdown', id=estimate.id, version_id=version.id) }}">Internal Detailed Cost Breakdown</a>
-        <a class="button button-secondary" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
-        <a class="button button-secondary" href="{{ url_for('project_controls.create_from_estimate_version', estimate_id=estimate.id, version_id=version.id) }}">Create Change Order</a>
+    <div class="form-actions">
         {% if estimate.current_version_id != version.id %}
         <form method="post" action="{{ url_for('estimates.set_current', id=estimate.id, version_id=version.id) }}">
-            <button type="submit" class="button-secondary">Set as Current</button>
+            <button type="submit">Set as Current</button>
         </form>
         {% endif %}
         {% if version.is_locked %}
         <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=version.id) }}">
-            <button type="submit" class="button-secondary">Unlock</button>
+            <button type="submit">Unlock</button>
         </form>
         {% else %}
         <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=version.id) }}">
-            <button type="submit" class="button-secondary">Lock</button>
+            <button type="submit">Lock</button>
         </form>
         {% endif %}
+        <a class="button" href="{{ url_for('estimates.internal_cost_breakdown', id=estimate.id, version_id=version.id) }}">Internal Detailed Cost Breakdown</a>
+        <a class="button" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
+        <a class="button" href="{{ url_for('project_controls.create_from_estimate_version', estimate_id=estimate.id, version_id=version.id) }}">Create Change Order</a>
+        <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
     </div>
-    {% if editable and not costing_current %}
-    <p class="estimate-next-step">Next step: review and approve the costing in <a href="#costing-review">Costing review</a>.</p>
-    {% elif editable and not priced_current %}
-    <p class="estimate-next-step">Next step: apply pricing in <a href="#estimate-pricing">Pricing</a>.</p>
-    {% elif editable and priced_current %}
-    <p class="estimate-next-step">Costing is approved and pricing is applied. Next step: create the proposal.</p>
-    {% endif %}
 </section>
 
 <section class="form-panel pricing-summary" style="margin-bottom: 24px;">
@@ -95,45 +84,45 @@
     {% elif pricing_snapshot.method == "COST_PLUS_MARKUP" %}
     <p>Cost plus markup rate: {{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
     {% endif %}
-    <div class="estimate-totals">
-        <div class="estimate-total">
+    <div class="form-grid">
+        <div>
             <p class="eyebrow">Direct cost basis</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(pricing_snapshot.direct_cost_basis) }}</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.direct_cost_basis) }}</strong></p>
         </div>
-        <div class="estimate-total">
+        <div>
             <p class="eyebrow">Pre-tax selling price</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(pricing_snapshot.pre_tax_selling_price) }}</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.pre_tax_selling_price) }}</strong></p>
         </div>
-        <div class="estimate-total">
+        <div>
             <p class="eyebrow">Tax ({{ "%.2f"|format(pricing_snapshot.tax_percent) }}%)</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(pricing_snapshot.tax_amount) }}</p>
+            <p>${{ "%.2f"|format(pricing_snapshot.tax_amount) }}</p>
         </div>
-        <div class="estimate-total is-grand">
+        <div>
             <p class="eyebrow">Customer total</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(pricing_snapshot.customer_total) }}</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.customer_total) }}</strong></p>
         </div>
     </div>
     {% else %}
-    <div class="estimate-totals">
-        <div class="estimate-total">
+    <div class="form-grid">
+        <div>
             <p class="eyebrow">Subtotal</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(version.subtotal) }}</p>
+            <p><strong>${{ "%.2f"|format(version.subtotal) }}</strong></p>
         </div>
-        <div class="estimate-total">
+        <div>
             <p class="eyebrow">Overhead ({{ "%.2f"|format(version.overhead_percent) }}%)</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(version.overhead_amount) }}</p>
+            <p>${{ "%.2f"|format(version.overhead_amount) }}</p>
         </div>
-        <div class="estimate-total">
+        <div>
             <p class="eyebrow">Profit ({{ "%.2f"|format(version.profit_percent) }}%)</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(version.profit_amount) }}</p>
+            <p>${{ "%.2f"|format(version.profit_amount) }}</p>
         </div>
-        <div class="estimate-total">
+        <div>
             <p class="eyebrow">Tax ({{ "%.2f"|format(version.tax_percent) }}%)</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(version.tax_amount) }}</p>
+            <p>${{ "%.2f"|format(version.tax_amount) }}</p>
         </div>
-        <div class="estimate-total is-grand">
+        <div>
             <p class="eyebrow">Grand Total</p>
-            <p class="estimate-total-value">${{ "%.2f"|format(version.total) }}</p>
+            <p><strong>${{ "%.2f"|format(version.total) }}</strong></p>
         </div>
     </div>
     {% endif %}
@@ -163,10 +152,8 @@
 
 <section class="form-panel" id="costing-review" style="margin-bottom: 24px;">
     <h2>{{ contractor_copy.COSTING_REVIEW_HEADING }}</h2>
-    <div class="estimate-actions">
-        <a class="button button-secondary" href="{{ url_for('approved_costs.review', id=estimate.id, version_id=version.id) }}">Use approved supplier costs on this estimate</a>
-        <a class="button button-secondary" href="{{ url_for('estimate_labour.hours', id=estimate.id, version_id=version.id) }}">Enter labour hours</a>
-    </div>
+    <p><a class="button-link" href="{{ url_for('approved_costs.review', id=estimate.id, version_id=version.id) }}">Use approved supplier costs on this estimate</a></p>
+    <p><a class="button-link" href="{{ url_for('estimate_labour.hours', id=estimate.id, version_id=version.id) }}">Enter labour hours</a></p>
     {% if costing_review.has_current_costing and costing_review.working_matches_current %}
     <p>Approved costing snapshot {{ costing_review.current_snapshot.id }} — direct cost ${{ "%.2f"|format(costing_review.current_snapshot.approved_direct_cost_total) }} · {{ costing_review.current_snapshot.actor_display_name }} · {{ costing_review.current_snapshot.approved_at }}.</p>
     {% elif costing_review.has_current_costing %}
@@ -253,7 +240,7 @@
     {% endif %}
 </section>
 
-<section class="form-panel" id="estimate-pricing" style="margin-bottom: 24px;">
+<section class="form-panel" style="margin-bottom: 24px;">
     <h2>{{ contractor_copy.PRICING_HEADING }}</h2>
     {% if pricing_snapshot %}
     <p>

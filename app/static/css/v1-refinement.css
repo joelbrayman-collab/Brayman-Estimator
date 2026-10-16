@@ -489,3 +489,293 @@ body[data-sidebar-collapsed="true"] .sidebar-collapsible .sidebar-group-chevron 
         justify-content: flex-start;
     }
 }
+
+/* ---------- Final bounded polish (Joel, 16 Oct 2026) ---------- */
+
+/* Quiet secondary actions: same shape as the primary gold button, white with a fine border. */
+.button.button-secondary,
+a.button.button-secondary {
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid #d9d3c7;
+    box-shadow: none;
+}
+
+.button.button-secondary:hover,
+a.button.button-secondary:hover {
+    background: #faf7f0;
+    border-color: var(--gold);
+    color: var(--text);
+}
+
+/* Project hub and estimate: one primary next action, then quieter groups. */
+.hub-heading-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.action-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.action-group:empty {
+    display: none;
+}
+
+.action-group-primary .button {
+    padding: 11px 20px;
+    font-size: 0.98rem;
+}
+
+.estimate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.estimate-actions form {
+    margin: 0;
+}
+
+.estimate-actions .action-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--border);
+    margin: 0 4px;
+}
+
+.estimate-next-step {
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--gold);
+    background: #faf7f0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 0.92rem;
+}
+
+.estimate-next-step a {
+    font-weight: 600;
+}
+
+/* Estimate totals: the customer total reads first. */
+.estimate-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1px;
+    margin-top: 14px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.estimate-total {
+    padding: 14px 16px;
+    background: var(--white);
+    min-width: 0;
+}
+
+.estimate-total .eyebrow {
+    margin: 0 0 6px;
+}
+
+.estimate-total-value {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+
+.estimate-total.is-grand {
+    background: #fbf6e8;
+}
+
+.estimate-total.is-grand .estimate-total-value {
+    font-size: 1.55rem;
+    color: #6d5310;
+}
+
+/* Projects register: matches the Clients register. */
+.projects-empty {
+    text-align: center;
+    padding: 44px 24px;
+}
+
+.projects-empty h2 {
+    margin: 0 0 6px;
+}
+
+.projects-empty p {
+    margin: 0 auto 18px;
+    max-width: 30rem;
+}
+
+@media (max-width: 900px) {
+    .hub-heading-actions,
+    .action-group {
+        align-items: stretch;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .estimate-totals {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .estimate-total.is-grand:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 720px) {
+    /* Phones: wide tables scroll inside their own box instead of widening the page. */
+    .shell-workspace table:not(.register-table):not(.home-month):not([class*="calendar"]) {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .shell-workspace input,
+    .shell-workspace select,
+    .shell-workspace textarea {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    /* Grid and flex children may shrink, so a wide table scrolls inside its panel. */
+    .shell-workspace .grid > *,
+    .shell-workspace .form-grid > *,
+    .shell-workspace .panel,
+    .shell-workspace .form-panel,
+    .shell-workspace section,
+    .shell-workspace article {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Touch targets: at least 44 px, and buttons share the row in even columns rather than squeezing. */
+    .shell-workspace .button,
+    .shell-workspace .button-link,
+    .shell-workspace button:not(.contextual-help-ask-btn):not(.contextual-help-voice-btn):not(.contextual-help-speak-btn):not(.contextual-help-stop-btn) {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .action-group,
+    .estimate-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .action-group .button,
+    .estimate-actions .button,
+    .estimate-actions form,
+    .estimate-actions form button {
+        width: 100%;
+    }
+
+    .action-group-primary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .estimate-actions .action-divider {
+        display: none;
+    }
+
+    .estimate-actions .is-primary {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Projects register in a card, like Clients. Markup and links unchanged. */
+.projects-workspace {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    margin-top: 14px;
+}
+
+.projects-workspace .projects-head {
+    padding: 12px 20px;
+    background: #faf8f4;
+    border-bottom: 1px solid var(--border);
+}
+
+.projects-workspace .projects-row {
+    padding: 16px 20px;
+}
+
+.projects-workspace .projects-row:last-child {
+    border-bottom: 0;
+}
+
+.projects-workspace .projects-row:hover {
+    background: var(--row-hover);
+}
+
+.projects-workspace .projects-row-name {
+    font-weight: 600;
+}
+
+.projects-workspace .projects-row-stage {
+    justify-self: start;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #f3eee4;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.projects-empty {
+    margin-top: 14px;
+}
+
+@media (max-width: 720px) {
+    .projects-workspace .projects-head {
+        display: none;
+    }
+
+    .projects-workspace .projects-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 14px 16px;
+    }
+}
+
+@media (max-width: 720px) {
+    /* An odd last action takes the full row instead of leaving a gap. */
+    .action-group > :last-child:nth-child(odd),
+    .estimate-actions > :last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+}
+
+button.button-secondary {
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid #d9d3c7;
+}
+
+.action-group,
+.estimate-actions {
+    align-items: stretch;
+}
+
+.estimate-actions form {
+    display: flex;
+}

@@ -14627,3 +14627,13 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | Approved logo; refinement stylesheet; collapsible Calculators; Home and Clients; manifest and icons; logout clears the Field cache; walk extended; register reconciled; release script prepared |
 | Tests | See final report |
 | Commit hash | See session handoff |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-16 |
+| Branch | `v1/completion` |
+| Objective | V1 final UX/UI acceptance: bounded polish and verification |
+| Business decision | Joel 16 Oct: overall visual direction approved; bounded polish of project page, estimate page, Projects list; verify calculators, navigation, PWA, branding; no new features |
+| Implementation result | Action hierarchy, estimate totals and next step, Projects cards, phone layout fixes; release script walk check fixed |
+| Tests | See final report |
+| Commit hash | See session handoff |

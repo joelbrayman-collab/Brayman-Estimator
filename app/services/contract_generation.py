@@ -190,6 +190,23 @@ def _authoritative_objects(package: LegalContentJurisdictionPackage, kinds):
     return sorted(rows, key=lambda obj: (obj.kind, obj.version_number, obj.id))
 
 
+def _location_address(project) -> str:
+    """The job address from the structured location when the free-text address is blank.
+
+    The office enters the job location on Start New Project and Continue setup counts it as
+    complete, so the contract uses it rather than refusing (16 Oct 2026).
+    """
+    location = getattr(project, "location", None)
+    if location is None:
+        return ""
+    street = (location.street or "").strip()
+    municipality = (location.municipality or "").strip()
+    if not street or not municipality:
+        return ""
+    region = " ".join(part for part in ((location.province_state or "").strip(), (location.postal_zip or "").strip()) if part)
+    return ", ".join(part for part in (street, municipality, region) if part)
+
+
 def generate_project_contract(
     project_id: int,
     estimate_version_id: int,
@@ -258,7 +275,7 @@ def generate_project_contract(
         return _block(BLOCK_ORGANIZATION_MISMATCH)
     client_name = (client.name or "").strip()
     project_name = (project.name or "").strip()
-    project_address = (project.address or "").strip()
+    project_address = (project.address or "").strip() or _location_address(project)
     estimate_number = (estimate.estimate_number or "").strip()
     if not client_name or not project_name or not estimate_number or not project_address:
         return _block(BLOCK_MISSING_COMMERCIAL_FACTS)

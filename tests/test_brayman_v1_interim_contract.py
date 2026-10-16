@@ -413,6 +413,10 @@ def test_unresolved_jurisdiction_still_fails_closed(app):
 
 def test_missing_required_contract_data_fails_closed(app):
     project = _ottawa_project(address="")
+    # No address at all: the free-text address is blank and the job location has no street
+    # (since 16 Oct 2026 the contract uses the job location when the free-text address is blank).
+    project.location.street = ""
+    db.session.commit()
     ensure_brayman_v1_interim_ontario_package()
     version, proposal = _issued(project, number="EST-INTERIM-MISSING")
     result = _generate(project, version, proposal)

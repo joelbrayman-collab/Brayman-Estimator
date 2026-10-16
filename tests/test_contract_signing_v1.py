@@ -198,3 +198,14 @@ def test_outside_ontario_or_without_a_municipality_still_fails_closed(app):
     blank = _eastern_ontario_project("Perth")
     blank.location.municipality = ""; db.session.commit()
     assert select_legal_content_package_for_project(blank.id).block_code == BLOCK_JURISDICTION_UNRESOLVED
+
+
+def test_the_contract_uses_the_job_location_when_the_free_text_address_is_blank(app):
+    ensure_brayman_v1_interim_ontario_package()
+    project = _eastern_ontario_project("Merrickville")
+    project.address = ""; db.session.commit()
+    version, proposal = _issued(project, number="EST-LOCATION-ADDRESS")
+    result = _generate(project, version, proposal)
+    assert result.generated, result.block_code
+    snapshot = db.session.get(S.GeneratedProjectContract, result.contract_id).snapshot
+    assert snapshot.commercial_variables_json["project_address"] == "12 Main Street, Merrickville, Ontario"

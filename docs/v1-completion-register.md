@@ -1002,6 +1002,8 @@ Joel: CalibraytAI V1 is an internal Brayman Construction platform, not a commerc
 
 Defect found while preparing Storybook screens: the contract package was chosen through the municipal permit authority, and only the City of Ottawa is in the jurisdiction seed, so a job in Merrickville, Smiths Falls, Perth or anywhere else in Eastern Ontario showed "Project location is not complete" and could not get a contract. Joel: Brayman works across Eastern Ontario; correct before V1 is complete. Corrected: a municipality outside the seed now resolves to its province for the contract (the package is provincial); permits are unchanged; a blank municipality or a province other than Ontario still fails closed. `app/services/jurisdiction.py` (`resolve_province`), `app/services/legal_content.py`; `tests/test_contract_signing_v1.py` (seven Eastern Ontario towns, a Merrickville contract generated and signed, Quebec and blank municipality refused).
 
+Second defect found the same way: the contract also refused when the free-text "Project address" was blank, although the job location (street, municipality, province, postal code) was entered and Continue setup called it complete ("MISSING_COMMERCIAL_FACTS"). Corrected: the contract uses the job location when the free-text address is blank; with neither, it still refuses. `app/services/contract_generation.py` (`_location_address`); tests in `tests/test_contract_signing_v1.py` and the existing fail-closed test now blanks both.
+
 ### 15.6 V1 visual refinement and installable app — 15 Oct 2026
 
 | ID | Requirement | Class | Evidence | Outstanding |

@@ -7,6 +7,13 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 16 Oct 2026 — Contract signing for the Brayman V1 contract (not deployed)
+
+- Owner decision: counsel is not a V1 gate (register §15.5a).
+- `signing.py`: `SIGNABLE_CONTRACT_MASTERS` (Family 05 and the Brayman V1 presentation); a Brayman V1 contract is frozen as its generated PDF bytes; `CONSENT-BRAYMAN-V1-001` (PRODUCTION); `overlay_for_contract`; `office_send_contract_for_signature`.
+- Office: Contract page shows Customer signature with send, approve, invite, resend, countersign, execute, download and void; status Signed — executed once complete.
+- Tests: `tests/test_contract_signing_v1.py` (5).
+
 ## 16 Oct 2026 — V1 final bounded polish (not deployed)
 
 - `projects/detail.html`: hub actions grouped; one primary next action; others `button-secondary`.

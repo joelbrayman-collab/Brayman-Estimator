@@ -484,7 +484,9 @@ def test_future_lifecycle_not_operational(client, project):
     assert "QuickBooks" in html
     assert "four-output" not in html
     assert "The four-output package remains Future" not in html
-    assert "production Ontario contract is not available" in html
+    # Joel, 16 Oct 2026: the Brayman contract is the V1 contract and is signed from the Contract page.
+    assert "sent from there for the customer's electronic signature" in html
+    assert "production Ontario contract is not available" not in html
     assert "internal cost breakdown" in html
     assert "LEARN · Future" in html
     assert "MONITOR · Future" not in html

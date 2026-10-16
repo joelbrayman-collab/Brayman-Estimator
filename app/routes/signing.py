@@ -43,6 +43,7 @@ from app.services.signing import (
     get_signing_request,
     issue_customer_invitation,
     office_send_change_order_for_signature,
+    office_send_contract_for_signature,
     resend_customer_invitation,
     retrieve_executed_artifact_bytes,
     void_signing_request,
@@ -110,6 +111,11 @@ def _redirect_for_request(request_id: int, organization_id: str):
         signing_request = get_signing_request(request_id, organization_id)
     except SigningServiceError:
         abort(404)
+    if signing_request.document_family == "CONTRACT":
+        return redirect(
+            url_for("projects.review_contract", id=signing_request.project_id,
+                    _anchor=f"contract-snapshot-{signing_request.source_record_id}")
+        )
     if signing_request.document_family != "CHANGE_ORDER":
         abort(404)
     return redirect(_co_url(signing_request.source_record_id))
@@ -160,6 +166,41 @@ def send_for_signature(change_order_id):
     _store_invitation(issue)
     _flash_invitation(issue)
     return redirect(_co_url(change_order_id))
+
+
+@signing_office_bp.route(
+    "/projects/<int:project_id>/contract/<int:contract_id>/send-for-signature",
+    methods=["POST"],
+)
+def send_contract_for_signature(project_id, contract_id):
+    from app.models.project_contract import GeneratedProjectContract
+
+    organization_id = _organization_id()
+    contract = GeneratedProjectContract.query.filter_by(
+        id=contract_id, project_id=project_id, organization_id=organization_id
+    ).first()
+    if contract is None:
+        abort(404)
+    back = url_for("projects.review_contract", id=project_id, _anchor=f"contract-snapshot-{contract_id}")
+    actor_kind, actor_user_id, actor_identifier = _actor()
+    countersign_required = (request.form.get("countersign_required") or "").strip() == "yes"
+    try:
+        issue = office_send_contract_for_signature(
+            contract_id,
+            organization_id=organization_id,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+            invited_name=request.form.get("signer_name", ""),
+            invited_email=request.form.get("signer_email", ""),
+            countersign_required=countersign_required,
+            expires_at=_parse_expiry_days(request.form.get("expiry_days")),
+        )
+    except SigningServiceError as exc:
+        _flash_error(exc.code)
+        return redirect(back)
+    _store_invitation(issue)
+    _flash_invitation(issue)
+    return redirect(back)
 
 
 @signing_office_bp.route("/signing-requests/<int:request_id>/approve", methods=["POST"])

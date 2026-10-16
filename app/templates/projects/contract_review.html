@@ -61,8 +61,15 @@
         {% for contract in contracts %}
         {% set snapshot = contract.snapshot %}
         <section id="contract-snapshot-{{ contract.id }}">
+            {% set signing_overlay = signing_overlays.get(contract.id) %}
             <p>Contract {{ contract.contract_number }}</p>
+            {% if signing_overlay and signing_overlay.request_status == "EXECUTED" %}
+            <p>Contract status Signed — executed</p>
+            {% elif signing_overlay and signing_overlay.request_status %}
+            <p>Contract status {{ signing_overlay.hub_label }}</p>
+            {% else %}
             <p>Contract status Generated — not signed</p>
+            {% endif %}
             {% if snapshot %}
             <p>Ontario</p>
             {% if snapshot.package_code == "CA-ON-BRAYMAN-V1-INTERIM" %}
@@ -87,6 +94,9 @@
             <pre class="contract-review-body">{{ item.object_body }}</pre>
             {% endfor %}
             <p><a href="{{ url_for('projects.download_generated_contract', id=project.id, contract_id=contract.id) }}">Open contract</a></p>
+            {% endif %}
+            {% if signing_overlay %}
+            {% include "projects/partials/contract_signing.html" %}
             {% endif %}
         </section>
         {% endfor %}

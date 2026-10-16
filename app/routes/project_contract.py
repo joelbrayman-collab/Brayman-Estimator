@@ -5,7 +5,7 @@ Does not send a signing link. Does not live in the project hub assembler.
 
 from io import BytesIO
 
-from flask import flash, redirect, render_template, request, send_file, url_for
+from flask import flash, redirect, render_template, request, send_file, session, url_for
 
 from app.models.estimate import Estimate
 from app.models.project import Project
@@ -97,12 +97,20 @@ def review_contract(id):
     project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
     selection = select_legal_content_package_for_project(project.id)
     contract_copy = contractor_copy.contract_selection_copy(selection)
+    from app.services.signing import overlay_for_contract
+
+    contracts = _contracts(project.id, org_id)
+    overlays = {row.id: overlay_for_contract(row.id, org_id) for row in contracts}
+    invitation_request_id = session.get("signing_invitation_request_id")
     return render_template(
         "projects/contract_review.html",
         project=project,
         contract_copy=contract_copy,
         pairs=_eligible_pairs(project.id),
-        contracts=_contracts(project.id, org_id),
+        contracts=contracts,
+        signing_overlays=overlays,
+        invitation_request_id=invitation_request_id,
+        invitation_url=session.get("signing_invitation_url") or "",
         generated_note=contractor_copy.CONTRACT_GENERATED_NOT_SIGNED,
     )
 

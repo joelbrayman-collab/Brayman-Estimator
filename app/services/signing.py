@@ -74,6 +74,10 @@ from app.project_controls.pdf import generate_change_order_pdf
 from app.project_controls.repository import get_change_order
 from app.services.contract_artifact_storage import read_retained_docx
 from app.services.family_05_master import FAMILY_05_MASTER_SHA256
+from app.services.brayman_v1_contract_presentation import (
+    BRAYMAN_V1_PRESENTATION_MEDIA_TYPE,
+    BRAYMAN_V1_PRESENTATION_SHA256,
+)
 from app.services.signing_artifact_storage import (
     SigningArtifactStorageError,
     read_retained_bytes,
@@ -404,6 +408,12 @@ def freeze_change_order_pdf(change_order: ChangeOrder, organization_id: str) -> 
     )
 
 
+# The contract the office generates is the Brayman V1 contract, already a PDF (Joel, 16 Oct 2026:
+# use the existing generic contract for signing). A Family 05 DOCX contract is still converted once.
+SIGNABLE_CONTRACT_MASTERS = frozenset({FAMILY_05_MASTER_SHA256, BRAYMAN_V1_PRESENTATION_SHA256})
+GENERATED_AS_PDF_CONVERTER = "none — generated as PDF by CalibraytAI"
+
+
 def bind_generated_contract_source(
     contract: GeneratedProjectContract,
     organization_id: str,
@@ -416,7 +426,8 @@ def bind_generated_contract_source(
     if snapshot is None:
         raise SigningServiceError(BLOCK_SNAPSHOT_MISSING)
     _guard_protected_estimate_number(snapshot.estimate_number)
-    if (snapshot.presentation_master_sha256 or "") != FAMILY_05_MASTER_SHA256:
+    master_sha = snapshot.presentation_master_sha256 or ""
+    if master_sha not in SIGNABLE_CONTRACT_MASTERS:
         raise SigningServiceError(BLOCK_PRESENTATION_MASTER_SHA_MISMATCH)
     key = (contract.artifact_storage_key or snapshot.artifact_storage_key or "").strip()
     if not key:
@@ -426,6 +437,24 @@ def bind_generated_contract_source(
     expected = (contract.artifact_sha256 or snapshot.artifact_sha256 or "").lower()
     if digest != expected:
         raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
+    if master_sha == BRAYMAN_V1_PRESENTATION_SHA256:
+        # Already the generated PDF: the frozen copy is those exact bytes, no conversion.
+        if (contract.artifact_media_type or "") != BRAYMAN_V1_PRESENTATION_MEDIA_TYPE or not data.startswith(b"%PDF"):
+            raise SigningServiceError(BLOCK_CONVERSION_NOT_PDF)
+        return _store_frozen(
+            organization_id=organization_id,
+            document_family=DOCUMENT_FAMILY_CONTRACT,
+            source_record_id=contract.id,
+            data=data,
+            extension=".pdf",
+            media_type=PDF_MEDIA_TYPE,
+            source_docx_sha256=None,
+            presentation_master_sha256=master_sha,
+            presentation_master_filename=snapshot.presentation_master_filename,
+            converter_identity=GENERATED_AS_PDF_CONVERTER,
+            converter_version=None,
+            converted_at=None,
+        )
     try:
         converted = convert_docx_to_pdf(data, source_docx_sha256=digest)
     except DocxPdfConversionError as exc:
@@ -655,7 +684,7 @@ def approve_signing_request(
             raise SigningServiceError(BLOCK_CONTRACT_NOT_GENERATED)
         if contract.snapshot is None:
             raise SigningServiceError(BLOCK_SNAPSHOT_MISSING)
-        if (contract.snapshot.presentation_master_sha256 or "") != FAMILY_05_MASTER_SHA256:
+        if (contract.snapshot.presentation_master_sha256 or "") not in SIGNABLE_CONTRACT_MASTERS:
             raise SigningServiceError(BLOCK_PRESENTATION_MASTER_SHA_MISMATCH)
         if artifact.media_type != PDF_MEDIA_TYPE:
             raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
@@ -1567,6 +1596,164 @@ def office_send_change_order_for_signature(
         consent_version_id=consent.id,
         countersign_required=countersign_required,
         authority_class=AUTHORITY_SYNTHETIC_UAT,
+        expires_at=expires_at if expires_at is not None else default_expires_at(),
+    )
+    approved = approve_signing_request(
+        created.id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+    )
+    return issue_customer_invitation(
+        approved.id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Contract signing from the office (Joel, 16 Oct 2026). The generated Brayman V1 contract goes
+# through the same request, approval, invitation, consent, signature, countersign and executed
+# PDF steps as a Change Order. No new provider, no new contract.
+
+CONSENT_BRAYMAN_V1_CODE = "CONSENT-BRAYMAN-V1-001"
+CONSENT_BRAYMAN_V1_BODY = (
+    "By ticking the box, typing your full name and selecting Sign & Accept, you agree to sign "
+    "this contract electronically. Your typed name and that selection are your signature on this "
+    "contract. Before you sign you can open the full contract above and keep a copy. After you sign "
+    "you can download the signed contract with its signing record. If you do not want to sign "
+    "electronically, do not continue and contact Brayman Construction."
+)
+
+
+def ensure_brayman_v1_consent_version() -> SigningConsentVersion:
+    """The production consent wording for Brayman's own contracts. Created once, never edited."""
+    row = SigningConsentVersion.query.filter_by(version_code=CONSENT_BRAYMAN_V1_CODE).first()
+    if row is not None:
+        return row
+    row = SigningConsentVersion(
+        version_code=CONSENT_BRAYMAN_V1_CODE,
+        authority_class=AUTHORITY_PRODUCTION,
+        body_text=CONSENT_BRAYMAN_V1_BODY,
+        created_by_identifier="brayman-v1-contract-signing",
+    )
+    db.session.add(row)
+    db.session.flush()
+    return row
+
+
+def _consent_for_authority(authority: str) -> SigningConsentVersion:
+    if authority == AUTHORITY_PRODUCTION:
+        return ensure_brayman_v1_consent_version()
+    return ensure_synthetic_consent_version()
+
+
+def _latest_contract_request(contract_id: int, organization_id: str) -> Optional[SigningRequest]:
+    return (
+        SigningRequest.query.filter_by(
+            organization_id=organization_id,
+            document_family=DOCUMENT_FAMILY_CONTRACT,
+            source_record_id=contract_id,
+        )
+        .order_by(SigningRequest.id.desc())
+        .first()
+    )
+
+
+class ContractSigningOverlay(NamedTuple):
+    contract_id: int
+    hub_label: str
+    request_id: Optional[int]
+    request_number: Optional[str]
+    request_status: Optional[str]
+    signer_name: Optional[str]
+    signer_email: Optional[str]
+    expires_at: Optional[datetime]
+    countersign_required: bool
+    executed_available: bool
+    can_send: bool
+    can_approve: bool
+    can_invite: bool
+    can_resend: bool
+    can_void: bool
+    can_countersign: bool
+    can_execute: bool
+    can_download_executed: bool
+    email_delivery_label: Optional[str] = None
+
+
+def overlay_for_contract(contract_id: int, organization_id: str) -> ContractSigningOverlay:
+    contract = db.session.get(GeneratedProjectContract, contract_id)
+    if contract is None or contract.organization_id != organization_id:
+        raise SigningServiceError(BLOCK_SOURCE_NOT_FOUND)
+    latest = _latest_contract_request(contract.id, organization_id)
+    active = latest if latest is not None and latest.status in _ACTIVE_OVERLAY_STATUSES else None
+    status = active.status if active is not None else None
+    customer = None
+    if active is not None:
+        try:
+            customer = _customer_participant(active)
+        except SigningServiceError:
+            customer = None
+    generated = (contract.status or "") == "GENERATED"
+    return ContractSigningOverlay(
+        contract_id=contract.id,
+        hub_label=hub_signing_label(status),
+        request_id=active.id if active is not None else None,
+        request_number=active.request_number if active is not None else None,
+        request_status=status,
+        signer_name=customer.invited_name if customer is not None else None,
+        signer_email=customer.invited_email if customer is not None else None,
+        expires_at=active.expires_at if active is not None else None,
+        countersign_required=bool(active.countersign_required) if active is not None else True,
+        executed_available=status == STATUS_EXECUTED,
+        can_send=generated and active is None,
+        can_approve=status == STATUS_CREATED,
+        can_invite=status == STATUS_APPROVED_FOR_SIGNATURE,
+        can_resend=status == STATUS_SENT,
+        can_void=status in _VOID_ELIGIBLE_STATUSES,
+        can_countersign=status == STATUS_SIGNED and bool(active.countersign_required),
+        can_execute=status == STATUS_SIGNED and not bool(active.countersign_required),
+        can_download_executed=status == STATUS_EXECUTED,
+        email_delivery_label=office_delivery_label_for_request(active),
+    )
+
+
+def office_send_contract_for_signature(
+    contract_id: int,
+    *,
+    organization_id: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    invited_name: str,
+    invited_email: str,
+    countersign_required,
+    expires_at: Optional[datetime] = None,
+) -> InvitationIssue:
+    overlay = overlay_for_contract(contract_id, organization_id)
+    if not overlay.can_send:
+        if overlay.request_id is not None:
+            raise SigningServiceError(BLOCK_ACTIVE_SIGNING_REQUEST)
+        raise SigningServiceError(BLOCK_CONTRACT_NOT_GENERATED)
+    contract = db.session.get(GeneratedProjectContract, contract_id)
+    if contract.snapshot is None:
+        raise SigningServiceError(BLOCK_SNAPSHOT_MISSING)
+    authority = _source_authority_class(contract)
+    consent = _consent_for_authority(authority)
+    created = create_contract_signing_request(
+        contract_id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+        invited_name=invited_name,
+        invited_email=invited_email,
+        consent_version_id=consent.id,
+        countersign_required=countersign_required,
+        authority_class=authority,
         expires_at=expires_at if expires_at is not None else default_expires_at(),
     )
     approved = approve_signing_request(

@@ -36,3 +36,4 @@ Restore steps remain [v1-backup-restore-checklist.md](v1-backup-restore-checklis
 
 - Hosted backup `instance/backups/pre-v1m3-20261015-1617.db`, 152 tables, revision `w3d4e5f6a7b8`, integrity ok, sha256 `3721dd0e681c459ba0ad0fe1fe222da85ce59d9e9474875d44afcefbfbae0992`; Mac copy in `~/Desktop/Brayman-office-backups` identical (copied on the second attempt after a dropped connection).
 
+- 2026-10-16 09:38 UTC — `pre-v1final-20261016-0938.db`, sha256 `34d6252f7b68a60ccf1c6390aaee510f6d00e3d04aa10369038330f9d53cf549`, 152 tables, revision `w3d4e5f6a7b8`, integrity ok; copied to `~/Desktop/Brayman-office-backups` and checksum-matched. Taken before the V1 final completion release (`3a2266b`).

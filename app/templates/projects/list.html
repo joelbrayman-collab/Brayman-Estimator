@@ -51,7 +51,9 @@
     {% endfor %}
 </div>
 {% else %}
-<p class="muted-copy projects-empty-title">{{ empty_title }}</p>
-<p class="muted-copy">{{ empty_help }}</p>
+<div class="register-card projects-empty">
+    <h2 class="projects-empty-title">{{ empty_title }}</h2>
+    <p class="muted-copy">{{ empty_help }}</p>
+</div>
 {% endif %}
 {% endblock %}

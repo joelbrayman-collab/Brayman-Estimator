@@ -7,6 +7,14 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 16 Oct 2026 — V1 final bounded polish (not deployed)
+
+- `projects/detail.html`: hub actions grouped; one primary next action; others `button-secondary`.
+- `estimates/version_detail.html`: action row with Create Proposal primary only when costing and pricing are current; next-step line from existing state; totals strip (`estimate-totals`); pricing section `id="estimate-pricing"`; costing helpers as secondary buttons.
+- `projects/list.html`: empty state in a card.
+- `v1-refinement.css`: secondary buttons, action groups, totals, Projects card, phone rules (tables scroll inside, shrinking panels, 44 px targets).
+- `tests/test_v1_final_polish.py` (6).
+
 ## 15 Oct 2026 (evening) — V1 final completion: UI refinement and installable app (not deployed)
 
 - Approved CalibraytAI logo `app/static/branding/calibraytai-logo-v1-dark.png` (byte-identical to the approved reference); obsolete CalibAi logo and home icon removed.

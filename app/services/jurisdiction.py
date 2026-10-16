@@ -142,6 +142,24 @@ def resolve_jurisdiction(
     return _match_definition(municipality or "", "municipality", province_node)
 
 
+def resolve_province(
+    country: Optional[str],
+    province_state: Optional[str],
+) -> Optional[JurisdictionDefinition]:
+    """Resolve only the province/state from stored civic fields.
+
+    A contract is governed by the province (Ontario), not the municipal permit
+    authority, so a job in any Ontario municipality resolves here even when the
+    municipality is not in the seed (Joel, 16 Oct 2026: Brayman works across
+    Eastern Ontario).
+    """
+    ensure_jurisdiction_seed(commit=False)
+    country_node = _match_definition(country or "", "country", None)
+    if country_node is None:
+        return None
+    return _match_definition(province_state or "", "province_state", country_node)
+
+
 def assert_platform_jurisdiction_not_org_mutable():
     """No org-scoped write API exists; used by tests."""
     return not hasattr(Organization, "jurisdiction_definitions")

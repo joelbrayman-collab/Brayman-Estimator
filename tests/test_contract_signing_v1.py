@@ -139,3 +139,62 @@ def test_office_page_sends_and_another_project_cannot_reach_the_contract(client,
                              "expiry_days": "7"}, follow_redirects=True).get_data(as_text=True)
     assert 'data-signing-invitation="true"' in sent and 'data-signing-status="SENT"' in sent
     assert SigningRequest.query.count() == 1
+
+
+# Joel, 16 Oct 2026: Brayman works across Eastern Ontario, not only Ottawa. The contract package
+# is provincial, so a job in any Ontario municipality gets the Ontario contract.
+EASTERN_ONTARIO = ["Merrickville", "Smiths Falls", "Perth", "Kemptville", "Brockville", "Carleton Place", "Prescott"]
+
+
+def _eastern_ontario_project(municipality):
+    from app.models import Client, Project
+    from app.services.commercial_context import create_initial_commercial_context
+    from app.services.permit_foundation import establish_project_location_and_profile
+    from tests.test_brayman_v1_interim_contract import COMMERCIAL_CREATE
+
+    owner = Client(name=f"{municipality} client", organization_id=DEFAULT_ORGANIZATION_ID)
+    db.session.add(owner); db.session.commit()
+    project = Project(name=f"{municipality} deck", address=f"12 Main Street, {municipality}", client_id=owner.id,
+                      status="Lead", organization_id=DEFAULT_ORGANIZATION_ID)
+    db.session.add(project); db.session.flush()
+    create_initial_commercial_context(project_id=project.id, data=COMMERCIAL_CREATE); db.session.commit()
+    establish_project_location_and_profile(project.id, {"street": "12 Main Street", "municipality": municipality,
+                                                        "province_state": "Ontario", "postal_zip": None, "country": "Canada"},
+                                           permit_context_class="Other/unspecified", organization_id=DEFAULT_ORGANIZATION_ID, commit=True)
+    return project
+
+
+@pytest.mark.parametrize("municipality", EASTERN_ONTARIO)
+def test_eastern_ontario_jobs_get_the_ontario_contract(app, municipality):
+    from app.services.legal_content import select_legal_content_package_for_project
+
+    ensure_brayman_v1_interim_ontario_package()
+    project = _eastern_ontario_project(municipality)
+    selection = select_legal_content_package_for_project(project.id)
+    assert selection.available, selection.block_code
+    assert selection.package_code == "CA-ON-BRAYMAN-V1-INTERIM"
+
+
+def test_a_merrickville_contract_is_generated_and_signed(app):
+    user = ensure_office_user(); db.session.commit()
+    ensure_brayman_v1_interim_ontario_package()
+    project = _eastern_ontario_project("Merrickville")
+    version, proposal = _issued(project, number="EST-MERRICKVILLE")
+    result = _generate(project, version, proposal)
+    assert result.generated, result.block_code
+    issue = _send(result.contract_id, user, countersign=False)
+    S.accept_and_sign(_credential(issue), confirmed_signer_name=SIGNER[0], consent_accepted=True,
+                      client_ip="127.0.0.1", user_agent="pytest")
+    assert db.session.get(SigningRequest, issue.request.id).status == S.STATUS_EXECUTED
+
+
+def test_outside_ontario_or_without_a_municipality_still_fails_closed(app):
+    from app.services.legal_content import BLOCK_JURISDICTION_UNRESOLVED, select_legal_content_package_for_project
+
+    ensure_brayman_v1_interim_ontario_package()
+    quebec = _eastern_ontario_project("Gatineau")
+    quebec.location.province_state = "Quebec"; db.session.commit()
+    assert select_legal_content_package_for_project(quebec.id).available is False
+    blank = _eastern_ontario_project("Perth")
+    blank.location.municipality = ""; db.session.commit()
+    assert select_legal_content_package_for_project(blank.id).block_code == BLOCK_JURISDICTION_UNRESOLVED

@@ -998,6 +998,10 @@ This table supersedes the "Deploy" entries above. Production is `5753916` (miles
 
 Joel: CalibraytAI V1 is an internal Brayman Construction platform, not a commercial software product. Ontario counsel approval is **not required for V1 completion** and is removed from the V1 development blockers. The legal review notes stay for future use outside the V1 gate: §9.3, [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md), FG-024 and FG-033. The Brayman V1 interim package (`CA-ON-BRAYMAN-V1-INTERIM`, ACTIVE PRODUCTION since 8 Oct) is the V1 contract; a later counsel-reviewed package can replace it through the existing activation path.
 
+### 15.5b Contract jurisdiction — Eastern Ontario (16 Oct 2026)
+
+Defect found while preparing Storybook screens: the contract package was chosen through the municipal permit authority, and only the City of Ottawa is in the jurisdiction seed, so a job in Merrickville, Smiths Falls, Perth or anywhere else in Eastern Ontario showed "Project location is not complete" and could not get a contract. Joel: Brayman works across Eastern Ontario; correct before V1 is complete. Corrected: a municipality outside the seed now resolves to its province for the contract (the package is provincial); permits are unchanged; a blank municipality or a province other than Ontario still fails closed. `app/services/jurisdiction.py` (`resolve_province`), `app/services/legal_content.py`; `tests/test_contract_signing_v1.py` (seven Eastern Ontario towns, a Merrickville contract generated and signed, Quebec and blank municipality refused).
+
 ### 15.6 V1 visual refinement and installable app — 15 Oct 2026
 
 | ID | Requirement | Class | Evidence | Outstanding |

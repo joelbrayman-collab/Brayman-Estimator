@@ -13,7 +13,7 @@ from app.models.legal_content import (
     LegalContentJurisdictionPackage,
 )
 from app.models.organization import Organization
-from app.services.jurisdiction import resolve_jurisdiction
+from app.services.jurisdiction import resolve_jurisdiction, resolve_province
 
 STATUS_ALLOW = "ALLOW"
 STATUS_WARN = "WARN"
@@ -282,9 +282,15 @@ def select_legal_content_package_for_project(
         tax_jurisdiction=None,
     )
     if municipal is None:
-        return _block(BLOCK_JURISDICTION_UNRESOLVED)
-
-    nodes = _selection_nodes(municipal)
+        # A municipality outside the seed (for example Merrickville or Smiths Falls) still
+        # resolves to its province for the contract; the contract package is provincial.
+        province = resolve_province(location.country, location.province_state)
+        if province is None or not (location.municipality or "").strip():
+            return _block(BLOCK_JURISDICTION_UNRESOLVED)
+        municipal = province
+        nodes = [province]
+    else:
+        nodes = _selection_nodes(municipal)
     if not nodes:
         return _block(
             BLOCK_JURISDICTION_NOT_SUPPORTED,

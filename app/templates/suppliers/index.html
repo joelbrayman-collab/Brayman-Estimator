@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Suppliers | Brayman Construction Platform{% endblock %}
+{% block page_title %}Suppliers{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Supplier Hub</p><h1>Suppliers</h1>
+<p class="muted-copy">Your supplier accounts and the store people who sign in to the Supplier Hub. A supplier sees only the requests you send them. Concrete through Tomlinson is its own supplier, kept apart from BMR Winchester.</p></div></div>
+
+<section class="form-panel" data-supplier-accounts="true">
+    <h2>Supplier accounts</h2>
+    {% for account in accounts %}
+    <article class="supplier-account" data-supplier="{{ account.supplier.legal_name }}" style="margin-bottom: 18px;">
+        <h3>{{ account.supplier.legal_name }} <span class="muted-copy">— {{ account.supplier_location.display_name }} · {{ account.status|lower }}</span></h3>
+        {% set people = members.get(account.supplier_id) or [] %}
+        {% if people %}
+        <ul>
+            {% for m in people %}
+            <li>{{ m.user.display_name }} ({{ m.user.email }}) — {{ "can sign in" if m.status == "ACTIVE" else "removed" }}
+                {% if m.status == "ACTIVE" %}
+                <form method="post" action="{{ url_for('supplier_office.revoke_user', membership_id=m.id) }}" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="button-link">Remove sign-in</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted-copy">No one from {{ account.supplier.legal_name }} can sign in yet.</p>
+        {% endif %}
+        <form method="post" action="{{ url_for('supplier_office.add_user', supplier_id=account.supplier_id) }}" class="form-grid" data-add-supplier-user="{{ account.supplier_id }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Name <input type="text" name="display_name" required></label>
+            <label>Email <input type="email" name="email" required></label>
+            <div class="form-actions"><button type="submit" class="button-secondary">Give Supplier Hub sign-in</button></div>
+        </form>
+    </article>
+    {% else %}
+    <p class="muted-copy">No supplier accounts yet.</p>
+    {% endfor %}
+</section>
+
+<section class="form-panel">
+    <h2>Add a supplier</h2>
+    <form method="post" action="{{ url_for('supplier_office.create_supplier_account') }}" class="form-grid" data-add-supplier="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Supplier name <input type="text" name="legal_name" placeholder="BMR Winchester" required></label>
+        <label>Store or location <input type="text" name="location_name" placeholder="Winchester"></label>
+        <div class="form-actions"><button type="submit" class="button-secondary">Add supplier</button></div>
+    </form>
+    <p class="muted-copy">Store staff sign in at <a href="{{ url_for('supplier_portal.login') }}">{{ url_for('supplier_portal.login', _external=True) }}</a>.</p>
+</section>
+{% endblock %}

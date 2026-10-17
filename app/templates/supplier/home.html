@@ -1,0 +1,16 @@
+{% extends "supplier/base.html" %}
+{% block title %}Your supplier areas{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Supplier Hub</p><h1>Your supplier areas</h1>
+<p class="muted-copy">Each area has its own requests, quotes and orders. They are never combined.</p></div></div>
+<div class="supplier-areas">
+{% for row in summary %}
+<a class="form-panel supplier-area" href="{{ url_for('supplier_portal.inbox', supplier_id=row.supplier.id) }}" data-supplier-area="{{ row.supplier.id }}">
+    <h2>{{ row.supplier.legal_name }}</h2>
+    <p>{{ row.waiting }} request{{ "s" if row.waiting != 1 }} waiting · {{ row.orders_waiting }} order{{ "s" if row.orders_waiting != 1 }} to confirm</p>
+</a>
+{% else %}
+<p class="muted-copy">You are not linked to a supplier yet. Ask the contractor who invited you.</p>
+{% endfor %}
+</div>
+{% endblock %}

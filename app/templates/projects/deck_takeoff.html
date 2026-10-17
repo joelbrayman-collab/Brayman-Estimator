@@ -106,6 +106,7 @@
 
 <div class="form-panel">
     <p class="eyebrow">SUPPLIER REQUEST</p>
+    <p class="muted-copy"><a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Requests sent in CalibraytAI, quotes returned and orders</a> · <a href="{{ url_for('supplier_office.suppliers') }}">Suppliers and their sign-ins</a></p>
     {% if accounts %}
     <form method="post" action="{{ url_for('deck_takeoff.issue_request', project_id=project.id) }}" class="form-grid">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -118,7 +119,7 @@
         <div class="form-actions"><button type="submit">Download the supplier request</button></div>
     </form>
     {% else %}
-    <p class="empty-state">No active supplier account for this organization.</p>
+    <p class="empty-state">No active supplier account for this organization. <a href="{{ url_for('supplier_office.suppliers') }}">Add a supplier</a>.</p>
     {% endif %}
     {% if requests %}
     <div style="overflow-x: auto;"><table class="data-table">
@@ -130,6 +131,13 @@
             <td>
                 <a href="{{ url_for('deck_takeoff.download_request', project_id=project.id, request_id=r.request_id) }}">PDF</a> ·
                 <a href="{{ url_for('deck_takeoff.enter_response', project_id=project.id, request_id=r.request_id) }}">Enter response by hand</a>
+                {% if (r.response_form or 1)|int == 2 %}
+                <form method="post" action="{{ url_for('supplier_office.send_material', project_id=project.id, request_id=r.request_id) }}" class="inline-form" data-send-to-supplier="{{ r.request_id }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>Needed by <input type="date" name="needed_by"></label>
+                    <button type="submit" class="button-secondary">Send to {{ r.supplier_name }} in CalibraytAI</button>
+                </form>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

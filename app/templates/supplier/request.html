@@ -1,0 +1,122 @@
+{% extends "supplier/base.html" %}
+{% block title %}{{ share.number }}{% endblock %}
+{% block content %}
+{% set s = share.shared_json %}
+<div class="page-heading">
+    <div><p class="eyebrow">{{ supplier.legal_name }} · {{ "Concrete request" if share.request_kind == kind_concrete else "Material request" }}</p>
+    <h1>{{ share.number }}</h1>
+    <p class="muted-copy">From {{ s.company }} — {{ s.contact_name }}{% if s.contact_email %} ({{ s.contact_email }}){% endif %} · {{ s.project_reference }} · Delivery town {{ s.delivery_town }}{% if s.needed_by %} · Needed by {{ s.needed_by }}{% endif %}</p></div>
+    <div><a class="button-link" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div>
+</div>
+
+{% if order %}
+<section class="form-panel supplier-order" data-supplier-order="{{ order.status }}">
+    <h2>Purchase order {{ order.number }}</h2>
+    <p>Placed by {{ order.placed_by_name }} on {{ order.placed_at.strftime("%B %d, %Y") }} against quote {{ order.quote_ref }}. Total before tax <strong>{{ "${:,.2f}".format(order.total) }}</strong>.</p>
+    <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if order.delivery_date %} on {{ order.delivery_date.isoformat() }}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
+    {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>No.</th><th>Item</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Net unit cost</th><th>Total</th></tr></thead>
+        <tbody>{% for line in order.lines_json %}<tr><td>{{ line.number }}</td><td>{{ line.description }}</td><td>{{ line.sku }}</td><td>{{ line.quantity }}</td><td>{{ line.unit }}</td><td>{{ line.net_unit_cost }}</td><td>{{ line.line_value }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% if order.status == "PLACED" %}
+    <form method="post" action="{{ url_for('supplier_portal.confirm', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid" data-confirm-order="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Expected delivery <input type="date" name="expected_delivery"></label>
+        <label>Note to the contractor <input type="text" name="note"></label>
+        <div class="form-actions">
+            <button type="submit" name="action" value="confirm" class="button is-primary">Confirm order</button>
+            <button type="submit" name="action" value="problem" class="button-secondary">Report a problem</button>
+        </div>
+    </form>
+    <p class="muted-copy">Confirm order completes the agreement with the contractor under your account terms. Report a problem (for example a price change or an item out of stock) puts the order on hold; write what is wrong in the note.</p>
+    {% else %}
+    <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else order.status|title) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.expected_delivery %} · Expected delivery {{ order.expected_delivery.isoformat() }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if share.request_kind == kind_concrete %}
+{% set c = s.concrete %}
+<section class="form-panel">
+    <h2>Concrete</h2>
+    <div class="form-grid">
+        <div><p class="eyebrow">Volume</p><p>{{ c.volume_m3 }} m³</p></div>
+        <div><p class="eyebrow">Strength</p><p>{{ c.strength_mpa }} MPa</p></div>
+        <div><p class="eyebrow">Exposure class</p><p>{{ c.exposure_class or "—" }}</p></div>
+        <div><p class="eyebrow">Air</p><p>{{ c.air_entrainment or "—" }}</p></div>
+        <div><p class="eyebrow">Slump</p><p>{{ (c.slump_mm ~ " mm") if c.slump_mm else "—" }}</p></div>
+        <div><p class="eyebrow">Delivery</p><p>{{ c.delivery_date }}{% if c.delivery_window %}, {{ c.delivery_window }}{% endif %}</p></div>
+        <div><p class="eyebrow">Placement</p><p>{{ c.placement }}</p></div>
+    </div>
+    {% if c.notes %}<p>Notes: {{ c.notes }}</p>{% endif %}
+</section>
+{% if share.status in ("SENT", "OPENED") %}
+<form method="post" action="{{ url_for('supplier_portal.return_quote', supplier_id=supplier.id, share_id=share.id) }}" class="form-panel form-grid" data-concrete-quote="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Your quote</h2>
+    <label>Your quote number <input type="text" name="quote_number"></label>
+    <label>Price per m³ * <input type="text" name="price_per_m3" inputmode="decimal" required></label>
+    {% for key, label in concrete_charges %}<label>{{ label }} <input type="text" name="{{ key }}" inputmode="decimal"></label>{% endfor %}
+    <label>Prices valid until * <input type="date" name="valid_until" required></label>
+    <label>Notes <input type="text" name="notes"></label>
+    <label>Minutes this quote took (optional) <input type="number" name="minutes_reported" min="0" max="1440"></label>
+    <div class="form-actions"><button type="submit" class="button is-primary">Return quote</button></div>
+    <p class="muted-copy">CalibraytAI calculates the total: volume × price per m³, plus the charges you enter. Before tax.</p>
+</form>
+{% elif share.quote_json %}
+{% set q = share.quote_json %}
+<section class="form-panel" data-quote-returned="true">
+    <h2>Quote returned</h2>
+    <p>Quote {{ q.quote_number }}: {{ q.volume_m3 }} m³ at ${{ q.price_per_m3 }} = ${{ q.concrete_value }}; total before tax <strong>${{ q.total_before_tax }}</strong>, valid until {{ q.valid_until }}. Returned by {{ share.returned_by_name }}.</p>
+</section>
+{% endif %}
+{% else %}
+<section class="form-panel">
+    <h2>Items</h2>
+    {% if share.status in ("SENT", "OPENED") %}
+    <p class="muted-copy">For each line, enter your SKU, unit cost and discount % (0 if none). A blank is not zero. CalibraytAI calculates line and quote totals with the contractor's quantities.</p>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_portal.return_quote', supplier_id=supplier.id, share_id=share.id) }}" data-material-quote="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div style="overflow-x: auto;"><table class="data-table">
+            <thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Unit</th><th>SKU</th><th>Unit cost</th><th>Discount %</th></tr></thead>
+            <tbody>
+            {% for line in s.lines %}{% set n = '%02d'|format(line.number) %}
+            <tr data-line="{{ n }}">
+                <td>{{ line.number }}</td>
+                <td>{{ line.description }}{% if line.status_label %}<div class="muted-copy">{{ line.status_label }}</div>{% endif %}</td>
+                <td>{{ line.qty }}</td><td>{{ line.unit }}</td>
+                <td><input name="sku_{{ n }}" size="10"></td>
+                <td><input name="unit_cost_{{ n }}" size="8" inputmode="decimal"></td>
+                <td><input name="discount_{{ n }}" size="5" inputmode="decimal"></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table></div>
+        <div class="form-grid">
+            <label>Your name (contact) <input name="bmr_contact" value="{{ current_user.display_name }}"></label>
+            <label>Quote date <input type="date" name="response_date"></label>
+            <label>Prices valid until * <input type="date" name="valid_until" required></label>
+            <label>General notes (substitutions: line number and replacement SKU) <input name="general_notes"></label>
+            <label>Minutes this quote took (optional) <input type="number" name="minutes_reported" min="0" max="1440"></label>
+            <label>Or upload the filled request PDF <input type="file" name="response_pdf" accept="application/pdf"></label>
+        </div>
+        <div class="form-actions"><button type="submit" class="button is-primary">Return quote</button></div>
+    </form>
+    {% else %}
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Unit</th></tr></thead>
+        <tbody>{% for line in s.lines %}<tr><td>{{ line.number }}</td><td>{{ line.description }}</td><td>{{ line.qty }}</td><td>{{ line.unit }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% if share.quote_json %}
+    <p data-quote-returned="true">Quote returned by {{ share.returned_by_name }} on {{ share.returned_at.strftime("%B %d, %Y") }}: {{ share.quote_json.lines_priced }} of {{ share.quote_json.lines }} lines priced. Quoted total (lines the contractor can record) <strong>${{ share.quote_json.recordable_quoted_total }}</strong>{% if share.quote_json.valid_until %}, valid until {{ share.quote_json.valid_until }}{% endif %}.</p>
+    {% endif %}
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="form-panel">
+    <h2>History</h2>
+    <ul class="supplier-history">{% for e in events %}<li>{{ e.at.strftime("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} by {{ e.actor_name }}{% if e.detail %} ({{ e.detail }}){% endif %}</li>{% endfor %}</ul>
+</section>
+{% endblock %}

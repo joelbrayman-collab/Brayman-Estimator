@@ -5,7 +5,7 @@ import tempfile
 
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 
-from flask import Flask, abort, g, request, send_from_directory
+from flask import Flask, abort, g, redirect, request, send_from_directory, url_for
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -218,6 +218,28 @@ def _register_office_auth(app: Flask) -> None:
             or endpoint.startswith("decision_tools.")
         ):
             return None
+        # Supplier Hub (ADR-047, Joel 17 Oct 2026): suppliers sign in separately and land in their
+        # own workspace. Office pages refuse them; supplier pages refuse office users.
+        from app.services.supplier_hub import principal_class
+
+        if endpoint is not None and endpoint.startswith("supplier_portal."):
+            if endpoint in ("supplier_portal.login", "supplier_portal.logout"):
+                return None
+            if not current_user.is_authenticated:
+                return redirect(url_for("supplier_portal.login", next=request.path))
+            if principal_class(current_user) != "SUPPLIER":
+                abort(403)
+            return None
+        if current_user.is_authenticated:
+            principal = principal_class(current_user)
+            if principal == "CONFLICT":
+                if _is_api_request():
+                    return api_error(ERROR_ORGANIZATION_CONTEXT, 403)
+                abort(403)
+            if principal == "SUPPLIER":
+                if _is_api_request():
+                    return api_error(ERROR_ORGANIZATION_CONTEXT, 403)
+                return redirect(url_for("supplier_portal.home"))
         if _is_api_request():
             if not current_user.is_authenticated:
                 return api_error(ERROR_AUTHENTICATION_REQUIRED, 401)
@@ -403,6 +425,8 @@ def create_app(config=None):
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
     from app.routes.sign import sign_bp
     from app.routes.proposal_link import proposal_link_bp
+    from app.routes.supplier_portal import supplier_portal_bp
+    from app.routes.supplier_office import supplier_office_bp
     from app.routes.signing import signing_office_bp
     from app.routes.work_structure import work_structure_bp
     from app.routes.time_entry import time_entry_bp
@@ -445,6 +469,8 @@ def create_app(config=None):
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)
     app.register_blueprint(proposal_link_bp)
+    app.register_blueprint(supplier_portal_bp)
+    app.register_blueprint(supplier_office_bp)
     app.register_blueprint(signing_office_bp)
     app.register_blueprint(work_structure_bp)
     app.register_blueprint(time_entry_bp)

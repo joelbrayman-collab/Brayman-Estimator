@@ -177,6 +177,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Suppliers",
+                "endpoint": "supplier_office.suppliers",
+                "icon": "bi-shop",
+                "enabled": True,
+            },
+            {
                 "title": WORK_CATALOG_NAV_TITLE,
                 "endpoint": "work_structure.catalog_index",
                 "icon": "bi-diagram-3",

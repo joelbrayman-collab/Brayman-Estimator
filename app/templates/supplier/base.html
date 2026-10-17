@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}Supplier Hub{% endblock %} | CalibraytAI</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v1-refinement.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supplier-hub.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="supplier-hub" data-workspace="supplier">
+    <header class="supplier-header">
+        <div class="supplier-header-inner">
+            <a class="supplier-brand" href="{{ url_for('supplier_portal.home') }}">
+                <img src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}" alt="CalibraytAI" width="110" height="40">
+                <span>Supplier Hub</span>
+            </a>
+            {% if current_user.is_authenticated %}
+            <nav class="supplier-nav" aria-label="Supplier areas">
+                {% for area in areas or [] %}
+                <a href="{{ url_for('supplier_portal.inbox', supplier_id=area.id) }}" {% if supplier is defined and supplier and supplier.id == area.id %}aria-current="page"{% endif %}>{{ area.legal_name }}</a>
+                {% endfor %}
+            </nav>
+            <form method="post" action="{{ url_for('supplier_portal.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <span class="supplier-user">{{ current_user.display_name }}</span>
+                <button type="submit" class="button-secondary">Sign out</button>
+            </form>
+            {% endif %}
+        </div>
+    </header>
+    <main class="supplier-main" id="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}" role="status">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

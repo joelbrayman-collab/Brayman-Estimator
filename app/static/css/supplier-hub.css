@@ -1,0 +1,20 @@
+/* Supplier Hub workspace (Joel, 17 Oct 2026). No office navigation. */
+.supplier-hub { background: #f6f5f2; margin: 0; }
+.supplier-header { background: #1f2a33; color: #fff; }
+.supplier-header-inner { max-width: 1180px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between; }
+.supplier-brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 600; }
+.supplier-brand img { background: #fff; border-radius: 6px; padding: 2px 6px; height: 34px; width: auto; }
+.supplier-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.supplier-nav a { color: #dfe6ea; text-decoration: none; padding: 8px 12px; border-radius: 6px; min-height: 44px; display: inline-flex; align-items: center; }
+.supplier-nav a[aria-current="page"] { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.supplier-header form { display: flex; align-items: center; gap: 10px; margin: 0; }
+.supplier-user { color: #dfe6ea; font-size: 0.9rem; }
+.supplier-main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
+.supplier-main .form-panel { margin-bottom: 20px; }
+.supplier-login { max-width: 460px; margin: 40px auto; }
+.supplier-areas, .supplier-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.supplier-area { text-decoration: none; color: inherit; display: block; }
+.supplier-figure { font-size: 1.9rem; font-weight: 600; margin: 4px 0; }
+.supplier-history { margin: 0; padding-left: 18px; }
+.supplier-main input[type="text"], .supplier-main input[type="date"], .supplier-main input[type="number"] { min-height: 40px; }
+@media (max-width: 640px) { .supplier-header-inner { justify-content: flex-start; } }

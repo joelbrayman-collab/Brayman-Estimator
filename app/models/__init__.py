@@ -107,6 +107,13 @@ from app.models.calculation_estimate_mapping import (
 )
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.proposal_acceptance import ProposalAcceptance, ProposalClientLink
+from app.models.supplier_portal import (
+    ConcreteRequest,
+    SupplierPurchaseOrder,
+    SupplierRequestEvent,
+    SupplierRequestShare,
+    SupplierUserMembership,
+)
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
     OrganizationPricingPolicy,
@@ -170,6 +177,11 @@ from app.plan_intelligence.models import (
 )
 
 __all__ = [
+    "ConcreteRequest",
+    "SupplierPurchaseOrder",
+    "SupplierRequestEvent",
+    "SupplierRequestShare",
+    "SupplierUserMembership",
     "ProposalAcceptance",
     "ProposalClientLink",
     "Assembly",

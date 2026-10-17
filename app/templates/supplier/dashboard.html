@@ -1,0 +1,24 @@
+{% extends "supplier/base.html" %}
+{% block title %}Dashboard — {{ supplier.legal_name }}{% endblock %}
+{% block content %}
+{% set f = figures %}
+<div class="page-heading"><div><p class="eyebrow">{{ supplier.legal_name }}</p><h1>Dashboard</h1>
+<p class="muted-copy">Measured figures for {{ supplier.legal_name }} only. Nothing here is estimated.</p></div>
+<div><a class="button-link" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
+<section class="supplier-tiles" data-supplier-dashboard="{{ supplier.id }}">
+    <div class="form-panel"><p class="eyebrow">Requests received</p><p class="supplier-figure">{{ f.requests_received }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Quotes returned</p><p class="supplier-figure">{{ f.quotes_returned }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Quote lines recorded by contractors</p><p class="supplier-figure">{{ f.lines_recorded }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Costs approved by contractors</p><p class="supplier-figure">{{ f.costs_approved }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Orders placed</p><p class="supplier-figure">{{ f.orders_placed }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Orders confirmed</p><p class="supplier-figure">{{ f.orders_confirmed }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Ordered value (before tax)</p><p class="supplier-figure">{{ "${:,.2f}".format(f.ordered_value) }}</p></div>
+    <div class="form-panel"><p class="eyebrow">Minutes per quote (self-reported)</p><p class="supplier-figure">{{ "%.0f"|format(f.average_minutes) if f.average_minutes is not none else "—" }}</p><p class="muted-copy">From {{ f.quotes_with_minutes }} quote{{ "s" if f.quotes_with_minutes != 1 }}.</p></div>
+    <div class="form-panel"><p class="eyebrow">Lines per request</p><p class="supplier-figure">{{ "%.1f"|format(f.lines_per_request) if f.lines_per_request is not none else "—" }}</p></div>
+</section>
+<section class="form-panel">
+    <h2>Contractors who sent requests</h2>
+    {% if f.contractors %}<ul>{% for name, count in f.contractors %}<li>{{ name }} — {{ count }} request{{ "s" if count != 1 }}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None yet.</p>{% endif %}
+    <p class="muted-copy">Not shown here: contractor margins, labour rates or internal costs, other suppliers' prices, and projects not sent to {{ supplier.legal_name }}.</p>
+</section>
+{% endblock %}

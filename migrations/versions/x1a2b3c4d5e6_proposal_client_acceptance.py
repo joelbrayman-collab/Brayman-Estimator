@@ -10,8 +10,8 @@ CalibraytAI link; the client ticks Accept Proposal (or the office records an
 acceptance given another way); the contract is then generated and waits for
 one office Send click.
 
-Additive only: three nullable columns on estimate_versions and two new
-tables. No existing row is changed. Downgrade refuses while any link,
+Additive only: three nullable columns added to estimate_versions with ALTER TABLE ADD COLUMN
+(no table rebuild) and two new tables. No existing row is changed. Downgrade refuses while any link,
 acceptance or sign-off exists; the rollback then is the pre-migration backup.
 """
 
@@ -26,13 +26,11 @@ depends_on = None
 
 
 def upgrade():
-    with op.batch_alter_table("estimate_versions") as batch:
-        batch.add_column(sa.Column("signed_off_at", sa.DateTime(), nullable=True))
-        batch.add_column(sa.Column("signed_off_by_user_id", sa.Integer(), nullable=True))
-        batch.add_column(sa.Column("signed_off_by_name", sa.String(length=160), nullable=True))
-        batch.create_foreign_key(
-            "fk_estimate_versions_signed_off_by_user_id", "users", ["signed_off_by_user_id"], ["id"], ondelete="RESTRICT"
-        )
+    # Plain ADD COLUMN (no table rebuild): existing estimate_versions rows are not copied or rewritten.
+    op.add_column("estimate_versions", sa.Column("signed_off_at", sa.DateTime(), nullable=True))
+    # SQLite cannot add a foreign key with ALTER TABLE; the user id is kept as a plain reference.
+    op.add_column("estimate_versions", sa.Column("signed_off_by_user_id", sa.Integer(), nullable=True))
+    op.add_column("estimate_versions", sa.Column("signed_off_by_name", sa.String(length=160), nullable=True))
     op.create_table(
         "proposal_client_links",
         sa.Column("id", sa.Integer(), primary_key=True),
@@ -91,7 +89,6 @@ def downgrade():
     op.drop_index("ix_proposal_client_links_organization_id", table_name="proposal_client_links")
     op.drop_table("proposal_client_links")
     with op.batch_alter_table("estimate_versions") as batch:
-        batch.drop_constraint("fk_estimate_versions_signed_off_by_user_id", type_="foreignkey")
         batch.drop_column("signed_off_by_name")
         batch.drop_column("signed_off_by_user_id")
         batch.drop_column("signed_off_at")

@@ -1,0 +1,12 @@
+{# Reporting period (owner review B). GET only; the page never changes a record. #}
+<form method="get" class="period-form" data-period-form="true">
+    <label>Period
+        <select name="period" onchange="this.form.querySelectorAll('[data-custom]').forEach(function (el) { el.hidden = (this.value !== 'custom'); }, this);">
+            {% for key, label in periods %}<option value="{{ key }}"{% if key == period.key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+    </label>
+    <label data-custom {% if period.key != "custom" %}hidden{% endif %}>From <input type="date" name="from" value="{{ period.start.isoformat() if period.key == 'custom' else '' }}"></label>
+    <label data-custom {% if period.key != "custom" %}hidden{% endif %}>To <input type="date" name="to" value="{{ period.end.isoformat() if period.key == 'custom' else '' }}"></label>
+    <button type="submit" class="button-secondary">Show</button>
+    {% if period.start %}<p class="muted-copy supplier-figure-note" style="flex-basis: 100%;">{{ period.start.strftime("%b %d, %Y").replace(" 0", " ") }} to {{ period.end.strftime("%b %d, %Y").replace(" 0", " ") }}, Eastern time.</p>{% endif %}
+</form>

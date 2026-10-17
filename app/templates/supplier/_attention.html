@@ -1,0 +1,32 @@
+{# Needs attention (owner review B, 17 Oct 2026). Records only; nothing here is estimated. #}
+{% set a = attention %}
+<section class="form-panel supplier-attention" data-attention="{{ a.total }}" aria-labelledby="attention-heading">
+    <h2 id="attention-heading">Needs attention</h2>
+    {% if a.total == 0 and a.upcoming_count == 0 %}
+    <p class="muted-copy" data-attention-empty>Nothing waiting for {{ brand_for(supplier).name }} right now.</p>
+    {% else %}
+    <div class="attention-grid">
+        <div class="attention-item" data-attention-quotes="{{ a.quotes_count }}">
+            <p class="eyebrow">Quotes to answer</p>
+            <p class="attention-count">{{ a.quotes_count }}</p>
+            {% if a.quotes %}<ul class="attention-list">{% for s in a.quotes %}<li><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=s.id) }}">{{ s.number }}</a> · {{ s.shared_json.company }}{% if s.shared_json.needed_by %} · needed {{ s.shared_json.needed_by }}{% endif %}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None waiting.</p>{% endif %}
+            {% if a.quotes_count > a.quotes|length %}<p class="muted-copy">and {{ a.quotes_count - a.quotes|length }} more below.</p>{% endif %}
+        </div>
+        <div class="attention-item" data-attention-orders="{{ a.orders_count }}">
+            <p class="eyebrow">Orders to confirm</p>
+            <p class="attention-count">{{ a.orders_count }}</p>
+            {% if a.orders %}<ul class="attention-list">{% for o in a.orders %}<li><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=o.share_id) }}">{{ o.number }}</a> · {{ "${:,.2f}".format(o.total) }} · placed {{ o.placed_at.strftime("%b %d") }}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None waiting.</p>{% endif %}
+        </div>
+        <div class="attention-item" data-attention-changes="{{ a.changes_count }}">
+            <p class="eyebrow">Delivery changes to answer</p>
+            <p class="attention-count">{{ a.changes_count }}</p>
+            {% if a.changes %}<ul class="attention-list">{% for c in a.changes %}<li><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=c.order.share_id) }}#delivery">{{ c.order.number }}</a> · to {{ c.new_date.strftime("%a %b %d") }}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None waiting.</p>{% endif %}
+        </div>
+        <div class="attention-item" data-attention-upcoming="{{ a.upcoming_count }}">
+            <p class="eyebrow">Deliveries in the next {{ a.upcoming_days }} days</p>
+            <p class="attention-count">{{ a.upcoming_count }}</p>
+            {% if a.upcoming %}<ul class="attention-list">{% for d in a.upcoming %}<li><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=d.order.share_id) }}#delivery">{{ d.order.number }}</a> · {{ d.date.strftime("%a %b %d") }}{% if d.window %}, {{ d.window }}{% endif %}{% if not d.agreed %} (requested){% endif %}{% if d.change_pending %} · change waiting{% endif %}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None scheduled.</p>{% endif %}
+        </div>
+    </div>
+    {% endif %}
+</section>

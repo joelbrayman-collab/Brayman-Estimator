@@ -4,10 +4,11 @@
 <div class="page-heading">
     <div><p class="eyebrow">Supplier Hub</p><h1>{{ brand_for(supplier).name }}</h1>
     <p class="muted-copy">Requests contractors sent to {{ brand_for(supplier).name }}. You see only what each contractor chose to send.</p></div>
-    <div><a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_deliveries', supplier_id=supplier.id) }}">Deliveries</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a></div>
+    <div><a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_deliveries', supplier_id=supplier.id) }}">Deliveries</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_demand', supplier_id=supplier.id) }}">Material demand</a></div>
 </div>
+{% include "supplier/_attention.html" %}
 {% if changes_waiting %}
-<section class="form-panel delivery-alert" data-changes-waiting="{{ changes_waiting|length }}">
+<section class="form-panel delivery-alert" id="changes" data-changes-waiting="{{ changes_waiting|length }}">
     <h2>Delivery changes waiting for your answer</h2>
     <ul>{% for c in changes_waiting %}<li><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=c.order.share_id) }}#delivery">{{ c.order.number }}</a>: {{ c.requested_by_name }} asks to move the delivery to <strong>{{ c.new_date.strftime("%a %b %d") }}{% if c.new_window %}, {{ c.new_window }}{% endif %}</strong> ({{ c.reason }})</li>{% endfor %}</ul>
 </section>

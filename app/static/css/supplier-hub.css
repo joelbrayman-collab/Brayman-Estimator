@@ -34,3 +34,22 @@
 .delivery-alert { border-left: 4px solid #c8871a; }
 .delivery-change.is-pending { border-left: 4px solid #c8871a; padding: 8px 14px; background: #fbf6ec; border-radius: 6px; }
 .delivery-history { margin: 6px 0 0; padding-left: 18px; }
+
+/* Needs attention, dashboard periods and material demand (owner review B–D, 17 Oct 2026). */
+.attention-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.attention-item { border-top: 3px solid #d9d4c7; padding-top: 8px; min-width: 0; }
+.attention-item[data-attention-quotes]:not([data-attention-quotes="0"]),
+.attention-item[data-attention-orders]:not([data-attention-orders="0"]),
+.attention-item[data-attention-changes]:not([data-attention-changes="0"]) { border-top-color: #c8871a; }
+.attention-count { font-size: 1.6rem; font-weight: 600; margin: 2px 0 4px; }
+.attention-list { margin: 0; padding-left: 18px; font-size: 0.92rem; }
+.attention-list li { margin: 2px 0; overflow-wrap: anywhere; }
+.period-form { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; }
+.period-form label { display: flex; flex-direction: column; font-size: 0.85rem; gap: 2px; }
+.period-form select, .period-form input[type="date"] { min-height: 40px; }
+.supplier-figure-note { font-size: 0.85rem; margin: 0; }
+.demand-flag { display: inline-block; font-size: 0.78rem; padding: 1px 7px; border-radius: 10px; background: #efe9dc; color: #5b4a22; margin: 2px 4px 0 0; white-space: nowrap; }
+.demand-flag.is-gap { background: #fbe7d6; color: #8a4b00; }
+.sku-suggested { display: block; font-size: 0.75rem; color: #6b6b6b; margin-top: 2px; }
+.sku-suggested.is-several { color: #8a4b00; }
+.supplier-main [data-spaced] { margin-top: 14px; }

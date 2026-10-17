@@ -82,6 +82,7 @@
     <h2>Items</h2>
     {% if share.status in ("SENT", "OPENED") %}
     <p class="muted-copy">For each line, enter your SKU, unit cost and discount % (0 if none). A blank is not zero. CalibraytAI calculates line and quote totals with the contractor's quantities.</p>
+    {% if remembered %}<p class="muted-copy" data-sku-prefill="{{ remembered|length }}">SKUs you quoted before for the same product are filled in for you. Check each one and change it if it is not right. Prices and discounts are never filled in: enter today's.</p>{% endif %}
     <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_portal.return_quote', supplier_id=supplier.id, share_id=share.id) }}" data-material-quote="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div style="overflow-x: auto;"><table class="data-table">
@@ -92,7 +93,8 @@
                 <td>{{ line.number }}</td>
                 <td>{{ line.description }}{% if line.status_label %}<div class="muted-copy">{{ line.status_label }}</div>{% endif %}</td>
                 <td>{{ line.qty }}</td><td>{{ line.unit }}</td>
-                <td><input name="sku_{{ n }}" size="10"></td>
+                {% set hint = remembered.get(line.number) %}
+                <td>{% if hint and hint.sku %}<input name="sku_{{ n }}" size="10" value="{{ hint.sku }}" data-sku-suggested="{{ hint.sku }}" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested" id="sku-hint-{{ n }}">Your confirmed SKU — check it</span>{% elif hint and hint.several %}<input name="sku_{{ n }}" size="10" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested is-several" id="sku-hint-{{ n }}" data-sku-several="true">On record: {{ hint.several|join(", ") }}</span>{% else %}<input name="sku_{{ n }}" size="10">{% endif %}</td>
                 <td><input name="unit_cost_{{ n }}" size="8" inputmode="decimal"></td>
                 <td><input name="discount_{{ n }}" size="5" inputmode="decimal"></td>
             </tr>

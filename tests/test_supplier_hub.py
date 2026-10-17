@@ -534,3 +534,166 @@ def test_supplier_sign_in_has_show_password_and_a_reset_that_returns_to_the_supp
     assert 'href="/supplier/login"' in app.test_client().get(sent.headers["Location"]).data.decode()
     # Without the supplier hint the office pages keep their own link.
     assert 'href="/login"' in app.test_client().get("/forgot-password").data.decode()
+
+
+# ------------------------------------------------------------------ owner review B–D (17 Oct 2026)
+
+
+def _material_round(app, client, project, account, *, sku="TEST-SKU-1", minutes="12"):
+    """Send a deck request to BMR, Darcy prices the first line, Ben records, approves and orders."""
+    from app.services.deck_takeoff import storage
+
+    _pdf, fields, keys = _issue(client, project, account)
+    request_id = fields["request_id"]["/V"]
+    client.post(f"/projects/{project.id}/deck-takeoff/requests/{request_id}/send-to-supplier",
+                data={"needed_by": (date.today() + timedelta(days=10)).isoformat()})
+    share = SupplierRequestShare.query.filter_by(source_ref=request_id).one()
+    supplier = _supplier_client(app)
+    first = next(iter(keys.values()))
+    supplier.post(f"/supplier/{account.supplier_id}/requests/{share.id}/quote", data={
+        f"sku_{first}": sku, f"unit_cost_{first}": "10.00", f"discount_{first}": "10", "bmr_contact": DARCY[0],
+        "response_date": RESPONSE_DATE, "valid_until": VALID_UNTIL, "minutes_reported": minutes})
+    share = db.session.get(SupplierRequestShare, share.id)
+    client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/record", data={})
+    follow = next(r for r in storage.list_responses(DEFAULT_ORGANIZATION_ID, project.id)
+                  if r.get("records_response") == share.response_ref)
+    for result in follow["results"]:
+        if result.get("recorded"):
+            client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
+                        data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
+                data={"delivery_date": (date.today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
+    return supplier, share, keys, first
+
+
+def test_needs_attention_lists_what_waits_for_the_store_and_period_figures_use_actual_records(app, client):
+    from app.services import supplier_insights as I
+
+    project, tomlinson, darcy, _user, order = _concrete_order(app, client)
+    # A second concrete request is waiting for a quote; the first is ordered and confirmed for next week.
+    client.post(f"/projects/{project.id}/concrete-requests", data={
+        "volume_m3": "2", "strength_mpa": "25", "delivery_date": (date.today() + timedelta(days=20)).isoformat(),
+        "placement": "Chute", "contractor_supplier_account_id": tomlinson.id})
+    waiting = SupplierRequestShare.query.filter_by(status="SENT").one()
+    attention = I.attention(tomlinson.supplier_id)
+    assert attention["quotes_count"] == 1 and attention["quotes"][0].id == waiting.id
+    assert attention["orders_count"] == 0 and attention["changes_count"] == 0
+    assert attention["upcoming_count"] == 1 and attention["upcoming"][0]["order"].id == order.id
+    client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
+                data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
+    inbox = darcy.get(f"/supplier/{tomlinson.supplier_id}/").get_data(as_text=True)
+    assert 'data-attention-quotes="1"' in inbox and 'data-attention-changes="1"' in inbox
+    assert 'data-attention-upcoming="1"' in inbox and waiting.number in inbox
+    assert 'data-changes-waiting="1"' in inbox  # the accepted delivery-change banner is still there
+
+    week = I.period_figures(tomlinson.supplier_id, I.resolve_period("week"))
+    assert week["quotes_received"] == 2 and week["quotes_returned"] == 1 and week["quotes_ordered"] == 1
+    assert week["conversion_percent"] is None  # fewer than five returned quotes: shown as "1 of 1"
+    assert week["orders_placed"] == 1 and week["orders_confirmed"] == 1
+    assert week["average_order_value"] == Decimal("945.00") and week["ordered_value"] == Decimal("945.00")
+    past = I.resolve_period("custom", "2020-01-01", "2020-01-31")
+    assert past.key == "custom"
+    empty = I.period_figures(tomlinson.supplier_id, past)
+    assert empty["quotes_received"] == empty["orders_placed"] == 0 and empty["average_order_value"] is None
+    assert I.resolve_period("custom", "2020-02-01", "2020-01-01").key == I.DEFAULT_PERIOD  # unusable dates
+
+    page = darcy.get(f"/supplier/{tomlinson.supplier_id}/dashboard?period=week").get_data(as_text=True)
+    assert 'data-period-figures="week"' in page and "1 of 1" in page and "$945.00" in page
+    assert "Purchase orders, not invoiced sales." in page and "data-supplier-dashboard" in page
+    custom = darcy.get(f"/supplier/{tomlinson.supplier_id}/dashboard?period=custom&from=2020-01-01&to=2020-01-31")
+    assert custom.status_code == 200 and "No orders placed in this period." in custom.get_data(as_text=True)
+    for word in ("margin", "markup", "selling price"):
+        assert word not in page.lower().replace("contractor margins, labour rates or internal costs", "")
+
+
+def test_quote_to_order_conversion_shows_a_percentage_from_five_returned_quotes(app, client):
+    from app.services import supplier_insights as I
+
+    project, tomlinson, darcy, _user, _order = _concrete_order(app, client)
+    for n in range(4):
+        client.post(f"/projects/{project.id}/concrete-requests", data={
+            "volume_m3": "1", "strength_mpa": str(20 + n), "delivery_date": (date.today() + timedelta(days=30)).isoformat(),
+            "placement": "Chute", "contractor_supplier_account_id": tomlinson.id})
+        share = SupplierRequestShare.query.filter_by(status="SENT").one()
+        darcy.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote",
+                   data={"price_per_m3": "200", "valid_until": (date.today() + timedelta(days=30)).isoformat(),
+                         "minutes_reported": "6"})
+    figures = I.period_figures(tomlinson.supplier_id, I.resolve_period("90d"))
+    assert figures["quotes_returned"] == 5 and figures["quotes_ordered"] == 1 and figures["conversion_percent"] == 20
+    assert figures["quotes_with_minutes"] == 4 and figures["average_minutes"] == 6
+    assert figures["hours_recorded"] == Decimal("0.4")
+
+
+def test_material_demand_adds_up_requests_to_this_store_only_without_naming_contractors_or_jobs(app, client):
+    from app.services import supplier_insights as I
+
+    project, other, account = _setup()
+    _give_sign_in(client, account)
+    supplier, share, keys, first = _material_round(app, client, project, account)
+    demand = I.material_demand(account.supplier_id, I.resolve_period("90d"))
+    assert demand["requests"] == 1 and demand["contractors"] == 1
+    rows = [r for c in demand["categories"] for r in c["rows"]]
+    assert rows and sum(r["quoted"] for r in rows) == 1
+    priced = next(r for r in rows if r["quoted"] == 1)
+    assert priced["confirmed_sku"] and priced["ordered_lines"] == 1
+    # Every other line came back without a price (a product can sit on two lines of one request).
+    assert all(r["not_priced"] >= 1 and r["quoted"] == 0 and r["requests"] == 1 for r in rows if r is not priced)
+    assert not demand["possible_gaps"]  # one request is never called a gap
+
+    # A second request for another job: the same products now recur; still only this store's requests.
+    supplier2, share2, _keys, _first = _material_round(app, client, other, account)
+    demand = I.material_demand(account.supplier_id, I.resolve_period("90d"))
+    rows = [r for c in demand["categories"] for r in c["rows"]]
+    assert demand["requests"] == 2 and all(r["requests"] == 2 for r in rows)
+    assert demand["possible_gaps"] and all(g["quoted"] == 0 for g in demand["possible_gaps"])
+
+    page = supplier.get(f"/supplier/{account.supplier_id}/demand?period=90d").get_data(as_text=True)
+    assert "data-demand-requests" in page and "Possible assortment gaps" in page and "Recurring" in page
+    for private in (project.name, other.name, "Arcy", "Brayman Construction", "TEST-SKU-1-COST"):
+        assert private not in page
+    assert "Requested is not purchased" in page and "Neither shows whether a contractor bought it elsewhere" in page
+    for word in ("margin", "markup", "selling price"):
+        assert word not in page.lower()
+
+    # Another supplier sees none of it, and cannot open BMR's demand page.
+    tomlinson = _tomlinson()
+    assert I.material_demand(tomlinson.supplier_id, I.resolve_period("all"))["requests"] == 0
+    assert supplier.get(f"/supplier/{tomlinson.supplier_id}/demand").status_code == 404
+
+
+def test_a_confirmed_sku_is_suggested_on_the_next_request_and_staff_can_change_it(app, client):
+    from app.services import supplier_insights as I
+
+    project, other, account = _setup()
+    _give_sign_in(client, account)
+    supplier, _share, keys, first = _material_round(app, client, project, account, sku="BMR-2X12-08")
+    # Next request (another job) for the same products: the SKU confirmed when Ben recorded the quote is filled in.
+    _pdf, fields, keys2 = _issue(client, other, account)
+    request_id = fields["request_id"]["/V"]
+    client.post(f"/projects/{other.id}/deck-takeoff/requests/{request_id}/send-to-supplier", data={})
+    share = SupplierRequestShare.query.filter_by(source_ref=request_id).one()
+    remembered = I.remembered_skus(share)
+    assert remembered and {v["sku"] for v in remembered.values()} == {"BMR-2X12-08"}
+    page = supplier.get(f"/supplier/{account.supplier_id}/requests/{share.id}").get_data(as_text=True)
+    assert 'data-sku-suggested="BMR-2X12-08"' in page and "Your confirmed SKU — check it" in page
+    assert "Prices and discounts are never filled in" in page
+    # Never a price or discount: those inputs stay empty.
+    import re
+    for name in re.findall(r'name="(unit_cost_\d+|discount_\d+)"[^>]*>', page):
+        assert re.search(rf'name="{name}"[^>]*value="[^"]+"', page) is None
+    # Staff correct the suggestion: the typed SKU is what goes back.
+    n = next(iter(f"{k:02d}" for k in remembered))
+    supplier.post(f"/supplier/{account.supplier_id}/requests/{share.id}/quote", data={
+        f"sku_{n}": "BMR-2X12-08-NEW", f"unit_cost_{n}": "11.00", f"discount_{n}": "0", "bmr_contact": DARCY[0],
+        "response_date": RESPONSE_DATE, "valid_until": VALID_UNTIL})
+    from app.services.deck_takeoff import storage
+
+    share = db.session.get(SupplierRequestShare, share.id)
+    record = storage.load_response(DEFAULT_ORGANIZATION_ID, other.id, share.response_ref)
+    row = next(r for r in record["rows"] if int(r["number"]) == int(n))
+    assert row["answers"]["sku"] == "BMR-2X12-08-NEW"
+    assert I.remembered_skus(share) == {}  # a returned request is closed: no suggestions
+    # Another supplier never gets BMR's SKUs.
+    from app.models.supplier_catalogue import SupplierProduct
+
+    assert {p.supplier_id for p in SupplierProduct.query.filter(SupplierProduct.sku.like("BMR-%"))} == {account.supplier_id}

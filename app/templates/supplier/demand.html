@@ -1,0 +1,77 @@
+{% extends "supplier/base.html" %}
+{% block title %}Material demand — {{ brand_for(supplier).name }}{% endblock %}
+{% block content %}
+{% set d = demand %}
+<div class="page-heading"><div><p class="eyebrow">{{ brand_for(supplier).name }}</p><h1>Material demand</h1>
+<p class="muted-copy">What contractors asked {{ brand_for(supplier).name }} to quote, added up by product. Requested is not purchased: this shows requests sent to you, what you priced, and what was ordered from you through CalibraytAI.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
+
+<section class="form-panel" data-demand="{{ supplier.id }}">
+    <h2>{{ period.label }}</h2>
+    {% include "supplier/_period_form.html" %}
+    <div class="supplier-tiles" data-spaced>
+        <div class="form-panel"><p class="eyebrow">Requests sent to you</p><p class="supplier-figure" data-demand-requests>{{ d.requests }}</p></div>
+        <div class="form-panel"><p class="eyebrow">Contractors who asked</p><p class="supplier-figure">{{ d.contractors }}</p></div>
+        <div class="form-panel"><p class="eyebrow">Products asked for more than once</p><p class="supplier-figure" data-demand-recurring>{{ d.recurring|length }}</p></div>
+        <div class="form-panel"><p class="eyebrow">Products with no confirmed SKU of yours</p><p class="supplier-figure" data-demand-no-sku>{{ d.no_confirmed_sku|length }}</p></div>
+    </div>
+</section>
+
+{% if d.possible_gaps %}
+<section class="form-panel delivery-alert" data-demand-gaps="{{ d.possible_gaps|length }}">
+    <h2>Possible assortment gaps</h2>
+    <p class="muted-copy">Asked for in two or more requests and returned without a price each time. Worth a look: you may not stock it, or it may go by another SKU.</p>
+    <ul>{% for r in d.possible_gaps %}<li><strong>{{ r.name }}</strong> ({{ r.unit }}) — in {{ r.requests }} requests, not priced {{ r.not_priced }} time{{ "s" if r.not_priced != 1 }}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+{% if d.categories %}
+<section class="form-panel">
+    <h2>Requested materials</h2>
+    {% for cat in d.categories %}
+    <h3 data-spaced>{{ cat.name }}</h3>
+    <div style="overflow-x: auto;"><table class="data-table" data-demand-category="{{ cat.name }}">
+        <thead><tr><th>Product</th><th>Unit</th><th>Requests</th><th>Contractors</th><th>Quantity requested</th><th>You priced</th><th>Ordered from you</th><th></th></tr></thead>
+        <tbody>
+        {% for r in cat.rows %}
+        <tr data-demand-row="{{ r.name }}">
+            <td>{{ r.name }}</td>
+            <td>{{ r.unit }}</td>
+            <td>{{ r.requests }}</td>
+            <td>{{ r.contractors }}</td>
+            <td>{{ r.quantity if r.quantity else "—" }}{% if r.without_quantity %}<div class="muted-copy">+{{ r.without_quantity }} without a final quantity</div>{% endif %}</td>
+            <td>{% if r.quoted or r.not_priced %}{{ r.quoted }} of {{ r.quoted + r.not_priced }}{% else %}—{% endif %}</td>
+            <td>{% if r.ordered_lines %}{{ r.ordered_quantity }} {{ r.unit }}{% else %}—{% endif %}</td>
+            <td>{% if r.recurring %}<span class="demand-flag">Recurring</span>{% endif %}{% if not r.confirmed_sku %}<span class="demand-flag">No confirmed SKU</span>{% endif %}{% if r.possible_gap %}<span class="demand-flag is-gap">Possible gap</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% endfor %}
+</section>
+{% endif %}
+
+{% if d.concrete %}
+<section class="form-panel">
+    <h2>Concrete</h2>
+    <div style="overflow-x: auto;"><table class="data-table" data-demand-concrete="true">
+        <thead><tr><th>Mix</th><th>Requests</th><th>Contractors</th><th>Volume requested</th><th>You quoted</th><th>Ordered from you</th></tr></thead>
+        <tbody>{% for c in d.concrete %}<tr><td>{{ c.label }}</td><td>{{ c.requests }}</td><td>{{ c.contractors }}</td><td>{{ c.volume }} m³</td><td>{{ c.quoted }}</td><td>{{ c.ordered }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+</section>
+{% endif %}
+
+{% if not d.categories and not d.concrete %}
+<section class="form-panel"><p class="muted-copy" data-demand-empty>No requests were sent to {{ brand_for(supplier).name }} in this period.</p></section>
+{% endif %}
+
+<section class="form-panel">
+    <h2>How this is counted</h2>
+    <ul class="muted-copy">
+        <li>Only requests contractors sent to {{ brand_for(supplier).name }}. Withdrawn requests are left out, and a request replaced by a newer one counts once.</li>
+        <li>Contractors are counted, never named here; no project, address or customer is shown, and nothing sent to any other supplier.</li>
+        <li>"You priced" counts the times you returned a SKU and price for the product. "Ordered from you" is what contractors ordered through CalibraytAI. Neither shows whether a contractor bought it elsewhere.</li>
+        <li>"No confirmed SKU" means CalibraytAI has no contractor-recorded match between this product and one of your SKUs yet.</li>
+    </ul>
+</section>
+{% endblock %}

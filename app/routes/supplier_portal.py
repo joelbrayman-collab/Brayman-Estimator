@@ -95,9 +95,11 @@ def inbox(supplier_id):
     orders = supplier_orders(supplier.id)
     from app.services.supplier_hub import pending_change
 
+    from app.services.supplier_insights import attention
+
     changes_waiting = [c for c in (pending_change(o) for o in orders) if c and c.requested_by_side == "CONTRACTOR"]
     return render_template("supplier/inbox.html", supplier=supplier, areas=_areas(), shares=shares, orders=orders,
-                           changes_waiting=changes_waiting,
+                           changes_waiting=changes_waiting, attention=attention(supplier.id),
                            orders_by_share={o.share_id: o for o in orders})
 
 
@@ -112,8 +114,11 @@ def request_detail(supplier_id, share_id):
     from app.models.supplier_portal import CHANGE_REASONS
     from app.services.supplier_hub import change_history, current_schedule, pending_change
 
+    from app.services.supplier_insights import remembered_skus
+
     order = purchase_order_for(share)
     return render_template("supplier/request.html", supplier=supplier, areas=_areas(), share=share,
+                           remembered=remembered_skus(share),
                            order=order, events=share_events(share), reasons=CHANGE_REASONS,
                            schedule=current_schedule(order) if order else None,
                            pending=pending_change(order) if order else None,
@@ -168,8 +173,23 @@ def confirm(supplier_id, order_id):
 
 @supplier_portal_bp.route("/<int:supplier_id>/dashboard")
 def supplier_dashboard(supplier_id):
+    from app.services.supplier_insights import PERIODS, attention, period_figures, resolve_period
+
     supplier = _supplier(supplier_id)
-    return render_template("supplier/dashboard.html", supplier=supplier, areas=_areas(), figures=dashboard(supplier.id))
+    period = resolve_period(request.args.get("period"), request.args.get("from"), request.args.get("to"))
+    return render_template("supplier/dashboard.html", supplier=supplier, areas=_areas(), figures=dashboard(supplier.id),
+                           period=period, periods=PERIODS, pf=period_figures(supplier.id, period),
+                           attention=attention(supplier.id))
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/demand")
+def supplier_demand(supplier_id):
+    from app.services.supplier_insights import PERIODS, material_demand, resolve_period
+
+    supplier = _supplier(supplier_id)
+    period = resolve_period(request.args.get("period"), request.args.get("from"), request.args.get("to"))
+    return render_template("supplier/demand.html", supplier=supplier, areas=_areas(), period=period,
+                           periods=PERIODS, demand=material_demand(supplier.id, period))
 
 
 @supplier_portal_bp.context_processor

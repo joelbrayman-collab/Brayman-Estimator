@@ -4,8 +4,30 @@
 {% set f = figures %}
 <div class="page-heading"><div><p class="eyebrow">{{ brand_for(supplier).name }}</p><h1>Dashboard</h1>
 <p class="muted-copy">Measured figures for {{ brand_for(supplier).name }} only. Nothing here is estimated.</p></div>
-<div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
-<section class="supplier-tiles" data-supplier-dashboard="{{ supplier.id }}">
+<div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_demand', supplier_id=supplier.id, period=period.key, **({'from': period.start.isoformat(), 'to': period.end.isoformat()} if period.key == 'custom' else {})) }}">Material demand</a></div></div>
+
+{% include "supplier/_attention.html" %}
+
+<section class="form-panel" data-period-figures="{{ period.key }}">
+    <h2>{{ period.label }}</h2>
+    {% include "supplier/_period_form.html" %}
+    <div class="supplier-tiles" data-spaced>
+        <div class="form-panel" data-figure="quotes-received"><p class="eyebrow">Quote requests received</p><p class="supplier-figure">{{ pf.quotes_received }}</p></div>
+        <div class="form-panel" data-figure="quotes-returned"><p class="eyebrow">Quotes returned</p><p class="supplier-figure">{{ pf.quotes_returned }}</p></div>
+        <div class="form-panel" data-figure="conversion"><p class="eyebrow">Quote-to-order conversion</p>
+            <p class="supplier-figure">{% if pf.conversion_percent is not none %}{{ pf.conversion_percent }}%{% else %}{{ pf.quotes_ordered }} of {{ pf.quotes_returned }}{% endif %}</p>
+            <p class="muted-copy supplier-figure-note">{% if pf.quotes_returned %}{{ pf.quotes_ordered }} of the {{ pf.quotes_returned }} quote{{ "s" if pf.quotes_returned != 1 }} returned in this period {{ "have" if pf.quotes_ordered != 1 else "has" }} become an order so far.{% if pf.conversion_percent is none %} A percentage shows from {{ pf.conversion_percent_min }} returned quotes.{% endif %}{% else %}No quotes returned in this period.{% endif %}</p></div>
+        <div class="form-panel" data-figure="orders-placed"><p class="eyebrow">Orders placed with you</p><p class="supplier-figure">{{ pf.orders_placed }}</p><p class="muted-copy supplier-figure-note">{{ pf.orders_confirmed }} confirmed by you in this period{% if pf.orders_with_problem %} · {{ pf.orders_with_problem }} with a problem reported{% endif %}.</p></div>
+        <div class="form-panel" data-figure="average-order"><p class="eyebrow">Average recorded order value</p><p class="supplier-figure">{{ "${:,.2f}".format(pf.average_order_value) if pf.average_order_value is not none else "—" }}</p><p class="muted-copy supplier-figure-note">{% if pf.orders_valued %}{{ "${:,.2f}".format(pf.ordered_value) }} across {{ pf.orders_valued }} order{{ "s" if pf.orders_valued != 1 }}, before tax. Purchase orders, not invoiced sales.{% else %}No orders placed in this period.{% endif %}</p></div>
+        <div class="form-panel" data-figure="effort"><p class="eyebrow">Measured quotation effort</p><p class="supplier-figure">{{ ("%.0f min"|format(pf.average_minutes)) if pf.average_minutes is not none else "—" }}</p><p class="muted-copy supplier-figure-note">{% if pf.quotes_with_minutes %}Average per quote from {{ pf.quotes_with_minutes }} quote{{ "s" if pf.quotes_with_minutes != 1 }} where your staff entered the time; {{ pf.hours_recorded }} h recorded in total. Self-reported.{% else %}Your staff can enter the minutes a quote took when returning it.{% endif %}</p></div>
+        <div class="form-panel" data-figure="upcoming"><p class="eyebrow">Deliveries in the next 14 days</p><p class="supplier-figure">{{ pf.upcoming_deliveries }}</p></div>
+    </div>
+    <p class="muted-copy" data-spaced>Orders placed are purchase orders contractors sent through CalibraytAI. Whether an order was delivered, invoiced or paid is in your own store system, not here.</p>
+</section>
+
+<section class="form-panel">
+    <h2>All-time record</h2>
+<div class="supplier-tiles" data-supplier-dashboard="{{ supplier.id }}">
     <div class="form-panel"><p class="eyebrow">Requests received</p><p class="supplier-figure">{{ f.requests_received }}</p></div>
     <div class="form-panel"><p class="eyebrow">Quotes returned</p><p class="supplier-figure">{{ f.quotes_returned }}</p></div>
     <div class="form-panel"><p class="eyebrow">Quote lines recorded by contractors</p><p class="supplier-figure">{{ f.lines_recorded }}</p></div>
@@ -15,6 +37,7 @@
     <div class="form-panel"><p class="eyebrow">Ordered value (before tax)</p><p class="supplier-figure">{{ "${:,.2f}".format(f.ordered_value) }}</p></div>
     <div class="form-panel"><p class="eyebrow">Minutes per quote (self-reported)</p><p class="supplier-figure">{{ "%.0f"|format(f.average_minutes) if f.average_minutes is not none else "—" }}</p><p class="muted-copy">From {{ f.quotes_with_minutes }} quote{{ "s" if f.quotes_with_minutes != 1 }}.</p></div>
     <div class="form-panel"><p class="eyebrow">Lines per request</p><p class="supplier-figure">{{ "%.1f"|format(f.lines_per_request) if f.lines_per_request is not none else "—" }}</p></div>
+</div>
 </section>
 <section class="form-panel">
     <h2>Contractors who sent requests</h2>

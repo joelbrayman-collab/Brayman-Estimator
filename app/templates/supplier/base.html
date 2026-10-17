@@ -12,18 +12,33 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="supplier-hub" data-workspace="supplier">
-    <header class="supplier-header">
+    {% set area = supplier if supplier is defined and supplier else None %}
+    {% set brand = brand_for(area) if area else None %}
+    <header class="supplier-header{% if brand %} is-branded{% endif %}"{% if brand and brand.color %} style="--supplier-brand: {{ brand.color }}; --supplier-brand-text: {{ brand.text }};"{% endif %} data-supplier-brand="{{ area.id if area else '' }}">
         <div class="supplier-header-inner">
+            {% if brand %}
+            <a class="supplier-brand" href="{{ url_for('supplier_portal.inbox', supplier_id=area.id) }}">
+                {% if brand.logo_url %}<img class="supplier-brand-logo" src="{{ brand.logo_url }}" alt="{{ brand.name }}">{% endif %}
+                {% if brand.logo_url %}
+                <span class="supplier-location">{{ brand.location or brand.name }}<small>Supplier Hub</small></span>
+                {% else %}
+                <span>{{ brand.name }}{% if brand.location and brand.location not in brand.name %} — {{ brand.location }}{% endif %}<small>Supplier Hub</small></span>
+                {% endif %}
+            </a>
+            {% else %}
             <a class="supplier-brand" href="{{ url_for('supplier_portal.home') }}">
                 <img src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}" alt="CalibraytAI" width="110" height="40">
                 <span>Supplier Hub</span>
             </a>
+            {% endif %}
             {% if current_user.is_authenticated %}
+            {% if (areas or [])|length > 1 %}
             <nav class="supplier-nav" aria-label="Supplier areas">
-                {% for area in areas or [] %}
-                <a href="{{ url_for('supplier_portal.inbox', supplier_id=area.id) }}" {% if supplier is defined and supplier and supplier.id == area.id %}aria-current="page"{% endif %}>{{ area.legal_name }}</a>
+                {% for a in areas %}
+                <a href="{{ url_for('supplier_portal.inbox', supplier_id=a.id) }}" {% if area and area.id == a.id %}aria-current="page"{% endif %}>{{ brand_for(a).name }}</a>
                 {% endfor %}
             </nav>
+            {% endif %}
             <form method="post" action="{{ url_for('supplier_portal.logout') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <span class="supplier-user">{{ current_user.display_name }}</span>
@@ -40,5 +55,6 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+    <footer class="supplier-footer">Powered by <img src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}" alt="CalibraytAI" width="76" height="28"></footer>
 </body>
 </html>

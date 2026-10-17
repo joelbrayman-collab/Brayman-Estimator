@@ -4,7 +4,7 @@ Revision ID: y2b3c4d5e6f7
 Revises: x1a2b3c4d5e6
 Create Date: 2026-10-17
 
-Joel, 17 Oct 2026 (ADR-047). Five new tables; no existing table or row changes.
+Joel, 17 Oct 2026 (ADR-047). Six new tables; no existing table or row changes.
 
 supplier_user_memberships: User ↔ Supplier, never a contractor membership.
 concrete_requests: concrete is its own request, outside all other requests.
@@ -14,6 +14,7 @@ contractor's company and contact, a project reference).
 supplier_purchase_orders: the contractor's order against a returned quote and
 the supplier's confirmation.
 supplier_request_events: who did what and when.
+supplier_brand_profiles: a supplier's own logo, colour and display name for its area.
 
 Downgrade refuses while any row exists; the rollback then is the pre-migration backup.
 """
@@ -28,6 +29,7 @@ branch_labels = None
 depends_on = None
 
 _TABLES = (
+    "supplier_brand_profiles",
     "supplier_request_events",
     "supplier_purchase_orders",
     "supplier_request_shares",
@@ -148,6 +150,20 @@ def upgrade():
         sa.Column("detail", sa.Text(), nullable=True),
     )
     op.create_index("ix_supplier_request_events_share_id", "supplier_request_events", ["share_id"])
+
+    op.create_table(
+        "supplier_brand_profiles",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("supplier_id", sa.Integer(), sa.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=False, unique=True),
+        sa.Column("display_name", sa.String(length=160), nullable=True),
+        sa.Column("primary_color", sa.String(length=7), nullable=True),
+        sa.Column("logo_bytes", sa.LargeBinary(), nullable=True),
+        sa.Column("logo_mime", sa.String(length=40), nullable=True),
+        sa.Column("logo_sha256", sa.String(length=64), nullable=True),
+        sa.Column("updated_by_name", sa.String(length=160), nullable=False),
+        sa.Column("updated_by_organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+    )
 
 
 def downgrade():

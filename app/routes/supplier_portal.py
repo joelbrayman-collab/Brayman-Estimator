@@ -6,7 +6,7 @@ a supplier the signed-in person belongs to; anything else is Not found.
 
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
 from app.models.supplier_portal import KIND_CONCRETE, KIND_MATERIAL
@@ -29,6 +29,8 @@ from app.services.supplier_hub import (
     supplier_orders,
     supplier_share,
     supplier_shares,
+    readable_text_color,
+    supplier_brand,
 )
 
 supplier_portal_bp = Blueprint("supplier_portal", __name__, url_prefix="/supplier")
@@ -157,3 +159,34 @@ def confirm(supplier_id, order_id):
 def supplier_dashboard(supplier_id):
     supplier = _supplier(supplier_id)
     return render_template("supplier/dashboard.html", supplier=supplier, areas=_areas(), figures=dashboard(supplier.id))
+
+
+@supplier_portal_bp.context_processor
+def _brand_helpers():
+    def brand_for(supplier):
+        if supplier is None:
+            return None
+        from app.models.supplier_catalogue import SupplierLocation
+
+        brand = supplier_brand(supplier.id)
+        location = (SupplierLocation.query.filter_by(supplier_id=supplier.id, status="ACTIVE")
+                    .order_by(SupplierLocation.id.asc()).first())
+        return {
+            "location": location.display_name if location else "",
+            "name": (brand.display_name if brand and brand.display_name else supplier.legal_name),
+            "color": brand.primary_color if brand and brand.primary_color else None,
+            "text": readable_text_color(brand.primary_color if brand else None),
+            "logo_url": url_for("supplier_portal.logo", supplier_id=supplier.id, v=brand.logo_sha256[:12])
+            if brand and brand.logo_bytes else None,
+        }
+    return {"brand_for": brand_for}
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/logo")
+def logo(supplier_id):
+    supplier = _supplier(supplier_id)
+    brand = supplier_brand(supplier.id)
+    if brand is None or not brand.logo_bytes:
+        abort(404)
+    return Response(brand.logo_bytes, mimetype=brand.logo_mime,
+                    headers={"Cache-Control": "private, max-age=86400", "X-Content-Type-Options": "nosniff"})

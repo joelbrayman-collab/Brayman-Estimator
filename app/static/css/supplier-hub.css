@@ -19,3 +19,14 @@
 .supplier-main input[type="text"], .supplier-main input[type="date"], .supplier-main input[type="number"] { min-height: 40px; }
 @media (max-width: 640px) { .supplier-header-inner { justify-content: flex-start; } }
 .supplier-tiles .form-panel, .supplier-areas .form-panel { margin: 0; }
+
+/* Supplier branding: the area shows the supplier's own logo and colour (Joel, 17 Oct 2026). */
+.supplier-header.is-branded { background: var(--supplier-brand, #1f2a33); color: var(--supplier-brand-text, #fff); }
+.supplier-header.is-branded .supplier-brand, .supplier-header.is-branded .supplier-user,
+.supplier-header.is-branded .supplier-nav a { color: var(--supplier-brand-text, #fff); }
+.supplier-brand span { display: flex; flex-direction: column; line-height: 1.15; }
+.supplier-brand small { font-weight: 400; font-size: 0.78rem; opacity: 0.85; }
+.supplier-brand .supplier-brand-logo { height: 40px; max-width: 160px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px 6px; }
+.supplier-footer { max-width: 1180px; margin: 0 auto; padding: 8px 16px 28px; color: #6b6b6b; font-size: 0.82rem; display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.supplier-footer img { height: 22px; width: auto; }
+.supplier-brand .supplier-location { font-size: 1.15rem; font-weight: 600; }

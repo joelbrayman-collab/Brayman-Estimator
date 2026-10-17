@@ -1,9 +1,9 @@
 {% extends "supplier/base.html" %}
-{% block title %}{{ supplier.legal_name }}{% endblock %}
+{% block title %}{{ brand_for(supplier).name }}{% endblock %}
 {% block content %}
 <div class="page-heading">
-    <div><p class="eyebrow">Supplier Hub</p><h1>{{ supplier.legal_name }}</h1>
-    <p class="muted-copy">Requests contractors sent to {{ supplier.legal_name }}. You see only what each contractor chose to send.</p></div>
+    <div><p class="eyebrow">Supplier Hub</p><h1>{{ brand_for(supplier).name }}</h1>
+    <p class="muted-copy">Requests contractors sent to {{ brand_for(supplier).name }}. You see only what each contractor chose to send.</p></div>
     <div><a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a></div>
 </div>
 <section class="form-panel" data-supplier-inbox="{{ supplier.id }}">

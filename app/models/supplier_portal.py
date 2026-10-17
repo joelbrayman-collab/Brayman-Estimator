@@ -175,3 +175,20 @@ class SupplierRequestEvent(db.Model):
     actor_name = db.Column(db.String(160), nullable=False)
     at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     detail = db.Column(db.Text, nullable=True)
+
+
+class SupplierBrandProfile(db.Model):
+    """A supplier's own branding for its Supplier Hub area (Joel, 17 Oct 2026). Logo supplied by the supplier."""
+
+    __tablename__ = "supplier_brand_profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=False, unique=True)
+    display_name = db.Column(db.String(160), nullable=True)
+    primary_color = db.Column(db.String(7), nullable=True)
+    logo_bytes = db.Column(db.LargeBinary, nullable=True)
+    logo_mime = db.Column(db.String(40), nullable=True)
+    logo_sha256 = db.Column(db.String(64), nullable=True)
+    updated_by_name = db.Column(db.String(160), nullable=False)
+    updated_by_organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

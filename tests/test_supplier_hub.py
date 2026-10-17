@@ -250,3 +250,44 @@ def test_the_supplier_cannot_return_a_closed_request_or_change_identity(app, cli
     assert share.status == "RETURNED"  # the forged identity fields were ignored
     again = darcy.post(f"/supplier/{account.supplier_id}/requests/{share.id}/quote", data=values, follow_redirects=True)
     assert b"closed or already returned" in again.data
+
+
+PNG = (b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89"
+       b"\x00\x00\x00\rIDATx\x9cc\xf8\x0f\x00\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82")
+
+
+def test_each_supplier_area_carries_that_suppliers_own_branding(app, client):
+    from io import BytesIO
+
+    _project, _other, bmr = _setup()
+    tomlinson = _tomlinson()
+    _give_sign_in(client, bmr)
+    _give_sign_in(client, tomlinson)
+    refused = client.post(f"/suppliers/{bmr.supplier_id}/branding", data={"primary_color": "blue"}, follow_redirects=True)
+    assert b"The colour must look like" in refused.data
+    bad = client.post(f"/suppliers/{bmr.supplier_id}/branding", data={"logo": (BytesIO(b"<svg onload=alert(1)>"), "x.svg")},
+                      content_type="multipart/form-data", follow_redirects=True)
+    assert b"must be a PNG, JPEG or WebP" in bad.data
+    saved = client.post(f"/suppliers/{bmr.supplier_id}/branding",
+                        data={"display_name": "BMR Winchester", "primary_color": "#e2231a", "logo": (BytesIO(PNG), "bmr.png")},
+                        content_type="multipart/form-data", follow_redirects=True)
+    assert b"Branding saved" in saved.data
+    darcy = _supplier_client(app)
+    page = darcy.get(f"/supplier/{bmr.supplier_id}/").get_data(as_text=True)
+    assert "--supplier-brand: #E2231A" in page and f"/supplier/{bmr.supplier_id}/logo" in page
+    assert 'class="supplier-location">Winchester<small>' in page  # the store location beside the supplier's logo
+    assert "Powered by" in page
+    logo = darcy.get(f"/supplier/{bmr.supplier_id}/logo")
+    assert logo.data == PNG and logo.mimetype == "image/png" and logo.headers["X-Content-Type-Options"] == "nosniff"
+    other = darcy.get(f"/supplier/{tomlinson.supplier_id}/").get_data(as_text=True)
+    assert "#E2231A" not in other and "Tomlinson concrete (synthetic)<small>" in other  # its own area, not BMR's
+    _give_sign_in(client, _third(), name="Third Store", email="third@example.invalid")
+    third = _supplier_client(app, email="third@example.invalid")
+    assert third.get(f"/supplier/{bmr.supplier_id}/logo").status_code == 404
+
+
+def _third():
+    supplier = create_supplier(code="TEST-THIRD", legal_name="Third supplier (synthetic)", demo_synthetic=True)
+    location = create_supplier_location(supplier_id=supplier.id, code="MAIN", display_name="Third", demo_synthetic=True)
+    return create_contractor_supplier_account(organization_id=DEFAULT_ORGANIZATION_ID, supplier_id=supplier.id,
+                                              supplier_location_id=location.id, demo_synthetic=True)

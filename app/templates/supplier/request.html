@@ -3,7 +3,7 @@
 {% block content %}
 {% set s = share.shared_json %}
 <div class="page-heading">
-    <div><p class="eyebrow">{{ supplier.legal_name }} · {{ "Concrete request" if share.request_kind == kind_concrete else "Material request" }}</p>
+    <div><p class="eyebrow">{{ brand_for(supplier).name }} · {{ "Concrete request" if share.request_kind == kind_concrete else "Material request" }}</p>
     <h1>{{ share.number }}</h1>
     <p class="muted-copy">From {{ s.company }} — {{ s.contact_name }}{% if s.contact_email %} ({{ s.contact_email }}){% endif %} · {{ s.project_reference }} · Delivery town {{ s.delivery_town }}{% if s.needed_by %} · Needed by {{ s.needed_by }}{% endif %}</p></div>
     <div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div>

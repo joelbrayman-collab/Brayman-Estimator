@@ -6,7 +6,7 @@ supplier, sends concrete as its own request, and places orders on returned quote
 
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from app import db
@@ -34,6 +34,9 @@ from app.services.supplier_hub import (
     supplier_has_sign_in,
     withdraw_share,
     _date,
+    save_supplier_brand,
+    supplier_brand,
+    LOGO_MAX_BYTES,
 )
 
 supplier_office_bp = Blueprint("supplier_office", __name__)
@@ -64,7 +67,12 @@ def suppliers():
     for account in accounts:
         members[account.supplier_id] = (SupplierUserMembership.query.filter_by(supplier_id=account.supplier_id)
                                         .order_by(SupplierUserMembership.id.asc()).all())
-    return render_template("suppliers/index.html", accounts=accounts, members=members)
+    brands = {account.supplier_id: supplier_brand(account.supplier_id) for account in accounts}
+    from app.services.supplier_hub import readable_text_color
+
+    brand_text = {sid: readable_text_color(b.primary_color if b else None) for sid, b in brands.items()}
+    return render_template("suppliers/index.html", accounts=accounts, members=members, brands=brands,
+                           brand_text=brand_text)
 
 
 @supplier_office_bp.route("/suppliers", methods=["POST"])
@@ -227,3 +235,39 @@ def order(project_id, share_id):
     else:
         flash(f"Purchase order {po.number} sent to {share.supplier.legal_name}. It is agreed when they confirm it.", "success")
     return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")
+
+
+def _own_supplier(supplier_id):
+    org_id = get_current_organization_id()
+    if ContractorSupplierAccount.query.filter_by(organization_id=org_id, supplier_id=supplier_id).first() is None:
+        abort(404)
+    return org_id, db.session.get(Supplier, supplier_id)
+
+
+@supplier_office_bp.route("/suppliers/<int:supplier_id>/branding", methods=["POST"])
+def save_branding(supplier_id):
+    org_id, supplier = _own_supplier(supplier_id)
+    upload = request.files.get("logo")
+    data = None
+    if upload is not None and upload.filename:
+        data = upload.read(LOGO_MAX_BYTES + 1)
+    try:
+        save_supplier_brand(organization_id=org_id, supplier=supplier, actor_name=_actor(),
+                            display_name=request.form.get("display_name", ""),
+                            primary_color=request.form.get("primary_color", ""),
+                            logo=data, remove_logo=request.form.get("remove_logo") == "yes")
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Branding saved. {supplier.legal_name}'s Supplier Hub area now shows it.", "success")
+    return redirect(url_for("supplier_office.suppliers") + f"#supplier-{supplier.id}")
+
+
+@supplier_office_bp.route("/suppliers/<int:supplier_id>/logo")
+def office_logo(supplier_id):
+    _org, supplier = _own_supplier(supplier_id)
+    brand = supplier_brand(supplier.id)
+    if brand is None or not brand.logo_bytes:
+        abort(404)
+    return Response(brand.logo_bytes, mimetype=brand.logo_mime,
+                    headers={"Cache-Control": "private, max-age=300", "X-Content-Type-Options": "nosniff"})

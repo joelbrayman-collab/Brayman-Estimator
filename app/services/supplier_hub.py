@@ -764,3 +764,68 @@ def dashboard(supplier_id: int) -> dict:
         "lines_per_request": (lines_requested / len(visible)) if visible else None,
         "contractors": sorted(contractors.items()),
     }
+
+
+# ------------------------------------------------------------------ supplier branding (Joel, 17 Oct 2026)
+
+LOGO_MAX_BYTES = 2 * 1024 * 1024
+_LOGO_SIGNATURES = (
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+    (b"\xff\xd8\xff", "image/jpeg"),
+)
+_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def supplier_brand(supplier_id: int):
+    from app.models.supplier_portal import SupplierBrandProfile
+
+    return SupplierBrandProfile.query.filter_by(supplier_id=supplier_id).first()
+
+
+def _logo_mime(data: bytes) -> str:
+    for signature, mime in _LOGO_SIGNATURES:
+        if data.startswith(signature):
+            return mime
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    raise SupplierHubError("The logo must be a PNG, JPEG or WebP image.")
+
+
+def save_supplier_brand(*, organization_id: str, supplier: Supplier, actor_name: str, display_name: str = "",
+                        primary_color: str = "", logo: Optional[bytes] = None, remove_logo: bool = False):
+    import hashlib
+
+    from app.models.supplier_portal import SupplierBrandProfile
+
+    if ContractorSupplierAccount.query.filter_by(organization_id=organization_id, supplier_id=supplier.id).first() is None:
+        raise SupplierHubError("This supplier has no account with your company.")
+    color = (primary_color or "").strip()
+    if color and not _COLOR_RE.match(color):
+        raise SupplierHubError("The colour must look like #1F4E8C.")
+    brand = supplier_brand(supplier.id) or SupplierBrandProfile(supplier_id=supplier.id)
+    brand.display_name = (display_name or "").strip()[:160] or None
+    brand.primary_color = color.upper() or None
+    if logo:
+        if len(logo) > LOGO_MAX_BYTES:
+            raise SupplierHubError("The logo is larger than 2 MB.")
+        brand.logo_mime = _logo_mime(logo)
+        brand.logo_bytes = logo
+        brand.logo_sha256 = hashlib.sha256(logo).hexdigest()
+    elif remove_logo:
+        brand.logo_bytes = brand.logo_mime = brand.logo_sha256 = None
+    brand.updated_by_name = (actor_name or "Office")[:160]
+    brand.updated_by_organization_id = organization_id
+    brand.updated_at = datetime.utcnow()
+    db.session.add(brand)
+    db.session.commit()
+    return brand
+
+
+def readable_text_color(hex_color: Optional[str]) -> str:
+    """Dark or white text on the brand colour, whichever reads better (WCAG relative luminance)."""
+    if not hex_color or not _COLOR_RE.match(hex_color):
+        return "#ffffff"
+    channels = [int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    lin = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    luminance = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+    return "#111111" if luminance > 0.4 else "#ffffff"

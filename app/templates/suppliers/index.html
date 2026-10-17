@@ -8,7 +8,7 @@
 <section class="form-panel" data-supplier-accounts="true">
     <h2>Supplier accounts</h2>
     {% for account in accounts %}
-    <article class="supplier-account" data-supplier="{{ account.supplier.legal_name }}" style="margin-bottom: 18px;">
+    <article class="supplier-account" id="supplier-{{ account.supplier_id }}" data-supplier="{{ account.supplier.legal_name }}" style="margin-bottom: 18px;">
         <h3>{{ account.supplier.legal_name }} <span class="muted-copy">— {{ account.supplier_location.display_name }} · {{ account.status|lower }}</span></h3>
         {% set people = members.get(account.supplier_id) or [] %}
         {% if people %}
@@ -27,6 +27,22 @@
         {% else %}
         <p class="muted-copy">No one from {{ account.supplier.legal_name }} can sign in yet.</p>
         {% endif %}
+        {% set brand = brands.get(account.supplier_id) %}
+        <details class="supplier-branding" data-supplier-branding="{{ account.supplier_id }}">
+            <summary>Branding in the Supplier Hub{% if brand and (brand.logo_bytes or brand.primary_color) %} — set{% endif %}</summary>
+            <div style="display: flex; gap: 14px; align-items: center; margin: 10px 0; padding: 10px 14px; border-radius: 8px; background: {{ brand.primary_color if brand and brand.primary_color else '#1f2a33' }};">
+                {% if brand and brand.logo_bytes %}<img src="{{ url_for('supplier_office.office_logo', supplier_id=account.supplier_id) }}" alt="" style="height: 40px; max-width: 160px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px 6px;">{% endif %}
+                <strong style="color: {{ brand_text.get(account.supplier_id, '#fff') }};">{{ brand.display_name if brand and brand.display_name else account.supplier.legal_name }}</strong>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_office.save_branding', supplier_id=account.supplier_id) }}" class="form-grid">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Name shown <input type="text" name="display_name" value="{{ brand.display_name if brand and brand.display_name else '' }}" placeholder="{{ account.supplier.legal_name }}"></label>
+                <label>Main colour <input type="text" name="primary_color" value="{{ brand.primary_color if brand and brand.primary_color else '' }}" placeholder="#1F4E8C"></label>
+                <label>Logo (PNG, JPEG or WebP, up to 2 MB; use the supplier's own file) <input type="file" name="logo" accept="image/png,image/jpeg,image/webp"></label>
+                {% if brand and brand.logo_bytes %}<label class="checkbox-label"><input type="checkbox" name="remove_logo" value="yes"> Remove the logo</label>{% endif %}
+                <div class="form-actions"><button type="submit" class="button-secondary">Save branding</button></div>
+            </form>
+        </details>
         <form method="post" action="{{ url_for('supplier_office.add_user', supplier_id=account.supplier_id) }}" class="form-grid" data-add-supplier-user="{{ account.supplier_id }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label>Name <input type="text" name="display_name" required></label>

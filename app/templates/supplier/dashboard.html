@@ -1,9 +1,9 @@
 {% extends "supplier/base.html" %}
-{% block title %}Dashboard — {{ supplier.legal_name }}{% endblock %}
+{% block title %}Dashboard — {{ brand_for(supplier).name }}{% endblock %}
 {% block content %}
 {% set f = figures %}
-<div class="page-heading"><div><p class="eyebrow">{{ supplier.legal_name }}</p><h1>Dashboard</h1>
-<p class="muted-copy">Measured figures for {{ supplier.legal_name }} only. Nothing here is estimated.</p></div>
+<div class="page-heading"><div><p class="eyebrow">{{ brand_for(supplier).name }}</p><h1>Dashboard</h1>
+<p class="muted-copy">Measured figures for {{ brand_for(supplier).name }} only. Nothing here is estimated.</p></div>
 <div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
 <section class="supplier-tiles" data-supplier-dashboard="{{ supplier.id }}">
     <div class="form-panel"><p class="eyebrow">Requests received</p><p class="supplier-figure">{{ f.requests_received }}</p></div>
@@ -19,6 +19,6 @@
 <section class="form-panel">
     <h2>Contractors who sent requests</h2>
     {% if f.contractors %}<ul>{% for name, count in f.contractors %}<li>{{ name }} — {{ count }} request{{ "s" if count != 1 }}</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None yet.</p>{% endif %}
-    <p class="muted-copy">Not shown here: contractor margins, labour rates or internal costs, other suppliers' prices, and projects not sent to {{ supplier.legal_name }}.</p>
+    <p class="muted-copy">Not shown here: contractor margins, labour rates or internal costs, other suppliers' prices, and projects not sent to {{ brand_for(supplier).name }}.</p>
 </section>
 {% endblock %}

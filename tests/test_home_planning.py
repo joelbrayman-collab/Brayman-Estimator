@@ -112,7 +112,11 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert contractor_copy.HOME_COMING in html
     assert "Purchase Orders" not in html
     assert "Job Costing" not in html
-    assert "AI Assistant" not in html
+    # The old placeholder "AI Assistant" item stays gone; the approved Cal identity
+    # ("Your CalibraytAI Assistant", Cal Phase 1) is the only assistant wording allowed.
+    from app.presentation import cal_copy
+
+    assert "AI Assistant" not in html.replace(cal_copy.CAL_IDENTITY, "").replace(cal_copy.CAL_OPEN_LABEL, "")
     assert 'href="/decision-tools/employment-vs-entrepreneurship"' not in html
     assert 'href="/calculators/employment-vs-entrepreneurship"' in html
     assert 'href="/assemblies/"' in html

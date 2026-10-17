@@ -4,7 +4,7 @@ Revision ID: y2b3c4d5e6f7
 Revises: x1a2b3c4d5e6
 Create Date: 2026-10-17
 
-Joel, 17 Oct 2026 (ADR-047). Six new tables; no existing table or row changes.
+Joel, 17 Oct 2026 (ADR-047). Ten new tables; no existing table or row changes.
 
 supplier_user_memberships: User ↔ Supplier, never a contractor membership.
 concrete_requests: concrete is its own request, outside all other requests.
@@ -15,6 +15,10 @@ supplier_purchase_orders: the contractor's order against a returned quote and
 the supplier's confirmation.
 supplier_request_events: who did what and when.
 supplier_brand_profiles: a supplier's own logo, colour and display name for its area.
+supplier_delivery_changes: a proposed delivery change and the other side's answer.
+notification_contacts: a person's mobile number and recorded consent to texts.
+text_messages: every text sent (or not sent) and why.
+supplier_notification_numbers: an extra number a supplier adds for texts (a staff member).
 
 Downgrade refuses while any row exists; the rollback then is the pre-migration backup.
 """
@@ -29,6 +33,10 @@ branch_labels = None
 depends_on = None
 
 _TABLES = (
+    "supplier_notification_numbers",
+    "text_messages",
+    "notification_contacts",
+    "supplier_delivery_changes",
     "supplier_brand_profiles",
     "supplier_request_events",
     "supplier_purchase_orders",
@@ -121,6 +129,9 @@ def upgrade():
         sa.Column("lines_json", sa.JSON(), nullable=False),
         sa.Column("total", sa.Numeric(14, 2), nullable=False),
         sa.Column("delivery_date", sa.Date(), nullable=True),
+        sa.Column("delivery_window", sa.String(length=60), nullable=True),
+        sa.Column("scheduled_date", sa.Date(), nullable=True),
+        sa.Column("scheduled_window", sa.String(length=60), nullable=True),
         sa.Column("delivery_address", sa.String(length=300), nullable=False),
         sa.Column("site_contact", sa.String(length=160), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
@@ -164,6 +175,67 @@ def upgrade():
         sa.Column("updated_by_organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
     )
+
+    op.create_table(
+        "supplier_delivery_changes",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("order_id", sa.Integer(), sa.ForeignKey("supplier_purchase_orders.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("requested_by_side", sa.String(length=20), nullable=False),
+        sa.Column("requested_by_name", sa.String(length=160), nullable=False),
+        sa.Column("requested_at", sa.DateTime(), nullable=False),
+        sa.Column("previous_date", sa.Date(), nullable=True),
+        sa.Column("previous_window", sa.String(length=60), nullable=True),
+        sa.Column("new_date", sa.Date(), nullable=False),
+        sa.Column("new_window", sa.String(length=60), nullable=True),
+        sa.Column("reason", sa.String(length=40), nullable=False),
+        sa.Column("note", sa.Text(), nullable=True),
+        sa.Column("status", sa.String(length=20), nullable=False),
+        sa.Column("answered_by_name", sa.String(length=160), nullable=True),
+        sa.Column("answered_at", sa.DateTime(), nullable=True),
+        sa.Column("answer_note", sa.Text(), nullable=True),
+        sa.Column("counter_of_id", sa.Integer(), sa.ForeignKey("supplier_delivery_changes.id", ondelete="RESTRICT"), nullable=True),
+        sa.CheckConstraint("status IN ('PENDING', 'ACCEPTED', 'DECLINED', 'COUNTERED', 'WITHDRAWN')", name="ck_supplier_delivery_changes_status"),
+        sa.CheckConstraint("requested_by_side IN ('CONTRACTOR', 'SUPPLIER')", name="ck_supplier_delivery_changes_side"),
+    )
+    op.create_index("ix_supplier_delivery_changes_order_id", "supplier_delivery_changes", ["order_id"])
+
+    op.create_table(
+        "notification_contacts",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, unique=True),
+        sa.Column("mobile_phone", sa.String(length=20), nullable=True),
+        sa.Column("sms_opt_in", sa.Boolean(), nullable=False),
+        sa.Column("opted_in_at", sa.DateTime(), nullable=True),
+        sa.Column("opted_out_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+    )
+    op.create_table(
+        "text_messages",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
+        sa.Column("to_phone", sa.String(length=20), nullable=False),
+        sa.Column("body", sa.Text(), nullable=False),
+        sa.Column("status", sa.String(length=20), nullable=False),
+        sa.Column("provider", sa.String(length=20), nullable=False),
+        sa.Column("provider_message_id", sa.String(length=80), nullable=True),
+        sa.Column("error_code", sa.String(length=80), nullable=True),
+        sa.Column("related_type", sa.String(length=40), nullable=True),
+        sa.Column("related_id", sa.String(length=80), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_text_messages_user_id", "text_messages", ["user_id"])
+    op.create_table(
+        "supplier_notification_numbers",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("supplier_id", sa.Integer(), sa.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("name", sa.String(length=160), nullable=False),
+        sa.Column("mobile_phone", sa.String(length=20), nullable=False),
+        sa.Column("consent_confirmed_by_name", sa.String(length=160), nullable=False),
+        sa.Column("consent_confirmed_at", sa.DateTime(), nullable=False),
+        sa.Column("active", sa.Boolean(), nullable=False),
+        sa.Column("removed_at", sa.DateTime(), nullable=True),
+    )
+    op.create_index("ix_supplier_notification_numbers_supplier_id", "supplier_notification_numbers", ["supplier_id"])
 
 
 def downgrade():

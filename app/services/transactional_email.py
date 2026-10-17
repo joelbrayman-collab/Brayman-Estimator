@@ -28,6 +28,7 @@ from app.models.transactional_message import (
     STATUS_FAILED_CONFIG,
     STATUS_LOCAL_CAPTURED,
     STATUS_SKIPPED_ALLOWLIST,
+    TEMPLATE_DELIVERY_SCHEDULE,
     TEMPLATE_PASSWORD_RESET,
     TEMPLATE_PROPOSAL_INVITATION,
     TEMPLATE_SIGNING_COMPLETE,
@@ -131,6 +132,11 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
             "Your password will not change."
         )
         return subject, body
+    if template_id == TEMPLATE_DELIVERY_SCHEDULE:
+        subject = str(variables.get("subject") or "Delivery schedule update")
+        body = str(variables.get("body") or "")
+        url = str(variables.get("link") or "")
+        return subject, body + (f"\n\nOpen it: {url}\n" if url else "\n")
     if template_id == TEMPLATE_PROPOSAL_INVITATION:
         url = str(variables.get("invitation_url") or "")
         org = str(variables.get("organization_name") or "Brayman Construction")

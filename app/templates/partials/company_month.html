@@ -33,7 +33,7 @@
                         <a
                             class="home-band accent-{{ band.accent }}{% if band.conflict %} is-conflict{% endif %}"
                             style="grid-column: {{ band.col_start }} / {{ band.col_end }}; grid-row: {{ band.lane + 1 }};"
-                            href="{{ url_for('projects.view_project', id=band.project_id) }}#hub-schedule"
+                            href="{{ band.href if band.href else url_for('projects.view_project', id=band.project_id) ~ '#hub-schedule' }}"
                         >
                             {% if band.crew_letter %}<span class="home-band-crew">{{ band.crew_letter }}</span>{% endif %}
                             <span class="home-band-ttl">{{ band.label }}</span>
@@ -64,6 +64,14 @@
                 <p>{{ contractor_copy.HOME_NO_SCHEDULED_WORK }}</p>
                 {% endif %}
             </div>
+            {% if calendar.detail.deliveries %}
+            <div class="home-block" data-calendar-deliveries="true">
+                <h4>Deliveries</h4>
+                {% for row in calendar.detail.deliveries %}
+                <p><a href="{{ row.href }}">{{ row.label }}</a> — {{ row.status }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
             {% if calendar.detail.people %}
             <div class="home-block">
                 <h4>{{ contractor_copy.SCHEDULE_ASSIGNED }}</h4>

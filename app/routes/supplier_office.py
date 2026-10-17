@@ -158,7 +158,17 @@ def project_requests(project_id):
     concrete = (ConcreteRequest.query.filter_by(organization_id=org_id, project_id=project.id)
                 .order_by(ConcreteRequest.id.desc()).all())
     accounts = [a for a in _accounts(org_id) if a.status == "ACTIVE"]
+    from app.services.supplier_hub import change_history, current_schedule, pending_change, upcoming_deliveries
+    from app.models.supplier_portal import CHANGE_REASONS
+
+    for row in rows:
+        if row["order"] is not None:
+            row["schedule"] = current_schedule(row["order"])
+            row["pending"] = pending_change(row["order"])
+            row["changes"] = change_history(row["order"])
     return render_template("suppliers/project_requests.html", project=project, rows=rows, concrete=concrete,
+                           reasons=CHANGE_REASONS,
+                           deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),
                            accounts=accounts, placements=CONCRETE_PLACEMENT,
                            signed_in={a.supplier_id: supplier_has_sign_in(a.supplier_id) for a in accounts})
 
@@ -229,7 +239,8 @@ def order(project_id, share_id):
     share = _share(project, org_id, share_id)
     try:
         po = place_order(share, user=current_user, delivery_date=request.form.get("delivery_date", ""),
-                         site_contact=request.form.get("site_contact", ""), notes=request.form.get("notes", ""))
+                         site_contact=request.form.get("site_contact", ""), notes=request.form.get("notes", ""),
+                         delivery_window=request.form.get("delivery_window", ""))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -271,3 +282,96 @@ def office_logo(supplier_id):
         abort(404)
     return Response(brand.logo_bytes, mimetype=brand.logo_mime,
                     headers={"Cache-Control": "private, max-age=300", "X-Content-Type-Options": "nosniff"})
+
+
+# ------------------------------------------------------------------ delivery schedule
+
+def _order_for(project, org_id, order_id):
+    from app.models.supplier_portal import SupplierPurchaseOrder
+
+    return SupplierPurchaseOrder.query.filter_by(id=order_id, organization_id=org_id, project_id=project.id).first_or_404()
+
+
+def _change_for(project, org_id, change_id):
+    from app.models.supplier_portal import SupplierDeliveryChange, SupplierPurchaseOrder
+
+    change = db.session.get(SupplierDeliveryChange, change_id)
+    if change is None:
+        abort(404)
+    _order_for(project, org_id, change.order_id)
+    return change
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/orders/<int:order_id>/delivery-change", methods=["POST"])
+def request_change(project_id, order_id):
+    from app.services.supplier_hub import request_delivery_change
+
+    project, org_id = _project(project_id)
+    order = _order_for(project, org_id, order_id)
+    try:
+        request_delivery_change(order, side="CONTRACTOR", user=current_user, new_date=request.form.get("new_date", ""),
+                                new_window=request.form.get("new_window", ""), reason=request.form.get("reason", ""),
+                                note=request.form.get("note", ""))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Delivery change sent. The current delivery stands until the supplier accepts.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{order.share_id}")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/delivery-changes/<int:change_id>/answer", methods=["POST"])
+def answer_change(project_id, change_id):
+    from app.services.supplier_hub import answer_delivery_change
+
+    project, org_id = _project(project_id)
+    change = _change_for(project, org_id, change_id)
+    try:
+        answer_delivery_change(change, side="CONTRACTOR", user=current_user, action=request.form.get("action", ""),
+                               note=request.form.get("note", ""), counter_date=request.form.get("counter_date", ""),
+                               counter_window=request.form.get("counter_window", ""),
+                               counter_reason=request.form.get("counter_reason", "Other"))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Answer sent to the supplier.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{change.order.share_id}")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/delivery-changes/<int:change_id>/withdraw", methods=["POST"])
+def withdraw_change(project_id, change_id):
+    from app.services.supplier_hub import withdraw_delivery_change
+
+    project, org_id = _project(project_id)
+    change = _change_for(project, org_id, change_id)
+    try:
+        withdraw_delivery_change(change, side="CONTRACTOR", user=current_user)
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Delivery change withdrawn.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{change.order.share_id}")
+
+
+@supplier_office_bp.route("/deliveries")
+def deliveries():
+    from app.services.supplier_hub import upcoming_deliveries
+
+    org_id = get_current_organization_id()
+    return render_template("suppliers/deliveries.html", deliveries=upcoming_deliveries(organization_id=org_id))
+
+
+@supplier_office_bp.route("/account/text-messages", methods=["GET", "POST"])
+def text_settings():
+    from app.services.text_messages import TextSettingsError, contact_for, save_contact, texting_configured
+
+    if request.method == "POST":
+        try:
+            save_contact(current_user, mobile_phone=request.form.get("mobile_phone", ""),
+                         opt_in=request.form.get("sms_opt_in") == "yes")
+        except TextSettingsError as exc:
+            flash(str(exc), "error")
+        else:
+            flash("Text settings saved.", "success")
+        return redirect(url_for("supplier_office.text_settings"))
+    return render_template("suppliers/text_settings.html", contact=contact_for(current_user),
+                           configured=texting_configured())

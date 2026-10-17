@@ -1,0 +1,29 @@
+{% extends "supplier/base.html" %}
+{% block title %}Your text settings{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Supplier Hub</p><h1>Text settings</h1>
+<p class="muted-copy">Get a text when a contractor places an order or asks to change a delivery. Each text has a link: open it to accept or answer.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_portal.home') }}">Back</a></div></div>
+<section class="form-panel">
+    <h2>Your mobile</h2>
+    {% include "supplier/_text_form.html" %}
+</section>
+{% for area in areas %}{% set b = brand_for(area) %}
+<section class="form-panel" data-extra-numbers="{{ area.id }}">
+    <h2>Also text someone at {{ b.name }} (optional)</h2>
+    <p class="muted-copy">For example a staff member who handles deliveries but does not sign in. They get the same delivery texts for {{ b.name }} only, and answer through you or by phone. Up to two numbers.</p>
+    {% set rows = extras.get(area.id) or [] %}
+    {% if rows %}<ul>{% for r in rows %}<li>{{ r.name }} — {{ r.mobile_phone }} (added by {{ r.consent_confirmed_by_name }}, {{ r.consent_confirmed_at.strftime("%b %d, %Y") }})
+        <form method="post" action="{{ url_for('supplier_portal.remove_text_number', supplier_id=area.id, number_id=r.id) }}" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="button-secondary">Remove</button></form></li>{% endfor %}</ul>{% endif %}
+    {% if rows|length < 2 %}
+    <form method="post" action="{{ url_for('supplier_portal.add_text_number', supplier_id=area.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Name <input type="text" name="name" required></label>
+        <label>Mobile number <input type="tel" name="mobile_phone" required placeholder="613-555-0101"></label>
+        <label class="checkbox-label"><input type="checkbox" name="consent" value="yes" required> This person agreed to receive these texts.</label>
+        <div class="form-actions"><button type="submit" class="button-secondary">Add number</button></div>
+    </form>
+    {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

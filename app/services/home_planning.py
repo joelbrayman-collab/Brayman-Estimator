@@ -230,6 +230,30 @@ def _home_briefing(today: date, item_rows: list[dict], attention_items: list[dic
     }
 
 
+def _delivery_rows(organization_id: str, start: date, end: date) -> list[dict]:
+    """Supplier deliveries on the Company Calendar (Joel, 17 Oct 2026). Read-only."""
+    from app.services.supplier_hub import upcoming_deliveries
+
+    rows = []
+    for row in upcoming_deliveries(organization_id=organization_id):
+        day = row["schedule"]["date"]
+        if day is None or not (start <= day <= end):
+            continue
+        order = row["order"]
+        kind = "Concrete" if order.share.request_kind == "CONCRETE" else "Delivery"
+        window = row["schedule"]["window"]
+        rows.append({
+            "order_id": order.id,
+            "project_id": order.project_id,
+            "date": day,
+            "pending": row["pending"] is not None,
+            "label": f"{kind} · {order.share.supplier.legal_name} · {row['project'].name}" + (f" · {window}" if window else ""),
+            "href": f"/projects/{order.project_id}/supplier-requests#share-{order.share_id}",
+            "status": ("Change requested" if row["pending"] is not None else ("Agreed" if row["schedule"]["agreed"] else "Waiting for supplier")),
+        })
+    return rows
+
+
 def assemble_home_planning(
     organization_id: str,
     *,
@@ -292,6 +316,8 @@ def assemble_home_planning(
     for row in item_rows:
         row["conflict"] = row["item_id"] in conflict_ids
 
+    delivery_rows = _delivery_rows(organization_id, grid_start, grid_end)
+
     segments = []
     cursor = grid_start
     while cursor <= grid_end:
@@ -320,6 +346,24 @@ def assemble_home_planning(
                     "project_id": row["project_id"],
                 }
             )
+        for row in delivery_rows:
+            if cursor <= row["date"] <= week_end:
+                segments.append(
+                    {
+                        "item_id": -row["order_id"],
+                        "week_start": cursor,
+                        "start": row["date"],
+                        "end": row["date"],
+                        "col_start": row["date"].weekday() + 1,
+                        "col_end": row["date"].weekday() + 2,
+                        "label": row["label"],
+                        "crew_letter": "",
+                        "accent": "delivery-pending" if row["pending"] else "delivery",
+                        "conflict": False,
+                        "project_id": row["project_id"],
+                        "href": row["href"],
+                    }
+                )
         cursor += timedelta(days=7)
 
     packed = []
@@ -440,7 +484,8 @@ def assemble_home_planning(
         "month_label": month_start.strftime("%B %Y"),
         "selected": selected,
         "weeks": weeks,
-        "detail": _selected_detail(selected, item_rows, schedule.get("conflicts") or []),
+        "detail": dict(_selected_detail(selected, item_rows, schedule.get("conflicts") or []),
+                       deliveries=[row for row in delivery_rows if row["date"] == selected]),
         "pulse": pulse,
         "unscheduled": unscheduled_rows,
         "unscheduled_more": max(len(unscheduled) - len(unscheduled_rows), 0),

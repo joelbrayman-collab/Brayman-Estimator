@@ -291,3 +291,109 @@ def _third():
     location = create_supplier_location(supplier_id=supplier.id, code="MAIN", display_name="Third", demo_synthetic=True)
     return create_contractor_supplier_account(organization_id=DEFAULT_ORGANIZATION_ID, supplier_id=supplier.id,
                                               supplier_location_id=location.id, demo_synthetic=True)
+
+
+def _concrete_order(app, client):
+    project, _other, _bmr = _setup()
+    tomlinson = _tomlinson()
+    darcy_user = _give_sign_in(client, tomlinson)
+    delivery = (date.today() + timedelta(days=7)).isoformat()
+    client.post(f"/projects/{project.id}/concrete-requests", data={
+        "volume_m3": "4.5", "strength_mpa": "32", "delivery_date": delivery, "placement": "Pump",
+        "contractor_supplier_account_id": tomlinson.id})
+    share = SupplierRequestShare.query.one()
+    darcy = _supplier_client(app)
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote",
+               data={"price_per_m3": "210", "valid_until": delivery})
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
+                data={"delivery_date": delivery, "delivery_window": "7:00–9:00"})
+    order = SupplierPurchaseOrder.query.one()
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm", data={"action": "confirm",
+               "expected_delivery": delivery, "delivery_window": "7:00–9:00"})
+    return project, tomlinson, darcy, darcy_user, db.session.get(SupplierPurchaseOrder, order.id)
+
+
+def test_a_weather_change_needs_the_other_sides_acceptance_and_is_texted(app, client):
+    from app.models.supplier_portal import SupplierDeliveryChange, TextMessage
+    from app.services.text_messages import save_contact
+    from tests.auth_fixtures import ensure_office_user
+
+    sent = []
+    app.config["TEXT_TRANSPORT"] = lambda phone, body: sent.append((phone, body)) or f"SM{len(sent)}"
+    project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
+    assert order.status == "CONFIRMED" and order.scheduled_window == "7:00–9:00"
+    agreed = order.scheduled_date
+    save_contact(darcy_user, mobile_phone="613-555-0101", opt_in=True)
+    save_contact(ensure_office_user(), mobile_phone="(613) 555-0100", opt_in=True)
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/text-numbers", data={"name": "Yard dispatcher", "mobile_phone": "613-555-0102", "consent": "yes"})
+
+    new_day = (agreed + timedelta(days=1)).isoformat()
+    client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
+                data={"new_date": new_day, "new_window": "7:00–9:00", "reason": "Weather", "note": "Rain Thursday"})
+    change = SupplierDeliveryChange.query.one()
+    assert change.status == "PENDING"
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # nothing changes until accepted
+    assert {p for p, _ in sent} >= {"+16135550101", "+16135550102"}  # Darcy and his staff number are texted
+    assert any("Rain Thursday" in body and "/supplier/" in body for _, body in sent)
+    again = client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
+                        data={"new_date": new_day, "reason": "Weather"}, follow_redirects=True)
+    assert b"already waiting for an answer" in again.data
+    # The contractor cannot accept its own request.
+    client.post(f"/projects/{project.id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    assert db.session.get(SupplierDeliveryChange, change.id).status == "PENDING"
+    inbox = darcy.get(f"/supplier/{tomlinson.supplier_id}/").get_data(as_text=True)
+    assert "Delivery changes waiting for your answer" in inbox
+    sent.clear()
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    order = db.session.get(SupplierPurchaseOrder, order.id)
+    assert order.scheduled_date.isoformat() == new_day and db.session.get(SupplierDeliveryChange, change.id).status == "ACCEPTED"
+    assert any(p == "+16135550100" and "accepted" in body for p, body in sent)  # Ben gets the acceptance by text
+    assert TextMessage.query.filter_by(status="SENT").count() >= 3
+
+
+def test_the_supplier_can_propose_another_time_and_decline_needs_a_reason(app, client):
+    from app.models.supplier_portal import SupplierDeliveryChange
+
+    project, tomlinson, darcy, _user, order = _concrete_order(app, client)
+    first = (order.scheduled_date + timedelta(days=1)).isoformat()
+    client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change", data={"new_date": first, "new_window": "7:00–9:00", "reason": "Weather"})
+    change = SupplierDeliveryChange.query.one()
+    no_reason = darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "decline"}, follow_redirects=True)
+    assert b"Say why" in no_reason.data
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer",
+               data={"action": "counter", "counter_date": first, "counter_window": "10:00–12:00", "counter_reason": "Supplier availability"})
+    counter = SupplierDeliveryChange.query.filter_by(requested_by_side="SUPPLIER").one()
+    assert db.session.get(SupplierDeliveryChange, change.id).status == "COUNTERED" and counter.counter_of_id == change.id
+    page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    assert "Change requested by Darcy Synthetic" in page and "10:00–12:00" in page
+    client.post(f"/projects/{project.id}/delivery-changes/{counter.id}/answer", data={"action": "accept"})
+    order = db.session.get(SupplierPurchaseOrder, order.id)
+    assert order.scheduled_window == "10:00–12:00"
+    # Deliveries everywhere: the office list, the supplier list and the Company Calendar.
+    assert order.number.encode() in client.get("/deliveries").data
+    assert order.number.encode() in darcy.get(f"/supplier/{tomlinson.supplier_id}/deliveries").data
+    cal = client.get(f"/schedule?year={order.scheduled_date.year}&month={order.scheduled_date.month}&day={order.scheduled_date.day}").get_data(as_text=True)
+    assert "Concrete · Tomlinson concrete (synthetic)" in cal and "data-calendar-deliveries" in cal
+
+
+def test_texts_need_consent_and_wait_for_twilio_settings(app, client):
+    from app.models.supplier_portal import TextMessage
+    from app.services.text_messages import TextSettingsError, normalize_phone, save_contact, send_text_to_user
+    from tests.auth_fixtures import ensure_office_user
+
+    user = ensure_office_user()
+    assert normalize_phone("613 555 0100") == "+16135550100"
+    with pytest.raises(TextSettingsError):
+        normalize_phone("12345")
+    assert send_text_to_user(user, "hello") is None  # no consent, no text
+    save_contact(user, mobile_phone="613-555-0100", opt_in=True)
+    app.config["TESTING"] = False
+    try:
+        row = send_text_to_user(user, "hello")
+    finally:
+        app.config["TESTING"] = True
+    assert row.status == "NOT_CONFIGURED" and row.error_code == "TWILIO_SETTINGS_MISSING"
+    save_contact(user, mobile_phone="613-555-0100", opt_in=False)
+    assert send_text_to_user(user, "hello") is None
+    assert client.get("/account/text-messages").status_code == 200
+    assert b"Text settings" in client.get("/account/text-messages").data

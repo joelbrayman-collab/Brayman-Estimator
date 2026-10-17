@@ -633,7 +633,7 @@ def order_lines(share):
 
 
 def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_contact: str = "",
-                notes: str = "") -> SupplierPurchaseOrder:
+                notes: str = "", delivery_window: str = "") -> SupplierPurchaseOrder:
     if purchase_order_for(share) is not None:
         raise SupplierHubError("An order was already placed on this request.")
     lines, blockers = order_lines(share)
@@ -651,6 +651,7 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
         lines_json=lines,
         total=total,
         delivery_date=_date(delivery_date, "delivery date", required=False) if isinstance(delivery_date, str) else delivery_date,
+        delivery_window=(delivery_window or "").strip()[:60] or None,
         delivery_address=_site_address(project)[:300],
         site_contact=(site_contact or "").strip()[:160] or None,
         notes=(notes or "").strip() or None,
@@ -662,10 +663,15 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
     db.session.add(order)
     _event(share, "ORDER_PLACED", "CONTRACTOR", order.placed_by_name, f"{order.number}: ${total}")
     db.session.commit()
+    _notify_supplier(order, f"New purchase order {order.number}",
+                     f"{order.placed_by_name} placed purchase order {order.number} (${total} before tax)"
+                     + (f" for delivery {_when(order.delivery_date, order.delivery_window)}" if order.delivery_date else "")
+                     + ". Please confirm it in the Supplier Hub.")
     return order
 
 
-def confirm_order(order: SupplierPurchaseOrder, *, user, expected_delivery=None, note: str = "") -> None:
+def confirm_order(order: SupplierPurchaseOrder, *, user, expected_delivery=None, note: str = "",
+                  delivery_window: str = "") -> None:
     if order.status != PO_PLACED:
         raise SupplierHubError("This order has already been answered.")
     order.status = PO_CONFIRMED
@@ -673,9 +679,14 @@ def confirm_order(order: SupplierPurchaseOrder, *, user, expected_delivery=None,
     order.supplier_note = (note or "").strip() or None
     order.supplier_responded_by_name = _display(user)
     order.supplier_responded_at = datetime.utcnow()
+    order.scheduled_date = order.expected_delivery or order.delivery_date
+    order.scheduled_window = (delivery_window or "").strip()[:60] or order.delivery_window
     _event(order.share, "ORDER_CONFIRMED", "SUPPLIER", order.supplier_responded_by_name,
-           f"{order.number}" + (f", delivery {order.expected_delivery.isoformat()}" if order.expected_delivery else ""))
+           f"{order.number}" + (f", delivery {_when(order.scheduled_date, order.scheduled_window)}" if order.scheduled_date else ""))
     db.session.commit()
+    _notify_contractor(order, f"{order.number} confirmed by {order.supplier_responded_by_name}",
+                       f"{order.supplier_responded_by_name} confirmed purchase order {order.number}"
+                       + (f" for delivery {_when(order.scheduled_date, order.scheduled_window)}." if order.scheduled_date else "."))
 
 
 def report_order_problem(order: SupplierPurchaseOrder, *, user, note: str) -> None:
@@ -829,3 +840,237 @@ def readable_text_color(hex_color: Optional[str]) -> str:
     lin = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
     luminance = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
     return "#111111" if luminance > 0.4 else "#ffffff"
+
+
+
+# ------------------------------------------------------------------ delivery schedule (Joel, 17 Oct 2026)
+# Either side may propose a change; nothing changes until the other side accepts. Notices go by email
+# now; texts (SMS) will be added later through the same _notify functions.
+
+def _when(day, window=None) -> str:
+    if day is None:
+        return "date to be set"
+    text = day.strftime("%a %b %d, %Y").replace(" 0", " ")
+    return f"{text}, {window}" if window else text
+
+
+def current_schedule(order) -> dict:
+    agreed = order.scheduled_date is not None
+    return {
+        "date": order.scheduled_date if agreed else order.delivery_date,
+        "window": order.scheduled_window if agreed else order.delivery_window,
+        "agreed": agreed,
+    }
+
+
+def pending_change(order):
+    from app.models.supplier_portal import CHANGE_PENDING, SupplierDeliveryChange
+
+    return (SupplierDeliveryChange.query.filter_by(order_id=order.id, status=CHANGE_PENDING)
+            .order_by(SupplierDeliveryChange.id.desc()).first())
+
+
+def change_history(order):
+    from app.models.supplier_portal import SupplierDeliveryChange
+
+    return SupplierDeliveryChange.query.filter_by(order_id=order.id).order_by(SupplierDeliveryChange.id.asc()).all()
+
+
+def _other_side(side: str) -> str:
+    return "SUPPLIER" if side == "CONTRACTOR" else "CONTRACTOR"
+
+
+def request_delivery_change(order, *, side: str, user, new_date, new_window: str = "", reason: str = "",
+                            note: str = "", counter_of=None):
+    from app.models.supplier_portal import CHANGE_REASONS, SupplierDeliveryChange
+
+    if order.status not in (PO_PLACED, PO_CONFIRMED):
+        raise SupplierHubError("Only an open order's delivery can be changed.")
+    if counter_of is None and pending_change(order) is not None:
+        raise SupplierHubError("A delivery change is already waiting for an answer. Answer or withdraw it first.")
+    day = _date(new_date, "new delivery date") if isinstance(new_date, str) else new_date
+    if reason not in CHANGE_REASONS:
+        raise SupplierHubError("Choose a reason for the change.")
+    schedule = current_schedule(order)
+    change = SupplierDeliveryChange(
+        order_id=order.id, requested_by_side=side, requested_by_name=_display(user), requested_at=datetime.utcnow(),
+        previous_date=schedule["date"], previous_window=schedule["window"], new_date=day,
+        new_window=(new_window or "").strip()[:60] or None, reason=reason, note=(note or "").strip() or None,
+        status="PENDING", counter_of_id=counter_of.id if counter_of is not None else None,
+    )
+    db.session.add(change)
+    _event(order.share, "DELIVERY_CHANGE_REQUESTED", side, change.requested_by_name,
+           f"{order.number}: {_when(schedule['date'], schedule['window'])} → {_when(day, change.new_window)} ({reason})")
+    db.session.commit()
+    message = (f"{change.requested_by_name} asks to move the delivery for {order.number} "
+               f"from {_when(schedule['date'], schedule['window'])} to {_when(day, change.new_window)}. "
+               f"Reason: {reason}." + (f" Note: {change.note}" if change.note else "")
+               + " Please accept it, propose another time or decline.")
+    subject = f"Delivery change requested: {order.number} → {_when(day, change.new_window)}"
+    (_notify_supplier if side == "CONTRACTOR" else _notify_contractor)(order, subject, message)
+    return change
+
+
+def answer_delivery_change(change, *, side: str, user, action: str, note: str = "", counter_date=None,
+                           counter_window: str = "", counter_reason: str = "Other"):
+    order = change.order
+    if change.status != "PENDING":
+        raise SupplierHubError("This change has already been answered.")
+    if side != _other_side(change.requested_by_side):
+        raise SupplierHubError("The other side answers this change.")
+    who = _display(user)
+    change.answered_by_name = who
+    change.answered_at = datetime.utcnow()
+    change.answer_note = (note or "").strip() or None
+    if action == "accept":
+        change.status = "ACCEPTED"
+        order.scheduled_date = change.new_date
+        order.scheduled_window = change.new_window
+        order.delivery_date = change.new_date
+        order.delivery_window = change.new_window
+        detail = f"{order.number}: now {_when(change.new_date, change.new_window)}"
+        _event(order.share, "DELIVERY_CHANGE_ACCEPTED", side, who, detail)
+        db.session.commit()
+        subject = f"Delivery change accepted: {order.number} is now {_when(change.new_date, change.new_window)}"
+        body = f"{who} accepted the delivery change. {order.number} is now scheduled for {_when(change.new_date, change.new_window)}."
+    elif action == "decline":
+        if not change.answer_note:
+            raise SupplierHubError("Say why you cannot accept the change.")
+        change.status = "DECLINED"
+        current = current_schedule(order)
+        _event(order.share, "DELIVERY_CHANGE_DECLINED", side, who, f"{order.number}: {change.answer_note}")
+        db.session.commit()
+        subject = f"Delivery change declined: {order.number}"
+        body = (f"{who} declined the delivery change: {change.answer_note}. "
+                f"{order.number} stays scheduled for {_when(current['date'], current['window'])}.")
+    elif action == "counter":
+        change.status = "COUNTERED"
+        db.session.flush()
+        counter = request_delivery_change(order, side=side, user=user, new_date=counter_date,
+                                          new_window=counter_window, reason=counter_reason,
+                                          note=note, counter_of=change)
+        return counter
+    else:
+        raise SupplierHubError("Choose accept, propose another time or decline.")
+    (_notify_contractor if side == "SUPPLIER" else _notify_supplier)(order, subject, body)
+    return change
+
+
+def withdraw_delivery_change(change, *, side: str, user):
+    if change.status != "PENDING":
+        raise SupplierHubError("This change has already been answered.")
+    if side != change.requested_by_side:
+        raise SupplierHubError("Only the side that asked can withdraw the change.")
+    change.status = "WITHDRAWN"
+    change.answered_by_name = _display(user)
+    change.answered_at = datetime.utcnow()
+    _event(change.order.share, "DELIVERY_CHANGE_WITHDRAWN", side, change.answered_by_name, change.order.number)
+    db.session.commit()
+
+
+def _send(users, subject: str, body: str, link: str, order) -> None:
+    """Email every recipient; also text those who entered a mobile number and agreed to texts."""
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+    from app.services.text_messages import send_text_to_user
+    from app.services.transactional_email import send_transactional_message
+
+    seen = set()
+    for user in users:
+        if user is None or not user.is_active or user.id in seen:
+            continue
+        seen.add(user.id)
+        try:
+            send_transactional_message(TEMPLATE_DELIVERY_SCHEDULE, user.email,
+                                       variables={"subject": subject, "body": body, "link": link},
+                                       related_type="supplier_purchase_order", related_id=order.id)
+        except Exception:
+            pass  # a notice never blocks the schedule record itself
+        try:
+            send_text_to_user(user, f"{body} {link}", related_type="supplier_purchase_order", related_id=order.id)
+        except Exception:
+            pass
+
+
+def _notify_supplier(order, subject: str, body: str) -> None:
+    from app.services.signing_mail import public_signing_url
+
+    members = SupplierUserMembership.query.filter_by(supplier_id=order.supplier_id, status=MEMBERSHIP_ACTIVE).all()
+    link = public_signing_url(f"/supplier/{order.supplier_id}/requests/{order.share_id}")
+    _send([m.user for m in members], subject, body, link, order)
+    from app.models.supplier_portal import SupplierNotificationNumber
+    from app.services.text_messages import send_text
+
+    for extra in SupplierNotificationNumber.query.filter_by(supplier_id=order.supplier_id, active=True):
+        try:
+            send_text(extra.mobile_phone, f"{body} {link}", related_type="supplier_purchase_order", related_id=order.id)
+        except Exception:
+            pass
+
+
+def _notify_contractor(order, subject: str, body: str) -> None:
+    from app.services.signing_mail import public_signing_url
+
+    ids = [i for i in (order.placed_by_user_id, order.share.sent_by_user_id) if i]
+    link = public_signing_url(f"/projects/{order.project_id}/supplier-requests#share-{order.share_id}")
+    _send([db.session.get(User, i) for i in ids], subject, body, link, order)
+
+
+def upcoming_deliveries(*, organization_id: Optional[str] = None, supplier_id: Optional[int] = None,
+                        project_id: Optional[int] = None):
+    query = SupplierPurchaseOrder.query.filter(SupplierPurchaseOrder.status.in_((PO_PLACED, PO_CONFIRMED, PO_PROBLEM)))
+    if organization_id:
+        query = query.filter(SupplierPurchaseOrder.organization_id == organization_id)
+    if supplier_id:
+        query = query.filter(SupplierPurchaseOrder.supplier_id == supplier_id)
+    if project_id:
+        query = query.filter(SupplierPurchaseOrder.project_id == project_id)
+    rows = []
+    for order in query.all():
+        schedule = current_schedule(order)
+        rows.append({"order": order, "schedule": schedule, "pending": pending_change(order),
+                     "project": db.session.get(Project, order.project_id)})
+    rows.sort(key=lambda r: (r["schedule"]["date"] or date.max, r["order"].id))
+    return rows
+
+
+MAX_EXTRA_NUMBERS = 2
+
+
+def supplier_extra_numbers(supplier_id: int):
+    from app.models.supplier_portal import SupplierNotificationNumber
+
+    return (SupplierNotificationNumber.query.filter_by(supplier_id=supplier_id, active=True)
+            .order_by(SupplierNotificationNumber.id.asc()).all())
+
+
+def add_supplier_extra_number(supplier_id: int, *, user, name: str, mobile_phone: str, consent: bool):
+    from app.models.supplier_portal import SupplierNotificationNumber
+    from app.services.text_messages import normalize_phone
+
+    if len(supplier_extra_numbers(supplier_id)) >= MAX_EXTRA_NUMBERS:
+        raise SupplierHubError("Remove a number before adding another.")
+    who = (name or "").strip()
+    if not who:
+        raise SupplierHubError("Enter the person's name.")
+    phone = normalize_phone(mobile_phone)
+    if not phone:
+        raise SupplierHubError("Enter the mobile number.")
+    if not consent:
+        raise SupplierHubError("Confirm that this person agreed to receive texts.")
+    row = SupplierNotificationNumber(supplier_id=supplier_id, name=who[:160], mobile_phone=phone,
+                                     consent_confirmed_by_name=_display(user), consent_confirmed_at=datetime.utcnow(),
+                                     active=True)
+    db.session.add(row)
+    db.session.commit()
+    return row
+
+
+def remove_supplier_extra_number(supplier_id: int, number_id: int) -> None:
+    from app.models.supplier_portal import SupplierNotificationNumber
+
+    row = SupplierNotificationNumber.query.filter_by(id=number_id, supplier_id=supplier_id, active=True).first()
+    if row is None:
+        raise SupplierHubError("Not found.")
+    row.active = False
+    row.removed_at = datetime.utcnow()
+    db.session.commit()

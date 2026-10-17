@@ -109,7 +109,11 @@ from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, Pro
 from app.models.proposal_acceptance import ProposalAcceptance, ProposalClientLink
 from app.models.supplier_portal import (
     ConcreteRequest,
+    NotificationContact,
+    TextMessage,
     SupplierBrandProfile,
+    SupplierDeliveryChange,
+    SupplierNotificationNumber,
     SupplierPurchaseOrder,
     SupplierRequestEvent,
     SupplierRequestShare,
@@ -179,7 +183,11 @@ from app.plan_intelligence.models import (
 
 __all__ = [
     "ConcreteRequest",
+    "NotificationContact",
+    "TextMessage",
     "SupplierBrandProfile",
+    "SupplierDeliveryChange",
+    "SupplierNotificationNumber",
     "SupplierPurchaseOrder",
     "SupplierRequestEvent",
     "SupplierRequestShare",

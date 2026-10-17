@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "supplier/_delivery.html" import when %}
+{% block title %}Deliveries | Brayman Construction Platform{% endblock %}
+{% block page_title %}Deliveries{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Purchasing</p><h1>Deliveries</h1>
+<p class="muted-copy">Every open order from a supplier, soonest first. A delivery changes only when the other side accepts.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_office.text_settings') }}">Text me updates</a> <a class="button button-secondary" href="{{ url_for('supplier_office.suppliers') }}">Suppliers</a></div></div>
+<section class="form-panel" data-all-deliveries="true">
+    {% if deliveries %}
+    <div style="overflow-x: auto;"><table class="data-table">
+        <thead><tr><th>Delivery</th><th>Project</th><th>Supplier</th><th>Order</th><th>Status</th></tr></thead>
+        <tbody>{% for d in deliveries %}
+        <tr data-delivery="{{ d.order.number }}">
+            <td><strong>{{ when(d.schedule.date, d.schedule.window) }}</strong></td>
+            <td><a href="{{ url_for('supplier_office.project_requests', project_id=d.order.project_id) }}#share-{{ d.order.share_id }}">{{ d.project.name }}</a></td>
+            <td>{{ d.order.share.supplier.legal_name }} · {{ "concrete" if d.order.share.request_kind == "CONCRETE" else "materials" }}</td>
+            <td>{{ d.order.number }}</td>
+            <td>{% if d.pending %}<span class="delivery-flag">Change requested by {{ d.pending.requested_by_name }} → {{ when(d.pending.new_date, d.pending.new_window) }}</span>{% elif d.order.status == "PROBLEM" %}Problem reported{% elif d.schedule.agreed %}Agreed{% else %}Waiting for the supplier to confirm{% endif %}</td>
+        </tr>{% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="muted-copy">No open deliveries.</p>{% endif %}
+</section>
+{% endblock %}

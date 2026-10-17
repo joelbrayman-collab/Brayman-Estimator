@@ -93,7 +93,11 @@ def inbox(supplier_id):
     supplier = _supplier(supplier_id)
     shares = supplier_shares(supplier.id)
     orders = supplier_orders(supplier.id)
+    from app.services.supplier_hub import pending_change
+
+    changes_waiting = [c for c in (pending_change(o) for o in orders) if c and c.requested_by_side == "CONTRACTOR"]
     return render_template("supplier/inbox.html", supplier=supplier, areas=_areas(), shares=shares, orders=orders,
+                           changes_waiting=changes_waiting,
                            orders_by_share={o.share_id: o for o in orders})
 
 
@@ -105,8 +109,15 @@ def request_detail(supplier_id, share_id):
     except SupplierHubError:
         abort(404)
     mark_opened(share, user=current_user)
+    from app.models.supplier_portal import CHANGE_REASONS
+    from app.services.supplier_hub import change_history, current_schedule, pending_change
+
+    order = purchase_order_for(share)
     return render_template("supplier/request.html", supplier=supplier, areas=_areas(), share=share,
-                           order=purchase_order_for(share), events=share_events(share),
+                           order=order, events=share_events(share), reasons=CHANGE_REASONS,
+                           schedule=current_schedule(order) if order else None,
+                           pending=pending_change(order) if order else None,
+                           changes=change_history(order) if order else [],
                            concrete_charges=CONCRETE_CHARGES, kind_concrete=KIND_CONCRETE)
 
 
@@ -148,7 +159,7 @@ def confirm(supplier_id, order_id):
             flash("Problem sent to the contractor. The order is on hold until they answer.", "success")
         else:
             confirm_order(order, user=current_user, expected_delivery=request.form.get("expected_delivery", ""),
-                          note=request.form.get("note", ""))
+                          note=request.form.get("note", ""), delivery_window=request.form.get("delivery_window", ""))
             flash(f"Order {order.number} confirmed.", "success")
     except SupplierHubError as exc:
         flash(str(exc), "error")
@@ -190,3 +201,122 @@ def logo(supplier_id):
         abort(404)
     return Response(brand.logo_bytes, mimetype=brand.logo_mime,
                     headers={"Cache-Control": "private, max-age=86400", "X-Content-Type-Options": "nosniff"})
+
+
+def _supplier_change(supplier, change_id):
+    from app import db
+    from app.models.supplier_portal import SupplierDeliveryChange
+
+    change = db.session.get(SupplierDeliveryChange, change_id)
+    if change is None or change.order.supplier_id != supplier.id:
+        abort(404)
+    return change
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/orders/<int:order_id>/delivery-change", methods=["POST"])
+def request_change(supplier_id, order_id):
+    from app.services.supplier_hub import request_delivery_change
+
+    supplier = _supplier(supplier_id)
+    try:
+        order = supplier_order(supplier.id, order_id)
+    except SupplierHubError:
+        abort(404)
+    try:
+        request_delivery_change(order, side="SUPPLIER", user=current_user, new_date=request.form.get("new_date", ""),
+                                new_window=request.form.get("new_window", ""), reason=request.form.get("reason", ""),
+                                note=request.form.get("note", ""))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Delivery change sent to the contractor. The current delivery stands until they accept.", "success")
+    return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=order.share_id) + "#delivery")
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/delivery-changes/<int:change_id>/answer", methods=["POST"])
+def answer_change(supplier_id, change_id):
+    from app.services.supplier_hub import answer_delivery_change
+
+    supplier = _supplier(supplier_id)
+    change = _supplier_change(supplier, change_id)
+    try:
+        answer_delivery_change(change, side="SUPPLIER", user=current_user, action=request.form.get("action", ""),
+                               note=request.form.get("note", ""), counter_date=request.form.get("counter_date", ""),
+                               counter_window=request.form.get("counter_window", ""),
+                               counter_reason=request.form.get("counter_reason", "Other"))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Answer sent to the contractor.", "success")
+    return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=change.order.share_id) + "#delivery")
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/delivery-changes/<int:change_id>/withdraw", methods=["POST"])
+def withdraw_change(supplier_id, change_id):
+    from app.services.supplier_hub import withdraw_delivery_change
+
+    supplier = _supplier(supplier_id)
+    change = _supplier_change(supplier, change_id)
+    try:
+        withdraw_delivery_change(change, side="SUPPLIER", user=current_user)
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=change.order.share_id) + "#delivery")
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/deliveries")
+def supplier_deliveries(supplier_id):
+    from app.services.supplier_hub import upcoming_deliveries
+
+    supplier = _supplier(supplier_id)
+    return render_template("supplier/deliveries.html", supplier=supplier, areas=_areas(),
+                           deliveries=upcoming_deliveries(supplier_id=supplier.id))
+
+
+@supplier_portal_bp.route("/account", methods=["GET", "POST"])
+def account():
+    from app.services.text_messages import TextSettingsError, contact_for, save_contact
+
+    if request.method == "POST":
+        try:
+            save_contact(current_user, mobile_phone=request.form.get("mobile_phone", ""),
+                         opt_in=request.form.get("sms_opt_in") == "yes")
+        except TextSettingsError as exc:
+            flash(str(exc), "error")
+        else:
+            flash("Text settings saved.", "success")
+        return redirect(url_for("supplier_portal.account"))
+    from app.services.supplier_hub import supplier_extra_numbers
+
+    return render_template("supplier/account.html", areas=_areas(), contact=contact_for(current_user),
+                           extras={a.id: supplier_extra_numbers(a.id) for a in _areas()})
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/text-numbers", methods=["POST"])
+def add_text_number(supplier_id):
+    from app.services.supplier_hub import add_supplier_extra_number
+    from app.services.text_messages import TextSettingsError
+
+    supplier = _supplier(supplier_id)
+    try:
+        add_supplier_extra_number(supplier.id, user=current_user, name=request.form.get("name", ""),
+                                  mobile_phone=request.form.get("mobile_phone", ""),
+                                  consent=request.form.get("consent") == "yes")
+    except (SupplierHubError, TextSettingsError) as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Number added. They will get the same delivery texts as you.", "success")
+    return redirect(url_for("supplier_portal.account"))
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/text-numbers/<int:number_id>/remove", methods=["POST"])
+def remove_text_number(supplier_id, number_id):
+    from app.services.supplier_hub import remove_supplier_extra_number
+
+    supplier = _supplier(supplier_id)
+    try:
+        remove_supplier_extra_number(supplier.id, number_id)
+    except SupplierHubError:
+        abort(404)
+    flash("Number removed.", "success")
+    return redirect(url_for("supplier_portal.account"))

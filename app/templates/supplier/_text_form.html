@@ -1,0 +1,7 @@
+<form method="post" class="form-grid" data-text-settings="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Mobile number <input type="tel" name="mobile_phone" autocomplete="tel" value="{{ contact.mobile_phone if contact and contact.mobile_phone else '' }}" placeholder="613-555-0100"></label>
+    <label class="checkbox-label"><input type="checkbox" name="sms_opt_in" value="yes" {% if contact and contact.sms_opt_in %}checked{% endif %}> Text me delivery updates: new orders, confirmations and delivery changes. I can untick this at any time.</label>
+    <div class="form-actions"><button type="submit" class="button is-primary">Save</button></div>
+</form>
+{% if contact and contact.sms_opt_in %}<p class="muted-copy">Texts on since {{ contact.opted_in_at.strftime("%B %d, %Y") }}. Email notices continue as well.</p>{% endif %}

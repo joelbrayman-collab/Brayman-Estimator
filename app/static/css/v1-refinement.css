@@ -779,3 +779,10 @@ button.button-secondary {
 .estimate-actions form {
     display: flex;
 }
+
+/* Supplier Hub delivery schedule on office pages (Joel, 17 Oct 2026). */
+.delivery-flag { color: #8a4b00; font-weight: 600; }
+.delivery-change.is-pending { border-left: 4px solid #c8871a; padding: 8px 14px; background: #fbf6ec; border-radius: 6px; }
+.delivery-history { margin: 6px 0 0; padding-left: 18px; }
+.home-band.accent-delivery { border-left-color: #2f6f4f; background: #eef6f1; }
+.home-band.accent-delivery-pending { border-left-color: #c8871a; background: #fbf3e4; }

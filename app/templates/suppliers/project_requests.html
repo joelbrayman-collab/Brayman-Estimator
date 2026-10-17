@@ -1,10 +1,23 @@
 {% extends "base.html" %}
+{% from "supplier/_delivery.html" import delivery_panel, when with context %}
 {% block title %}Supplier requests | {{ project.name }}{% endblock %}
 {% block page_title %}Supplier requests{% endblock %}
 {% block content %}
 <div class="page-heading"><div><p class="eyebrow">Purchasing</p><h1>Supplier requests — {{ project.name }}</h1>
 <p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p></div>
 <div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a></div></div>
+
+<section class="form-panel" data-project-deliveries="true">
+    <h2>Deliveries</h2>
+    {% if deliveries %}
+    <ul class="delivery-list">{% for d in deliveries %}
+        <li><strong>{{ when(d.schedule.date, d.schedule.window) }}</strong> — {{ d.order.share.supplier.legal_name }}, {{ d.order.number }} ({{ "concrete" if d.order.share.request_kind == "CONCRETE" else "materials" }}) —
+        {% if d.pending %}<span class="delivery-flag">change requested by {{ d.pending.requested_by_name }} → {{ when(d.pending.new_date, d.pending.new_window) }}</span>{% elif d.schedule.agreed %}agreed{% else %}waiting for the supplier to confirm{% endif %}
+        · <a href="#share-{{ d.order.share_id }}">Open</a></li>
+    {% endfor %}</ul>
+    {% else %}<p class="muted-copy">No deliveries yet. They appear here when an order is placed.</p>{% endif %}
+    <p class="muted-copy"><a href="{{ url_for('supplier_office.deliveries') }}">All deliveries, every project</a></p>
+</section>
 
 <section class="form-panel" data-material-requests="true">
     <h2>Material and concrete requests</h2>
@@ -21,6 +34,7 @@
         {% if order %}
         <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong> — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
         {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if order.expected_delivery %}, delivery {{ order.expected_delivery.isoformat() }}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
+        {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
         <p class="muted-copy" data-order-blocked="true">To place the order: {{ row.blockers|join(" ") }}</p>
@@ -30,6 +44,7 @@
             {% set ns = namespace(t=0) %}{% for l in row.lines %}{% set ns.t = ns.t + (l.line_value|float) %}{% endfor %}
             <p>{{ row.lines|length }} line{{ "s" if row.lines|length != 1 }}, total ${{ "%.2f"|format(ns.t) }} before tax. The site address goes to the supplier with the order.</p>
             <label>Delivery date <input type="date" name="delivery_date"></label>
+            <label>Time window <input type="text" name="delivery_window" placeholder="7:00–9:00"></label>
             <label>Site contact <input type="text" name="site_contact"></label>
             <label>Notes for the supplier <input type="text" name="notes"></label>
             <div class="form-actions"><button type="submit" class="button is-primary">Place order</button></div>

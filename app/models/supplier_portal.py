@@ -148,6 +148,10 @@ class SupplierPurchaseOrder(db.Model):
     lines_json = db.Column(db.JSON, nullable=False)
     total = db.Column(db.Numeric(14, 2), nullable=False)
     delivery_date = db.Column(db.Date, nullable=True)
+    delivery_window = db.Column(db.String(60), nullable=True)
+    # The agreed delivery: set when the supplier confirms, changed only by an accepted schedule change.
+    scheduled_date = db.Column(db.Date, nullable=True)
+    scheduled_window = db.Column(db.String(60), nullable=True)
     delivery_address = db.Column(db.String(300), nullable=False)
     site_contact = db.Column(db.String(160), nullable=True)
     notes = db.Column(db.Text, nullable=True)
@@ -192,3 +196,96 @@ class SupplierBrandProfile(db.Model):
     updated_by_name = db.Column(db.String(160), nullable=False)
     updated_by_organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+CHANGE_PENDING = "PENDING"
+CHANGE_ACCEPTED = "ACCEPTED"
+CHANGE_DECLINED = "DECLINED"
+CHANGE_COUNTERED = "COUNTERED"
+CHANGE_WITHDRAWN = "WITHDRAWN"
+CHANGE_REASONS = ("Weather", "Site not ready", "Customer request", "Supplier availability", "Other")
+
+
+class SupplierDeliveryChange(db.Model):
+    """A proposed change to an order's delivery. Nothing changes until the other side accepts."""
+
+    __tablename__ = "supplier_delivery_changes"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status IN ('PENDING', 'ACCEPTED', 'DECLINED', 'COUNTERED', 'WITHDRAWN')",
+            name="ck_supplier_delivery_changes_status",
+        ),
+        db.CheckConstraint("requested_by_side IN ('CONTRACTOR', 'SUPPLIER')", name="ck_supplier_delivery_changes_side"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("supplier_purchase_orders.id", ondelete="RESTRICT"), nullable=False, index=True)
+    requested_by_side = db.Column(db.String(20), nullable=False)
+    requested_by_name = db.Column(db.String(160), nullable=False)
+    requested_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    previous_date = db.Column(db.Date, nullable=True)
+    previous_window = db.Column(db.String(60), nullable=True)
+    new_date = db.Column(db.Date, nullable=False)
+    new_window = db.Column(db.String(60), nullable=True)
+    reason = db.Column(db.String(40), nullable=False)
+    note = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(20), nullable=False, default=CHANGE_PENDING)
+    answered_by_name = db.Column(db.String(160), nullable=True)
+    answered_at = db.Column(db.DateTime, nullable=True)
+    answer_note = db.Column(db.Text, nullable=True)
+    counter_of_id = db.Column(db.Integer, db.ForeignKey("supplier_delivery_changes.id", ondelete="RESTRICT"), nullable=True)
+
+    order = db.relationship("SupplierPurchaseOrder")
+
+
+TEXT_LOCAL_CAPTURED = "LOCAL_CAPTURED"
+TEXT_SENT = "SENT"
+TEXT_FAILED = "FAILED"
+TEXT_NOT_CONFIGURED = "NOT_CONFIGURED"
+
+
+class NotificationContact(db.Model):
+    """A person's mobile number and their recorded consent to receive texts (Joel, 17 Oct 2026; CASL)."""
+
+    __tablename__ = "notification_contacts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, unique=True)
+    mobile_phone = db.Column(db.String(20), nullable=True)
+    sms_opt_in = db.Column(db.Boolean, nullable=False, default=False)
+    opted_in_at = db.Column(db.DateTime, nullable=True)
+    opted_out_at = db.Column(db.DateTime, nullable=True)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+class TextMessage(db.Model):
+    """Every text CalibraytAI tried to send, and what happened to it."""
+
+    __tablename__ = "text_messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True, index=True)
+    to_phone = db.Column(db.String(20), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+    provider = db.Column(db.String(20), nullable=False)
+    provider_message_id = db.Column(db.String(80), nullable=True)
+    error_code = db.Column(db.String(80), nullable=True)
+    related_type = db.Column(db.String(40), nullable=True)
+    related_id = db.Column(db.String(80), nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+class SupplierNotificationNumber(db.Model):
+    """An extra mobile number a supplier adds for texts, e.g. one of Darcy's staff without a sign-in."""
+
+    __tablename__ = "supplier_notification_numbers"
+
+    id = db.Column(db.Integer, primary_key=True)
+    supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=False, index=True)
+    name = db.Column(db.String(160), nullable=False)
+    mobile_phone = db.Column(db.String(20), nullable=False)
+    consent_confirmed_by_name = db.Column(db.String(160), nullable=False)
+    consent_confirmed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    active = db.Column(db.Boolean, nullable=False, default=True)
+    removed_at = db.Column(db.DateTime, nullable=True)

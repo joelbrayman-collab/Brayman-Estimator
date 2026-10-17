@@ -1,4 +1,5 @@
 {% extends "supplier/base.html" %}
+{% from "supplier/_delivery.html" import delivery_panel with context %}
 {% block title %}{{ share.number }}{% endblock %}
 {% block content %}
 {% set s = share.shared_json %}
@@ -13,7 +14,7 @@
 <section class="form-panel supplier-order" data-supplier-order="{{ order.status }}">
     <h2>Purchase order {{ order.number }}</h2>
     <p>Placed by {{ order.placed_by_name }} on {{ order.placed_at.strftime("%B %d, %Y") }} against quote {{ order.quote_ref }}. Total before tax <strong>{{ "${:,.2f}".format(order.total) }}</strong>.</p>
-    <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if order.delivery_date %} on {{ order.delivery_date.isoformat() }}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
+    <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if order.delivery_date %} on {{ order.delivery_date.isoformat() }}{% if order.delivery_window %}, {{ order.delivery_window }}{% endif %}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
     {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
     {% if share.request_kind != kind_concrete %}<p class="muted-copy">The order lists the lines the contractor can order now. Lines whose quantity or product is not final stay on your quote and are not ordered yet.</p>{% endif %}
     <div style="overflow-x: auto;"><table class="data-table">
@@ -23,7 +24,8 @@
     {% if order.status == "PLACED" %}
     <form method="post" action="{{ url_for('supplier_portal.confirm', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid" data-confirm-order="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Expected delivery <input type="date" name="expected_delivery"></label>
+        <label>Delivery date you can make <input type="date" name="expected_delivery" value="{{ order.delivery_date.isoformat() if order.delivery_date else '' }}"></label>
+        <label>Time window <input type="text" name="delivery_window" value="{{ order.delivery_window or '' }}" placeholder="7:00–9:00"></label>
         <label>Note to the contractor <input type="text" name="note"></label>
         <div class="form-actions">
             <button type="submit" name="action" value="confirm" class="button is-primary">Confirm order</button>
@@ -35,6 +37,9 @@
     <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else order.status|title) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.expected_delivery %} · Expected delivery {{ order.expected_delivery.isoformat() }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
     {% endif %}
 </section>
+{% endif %}
+{% if order and order.status in ("PLACED", "CONFIRMED", "PROBLEM") %}
+{{ delivery_panel(order, schedule, pending, changes, reasons, "SUPPLIER", "supplier_portal", {"supplier_id": supplier.id}, "the contractor") }}
 {% endif %}
 
 {% if share.request_kind == kind_concrete %}

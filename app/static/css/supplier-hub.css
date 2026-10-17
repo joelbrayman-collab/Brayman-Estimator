@@ -30,3 +30,7 @@
 .supplier-footer { max-width: 1180px; margin: 0 auto; padding: 8px 16px 28px; color: #6b6b6b; font-size: 0.82rem; display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
 .supplier-footer img { height: 22px; width: auto; }
 .supplier-brand .supplier-location { font-size: 1.15rem; font-weight: 600; }
+.delivery-flag { color: #8a4b00; font-weight: 600; }
+.delivery-alert { border-left: 4px solid #c8871a; }
+.delivery-change.is-pending { border-left: 4px solid #c8871a; padding: 8px 14px; background: #fbf6ec; border-radius: 6px; }
+.delivery-history { margin: 6px 0 0; padding-left: 18px; }

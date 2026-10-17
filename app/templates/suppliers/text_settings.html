@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Text settings | Brayman Construction Platform{% endblock %}
+{% block page_title %}Text settings{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Your account</p><h1>Text settings</h1>
+<p class="muted-copy">Get a text when a supplier confirms an order, asks to change a delivery, or answers your change. Each text has a link to answer in CalibraytAI.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_office.deliveries') }}">Deliveries</a></div></div>
+<section class="form-panel">
+    {% include "supplier/_text_form.html" %}
+    {% if not configured %}<p class="muted-copy" data-texting-not-configured="true">Texting is not switched on for the company yet. Your number is saved; texts start once it is.</p>{% endif %}
+</section>
+{% endblock %}

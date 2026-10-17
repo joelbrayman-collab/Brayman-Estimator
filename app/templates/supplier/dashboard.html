@@ -4,7 +4,7 @@
 {% set f = figures %}
 <div class="page-heading"><div><p class="eyebrow">{{ supplier.legal_name }}</p><h1>Dashboard</h1>
 <p class="muted-copy">Measured figures for {{ supplier.legal_name }} only. Nothing here is estimated.</p></div>
-<div><a class="button-link" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
 <section class="supplier-tiles" data-supplier-dashboard="{{ supplier.id }}">
     <div class="form-panel"><p class="eyebrow">Requests received</p><p class="supplier-figure">{{ f.requests_received }}</p></div>
     <div class="form-panel"><p class="eyebrow">Quotes returned</p><p class="supplier-figure">{{ f.quotes_returned }}</p></div>

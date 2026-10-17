@@ -11,7 +11,7 @@
         {% if project_id %}<p><a class="button is-primary" href="{{ url_for('projects.review_contract', id=project_id) }}#contract-snapshot-{{ acceptance.contract_id }}">Review and send the contract</a></p>{% endif %}
         {% else %}
         <p class="muted-copy" data-contract-blocked="{{ acceptance.contract_block_code }}">The contract could not be generated automatically ({{ acceptance.contract_block_code }}). Open the Contract page to see what is missing.</p>
-        {% if project_id %}<p><a class="button" href="{{ url_for('projects.review_contract', id=project_id) }}">Open the Contract page</a></p>{% endif %}
+        {% if project_id %}<p><a class="button button-secondary" href="{{ url_for('projects.review_contract', id=project_id) }}">Open the Contract page</a></p>{% endif %}
         {% endif %}
     </div>
     {% else %}
@@ -50,7 +50,7 @@
             </label>
             <label>Who accepted <input type="text" name="client_name" value="{{ proposal.client_name }}" required></label>
             <label>Note (when, and what they said) <input type="text" name="note" required></label>
-            <div class="form-actions"><button type="submit" class="button">Record acceptance</button></div>
+            <div class="form-actions"><button type="submit" class="button-secondary">Record acceptance</button></div>
         </form>
     </details>
     {% endif %}

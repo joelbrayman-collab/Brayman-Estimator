@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-heading"><div><p class="eyebrow">Purchasing</p><h1>Supplier requests — {{ project.name }}</h1>
 <p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p></div>
-<div><a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> · <a class="button-link" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a></div></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a></div></div>
 
 <section class="form-panel" data-material-requests="true">
     <h2>Material and concrete requests</h2>
@@ -13,7 +13,7 @@
         <h3>{{ share.number }} — {{ share.supplier.legal_name }} <span class="muted-copy">({{ "concrete" if share.request_kind == "CONCRETE" else "materials" }})</span></h3>
         <p>Sent {{ share.sent_at.strftime("%B %d, %Y") }} by {{ share.sent_by_name }} · Status: <strong>{{ {"SENT": "Sent, not opened", "OPENED": "Opened by the supplier", "RETURNED": "Quote returned", "WITHDRAWN": "Withdrawn", "SUPERSEDED": "Replaced by a newer request"}.get(share.status, share.status) }}</strong>{% if share.returned_at %} on {{ share.returned_at.strftime("%B %d, %Y") }} by {{ share.returned_by_name }}{% endif %}</p>
         {% if share.request_kind == "MATERIAL" and share.response_ref %}
-        <p><a class="button" href="{{ url_for('deck_takeoff.view_response', project_id=project.id, response_id=share.response_ref) }}">Review the returned quote ({{ share.response_ref }})</a> — record its prices and approve the costs there.</p>
+        <p><a class="button button-secondary" href="{{ url_for('deck_takeoff.view_response', project_id=project.id, response_id=share.response_ref) }}">Review the returned quote ({{ share.response_ref }})</a> — record its prices and approve the costs there.</p>
         {% elif share.request_kind == "CONCRETE" and share.quote_json %}
         {% set q = share.quote_json %}
         <p data-concrete-quote-returned="true">Quote {{ q.quote_number }}: {{ q.volume_m3 }} m³ at ${{ q.price_per_m3 }} = ${{ q.concrete_value }}; with charges ${{ q.total_before_tax }} before tax; valid until {{ q.valid_until }}.{% if q.notes %} Notes: {{ q.notes }}{% endif %}</p>
@@ -39,7 +39,7 @@
         {% if share.status in ("SENT", "OPENED", "RETURNED") and not order %}
         <form method="post" action="{{ url_for('supplier_office.withdraw', project_id=project.id, share_id=share.id) }}" class="inline-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="button-link">Withdraw this request</button>
+            <button type="submit" class="button-secondary">Withdraw this request</button>
         </form>
         {% endif %}
         <details><summary>History</summary><ul>{% for e in row.events %}<li>{{ e.at.strftime("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} ({{ e.actor_side|lower }}: {{ e.actor_name }}){% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul></details>

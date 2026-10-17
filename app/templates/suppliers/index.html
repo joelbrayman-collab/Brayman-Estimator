@@ -18,7 +18,7 @@
                 {% if m.status == "ACTIVE" %}
                 <form method="post" action="{{ url_for('supplier_office.revoke_user', membership_id=m.id) }}" class="inline-form">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="button-link">Remove sign-in</button>
+                    <button type="submit" class="button-secondary">Remove sign-in</button>
                 </form>
                 {% endif %}
             </li>

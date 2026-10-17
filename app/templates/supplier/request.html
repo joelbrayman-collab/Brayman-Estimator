@@ -6,7 +6,7 @@
     <div><p class="eyebrow">{{ supplier.legal_name }} · {{ "Concrete request" if share.request_kind == kind_concrete else "Material request" }}</p>
     <h1>{{ share.number }}</h1>
     <p class="muted-copy">From {{ s.company }} — {{ s.contact_name }}{% if s.contact_email %} ({{ s.contact_email }}){% endif %} · {{ s.project_reference }} · Delivery town {{ s.delivery_town }}{% if s.needed_by %} · Needed by {{ s.needed_by }}{% endif %}</p></div>
-    <div><a class="button-link" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div>
+    <div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div>
 </div>
 
 {% if order %}
@@ -15,6 +15,7 @@
     <p>Placed by {{ order.placed_by_name }} on {{ order.placed_at.strftime("%B %d, %Y") }} against quote {{ order.quote_ref }}. Total before tax <strong>{{ "${:,.2f}".format(order.total) }}</strong>.</p>
     <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if order.delivery_date %} on {{ order.delivery_date.isoformat() }}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
     {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
+    {% if share.request_kind != kind_concrete %}<p class="muted-copy">The order lists the lines the contractor can order now. Lines whose quantity or product is not final stay on your quote and are not ordered yet.</p>{% endif %}
     <div style="overflow-x: auto;"><table class="data-table">
         <thead><tr><th>No.</th><th>Item</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Net unit cost</th><th>Total</th></tr></thead>
         <tbody>{% for line in order.lines_json %}<tr><td>{{ line.number }}</td><td>{{ line.description }}</td><td>{{ line.sku }}</td><td>{{ line.quantity }}</td><td>{{ line.unit }}</td><td>{{ line.net_unit_cost }}</td><td>{{ line.line_value }}</td></tr>{% endfor %}</tbody>
@@ -104,10 +105,12 @@
         <div class="form-actions"><button type="submit" class="button is-primary">Return quote</button></div>
     </form>
     {% else %}
+    <details{% if not order %} open{% endif %}><summary>All {{ s.lines|length }} requested lines</summary>
     <div style="overflow-x: auto;"><table class="data-table">
         <thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Unit</th></tr></thead>
         <tbody>{% for line in s.lines %}<tr><td>{{ line.number }}</td><td>{{ line.description }}</td><td>{{ line.qty }}</td><td>{{ line.unit }}</td></tr>{% endfor %}</tbody>
     </table></div>
+    </details>
     {% if share.quote_json %}
     <p data-quote-returned="true">Quote returned by {{ share.returned_by_name }} on {{ share.returned_at.strftime("%B %d, %Y") }}: {{ share.quote_json.lines_priced }} of {{ share.quote_json.lines }} lines priced. Quoted total (lines the contractor can record) <strong>${{ share.quote_json.recordable_quoted_total }}</strong>{% if share.quote_json.valid_until %}, valid until {{ share.quote_json.valid_until }}{% endif %}.</p>
     {% endif %}

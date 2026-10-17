@@ -18,3 +18,4 @@
 .supplier-history { margin: 0; padding-left: 18px; }
 .supplier-main input[type="text"], .supplier-main input[type="date"], .supplier-main input[type="number"] { min-height: 40px; }
 @media (max-width: 640px) { .supplier-header-inner { justify-content: flex-start; } }
+.supplier-tiles .form-panel, .supplier-areas .form-panel { margin: 0; }

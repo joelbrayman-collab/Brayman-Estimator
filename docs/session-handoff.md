@@ -1668,3 +1668,11 @@ A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CL
 - Gates: native Mac 2659 passed / 13 skipped; walk passed; 32 browser checks; backup `pre-v1addr2-20261017-0941.db` (Mac copy matches); post-check 152 tables, ROWS 3655, 19 proposals, integrity ok.
 - Rollback: redeploy `dfe098b` (`dep-db92jp2jnfac739l81mg`).
 - Joel's decisions recorded: Supplier Hub S0 (assessment §10) and the planned proposal-acceptance / supplier ordering flow (`docs/planned/`). Neither is authorized for implementation.
+
+## 17 Oct 2026 — Supplier Hub B–D released
+- Live: `fb754edf9d865358cdda60a5588edaeb1b53508c` (deploy `dep-db9udb7avr4c73ff141g`, released 17:22 EDT), pushed to `main` as the tested commit itself (fast-forward from `098c554`, git fsck ok). No migration; revision `y2b3c4d5e6f7` unchanged. Scope: needs attention, reporting periods, material demand, confirmed SKU suggestions, plain quantities, gap needs two unpriced requests, hidden custom dates.
+- Gates (`generated/v1bd_release.sh`, run 16:43 EDT): native Mac 2697 passed / 2 skipped, exit 0; end-to-end contractor walk passed in Chrome; 32 browser checks passed; backup `pre-v1bd-20261017-2110.db` sha256 `4854c72e…32e8`, integrity ok, Mac copy matches; signing readiness ok.
+- Post-check (read-only, on the running SHA): 164 tables, ROWS 3668, 19 proposals, integrity ok — identical to the pre-release backup counts.
+- Public checks: signed-out visitors sent to sign-in; supplier sign-in page served; supplier material demand requires supplier sign-in; manifest starts on Home; tested service worker, four app icons and the approved logo served. Signed-in supplier screens not checked in production from this session.
+- Rollback: redeploy `098c554` (`dep-db9ocuu54i7c738bc7t0`, same settings); no database change to undo; restore only with Joel's approval from `pre-v1bd-20261017-2110.db`.
+- Next (Joel, 17 Oct): Cal Assistant Phase 1 "Find It", using the approved Cal logo and the existing architecture reconnaissance. No external AI services; Cal is not deployed without separate authorization.

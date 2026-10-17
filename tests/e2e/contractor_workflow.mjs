@@ -275,9 +275,9 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await customer.close();
     await page.goto(proposalUrl);
     assert.match(await page.locator("[data-proposal-client-flow]").innerText(), /Accepted by E2E Synthetic Client/);
+    // The sign-off already locked the estimate, so the hub shows the committed baseline at once.
     await page.goto(`${base}/projects/${projectId}`);
-    await submit(page.locator("[data-lock-baseline] button"));
-    await page.goto(`${base}/projects/${projectId}`);
+    assert.equal(await page.locator("[data-lock-baseline]").count(), 0);
     let hub = await page.locator("main").innerText();
     assert.match(hub, /ORIGINAL ESTIMATED DIRECT COST\s+\$2667\.75/i);
     assert.match(hub, /ORIGINAL ESTIMATED PRE-TAX SELLING PRICE\s+\$3138\.53/i);

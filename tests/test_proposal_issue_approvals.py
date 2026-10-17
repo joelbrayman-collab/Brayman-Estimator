@@ -95,9 +95,11 @@ def test_historical_issued_proposals_are_not_rechecked_or_invalidated(app):
 def test_the_status_button_explains_instead_of_failing(client, app):
     estimate = _direct_estimate("EST-D3-0006")
     proposal = _draft(estimate)
+    # Joel, 17 Oct 2026: a proposal is issued only by sending it to the client; the page says why it cannot be sent.
     response = client.post(f"/proposals/{proposal.id}/status", data={"status": "Issued"}, follow_redirects=True)
     assert response.status_code == 200
-    assert b"cannot be issued yet" in response.data
+    assert b"Use Send proposal to client on the proposal page" in response.data
+    assert b"To send this proposal: Sign off the estimate first. Approve the estimate&#39;s costing." in response.data
     assert db.session.get(Proposal, proposal.id).status == "Draft"
 
 

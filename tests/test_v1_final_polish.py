@@ -67,9 +67,10 @@ def test_once_costing_and_pricing_are_approved_create_proposal_is_the_primary_ac
     client = _signed_in(app)
     page = client.get(f"/estimates/{estimate.id}/versions/{version.id}").get_data(as_text=True)
     actions = _actions(page)
-    assert '<a class="button is-primary" href="' in actions
+    # Joel, 17 Oct 2026: signing off the estimate is the primary action; it builds the proposal.
+    assert '<button type="submit" class="button is-primary">Sign off estimate</button>' in actions
     assert actions.index("is-primary") < actions.index("Create Proposal")
-    assert "Next step: create the proposal." in page
+    assert "Next step: sign off the estimate." in page
     totals = page[page.index('class="estimate-totals"'):]
     assert 'class="estimate-total is-grand"' in totals and "Customer total" in totals
 

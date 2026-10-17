@@ -79,6 +79,7 @@ Files: `assets/screenshots/<chapter>/` (PNG), `assets/documents/` (original PDFs
 | `app/static/branding/calibraytai-logo-v1-dark.png` | 2500×1251 | `86a4d964cb31aa4e` | Sidebar logo (identical to the approved V1 dark reference) |
 | `app/static/branding/calibraytai-logo-v2.png` | 2501×1251 | `b719bdd2fe7814d4` | Earlier logo file still in the repository; not used by the V1 screens |
 | `docs/branding/calibraytai-opening-v1/storyboard/approved-logo-v1-dark-reference.png` | 2500×1251 | `86a4d964cb31aa4e` | Approved V1 reference |
+| `app/static/branding/Cal_Assistant_Approved_Identity_2026-10-17.png` | 1281×1227 | `d8857f1bfef06c70` | **CAL — APPROVED ASSISTANT IDENTITY.** Approved 17 Oct 2026; frozen master, stored unchanged. Full SHA-256 `d8857f1bfef06c709390e8eaedfe437aea49983236c79843ee7845d561617e87`. Design record: [cal-assistant-approved-identity-2026-10-17.md](../branding/cal-assistant-approved-identity-2026-10-17.md). Not yet used by any screen. |
 
 ## Recommended placement by chapter
 

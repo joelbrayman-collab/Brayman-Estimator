@@ -82,6 +82,15 @@ Joel-approved final package **`CalibraytAI_090926_Final.zip`** remains the exter
 
 Office chrome, login mark, tenant Brand Profile, Proposal, and Change Order continue to use `app/static/branding/brayman-construction-logo.png`. Field favicon remains that tenant PNG because the package contains no supplied square favicon and derivation is forbidden.
 
+## Cal — approved assistant identity (archived 17 Oct 2026)
+
+**CAL — APPROVED ASSISTANT IDENTITY.** Owner approval: **17 October 2026**. Frozen; do not redesign, regenerate or substitute without Joel's explicit approval.
+
+- Repository path: **`app/static/branding/Cal_Assistant_Approved_Identity_2026-10-17.png`** (placed with the other approved CalibraytAI brand assets).
+- SHA-256: `d8857f1bfef06c709390e8eaedfe437aea49983236c79843ee7845d561617e87` (verified against Joel's download before commit). PNG, 1281×1227, 1,911,609 bytes. Stored byte-for-byte unchanged.
+- Design record: [docs/branding/cal-assistant-approved-identity-2026-10-17.md](../branding/cal-assistant-approved-identity-2026-10-17.md) (original record commit `91a159f`, preserved unchanged). That record named `app/static/img/cal-assistant/` as a provisional location; per Joel's archival instruction the asset lives in `app/static/branding/` instead, with no separate asset directory.
+- Status: archived only. No screen uses it yet; derivative sizes, if any, are recorded separately when produced. This archival does not authorize Cal Assistant implementation, AI access or deployment.
+
 ## Website
 
 **WEBSITE (EXTERNAL / NOT THIS REPOSITORY):** Version 15 CalibraytAI identity is published; live QA **PASS**. Supplier Integration is a separate Work stream; Phase 2 outstanding/in progress outside this repo. Future universal website Log In gateway is **not implemented**. Hosting migration chatgpt.site → HostPapa is **QUEUED POST-BETA**. No redesign during hosting migration.

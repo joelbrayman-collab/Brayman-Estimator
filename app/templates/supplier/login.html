@@ -1,17 +1,23 @@
 {% extends "supplier/base.html" %}
 {% block title %}Supplier sign-in{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 <section class="form-panel supplier-login">
     <p class="eyebrow">Supplier Hub</p>
     <h1>Supplier sign-in</h1>
     <p class="muted-copy">For store staff who receive material requests from contractors on CalibraytAI. Contractor office staff sign in on the office sign-in page.</p>
-    <form method="post" action="{{ url_for('supplier_portal.login') }}" class="form-grid">
+    <form method="post" action="{{ url_for('supplier_portal.login') }}" class="login-form supplier-login-form" novalidate>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
-        <label>Email <input type="email" name="email" autocomplete="username" required></label>
-        <label>Password <input type="password" name="password" autocomplete="current-password" required></label>
-        <div class="form-actions"><button type="submit" class="button is-primary">Sign in</button></div>
+        <label for="supplier-email">Email</label>
+        <input id="supplier-email" type="email" name="email" autocomplete="username" inputmode="email" required autofocus>
+        <label for="supplier-password">Password</label>
+        <input id="supplier-password" type="password" name="password" autocomplete="current-password" required data-password-reveal>
+        <p class="login-forgot">
+            <a class="login-forgot-link" href="{{ url_for('auth.forgot_password', portal='supplier') }}" data-supplier-forgot>Forgot your password?</a>
+        </p>
+        <button type="submit" class="button is-primary login-primary">Sign in</button>
     </form>
-    <p class="muted-copy"><a href="{{ url_for('auth.forgot_password') }}">Forgot your password?</a></p>
 </section>
+<script src="{{ url_for('static', filename='js/password-reveal.js') }}"></script>
 {% endblock %}

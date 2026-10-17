@@ -25,7 +25,7 @@
             <label for="email">Email</label>
             <input id="email" type="email" name="email" autocomplete="username" inputmode="email" required autofocus>
             <label for="password">Password</label>
-            <input id="password" type="password" name="password" autocomplete="current-password" required>
+            <input id="password" type="password" name="password" autocomplete="current-password" required data-password-reveal>
             <p class="login-forgot">
                 <a class="login-forgot-link" href="{{ url_for('auth.forgot_password') }}">{{ contractor_copy.FORGOT_PASSWORD_LINK }}</a>
             </p>
@@ -34,6 +34,7 @@
 {% endblock %}
 {% block auth_scripts %}
     <script src="{{ url_for('static', filename='js/sign-in-clears-field-cache.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/password-reveal.js') }}"></script>
     {% if opening_v1 %}
     <script type="application/json" id="opening-v1-config">{{ opening_v1 | tojson }}</script>
     <script src="{{ url_for('static', filename='js/opening-v1.js') }}" defer></script>

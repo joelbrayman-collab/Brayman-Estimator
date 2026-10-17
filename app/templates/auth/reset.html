@@ -8,12 +8,15 @@
         <form method="post" action="{{ url_for('auth.reset_password', credential=credential) }}" class="login-form" novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="password">{{ contractor_copy.RESET_PASSWORD_NEW_LABEL }}</label>
-            <input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
+            <input id="password" type="password" name="password" autocomplete="new-password" required minlength="8" data-password-reveal>
             <label for="confirm_password">{{ contractor_copy.RESET_PASSWORD_CONFIRM_LABEL }}</label>
-            <input id="confirm_password" type="password" name="confirm_password" autocomplete="new-password" required minlength="8">
+            <input id="confirm_password" type="password" name="confirm_password" autocomplete="new-password" required minlength="8" data-password-reveal>
             <button type="submit" class="button login-primary">{{ contractor_copy.RESET_PASSWORD_SUBMIT }}</button>
         </form>
         <p class="login-secondary">
             <a class="login-secondary-link" href="{{ url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
         </p>
+{% endblock %}
+{% block auth_scripts %}
+    <script src="{{ url_for('static', filename='js/password-reveal.js') }}"></script>
 {% endblock %}

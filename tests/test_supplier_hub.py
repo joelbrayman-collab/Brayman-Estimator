@@ -515,3 +515,22 @@ def test_supplier_pages_never_show_selling_prices_or_margins(app, client):
             assert value not in page and f"{float(value):,.2f}" not in page
         for word in ("margin", "markup", "selling price", "customer total", "EST-MARGIN-1"):
             assert word.lower() not in page.lower().replace("contractor margins, labour rates or internal costs", "")
+
+
+def test_supplier_sign_in_has_show_password_and_a_reset_that_returns_to_the_supplier_page(app, client):
+    _project, _other, account = _setup()
+    _give_sign_in(client, account)
+    page = app.test_client().get("/supplier/login").data.decode()
+    assert 'name="password"' in page and "data-password-reveal" in page and "js/password-reveal.js" in page
+    assert '/forgot-password?portal=supplier' in page
+    office = app.test_client().get("/login").data.decode()
+    assert "data-password-reveal" in office and "js/password-reveal.js" in office  # same treatment both pages
+    forgot = app.test_client().get("/forgot-password?portal=supplier").data.decode()
+    assert 'name="portal" value="supplier"' in forgot and 'href="/supplier/login"' in forgot
+    before = TransactionalMessage.query.filter_by(to_email=DARCY[1]).count()
+    sent = app.test_client().post("/forgot-password", data={"email": DARCY[1], "portal": "supplier"})
+    assert sent.status_code == 302 and sent.headers["Location"].endswith("/forgot-password/sent?portal=supplier")
+    assert TransactionalMessage.query.filter_by(to_email=DARCY[1]).count() == before + 1  # reset link to Darcy
+    assert 'href="/supplier/login"' in app.test_client().get(sent.headers["Location"]).data.decode()
+    # Without the supplier hint the office pages keep their own link.
+    assert 'href="/login"' in app.test_client().get("/forgot-password").data.decode()

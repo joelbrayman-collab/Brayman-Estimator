@@ -90,20 +90,30 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
+def _recovery_portal():
+    """Supplier staff who start from the supplier sign-in return to it (Joel, 17 Oct 2026)."""
+    return "supplier" if (request.values.get("portal") or "") == "supplier" else ""
+
+
+def _sign_in_url(portal):
+    return url_for("supplier_portal.login") if portal == "supplier" else url_for("auth.login")
+
+
 @auth_bp.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
+    portal = _recovery_portal()
     if request.method == "POST":
         try:
             request_password_reset(request.form.get("email", ""), client_ip=_client_ip())
         except PasswordResetServiceError:
             pass
-        return redirect(url_for("auth.forgot_password_sent"))
-    return render_template("auth/forgot.html")
+        return redirect(url_for("auth.forgot_password_sent", portal=portal or None))
+    return render_template("auth/forgot.html", portal=portal, sign_in_url=_sign_in_url(portal))
 
 
 @auth_bp.route("/forgot-password/sent", methods=["GET"])
 def forgot_password_sent():
-    return render_template("auth/forgot_sent.html")
+    return render_template("auth/forgot_sent.html", sign_in_url=_sign_in_url(_recovery_portal()))
 
 
 @auth_bp.route("/reset-password/complete", methods=["GET"])

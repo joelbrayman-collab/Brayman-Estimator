@@ -4,6 +4,6 @@
         <h1>{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}</h1>
         <p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>
         <p class="login-secondary">
-            <a class="login-secondary-link" href="{{ url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
+            <a class="login-secondary-link" href="{{ sign_in_url or url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
         </p>
 {% endblock %}

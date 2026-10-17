@@ -74,3 +74,14 @@ a.login-primary,
         min-height: 48px;
     }
 }
+
+/* Show / hide password (office and supplier sign-in). */
+.password-reveal { position: relative; display: block; width: 100%; }
+.password-reveal input { width: 100%; min-height: 44px; font-size: 1rem; padding-right: 48px; }
+.password-reveal-toggle {
+    position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+    width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 6px; background: transparent; color: #4a5560; cursor: pointer; padding: 0;
+}
+.password-reveal-toggle:hover { color: #17212b; background: rgba(0, 0, 0, 0.05); }
+.password-reveal-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }

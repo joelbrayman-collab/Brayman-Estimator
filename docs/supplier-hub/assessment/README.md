@@ -204,3 +204,10 @@ Build the FG-030 minimum, following ADR-047, reusing the existing User and passw
 Report: files, migration (up/down tested on a copy), focused and full regression, screenshots of
 /supplier/login and /supplier at 1440 and 390, and the release script for owner authorization.
 ```
+
+## 10. S0 decisions (Joel, 17 Oct 2026, 04:50)
+
+1. **Supplier sign-in — APPROVED.** A separate supplier-side sign-in (FG-030 minimum) is authorized for build and test on synthetic data. No deploy without separate authorization.
+2. **Shared-request field list (§6) — APPROVED as written.**
+3. **Concrete path — NOT the FG-029 Supplier Package and not Form 2.** Concrete is a separate request that lives outside all other requests. It is a separate business that Darcy runs through Tomlinson. Open: whether it is its own supplier account, kept apart from BMR Winchester; and the concrete request's field list.
+4. **Estimate Accepted on proposal acceptance — YES in principle.** Joel asked whether e-signing marks it accepted. Customers e-sign contracts and change orders, not proposals. Proposed rule awaiting confirmation: when the office marks the proposal Accepted, the estimate version becomes Accepted automatically.

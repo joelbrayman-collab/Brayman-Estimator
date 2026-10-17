@@ -48,7 +48,7 @@ def test_graph_head_is_the_drawing_revision():
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
         assert script.get_heads() == [HEAD]
-        assert script.get_revision(HEAD).down_revision == REVISION
+        assert script.get_revision("w3d4e5f6a7b8").down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 
 

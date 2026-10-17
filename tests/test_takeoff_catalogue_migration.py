@@ -90,7 +90,7 @@ def test_graph_has_one_head_after_the_takeoff_revision():
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
         assert script.get_heads() == [HEAD]
-        assert script.get_revision(HEAD).down_revision == NEXT
+        assert script.get_revision("w3d4e5f6a7b8").down_revision == NEXT
         assert script.get_revision(NEXT).down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 

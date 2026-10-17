@@ -29,6 +29,7 @@ def test_brand_is_not_in_the_daily_menu():
     assert [item["title"] for item in company["links"]] == [
         "Attention",
         "Crews",
+        "Suppliers",
         "Work catalog",
     ]
 

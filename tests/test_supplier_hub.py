@@ -645,7 +645,8 @@ def test_material_demand_adds_up_requests_to_this_store_only_without_naming_cont
     demand = I.material_demand(account.supplier_id, I.resolve_period("90d"))
     rows = [r for c in demand["categories"] for r in c["rows"]]
     assert demand["requests"] == 2 and all(r["requests"] == 2 for r in rows)
-    assert demand["possible_gaps"] and all(g["quoted"] == 0 for g in demand["possible_gaps"])
+    assert demand["possible_gaps"] and all(g["quoted"] == 0 and g["unpriced_requests"] == 2 for g in demand["possible_gaps"])
+    assert all("E+" not in r["quantity"] for r in rows)  # plain numbers, never scientific notation
 
     page = supplier.get(f"/supplier/{account.supplier_id}/demand?period=90d").get_data(as_text=True)
     assert "data-demand-requests" in page and "Possible assortment gaps" in page and "Recurring" in page

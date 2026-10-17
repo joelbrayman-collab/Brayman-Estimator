@@ -250,6 +250,14 @@ def _decimal(value) -> Optional[Decimal]:
         return None
 
 
+def _plain(value: Decimal) -> str:
+    """12, 12.5, 0 — never scientific notation."""
+    if not value:
+        return "0"
+    text = format(value, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text
+
+
 def _material_lookup(codes) -> dict:
     codes = [c for c in set(codes) if c]
     if not codes:
@@ -336,6 +344,7 @@ def material_demand(supplier_id: int, period: Period) -> dict:
                 "code": code, "description": (line.get("description") or "").strip(), "unit": unit,
                 "category_raw": facts.get("category"), "requests": 0, "share_ids": set(), "contractors": set(),
                 "quantity": Decimal("0"), "without_quantity": 0, "quoted": 0, "not_priced": 0,
+                "unpriced_shares": set(), "priced_shares": set(),
                 "ordered_quantity": Decimal("0"), "ordered_lines": 0,
             })
             if share.id not in g["share_ids"]:
@@ -353,8 +362,10 @@ def material_demand(supplier_id: int, period: Period) -> dict:
                 priced = row is not None and row.get("status") == "QUOTED" and str(answers.get("sku") or "").strip()
                 if priced:
                     g["quoted"] += 1
+                    g["priced_shares"].add(share.id)
                 else:
                     g["not_priced"] += 1
+                    g["unpriced_shares"].add(share.id)
             if number in ordered:
                 g["ordered_lines"] += 1
                 g["ordered_quantity"] += ordered[number] or Decimal("0")
@@ -370,17 +381,18 @@ def material_demand(supplier_id: int, period: Period) -> dict:
             "unit": g["unit"],
             "requests": g["requests"],
             "contractors": len(g["contractors"]),
-            "quantity": g["quantity"].normalize() if g["quantity"] else Decimal("0"),
+            "quantity": _plain(g["quantity"]),
             "without_quantity": g["without_quantity"],
             "quoted": g["quoted"],
             "not_priced": g["not_priced"],
             "ordered_lines": g["ordered_lines"],
-            "ordered_quantity": g["ordered_quantity"].normalize() if g["ordered_quantity"] else Decimal("0"),
+            "ordered_quantity": _plain(g["ordered_quantity"]),
             "confirmed_sku": confirmed_sku,
             "recurring": g["requests"] >= 2,
-            # A possible assortment gap: asked for in at least two requests and returned unpriced by
-            # this store each time it answered. Shown as a prompt to look, never as a conclusion.
-            "possible_gap": (g["requests"] >= 2 and g["quoted"] == 0 and g["not_priced"] > 0),
+            "unpriced_requests": len(g["unpriced_shares"] - g["priced_shares"]),
+            # A possible assortment gap: returned without a price in at least two separate requests and
+            # never priced by this store. Shown as a prompt to look, never as a conclusion.
+            "possible_gap": (len(g["unpriced_shares"]) >= 2 and not g["priced_shares"]),
         })
     rows.sort(key=lambda r: (r["category"], -r["requests"], r["name"].lower()))
     categories = []
@@ -389,7 +401,7 @@ def material_demand(supplier_id: int, period: Period) -> dict:
             categories.append({"name": row["category"], "rows": []})
         categories[-1]["rows"].append(row)
     concrete_rows = [{"label": g["label"], "requests": g["requests"], "contractors": len(g["contractors"]),
-                      "volume": g["volume"].normalize(), "quoted": g["quoted"], "ordered": g["ordered"]}
+                      "volume": _plain(g["volume"]), "quoted": g["quoted"], "ordered": g["ordered"]}
                      for _, g in sorted(concrete.items())]
     return {
         "period": period,

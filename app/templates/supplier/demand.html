@@ -20,8 +20,8 @@
 {% if d.possible_gaps %}
 <section class="form-panel delivery-alert" data-demand-gaps="{{ d.possible_gaps|length }}">
     <h2>Possible assortment gaps</h2>
-    <p class="muted-copy">Asked for in two or more requests and returned without a price each time. Worth a look: you may not stock it, or it may go by another SKU.</p>
-    <ul>{% for r in d.possible_gaps %}<li><strong>{{ r.name }}</strong> ({{ r.unit }}) — in {{ r.requests }} requests, not priced {{ r.not_priced }} time{{ "s" if r.not_priced != 1 }}</li>{% endfor %}</ul>
+    <p class="muted-copy">Returned without a price in two or more separate requests, and never priced. Worth a look: you may not stock it, or it may go by another SKU.</p>
+    <ul>{% for r in d.possible_gaps %}<li><strong>{{ r.name }}</strong> ({{ r.unit }}) — in {{ r.requests }} requests, returned without a price in {{ r.unpriced_requests }}</li>{% endfor %}</ul>
 </section>
 {% endif %}
 
@@ -39,7 +39,7 @@
             <td>{{ r.unit }}</td>
             <td>{{ r.requests }}</td>
             <td>{{ r.contractors }}</td>
-            <td>{{ r.quantity if r.quantity else "—" }}{% if r.without_quantity %}<div class="muted-copy">+{{ r.without_quantity }} without a final quantity</div>{% endif %}</td>
+            <td>{{ r.quantity if r.quantity != "0" else "—" }}{% if r.without_quantity %}<div class="muted-copy">+{{ r.without_quantity }} without a final quantity</div>{% endif %}</td>
             <td>{% if r.quoted or r.not_priced %}{{ r.quoted }} of {{ r.quoted + r.not_priced }}{% else %}—{% endif %}</td>
             <td>{% if r.ordered_lines %}{{ r.ordered_quantity }} {{ r.unit }}{% else %}—{% endif %}</td>
             <td>{% if r.recurring %}<span class="demand-flag">Recurring</span>{% endif %}{% if not r.confirmed_sku %}<span class="demand-flag">No confirmed SKU</span>{% endif %}{% if r.possible_gap %}<span class="demand-flag is-gap">Possible gap</span>{% endif %}</td>

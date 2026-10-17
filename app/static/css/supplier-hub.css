@@ -53,3 +53,4 @@
 .sku-suggested { display: block; font-size: 0.75rem; color: #6b6b6b; margin-top: 2px; }
 .sku-suggested.is-several { color: #8a4b00; }
 .supplier-main [data-spaced] { margin-top: 14px; }
+.period-form [hidden] { display: none; }

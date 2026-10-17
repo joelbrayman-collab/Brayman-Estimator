@@ -155,6 +155,10 @@ def test_commercial_tokens_mapped_from_frozen_snapshot(app):
 
 def test_missing_required_frozen_commercial_fact_blocks(app):
     project = _ottawa_project(address="", estimate_number="EST-FG024C-NOSITE")
+    # No site at all: since 16 Oct 2026 a blank free-text address falls back to the job location,
+    # so the location street is blanked too.
+    project.location.street = ""
+    db.session.commit()
     package = _package(
         code="TEST-ON-NOSITE",
         jurisdiction_code="CA-ON",

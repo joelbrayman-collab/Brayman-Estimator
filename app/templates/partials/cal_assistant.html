@@ -1,0 +1,37 @@
+{# Cal Assistant, Phase 1 — Find It. Opens only when clicked; read-only links. #}
+<button type="button" class="header-icon-btn cal-launch" id="cal-launch"
+        aria-label="{{ cal_copy.CAL_OPEN_LABEL }}" title="{{ cal_copy.CAL_NAME }} — {{ cal_copy.CAL_IDENTITY }}"
+        aria-haspopup="dialog" aria-expanded="false" aria-controls="cal-panel">
+    <img src="{{ url_for('static', filename='img/cal-assistant/cal-64.png') }}"
+         srcset="{{ url_for('static', filename='img/cal-assistant/cal-64.png') }} 1x, {{ url_for('static', filename='img/cal-assistant/cal-128.png') }} 2x"
+         alt="" width="26" height="25">
+</button>
+<div class="cal-panel" id="cal-panel" role="dialog" aria-modal="false" aria-labelledby="cal-panel-title" hidden
+     data-cal-find-url="{{ url_for('cal_assistant.find_it') }}"
+     data-cal-searching="{{ cal_copy.CAL_SEARCHING }}"
+     data-cal-error="{{ cal_copy.CAL_ERROR }}"
+     data-cal-signed-out="{{ cal_copy.CAL_SIGNED_OUT }}">
+    <div class="cal-panel-head">
+        <img src="{{ url_for('static', filename='img/cal-assistant/cal-128.png') }}" alt="" width="40" height="38">
+        <div class="cal-panel-name">
+            <strong id="cal-panel-title">{{ cal_copy.CAL_NAME }}</strong>
+            <span>{{ cal_copy.CAL_IDENTITY }}</span>
+        </div>
+        <button type="button" class="cal-close" id="cal-close" aria-label="{{ cal_copy.CAL_CLOSE_LABEL }}">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+    <form class="cal-form" id="cal-form" action="{{ url_for('cal_assistant.find_it') }}" method="get" role="search">
+        <label for="cal-query">{{ cal_copy.CAL_FIND_LABEL }}</label>
+        <div class="cal-form-row">
+            <input id="cal-query" name="q" type="search" maxlength="200" autocomplete="off"
+                   placeholder="{{ cal_copy.CAL_FIND_PLACEHOLDER }}" enterkeyhint="search">
+            <button type="submit" class="cal-find-btn">{{ cal_copy.CAL_FIND_BUTTON }}</button>
+        </div>
+        <div class="cal-examples" id="cal-examples">
+            {% for example in cal_copy.CAL_EXAMPLES %}<button type="button" class="cal-example" data-cal-example="{{ example }}">{{ example }}</button>{% endfor %}
+        </div>
+    </form>
+    <div class="cal-results" id="cal-results" role="status" aria-live="polite"></div>
+    <p class="cal-footnote">{{ cal_copy.CAL_FOOTNOTE }}</p>
+</div>

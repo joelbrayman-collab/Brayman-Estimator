@@ -1676,3 +1676,8 @@ A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CL
 - Public checks: signed-out visitors sent to sign-in; supplier sign-in page served; supplier material demand requires supplier sign-in; manifest starts on Home; tested service worker, four app icons and the approved logo served. Signed-in supplier screens not checked in production from this session.
 - Rollback: redeploy `098c554` (`dep-db9ocuu54i7c738bc7t0`, same settings); no database change to undo; restore only with Joel's approval from `pre-v1bd-20261017-2110.db`.
 - Next (Joel, 17 Oct): Cal Assistant Phase 1 "Find It", using the approved Cal logo and the existing architecture reconnaissance. No external AI services; Cal is not deployed without separate authorization.
+
+## 17 Oct 2026 — Cal Assistant Phase 1 "Find It" (branch only, not deployed)
+- Built on `v1/completion` from `main` `5904ff5`. Spec, reuse map and limitations: `docs/modules/cal-assistant-find-it.md`. Logo derivatives recorded in the Cal identity doc.
+- Gates: 20 dedicated tests; 30 browser checks on desktop 1440×900 and phone 390×844 (open on click, focus, ambiguity, nothing-found, result opens the record, Esc/outside close, no page widening, 44 px targets, Help still present, no script errors).
+- Not deployed. Production requires Joel's separate authorization. Phases 2–3 are not authorized.

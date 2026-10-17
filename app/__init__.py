@@ -397,6 +397,7 @@ def create_app(config=None):
     from app.routes import calculation_mapping_trades as calculation_mapping_trade_routes  # noqa: F401
     from app.routes.main import main_bp
     from app.routes.help import help_bp
+    from app.routes.cal_assistant import cal_bp
     from app.routes.projects import projects_bp
     from app.routes import project_scope as project_scope_routes  # noqa: F401
     from app.routes import project_setup as project_setup_routes  # noqa: F401
@@ -439,6 +440,7 @@ def create_app(config=None):
 
     app.register_blueprint(main_bp)
     app.register_blueprint(help_bp)
+    app.register_blueprint(cal_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(projects_bp)
     app.register_blueprint(punch_list_bp)

@@ -5,7 +5,7 @@ from flask_login import current_user
 from sqlalchemy import or_
 
 from app.navigation import NAV_SECTIONS, is_nav_item_active
-from app.presentation import contractor_copy, help_content
+from app.presentation import cal_copy, contractor_copy, help_content
 
 
 def register_shell_context(app):
@@ -89,6 +89,7 @@ def register_shell_context(app):
             "product_name": "Brayman Construction Platform",
             "contractor_copy": contractor_copy,
             "help_content": help_content,
+            "cal_copy": cal_copy,
         }
 
 

@@ -7,7 +7,7 @@
 {% for row in summary %}
 <a class="form-panel supplier-area" href="{{ url_for('supplier_portal.inbox', supplier_id=row.supplier.id) }}" data-supplier-area="{{ row.supplier.id }}">
     {% set b = brand_for(row.supplier) %}
-    {% if b.logo_url %}<img src="{{ b.logo_url }}" alt="{{ b.name }}" style="height: 40px; max-width: 180px; object-fit: contain;">{% endif %}
+    {% if b.logo_url %}<img src="{{ b.logo_url }}" alt="{{ b.name }}" style="height: 40px; max-width: 260px; object-fit: contain;">{% endif %}
     <h2>{{ b.name }}{% if b.location and b.location not in b.name %} — {{ b.location }}{% endif %}</h2>
     <p>{{ row.waiting }} request{{ "s" if row.waiting != 1 }} waiting · {{ row.orders_waiting }} order{{ "s" if row.orders_waiting != 1 }} to confirm</p>
 </a>

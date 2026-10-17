@@ -31,7 +31,7 @@
         <details class="supplier-branding" data-supplier-branding="{{ account.supplier_id }}">
             <summary>Branding in the Supplier Hub{% if brand and (brand.logo_bytes or brand.primary_color) %} — set{% endif %}</summary>
             <div style="display: flex; gap: 14px; align-items: center; margin: 10px 0; padding: 10px 14px; border-radius: 8px; background: {{ brand.primary_color if brand and brand.primary_color else '#1f2a33' }};">
-                {% if brand and brand.logo_bytes %}<img src="{{ url_for('supplier_office.office_logo', supplier_id=account.supplier_id) }}" alt="" style="height: 40px; max-width: 160px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px 6px;">{% endif %}
+                {% if brand and brand.logo_bytes %}<img src="{{ url_for('supplier_office.office_logo', supplier_id=account.supplier_id) }}" alt="" style="height: 40px; max-width: 260px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px 6px;">{% endif %}
                 <strong style="color: {{ brand_text.get(account.supplier_id, '#fff') }};">{{ brand.display_name if brand and brand.display_name else account.supplier.legal_name }}</strong>
             </div>
             <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_office.save_branding', supplier_id=account.supplier_id) }}" class="form-grid">

@@ -293,7 +293,22 @@ def _record_history(
         reason=reason,
     )
     db.session.add(row)
+    if event == SCHEDULE_EVENT_DATES_CHANGED and prior_start is not None and prior_start != item.scheduled_start:
+        # Joel, 17 Oct 2026: linked supplier deliveries follow a schedule move (proposed, not imposed).
+        db.session.info.setdefault("schedule_moves", []).append((item.id, prior_start))
     return row
+
+
+def _propose_linked_deliveries() -> None:
+    from app.services.supplier_hub import propose_deliveries_for_schedule_moves
+
+    moves = db.session.info.pop("schedule_moves", [])
+    if moves:
+        proposed = propose_deliveries_for_schedule_moves(moves)
+        from flask import g, has_app_context
+
+        if has_app_context() and proposed:
+            g.schedule_delivery_proposals = getattr(g, "schedule_delivery_proposals", 0) + len(proposed)
 
 
 def _record_dependency_history(
@@ -477,6 +492,7 @@ def update_schedule_window(
     )
     if commit:
         db.session.commit()
+        _propose_linked_deliveries()
     return item
 
 
@@ -571,7 +587,9 @@ def schedule_activity_with_element_adjustment(
         db.session.commit()
     except Exception:
         db.session.rollback()
+        db.session.info.pop("schedule_moves", None)
         raise
+    _propose_linked_deliveries()
     return {"element_item": parent, "activity_item": activity_item}
 
 
@@ -626,7 +644,9 @@ def shift_project_schedule(
         db.session.commit()
     except Exception:
         db.session.rollback()
+        db.session.info.pop("schedule_moves", None)
         raise
+    _propose_linked_deliveries()
     return items
 
 

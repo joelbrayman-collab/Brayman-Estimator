@@ -36,6 +36,16 @@ from app.services.shared_api import list_current_operating_projects
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 
 
+def _flash_delivery_proposals():
+    """Tell the office when moving work proposed new dates for linked supplier deliveries."""
+    from flask import g
+
+    count = getattr(g, "schedule_delivery_proposals", 0)
+    if count:
+        flash(f"{count} linked supplier deliver{'y' if count == 1 else 'ies'} proposed for the new date. "
+              "The supplier is asked to accept; until then the agreed delivery stands.", "success")
+
+
 def _org():
     return get_current_organization()
 
@@ -230,6 +240,7 @@ def edit_item(item_id):
                     organization_id=organization.id,
                 )
             flash("Schedule updated.", "success")
+            _flash_delivery_proposals()
             return redirect(url_for("schedule.company", project_id=item.project_id))
         except (ScheduleError, ScheduleNotFoundError) as exc:
             flash(str(exc), "error")
@@ -320,6 +331,7 @@ def shift_project(project_id):
             organization_id=organization.id,
         )
         flash("Project schedule moved.", "success")
+        _flash_delivery_proposals()
     except (TypeError, ValueError):
         flash("Enter how many days to move this project.", "error")
     except (ScheduleError, ScheduleNotFoundError) as exc:

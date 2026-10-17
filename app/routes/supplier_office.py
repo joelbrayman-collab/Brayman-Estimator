@@ -166,7 +166,11 @@ def project_requests(project_id):
             row["schedule"] = current_schedule(row["order"])
             row["pending"] = pending_change(row["order"])
             row["changes"] = change_history(row["order"])
+    from app.services.supplier_hub import schedule_item_label, schedule_items_for_project
+
+    schedule_options = [(item.id, schedule_item_label(item)) for item in schedule_items_for_project(project)]
     return render_template("suppliers/project_requests.html", project=project, rows=rows, concrete=concrete,
+                           schedule_options=schedule_options,
                            reasons=CHANGE_REASONS,
                            deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),
                            accounts=accounts, placements=CONCRETE_PLACEMENT,
@@ -240,7 +244,8 @@ def order(project_id, share_id):
     try:
         po = place_order(share, user=current_user, delivery_date=request.form.get("delivery_date", ""),
                          site_contact=request.form.get("site_contact", ""), notes=request.form.get("notes", ""),
-                         delivery_window=request.form.get("delivery_window", ""))
+                         delivery_window=request.form.get("delivery_window", ""),
+                         schedule_item_id=request.form.get("schedule_item_id") or None)
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -375,3 +380,18 @@ def text_settings():
         return redirect(url_for("supplier_office.text_settings"))
     return render_template("suppliers/text_settings.html", contact=contact_for(current_user),
                            configured=texting_configured())
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/supplier-requests/<int:share_id>/approve-quote", methods=["POST"])
+def approve_quote(project_id, share_id):
+    from app.services.supplier_hub import approve_concrete_quote
+
+    project, org_id = _project(project_id)
+    share = _share(project, org_id, share_id)
+    try:
+        approve_concrete_quote(share, user=current_user)
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Concrete quote approved. Placing the order is a separate step.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")

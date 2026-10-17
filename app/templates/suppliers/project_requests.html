@@ -30,9 +30,14 @@
         {% elif share.request_kind == "CONCRETE" and share.quote_json %}
         {% set q = share.quote_json %}
         <p data-concrete-quote-returned="true">Quote {{ q.quote_number }}: {{ q.volume_m3 }} m³ at ${{ q.price_per_m3 }} = ${{ q.concrete_value }}; with charges ${{ q.total_before_tax }} before tax; valid until {{ q.valid_until }}.{% if q.notes %} Notes: {{ q.notes }}{% endif %}</p>
+        {% if q.approved_at %}<p data-concrete-quote-approved="true">Approved by {{ q.approved_by }} on {{ q.approved_at[:10] }}.</p>
+        {% elif not order %}<form method="post" action="{{ url_for('supplier_office.approve_quote', project_id=project.id, share_id=share.id) }}" class="inline-form" data-approve-quote="{{ share.id }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="button is-primary">Approve this quote</button>
+        </form>{% endif %}
         {% endif %}
         {% if order %}
-        <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong> — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
+        <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong>{% if order.schedule_item_id %} <span class="muted-copy">(follows the project schedule: moving that work proposes a new delivery to the supplier)</span>{% endif %} — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
         {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if order.expected_delivery %}, delivery {{ order.expected_delivery.isoformat() }}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
         {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
         {% elif share.status == "RETURNED" %}
@@ -45,6 +50,9 @@
             <p>{{ row.lines|length }} line{{ "s" if row.lines|length != 1 }}, total ${{ "%.2f"|format(ns.t) }} before tax. The site address goes to the supplier with the order.</p>
             <label>Delivery date <input type="date" name="delivery_date"></label>
             <label>Time window <input type="text" name="delivery_window" placeholder="7:00–9:00"></label>
+            <label>Follows the project schedule item
+                <select name="schedule_item_id"><option value="">Not linked</option>{% for sid, label in schedule_options %}<option value="{{ sid }}">{{ label }}</option>{% endfor %}</select>
+            </label>
             <label>Site contact <input type="text" name="site_contact"></label>
             <label>Notes for the supplier <input type="text" name="notes"></label>
             <div class="form-actions"><button type="submit" class="button is-primary">Place order</button></div>

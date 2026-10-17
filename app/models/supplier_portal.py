@@ -152,6 +152,8 @@ class SupplierPurchaseOrder(db.Model):
     # The agreed delivery: set when the supplier confirms, changed only by an accepted schedule change.
     scheduled_date = db.Column(db.Date, nullable=True)
     scheduled_window = db.Column(db.String(60), nullable=True)
+    # Optional link to the project schedule item this delivery serves; a move proposes a delivery change.
+    schedule_item_id = db.Column(db.Integer, db.ForeignKey("work_schedule_items.id", ondelete="RESTRICT"), nullable=True)
     delivery_address = db.Column(db.String(300), nullable=False)
     site_contact = db.Column(db.String(160), nullable=True)
     notes = db.Column(db.Text, nullable=True)
@@ -203,7 +205,7 @@ CHANGE_ACCEPTED = "ACCEPTED"
 CHANGE_DECLINED = "DECLINED"
 CHANGE_COUNTERED = "COUNTERED"
 CHANGE_WITHDRAWN = "WITHDRAWN"
-CHANGE_REASONS = ("Weather", "Site not ready", "Customer request", "Supplier availability", "Other")
+CHANGE_REASONS = ("Weather", "Site not ready", "Project schedule change", "Customer request", "Supplier availability", "Other")
 
 
 class SupplierDeliveryChange(db.Model):

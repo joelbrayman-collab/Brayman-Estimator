@@ -625,7 +625,24 @@ def concrete_order_lines(share: SupplierRequestShare) -> tuple[list[dict], list[
                           "net_unit_cost": str(value), "line_value": str(value), "cost_approved": True})
     if quote.get("valid_until") and date.fromisoformat(quote["valid_until"]) < date.today():
         return lines, ["The supplier's price has expired. Ask for a new quote."]
+    if not quote.get("approved_at"):
+        return lines, ["Approve the concrete quote first."]
     return lines, []
+
+
+def approve_concrete_quote(share: SupplierRequestShare, *, user) -> None:
+    """Demo step 5: Ben reviews and approves the returned concrete quote before any order (a separate step)."""
+    if share.request_kind != KIND_CONCRETE or share.status != SHARE_RETURNED or not share.quote_json:
+        raise SupplierHubError("There is no returned concrete quote to approve.")
+    if share.quote_json.get("approved_at"):
+        raise SupplierHubError("This quote is already approved.")
+    quote = dict(share.quote_json)
+    quote["approved_by"] = _display(user)
+    quote["approved_at"] = datetime.utcnow().isoformat(timespec="seconds")
+    share.quote_json = quote
+    _event(share, "QUOTE_APPROVED", "CONTRACTOR", quote["approved_by"],
+           f"Concrete quote {quote.get('quote_number')}: ${quote.get('total_before_tax')} before tax")
+    db.session.commit()
 
 
 def order_lines(share):
@@ -633,7 +650,7 @@ def order_lines(share):
 
 
 def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_contact: str = "",
-                notes: str = "", delivery_window: str = "") -> SupplierPurchaseOrder:
+                notes: str = "", delivery_window: str = "", schedule_item_id=None) -> SupplierPurchaseOrder:
     if purchase_order_for(share) is not None:
         raise SupplierHubError("An order was already placed on this request.")
     lines, blockers = order_lines(share)
@@ -652,6 +669,7 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
         total=total,
         delivery_date=_date(delivery_date, "delivery date", required=False) if isinstance(delivery_date, str) else delivery_date,
         delivery_window=(delivery_window or "").strip()[:60] or None,
+        schedule_item_id=_schedule_item_for(project, schedule_item_id),
         delivery_address=_site_address(project)[:300],
         site_contact=(site_contact or "").strip()[:160] or None,
         notes=(notes or "").strip() or None,
@@ -1074,3 +1092,94 @@ def remove_supplier_extra_number(supplier_id: int, number_id: int) -> None:
     row.active = False
     row.removed_at = datetime.utcnow()
     db.session.commit()
+
+
+
+# ------------------------------------------------------------------ project schedule → delivery (Joel, 17 Oct 2026)
+
+def _schedule_item_for(project, schedule_item_id):
+    """Only an active schedule item on the same project may be linked."""
+    if not schedule_item_id:
+        return None
+    from app.models.schedule import WorkScheduleItem
+
+    try:
+        item_id = int(schedule_item_id)
+    except (TypeError, ValueError):
+        return None
+    item = WorkScheduleItem.query.filter_by(id=item_id, project_id=project.id,
+                                            organization_id=project.organization_id).first()
+    if item is None:
+        raise SupplierHubError("Choose a schedule item on this project.")
+    return item.id
+
+
+def schedule_items_for_project(project):
+    from app.models.schedule import WorkScheduleItem
+
+    return (WorkScheduleItem.query.filter_by(project_id=project.id, organization_id=project.organization_id,
+                                             status="ACTIVE")
+            .order_by(WorkScheduleItem.scheduled_start.asc(), WorkScheduleItem.id.asc()).all())
+
+
+def schedule_item_label(item) -> str:
+    element = getattr(item, "element", None)
+    activity = getattr(item, "activity", None)
+    name = (getattr(activity, "display_name", None) or getattr(activity, "name", None)
+            or getattr(element, "display_name", None) or f"Schedule item {item.id}")
+    return f"{name} ({item.scheduled_start.isoformat()} – {item.scheduled_end.isoformat()})"
+
+
+class _ScheduleActor:
+    id = None
+    email = ""
+    display_name = "Project schedule"
+
+
+def _schedule_actor():
+    """The signed-in person who moved the schedule, or a neutral label outside a request."""
+    from flask import has_request_context
+    from flask_login import current_user
+
+    if has_request_context() and getattr(current_user, "is_authenticated", False):
+        return current_user
+    return _ScheduleActor()
+
+
+def propose_deliveries_for_schedule_moves(moves) -> list:
+    """For each moved schedule item, propose moving its linked open deliveries by the same number of days.
+
+    Proposed by the contractor side and sent to the supplier to accept, decline or counter; the agreed
+    delivery stands until then. An order that already has a change waiting is left alone and noted.
+    """
+    from app.models.schedule import WorkScheduleItem
+
+    proposed = []
+    for item_id, prior_start in moves:
+        item = db.session.get(WorkScheduleItem, item_id)
+        if item is None or prior_start is None:
+            continue
+        delta = item.scheduled_start - prior_start
+        if not delta.days:
+            continue
+        orders = SupplierPurchaseOrder.query.filter(
+            SupplierPurchaseOrder.schedule_item_id == item.id,
+            SupplierPurchaseOrder.status.in_((PO_PLACED, PO_CONFIRMED)),
+        ).all()
+        for order in orders:
+            schedule = current_schedule(order)
+            if schedule["date"] is None:
+                continue
+            if pending_change(order) is not None:
+                _event(order.share, "SCHEDULE_MOVED_CHANGE_PENDING", "CONTRACTOR", "CalibraytAI",
+                       f"{order.number}: schedule item moved {delta.days:+d} days; a delivery change is already waiting")
+                db.session.commit()
+                continue
+            change = request_delivery_change(
+                order, side="CONTRACTOR", user=_schedule_actor(), new_date=schedule["date"] + delta,
+                new_window=schedule["window"] or "", reason="Project schedule change",
+                note=(f"{schedule_item_label(item).rsplit(' (', 1)[0]} moved from {prior_start.isoformat()} to "
+                      f"{item.scheduled_start.isoformat()} ({delta.days:+d} day{'s' if abs(delta.days) != 1 else ''})."),
+            )
+            proposed.append(change)
+    return proposed

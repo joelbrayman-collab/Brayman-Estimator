@@ -132,6 +132,7 @@ def upgrade():
         sa.Column("delivery_window", sa.String(length=60), nullable=True),
         sa.Column("scheduled_date", sa.Date(), nullable=True),
         sa.Column("scheduled_window", sa.String(length=60), nullable=True),
+        sa.Column("schedule_item_id", sa.Integer(), sa.ForeignKey("work_schedule_items.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("delivery_address", sa.String(length=300), nullable=False),
         sa.Column("site_contact", sa.String(length=160), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),

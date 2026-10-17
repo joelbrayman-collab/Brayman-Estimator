@@ -222,6 +222,11 @@ def test_concrete_is_its_own_request_to_its_own_supplier_and_is_ordered_and_conf
     })
     share = db.session.get(SupplierRequestShare, share.id)
     assert share.quote_json["concrete_value"] == "945.00" and share.quote_json["total_before_tax"] == "1020.00"
+    blocked = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={"site_contact": "Ben"},
+                          follow_redirects=True)
+    assert b"Approve the concrete quote first" in blocked.data and SupplierPurchaseOrder.query.count() == 0
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")  # demo step 5, separate from the order
+    assert db.session.get(SupplierRequestShare, share.id).quote_json["approved_by"]
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={"site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.one()
     assert order.total == Decimal("1020.00") and order.supplier_id == tomlinson.supplier_id
@@ -305,6 +310,7 @@ def _concrete_order(app, client):
     darcy = _supplier_client(app)
     darcy.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote",
                data={"price_per_m3": "210", "valid_until": delivery})
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
                 data={"delivery_date": delivery, "delivery_window": "7:00–9:00"})
     order = SupplierPurchaseOrder.query.one()
@@ -397,3 +403,115 @@ def test_texts_need_consent_and_wait_for_twilio_settings(app, client):
     assert send_text_to_user(user, "hello") is None
     assert client.get("/account/text-messages").status_code == 200
     assert b"Text settings" in client.get("/account/text-messages").data
+
+
+def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplier(app, client):
+    """Joel, 17 Oct 2026: a schedule move is proposed to the supplier, who acknowledges it; nothing is imposed."""
+    from app.models.supplier_portal import SupplierDeliveryChange
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+    from app.services.schedule import create_schedule_item, shift_project_schedule
+    from app.services.work_structure import add_project_element
+
+    project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
+    agreed = order.scheduled_date
+    element = add_project_element(project_id=project.id, display_name="Foundation pour",
+                                  organization_id=project.organization_id)
+    item = create_schedule_item(project_id=project.id, project_work_element_id=element.id, scheduled_start=agreed,
+                                scheduled_end=agreed, organization_id=project.organization_id)
+    order.schedule_item_id = item.id
+    db.session.commit()
+    before = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count()
+
+    shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
+
+    change = SupplierDeliveryChange.query.one()
+    assert change.status == "PENDING" and change.reason == "Project schedule change"
+    assert change.new_date == agreed + timedelta(days=2) and change.new_window == "7:00–9:00"
+    assert "Foundation pour" in change.note and "+2 days" in change.note
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # not imposed
+    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 1
+    # A second move while the first is waiting does not stack a second change; it is noted in the history.
+    shift_project_schedule(project.id, days=1, organization_id=project.organization_id)
+    assert SupplierDeliveryChange.query.count() == 1
+    assert SupplierRequestEvent.query.filter_by(event_type="SCHEDULE_MOVED_CHANGE_PENDING").count() == 1
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    order = db.session.get(SupplierPurchaseOrder, order.id)
+    assert order.scheduled_date == agreed + timedelta(days=2)
+    events = [e.event_type for e in SupplierRequestEvent.query.filter_by(share_id=order.share_id).order_by(SupplierRequestEvent.id)]
+    assert events[-3:] == ["DELIVERY_CHANGE_REQUESTED", "SCHEDULE_MOVED_CHANGE_PENDING", "DELIVERY_CHANGE_ACCEPTED"]
+
+
+def test_delivery_notices_email_the_right_people_and_texts_stay_not_sent_until_twilio_is_configured(app, client):
+    from app.models.supplier_portal import SupplierDeliveryChange, TextMessage
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+    from app.services.text_messages import save_contact
+    from tests.auth_fixtures import DEFAULT_OFFICE_EMAIL
+
+    project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
+    save_contact(darcy_user, mobile_phone="613-555-0101", opt_in=True)
+    other = _give_sign_in(client, _bmr_account_of(project), name="BMR only", email="bmr.only@example.invalid")
+    sent = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE)
+    assert {m.to_email for m in sent} >= {DARCY[1], DEFAULT_OFFICE_EMAIL}  # order to Darcy, confirmation to Ben
+    app.config["TESTING"] = False  # production behaviour without Twilio settings
+    try:
+        client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
+                    data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
+    finally:
+        app.config["TESTING"] = True
+    texts = TextMessage.query.filter_by(to_phone="+16135550101").all()
+    assert texts and all(t.status == "NOT_CONFIGURED" and t.error_code == "TWILIO_SETTINGS_MISSING" for t in texts)
+    assert SupplierDeliveryChange.query.one().status == "PENDING"  # the change is recorded although no text went out
+    assert not TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=other.email).count()
+
+
+def _bmr_account_of(project):
+    return ContractorSupplierAccount.query.join(
+        ContractorSupplierAccount.supplier).filter_by(code="TEST-BMR").one()
+
+
+def test_one_contractors_requests_orders_and_deliveries_are_invisible_to_another_contractor(app, client):
+    from app.models import Client, Organization, Project
+    from app.models.user import UserMembership
+    from tests.auth_fixtures import create_user
+
+    project, tomlinson, darcy, _user, order = _concrete_order(app, client)
+    other_org = Organization(id="ORG-SYN-2", legal_name="Other Contractor Inc. (synthetic)", display_name="Other Contractor")
+    db.session.add(other_org); db.session.commit()
+    outsider = create_user(email="outsider@example.invalid", password="Synthetic-other-1", display_name="Other Office")
+    db.session.add(UserMembership(user_id=outsider.id, organization_id=other_org.id, is_active=True)); db.session.commit()
+    owner = Client(name="Other client", organization_id=other_org.id); db.session.add(owner); db.session.flush()
+    theirs = Project(name="Other contractor job", client_id=owner.id, organization_id=other_org.id, status="Estimating")
+    db.session.add(theirs); db.session.commit()
+    other = app.test_client()
+    assert other.post("/login", data={"email": "outsider@example.invalid", "password": "Synthetic-other-1"}).status_code == 302
+    assert other.get(f"/projects/{project.id}/supplier-requests").status_code == 404
+    assert order.number.encode() not in other.get("/deliveries").data
+    assert other.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
+                      data={"new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
+    assert other.post(f"/projects/{theirs.id}/orders/{order.id}/delivery-change",
+                      data={"new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
+    assert b"Tomlinson concrete (synthetic)" not in other.get("/suppliers").data  # the account belongs to the first contractor
+    assert other.post(f"/suppliers/{tomlinson.supplier_id}/users", data={"display_name": "x", "email": "x@example.invalid"}).status_code == 404
+
+
+def test_supplier_pages_never_show_selling_prices_or_margins(app, client):
+    from app.services.estimates import create_estimate
+    from app.services.estimate_builder import add_manual_line, create_section
+    from tests.proposal_issue_support import approve_for_issue
+
+    project, tomlinson, darcy, _user, order = _concrete_order(app, client)
+    estimate = create_estimate(project_id=project.id, estimate_number="EST-MARGIN-1", title="Deck",
+                               organization_id=DEFAULT_ORGANIZATION_ID)
+    section = create_section(estimate.current_version, name="Work")
+    add_manual_line(section, line_type="Custom", description="Composite decking", quantity=100, unit="SF", unit_cost=13.37)
+    approve_for_issue(estimate.current_version)
+    pricing = estimate.current_version.pricing_snapshot
+    secret_values = {f"{pricing.customer_total:.2f}", f"{pricing.pre_tax_selling_price:.2f}", "1337.00", "13.37"}
+    pages = [darcy.get(u).get_data(as_text=True) for u in (
+        "/supplier/", f"/supplier/{tomlinson.supplier_id}/", f"/supplier/{tomlinson.supplier_id}/dashboard",
+        f"/supplier/{tomlinson.supplier_id}/deliveries", f"/supplier/{tomlinson.supplier_id}/requests/{order.share_id}")]
+    for page in pages:
+        for value in secret_values:
+            assert value not in page and f"{float(value):,.2f}" not in page
+        for word in ("margin", "markup", "selling price", "customer total", "EST-MARGIN-1"):
+            assert word.lower() not in page.lower().replace("contractor margins, labour rates or internal costs", "")

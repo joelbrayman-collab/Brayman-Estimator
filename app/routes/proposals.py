@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, session, url_for
 
 from app import db
 from app.models.estimate import Estimate
@@ -36,8 +36,30 @@ from app.services.proposals import (
     update_proposal_line_item,
     update_proposal_status,
 )
+from app.services.proposal_acceptance import (
+    ProposalAcceptanceError,
+    acceptance_for,
+    current_link,
+    estimate_sign_off_blockers,
+    proposal_content_sha256,
+    proposal_send_blockers,
+    record_office_acceptance,
+    send_proposal_to_client,
+    sign_off_estimate,
+    withdraw_link_after_change,
+)
+from app.models.proposal_acceptance import OFFICE_ACCEPTANCE_CHANNELS
 
 proposals_bp = Blueprint("proposals", __name__)
+
+# Joel, 17 Oct 2026: a proposal is issued only by sending it to the client from
+# CalibraytAI, and accepted only by the client (or recorded by the office).
+ISSUED_BY_FLOW_ONLY = ("Issued", "Accepted")
+ISSUED_BY_FLOW_MESSAGE = (
+    "A proposal is issued by sending it to the client from CalibraytAI, and accepted when the "
+    "client accepts it. Use Send proposal to client on the proposal page."
+)
+OFFICE_STATUSES = tuple(s for s in PROPOSAL_STATUSES if s not in ISSUED_BY_FLOW_ONLY)
 
 
 def _parse_date(value):
@@ -157,6 +179,46 @@ def _proposal_form_from_model(proposal):
     }
 
 
+def _stamp_office_copy(pdf_bytes):
+    """Mark every page of a proposal that has not been sent to the client."""
+    from io import BytesIO
+
+    from pypdf import PdfReader, PdfWriter
+    from reportlab.pdfgen import canvas
+
+    reader = PdfReader(BytesIO(pdf_bytes))
+    writer = PdfWriter()
+    for page in reader.pages:
+        width, height = float(page.mediabox.width), float(page.mediabox.height)
+        mark = BytesIO()
+        sheet = canvas.Canvas(mark, pagesize=(width, height))
+        sheet.setFillColorRGB(0.75, 0.1, 0.1)
+        sheet.setFont("Helvetica-Bold", 9)
+        sheet.drawCentredString(width / 2, height - 14,
+                                "OFFICE COPY — NOT ISSUED. Proposals go to clients only through CalibraytAI.")
+        sheet.save()
+        page.merge_page(PdfReader(BytesIO(mark.getvalue())).pages[0])
+        writer.add_page(page)
+    out = BytesIO()
+    writer.write(out)
+    return out.getvalue()
+
+
+def _flow_context(proposal):
+    """Send-to-client and acceptance state for the proposal page."""
+    link_url = None
+    if session.get("proposal_link_for") == proposal.id:
+        link_url = session.get("proposal_link_url")
+    return {
+        "send_blockers": proposal_send_blockers(proposal),
+        "client_link": current_link(proposal),
+        "client_link_url": link_url,
+        "acceptance": acceptance_for(proposal),
+        "acceptance_channels": OFFICE_ACCEPTANCE_CHANNELS,
+        "signed_off": bool(proposal.estimate_version and proposal.estimate_version.signed_off_at),
+    }
+
+
 def _get_scoped_proposal_or_404(id):
     org_id = get_current_organization_id()
     proposal = Proposal.query.get_or_404(id)
@@ -217,6 +279,8 @@ def create_proposal_route(estimate_id, version_id):
                 raise ProposalServiceError(
                     "Select an active proposal template."
                 )
+            if form["status"] in ISSUED_BY_FLOW_ONLY:
+                raise ProposalServiceError(ISSUED_BY_FLOW_MESSAGE)
             proposal = create_proposal(
                 estimate=estimate,
                 version=version,
@@ -264,7 +328,7 @@ def create_proposal_route(estimate_id, version_id):
                 estimate=estimate,
                 version=version,
                 templates=templates,
-                statuses=PROPOSAL_STATUSES,
+                statuses=OFFICE_STATUSES,
                 proposal=None,
             )
 
@@ -286,7 +350,7 @@ def create_proposal_route(estimate_id, version_id):
         estimate=estimate,
         version=version,
         templates=templates,
-        statuses=PROPOSAL_STATUSES,
+        statuses=OFFICE_STATUSES,
         proposal=None,
     )
 
@@ -339,6 +403,7 @@ def view_proposal(id):
         editing_item_id=editing_item_id,
         item_edit_form=item_edit_form,
         proposal_immutable=immutable,
+        **_flow_context(proposal),
     )
 
 
@@ -392,6 +457,9 @@ def download_proposal_pdf(id):
     attachment = current_attachment(ATTACH_PROPOSAL, proposal.id)
     if attachment is not None:
         pdf_buffer = _BytesIO(append_drawings(pdf_buffer.getvalue(), attachment))
+    if proposal.status not in ISSUED_BY_FLOW_ONLY:
+        # Joel, 17 Oct 2026: only a proposal sent from CalibraytAI goes to a client.
+        pdf_buffer = _BytesIO(_stamp_office_copy(pdf_buffer.getvalue()))
     filename = sanitize_pdf_filename(proposal)
     return send_file(
         pdf_buffer,
@@ -425,6 +493,7 @@ def edit_proposal_line_item(id, section_id, item_id):
         "notes": request.form.get("notes", "").strip(),
     }
 
+    content_before = proposal_content_sha256(proposal)
     try:
         update_proposal_line_item(
             item,
@@ -443,9 +512,14 @@ def edit_proposal_line_item(id, section_id, item_id):
             editing_item_id=item.id if not is_proposal_immutable(proposal) else None,
             item_edit_form=form if not is_proposal_immutable(proposal) else None,
             proposal_immutable=is_proposal_immutable(proposal),
+            **_flow_context(proposal),
         )
 
-    flash("Proposal line item updated.", "success")
+    if withdraw_link_after_change(proposal, content_before=content_before):
+        flash("Line item updated. The client link was withdrawn because the proposal changed. "
+              "Send it to the client again.", "success")
+    else:
+        flash("Proposal line item updated.", "success")
     return redirect(url_for("proposals.view_proposal", id=proposal.id))
 
 
@@ -466,6 +540,9 @@ def edit_proposal(id):
     if request.method == "POST":
         form = _proposal_form_from_request()
         try:
+            if form["status"] in ISSUED_BY_FLOW_ONLY and form["status"] != proposal.status:
+                raise ProposalServiceError(ISSUED_BY_FLOW_MESSAGE)
+            content_before = proposal_content_sha256(proposal)
             update_proposal(
                 proposal,
                 proposal_number=form["proposal_number"],
@@ -516,11 +593,15 @@ def edit_proposal(id):
                 estimate=proposal.estimate,
                 version=proposal.estimate_version,
                 templates=templates,
-                statuses=PROPOSAL_STATUSES,
+                statuses=OFFICE_STATUSES,
                 proposal=proposal,
             )
 
-        flash("Proposal updated.", "success")
+        if withdraw_link_after_change(proposal, content_before=content_before):
+            flash("Proposal updated. The client link was withdrawn because the proposal changed. "
+                  "Send it to the client again.", "success")
+        else:
+            flash("Proposal updated.", "success")
         return redirect(url_for("proposals.view_proposal", id=proposal.id))
 
     form = _proposal_form_from_model(proposal)
@@ -530,7 +611,7 @@ def edit_proposal(id):
         estimate=proposal.estimate,
         version=proposal.estimate_version,
         templates=templates,
-        statuses=PROPOSAL_STATUSES,
+        statuses=OFFICE_STATUSES,
         proposal=proposal,
     )
 
@@ -540,9 +621,75 @@ def update_status(id):
     proposal = _get_scoped_proposal_or_404(id)
     status = request.form.get("status", "").strip()
     try:
+        if status in ISSUED_BY_FLOW_ONLY and status != proposal.status and not is_proposal_immutable(proposal):
+            raise ProposalServiceError(ISSUED_BY_FLOW_MESSAGE)
         update_proposal_status(proposal, status)
     except ProposalServiceError as exc:
         flash(str(exc), "error")
     else:
         flash(f'Proposal status set to "{proposal.status}".', "success")
     return redirect(url_for("proposals.view_proposal", id=proposal.id))
+
+
+@proposals_bp.route("/estimates/<int:estimate_id>/versions/<int:version_id>/sign-off", methods=["POST"])
+def sign_off_estimate_route(estimate_id, version_id):
+    from flask_login import current_user
+
+    estimate, version = get_estimate_and_version(estimate_id, version_id)
+    if estimate is None or version is None:
+        abort(404)
+    try:
+        proposal = sign_off_estimate(version, user=current_user)
+    except ProposalServiceError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("estimates.view_version", id=estimate.id, version_id=version.id))
+    flash("Estimate signed off and locked. Its proposal is ready: review it, then send it to the client.", "success")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id))
+
+
+@proposals_bp.route("/proposals/<int:id>/send-to-client", methods=["POST"])
+def send_to_client(id):
+    from flask_login import current_user
+
+    proposal = _get_scoped_proposal_or_404(id)
+    try:
+        days = int(request.form.get("valid_days") or 30)
+    except ValueError:
+        days = 30
+    try:
+        sent = send_proposal_to_client(
+            proposal,
+            user=current_user,
+            client_name=request.form.get("client_name", ""),
+            client_email=request.form.get("client_email", ""),
+            days=days,
+        )
+    except ProposalServiceError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("proposals.view_proposal", id=proposal.id))
+    from app.services.signing_mail import public_signing_url
+
+    session["proposal_link_for"] = proposal.id
+    session["proposal_link_url"] = public_signing_url(sent.path)
+    flash(f"Proposal sent to {sent.link.sent_to_name} ({sent.link.sent_to_email}).", "success")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id) + "#client-acceptance")
+
+
+@proposals_bp.route("/proposals/<int:id>/record-acceptance", methods=["POST"])
+def record_acceptance(id):
+    from flask_login import current_user
+
+    proposal = _get_scoped_proposal_or_404(id)
+    try:
+        record_office_acceptance(
+            proposal,
+            user=current_user,
+            channel=request.form.get("channel", ""),
+            client_name=request.form.get("client_name", ""),
+            note=request.form.get("note", ""),
+        )
+    except ProposalServiceError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Acceptance recorded. The contract was generated and is ready to send.", "success")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id) + "#client-acceptance")

@@ -212,9 +212,9 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     }
     await submit(page.locator("main form button[type=submit]").last());
     const earlyId = page.url().match(/proposals\/(\d+)/)[1];
-    await page.locator('form[action$="/status"] select[name=status]').selectOption("Issued");
-    await submit(page.locator('form[action$="/status"] button[type=submit]'));
-    assert.match(await flash(), /cannot be issued yet\. Approve the estimate's costing/);
+    // Joel, 17 Oct 2026: a proposal goes to the client only from a signed-off estimate, as a link.
+    assert.match(await page.locator("[data-proposal-client-flow]").innerText(),
+      /To send this proposal: Sign off the estimate first\. Approve the estimate's costing/);
 
     // Costing approval records the signed-in person (SEC-03); then the company pricing policy.
     await page.goto(versionUrl);
@@ -231,18 +231,23 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.match(totals, /TAX \(13\.00%\)\s+\$408\.01/i);
     assert.match(totals, /CUSTOMER TOTAL\s+\$3546\.54/i);
 
-    // The early draft still carries its old prices and cannot be issued; a new proposal can.
-    await page.goto(`${base}/proposals/${earlyId}`);
-    await page.locator('form[action$="/status"] select[name=status]').selectOption("Issued");
-    await submit(page.locator('form[action$="/status"] button[type=submit]'));
-    assert.match(await flash(), /copied before the current pricing/);
+    // Ben signs off the estimate: it locks, and a proposal is built from it with the current prices.
     await page.goto(versionUrl);
-    await submit(page.getByRole("link", { name: "Create Proposal" }));
-    await submit(page.locator("main form button[type=submit]").last());
+    await submit(page.getByRole("button", { name: "Sign off estimate" }));
+    assert.match(await flash(), /Estimate signed off and locked/);
     const proposalUrl = page.url();
-    await page.locator('form[action$="/status"] select[name=status]').selectOption("Issued");
-    await submit(page.locator('form[action$="/status"] button[type=submit]'));
-    assert.match(await flash(), /Proposal status set to "Issued"/);
+    assert.ok(!proposalUrl.endsWith(`/proposals/${earlyId}`), "a new proposal, not the early draft");
+    // The early draft still carries its old prices and cannot be sent.
+    await page.goto(`${base}/proposals/${earlyId}`);
+    await page.fill("[data-proposal-send] [name=client_email]", "e2e.client@example.invalid");
+    await submit(page.getByRole("button", { name: "Send proposal to client" }));
+    assert.match(await flash(), /copied before the current pricing/);
+    // The proposal goes to the client as a link.
+    await page.goto(proposalUrl);
+    await page.fill("[data-proposal-send] [name=client_email]", "e2e.client@example.invalid");
+    await submit(page.getByRole("button", { name: "Send proposal to client" }));
+    assert.match(await flash(), /Proposal sent to/);
+    const clientLink = await page.locator("[data-proposal-link-url]").inputValue();
     const proposalText = await page.locator("main").innerText();
     assert.ok(proposalText.includes("3546.54") || proposalText.includes("3,546.54"), "proposal total");
 
@@ -258,10 +263,18 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.equal(pdf.headers()["content-type"], "application/pdf");
     assert.equal((await pdf.body()).subarray(0, 5).toString(), "%PDF-");
 
-    // The customer accepts. The hub offers to lock the estimate as the committed baseline.
+    // The customer opens the link, ticks the box and accepts; the contract is generated for one office Send click.
+    const customer = await browser.newContext();
+    const customerPage = await customer.newPage();
+    await customerPage.goto(clientLink.replace(/^https?:\/\/[^/]+/, base));
+    await customerPage.check("[name=accept]");
+    await customerPage.fill("[name=confirmed_name]", "E2E Synthetic Client");
+    await customerPage.getByRole("button", { name: "Accept Proposal" }).click();
+    await customerPage.waitForLoadState();
+    assert.match(await customerPage.locator("body").innerText(), /Proposal accepted/);
+    await customer.close();
     await page.goto(proposalUrl);
-    await page.locator('form[action$="/status"] select[name=status]').selectOption("Accepted");
-    await submit(page.locator('form[action$="/status"] button[type=submit]'));
+    assert.match(await page.locator("[data-proposal-client-flow]").innerText(), /Accepted by E2E Synthetic Client/);
     await page.goto(`${base}/projects/${projectId}`);
     await submit(page.locator("[data-lock-baseline] button"));
     await page.goto(`${base}/projects/${projectId}`);

@@ -156,6 +156,11 @@ class EstimateVersion(db.Model):
     )
     total = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     is_locked = db.Column(db.Boolean, nullable=False, default=False)
+    # Estimate sign-off (Joel, 17 Oct 2026): the estimator approves the estimate,
+    # which locks it; its proposal is built from it automatically.
+    signed_off_at = db.Column(db.DateTime, nullable=True)
+    signed_off_by_user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True)
+    signed_off_by_name = db.Column(db.String(160), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
         db.DateTime,

@@ -68,6 +68,9 @@
         <label>
             Status *
             <select name="status" required>
+                {% if form.status and form.status not in statuses %}
+                <option value="{{ form.status }}" selected>{{ form.status }}</option>
+                {% endif %}
                 {% for status in statuses %}
                 <option value="{{ status }}" {% if form.status == status %}selected{% endif %}>{{ status }}</option>
                 {% endfor %}

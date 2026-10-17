@@ -1,0 +1,58 @@
+{# Joel, 17 Oct 2026: the proposal reaches the client only as a CalibraytAI link; the client ticks Accept Proposal. #}
+<section class="form-panel" id="client-acceptance" data-proposal-client-flow="true" style="margin-bottom: 24px;">
+    <h2>Client acceptance</h2>
+    {% if acceptance %}
+    <div data-proposal-acceptance="{{ acceptance.method }}">
+        <p><strong>Accepted by {{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at.strftime("%B %d, %Y at %H:%M") }} UTC
+            {% if acceptance.method == "CLIENT_LINK" %}— accepted on the CalibraytAI proposal link.{% else %}— recorded by {{ acceptance.recorded_by_name }} ({{ acceptance.office_channel|lower }}): {{ acceptance.office_note }}{% endif %}</p>
+        {% set project_id = proposal.estimate.project_id if proposal.estimate else None %}
+        {% if acceptance.contract_id %}
+        <p data-contract-ready="true">The contract was generated from this proposal and is ready to send for the client's electronic signature.</p>
+        {% if project_id %}<p><a class="button is-primary" href="{{ url_for('projects.review_contract', id=project_id) }}#contract-snapshot-{{ acceptance.contract_id }}">Review and send the contract</a></p>{% endif %}
+        {% else %}
+        <p class="muted-copy" data-contract-blocked="{{ acceptance.contract_block_code }}">The contract could not be generated automatically ({{ acceptance.contract_block_code }}). Open the Contract page to see what is missing.</p>
+        {% if project_id %}<p><a class="button" href="{{ url_for('projects.review_contract', id=project_id) }}">Open the Contract page</a></p>{% endif %}
+        {% endif %}
+    </div>
+    {% else %}
+    {% if client_link %}
+    <p data-proposal-link-status="sent">Sent to <strong>{{ client_link.sent_to_name }}</strong> ({{ client_link.sent_to_email }}) on {{ client_link.sent_at.strftime("%B %d, %Y") }} by {{ client_link.sent_by_name }}. Link valid until {{ client_link.expires_at.strftime("%B %d, %Y") }}.
+        {% if client_link.first_viewed_at %}Opened {{ client_link.view_count }} time{{ "s" if client_link.view_count != 1 }}, last {{ client_link.last_viewed_at.strftime("%B %d, %Y") }}.{% else %}Not opened yet.{% endif %}</p>
+    {% if client_link_url %}
+    <label>Client link (copy it if you need to send it yourself)
+        <input type="text" readonly value="{{ client_link_url }}" data-proposal-link-url="true" onclick="this.select()">
+    </label>
+    {% endif %}
+    {% endif %}
+
+    {% if send_blockers %}
+    <p class="muted-copy" data-proposal-send-blocked="true">To send this proposal: {{ send_blockers|join(" ") }}</p>
+    {% else %}
+    <form method="post" action="{{ url_for('proposals.send_to_client', id=proposal.id) }}" class="form-grid" data-proposal-send="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Client name <input type="text" name="client_name" value="{{ client_link.sent_to_name if client_link else proposal.client_name }}" required></label>
+        <label>Client email <input type="email" name="client_email" value="{{ client_link.sent_to_email if client_link else (proposal.client_email or '') }}" required></label>
+        <label>Link valid for (days) <input type="number" name="valid_days" value="30" min="1" max="90"></label>
+        <div class="form-actions"><button type="submit" class="button is-primary">{{ "Send the proposal again" if client_link else "Send proposal to client" }}</button></div>
+    </form>
+    <p class="muted-copy">The client gets an email with a link. They review the proposal there, tick the box and select Accept Proposal. Sending it again replaces the earlier link.</p>
+    {% endif %}
+
+    {% if proposal.status == "Issued" %}
+    <details>
+        <summary>The client accepted another way (phone, email or in person)</summary>
+        <form method="post" action="{{ url_for('proposals.record_acceptance', id=proposal.id) }}" class="form-grid" data-proposal-record-acceptance="true">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>How
+                <select name="channel" required>
+                    {% for channel in acceptance_channels %}<option value="{{ channel }}">{{ channel }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>Who accepted <input type="text" name="client_name" value="{{ proposal.client_name }}" required></label>
+            <label>Note (when, and what they said) <input type="text" name="note" required></label>
+            <div class="form-actions"><button type="submit" class="button">Record acceptance</button></div>
+        </form>
+    </details>
+    {% endif %}
+    {% endif %}
+</section>

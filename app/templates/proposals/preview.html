@@ -14,6 +14,17 @@
     </style>
 </head>
 <body class="proposal-preview-page">
+    {% if client_view %}
+    <div class="proposal-preview-toolbar d-print-none">
+        <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div><span class="text-white-50">Proposal from {{ brand.customer_facing_name or "Brayman Construction" }}</span></div>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-light" href="{{ client_pdf_url }}">Download PDF</a>
+                <button type="button" class="btn btn-sm btn-outline-light" onclick="window.print()">Print</button>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="proposal-preview-toolbar d-print-none">
         <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2">
             <div>
@@ -26,6 +37,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <article class="proposal-document">
         <header class="row g-4 align-items-start mb-2">
@@ -208,5 +220,8 @@
         </section>
         {% endif %}
     </article>
+    {% if client_view %}
+    {% include "proposals/partials/client_acceptance.html" %}
+    {% endif %}
 </body>
 </html>

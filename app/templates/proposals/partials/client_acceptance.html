@@ -1,0 +1,27 @@
+<section class="proposal-document proposal-client-acceptance d-print-none" data-client-acceptance="true">
+    {% if acceptance %}
+    <div data-proposal-accepted="true">
+        <h2 class="h4">Proposal accepted</h2>
+        <p class="mb-1">Accepted by <strong>{{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at.strftime("%B %d, %Y at %H:%M") }} UTC.</p>
+        <p class="text-muted mb-0">Thank you. {{ brand.customer_facing_name or "Brayman Construction" }} will send the contract for your electronic signature.</p>
+    </div>
+    {% else %}
+    <h2 class="h4">Accept this proposal</h2>
+    <p class="text-muted">If you agree with this proposal, tick the box, type your full name and select Accept Proposal. {{ brand.customer_facing_name or "Brayman Construction" }} will then send the contract for your electronic signature.</p>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="{{ accept_url }}" class="d-grid gap-3" style="max-width: 32rem;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="form-check">
+            <input class="form-check-input" type="checkbox" name="accept" value="yes" required>
+            <span class="form-check-label">I accept proposal {{ proposal.proposal_number }} for {{ "${:,.2f}".format(proposal.total) }}, including its terms.</span>
+        </label>
+        <label class="form-label mb-0">Your full name
+            <input class="form-control" type="text" name="confirmed_name" autocomplete="name" required value="{{ typed_name or '' }}">
+        </label>
+        <button type="submit" class="btn btn-dark btn-lg">Accept Proposal</button>
+    </form>
+    <p class="small text-muted mt-3 mb-0">Questions? Contact {{ brand.customer_facing_name or "Brayman Construction" }}{% if brand.phone %} at {{ brand.phone }}{% endif %}{% if brand.email %} or {{ brand.email }}{% endif %}.</p>
+    {% endif %}
+</section>

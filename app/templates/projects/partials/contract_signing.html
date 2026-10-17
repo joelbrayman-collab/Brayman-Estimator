@@ -29,8 +29,10 @@
     <form method="post" action="{{ url_for('signing_office.send_contract_for_signature', project_id=project.id, contract_id=contract.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-grid">
-            <label>Signer name * <input type="text" name="signer_name" required autocomplete="name"></label>
-            <label>Signer email * <input type="email" name="signer_email" required autocomplete="email"></label>
+            {% set prefill = contract_acceptances.get(contract.id) if contract_acceptances is defined else None %}
+            {% if prefill %}<p class="muted-copy" data-contract-from-acceptance="true">Generated when {{ prefill.accepted_name }} accepted proposal {{ prefill.proposal.proposal_number }}. Check the details, then send.</p>{% endif %}
+            <label>Signer name * <input type="text" name="signer_name" required autocomplete="name" value="{{ prefill.accepted_name if prefill else '' }}"></label>
+            <label>Signer email * <input type="email" name="signer_email" required autocomplete="email" value="{{ (prefill.accepted_email or '') if prefill else '' }}"></label>
             <label>Invitation days <input type="number" name="expiry_days" value="7" min="1" max="30"></label>
             <label class="sign-office-check">
                 <input type="checkbox" name="countersign_required" value="yes" checked>

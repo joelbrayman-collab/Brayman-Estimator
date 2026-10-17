@@ -104,7 +104,7 @@ def test_the_migration_binds_only_baseline_rows_and_reverses(tmp_path):
         cfg = Config(str(REPO / "migrations" / "alembic.ini"))
         cfg.set_main_option("script_location", str(REPO / "migrations"))
         cfg.set_main_option("sqlalchemy.url", db_uri)
-        assert ScriptDirectory.from_config(cfg).get_heads() == ["w3d4e5f6a7b8"]
+        assert ScriptDirectory.from_config(cfg).get_heads() == ["x1a2b3c4d5e6"]
 
         def rows():
             with db.engine.begin() as conn:
@@ -116,7 +116,7 @@ def test_the_migration_binds_only_baseline_rows_and_reverses(tmp_path):
         before = rows()
         assert set(before) >= {"FOUND", "STRUCT", "ICF"}
         assert before["FOUND"] is None and before["STRUCT"] is None and before["ICF"] == "icf_wall"
-        command.upgrade(cfg, "w3d4e5f6a7b8")
+        command.upgrade(cfg, "x1a2b3c4d5e6")
         assert rows() == {**before, "FOUND": "rectangular_footing", "STRUCT": "wall_framing"}
         command.downgrade(cfg, "v2c3d4e5f6a7")
         assert rows() == before

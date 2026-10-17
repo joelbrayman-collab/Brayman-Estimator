@@ -29,6 +29,7 @@ from app.models.transactional_message import (
     STATUS_LOCAL_CAPTURED,
     STATUS_SKIPPED_ALLOWLIST,
     TEMPLATE_PASSWORD_RESET,
+    TEMPLATE_PROPOSAL_INVITATION,
     TEMPLATE_SIGNING_COMPLETE,
     TEMPLATE_SIGNING_INVITATION,
     TEMPLATE_SIGNING_RESEND,
@@ -128,6 +129,20 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
             f"{url}\n\n"
             "If you did not request this, ignore this message. "
             "Your password will not change."
+        )
+        return subject, body
+    if template_id == TEMPLATE_PROPOSAL_INVITATION:
+        url = str(variables.get("invitation_url") or "")
+        org = str(variables.get("organization_name") or "Brayman Construction")
+        document = str(variables.get("document_label") or "your proposal")
+        expiry = str(variables.get("expires_display") or "").strip()
+        expiry_line = f"The link is valid until {expiry}.\n" if expiry else ""
+        subject = f"{org}: your proposal is ready to review"
+        body = (
+            f"{org} has prepared a proposal for you: {document}.\n\n"
+            "Open the link to review it. If you agree, tick the box and select Accept Proposal.\n"
+            f"{expiry_line}"
+            f"{url}\n"
         )
         return subject, body
     if template_id == TEMPLATE_SIGNING_INVITATION:

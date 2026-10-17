@@ -60,7 +60,10 @@
         <label>
             Update status
             <select name="status">
-                {% for status in ["Draft", "Ready", "Issued", "Accepted", "Rejected", "Expired", "Cancelled", "Superseded"] %}
+                {% if proposal.status in ["Issued", "Accepted"] %}
+                <option value="{{ proposal.status }}" selected>{{ proposal.status }}</option>
+                {% endif %}
+                {% for status in ["Draft", "Ready", "Rejected", "Expired", "Cancelled", "Superseded"] %}
                 <option value="{{ status }}" {% if proposal.status == status %}selected{% endif %}>{{ status }}</option>
                 {% endfor %}
             </select>
@@ -69,6 +72,8 @@
     </form>
     {% endif %}
 </section>
+
+{% include "proposals/partials/office_client_flow.html" %}
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Client</h2>

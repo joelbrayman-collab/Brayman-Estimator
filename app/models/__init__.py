@@ -106,6 +106,7 @@ from app.models.calculation_estimate_mapping import (
     CalculationResultIntake,
 )
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
+from app.models.proposal_acceptance import ProposalAcceptance, ProposalClientLink
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
     OrganizationPricingPolicy,
@@ -169,6 +170,8 @@ from app.plan_intelligence.models import (
 )
 
 __all__ = [
+    "ProposalAcceptance",
+    "ProposalClientLink",
     "Assembly",
     "AssemblyItem",
     "ChangeOrder",

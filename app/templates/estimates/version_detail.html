@@ -56,7 +56,19 @@
     {% set costing_current = costing_review.has_current_costing and costing_review.working_matches_current %}
     {% set priced_current = named_method_governs and costing_current and not costing_review.pricing_is_stale %}
     <div class="estimate-actions">
-        <a class="button {% if priced_current %}is-primary{% else %}button-secondary{% endif %}" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
+        {# Joel, 17 Oct 2026: the estimator signs off the estimate; its proposal is built from it automatically. #}
+        {% if version.signed_off_at %}
+        {% set signed_proposal = version_proposals|first if version_proposals is defined else None %}
+        {% if signed_proposal %}
+        <a class="button is-primary" href="{{ url_for('proposals.view_proposal', id=signed_proposal.id) }}">Open proposal {{ signed_proposal.proposal_number }}</a>
+        {% endif %}
+        {% elif not sign_off_blockers and version.status not in ['Rejected', 'Superseded'] %}
+        <form method="post" action="{{ url_for('proposals.sign_off_estimate_route', estimate_id=estimate.id, version_id=version.id) }}" data-estimate-sign-off="true">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="button is-primary">Sign off estimate</button>
+        </form>
+        {% endif %}
+        <a class="button button-secondary" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
         <span class="action-divider" aria-hidden="true"></span>
         <a class="button button-secondary" href="{{ url_for('estimates.internal_cost_breakdown', id=estimate.id, version_id=version.id) }}">Internal Detailed Cost Breakdown</a>
         <a class="button button-secondary" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
@@ -81,7 +93,10 @@
     {% elif editable and not priced_current %}
     <p class="estimate-next-step">Next step: apply pricing in <a href="#estimate-pricing">Pricing</a>.</p>
     {% elif editable and priced_current %}
-    <p class="estimate-next-step">Costing is approved and pricing is applied. Next step: create the proposal.</p>
+    <p class="estimate-next-step">Costing is approved and pricing is applied. Next step: sign off the estimate. Signing off locks it and builds its proposal.</p>
+    {% endif %}
+    {% if version.signed_off_at %}
+    <p class="estimate-next-step" data-estimate-signed-off="true">Signed off by {{ version.signed_off_by_name or "the office" }} on {{ version.signed_off_at.strftime("%B %d, %Y") }}. The estimate is locked.</p>
     {% endif %}
 </section>
 

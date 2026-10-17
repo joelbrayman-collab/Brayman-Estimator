@@ -123,6 +123,18 @@ def _get_line_item(estimate_id, version_id, section_id, item_id):
     return estimate, version, section, item
 
 
+def _version_proposals(version):
+    from app.models.proposal import Proposal
+
+    return Proposal.query.filter_by(estimate_version_id=version.id).order_by(Proposal.id.desc()).all()
+
+
+def _sign_off_blockers(version):
+    from app.services.proposal_acceptance import estimate_sign_off_blockers
+
+    return estimate_sign_off_blockers(version)
+
+
 def _builder_context(estimate, version, **extra):
     from app.models.organization import Organization
     from app.models.pricing_engine import EstimatePricingSnapshot, OrganizationPricingPolicy
@@ -152,6 +164,8 @@ def _builder_context(estimate, version, **extra):
         "named_method_governs": named_method_governs(snapshot),
         "approved_pricing_policies": approved_policies,
         "costing_review": costing_review_context(version),
+        "version_proposals": _version_proposals(version),
+        "sign_off_blockers": _sign_off_blockers(version),
     }
     context.update(extra)
     return context
@@ -621,8 +635,17 @@ def lock_estimate_version(id, version_id):
 )
 def unlock_estimate_version(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
+    was_signed_off = version.signed_off_at is not None and version.status not in ("Issued", "Accepted")
+    if was_signed_off:
+        # Unlocking a signed-off estimate withdraws the sign-off: it must be signed off again.
+        version.signed_off_at = None
+        version.signed_off_by_user_id = None
+        version.signed_off_by_name = None
     unlock_version(version)
-    flash(f"{version.display_label} unlocked.", "success")
+    if was_signed_off:
+        flash(f"{version.display_label} unlocked. Its sign-off was withdrawn; sign it off again when it is ready.", "success")
+    else:
+        flash(f"{version.display_label} unlocked.", "success")
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )

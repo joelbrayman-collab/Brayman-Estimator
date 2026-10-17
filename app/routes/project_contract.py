@@ -101,6 +101,9 @@ def review_contract(id):
 
     contracts = _contracts(project.id, org_id)
     overlays = {row.id: overlay_for_contract(row.id, org_id) for row in contracts}
+    from app.services.proposal_acceptance import acceptance_for_contract
+
+    acceptances = {row.id: acceptance_for_contract(row.id, org_id) for row in contracts}
     invitation_request_id = session.get("signing_invitation_request_id")
     return render_template(
         "projects/contract_review.html",
@@ -109,6 +112,7 @@ def review_contract(id):
         pairs=_eligible_pairs(project.id),
         contracts=contracts,
         signing_overlays=overlays,
+        contract_acceptances={key: value for key, value in acceptances.items() if value is not None},
         invitation_request_id=invitation_request_id,
         invitation_url=session.get("signing_invitation_url") or "",
         generated_note=contractor_copy.CONTRACT_GENERATED_NOT_SIGNED,

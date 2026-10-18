@@ -80,6 +80,10 @@ def test_the_header_shows_the_exact_approved_cal_identity_and_opens_only_when_cl
         assert client.get(f"/static/img/cal-assistant/cal-{size}.png").status_code == 200
     # The existing Help and its voice control are still on the page, unchanged.
     assert 'class="contextual-help' in page and "data-help-voice" in page and "js/contextual_help.js" in page
+    # The disabled "Search (coming soon)" placeholder is gone; Notifications is unchanged.
+    assert "Search (coming soon)" not in page and "bi-search" not in page
+    assert "Notifications (coming soon)" in page
+    assert "Upcoming deliveries" in page
 
 
 def test_signed_out_visitors_get_no_cal_and_the_endpoint_sends_them_to_sign_in(app):

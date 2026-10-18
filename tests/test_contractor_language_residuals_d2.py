@@ -191,7 +191,8 @@ def test_header_settings_uses_live_settings(client, project):
         assert 'aria-label="Settings"' not in html
         assert "Settings (coming soon)" not in html
         assert 'href="/settings/brand-profile"' in html
-        assert "Search (coming soon)" in html
+        assert "Search (coming soon)" not in html  # replaced by Cal (Phase 1)
+        assert 'id="cal-launch"' in html
 
 
 def test_historical_and_cost_library_and_permit_remain_operational(client, project):

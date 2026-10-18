@@ -39,7 +39,7 @@ Destinations: Projects, Drawings and Project Plans (generated drawing sets and u
 - Office header only. Cal is not yet in the Field app or the supplier portal.
 - Word matching, not language understanding: there is no typo tolerance or synonyms beyond the listed destination words, and every typed project word must appear in the project's name, number, address, client or location.
 - Only office-wide Help topics are linked. Project-page topics (permit report, job location, workflow documents, supplier estimate request) and Hub/Field topics are not.
-- "Deliveries this week" lists upcoming deliveries; it does not filter by date.
+- Delivery searches list upcoming deliveries (the panel example reads "Upcoming deliveries"); there is no date-range filter such as "this week".
 - Results are capped at 8 per group.
 - Without JavaScript, the form returns the raw JSON answer.
-- The older disabled "Search (coming soon)" header button remains; whether to remove it is Joel's call.
+- The disabled "Search (coming soon)" header placeholder was removed (Joel, 17 Oct); Cal replaces it. The unused `partials/header.html` (included nowhere) was left untouched.

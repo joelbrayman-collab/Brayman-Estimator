@@ -370,7 +370,9 @@ def test_settings_nav_enabled_header_settings_unchanged(client):
     assert b'class="header-company"' in home.data
     assert b'aria-label="Settings"' not in home.data
     assert b"Settings (coming soon)" not in home.data
-    assert b"Search (coming soon)" in home.data
+    # Cal Phase 1 replaced the disabled Search placeholder; Cal is the way to find things.
+    assert b"Search (coming soon)" not in home.data
+    assert b'id="cal-launch"' in home.data
     assert b'sidebar-logo' in home.data
     assert b"/static/branding/calibraytai-logo-v1-dark.png" in home.data
     assert b"/static/branding/brayman-construction-logo.png" in home.data

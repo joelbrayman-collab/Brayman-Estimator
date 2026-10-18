@@ -39,9 +39,6 @@
 
             <div class="header-actions" aria-label="Quick actions">
                 {% if current_user.is_authenticated %}{% include "partials/cal_assistant.html" %}{% endif %}
-                <button type="button" class="header-icon-btn" disabled aria-label="Search (coming soon)" title="Search (coming soon)">
-                    <i class="bi bi-search" aria-hidden="true"></i>
-                </button>
                 <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)" title="Notifications (coming soon)">
                     <i class="bi bi-bell" aria-hidden="true"></i>
                 </button>

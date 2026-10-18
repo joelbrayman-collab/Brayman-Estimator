@@ -109,18 +109,25 @@ def company():
         selected_day=request.args.get("day", type=int),
         today=today,
         viewer=current_user,
+        project_id=project_id,
     )
+    # Month / Week / Day (Joel, 18 Oct 2026). No choice = month on a computer, week list on a phone.
+    calendar_view = request.args.get("view") if request.args.get("view") in ("month", "week", "day") else ""
     calendar_keep = {
         "from": view["window_start"].isoformat(),
         "to": view["window_end"].isoformat(),
     }
     if project_id is not None:
         calendar_keep["project_id"] = project_id
+    from app.presentation.schedule_categories import legend
+
     return render_template(
         "schedule/company.html",
         view=view,
         calendar=calendar,
         calendar_keep=calendar_keep,
+        calendar_view=calendar_view,
+        category_legend=legend(),
         projects=list_current_operating_projects(organization.id),
         selected_project_id=project_id,
     )

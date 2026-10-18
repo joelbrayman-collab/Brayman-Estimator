@@ -1,0 +1,106 @@
+"""The repository's release scripts keep every approved safeguard (technical cleanup, 18 Oct 2026).
+
+These tests do not run a release. They read the scripts and check, on any machine, that the
+gate still stops at READY_FOR_PUSH, never pushes or deploys, refuses a database change, requires
+exact commits and a skip-free regression, and that the post-release check is read-only.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import re
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+RELEASE = ROOT / "tools" / "release"
+GATE = RELEASE / "release_gate.sh"
+POST = RELEASE / "postrelease_check.sh"
+
+# Byte-identical to the helpers the 18 Oct Cal Phase 1 release verified by checksum before use.
+PROVEN_HELPERS = {
+    "hosted_preflight.py": "ea57a7374f2a4b9ed9247c4a9cd0aa4a9e545592d6bb8883c33294a839dbfc8c",
+    "hosted_postcheck.py": "05653deeb6dd8ad58bf730bbe64addafef75fb18ab93586dc18930d849f6ddb6",
+    "signing_readiness.py": "5fd93ffffed9313d0a48891c021b0f08c063ef2bdbada3034a36df26aa76c17c",
+    "evidence_common.mjs": "6ae1562d2008f4edaf618ccc1cf9849d433eb3a202d05cf2394ca8deb69ba0f8",
+    "evidence_employment_v11.mjs": "2e4f121deddfe475a66aeced6a72eb8cf0798d0d77f104f5d2a74f470bb95ebe",
+    "evidence_trade_pages.mjs": "9962fe4b74983aaa14cb39117f49cdaaf892f7ab42a9fa4dd63b18a1756bb79c",
+    "evidence_cal_find_it.mjs": "518f68ccbeb170c9631aaf579c52bcfde558412a32a3804544a2cec56d1ef179",
+}
+
+
+def _code(path: Path) -> str:
+    """Script text without comment lines, so a safeguard must exist as code, not prose."""
+    return "\n".join(
+        line for line in path.read_text().splitlines() if not line.lstrip().startswith("#")
+    )
+
+
+def test_scripts_parse():
+    for script in (GATE, POST, ROOT / "tools" / "setup_test_environment.sh"):
+        result = subprocess.run(["bash", "-n", str(script)], capture_output=True, text=True)
+        assert result.returncode == 0, result.stderr
+
+
+def test_helpers_are_the_proven_bytes():
+    for name, sha in PROVEN_HELPERS.items():
+        assert hashlib.sha256((RELEASE / name).read_bytes()).hexdigest() == sha, name
+
+
+def test_gate_never_pushes_or_deploys():
+    for path in (GATE, POST):
+        code = _code(path)
+        assert not re.search(r"\bgit\s+(-C\s+\S+\s+)?push\b", code), path.name
+        assert "trigger_deploy" not in code and "api.render.com" not in code, path.name
+        assert "render deploys" not in code, path.name
+
+
+def test_gate_stops_at_ready_for_push_after_every_gate():
+    code = _code(GATE)
+    order = [
+        'refs/heads/main',  # GitHub main checked
+        'RENDER_GIT_COMMIT',  # live instance checked
+        "merge-base --is-ancestor \"$MAIN_BASE\"",  # fast-forward
+        "-- migrations app/models",  # no database change
+        "-c requirements-lock.txt",  # production's exact versions
+        "-m pytest",  # complete regression
+        "not skipped",  # no skipped test
+        "test_contractor_workflow_e2e",  # end-to-end walk ran
+        "evidence_cal_find_it.mjs",  # browser checks
+        "< tools/release/hosted_preflight.py",  # fresh backup
+        "BACKUP_SHA256",
+        "PRAGMA integrity_check",
+        "< tools/release/signing_readiness.py",
+        "READY_FOR_PUSH commit=",
+    ]
+    positions = [code.find(marker) for marker in order]
+    assert all(p >= 0 for p in positions), dict(zip(order, positions))
+    assert positions == sorted(positions), dict(zip(order, positions))
+    assert code.rstrip().splitlines()[-1].startswith("echo \"== DONE")
+
+
+def test_gate_requires_exact_commits_and_refuses_bad_input():
+    bad = subprocess.run(
+        ["bash", str(GATE), "--label", "x", "--candidate", "abc1234", "--branch", "b",
+         "--main-base", "a" * 40, "--live-base", "a" * 40, "--live-deploy", "dep-x"],
+        capture_output=True, text=True,
+    )
+    assert bad.returncode == 2
+    assert "full 40-character commit SHA" in bad.stdout
+    assert subprocess.run(["bash", str(GATE)], capture_output=True, text=True).returncode == 2
+    assert subprocess.run(["bash", str(POST)], capture_output=True, text=True).returncode == 2
+
+
+def test_gate_allows_one_run_at_a_time():
+    code = _code(GATE)
+    assert 'mkdir "$LOCKDIR"' in code and "another release gate is running" in code
+
+
+def test_postrelease_requires_the_gate_and_rereads_the_database():
+    code = _code(POST)
+    assert 'READY_FOR_PUSH commit=$SHA' in code
+    assert '"$MAIN" = "$SHA"' in code
+    assert "hosted_postcheck.py" in code and "$BROWS" in code
+    assert "ROLLBACK_TARGET=redeploy" in code
+    # Post-release makes no database write: the hosted check opens SQLite read-only.
+    assert "mode=ro" in (RELEASE / "hosted_postcheck.py").read_text()

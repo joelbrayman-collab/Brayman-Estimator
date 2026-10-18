@@ -889,8 +889,10 @@ button.button-secondary {
     .cal-week-view { grid-template-columns: 1fr; }
     .cal-week-day { min-height: 0; border-left: 0; display: grid; grid-template-columns: 64px 1fr; gap: 8px; }
     .cal-period-title { font-size: 1.1rem; }
-    .cal-selected-panel { position: fixed; left: 12px; right: 12px; top: 120px; width: auto; }
-    .cal-period-form, .cal-help .contextual-help-body { position: fixed; left: 12px; right: 12px; top: 120px; width: auto; }
+    /* On a phone the dropdowns open in place under their button, so the button stays tappable. */
+    .cal-selected-day, .cal-period, .cal-help:has(details[open]) { flex-basis: 100%; }
+    .cal-selected-day[open] > summary, .cal-period[open] > summary { width: 100%; }
+    .cal-selected-panel, .cal-period-form, .cal-help .contextual-help-body { position: static; width: auto; margin-top: 6px; box-shadow: none; }
     .cal-workspace .home-band .home-band-ttl { display: none; }
     .cal-workspace .home-band { height: 8px; margin: 0 2px; padding: 0; border-left-width: 3px; }
     .cal-workspace .home-bands { grid-auto-rows: 8px; row-gap: 3px; }

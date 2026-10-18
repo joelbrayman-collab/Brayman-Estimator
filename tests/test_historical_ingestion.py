@@ -78,9 +78,14 @@ def client(app):
 
 @pytest.fixture
 def source_dir():
-    path = os.path.expanduser("~/Desktop/CalibAi Historical Estimates")
+    # The 20 source workbooks are real customer estimates: they live only on the office
+    # Mac and are never committed. CALIBRAYTAI_HISTORICAL_ESTIMATES_DIR may name another
+    # copy; without one these tests skip and say why (docs/testing/test-environment.md).
+    path = os.environ.get("CALIBRAYTAI_HISTORICAL_ESTIMATES_DIR") or os.path.expanduser(
+        "~/Desktop/CalibAi Historical Estimates"
+    )
     if not os.path.exists(path):
-        pytest.skip(f"Historical source directory not found at {path}")
+        pytest.skip(f"Historical source directory not found at {path} (real customer workbooks; office Mac only)")
     return path
 
 

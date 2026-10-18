@@ -16,7 +16,9 @@ OUTPUTS = ["lBill", "lAnnual", "lRev", "lOwner", "lCost", "lPayroll", "lTotalCos
            "curHr", "bizHr", "hourDelta", "cash", "benefits", "curHours", "revenue", "allCosts", "bizHours", "beRate",
            "tBill", "tWeeks", "tUtil", "rateMsg", "sum1", "sum2"]
 
-playwright = pytest.importorskip("playwright.sync_api")
+# A required test dependency (requirements-dev.txt). If it is missing the run fails
+# here; it is not skipped (technical cleanup, 18 Oct 2026).
+import playwright.sync_api as playwright  # noqa: E402
 
 
 @pytest.fixture(scope="module")

@@ -1,0 +1,7 @@
+# Test-only dependencies, on top of requirements.txt (never installed on Render).
+#   pip install -r requirements.txt -r requirements-dev.txt -c requirements-lock.txt
+# Python Playwright drives Chromium for tests/test_employment_calculator_v11.py and
+# tests/test_trade_calculator_pages_browser.py. After installing, fetch its browser once:
+#   python -m playwright install chromium
+# (the cloud workspace already has Chromium under PLAYWRIGHT_BROWSERS_PATH).
+playwright==1.56.0

@@ -16,7 +16,9 @@ from app import create_app, db
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import DEFAULT_OFFICE_EMAIL, DEFAULT_OFFICE_PASSWORD, ensure_office_user
 
-playwright = pytest.importorskip("playwright.sync_api")
+# A required test dependency (requirements-dev.txt). If it is missing the run fails
+# here; it is not skipped (technical cleanup, 18 Oct 2026).
+import playwright.sync_api as playwright  # noqa: E402
 
 
 @pytest.fixture(scope="module")

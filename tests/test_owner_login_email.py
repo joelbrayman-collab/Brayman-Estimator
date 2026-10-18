@@ -1,15 +1,17 @@
 """Joel's permanent login (15 Oct 2026): user 1's email becomes joel@braymanconstruction.ca.
 
-Proves on a disposable database, with the bypass switch still on, that once the email is changed
-the bypass no longer signs anyone in, the sign-in page asks for credentials, and the same password
-works with the new email. Moving the credentials epoch on ends sessions made before the change.
+Proves on a disposable database that once the email is changed the sign-in page asks for
+credentials, the temporary email no longer signs in, and the same password works with the new
+email. Moving the credentials epoch on ends sessions made before the change. (Until 18 Oct 2026
+this ran with the UAT bypass switch on; the bypass is removed, so the earlier session now signs
+in with the password.)
 """
 
 from flask import g
 
 from app import db
 from app.models import User
-from tests.test_uat_auth_bypass import HTTPS, UAT_AUTH_BYPASS_ENV, _app, _hosted, _seed_user_one
+from tests.hosted_app_support import HTTPS, _app, _hosted, _seed_user_one
 
 NEW = "joel@braymanconstruction.ca"
 
@@ -36,11 +38,12 @@ def _change_email(user):
     db.session.commit()
 
 
-def test_after_the_email_change_the_bypass_fails_closed_and_the_password_signs_in():
-    with _app(_hosted(**{UAT_AUTH_BYPASS_ENV: "1"})) as application:
+def test_after_the_email_change_old_sessions_end_and_the_password_signs_in():
+    with _app(_hosted()) as application:
         old_session = application.test_client()
         user = _seed_user_one()
-        assert _get(old_session, "/login").status_code == 302  # bypass active before the change
+        signed = _post(old_session, "/login", {"email": "uat@example.invalid", "password": "office-test-password"})
+        assert signed.status_code == 302  # signed in before the change
         assert _get(old_session, "/").status_code == 200
 
         _change_email(db.session.get(User, user.id))

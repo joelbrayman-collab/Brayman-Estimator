@@ -235,8 +235,7 @@ def test_how_we_price_shows_company_meaning_not_policy_codes(client):
     assert "<h1>Labour rates</h1>" in labour
 
 
-def test_uat_bypass_is_unchanged():
-    text = BYPASS.read_text(encoding="utf-8")
-    assert "CALIBRAYTAI_UAT_AUTH_BYPASS" in text
-    assert "costs_and_pricing" not in text
-    assert "unit_cost" not in text
+def test_uat_bypass_is_removed():
+    # Was test_uat_bypass_is_unchanged (UAT-3 must not touch the bypass). The bypass itself was
+    # removed on 18 Oct 2026 (tests/test_auth_bypass_removed.py).
+    assert not BYPASS.exists()

@@ -1701,3 +1701,11 @@ A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CL
 - Next Mac release must use `tools/release/release_gate.sh`; it installs Python Playwright and stops on any skipped test.
 - Owner decisions recorded (see register §15.7): stored-file errors show the 500 page (signing/contract routes); no session timeout; bypass code path still present; the 19 September signing files are on the Mac, not on the live disk; production `requirements.txt` unpinned.
 
+## 18 Oct 2026 — Security closure (branch `security/closure-2026-10-18`, not deployed)
+- Directive: Master Technical Cleanup closure (Joel, 18 Oct): release preparation for the cleanup, and six bounded corrections on a separate branch. No deploy, no migration, no push to `main`, no live file restoration.
+- Branch from the cleanup head `3e36b9d`. Corrections: `4818e7f` stored signing/contract file missing or altered → clear unavailable message; `bfa783a` UAT bypass code removed; `46762c3` 30-minute inactivity sign-out with warning, keep-alive and form draft restore; `926799c` production dependencies pinned (identical versions); `c30235b` local backups and release files moved out of the iCloud Desktop (copy-only script; gate uses `~/CalibraytAI-Office`); `95bb05c` September signing files inventory and guarded restoration plan (not run); `66f7772` documentation.
+- Full regression of `66f7772` on a clean checkout, fresh Python 3.9.6 venv from the pinned files: **2796 passed, 0 failed, 0 errors, 11 skipped (historical, Mac only), 8916 warnings, 3855.7 s, exit 0** (2,807 collected). Release browser checks 43 / 43. Darcy nine-step demonstration: 59 screens, no error responses.
+- Cleanup release gate rehearsed in the cloud with stand-ins for SSH/SCP and a synthetic database: reached READY_FOR_PUSH (all gates, 43 browser checks, backup checksum and integrity); a variant with the historical tests stopped on the skips as designed; the post-release check passed against a local office.
+- Not run on the Mac yet: the native gate (cleanup release) and `relocate_local_storage.py` (before the first security-branch release).
+- Live production unchanged: `0e2c917`, revision `y2b3c4d5e6f7`.
+

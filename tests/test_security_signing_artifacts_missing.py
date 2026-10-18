@@ -20,13 +20,13 @@ from app.models.signing import (
 from app.services.jurisdiction import ensure_jurisdiction_seed
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.signing import (
+    BLOCK_ARTIFACT_NOT_RETAINED,
     BLOCK_ARTIFACT_SHA_MISMATCH,
     SigningServiceError,
     retrieve_executed_artifact_bytes,
     retrieve_frozen_artifact_bytes,
 )
 from app.services.signing_artifact_storage import (
-    SigningArtifactStorageError,
     absolute_stored_path,
     get_signing_artifact_root,
 )
@@ -73,6 +73,13 @@ def _assert_no_pdf(response):
     assert response.mimetype != "application/pdf"
 
 
+def _assert_document_unavailable_page(response):
+    assert response.status_code == 404
+    assert b"This document is not available." in response.data
+    assert b'data-sign-document-unavailable="true"' in response.data
+    assert b"Internal" not in response.data and b"reference" not in response.data.lower()
+
+
 def _sent(app):
     _user, _change_order, issued = _sent_change_order(app, email="sec-sign-sent@example.invalid")
     request = db.session.get(SigningRequest, issued.request.id)
@@ -95,15 +102,14 @@ def test_customer_document_with_frozen_file_deleted_serves_no_pdf(app):
     absolute_stored_path(request.frozen_artifact.storage_key).unlink()
     files_before, counts_before = _files(), _counts()
 
-    with pytest.raises(SigningArtifactStorageError):
+    with pytest.raises(SigningServiceError) as exc:
         retrieve_frozen_artifact_bytes(request.frozen_artifact)
+    assert exc.value.code == BLOCK_ARTIFACT_NOT_RETAINED
 
     response = client.get(f"/sign/{credential}/document")
     _assert_no_pdf(response)
-    # DEFECT (recorded for Joel): returns 500, intended 404/fail-closed page.
-    # read_retained_bytes raises SigningArtifactStorageError, which is not a
-    # SigningServiceError, so sign.document's except clause does not catch it.
-    assert response.status_code in (404, 410, 500)  # safety property: refused, never 200
+    # Corrected 18 Oct 2026 (was the 500 page): the customer sees the document-unavailable page.
+    _assert_document_unavailable_page(response)
     assert _files() == files_before
     assert _counts() == counts_before
     assert db.session.get(SigningRequest, request.id).status == STATUS_SENT
@@ -116,22 +122,23 @@ def test_executed_file_deleted_serves_no_pdf_to_customer_or_office(app):
     absolute_stored_path(request.executed_artifact.storage_key).unlink()
     files_before, counts_before = _files(), _counts()
 
-    with pytest.raises(SigningArtifactStorageError):
+    with pytest.raises(SigningServiceError) as exc:
         retrieve_executed_artifact_bytes(request.id, DEFAULT_ORGANIZATION_ID)
+    assert exc.value.code == BLOCK_ARTIFACT_NOT_RETAINED
 
     response = customer.get(f"/sign/{credential}/executed")
     _assert_no_pdf(response)
-    # DEFECT (recorded for Joel): returns 500, intended 404/fail-closed page.
-    # SigningArtifactStorageError escapes sign.executed (it catches SigningServiceError only).
-    assert response.status_code in (404, 410, 500)  # safety property: refused, never 200
+    _assert_document_unavailable_page(response)
 
     office = app.test_client()
     assert login_office_user(office, email=user.email, password=OFFICE_PASSWORD).status_code == 302
     office_response = office.get(f"/signing-requests/{request.id}/executed")
     _assert_no_pdf(office_response)
-    # DEFECT (recorded for Joel): returns 500, intended 404/fail-closed page.
-    # signing_office.download_executed catches SigningServiceError only.
-    assert office_response.status_code in (404, 410, 500)  # safety property: refused, never 200
+    # Corrected 18 Oct 2026 (was the 500 page): back to the request with a plain message.
+    assert office_response.status_code == 302
+    followed = office.get(office_response.headers["Location"])
+    assert followed.status_code == 200
+    assert b"The stored signed document could not be found, so nothing was downloaded." in followed.data
 
     assert _files() == files_before
     assert _counts() == counts_before
@@ -155,7 +162,7 @@ def test_customer_document_with_one_byte_altered_serves_no_pdf(app):
 
     response = app.test_client().get(f"/sign/{credential}/document")
     _assert_no_pdf(response)
-    assert response.status_code == 404  # the fail-closed signing/unavailable page
+    _assert_document_unavailable_page(response)
     assert bytes(tampered) not in response.data
     assert _files() == files_before
     assert _counts() == counts_before

@@ -25,6 +25,8 @@ from app.services.signing import (
     BLOCK_CHANGE_ORDER_NOT_APPROVED,
     BLOCK_COUNTERSIGN_NOT_REQUIRED,
     BLOCK_COUNTERSIGN_REQUIRED,
+    BLOCK_ARTIFACT_NOT_RETAINED,
+    BLOCK_ARTIFACT_SHA_MISMATCH,
     BLOCK_MEMBERSHIP_REQUIRED,
     BLOCK_REQUEST_NOT_APPROVED,
     BLOCK_REQUEST_NOT_CREATED,
@@ -72,6 +74,13 @@ _OFFICE_ERROR_COPY = {
     BLOCK_COUNTERSIGN_NOT_REQUIRED: "This request does not require countersignature.",
     BLOCK_VOID_REASON_REQUIRED: "Enter a reason to void this request.",
     BLOCK_MEMBERSHIP_REQUIRED: "You cannot act on another organization's request.",
+    BLOCK_ARTIFACT_NOT_RETAINED: (
+        "The stored signed document could not be found, so nothing was downloaded. "
+        "It can be restored from a backup by the administrator."
+    ),
+    BLOCK_ARTIFACT_SHA_MISMATCH: (
+        "The stored signed document failed its integrity check, so it was not downloaded."
+    ),
 }
 
 
@@ -327,8 +336,14 @@ def download_executed(request_id):
     organization_id = _organization_id()
     try:
         overlay_probe = get_signing_request(request_id, organization_id)
-        pdf = retrieve_executed_artifact_bytes(request_id, organization_id)
     except SigningServiceError:
+        abort(404)
+    try:
+        pdf = retrieve_executed_artifact_bytes(request_id, organization_id)
+    except SigningServiceError as exc:
+        if exc.code in (BLOCK_ARTIFACT_NOT_RETAINED, BLOCK_ARTIFACT_SHA_MISMATCH):
+            _flash_error(exc.code)
+            return _redirect_for_request(request_id, organization_id)
         abort(404)
     filename = f"{overlay_probe.request_number}-executed.pdf"
     return Response(

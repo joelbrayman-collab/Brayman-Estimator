@@ -3,14 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>This link is not available</title>
+    <title>{% if document_unavailable %}This document is not available{% else %}This link is not available{% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css') }}">
 </head>
 <body class="sign-body" data-sign-page="unavailable" data-sign-code="{{ code }}">
     <main class="sign-main">
         <section class="sign-panel">
+            {% if document_unavailable %}
+            <h1 class="sign-doc-title">This document is not available.</h1>
+            <p class="sign-muted" data-sign-document-unavailable="true">We could not open this document, so nothing was shown. Nothing has been signed or changed. Please contact the person who sent you this link.</p>
+            {% else %}
             <h1 class="sign-doc-title">This link is not available.</h1>
-            {% if rate_limited %}
+            {% endif %}
+            {% if document_unavailable %}
+            {% elif rate_limited %}
             <p class="sign-error">Too many tries. Please wait and try again later.</p>
             {% elif declined %}
             <p class="sign-muted">This invitation was declined. No signature was recorded.</p>

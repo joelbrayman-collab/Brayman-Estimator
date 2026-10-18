@@ -27,6 +27,8 @@ from app.models.signing import (
 )
 from app.project_controls.repository import get_change_order
 from app.services.signing import (
+    BLOCK_ARTIFACT_NOT_RETAINED,
+    BLOCK_ARTIFACT_SHA_MISMATCH,
     BLOCK_CONFIRMED_NAME_REQUIRED,
     BLOCK_CONSENT_NOT_ACCEPTED,
     BLOCK_CONTRACT_PDF_NOT_AVAILABLE,
@@ -138,9 +140,14 @@ def _fail_closed(code: str, *, status_code=None):
             "signing/unavailable.html",
             code=code,
             rate_limited=code == BLOCK_TOKEN_RATE_LIMITED,
+            document_unavailable=code in _DOCUMENT_UNAVAILABLE_CODES,
         ),
         status,
     )
+
+
+# The stored document is missing or failed its SHA-256 check: the link itself may be fine.
+_DOCUMENT_UNAVAILABLE_CODES = frozenset({BLOCK_ARTIFACT_NOT_RETAINED, BLOCK_ARTIFACT_SHA_MISMATCH})
 
 
 @sign_bp.route("/<credential>", methods=["GET"])

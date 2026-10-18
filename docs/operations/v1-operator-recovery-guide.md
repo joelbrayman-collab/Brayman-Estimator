@@ -216,3 +216,12 @@ Call Joel Brayman. Tell him the date, the project name, what you clicked, and th
 Do not delete the project. Do not rewrite an accepted proposal. Do not type a contract. Do not copy or rename the office database. Do not keep working in an office that looks empty.
 
 Joel writes the note in `docs/operations/v1-issue-log.md`. That is the record. Ben does not have to edit that file.
+
+## Signed out after 30 minutes (from the security release)
+
+Office and supplier accounts are signed out after 30 minutes without activity. Two minutes before, a box asks "Still there?"; press **Stay signed in**. Typing or tapping also keeps you signed in. If the time runs out, sign in again: you return to the same page and what you had typed in a form is put back; check it, then save. Customers signing a document or reading a proposal are not affected.
+
+## Owner sign-in recovery
+
+The temporary UAT sign-in bypass no longer exists (removed from the code on the security branch; switched off since 15 Oct 2026). If the owner cannot sign in: use "Forgot password" on the sign-in page, or run `flask auth reset-password --email joel@braymanconstruction.ca` in the Render shell.
+

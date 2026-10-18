@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Current (technical cleanup, 18 Oct 2026) |
+| Status | Current (technical cleanup, 18 Oct 2026; local folders updated on the security branch the same day) |
 | Scripts | `tools/release/release_gate.sh`, `tools/release/postrelease_check.sh` |
 | Replaces | the per-release copies in `~/Desktop/Brayman-Estimator/generated/` (`cal1_release.sh`, `v1bd_release.sh`, …), which remain there as history |
 
@@ -11,17 +11,17 @@ Production is changed only after Joel's explicit authorization of the exact comm
 ## Release without a database change
 
 1. **Candidate.** The commit to release is pushed to its development branch. Claude names the full SHA, the branch, GitHub `main`, the live SHA and its deploy id.
-2. **Gate (Joel, on the Mac).**
+2. **Gate (Joel, on the Mac).** The script is fetched from GitHub at the exact candidate commit, so it does not depend on the Desktop copy of the repository (parts of the Desktop are kept in iCloud only).
    ```bash
-   git -C ~/Desktop/Brayman-Estimator fetch -q origin <branch>
-   git -C ~/Desktop/Brayman-Estimator show <candidate>:tools/release/release_gate.sh > /tmp/release_gate.sh
+   curl -fsSL https://raw.githubusercontent.com/joelbrayman-collab/Brayman-Estimator/<candidate>/tools/release/release_gate.sh -o /tmp/release_gate.sh
    bash /tmp/release_gate.sh --label <name> --candidate <sha> --branch <branch> \
         --main-base <main sha> --live-base <live sha> --live-deploy <dep-id>
    ```
+   One-time prerequisite for releases from the security branch on: `/usr/bin/python3 relocate_local_storage.py` (fetched the same way from `tools/release/`). Release working files then go to `~/CalibraytAI-Office/release-work` and the Mac backup copies to `~/CalibraytAI-Office/office-backups`, outside the iCloud Desktop. The gate stops with that instruction if the folders are missing. (The cleanup-branch gate `3e36b9d` still uses the Desktop folders, as every release before it did.)
    It stops at the first failure, and on success at **READY_FOR_PUSH**. It checks: one run at a time; `main`, the branch and the live instance separately; a fresh clone at the exact commit, a fast-forward from `main`, descended from live, no migration or model change; production's exact Python packages; the complete native regression with exit 0 and **no skipped test**; the end-to-end contractor walk and the Cal tests ran and passed; the release browser checks in Google Chrome (desktop and phone); a fresh hosted backup, copied to the Mac and verified by SHA-256 and `PRAGMA integrity_check`, with tables and rows counted; contract signing readiness (read-only). It pushes nothing and deploys nothing.
 3. **Authorization (Joel).** Separate, explicit, naming the commit.
 4. **Push and deploy (Claude).** `git push origin <sha>:refs/heads/main` (the tested commit itself, fast-forward), then deploy that commit on Render.
-5. **Post-release (Joel, on the Mac).** `bash /tmp/postrelease_check.sh --label <name>` (fetched the same way). Read-only: `main` is the commit, `git fsck`, the live instance reports it, the database re-read shows the same revision, integrity ok and the same tables and rows as the backup, and the signed-out public and Cal checks pass. Safe to run again.
+5. **Post-release (Joel, on the Mac).** `curl -fsSL https://raw.githubusercontent.com/joelbrayman-collab/Brayman-Estimator/<sha>/tools/release/postrelease_check.sh -o /tmp/postrelease_check.sh && bash /tmp/postrelease_check.sh --label <name>`. Read-only: `main` is the commit, `git fsck`, the live instance reports it, the database re-read shows the same revision, integrity ok and the same tables and rows as the backup, and the signed-out public and Cal checks pass. Safe to run again.
 6. **Record.** Session handoff entry with the SHA, deploy id, gate results, backup, post-check and rollback.
 
 ## Release with a database change

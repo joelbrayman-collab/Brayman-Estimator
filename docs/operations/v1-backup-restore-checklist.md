@@ -8,6 +8,8 @@ The working office is the hosted platform. Its database is the operational file.
 
 The steps below copy the Mac file `instance/brayman_estimator.db`. They remain the steps for that mirror. Completing them does not back up the hosted office. On 9 October 2026 at 13:01 local, that Mac file was checked as a current mirror of hosted backup `hosted-current-2026-10-09-1258.db`, revision `t0a1b2c3d4e5`.
 
+> **Current location, 18 Oct 2026 (security branch, unreleased):** the Mac copy of each pre-release backup goes to `~/CalibraytAI-Office/office-backups` (home folder, not synced by iCloud). `tools/release/relocate_local_storage.py` copies the existing `~/Desktop/Brayman-office-backups` there once, verifying every file by SHA-256 and every database by `PRAGMA integrity_check`; it never deletes or overwrites, and the Desktop folder stays as it is. On 18 Oct the Desktop folder held 21 files, all downloaded on the Mac. The hosted backups themselves stay in `instance/backups` on the live disk; retention is unchanged. The sentence below is the 9 Oct record.
+
 There is no automatic backup. A copy is not finished until the check says ok and a second copy exists outside that live file. The current hosted backup is `hosted-current-2026-10-09-1258.db`, integrity `ok`, revision `t0a1b2c3d4e5`, with a verified Desktop second copy. The earlier hosted backup `pre-t0-2026-10-09-1202.db` remains revision `s9f0a1b2c3d4` and was not overwritten. Joel makes another checked backup at the end of a day a real project changed.
 
 Do this before the first real project is typed in, at the end of any day a real project changed, and before any change to the office file's structure. Ben never makes that structure change.

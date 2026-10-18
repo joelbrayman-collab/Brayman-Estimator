@@ -695,10 +695,50 @@ def test_ae_no_destructive_user_delete(app):
             assert "hourly_wage" not in text
 
 
+def _local_office_db_state(live_path):
+    """Read-only fingerprint of a local office database, or None if there is none:
+    the file's SHA-256 plus the two authority values this test must never change."""
+    if not live_path.exists():
+        return None
+    import hashlib
+    import sqlite3
+
+    digest = hashlib.sha256(live_path.read_bytes()).hexdigest()
+    con = sqlite3.connect(f"file:{live_path}?mode=ro", uri=True)
+    try:
+        cur = con.cursor()
+        tables = {
+            row[0]
+            for row in cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        admins = None
+        if "organization_system_administrator_memberships" in tables:
+            admins = cur.execute(
+                "SELECT COUNT(*) FROM organization_system_administrator_memberships"
+            ).fetchone()[0]
+        owner = None
+        if "organizations" in tables:
+            row = cur.execute(
+                "SELECT instance_owner_membership_id FROM organizations WHERE id = ?",
+                ("ORG-001",),
+            ).fetchone()
+            owner = row[0] if row else None
+    finally:
+        con.close()
+    return digest, admins, owner
+
+
 def test_af_no_live_db_mutation_and_memory_only(app):
+    # Technical cleanup, 18 Oct 2026: this used to compare the local office database
+    # with the values it held at the PA-B checkpoint (no system administrators, owner
+    # membership 1), so it failed on any machine whose local office had moved on, even
+    # though the test wrote nothing. It now proves what its name says: the test runs in
+    # memory, and the local office database is byte-for-byte unchanged afterwards.
     uri = str(app.config["SQLALCHEMY_DATABASE_URI"])
     assert uri.startswith("sqlite:///:memory:")
     assert "brayman_estimator.db" not in uri
+    live_path = REPO_ROOT / "instance" / "brayman_estimator.db"
+    before = _local_office_db_state(live_path)
     owner, _ = _make_owner()
     _, membership = _member(
         email=ADMIN_EMAIL,
@@ -706,30 +746,10 @@ def test_af_no_live_db_mutation_and_memory_only(app):
         display_name="Sys Admin One",
     )
     _appoint_admin(owner, membership)
-    live_path = REPO_ROOT / "instance" / "brayman_estimator.db"
-    if live_path.exists():
-        import sqlite3
+    from app.models import OrganizationSystemAdministratorMembership
 
-        con = sqlite3.connect(f"file:{live_path}?mode=ro", uri=True)
-        cur = con.cursor()
-        tables = {
-            row[0]
-            for row in cur.execute(
-                "SELECT name FROM sqlite_master WHERE type='table'"
-            )
-        }
-        if "organization_system_administrator_memberships" in tables:
-            count = cur.execute(
-                "SELECT COUNT(*) FROM organization_system_administrator_memberships"
-            ).fetchone()[0]
-            assert count == 0
-        owner_row = cur.execute(
-            "SELECT instance_owner_membership_id FROM organizations WHERE id = ?",
-            ("ORG-001",),
-        ).fetchone()
-        assert owner_row is not None
-        assert owner_row[0] == 1
-        con.close()
+    assert OrganizationSystemAdministratorMembership.query.count() == 1
+    assert _local_office_db_state(live_path) == before
 
 
 def test_owner_cannot_be_appointed_sys_admin(app):

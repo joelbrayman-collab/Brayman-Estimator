@@ -1,6 +1,12 @@
 # A Day in the Life with CalibraytAI — screenshot library
 
-Advance Reading Edition for Ben and Kevin. **Screenshot library only — the Storybook itself is not written yet.** Status: **awaiting Joel's visual approval.**
+## Refined book edition recorded — 18 October 2026
+
+The completed **44-page, 14-chapter** refined review edition, matching PDF, Vercel package and editable source are preserved in [editions/2026-10-18-refined/](editions/2026-10-18-refined/README.md), with original-file SHA-256 checksums and verification/publication status. This is a documentation archive; approved branding and earlier capture assets remain preserved. The revised edition is **not published** (Vercel 403); new-edition browser testing is not claimed.
+
+The screenshot-library description below is the historical 16 October capture record, not the current book's completion status.
+
+Advance Reading Edition for Ben and Kevin. Historical capture status on 16 October: **screenshot library only; awaiting Joel's visual approval.**
 
 - Product code: `6a8c807` on branch `v1/completion` (the screens are V1 as live, plus the Eastern Ontario contract correction and the job-location address fallback, which are ready for release). Captured 2026-10-16.
 - Office: a fresh office built by the real database migrations on a temporary database; **synthetic data only**. No production database was read or changed.

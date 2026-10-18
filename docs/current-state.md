@@ -903,3 +903,8 @@ The active stop is Linda Bushel — governed geometry reconciliation. It is in p
 - [feature-gates/FG-006-historical-estimate-ingestion-phase-b.md](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md)
 - [feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md](feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md)
 - [architecture/organization-and-calibration-architecture.md](architecture/organization-and-calibration-architecture.md)
+
+
+## 18 October 2026 — Storybook refined-edition archival record only
+
+Joel requested that the revised CalibraytAI book, matching PDF and supporting packages be recorded and saved in this repository. The dated archive and checksums are at [storybook/editions/2026-10-18-refined/README.md](storybook/editions/2026-10-18-refined/README.md). It preserves 44 pages and 14 chapters; approved logos/brand artwork and the earlier capture library remain intact. Seventeen focused reader/asset checks passed; all changed pages were visually checked and all 44 PDF pages rendered/compared. New-edition browser testing is not claimed. Vercel publication is blocked by a 403 scope error; the live book is unchanged. This documentation-only archival task does not advance platform milestones, change the active engineering resume sequence, or authorize application deployment. No additional Cursor implementation prompt was needed: the owner directly authorized repository preservation of existing deliverables. No further development is authorized by this entry.

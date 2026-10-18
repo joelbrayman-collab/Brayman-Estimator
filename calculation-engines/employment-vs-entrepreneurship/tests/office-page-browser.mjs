@@ -164,6 +164,13 @@ test("the contractor page runs the preserved comparison", async () => {
     await page.locator("#results.on").waitFor();
     const results = await page.locator("#results").innerText();
     assert.match(results, /break-even|employment economic value/i);
+    // The progress bar widens with a 0.2 s CSS transition; measure it once the transition
+    // has finished (bounded wait), not part-way through.
+    await page.waitForFunction(
+      () => document.getElementById("prog").getAnimations().length === 0,
+      null,
+      { timeout: 5000 },
+    );
     const resultLayout = await page.evaluate(() => {
       const resultsBox = document.getElementById("results").getBoundingClientRect();
       const bar = document.getElementById("prog").getBoundingClientRect();

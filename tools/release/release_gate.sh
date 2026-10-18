@@ -48,14 +48,21 @@ done
 [[ "$LABEL" =~ ^[a-z0-9-]+$ ]] || { echo "--label: lower-case letters, digits and dashes only"; exit 2; }
 
 REPO_URL=https://github.com/joelbrayman-collab/Brayman-Estimator.git
-GEN=/Users/joelbrayman/Desktop/Brayman-Estimator/generated
+# Release working files and office backups live outside the iCloud Desktop (18 Oct 2026):
+# ~/CalibraytAI-Office, made by tools/release/relocate_local_storage.py (copy only).
+OFFICE_LOCAL="${CALIBRAYTAI_OFFICE_LOCAL:-$HOME/CalibraytAI-Office}"
+GEN="$OFFICE_LOCAL/release-work"
 HOST=srv-dar95mh42hec73df4rug@ssh.virginia.render.com
 SSH_OPTS=(-o UpdateHostKeys=no)
-BACKUPS=$HOME/Desktop/Brayman-office-backups
+BACKUPS="$OFFICE_LOCAL/office-backups"
 DEST=$HOME/Developer/Brayman-Estimator-$LABEL-release-$(date +%Y%m%d-%H%M%S)
 TS=$(date +%Y%m%d-%H%M%S); OUT="$GEN/$LABEL-release-$TS"; LOG="$OUT.log"; STATUS="$GEN/$LABEL-release-status.txt"
 STATE="$GEN/$LABEL-release-state.txt"
-mkdir -p "$GEN"
+if [ ! -d "$GEN" ] || [ ! -d "$BACKUPS" ]; then
+  echo "STOP: $GEN or $BACKUPS does not exist. Run tools/release/relocate_local_storage.py first"
+  echo "(it copies the Desktop backups and release files there and verifies them; nothing is deleted)."
+  exit 1
+fi
 
 # One run at a time (two copies of a release script once ran side by side on 18 Oct).
 LOCKDIR="$GEN/.release-gate.lock"

@@ -16,7 +16,8 @@ while [ $# -gt 0 ]; do case "$1" in --label) LABEL=$2; shift 2;; *) sed -n '2,12
 CAL64_SHA=0b10a30a284877f117fd933f8126cf68155d89591f90117b6db4b2043f92ef3d
 SITE=https://calibryatai.onrender.com
 REPO_URL=https://github.com/joelbrayman-collab/Brayman-Estimator.git
-GEN=/Users/joelbrayman/Desktop/Brayman-Estimator/generated
+OFFICE_LOCAL="${CALIBRAYTAI_OFFICE_LOCAL:-$HOME/CalibraytAI-Office}"
+GEN="$OFFICE_LOCAL/release-work"
 HOST=srv-dar95mh42hec73df4rug@ssh.virginia.render.com
 SSH_OPTS=(-o UpdateHostKeys=no)
 STATUS="$GEN/$LABEL-release-status.txt"; STATE="$GEN/$LABEL-release-state.txt"

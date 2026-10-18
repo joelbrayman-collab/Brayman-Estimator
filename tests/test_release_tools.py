@@ -104,3 +104,49 @@ def test_postrelease_requires_the_gate_and_rereads_the_database():
     assert "ROLLBACK_TARGET=redeploy" in code
     # Post-release makes no database write: the hosted check opens SQLite read-only.
     assert "mode=ro" in (RELEASE / "hosted_postcheck.py").read_text()
+
+
+def test_release_files_and_backups_live_outside_the_icloud_desktop():
+    for path in (GATE, POST):
+        code = _code(path)
+        assert "/Desktop" not in code and "Desktop/" not in code, path.name
+        assert '"$OFFICE_LOCAL/release-work"' in code
+    gate = _code(GATE)
+    assert 'BACKUPS="$OFFICE_LOCAL/office-backups"' in gate
+    assert "relocate_local_storage.py first" in gate
+
+
+def test_relocation_only_copies_and_never_overwrites(tmp_path):
+    import os
+    import sqlite3
+
+    home = tmp_path
+    backups = home / "Desktop" / "Brayman-office-backups"
+    generated = home / "Desktop" / "Brayman-Estimator" / "generated" / "nested"
+    backups.mkdir(parents=True)
+    generated.mkdir(parents=True)
+    db_path = backups / "pre-test.db"
+    connection = sqlite3.connect(db_path)
+    connection.execute("CREATE TABLE t (x)")
+    connection.commit()
+    connection.close()
+    (generated / "run.log").write_text("log")
+    before = {p: p.read_bytes() for p in (home / "Desktop").rglob("*") if p.is_file()}
+    script = RELEASE / "relocate_local_storage.py"
+    env = {**os.environ, "RELOCATE_HOME": str(home)}
+
+    first = subprocess.run(["python3", str(script)], env=env, capture_output=True, text=True)
+    assert first.returncode == 0, first.stdout + first.stderr
+    assert (home / "CalibraytAI-Office" / "office-backups" / "pre-test.db").read_bytes() == db_path.read_bytes()
+    assert (home / "CalibraytAI-Office" / "release-work" / "nested" / "run.log").read_text() == "log"
+    assert {p: p.read_bytes() for p in (home / "Desktop").rglob("*") if p.is_file()} == before
+
+    again = subprocess.run(["python3", str(script)], env=env, capture_output=True, text=True)
+    assert again.returncode == 0 and "already_there=1" in again.stdout
+
+    copy = home / "CalibraytAI-Office" / "release-work" / "nested" / "run.log"
+    copy.write_text("changed")
+    conflict = subprocess.run(["python3", str(script)], env=env, capture_output=True, text=True)
+    assert conflict.returncode == 1 and "nothing overwritten" in conflict.stdout
+    assert copy.read_text() == "changed"
+    assert {p: p.read_bytes() for p in (home / "Desktop").rglob("*") if p.is_file()} == before

@@ -115,6 +115,7 @@ BLOCK_SIGNER_EMAIL_REQUIRED = "SIGNER_EMAIL_REQUIRED"
 BLOCK_CONSENT_VERSION_REQUIRED = "CONSENT_VERSION_REQUIRED"
 BLOCK_CONSENT_AUTHORITY_MISMATCH = "CONSENT_AUTHORITY_MISMATCH"
 BLOCK_ARTIFACT_SHA_MISMATCH = "ARTIFACT_SHA_MISMATCH"
+BLOCK_ARTIFACT_NOT_RETAINED = "ARTIFACT_NOT_RETAINED"
 BLOCK_EXPIRY_REQUIRED = "EXPIRY_REQUIRED"
 BLOCK_COUNTERSIGN_FLAG_REQUIRED = "COUNTERSIGN_FLAG_REQUIRED"
 BLOCK_AUTHORITY_CLASS_REQUIRED = "AUTHORITY_CLASS_REQUIRED"
@@ -216,11 +217,26 @@ def get_signing_request(request_id: int, organization_id: str) -> SigningRequest
     return request
 
 
-def retrieve_frozen_artifact_bytes(artifact: SigningFrozenArtifact) -> bytes:
-    data = read_retained_bytes(artifact.storage_key)
-    if sha256_hex(data) != artifact.sha256:
+def _read_verified_artifact(storage_key: str, expected_sha256: str, *, label: str) -> bytes:
+    """Read a retained signing file and check it against its recorded SHA-256.
+
+    A missing file or one that fails the check is refused with a SigningServiceError
+    (so every caller shows its unavailable page or message, never the 500 page), is
+    logged for the office, and is never served or re-created.
+    """
+    try:
+        data = read_retained_bytes(storage_key)
+    except SigningArtifactStorageError as exc:
+        current_app.logger.error("Signing %s file is not retained: %s", label, storage_key)
+        raise SigningServiceError(BLOCK_ARTIFACT_NOT_RETAINED) from exc
+    if sha256_hex(data) != expected_sha256:
+        current_app.logger.error("Signing %s file failed its SHA-256 check: %s", label, storage_key)
         raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
     return data
+
+
+def retrieve_frozen_artifact_bytes(artifact: SigningFrozenArtifact) -> bytes:
+    return _read_verified_artifact(artifact.storage_key, artifact.sha256, label="frozen")
 
 
 def _require_human(
@@ -1455,10 +1471,7 @@ def retrieve_executed_artifact_bytes(
         raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_MISSING)
     if executed.organization_id != organization_id:
         raise SigningServiceError(BLOCK_ORGANIZATION_MISMATCH)
-    data = read_retained_bytes(executed.storage_key)
-    if sha256_hex(data) != executed.sha256:
-        raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
-    return data
+    return _read_verified_artifact(executed.storage_key, executed.sha256, label="executed")
 
 
 def executed_pdf_bytes_for_customer(access: ResolvedSigningAccess) -> bytes:

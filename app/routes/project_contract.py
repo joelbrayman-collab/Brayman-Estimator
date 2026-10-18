@@ -5,7 +5,7 @@ Does not send a signing link. Does not live in the project hub assembler.
 
 from io import BytesIO
 
-from flask import flash, redirect, render_template, request, send_file, session, url_for
+from flask import current_app, flash, redirect, render_template, request, send_file, session, url_for
 
 from app.models.estimate import Estimate
 from app.models.project import Project
@@ -14,6 +14,7 @@ from app.models.proposal import Proposal
 from app.presentation import contractor_copy
 from app.routes.projects import projects_bp
 from app.services.auth import current_actor_display_name
+from app.services.contract_artifact_storage import ContractArtifactStorageError
 from app.services.contract_generation import (
     ELIGIBLE_PROPOSAL_STATUSES,
     ELIGIBLE_VERSION_STATUSES,
@@ -162,7 +163,19 @@ def download_generated_contract(id, contract_id):
             "error",
         )
         return redirect(url_for("projects.review_contract", id=project.id))
-    data = retrieve_generated_contract_docx(snapshot)
+    try:
+        data = retrieve_generated_contract_docx(snapshot)
+    except (ContractArtifactStorageError, ValueError):
+        # Missing on disk, or the bytes no longer match the frozen SHA-256: never served.
+        current_app.logger.error(
+            "Generated contract %s file is missing or failed its SHA-256 check", contract.id
+        )
+        flash(
+            "The stored contract file could not be opened: it is missing or failed its "
+            "integrity check, so nothing was downloaded.",
+            "error",
+        )
+        return redirect(url_for("projects.review_contract", id=project.id))
     if not data:
         flash("The generated contract file is not available.", "error")
         return redirect(url_for("projects.review_contract", id=project.id))

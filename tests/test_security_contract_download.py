@@ -57,6 +57,14 @@ def _generated(number="EST-SEC-DL-0001"):
     return project, contract, snapshot, stored, original
 
 
+def _assert_contract_unavailable_message(client, response, project_id):
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith(f"/projects/{project_id}/contract")
+    page = client.get(response.headers["Location"])
+    assert page.status_code == 200
+    assert b"The stored contract file could not be opened" in page.data
+
+
 def _url(project_id, contract_id):
     return f"/projects/{project_id}/contract/{contract_id}/download"
 
@@ -144,10 +152,8 @@ def test_altered_bytes_on_disk_are_not_served(app, client):
 
     _assert_no_docx_served(response, original)
     assert bytes(tampered) not in response.data
-    # DEFECT (recorded for Joel): returns 500, intended 404/fail-closed page.
-    # retrieve_generated_contract_docx raises ValueError on the SHA-256 mismatch and
-    # download_generated_contract does not catch it.
-    assert response.status_code in (404, 410, 500)  # safety property: refused, never 200
+    # Corrected 18 Oct 2026 (was the 500 page): back to the contract page with a plain message.
+    _assert_contract_unavailable_message(client, response, project.id)
     assert _files_under_root() == files_before
     assert GeneratedProjectContract.query.count() == contracts_before
     assert db.session.get(ProjectContractSnapshot, snapshot.id).artifact_sha256 == sha_before
@@ -162,10 +168,8 @@ def test_deleted_stored_file_is_not_served(app, client):
     response = client.get(_url(project.id, contract.id))
 
     _assert_no_docx_served(response, original)
-    # DEFECT (recorded for Joel): returns 500, intended 404/fail-closed page.
-    # read_retained_docx raises ContractArtifactStorageError ("not retained") and
-    # download_generated_contract does not catch it.
-    assert response.status_code in (404, 410, 500)  # safety property: refused, never 200
+    # Corrected 18 Oct 2026 (was the 500 page): back to the contract page with a plain message.
+    _assert_contract_unavailable_message(client, response, project.id)
     assert not stored.exists()  # nothing re-rendered or re-written behind the request
     assert GeneratedProjectContract.query.count() == contracts_before
     assert db.session.get(ProjectContractSnapshot, snapshot.id).artifact_storage_key == snapshot.artifact_storage_key

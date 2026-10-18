@@ -137,7 +137,9 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert "Brayman Construction Home" in html
     assert 'id="office-company-name"' in html
     schedule = client.get("/schedule").get_data(as_text=True)
-    assert "<h1>Company Calendar</h1>" in schedule
+    # Joel, 18 Oct 2026: the header carries the title; no repeated in-page heading.
+    assert '<h1 class="header-page-title">Company Calendar</h1>' in schedule
+    assert "<h1>Company Calendar</h1>" not in schedule
     assert "<h1>Schedule</h1>" not in schedule
     assert "home-month" in schedule
     assert contractor_copy.COMPANY_CALENDAR_WAITING in schedule

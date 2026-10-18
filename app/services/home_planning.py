@@ -262,7 +262,12 @@ def assemble_home_planning(
     selected_day: Optional[int] = None,
     today: Optional[date] = None,
     viewer=None,
+    project_id: Optional[int] = None,
 ) -> dict:
+    """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
+    day and the week/day lists to one project; Home never passes it."""
+    from app.presentation.schedule_categories import activity_category
+
     today = today or date.today()
     year = int(year or today.year)
     month = int(month or today.month)
@@ -288,6 +293,8 @@ def assemble_home_planning(
     item_rows = []
     for project_row in schedule["projects"]:
         project = project_row["project"]
+        if project_id is not None and project.id != project_id:
+            continue
         for bar in project_row["bars"]:
             item = bar["item"]
             assignments = bar.get("assignments") or []
@@ -306,6 +313,7 @@ def assemble_home_planning(
                     "crew": crew,
                     "people": people,
                     "conflict": False,
+                    "category": activity_category(element),
                 }
             )
 
@@ -317,6 +325,8 @@ def assemble_home_planning(
         row["conflict"] = row["item_id"] in conflict_ids
 
     delivery_rows = _delivery_rows(organization_id, grid_start, grid_end)
+    if project_id is not None:
+        delivery_rows = [row for row in delivery_rows if row["project_id"] == project_id]
 
     segments = []
     cursor = grid_start
@@ -340,6 +350,8 @@ def assemble_home_planning(
                     "col_start": col_start,
                     "col_end": col_end,
                     "label": f"{row['project_name']} · {row['element_name']}",
+                    "short_label": f"{row['element_name']} · {row['project_name']}",
+                    "category": row["category"],
                     "crew_letter": row["crew"]["letter"],
                     "accent": row["crew"]["accent"] or "none",
                     "conflict": row["conflict"],
@@ -357,6 +369,8 @@ def assemble_home_planning(
                         "col_start": row["date"].weekday() + 1,
                         "col_end": row["date"].weekday() + 2,
                         "label": row["label"],
+                        "short_label": row["label"],
+                        "category": "delivery",
                         "crew_letter": "",
                         "accent": "delivery-pending" if row["pending"] else "delivery",
                         "conflict": False,
@@ -476,9 +490,61 @@ def assemble_home_planning(
         can_attention,
     )
 
+    def entries_for(day: date) -> list[dict]:
+        work = [
+            {
+                "kind": "work",
+                "label": row["element_name"],
+                "project_name": row["project_name"],
+                "category": row["category"],
+                "crew_letter": row["crew"]["letter"],
+                "crew_name": row["crew"]["name"],
+                "people": row["people"],
+                "conflict": row["conflict"],
+                "href": f"/projects/{row['project_id']}#hub-schedule",
+                "edit_href": f"/schedule/items/{row['item_id']}",
+            }
+            for row in item_rows
+            if row["scheduled_start"] <= day <= row["scheduled_end"]
+        ]
+        deliveries = [
+            {
+                "kind": "delivery",
+                "label": row["label"],
+                "project_name": "",
+                "category": "delivery-pending" if row["pending"] else "delivery",
+                "status": row["status"],
+                "href": row["href"],
+            }
+            for row in delivery_rows
+            if row["date"] == day
+        ]
+        return work + deliveries
+
+    week_start = selected - timedelta(days=selected.weekday())
+    week_days = []
+    for offset in range(7):
+        day = week_start + timedelta(days=offset)
+        week_days.append({
+            "date": day,
+            "label": day.strftime("%a") + " " + str(day.day),
+            "long_label": day.strftime("%A") + " " + str(day.day) + " " + day.strftime("%B"),
+            "today": day == today,
+            "selected": day == selected,
+            "entries": entries_for(day),
+        })
+
     return {
         "today": today,
         "briefing": briefing,
+        "week_days": week_days,
+        "week_label": (week_start.strftime("%b") + " " + str(week_start.day) + " – "
+                       + (week_start + timedelta(days=6)).strftime("%b") + " " + str((week_start + timedelta(days=6)).day)),
+        "day_entries": entries_for(selected),
+        "nav_dates": {
+            "prev_week": selected - timedelta(days=7), "next_week": selected + timedelta(days=7),
+            "prev_day": selected - timedelta(days=1), "next_day": selected + timedelta(days=1),
+        },
         "year": year,
         "month": month,
         "month_label": month_start.strftime("%B %Y"),

@@ -79,7 +79,11 @@ print(f"  [ok]      {len(want)} Python packages match requirements-lock.txt / re
 PY
 "$VENV/bin/python" -c "import playwright.sync_api" 2>/dev/null && ok "Python Playwright importable" || miss "Python Playwright (pip install -r requirements-dev.txt)"
 NODE_BIN="$(command -v node || echo /opt/homebrew/bin/node)"
-if [ -x "$NODE_BIN" ]; then ok "Node $("$NODE_BIN" --version)"; else miss "Node (brew install node / apt-get install nodejs)"; fi
+if [ -x "$NODE_BIN" ]; then
+  NODE_MAJOR=$("$NODE_BIN" -p 'process.versions.node.split(".")[0]')
+  if [ "$NODE_MAJOR" -ge 18 ]; then ok "Node $("$NODE_BIN" --version) (Playwright 1.56 needs 18 or later)"
+  else miss "Node 18 or later (found $("$NODE_BIN" --version))"; fi
+else miss "Node (brew install node / apt-get install nodejs)"; fi
 for pkg in calculation-engines/concrete-slab-1.0.0 calculation-engines/stair-ontario-residential-v1; do
   [ -d "$pkg/node_modules/playwright" ] && ok "$pkg node_modules" || miss "$pkg node_modules (npm ci)"
 done

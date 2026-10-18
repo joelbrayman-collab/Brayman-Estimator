@@ -1,6 +1,6 @@
 # Cal Assistant — Phase 1: Find It
 
-Status: **IMPLEMENTED ON BRANCH / NOT DEPLOYED.** Production requires Joel's separate authorization. Phases 2 ("Understand it") and 3 ("Get it done") are **not authorized and not built**.
+Status: **LIVE since 18 Oct 2026** (`0e2c917`, deploy `dep-dbaa9p2jnfac73ev79h0`, authorized by Joel 18 Oct 06:51). Until that release it was implemented on branch `v1/completion` and not deployed. Phases 2 ("Understand it") and 3 ("Get it done") are **not authorized and not built**.
 
 ## What it does
 

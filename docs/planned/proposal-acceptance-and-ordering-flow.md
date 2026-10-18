@@ -1,6 +1,6 @@
 # Planned: proposal acceptance, contract and supplier ordering flow
 
-Approved by Joel, 17 Oct 2026 (05:09–05:17). **Built 17 Oct 2026 on `v1/completion` after Joel's instruction to build all of it (05:52); not deployed.** Migrations `x1a2b3c4d5e6` (client flow) and `y2b3c4d5e6f7` (Supplier Hub).
+Approved by Joel, 17 Oct 2026 (05:09–05:17). **Built 17 Oct 2026 on `v1/completion` after Joel's instruction to build all of it (05:52).** Current status (18 Oct 2026): **live** — released with both migrations in `098c554` on 17 Oct, then Supplier Hub B–D in `fb754ed` the same day; production now runs `0e2c917` at revision `y2b3c4d5e6f7`. ("Not deployed" was true when this was written.) Migrations `x1a2b3c4d5e6` (client flow) and `y2b3c4d5e6f7` (Supplier Hub).
 
 ## Client side
 1. Ben signs off the estimate; the sign-off locks it. The proposal is built from that locked estimate (numbers carried automatically, as today).

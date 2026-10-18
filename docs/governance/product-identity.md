@@ -75,7 +75,7 @@ Brayman Construction identity is separate. Do **not** replace `Brayman Construct
 
 ## Visual asset (Slice 3 — installed)
 
-Joel-approved final package **`CalibraytAI_090926_Final.zip`** remains the external source authority on the Desktop (SHA-256 `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde`). Runtime PNG **`app/static/branding/calibraytai-logo-v2.png`** is the exact ZIP member `V2 LOGO/CalibraytAI.png` (SHA-256 `b719bdd2fe7814d49d1a4065c4d6b1915f8e3cd6696f711c08e8d49b3fa53aea`).
+Joel-approved final package **`CalibraytAI_090926_Final.zip`** remains the external source authority on the Desktop (SHA-256 `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde`). (18 Oct 2026: the package is now in `~/Desktop/CalibAi Historical Estimates/`, same SHA-256; both runtime logos re-verified against it — [../branding/approved-asset-inventory.md](../branding/approved-asset-inventory.md).) Runtime PNG **`app/static/branding/calibraytai-logo-v2.png`** is the exact ZIP member `V2 LOGO/CalibraytAI.png` (SHA-256 `b719bdd2fe7814d49d1a4065c4d6b1915f8e3cd6696f711c08e8d49b3fa53aea`).
 
 - **V1** — dark / navy backgrounds: not installed; no governed PRODUCT dark-background placement exists.
 - **V2** — light / cream Field header: **installed**.

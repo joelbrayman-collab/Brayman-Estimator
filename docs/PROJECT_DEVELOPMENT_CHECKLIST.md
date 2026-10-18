@@ -155,6 +155,8 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** Plan Generation Engine productization remains in progress. PGE-1 is **CLOSED**. PGE-2 is **CLOSED**. PGE-3 is **CLOSED**. PGE-4 is **CLOSED**. PGE-5 is **CLOSED**. PGE-6 is **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. SNP-4 is **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. SNP-6 is **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. ESTIMATE HANDOFF is **IMPLEMENTED**. MAPPER HANDOFF is **VERIFIED / PRESERVED**. The 1 Oct 2026 Rule 16 re-audit is 7 / 7 PASS. SNP-3 is **CLOSED AS A SLICE**. START NEW PROJECT is **IMPLEMENTED**. GUIDED PROJECT SETUP is **IMPLEMENTED**. PROJECT READINESS is **CURRENTLY FIRST-GAP FOUNDATION**. The future readiness model is **NOT YET IMPLEMENTED**. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
 
+> **Status note, 18 Oct 2026 (technical cleanup):** the sentence above is history. The hosted platform has been the working office since 9 Oct 2026; the UAT sign-in bypass was removed on 15 Oct 2026; production runs `0e2c917`. Current status: [current-state.md](current-state.md) (top block).
+
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
 | 1 | This unified architecture | Governance | Recorded by this checklist. Not an implementation authorization. |

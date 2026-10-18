@@ -3,9 +3,49 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-14 |
+| Updated | 2026-10-18 (current status block below; dated sections after it are history) |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## CURRENT STATUS — 18 Oct 2026 (verified; read this first)
+
+Sections below this one are dated history. A heading such as "(not deployed)" was true on its date; the table here says what is live now.
+
+| Item | Current value | Evidence |
+|---|---|---|
+| Production commit | `0e2c917d421fc21f26434bbd7158860df30c79e8` (Cal Assistant Phase 1), deploy `dep-dbaa9p2jnfac73ev79h0`, live 18 Oct 10:53 UTC | Render deploy list; post-release check (`RUNNING_SHA`) |
+| GitHub `main` | the same commit | `git ls-remote` 18 Oct |
+| Database | revision `y2b3c4d5e6f7` (repository head; 76 migration files), 164 tables, 3,669 rows, 19 proposals, integrity ok | post-release check 18 Oct |
+| Rollback | redeploy `fb754ed` (`dep-db9udb7avr4c73ff141g`); restore only with Joel from `pre-cal1-20261018-0734.db` | release record |
+| Working office | the hosted platform (Joel, 9 Oct; [operations/operating-authority-2026-10-09.md](operations/operating-authority-2026-10-09.md)). The Mac file is a mirror and recovery copy, not the office. Earlier "Mac PRIMARY / hosted VALIDATION COPY" lines are history. | |
+| Release test authority | the native Mac regression inside `tools/release/release_gate.sh` (fresh clone, Python 3.9.6, production's package versions, no skipped test). The cloud workspace reproduces it ([testing/test-environment.md](testing/test-environment.md)). | |
+| Sign-in bypass | `CALIBRAYTAI_UAT_AUTH_BYPASS` removed 15 Oct 18:01 UTC; signed-out requests are sent to sign-in (checked again by the 18 Oct post-release check). The code path still exists and turns on only if that variable and `CALIBRAYTAI_HOSTED` are both set. | handoff 15 Oct; post-release 18 Oct |
+| Email | Postmark configured live (17 Oct); `TRANSACTIONAL_UAT_ALLOWLIST` limits recipients to Joel's two addresses. Text messages: Twilio not configured, so texts stay "not sent". | |
+
+Live features added since the 16 Oct sections below (all released with Joel's authorization):
+
+| Date | Commit | What |
+|---|---|---|
+| 16 Oct | `3a2266b` | V1 final completion and bounded polish |
+| 16 Oct | `1fa39e8` | Contract signing for the Brayman V1 contract |
+| 16–17 Oct | `dfe098b`, `be3cb60` | Contracts for all of Eastern Ontario (a municipality outside the seed resolves to Ontario); contract address fallback |
+| 17 Oct | `098c554` | Client proposal acceptance and Supplier Hub, migrations `x1a2b3c4d5e6` + `y2b3c4d5e6f7` applied once; sign-in show/hide password |
+| 17 Oct | `fb754ed` | Supplier Hub B–D (needs attention, reporting periods, material demand) |
+| 18 Oct | `0e2c917` | Cal Assistant Phase 1 "Find It" (read-only) |
+
+Development work not in production:
+
+| Branch | Commit | Status |
+|---|---|---|
+| `v1/completion` | `a2774e0` | `main` + one documentation commit (Cal release record) |
+| `calendar/layout-proof-wip` | `117862b` | Company Calendar visual layout proof; awaiting Joel's review; no Calendar deployment without separate authorization |
+| `cleanup/technical-2026-10-18` | see the handoff | Technical cleanup (tests, environment, release scripts, documentation); no product change; not for release until Joel reviews it |
+
+Governance points that earlier text states differently:
+
+- Definition of Done item 5 — "Full tests pass (actually run), or an explicit Joel-approved exception is recorded." Releases from 15–18 Oct passed the Mac regression with 2 skipped files (Python Playwright not installed; their checks were run as Node browser checks). Since 18 Oct the gate stops on any skip; no exception is recorded or needed.
+- Rule 16 (no dead ends; [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md)) is unchanged and sealed; the 1 Oct re-audit (7 / 7 PASS) stands.
+- The checklist line "Hosted password verification, bypass removal, and production cutover stay in Later" is history: the bypass was removed on 15 Oct and the hosted platform has been the working office since 9 Oct.
 
 ## 16 Oct 2026 — Contract signing for the Brayman V1 contract (not deployed)
 

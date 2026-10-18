@@ -2,6 +2,8 @@
 
 16 October 2026 · first pilot: BMR Winchester · status: **assessment for Joel's review — nothing implemented, nothing deployed**
 
+> **Status update, 18 Oct 2026:** this assessment is the 16 Oct record and is kept unchanged. Since then the Supplier Hub was built and released: `098c554` (17 Oct, migrations `x1a2b3c4d5e6` and `y2b3c4d5e6f7`) and Supplier Hub B–D in `fb754ed` (17 Oct). Production runs `0e2c917`. The capability table below describes 16 Oct; current status is in [../../current-state.md](../../current-state.md) (top block).
+
 Evidence base: the repository on branch `v1/completion` at `c1af230` (live product `dfe098b`). Screens are from a migration-built office with synthetic data (the Harbour Lane Pool Deck job and a synthetic "BMR Winchester" supplier account), in `screenshots/`.
 
 ---

@@ -39,7 +39,8 @@ Development work not in production:
 |---|---|---|
 | `v1/completion` | `a2774e0` | `main` + one documentation commit (Cal release record) |
 | `calendar/layout-proof-wip` | `117862b` | Company Calendar visual layout proof; awaiting Joel's review; no Calendar deployment without separate authorization |
-| `cleanup/technical-2026-10-18` | see the handoff | Technical cleanup (tests, environment, release scripts, documentation); no product change; not for release until Joel reviews it |
+| `cleanup/technical-2026-10-18` | `3e36b9d` (tested code `5094a2e`) | Technical cleanup (tests, environment, release scripts, documentation); no product change. Accepted by Joel for release preparation 18 Oct; **not released** |
+| `security/closure-2026-10-18` | see the handoff | The six approved corrections on top of the cleanup: stored-file messages, 30-minute inactivity sign-out, bypass code removed, production dependencies pinned, local backups outside iCloud, September signing-file restoration plan. **Tested, not released** |
 
 Governance points that earlier text states differently:
 

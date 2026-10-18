@@ -1,0 +1,10 @@
+{# One work item or delivery in the Week and Day lists. #}
+<li class="cal-entry cal-cat-{{ e.category }}{% if e.conflict %} is-conflict{% endif %}" data-category="{{ e.category }}">
+    {% if e.kind == "work" %}
+    <a href="{{ e.href }}" class="cal-entry-title">{% if e.crew_letter %}<span class="home-band-crew" title="{{ e.crew_name }}">{{ e.crew_letter }}</span> {% endif %}{{ e.label }}</a>
+    <span class="cal-entry-meta">{{ e.project_name }}{% if e.people %} · {{ e.people|join(", ") }}{% endif %}{% if e.conflict %} · <strong>{{ contractor_copy.SCHEDULE_CONFLICT }}</strong>{% endif %} · <a href="{{ e.edit_href }}">Edit dates</a></span>
+    {% else %}
+    <a href="{{ e.href }}" class="cal-entry-title">{{ e.label }}</a>
+    <span class="cal-entry-meta">{{ e.status }}</span>
+    {% endif %}
+</li>

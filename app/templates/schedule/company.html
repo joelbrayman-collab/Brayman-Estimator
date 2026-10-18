@@ -5,22 +5,136 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="page-heading">
-    <div>
-        <h1>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</h1>
-        <p>{{ contractor_copy.COMPANY_CALENDAR_LEDE }}</p>
+{# Company Calendar workspace (Joel, 18 Oct 2026). The header carries the title; the calendar gets the space.
+   Every scheduling control below is the existing one, moved or folded away, never removed. #}
+{% set d = calendar.detail %}
+{% set keep_view = calendar_view or None %}
+{% set nd = calendar.nav_dates %}
+<div class="cal-workspace" data-calendar-view="{{ calendar_view or 'auto' }}">
+
+<div class="cal-toolbar" role="toolbar" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }}">
+    <details class="cal-selected-day" data-selected-day="{{ calendar.selected.isoformat() }}">
+        <summary>
+            <span class="cal-chip-label">{{ contractor_copy.COMPANY_CALENDAR_DAY }}</span>
+            <strong>{{ d.title }}</strong>
+            <span class="cal-chip-count">{{ d.work|length + d.deliveries|length }} item{{ "s" if (d.work|length + d.deliveries|length) != 1 }}</span>
+        </summary>
+        <div class="cal-selected-panel home-detail">
+            <div class="home-block">
+                <h4>{{ contractor_copy.COMPANY_CALENDAR_DAY_WORK }}</h4>
+                {% if d.work %}{% for row in d.work %}<p><a href="{{ url_for('projects.view_project', id=row.project_id) }}#hub-schedule">{{ row.label }}</a></p>{% endfor %}
+                {% else %}<p>{{ contractor_copy.HOME_NO_SCHEDULED_WORK }}</p>{% endif %}
+            </div>
+            {% if d.deliveries %}
+            <div class="home-block" data-calendar-deliveries="true">
+                <h4>Deliveries</h4>
+                {% for row in d.deliveries %}<p><a href="{{ row.href }}">{{ row.label }}</a> — {{ row.status }}</p>{% endfor %}
+            </div>
+            {% endif %}
+            {% if d.people %}
+            <div class="home-block"><h4>{{ contractor_copy.SCHEDULE_ASSIGNED }}</h4>{% for name in d.people %}<p>{{ name }}</p>{% endfor %}</div>
+            {% endif %}
+            {% if d.attention %}
+            <div class="home-block"><h4>{{ contractor_copy.SCHEDULE_CONFLICT }}</h4>{% for line in d.attention %}<p class="home-attn">{{ line }}</p>{% endfor %}</div>
+            {% endif %}
+            <p><a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view='day', **calendar_keep) }}">Open this day</a></p>
+        </div>
+    </details>
+
+    <div class="cal-nav" aria-label="Move through the calendar">
+        {% if calendar_view == "week" %}
+        <a class="cal-nav-step" aria-label="Previous week" href="{{ url_for('schedule.company', year=nd.prev_week.year, month=nd.prev_week.month, day=nd.prev_week.day, view='week', **calendar_keep) }}">‹</a>
+        <h2 class="cal-period-title">{{ calendar.week_label }}</h2>
+        <a class="cal-nav-step" aria-label="Next week" href="{{ url_for('schedule.company', year=nd.next_week.year, month=nd.next_week.month, day=nd.next_week.day, view='week', **calendar_keep) }}">›</a>
+        {% elif calendar_view == "day" %}
+        <a class="cal-nav-step" aria-label="Previous day" href="{{ url_for('schedule.company', year=nd.prev_day.year, month=nd.prev_day.month, day=nd.prev_day.day, view='day', **calendar_keep) }}">‹</a>
+        <h2 class="cal-period-title">{{ d.title }}</h2>
+        <a class="cal-nav-step" aria-label="Next day" href="{{ url_for('schedule.company', year=nd.next_day.year, month=nd.next_day.month, day=nd.next_day.day, view='day', **calendar_keep) }}">›</a>
+        {% else %}
+        <a class="cal-nav-step" aria-label="Previous month" href="{{ url_for('schedule.company', year=calendar.prev.year, month=calendar.prev.month, view=keep_view, **calendar_keep) }}">‹</a>
+        <h2 class="cal-period-title"><span class="cal-when-month">{{ calendar.month_label }}</span><span class="cal-when-week">{{ calendar.week_label }}</span></h2>
+        <a class="cal-nav-step" aria-label="Next month" href="{{ url_for('schedule.company', year=calendar.next.year, month=calendar.next.month, view=keep_view, **calendar_keep) }}">›</a>
+        {% endif %}
+        <a class="cal-today" href="{{ url_for('schedule.company', year=calendar.today.year, month=calendar.today.month, day=calendar.today.day, view=keep_view, **calendar_keep) }}">Today</a>
     </div>
-    <a class="button" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+
+    <nav class="cal-views" aria-label="Calendar view">
+        {% for key, label in (("month", "Month"), ("week", "Week"), ("day", "Day")) %}
+        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=key, **calendar_keep) }}"
+           class="cal-view-{{ key }}"{% if calendar_view == key %} aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+    </nav>
+
+    <form method="get" class="cal-project-filter" data-project-filter="true">
+        <input type="hidden" name="year" value="{{ calendar.year }}">
+        <input type="hidden" name="month" value="{{ calendar.month }}">
+        <input type="hidden" name="day" value="{{ calendar.selected.day }}">
+        {% if calendar_view %}<input type="hidden" name="view" value="{{ calendar_view }}">{% endif %}
+        <input type="hidden" name="from" value="{{ view.window_start.isoformat() }}">
+        <input type="hidden" name="to" value="{{ view.window_end.isoformat() }}">
+        <label class="visually-hidden" for="cal-project">Project</label>
+        <select id="cal-project" name="project_id" onchange="this.form.submit()">
+            <option value="">All projects</option>
+            {% for project in projects %}
+            <option value="{{ project.id }}" {% if selected_project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+            {% endfor %}
+        </select>
+        <noscript><button type="submit" class="button secondary">Show</button></noscript>
+    </form>
+
+    <details class="cal-period" data-period-control="true">
+        <summary>{{ contractor_copy.COMPANY_CALENDAR_PERIOD }}: {{ view.window_start.strftime("%b %d").replace(" 0", " ") }} – {{ view.window_end.strftime("%b %d").replace(" 0", " ") }}</summary>
+        <form method="get" class="cal-period-form">
+            <input type="hidden" name="year" value="{{ calendar.year }}">
+            <input type="hidden" name="month" value="{{ calendar.month }}">
+            <input type="hidden" name="day" value="{{ calendar.selected.day }}">
+            {% if calendar_view %}<input type="hidden" name="view" value="{{ calendar_view }}">{% endif %}
+            {% if selected_project_id %}<input type="hidden" name="project_id" value="{{ selected_project_id }}">{% endif %}
+            <label>From <input type="date" name="from" value="{{ view.window_start.isoformat() }}"></label>
+            <label>To <input type="date" name="to" value="{{ view.window_end.isoformat() }}"></label>
+            <button type="submit" class="button">Show dates</button>
+            <p class="muted-copy">The period sets which project dates are listed below the calendar.</p>
+        </form>
+    </details>
+
+    <a class="button cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+    <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>
 </div>
 
-{{ contextual_help(help_content.office_topic("schedule")) }}
-
+{% if calendar_view != "week" and calendar_view != "day" %}
 {% include "partials/company_month.html" %}
+{% endif %}
 
-<section class="panel" style="margin: 28px 0 20px;">
-    <div class="panel-header">
-        <h2>{{ contractor_copy.COMPANY_CALENDAR_WAITING }}</h2>
+{% if calendar_view != "month" and calendar_view != "day" %}
+<section class="cal-week-view" aria-label="Week of {{ calendar.week_label }}" data-week-view="true">
+    {% for day in calendar.week_days %}
+    <div class="cal-week-day{% if day.today %} is-today{% endif %}{% if day.selected %} is-selected{% endif %}">
+        <a class="cal-week-date" href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view='day', **calendar_keep) }}">{{ day.label }}</a>
+        {% if day.entries %}
+        <ul class="cal-entries">{% for e in day.entries %}{% include "schedule/_calendar_entry.html" %}{% endfor %}</ul>
+        {% else %}<p class="cal-none">—</p>{% endif %}
     </div>
+    {% endfor %}
+</section>
+{% endif %}
+
+{% if calendar_view == "day" %}
+<section class="cal-day-view" aria-label="{{ d.title }}" data-day-view="true">
+    {% if calendar.day_entries %}
+    <ul class="cal-entries is-day">{% for e in calendar.day_entries %}{% include "schedule/_calendar_entry.html" %}{% endfor %}</ul>
+    {% else %}<p class="muted-copy">{{ contractor_copy.HOME_NO_SCHEDULED_WORK }}</p>{% endif %}
+    {% if d.attention %}<div class="home-block"><h4>{{ contractor_copy.SCHEDULE_CONFLICT }}</h4>{% for line in d.attention %}<p class="home-attn">{{ line }}</p>{% endfor %}</div>{% endif %}
+</section>
+{% endif %}
+
+<ul class="cal-legend" aria-label="Colour key">
+    {% for c in category_legend %}<li><span class="cal-swatch cal-cat-{{ c.key }}"></span>{{ c.label }}</li>{% endfor %}
+    <li><span class="cal-swatch cal-cat-delivery"></span>Delivery (agreed)</li>
+    <li><span class="cal-swatch cal-cat-delivery-pending"></span>Delivery (change waiting)</li>
+</ul>
+
+<details class="panel cal-fold" data-waiting="{{ view.unscheduled_elements|length }}"{% if view.unscheduled_elements %} open{% endif %}>
+    <summary><h2>{{ contractor_copy.COMPANY_CALENDAR_WAITING }} ({{ view.unscheduled_elements|length }})</h2></summary>
     {% if view.unscheduled_elements %}
     <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
     <ul class="schedule-unscheduled-list">
@@ -34,132 +148,110 @@
     {% else %}
     <p class="muted-copy">{{ contractor_copy.HOME_NO_UNSCHEDULED }}</p>
     {% endif %}
-</section>
+</details>
 
-<h2 class="home-period-heading">{{ contractor_copy.COMPANY_CALENDAR_PERIOD }}</h2>
-
-<section class="form-panel" style="margin-bottom: 20px;">
-    <form method="get" class="form-grid">
-        <input type="hidden" name="year" value="{{ calendar.year }}">
-        <input type="hidden" name="month" value="{{ calendar.month }}">
-        <input type="hidden" name="day" value="{{ calendar.selected.day }}">
-        <label>
-            From
-            <input type="date" name="from" value="{{ view.window_start.isoformat() }}">
-        </label>
-        <label>
-            To
-            <input type="date" name="to" value="{{ view.window_end.isoformat() }}">
-        </label>
-        <label>
-            Project
-            <select name="project_id">
-                <option value="">All projects</option>
-                {% for project in projects %}
-                <option value="{{ project.id }}" {% if selected_project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <div class="form-actions">
-            <button type="submit" class="button">Show dates</button>
-        </div>
-    </form>
-</section>
-
-{% if view.projects %}
-{% for row in view.projects %}
-<article class="panel panel-wide" style="margin-bottom: 16px;">
-    <div class="panel-header">
-        <h2>{{ row.project.name }}</h2>
-        <a href="{{ url_for('projects.view_project', id=row.project.id) }}#hub-schedule">Project</a>
-    </div>
-    <p class="muted-copy">
-        {% if row.scheduled_start and row.scheduled_end %}
-        {{ contractor_copy.SCHEDULE_PROJECT_RANGE }}:
-        {{ row.scheduled_start.isoformat() }} → {{ row.scheduled_end.isoformat() }}
-        {% else %}
-        {{ contractor_copy.SCHEDULE_UNSCHEDULED }}
-        {% endif %}
-    </p>
-    <div class="schedule-bar-track" aria-hidden="true">
-        {% for bar in row.bars %}
-        <span class="schedule-bar-fill" style="left: {{ bar.left_pct }}%; width: {{ bar.width_pct }}%;"></span>
-        {% endfor %}
-    </div>
-    {% if row.schedule_items %}
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Work item</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>{{ contractor_copy.SCHEDULE_ASSIGNED }}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in row.schedule_items %}
-            <tr>
-                <td>{{ item.element.display_name }}</td>
-                <td>{{ item.scheduled_start.isoformat() }}</td>
-                <td>{{ item.scheduled_end.isoformat() }}</td>
-                <td>
-                    {% set assigned = view.assignments_by_item_id.get(item.id, []) %}
-                    {% if assigned %}
-                    {{ assigned | map(attribute='name') | join(', ') }}
-                    {% else %}
-                    {{ contractor_copy.SCHEDULE_UNASSIGNED }}
-                    {% endif %}
-                </td>
-                <td><a href="{{ url_for('schedule.edit_item', item_id=item.id) }}">Edit dates</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<details class="panel cal-fold" data-project-dates="{{ view.projects|length }}">
+    <summary><h2>Project dates in this period ({{ view.projects|length }})</h2></summary>
+    {% if view.projects %}
+    {% for row in view.projects %}
     {% set project_conflicts = view.conflicts | selectattr('project_id', 'equalto', row.project.id) | list %}
-    {% if project_conflicts %}
-    <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
-    <ul class="schedule-conflict-list">
-        {% for conflict in project_conflicts %}
-        <li>
-            <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
-            {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
-            <span class="schedule-warning-actions">
-                {{ conflict.keep_label }}
-                {% if conflict.move_url %}
-                · <a href="{{ conflict.move_url }}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
-                {% endif %}
-                {% if conflict.review_url %}
-                · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
-                {% endif %}
-            </span>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endif %}
-    {% set project = row.project %}
-    {% set next_view = 'company' %}
-    {% set show_form = selected_project_id == row.project.id %}
-    {% include "schedule/_work_order.html" %}
-    {% if row.schedule_items %}
-    <form method="post" action="{{ url_for('schedule.shift_project', project_id=row.project.id) }}" class="form-grid" style="margin-top: 12px;">
-        <label>
-            Move this project by days
-            <input type="number" name="days" value="0" step="1">
-        </label>
-        <div class="form-actions">
-            <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_MOVE_PROJECT }}</button>
+    <details class="cal-project-card"{% if project_conflicts or selected_project_id == row.project.id %} open{% endif %} data-project-card="{{ row.project.id }}">
+        <summary>
+            <strong>{{ row.project.name }}</strong>
+            <span class="muted-copy">{% if row.scheduled_start and row.scheduled_end %}{{ row.scheduled_start.isoformat() }} → {{ row.scheduled_end.isoformat() }}{% else %}{{ contractor_copy.SCHEDULE_UNSCHEDULED }}{% endif %} · {{ row.schedule_items|length }} work item{{ "s" if row.schedule_items|length != 1 }}</span>
+            {% if project_conflicts %}<span class="cal-warning-count">{{ project_conflicts|length }} warning{{ "s" if project_conflicts|length != 1 }}</span>{% endif %}
+        </summary>
+        <p><a href="{{ url_for('projects.view_project', id=row.project.id) }}#hub-schedule">Project</a></p>
+        <p class="muted-copy cal-bar-caption">When the work falls in this period</p>
+        <div class="schedule-bar-track" aria-hidden="true">
+            {% for bar in row.bars %}
+            <span class="schedule-bar-fill" style="left: {{ bar.left_pct }}%; width: {{ bar.width_pct }}%;"></span>
+            {% endfor %}
         </div>
-    </form>
+        {% if row.schedule_items %}
+        <div class="cal-table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work item</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>{{ contractor_copy.SCHEDULE_ASSIGNED }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in row.schedule_items %}
+                <tr>
+                    <td>{{ item.element.display_name }}</td>
+                    <td>{{ item.scheduled_start.isoformat() }}</td>
+                    <td>{{ item.scheduled_end.isoformat() }}</td>
+                    <td>
+                        {% set assigned = view.assignments_by_item_id.get(item.id, []) %}
+                        {% if assigned %}
+                        {{ assigned | map(attribute='name') | join(', ') }}
+                        {% else %}
+                        {{ contractor_copy.SCHEDULE_UNASSIGNED }}
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ url_for('schedule.edit_item', item_id=item.id) }}">Edit dates</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% if project_conflicts %}
+        <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
+        <ul class="schedule-conflict-list">
+            {% for conflict in project_conflicts %}
+            <li>
+                <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
+                {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
+                <span class="schedule-warning-actions">
+                    {{ conflict.keep_label }}
+                    {% if conflict.move_url %}
+                    · <a href="{{ conflict.move_url }}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
+                    {% endif %}
+                    {% if conflict.review_url %}
+                    · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
+                    {% endif %}
+                </span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endif %}
+        {% set project = row.project %}
+        {% set next_view = 'company' %}
+        {% set show_form = selected_project_id == row.project.id %}
+        {% set rule_count = view.dependencies | selectattr('project_id', 'equalto', row.project.id) | list | length %}
+        <details class="cal-sub"{% if show_form %} open{% endif %}>
+            <summary>{{ contractor_copy.SCHEDULE_WORK_ORDER }} ({{ rule_count }})</summary>
+            {% include "schedule/_work_order.html" %}
+        </details>
+        {% if row.schedule_items %}
+        <details class="cal-sub">
+            <summary>Adjust project dates</summary>
+            <form method="post" action="{{ url_for('schedule.shift_project', project_id=row.project.id) }}" class="form-grid">
+                <label>
+                    Move this project by days
+                    <input type="number" name="days" value="0" step="1">
+                </label>
+                <div class="form-actions">
+                    <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_MOVE_PROJECT }}</button>
+                </div>
+            </form>
+        </details>
+        {% endif %}
+    </details>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <h3>{{ contractor_copy.SCHEDULE_EMPTY }}</h3>
+        <p>{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+    </div>
     {% endif %}
-</article>
-{% endfor %}
-{% else %}
-<div class="empty-state">
-    <h3>{{ contractor_copy.SCHEDULE_EMPTY }}</h3>
-    <p>{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+</details>
 </div>
-{% endif %}
 {% endblock %}

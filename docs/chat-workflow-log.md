@@ -14647,3 +14647,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | Signing engine accepts the generated Brayman V1 PDF; Contract page sends for signature; production consent pinned; synthetic browser proof of all 12 steps |
 | Tests | See final report |
 | Commit hash | See session handoff |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-18 |
+| Branch | `cleanup/technical-2026-10-18` |
+| Objective | Master Technical Cleanup: regression, security, code, documentation and release reliability |
+| Business decision | Joel 18 Oct: bounded cleanup on a development branch; no features, no UX change, no deploy, no migration, no push to main; product decisions recorded and stopped |
+| Implementation result | Cloud failures fixed at the cause (Family 05 master fixture, zombie process check, transition timing, live-DB test, Playwright required); pinned scripted environment proven on a clean Python 3.9.6 venv; repository release gate; 27 new tests; documentation reconciled; branding checksums enforced; two dead templates removed |
+| Tests | `5094a2e`: 2766 passed, 0 failed, 11 skipped, 8870 warnings, 4225.8 s; 43 release browser checks passed |
+| Commit hash | `5094a2e` (tested); documentation record on top |
+

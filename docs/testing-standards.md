@@ -35,6 +35,6 @@
 
 - [definition-of-done.md](definition-of-done.md)
 - [testing/uat-reference-cases.md](testing/uat-reference-cases.md)
-- Existing suite: `tests/` — @@COLLECTED@@ collected on 18 Oct 2026 (the "78 tests as of 2026-07-25" figure is historical)
+- Existing suite: `tests/` — 2,777 collected on 18 Oct 2026 (the "78 tests as of 2026-07-25" figure is historical)
 - Setup, fixtures, environment variables and the cloud/Mac differences: [testing/test-environment.md](testing/test-environment.md)
 - Release gate: [operations/release-procedure.md](operations/release-procedure.md) — the native Mac regression must exit 0 with no skipped test

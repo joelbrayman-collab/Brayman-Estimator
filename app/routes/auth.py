@@ -7,10 +7,6 @@ from flask_login import current_user, login_user, logout_user
 
 from app.presentation import contractor_copy
 from app.services.auth import GENERIC_LOGIN_FAILURE, authenticate
-from app.services.uat_auth_bypass import (
-    established_uat_bypass_user,
-    mark_uat_bypass_session,
-)
 from app.services.opening_v1 import opening_v1_config
 from app.services.password_reset import (
     BLOCK_PASSWORD_MISMATCH,
@@ -55,13 +51,6 @@ def _password_form_error(exc: PasswordResetServiceError):
 def login():
     if current_user.is_authenticated:
         return redirect(safe_next_url(request.args.get("next")))
-
-    if request.method == "GET":
-        bypass_user = established_uat_bypass_user()
-        if bypass_user is not None:
-            login_user(bypass_user, remember=False)
-            mark_uat_bypass_session()
-            return redirect(safe_next_url(request.args.get("next")))
 
     if request.method == "POST":
         user = authenticate(
@@ -152,12 +141,10 @@ def reset_password(credential):
 def change_password():
     """A signed-in person sets their own password.
 
-    The current password is required, except in a temporary UAT bypass session,
-    where it may never have been set; that is how the owner sets a real password
-    before the bypass switch is removed. Other sessions for the account end.
+    The current password is always required. Other sessions for the account end.
+    (The temporary UAT sign-in bypass, and its exception here, were removed on
+    18 Oct 2026.)
     """
-    from flask import session
-
     from app import db
     from app.services.auth import (
         AuthServiceError,
@@ -165,18 +152,16 @@ def change_password():
         validate_new_password,
         verify_password,
     )
-    from app.services.uat_auth_bypass import UAT_AUTH_BYPASS_SESSION_KEY
 
     if not current_user.is_authenticated:
         return redirect(url_for("auth.login", next=request.path))
-    bypass_session = bool(session.get(UAT_AUTH_BYPASS_SESSION_KEY))
     error = None
     if request.method == "POST":
         current = request.form.get("current_password") or ""
         new = request.form.get("password") or ""
         confirm = request.form.get("confirm_password") or ""
         try:
-            if not bypass_session and not verify_password(current_user.password_hash, current):
+            if not verify_password(current_user.password_hash, current):
                 raise AuthServiceError("The current password is not correct.")
             if new != confirm:
                 raise AuthServiceError("The new password and confirmation do not match.")
@@ -189,12 +174,10 @@ def change_password():
             user.credentials_epoch = int(user.credentials_epoch or 0) + 1
             db.session.commit()
             logout_user()
-            session.pop(UAT_AUTH_BYPASS_SESSION_KEY, None)
             flash("Your password is changed. Sign in with your email and the new password.", "success")
             return redirect(url_for("auth.login"))
     return render_template(
         "auth/change_password.html",
         error=error,
-        bypass_session=bypass_session,
         email=current_user.email,
     )

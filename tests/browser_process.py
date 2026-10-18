@@ -11,6 +11,7 @@ from __future__ import annotations
 import os
 import signal
 import subprocess
+import time
 
 
 def _process_table():
@@ -85,3 +86,38 @@ def run_node_browser_test(args, *, cwd, timeout, env=None):
             stderr=stderr,
         ) from exc
     return subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
+
+
+def process_is_running(pid):
+    """True while ``pid`` is alive. A killed process that its parent has not yet
+    collected (state Z, a zombie) has stopped running. Containers whose first
+    process does not collect orphans leave such zombies indefinitely, and
+    ``os.kill(pid, 0)`` still succeeds on them."""
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    state = subprocess.run(
+        ["ps", "-o", "stat=", "-p", str(pid)],
+        text=True,
+        capture_output=True,
+        check=False,
+    ).stdout.strip()
+    if not state:
+        return False
+    return not state.startswith("Z")
+
+
+def wait_until_stopped(pid, *, timeout=5.0, interval=0.05):
+    """Poll until ``pid`` is no longer running, for at most ``timeout`` seconds.
+    SIGKILL is delivered asynchronously, so a check made the instant after the
+    kill can still see the process. Returns True once stopped, False on timeout."""
+    deadline = time.monotonic() + timeout
+    while True:
+        if not process_is_running(pid):
+            return True
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(interval)

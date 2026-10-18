@@ -89,5 +89,6 @@
     <script src="{{ url_for('static', filename='js/shell.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/contextual_help.js', v='d5-voice') }}" defer></script>
     <script src="{{ url_for('static', filename='js/cal_assistant.js', v='find-it-1') }}" defer></script>
+    {% include "partials/session_timeout.html" %}
 </body>
 </html>

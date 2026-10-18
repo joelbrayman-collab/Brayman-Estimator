@@ -29,7 +29,7 @@ The script installs `requirements.txt` + `requirements-dev.txt` constrained by `
 | Python Playwright 1.56.0 + Chromium | `test_employment_calculator_v11.py`, `test_trade_calculator_pages_browser.py` | `pip install -r requirements-dev.txt`, `python -m playwright install chromium` | pre-installed Chromium (`PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`) |
 | Node 20+ and the two engine `node_modules` (Playwright 1.56.1) | calculator page tests, end-to-end walk, release browser checks | Homebrew Node; `npm ci` | pre-installed Node; `npm ci` |
 | Google Chrome | Node page tests launch `channel: "chrome"` | installed | `/opt/google/chrome` |
-| LibreOffice (`soffice`) | contract DOCX → PDF conversion in signing tests | `/Applications/LibreOffice.app` | `apt-get install libreoffice-writer` (24.2 present) |
+| LibreOffice (`soffice`) — **optional** | Not needed by any test (the signing tests inject a converter or use `tests/fake_soffice.py`) or by production; reported only | not installed on the office Mac (18 Oct) | 24.2 present |
 | Family 05 contract master (SHA-256 `24bb319a…000fb5`) | 40+ contract-generation and signing tests | `~/Documents/CalibAi/Approved Document Templates/Reusable Master Template Family V1/MASTER DOCX/` (the code's default) | a copy **outside the repository**, named by `CALIBRAYTAI_FAMILY_05_MASTER_PATH` |
 | Historical estimate workbooks (20 real customer files) | 11 tests in `test_historical_ingestion.py` | `~/Desktop/CalibAi Historical Estimates` | not available: the 11 tests skip with the reason |
 

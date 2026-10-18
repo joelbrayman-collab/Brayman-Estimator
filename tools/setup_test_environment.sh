@@ -91,7 +91,10 @@ fi
 SOFFICE=""
 [ -x /Applications/LibreOffice.app/Contents/MacOS/soffice ] && SOFFICE=/Applications/LibreOffice.app/Contents/MacOS/soffice
 [ -z "$SOFFICE" ] && SOFFICE="$(command -v soffice || true)"
-if [ -n "$SOFFICE" ]; then ok "LibreOffice $("$SOFFICE" --version 2>/dev/null | head -1)"; else miss "LibreOffice (brew install --cask libreoffice / apt-get install libreoffice-writer)"; fi
+# Optional: no test needs LibreOffice (the signing tests inject a converter or use tests/fake_soffice.py),
+# and production does not convert documents. It is only reported.
+if [ -n "$SOFFICE" ]; then ok "LibreOffice $("$SOFFICE" --version 2>/dev/null | head -1) (optional)"
+else note "LibreOffice not installed (optional: no test or production path needs it)"; fi
 
 MASTER_SHA=24bb319a10a8d386136fffdff8737dac5a30b80ec3104808c13033c9f5000fb5
 MASTER="${CALIBRAYTAI_FAMILY_05_MASTER_PATH:-$HOME/Documents/CalibAi/Approved Document Templates/Reusable Master Template Family V1/MASTER DOCX/05_Brayman_Ontario_Construction_Contract_COMMERCIAL_DRAFT_MASTER_V1.docx}"

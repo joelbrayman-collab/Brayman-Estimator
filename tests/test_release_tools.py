@@ -104,3 +104,18 @@ def test_postrelease_requires_the_gate_and_rereads_the_database():
     assert "ROLLBACK_TARGET=redeploy" in code
     # Post-release makes no database write: the hosted check opens SQLite read-only.
     assert "mode=ro" in (RELEASE / "hosted_postcheck.py").read_text()
+
+
+def test_libreoffice_is_reported_but_not_required():
+    """18 Oct 2026: the first Mac gate run stopped because LibreOffice is not installed there.
+    No test needs it (converters are injected or faked) and production does not convert, so the
+    environment check reports it and does not stop."""
+    script = (ROOT / "tools" / "setup_test_environment.sh").read_text()
+    line = next(l for l in script.splitlines() if "LibreOffice not installed" in l)
+    assert line.strip().startswith("else note ")
+    mac_path = "/Applications/" + "LibreOffice.app"
+    for test_file in (ROOT / "tests").glob("test_*.py"):
+        if test_file.name == "test_release_tools.py":
+            continue
+        assert mac_path not in test_file.read_text(errors="ignore"), test_file.name
+

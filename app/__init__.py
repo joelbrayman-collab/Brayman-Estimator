@@ -5,7 +5,7 @@ import tempfile
 
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 
-from flask import Flask, abort, g, redirect, request, send_from_directory, url_for
+from flask import Flask, abort, g, redirect, request, send_from_directory, session, url_for
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -179,6 +179,32 @@ def _register_office_auth(app: Flask) -> None:
     app.cli.add_command(legal_content_cli)
     app.cli.add_command(signing_cli)
 
+    # 30-minute inactivity sign-out (Joel, 18 Oct 2026). Runs before the sign-in wall, so an idle
+    # session is ended first and the wall then treats the request as signed out.
+    from flask_login import user_logged_in, user_logged_out
+
+    from app.services.session_timeout import (
+        SESSION_LAST_ACTIVITY_KEY,
+        enforce_idle_timeout,
+        mark_activity,
+        page_settings,
+    )
+
+    def _signed_in(_sender, **_extra):
+        mark_activity()
+
+    def _signed_out(_sender, **_extra):
+        session.pop(SESSION_LAST_ACTIVITY_KEY, None)
+
+    # weak=False: these handlers are local to create_app and would otherwise be garbage-collected.
+    user_logged_in.connect(_signed_in, app, weak=False)
+    user_logged_out.connect(_signed_out, app, weak=False)
+    app.before_request(enforce_idle_timeout)
+
+    @app.context_processor
+    def _session_timeout_settings():
+        return {"session_timeout": page_settings()}
+
     @app.before_request
     def protect_office_routes():
         from app.services.organizations import (
@@ -202,6 +228,8 @@ def _register_office_auth(app: Flask) -> None:
             "auth.reset_password",
             "auth.reset_password_complete",
             "favicon",
+            "session_status.status",
+            "session_status.keepalive",
         ):
             return None
         if endpoint is not None and (
@@ -475,6 +503,9 @@ def create_app(config=None):
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)
     app.register_blueprint(supplier_program_bp)
+    from app.routes.session_status import session_status_bp
+
+    app.register_blueprint(session_status_bp)
 
     @app.route("/field-sw.js")
     def field_service_worker():

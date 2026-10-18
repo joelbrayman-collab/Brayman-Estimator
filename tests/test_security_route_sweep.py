@@ -42,6 +42,10 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     "auth.reset_password",
     "auth.reset_password_complete",
     "favicon",
+    # Added 18 Oct 2026 for the inactivity warning; both check the sign-in themselves
+    # (status reports signed_in false, keep-alive answers 401) and expose nothing else.
+    "session_status.status",
+    "session_status.keepalive",
 }
 EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools."}
 EXPECTED_SUPPLIER_EXEMPT = {"supplier_portal.login", "supplier_portal.logout"}
@@ -75,6 +79,8 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "decision_tools.download_results_pdf",
     "supplier_portal.login",
     "supplier_portal.logout",
+    "session_status.status",
+    "session_status.keepalive",
 }
 
 

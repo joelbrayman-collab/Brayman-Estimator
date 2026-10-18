@@ -56,5 +56,6 @@
         {% block content %}{% endblock %}
     </main>
     <footer class="supplier-footer">Powered by <img src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}" alt="CalibraytAI" width="76" height="28"></footer>
+    {% include "partials/session_timeout.html" %}
 </body>
 </html>

@@ -1,0 +1,11 @@
+{# Inactivity sign-out warning (app/services/session_timeout.py). Only for a signed-in account. #}
+{% if session_timeout %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/session-timeout.css', v='1') }}">
+<script src="{{ url_for('static', filename='js/session-timeout.js', v='1') }}" defer
+        data-timeout="{{ session_timeout.timeout }}"
+        data-warning="{{ session_timeout.warning }}"
+        data-status-url="{{ session_timeout.status_url }}"
+        data-keepalive-url="{{ session_timeout.keepalive_url }}"
+        data-login-url="{{ session_timeout.login_url }}"
+        data-user="{{ session_timeout.user }}"></script>
+{% endif %}

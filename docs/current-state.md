@@ -13,10 +13,10 @@ Sections below this one are dated history. A heading such as "(not deployed)" wa
 
 | Item | Current value | Evidence |
 |---|---|---|
-| Production commit | `0e2c917d421fc21f26434bbd7158860df30c79e8` (Cal Assistant Phase 1), deploy `dep-dbaa9p2jnfac73ev79h0`, live 18 Oct 10:53 UTC | Render deploy list; post-release check (`RUNNING_SHA`) |
+| Production commit | `9b9acfc6b7d8d640e907c052bdaaa245edd2b161` (technical cleanup), deploy `dep-dbakojmq1p3s73c2cugg`, live 18 Oct 22:48 UTC. Before it: `0e2c917` (Cal Assistant Phase 1). | Render deploy list; post-release check (`RUNNING_SHA`) |
 | GitHub `main` | the same commit | `git ls-remote` 18 Oct |
 | Database | revision `y2b3c4d5e6f7` (repository head; 76 migration files), 164 tables, 3,669 rows, 19 proposals, integrity ok | post-release check 18 Oct |
-| Rollback | redeploy `fb754ed` (`dep-db9udb7avr4c73ff141g`); restore only with Joel from `pre-cal1-20261018-0734.db` | release record |
+| Rollback | redeploy `0e2c917` (`dep-dbaa9p2jnfac73ev79h0`); restore only with Joel from `pre-cleanup1-20261018-2232.db` | release record |
 | Working office | the hosted platform (Joel, 9 Oct; [operations/operating-authority-2026-10-09.md](operations/operating-authority-2026-10-09.md)). The Mac file is a mirror and recovery copy, not the office. Earlier "Mac PRIMARY / hosted VALIDATION COPY" lines are history. | |
 | Release test authority | the native Mac regression inside `tools/release/release_gate.sh` (fresh clone, Python 3.9.6, production's package versions, no skipped test). The cloud workspace reproduces it ([testing/test-environment.md](testing/test-environment.md)). | |
 | Sign-in bypass | `CALIBRAYTAI_UAT_AUTH_BYPASS` removed 15 Oct 18:01 UTC; signed-out requests are sent to sign-in (checked again by the 18 Oct post-release check). The code path still exists and turns on only if that variable and `CALIBRAYTAI_HOSTED` are both set. | handoff 15 Oct; post-release 18 Oct |
@@ -32,6 +32,7 @@ Live features added since the 16 Oct sections below (all released with Joel's au
 | 17 Oct | `098c554` | Client proposal acceptance and Supplier Hub, migrations `x1a2b3c4d5e6` + `y2b3c4d5e6f7` applied once; sign-in show/hide password |
 | 17 Oct | `fb754ed` | Supplier Hub B–D (needs attention, reporting periods, material demand) |
 | 18 Oct | `0e2c917` | Cal Assistant Phase 1 "Find It" (read-only) |
+| 18 Oct | `9b9acfc` | Technical cleanup (tests, environment, release scripts, documentation; no product change) |
 
 Development work not in production:
 

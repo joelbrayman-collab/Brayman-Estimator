@@ -1709,3 +1709,11 @@ A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CL
 - Not run on the Mac yet: the native gate (cleanup release) and `relocate_local_storage.py` (before the first security-branch release).
 - Live production unchanged: `0e2c917`, revision `y2b3c4d5e6f7`.
 
+## 18 Oct 2026 — Technical cleanup released (Release 1)
+- Live: `9b9acfc6b7d8d640e907c052bdaaa245edd2b161` (deploy `dep-dbakojmq1p3s73c2cugg`, live 18:48 EDT), pushed to `main` as the tested commit itself (fast-forward from `0e2c917`, git fsck ok). Authorized by Joel 18 Oct 18:46. No migration; revision `y2b3c4d5e6f7` unchanged.
+- The candidate moved from `3e36b9d` to `9b9acfc` after the first Mac gate run (17:52) stopped at the environment check: LibreOffice is not installed on the office Mac and the check wrongly required it. No test or production path needs it; the check now reports it as optional (84 signing/contract/recovery tests pass with no soffice on PATH).
+- Gate (`tools/release/release_gate.sh`, run 17:59): native Mac regression **2778 passed, 0 skipped**, exit 0, 27 min (the 11 historical-estimate tests ran); end-to-end walk and Cal tests passed in Chrome; 43 browser checks passed; backup `pre-cleanup1-20261018-2232.db` sha256 `d4b1e86f296aa89848f925925ec85ab5a9b8625702738861689397505a82476e`, 164 tables, 3,669 rows, integrity ok, Mac copy matches; signing readiness ok.
+- Post-release (`tools/release/postrelease_check.sh`, read-only): running SHA `9b9acfc`; revision unchanged; 164 tables, ROWS 3669 equal to the backup; 19 proposals; integrity ok; signed-out redirect, supplier sign-in, supplier material demand requires supplier sign-in, manifest, icons and logo served, Cal signed-out redirect, no Cal on sign-in, Cal icon bytes match. Render logs since the deploy: no 5xx, no unhandled errors. Signed-in checks need Joel's sign-in (not done by Claude).
+- Rollback: redeploy `0e2c917` (`dep-dbaa9p2jnfac73ev79h0`); no database change to undo; restore only with Joel's approval from `pre-cleanup1-20261018-2232.db`.
+- Next: Release 2, security closure, branch `security/closure-2026-10-18-r2` (built on `9b9acfc`); first the one-time local backup relocation.
+

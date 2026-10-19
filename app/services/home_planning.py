@@ -254,6 +254,23 @@ def _delivery_rows(organization_id: str, start: date, end: date) -> list[dict]:
     return rows
 
 
+def _assigned_in_window(item, user_id: int, start: date, end: date, organization_id: str) -> bool:
+    """True when the person is on this work on any day it falls in the window (crews by their dates)."""
+    from app.services.schedule import worker_assigned_on_date
+
+    if any(a.worker_user_id == user_id for a in item.assignments):
+        return True
+    if not any(a.crew_id is not None for a in item.assignments):
+        return False
+    day = max(item.scheduled_start, start)
+    last = min(item.scheduled_end, end)
+    while day <= last:
+        if worker_assigned_on_date(item, user_id, day, organization_id=organization_id):
+            return True
+        day += timedelta(days=1)
+    return False
+
+
 def assemble_home_planning(
     organization_id: str,
     *,
@@ -264,11 +281,14 @@ def assemble_home_planning(
     viewer=None,
     project_id: Optional[int] = None,
     appointments: Optional[list] = None,
+    mine_user_id: Optional[int] = None,
 ) -> dict:
     """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
     day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
     Calendar only, from ``app.services.appointments.calendar_rows``) adds business appointments to
-    the month, the selected day and the week/day lists; Home never passes them."""
+    the month, the selected day and the week/day lists; Home never passes them. ``mine_user_id``
+    (My Calendar) keeps only work assigned to that person, directly or through a crew they are on
+    at the time, and deliveries for those projects."""
     from app.presentation.schedule_categories import activity_category
 
     today = today or date.today()
@@ -300,6 +320,8 @@ def assemble_home_planning(
             continue
         for bar in project_row["bars"]:
             item = bar["item"]
+            if mine_user_id is not None and not _assigned_in_window(item, mine_user_id, grid_start, grid_end, organization_id):
+                continue
             assignments = bar.get("assignments") or []
             crew = _crew_from_assignments(assignments)
             people = [row["name"] for row in assignments if row.get("name")]
@@ -330,6 +352,9 @@ def assemble_home_planning(
     delivery_rows = _delivery_rows(organization_id, grid_start, grid_end)
     if project_id is not None:
         delivery_rows = [row for row in delivery_rows if row["project_id"] == project_id]
+    if mine_user_id is not None:
+        my_projects = {row["project_id"] for row in item_rows}
+        delivery_rows = [row for row in delivery_rows if row["project_id"] in my_projects]
 
     segments = []
     cursor = grid_start
@@ -518,6 +543,7 @@ def assemble_home_planning(
         work = [
             {
                 "kind": "work",
+                "project_id": row["project_id"],
                 "label": row["element_name"],
                 "project_name": row["project_name"],
                 "category": row["category"],

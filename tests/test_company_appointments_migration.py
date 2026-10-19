@@ -15,7 +15,7 @@ from app import create_app, db
 
 REVISION = "z3c4d5e6f7a8"
 PRIOR = "y2b3c4d5e6f7"
-NEW_TABLES = {"company_appointments", "company_appointment_history", "calendar_feed_keys"}
+NEW_TABLES = {"company_appointments", "company_appointment_attendees", "company_appointment_history", "calendar_feed_keys"}
 
 
 def _config(db_path):
@@ -75,24 +75,25 @@ def test_database_rules_hold_and_downgrade_is_guarded(tmp_path):
         command.upgrade(cfg, "head")
         insert = sa.text(
             "INSERT INTO company_appointments (organization_id, title, appointment_type, appointment_date, all_day, "
-            "start_time, end_time, is_private, status, created_at, updated_at) VALUES ('ORG-MIG', 'T', :type, "
-            "'2026-10-19', :all_day, :start, :end, 0, 'ACTIVE', '2026-10-19 00:00:00', '2026-10-19 00:00:00')")
+            "start_time, end_time, visibility, status, created_at, updated_at) VALUES ('ORG-MIG', 'T', :type, "
+            "'2026-10-19', :all_day, :start, :end, :vis, 'ACTIVE', '2026-10-19 00:00:00', '2026-10-19 00:00:00')")
         with db.engine.begin() as conn:
             conn.execute(sa.text(
                 "INSERT INTO organizations (id, legal_name, display_name, primary_address, default_region, currency, "
                 "tax_jurisdiction, is_active, created_at, updated_at) VALUES ('ORG-MIG', 'Synthetic Ltd.', 'Synthetic', "
                 "'1 Test Rd', 'Ontario', 'CAD', 'Ontario (HST 13%)', 1, '2026-10-19 00:00:00', '2026-10-19 00:00:00')"))
         for bad in (
-            {"type": "PARTY", "all_day": 0, "start": "09:00:00.000000", "end": "10:00:00.000000"},
-            {"type": "GENERAL", "all_day": 0, "start": "10:00:00.000000", "end": "09:00:00.000000"},
-            {"type": "GENERAL", "all_day": 1, "start": "09:00:00.000000", "end": "10:00:00.000000"},
-            {"type": "GENERAL", "all_day": 0, "start": None, "end": None},
+            {"type": "PARTY", "all_day": 0, "start": "09:00:00.000000", "end": "10:00:00.000000", "vis": "COMPANY"},
+            {"type": "GENERAL", "all_day": 0, "start": "10:00:00.000000", "end": "09:00:00.000000", "vis": "COMPANY"},
+            {"type": "GENERAL", "all_day": 1, "start": "09:00:00.000000", "end": "10:00:00.000000", "vis": "COMPANY"},
+            {"type": "GENERAL", "all_day": 0, "start": None, "end": None, "vis": "COMPANY"},
+            {"type": "GENERAL", "all_day": 0, "start": "09:00:00.000000", "end": "10:00:00.000000", "vis": "SECRET"},
         ):
             with pytest.raises(sa.exc.IntegrityError):
                 with db.engine.begin() as conn:
                     conn.execute(insert, bad)
         with db.engine.begin() as conn:
-            conn.execute(insert, {"type": "SITE_VISIT", "all_day": 0, "start": "09:00:00.000000", "end": "10:00:00.000000"})
+            conn.execute(insert, {"type": "SITE_VISIT", "all_day": 0, "start": "09:00:00.000000", "end": "10:00:00.000000", "vis": "PERSONAL"})
         with pytest.raises(RuntimeError, match="Downgrade refused"):
             command.downgrade(cfg, PRIOR)
         with db.engine.begin() as conn:

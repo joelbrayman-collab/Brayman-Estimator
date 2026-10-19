@@ -1,12 +1,12 @@
 {# One work item, delivery or business appointment in the Week and Day lists. #}
 {% from "schedule/_appt_icon.html" import appt_icon %}
 {% if e.kind == "appointment" %}
-<li class="cal-entry cal-entry-appt cal-cat-appointment cal-type-{{ e.type|lower }}{% if e.masked %} is-private{% endif %}" data-category="appointment" data-appointment="{{ e.id }}">
-    <a href="{{ e.href }}" class="cal-entry-title">{{ appt_icon(e.type) }} <span class="cal-entry-time">{{ e.time_label }}</span> {{ e.title }}</a>
+<li class="cal-entry cal-entry-appt cal-cat-appointment cal-type-{{ e.type|lower }}{% if e.personal %} is-personal{% endif %}" data-category="appointment" data-appointment="{{ e.id }}">
+    <a href="{{ e.href }}" class="cal-entry-title">{{ appt_icon(e.type) }} <span class="cal-entry-time">{{ e.time_label }}</span> {{ e.title }}{% if e.personal %} <span class="cal-personal-tag">Personal</span>{% endif %}</a>
     {% if e.type_label or e.location or e.person %}<span class="cal-entry-meta">{{ e.type_label }}{% if e.location %} · {{ e.location }}{% endif %}{% if e.person %} · {{ e.person }}{% endif %}</span>{% endif %}
 </li>
 {% else %}
-<li class="cal-entry cal-cat-{{ e.category }}{% if e.conflict %} is-conflict{% endif %}" data-category="{{ e.category }}">
+<li class="cal-entry cal-cat-{{ e.category }}{% if e.conflict %} is-conflict{% endif %}" data-category="{{ e.category }}"{% if e.project_id %} data-project-id="{{ e.project_id }}"{% endif %} title="{{ e.label }}{% if e.project_name %} · {{ e.project_name }}{% endif %}{% if e.crew_name %} · {{ e.crew_name }}{% endif %}">
     {% if e.kind == "work" %}
     <a href="{{ e.href }}" class="cal-entry-title">{% if e.crew_letter %}<span class="home-band-crew" title="{{ e.crew_name }}">{{ e.crew_letter }}</span> {% endif %}{{ e.label }}</a>
     <span class="cal-entry-meta">{{ e.project_name }}{% if e.people %} · {{ e.people|join(", ") }}{% endif %}{% if e.conflict %} · <strong>{{ contractor_copy.SCHEDULE_CONFLICT }}</strong>{% endif %} · <a href="{{ e.edit_href }}">Edit dates</a></span>

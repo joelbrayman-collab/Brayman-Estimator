@@ -5,12 +5,19 @@ WorkScheduleItem, WorkScheduleAssignment, ProjectWorkDependency or supplier deli
 message, text or email is sent when an appointment is made, changed or cancelled.
 
 Who may do what (office members of the organization only; suppliers never reach these pages):
-- Every office member sees the company's appointments.
-- A private appointment shows only its time (as "Private appointment") to anyone other than the
-  person who made it and the person it is assigned to.
-- Any office member may add an appointment.
-- An appointment may be changed or cancelled by the person who made it, the person it is
-  assigned to, or a Company Management member. A private one only by its maker or assignee.
+- Each person opens My Calendar: appointments they made, are assigned to or attend, and the
+  construction work assigned to them (directly or through their crew). Every office member may
+  switch to Company Calendar (Joel, 19 Oct 2026: nobody loses the company view they had).
+- Each appointment is COMPANY (every employee of the organization sees it) or PERSONAL (only its
+  owner sees it: not other employees, not administrators, not suppliers; it is left out of the
+  Company Calendar, other people's pages, files and feeds altogether, not merely hidden).
+  Joel's Calendar privacy decision, 19 Oct 2026. A personal appointment is always for the person
+  who made it and has no other attendees.
+- Any office member may add an appointment; by default it is for the person adding it, PERSONAL
+  from My Calendar and COMPANY from Company Calendar.
+- A company appointment may be changed or cancelled by the person who made it, the person it is
+  for, or a Company Management member; a personal one only by its owner. Attendees see a company
+  appointment but do not change it.
 """
 
 from __future__ import annotations
@@ -31,14 +38,17 @@ from app.models.appointment import (
     APPOINTMENT_TYPE_GENERAL,
     APPOINTMENT_TYPE_LABELS,
     APPOINTMENT_TYPES,
+    APPOINTMENT_VISIBILITIES,
+    APPOINTMENT_VISIBILITY_COMPANY,
+    APPOINTMENT_VISIBILITY_PERSONAL,
     CompanyAppointment,
+    CompanyAppointmentAttendee,
     CompanyAppointmentHistory,
 )
 from app.models.client import Client
 from app.models.project import Project
 from app.models.user import User, UserMembership
 
-PRIVATE_LABEL = "Private appointment"
 TITLE_MAX = 160
 
 # Hourly Day and Week views: 7 AM–6 PM by default; the office can move earlier or later.
@@ -103,10 +113,30 @@ class AppointmentInput:
     end_time: Optional[time]
     location: str
     notes: str
-    is_private: bool
+    visibility: str
     assigned_user_id: Optional[int]
     client_id: Optional[int]
     project_id: Optional[int]
+    attendee_user_ids: tuple = ()
+
+
+def _id_list(form, name) -> tuple:
+    raw = form.getlist(name) if hasattr(form, "getlist") else (form.get(name) or [])
+    if isinstance(raw, (str, int)):
+        raw = [raw]
+    ids = []
+    for value in raw:
+        parsed = _parse_id(value)
+        if parsed is not None and parsed not in ids:
+            ids.append(parsed)
+    return tuple(ids)
+
+
+def _read_visibility(form) -> str:
+    value = _clean(form.get("visibility")).upper() or APPOINTMENT_VISIBILITY_COMPANY
+    if value not in APPOINTMENT_VISIBILITIES:
+        raise AppointmentError("Choose who can see the appointment.")
+    return value
 
 
 def read_form(form) -> AppointmentInput:
@@ -143,10 +173,11 @@ def read_form(form) -> AppointmentInput:
         end_time=end_time,
         location=_clean(form.get("location"))[:255],
         notes=_clean(form.get("notes")),
-        is_private=_clean(form.get("is_private")) in ("1", "on", "true", "yes"),
+        visibility=_read_visibility(form),
         assigned_user_id=_parse_id(form.get("assigned_user_id")),
         client_id=_parse_id(form.get("client_id")),
         project_id=_parse_id(form.get("project_id")),
+        attendee_user_ids=_id_list(form, "attendee_user_ids"),
     )
 
 
@@ -171,21 +202,39 @@ def list_clients(organization_id: str) -> list[Client]:
     return Client.query.filter_by(organization_id=organization_id).order_by(Client.name, Client.id).all()
 
 
-def _check_links(organization_id: str, data: AppointmentInput) -> None:
-    """The person, client and project must belong to this organization."""
-    if data.assigned_user_id is not None:
-        member = (
-            UserMembership.query.join(User, User.id == UserMembership.user_id)
-            .filter(
-                UserMembership.user_id == data.assigned_user_id,
-                UserMembership.organization_id == organization_id,
-                UserMembership.is_active.is_(True),
-                User.is_active.is_(True),
-            )
-            .first()
+def _is_member(organization_id: str, user_id: int) -> bool:
+    return (
+        UserMembership.query.join(User, User.id == UserMembership.user_id)
+        .filter(
+            UserMembership.user_id == user_id,
+            UserMembership.organization_id == organization_id,
+            UserMembership.is_active.is_(True),
+            User.is_active.is_(True),
         )
-        if member is None:
-            raise AppointmentError("Choose a person from your company.")
+        .first()
+        is not None
+    )
+
+
+def _check_personal(data: AppointmentInput, owner_user_id: Optional[int]) -> None:
+    """A personal appointment is only its maker's: for them, with no other attendees."""
+    if data.visibility != APPOINTMENT_VISIBILITY_PERSONAL:
+        return
+    if data.assigned_user_id is None:
+        data.assigned_user_id = owner_user_id
+    if data.assigned_user_id != owner_user_id:
+        raise AppointmentError("A personal appointment can only be for the person who made it. Make it a company appointment to put it on someone else's calendar.")
+    if data.attendee_user_ids:
+        raise AppointmentError("A personal appointment has no other attendees. Make it a company appointment to invite others.")
+
+
+def _check_links(organization_id: str, data: AppointmentInput) -> None:
+    """The people, client and project must belong to this organization."""
+    if data.assigned_user_id is not None and not _is_member(organization_id, data.assigned_user_id):
+        raise AppointmentError("Choose a person from your company.")
+    for attendee in data.attendee_user_ids:
+        if not _is_member(organization_id, attendee):
+            raise AppointmentError("Choose attendees from your company.")
     if data.client_id is not None:
         if Client.query.filter_by(id=data.client_id, organization_id=organization_id).first() is None:
             raise AppointmentError("Choose a client from your company.")
@@ -214,13 +263,35 @@ def _is_management(user, organization_id: str) -> bool:
     return membership_has_access_domain(user, organization_id, ACCESS_DOMAIN_COMPANY_MANAGEMENT)
 
 
-def is_own(appointment: CompanyAppointment, user) -> bool:
+def is_owner(appointment: CompanyAppointment, user) -> bool:
     uid = _user_id(user)
-    return uid is not None and uid in (appointment.created_by_user_id, appointment.assigned_user_id)
+    return uid is not None and uid == appointment.owner_user_id
 
 
-def can_see_details(appointment: CompanyAppointment, user) -> bool:
-    return (not appointment.is_private) or is_own(appointment, user)
+def is_own(appointment: CompanyAppointment, user) -> bool:
+    """The person who made it or the person it is for (they may change it)."""
+    uid = _user_id(user)
+    if uid is None:
+        return False
+    if appointment.is_personal:
+        return is_owner(appointment, user)
+    return uid in (appointment.created_by_user_id, appointment.assigned_user_id)
+
+
+def is_involved(appointment: CompanyAppointment, user) -> bool:
+    """Made it, is it for them, or attending: it is on their My Calendar."""
+    uid = _user_id(user)
+    return uid is not None and (is_own(appointment, user) or (not appointment.is_personal and uid in appointment.attendee_ids))
+
+
+def can_see(appointment: CompanyAppointment, user) -> bool:
+    """Company: every employee of the organization. Personal: its owner only (enforced here, server side)."""
+    if appointment.is_personal:
+        return is_owner(appointment, user)
+    return _user_id(user) is not None
+
+
+can_see_details = can_see  # one rule: a personal appointment is not shown to others at all
 
 
 def can_manage(appointment: CompanyAppointment, user) -> bool:
@@ -228,7 +299,7 @@ def can_manage(appointment: CompanyAppointment, user) -> bool:
         return False
     if is_own(appointment, user):
         return True
-    if appointment.is_private:
+    if appointment.is_personal:
         return False
     return _is_management(user, appointment.organization_id)
 
@@ -274,10 +345,12 @@ def get_appointment(appointment_id: int, organization_id: str) -> CompanyAppoint
 def create_appointment(organization_id: str, data: AppointmentInput, user) -> CompanyAppointment:
     if _user_id(user) is None:
         raise AppointmentPermissionError("Sign in to add an appointment.")
+    _check_personal(data, _user_id(user))
     _check_links(organization_id, data)
     row = CompanyAppointment(organization_id=organization_id, status=APPOINTMENT_STATUS_ACTIVE,
                              created_by_user_id=_user_id(user))
     _apply(row, data)
+    _set_attendees(row, data)
     db.session.add(row)
     db.session.flush()
     _history(row, APPOINTMENT_EVENT_CREATED, user)
@@ -286,7 +359,7 @@ def create_appointment(organization_id: str, data: AppointmentInput, user) -> Co
 
 
 _FIELDS = ("title", "appointment_type", "appointment_date", "all_day", "start_time", "end_time",
-           "location", "notes", "is_private", "assigned_user_id", "client_id", "project_id")
+           "location", "notes", "visibility", "assigned_user_id", "client_id", "project_id")
 _TIMING = {"appointment_date", "all_day", "start_time", "end_time"}
 
 
@@ -302,13 +375,30 @@ def _apply(row: CompanyAppointment, data: AppointmentInput) -> set:
     return changed
 
 
+def _set_attendees(row: CompanyAppointment, data: AppointmentInput) -> bool:
+    wanted = [uid for uid in data.attendee_user_ids if uid != data.assigned_user_id]
+    if sorted(row.attendee_ids) == sorted(wanted):
+        return False
+    for existing in list(row.attendees):
+        if existing.user_id not in wanted:
+            row.attendees.remove(existing)
+    have = set(row.attendee_ids)
+    for uid in wanted:
+        if uid not in have:
+            row.attendees.append(CompanyAppointmentAttendee(organization_id=row.organization_id, user_id=uid))
+    return True
+
+
 def update_appointment(appointment_id: int, organization_id: str, data: AppointmentInput, user) -> CompanyAppointment:
     row = get_appointment(appointment_id, organization_id)
     if not can_manage(row, user):
         raise AppointmentPermissionError("You can't change this appointment.")
+    _check_personal(data, row.created_by_user_id)
     _check_links(organization_id, data)
     prior = (row.appointment_date, row.start_time, row.end_time)
     changed = _apply(row, data)
+    if _set_attendees(row, data):
+        changed.add("attendees")
     if not changed:
         return row
     event = APPOINTMENT_EVENT_RESCHEDULED if changed & _TIMING else APPOINTMENT_EVENT_CHANGED
@@ -345,7 +435,26 @@ def hour_label(hour: int) -> str:
     return f"{hour % 12 or 12} {'AM' if hour < 12 else 'PM'}"
 
 
-def list_active(organization_id: str, start: date, end: date, project_id: Optional[int] = None):
+def _mine_filter(user_id: int):
+    attending = db.session.query(CompanyAppointmentAttendee.appointment_id).filter(
+        CompanyAppointmentAttendee.user_id == user_id
+    )
+    company = CompanyAppointment.visibility == APPOINTMENT_VISIBILITY_COMPANY
+    return db.or_(
+        db.and_(company, db.or_(
+            CompanyAppointment.created_by_user_id == user_id,
+            CompanyAppointment.assigned_user_id == user_id,
+            CompanyAppointment.id.in_(attending),
+        )),
+        db.and_(
+            CompanyAppointment.visibility == APPOINTMENT_VISIBILITY_PERSONAL,
+            db.func.coalesce(CompanyAppointment.assigned_user_id, CompanyAppointment.created_by_user_id) == user_id,
+        ),
+    )
+
+
+def list_active(organization_id: str, start: date, end: date, project_id: Optional[int] = None,
+                mine_user_id: Optional[int] = None):
     query = CompanyAppointment.query.filter(
         CompanyAppointment.organization_id == organization_id,
         CompanyAppointment.status == APPOINTMENT_STATUS_ACTIVE,
@@ -354,17 +463,31 @@ def list_active(organization_id: str, start: date, end: date, project_id: Option
     )
     if project_id is not None:
         query = query.filter(CompanyAppointment.project_id == project_id)
+    if mine_user_id is not None:
+        query = query.filter(_mine_filter(mine_user_id))
+    else:  # Company Calendar: company appointments only
+        query = query.filter(CompanyAppointment.visibility == APPOINTMENT_VISIBILITY_COMPANY)
     return query.order_by(
         CompanyAppointment.appointment_date, CompanyAppointment.all_day.desc(),
         CompanyAppointment.start_time, CompanyAppointment.id,
     ).all()
 
 
-def calendar_rows(organization_id: str, start: date, end: date, viewer, project_id: Optional[int] = None) -> list[dict]:
-    """Presentation rows. A private appointment someone else made shows its time and nothing else."""
+def calendar_rows(organization_id: str, start: date, end: date, viewer, project_id: Optional[int] = None,
+                  mine: bool = False) -> list[dict]:
+    """Presentation rows.
+
+    Company Calendar (``mine`` False): company appointments only; nobody's personal appointment.
+    My Calendar (``mine`` True): appointments the viewer made, is for or attends, including their
+    own personal ones. Personal appointments are filtered out in the query, never just hidden.
+    """
     rows = []
-    for appt in list_active(organization_id, start, end, project_id):
-        details = can_see_details(appt, viewer)
+    viewer_id = _user_id(viewer)
+    if viewer_id is None:
+        return rows
+    for appt in list_active(organization_id, start, end, project_id, mine_user_id=viewer_id if mine else None):
+        if not can_see(appt, viewer):  # belt and braces: the query already excludes these
+            continue
         time_label = "All day" if appt.all_day else f"{format_time(appt.start_time)} – {format_time(appt.end_time)}"
         start_min = 0 if appt.all_day else appt.start_time.hour * 60 + appt.start_time.minute
         end_min = 24 * 60 if appt.all_day else appt.end_time.hour * 60 + appt.end_time.minute
@@ -378,24 +501,19 @@ def calendar_rows(organization_id: str, start: date, end: date, viewer, project_
             "time_label": time_label,
             "short_time": "" if appt.all_day else format_time(appt.start_time).replace(":00 ", " "),
             "category": "appointment",
-            "type": "PRIVATE" if not details else appt.appointment_type,
-            "private": bool(appt.is_private),
-            "masked": not details,
+            "type": appt.appointment_type,
+            "personal": appt.is_personal,
             "can_manage": can_manage(appt, viewer),
             "href": f"/schedule/appointments/{appt.id}",
             "project_id": appt.project_id,
+            "title": appt.title,
+            "type_label": appt.type_label,
+            "location": appt.location or "",
+            "person": appt.assigned_user.display_name if appt.assigned_user else "",
+            "attendees": [a.user.display_name for a in appt.attendees if a.user is not None],
+            "client_name": appt.client.name if appt.client else "",
+            "project_name": appt.project.name if appt.project else "",
         }
-        if details:
-            row.update(
-                title=appt.title,
-                type_label=appt.type_label,
-                location=appt.location or "",
-                person=appt.assigned_user.display_name if appt.assigned_user else "",
-                client_name=appt.client.name if appt.client else "",
-                project_name=appt.project.name if appt.project else "",
-            )
-        else:
-            row.update(title=PRIVATE_LABEL, type_label="", location="", person="", client_name="", project_name="")
         row["label"] = row["title"] if appt.all_day else f"{row['short_time']} {row['title']}"
         rows.append(row)
     return rows
@@ -507,6 +625,9 @@ def appointment_event(appt: CompanyAppointment, base_url: str = "") -> dict:
         parts.append(f"Project: {appt.project.name}")
     if appt.assigned_user is not None:
         parts.append(f"For: {appt.assigned_user.display_name}")
+    names = [a.user.display_name for a in appt.attendees if a.user is not None]
+    if names:
+        parts.append("Also attending: " + ", ".join(names))
     if appt.notes:
         parts.append("")
         parts.append(appt.notes)
@@ -592,6 +713,9 @@ def feed_for_key(key: str, *, today: Optional[date] = None, base_url: str = ""):
             db.or_(
                 CompanyAppointment.assigned_user_id == user.id,
                 db.and_(CompanyAppointment.assigned_user_id.is_(None), CompanyAppointment.created_by_user_id == user.id),
+                CompanyAppointment.id.in_(
+                    db.session.query(CompanyAppointmentAttendee.appointment_id).filter(CompanyAppointmentAttendee.user_id == user.id)
+                ),
             ),
         )
         .order_by(CompanyAppointment.appointment_date, CompanyAppointment.start_time, CompanyAppointment.id)

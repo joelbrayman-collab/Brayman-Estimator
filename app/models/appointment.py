@@ -37,6 +37,12 @@ APPOINTMENT_TYPE_LABELS = {
     APPOINTMENT_TYPE_GENERAL: "General business appointment",
 }
 
+# Joel, 19 Oct 2026 (Calendar privacy decision): COMPANY = every employee of the organization sees it;
+# PERSONAL = only its owner sees it (not other employees, not administrators, not suppliers).
+APPOINTMENT_VISIBILITY_COMPANY = "COMPANY"
+APPOINTMENT_VISIBILITY_PERSONAL = "PERSONAL"
+APPOINTMENT_VISIBILITIES = (APPOINTMENT_VISIBILITY_COMPANY, APPOINTMENT_VISIBILITY_PERSONAL)
+
 APPOINTMENT_EVENT_CREATED = "CREATED"
 APPOINTMENT_EVENT_CHANGED = "CHANGED"
 APPOINTMENT_EVENT_RESCHEDULED = "RESCHEDULED"
@@ -60,6 +66,7 @@ class CompanyAppointment(db.Model):
             "'ESTIMATE_CONSULTATION', 'GENERAL')",
             name="ck_company_appointments_type",
         ),
+        db.CheckConstraint("visibility IN ('COMPANY', 'PERSONAL')", name="ck_company_appointments_visibility"),
         db.CheckConstraint(
             "(all_day = 1 AND start_time IS NULL AND end_time IS NULL) OR "
             "(all_day = 0 AND start_time IS NOT NULL AND end_time IS NOT NULL AND end_time > start_time)",
@@ -80,7 +87,7 @@ class CompanyAppointment(db.Model):
     end_time = db.Column(db.Time, nullable=True)
     location = db.Column(db.String(255), nullable=True)
     notes = db.Column(db.Text, nullable=True)
-    is_private = db.Column(db.Boolean, nullable=False, default=False)
+    visibility = db.Column(db.String(16), nullable=False, default=APPOINTMENT_VISIBILITY_COMPANY)
     assigned_user_id = db.Column(
         db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True, index=True
     )
@@ -102,6 +109,12 @@ class CompanyAppointment(db.Model):
     created_by = db.relationship("User", foreign_keys=[created_by_user_id])
     client = db.relationship("Client")
     project = db.relationship("Project")
+    attendees = db.relationship(
+        "CompanyAppointmentAttendee",
+        back_populates="appointment",
+        order_by="CompanyAppointmentAttendee.id",
+        cascade="all, delete-orphan",
+    )
     history = db.relationship(
         "CompanyAppointmentHistory",
         back_populates="appointment",
@@ -109,11 +122,47 @@ class CompanyAppointment(db.Model):
     )
 
     @property
+    def is_personal(self) -> bool:
+        return self.visibility == APPOINTMENT_VISIBILITY_PERSONAL
+
+    @property
+    def owner_user_id(self):
+        """A personal appointment belongs to the person it is for (always its maker)."""
+        return self.assigned_user_id or self.created_by_user_id
+
+    @property
+    def attendee_ids(self) -> list:
+        return [row.user_id for row in self.attendees]
+
+    @property
     def type_label(self) -> str:
         return APPOINTMENT_TYPE_LABELS.get(self.appointment_type, APPOINTMENT_TYPE_LABELS[APPOINTMENT_TYPE_GENERAL])
 
     def __repr__(self):
         return f"<CompanyAppointment {self.id} {self.appointment_date}>"
+
+
+class CompanyAppointmentAttendee(db.Model):
+    """Another person from the company who attends (besides the person it is for)."""
+
+    __tablename__ = "company_appointment_attendees"
+    __table_args__ = (
+        db.UniqueConstraint("appointment_id", "user_id", name="uq_company_appointment_attendees_appt_user"),
+        Index("ix_company_appointment_attendees_org_user", "organization_id", "user_id"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    appointment_id = db.Column(
+        db.Integer, db.ForeignKey("company_appointments.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    appointment = db.relationship("CompanyAppointment", back_populates="attendees")
+    user = db.relationship("User")
 
 
 class CompanyAppointmentHistory(db.Model):

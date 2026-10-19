@@ -432,7 +432,7 @@ def test_assemble_and_office_surfaces(client, app, org_b):
     element, activity = _work(project)
     ensure_office_user()
     login_office_user(client)
-    page = client.get("/schedule")
+    page = client.get("/schedule?scope=company")
     html = page.get_data(as_text=True)
     assert page.status_code == 200
     assert "Company Calendar" in html

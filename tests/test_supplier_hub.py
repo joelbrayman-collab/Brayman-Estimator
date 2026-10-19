@@ -378,7 +378,7 @@ def test_the_supplier_can_propose_another_time_and_decline_needs_a_reason(app, c
     # Deliveries everywhere: the office list, the supplier list and the Company Calendar.
     assert order.number.encode() in client.get("/deliveries").data
     assert order.number.encode() in darcy.get(f"/supplier/{tomlinson.supplier_id}/deliveries").data
-    cal = client.get(f"/schedule?year={order.scheduled_date.year}&month={order.scheduled_date.month}&day={order.scheduled_date.day}").get_data(as_text=True)
+    cal = client.get(f"/schedule?scope=company&year={order.scheduled_date.year}&month={order.scheduled_date.month}&day={order.scheduled_date.day}").get_data(as_text=True)
     assert "Concrete · Tomlinson concrete (synthetic)" in cal and "data-calendar-deliveries" in cal
 
 

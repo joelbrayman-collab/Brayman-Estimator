@@ -945,13 +945,11 @@ button.button-secondary {
 .cal-type-supplier_meeting { --appt: #8b6bd0; --appt-tint: #efe9fb; --appt-ink: #3d2a6b; }
 .cal-type-estimate_consultation { --appt: #2f8f84; --appt-tint: #e2f3f0; --appt-ink: #164a44; }
 .cal-type-general { --appt: #6f7c8c; --appt-tint: #eef1f5; --appt-ink: #2c3440; }
-.cal-type-private { --appt: #8a8f97; --appt-tint: #f2f2f0; --appt-ink: #3f444b; }
 .cal-cat-appointment { --cat: #3f7fd0; --cat-tint: #e6f0fc; }
 .cal-workspace .home-band.cal-cat-appointment { background: var(--appt-tint, #e6f0fc); border: 1px solid color-mix(in srgb, var(--appt, #3f7fd0) 45%, transparent); border-left: 4px solid var(--appt, #3f7fd0); border-radius: 5px; color: var(--appt-ink, #1d3c66); }
 .cal-entry-appt { background: var(--appt-tint); border: 1px solid color-mix(in srgb, var(--appt) 40%, transparent); border-left: 4px solid var(--appt); border-radius: 7px; }
 .cal-entry-appt .cal-entry-title { color: var(--appt-ink); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .cal-entry-time { font-weight: 500; color: color-mix(in srgb, var(--appt-ink, #1c1f24) 75%, transparent); font-variant-numeric: tabular-nums; }
-.cal-entry-appt.is-private, .cal-appt.is-private { background: repeating-linear-gradient(135deg, #f7f7f5 0 6px, #efefec 6px 12px); }
 .cal-appt-icon { flex: none; }
 
 /* Hourly grid */
@@ -985,6 +983,7 @@ button.button-secondary {
 .cal-hours.is-week .cal-entries.is-compact .cal-entry-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 .cal-add-allday { position: absolute; right: 4px; bottom: 1px; justify-self: start; font-size: 11px; color: var(--muted); text-decoration: none; padding: 2px 5px; border-radius: 4px; opacity: 0; }
 .cal-hours-allday-cell:hover .cal-add-allday, .cal-add-allday:focus { opacity: 1; }
+@media (hover: none) { .cal-add-allday { opacity: 0.8; } }
 .cal-add-allday:hover, .cal-add-allday:focus { background: rgba(199, 154, 43, 0.14); color: var(--text); }
 .cal-hours-labels { display: grid; grid-template-rows: repeat(var(--cal-rows), var(--hour-h)); }
 .cal-hour-label { padding-top: 6px; font-variant-numeric: tabular-nums; border-top: 1px solid #ebedf0; }
@@ -1018,6 +1017,19 @@ button.button-secondary {
 .cal-week-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
 .cal-week-add { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; border-radius: 50%; text-decoration: none; color: var(--muted); font-size: 18px; line-height: 1; }
 .cal-week-add:hover, .cal-week-add:focus { background: rgba(199, 154, 43, 0.14); color: var(--text); }
+
+/* My Calendar | Company Calendar, Company / Personal */
+.cal-scope { display: inline-flex; padding: 3px; gap: 2px; background: #eceae5; border-radius: 10px; }
+.cal-scope a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none; }
+.cal-scope a[aria-current="page"] { background: var(--white); box-shadow: 0 1px 3px rgba(28, 31, 36, 0.14); font-weight: 600; }
+.cal-personal-tag { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(28, 31, 36, 0.08); color: #3f444b; vertical-align: 1px; }
+.cal-appt.is-personal, .cal-entry-appt.is-personal { border-style: dashed; border-left-style: solid; }
+.appt-visibility, .appt-attendees { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px 12px; margin: 0; }
+.appt-visibility legend, .appt-attendees legend { font-size: 13px; font-weight: 600; padding: 0 4px; }
+.appt-visibility { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.appt-choice { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.appt-attendee-list { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.appt-attendees[hidden] { display: none; }
 
 /* Calendar connection */
 .cal-connect { font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: auto; }

@@ -345,31 +345,6 @@ def test_who_may_change_an_appointment(app):
         assert db.session.get(CompanyAppointment, assigned.id).status == "CANCELLED"
 
 
-def test_private_appointments_show_only_busy_to_others(client, app):
-    with app.app_context():
-        colleague, _ = _person("private.owner@example.invalid", "Private Owner")
-        manager, manager_membership = _person("private.manager@example.invalid", "Private Manager")
-        grant_access_domain(membership_id=manager_membership.id, domain_key=ACCESS_DOMAIN_COMPANY_MANAGEMENT)
-        db.session.commit()
-        private = _create(colleague, title="Doctor visit", location="Clinic", notes="Personal", is_private="1")
-        private_id = private.id
-        rows = calendar_rows(ORG, TODAY, TODAY, _office())
-        assert rows[0]["masked"] and rows[0]["title"] == "Private appointment"
-        assert rows[0]["location"] == "" and "Doctor" not in json.dumps(rows, default=str)
-        assert calendar_rows(ORG, TODAY, TODAY, colleague)[0]["title"] == "Doctor visit"
-        with pytest.raises(AppointmentPermissionError):  # even Company Management cannot change it
-            cancel_appointment(private_id, ORG, manager)
-    for path in (_url(view="day"), _url(view="week"), _url(view="month"), _url()):
-        html = client.get(path).get_data(as_text=True)
-        assert "Doctor visit" not in html and "Clinic" not in html and "Personal" not in html
-        assert "Private appointment" in html
-    page = client.get(f"/schedule/appointments/{private_id}").get_data(as_text=True)
-    assert 'data-appointment-private="true"' in page and "Doctor visit" not in page and "Clinic" not in page
-    assert client.post(f"/schedule/appointments/{private_id}", data=_form(title="Hijack")).status_code == 302
-    with app.app_context():
-        assert db.session.get(CompanyAppointment, private_id).title == "Doctor visit"
-
-
 def test_suppliers_and_signed_out_visitors_never_see_appointments(client, app):
     with app.app_context():
         appt_id = _create(_office(), title="Supplier pricing chat", appointment_type="SUPPLIER_MEETING").id

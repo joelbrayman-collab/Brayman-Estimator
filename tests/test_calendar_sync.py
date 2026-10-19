@@ -75,7 +75,7 @@ def test_add_one_appointment_to_my_calendar(client, app):
 def test_calendar_file_respects_privacy_and_organizations(client, app):
     with app.app_context():
         colleague, _ = _person("ics.owner@example.invalid", "Ics Owner")
-        private_id = _create(colleague, title="Private thing", is_private="1").id
+        private_id = _create(colleague, title="Private thing", visibility="PERSONAL").id
         other = _other_org()
         outsider, _ = _person("ics.outsider@example.invalid", "Ics Outsider", org=other.id)
         foreign_id = create_appointment(other.id, read_form(_form(title="Foreign")), outsider).id
@@ -98,7 +98,7 @@ def test_private_feed_shows_my_appointments_and_updates(client, app):
         colleague, _ = _person("feed.colleague@example.invalid", "Feed Colleague")
         _create(office, title="Mine, assigned to me", assigned_user_id=office.id)
         _create(office, title="Mine, for no one")
-        _create(office, title="Mine, private", is_private="1", assigned_user_id=office.id)
+        _create(office, title="Mine, private", visibility="PERSONAL", assigned_user_id=office.id)
         _create(office, title="Made by me for the colleague", assigned_user_id=colleague.id)
         _create(colleague, title="Colleague's own")
         to_cancel = _create(office, title="Soon cancelled", assigned_user_id=office.id).id

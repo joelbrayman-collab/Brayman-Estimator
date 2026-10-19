@@ -134,7 +134,17 @@ def company():
     if not 1 <= grid_month <= 12:
         grid_year, grid_month = today.year, today.month
     grid_start, grid_end = month_grid_bounds(grid_year, grid_month)
-    appointment_rows = calendar_rows(organization.id, grid_start, grid_end, current_user, project_id=project_id)
+    # My Calendar | Company Calendar (Joel, 19 Oct 2026): everyone opens their own; every office
+    # member may switch to the company view.
+    # A project's own calendar (project filter, e.g. from the Project Hub or Cal) is the company
+    # view of that project unless "mine" is asked for.
+    requested_scope = request.args.get("scope")
+    if requested_scope in ("company", "mine"):
+        scope = requested_scope
+    else:
+        scope = "company" if project_id is not None else "mine"
+    mine = scope == "mine"
+    appointment_rows = calendar_rows(organization.id, grid_start, grid_end, current_user, project_id=project_id, mine=mine)
     calendar = assemble_home_planning(
         organization.id,
         year=year,
@@ -144,6 +154,7 @@ def company():
         viewer=current_user,
         project_id=project_id,
         appointments=appointment_rows,
+        mine_user_id=int(current_user.id) if mine else None,
     )
     # Month / Week / Day (Joel, 18 Oct 2026). No choice = month on a computer, week list on a phone.
     calendar_view = request.args.get("view") if request.args.get("view") in ("month", "week", "day") else ""
@@ -153,6 +164,10 @@ def company():
     }
     if project_id is not None:
         calendar_keep["project_id"] = project_id
+    if not mine:
+        calendar_keep["scope"] = "company"
+    elif project_id is not None:
+        calendar_keep["scope"] = "mine"
     # Hourly Day and Week (Joel, 19 Oct 2026): 7 AM–6 PM unless the office moved the hours.
     first_hour, _last = hour_window(request.args.get("hours"))
     if first_hour != DEFAULT_START_HOUR:
@@ -173,6 +188,8 @@ def company():
         selected_project_id=project_id,
         hour_grid=hour_grid,
         period_title=period_title,
+        scope=scope,
+        scope_keep={k: v for k, v in calendar_keep.items() if k != "scope"},
         day_columns=_day_columns(calendar, grid_days) if hour_grid else [],
     )
 
@@ -469,7 +486,8 @@ def retire_dependency(dependency_id):
 
 def _appointment_return(appt_date, view_name="day"):
     view_name = view_name if view_name in ("day", "week", "month") else "day"
-    return url_for("schedule.company", year=appt_date.year, month=appt_date.month, day=appt_date.day, view=view_name)
+    scope = "company" if (request.values.get("scope") or "") == "company" else None
+    return url_for("schedule.company", year=appt_date.year, month=appt_date.month, day=appt_date.day, view=view_name, scope=scope)
 
 
 def _appointment_form_context(organization, **extra):
@@ -505,8 +523,9 @@ def _prefill_from_query():
     return {
         "title": "", "appointment_type": "GENERAL", "appointment_date": day.isoformat(),
         "all_day": all_day, "start_time": start, "end_time": end, "location": "", "notes": "",
-        "is_private": False, "assigned_user_id": getattr(current_user, "id", None),
-        "client_id": None, "project_id": project_id,
+        "visibility": "COMPANY" if request.args.get("scope") == "company" else "PERSONAL",
+        "assigned_user_id": getattr(current_user, "id", None),
+        "client_id": None, "project_id": project_id, "attendee_user_ids": [],
     }
 
 
@@ -522,8 +541,9 @@ def _values_from_form():
         "appointment_date": form.get("appointment_date", ""), "all_day": bool(form.get("all_day")),
         "start_time": form.get("start_time", ""), "end_time": form.get("end_time", ""),
         "location": form.get("location", ""), "notes": form.get("notes", ""),
-        "is_private": bool(form.get("is_private")), "assigned_user_id": _int("assigned_user_id"),
+        "visibility": (form.get("visibility") or "COMPANY").upper(), "assigned_user_id": _int("assigned_user_id"),
         "client_id": _int("client_id"), "project_id": _int("project_id"),
+        "attendee_user_ids": [int(v) for v in form.getlist("attendee_user_ids") if str(v).isdigit()],
     }
 
 
@@ -533,8 +553,9 @@ def _values_from_appointment(appt):
         "appointment_date": appt.appointment_date.isoformat(), "all_day": bool(appt.all_day),
         "start_time": appt.start_time.strftime("%H:%M") if appt.start_time else "",
         "end_time": appt.end_time.strftime("%H:%M") if appt.end_time else "",
-        "location": appt.location or "", "notes": appt.notes or "", "is_private": bool(appt.is_private),
+        "location": appt.location or "", "notes": appt.notes or "", "visibility": appt.visibility,
         "assigned_user_id": appt.assigned_user_id, "client_id": appt.client_id, "project_id": appt.project_id,
+        "attendee_user_ids": appt.attendee_ids,
     }
 
 
@@ -577,6 +598,8 @@ def edit_appointment(appointment_id):
         appt = get_appointment(appointment_id, organization.id)
     except AppointmentNotFoundError:
         abort(404)
+    if not can_see_details(appt, current_user):
+        abort(404)  # someone else's personal appointment: not shown, not even that it exists
     if request.method == "POST":
         try:
             appt = update_appointment(appointment_id, organization.id, read_form(request.form), current_user)
@@ -606,6 +629,12 @@ def edit_appointment(appointment_id):
 def cancel_appointment_route(appointment_id):
     organization = _org()
     back = (request.values.get("back") or "day").strip()
+    try:
+        appt = get_appointment(appointment_id, organization.id)
+    except AppointmentNotFoundError:
+        abort(404)
+    if not can_see_details(appt, current_user):
+        abort(404)
     try:
         appt = cancel_appointment(appointment_id, organization.id, current_user)
     except AppointmentNotFoundError:

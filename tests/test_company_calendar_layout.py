@@ -18,7 +18,8 @@ from tests.test_home_planning import TODAY, _element, _project, _schedule, app, 
 
 
 def _url(**extra):
-    base = {"year": TODAY.year, "month": TODAY.month, "day": TODAY.day,
+    # The company-wide view (since 19 Oct the calendar opens on My Calendar by default).
+    base = {"year": TODAY.year, "month": TODAY.month, "day": TODAY.day, "scope": "company",
             "from": TODAY.isoformat(), "to": (TODAY + timedelta(days=30)).isoformat()}
     base.update(extra)
     return "/schedule?" + "&".join(f"{k}={v}" for k, v in base.items())

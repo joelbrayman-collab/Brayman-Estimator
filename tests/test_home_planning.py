@@ -136,7 +136,9 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert contractor_copy.COMPANY_CALENDAR_HEADING in html
     assert "Brayman Construction Home" in html
     assert 'id="office-company-name"' in html
-    schedule = client.get("/schedule").get_data(as_text=True)
+    # Joel, 19 Oct 2026: the calendar opens on My Calendar; Company Calendar is one switch away.
+    assert '<h1 class="header-page-title">My Calendar</h1>' in client.get("/schedule").get_data(as_text=True)
+    schedule = client.get("/schedule?scope=company").get_data(as_text=True)
     # Joel, 18 Oct 2026: the header carries the title; no repeated in-page heading.
     assert '<h1 class="header-page-title">Company Calendar</h1>' in schedule
     assert "<h1>Company Calendar</h1>" not in schedule
@@ -224,7 +226,7 @@ def test_company_calendar_shows_the_month_the_day_and_work_waiting_for_dates(cli
         _schedule(project, _element(project, "Framing"), TODAY, TODAY)
         _element(project, "Footings")
     html = client.get(
-        f"/schedule?year={TODAY.year}&month={TODAY.month}&day={TODAY.day}"
+        f"/schedule?scope=company&year={TODAY.year}&month={TODAY.month}&day={TODAY.day}"
         f"&from={TODAY.isoformat()}&to={TODAY.isoformat()}"
     ).get_data(as_text=True)
     assert "home-month" in html

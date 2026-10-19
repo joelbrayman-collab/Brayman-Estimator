@@ -4,10 +4,12 @@ Revision ID: z3c4d5e6f7a8
 Revises: y2b3c4d5e6f7
 Create Date: 2026-10-19
 
-Joel, 19 Oct 2026. Three new tables; no existing table or row changes.
+Joel, 19 Oct 2026. Four new tables; no existing table or row changes.
 
 company_appointments: one business appointment on one day (all day, or a start and end time),
-with type, location, notes, an optional assigned person, client and project, and a private flag.
+with type, location, notes, an owner (the person it is for), optional client and project, and a
+visibility: COMPANY (every employee) or PERSONAL (its owner only).
+company_appointment_attendees: other people from the company who attend.
 company_appointment_history: who created, changed, rescheduled or cancelled it, and when.
 calendar_feed_keys: a person's private calendar feed for Outlook, Google Calendar or Apple Calendar
 (only a hash of the secret key is stored).
@@ -27,7 +29,7 @@ down_revision = "y2b3c4d5e6f7"
 branch_labels = None
 depends_on = None
 
-_TABLES = ("calendar_feed_keys", "company_appointment_history", "company_appointments")
+_TABLES = ("calendar_feed_keys", "company_appointment_history", "company_appointment_attendees", "company_appointments")
 
 
 def upgrade():
@@ -43,7 +45,7 @@ def upgrade():
         sa.Column("end_time", sa.Time(), nullable=True),
         sa.Column("location", sa.String(length=255), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
-        sa.Column("is_private", sa.Boolean(), nullable=False),
+        sa.Column("visibility", sa.String(length=16), nullable=False),
         sa.Column("assigned_user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("client_id", sa.Integer(), sa.ForeignKey("clients.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("project_id", sa.Integer(), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=True),
@@ -58,6 +60,7 @@ def upgrade():
             "'ESTIMATE_CONSULTATION', 'GENERAL')",
             name="ck_company_appointments_type",
         ),
+        sa.CheckConstraint("visibility IN ('COMPANY', 'PERSONAL')", name="ck_company_appointments_visibility"),
         sa.CheckConstraint(
             "(all_day = 1 AND start_time IS NULL AND end_time IS NULL) OR "
             "(all_day = 0 AND start_time IS NOT NULL AND end_time IS NOT NULL AND end_time > start_time)",
@@ -70,6 +73,20 @@ def upgrade():
     op.create_index("ix_company_appointments_client_id", "company_appointments", ["client_id"])
     op.create_index("ix_company_appointments_project_id", "company_appointments", ["project_id"])
     op.create_index("ix_company_appointments_created_by_user_id", "company_appointments", ["created_by_user_id"])
+
+    op.create_table(
+        "company_appointment_attendees",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("appointment_id", sa.Integer(), sa.ForeignKey("company_appointments.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.UniqueConstraint("appointment_id", "user_id", name="uq_company_appointment_attendees_appt_user"),
+    )
+    op.create_index("ix_company_appointment_attendees_organization_id", "company_appointment_attendees", ["organization_id"])
+    op.create_index("ix_company_appointment_attendees_appointment_id", "company_appointment_attendees", ["appointment_id"])
+    op.create_index("ix_company_appointment_attendees_user_id", "company_appointment_attendees", ["user_id"])
+    op.create_index("ix_company_appointment_attendees_org_user", "company_appointment_attendees", ["organization_id", "user_id"])
 
     op.create_table(
         "company_appointment_history",

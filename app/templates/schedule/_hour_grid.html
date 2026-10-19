@@ -36,7 +36,7 @@
                 {% for e in col.work %}{% include "schedule/_calendar_entry.html" %}{% endfor %}
             </ul>
             {% endif %}
-            <a class="cal-add-allday" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), all_day=1, back=grid_kind) }}" aria-label="New all-day appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }}">+ All day</a>
+            <a class="cal-add-allday" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), all_day=1, back=grid_kind, scope=appt_scope) }}" aria-label="New all-day appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }}">+ All day</a>
         </div>
         {% endfor %}
     </div>
@@ -49,18 +49,18 @@
         {% set gcol = g.columns[loop.index0] %}
         <div class="cal-hours-col{% if col.today %} is-today{% endif %}" data-hours-date="{{ col.date.isoformat() }}">
             {% for h in g.hours %}
-            <a class="cal-slot" data-slot="{{ col.date.isoformat() }}T{{ h.value }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.value, back=grid_kind) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label }}"></a>
-            <a class="cal-slot is-half" data-slot="{{ col.date.isoformat() }}T{{ h.half }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.half, back=grid_kind) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label|replace(' ', ':30 ') }}"></a>
+            <a class="cal-slot" data-slot="{{ col.date.isoformat() }}T{{ h.value }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.value, back=grid_kind, scope=appt_scope) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label }}"></a>
+            <a class="cal-slot is-half" data-slot="{{ col.date.isoformat() }}T{{ h.half }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.half, back=grid_kind, scope=appt_scope) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label|replace(' ', ':30 ') }}"></a>
             {% endfor %}
             {% if gcol.earlier %}<a class="cal-more is-earlier" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, hours=0, **hour_keep) }}">{{ gcol.earlier }} earlier</a>{% endif %}
             {% for a in gcol.appointments %}
-            <a class="cal-appt cal-type-{{ a.type|lower }}{% if a.masked %} is-private{% endif %}{% if a.overlaps %} is-overlap{% endif %}{% if a.end_min - a.start_min < 45 %} is-short{% endif %}" data-appointment="{{ a.id }}" data-type="{{ a.type }}"
-               href="{{ a.href }}?back={{ grid_kind }}"
+            <a class="cal-appt cal-type-{{ a.type|lower }}{% if a.personal %} is-personal{% endif %}{% if a.overlaps %} is-overlap{% endif %}{% if a.end_min - a.start_min < 45 %} is-short{% endif %}" data-appointment="{{ a.id }}" data-type="{{ a.type }}"
+               href="{{ a.href }}?back={{ grid_kind }}{% if appt_scope %}&amp;scope=company{% endif %}"
                style="top: {{ a.top_pct }}%; height: {{ a.height_pct }}%; left: {{ a.left_pct }}%; width: calc({{ a.width_pct }}% - 6px);"
                title="{{ a.time_label }} · {{ a.title }}{% if a.location %} · {{ a.location }}{% endif %}">
                 {{ appt_icon(a.type) }}
                 <span class="cal-appt-text">
-                    <span class="cal-appt-title">{{ a.title }}</span>
+                    <span class="cal-appt-title">{{ a.title }}{% if a.personal %} <span class="cal-personal-tag" title="Personal: only you can see it">Personal</span>{% endif %}</span>
                     {% set meta = ([a.time_label] if grid_kind == "day" else []) + ([a.location] if a.location else []) + ([a.person] if a.person and grid_kind == "day" else []) %}
                     {% if meta %}<span class="cal-appt-meta">{{ meta|join(" · ") }}</span>{% endif %}
                 </span>

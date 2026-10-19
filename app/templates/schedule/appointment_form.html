@@ -8,15 +8,7 @@
 <div class="appt-page">
 <p class="appt-back"><a href="{{ cancel_url }}">‹ Back to the calendar</a></p>
 
-{% if appointment and not details %}
-<section class="form-panel appt-private" data-appointment-private="true">
-    <h2>Private appointment</h2>
-    <p>{{ appointment.appointment_date.strftime("%A %B %d, %Y").replace(" 0", " ") }} ·
-       {% if appointment.all_day %}All day{% else %}{{ appointment.start_time.strftime("%I:%M %p").lstrip("0") }} – {{ appointment.end_time.strftime("%I:%M %p").lstrip("0") }}{% endif %}</p>
-    <p class="muted-copy">Only the person who made it and the person it is for can see the details.</p>
-</section>
-
-{% elif appointment and not editable %}
+{% if appointment and not editable %}
 <section class="form-panel appt-readonly" data-appointment-readonly="true">
     <h2>{{ values.title }}</h2>
     <dl class="appt-facts">
@@ -24,6 +16,9 @@
         <dt>When</dt><dd>{{ appointment.appointment_date.strftime("%A %B %d, %Y").replace(" 0", " ") }} · {% if values.all_day %}All day{% else %}{{ appointment.start_time.strftime("%I:%M %p").lstrip("0") }} – {{ appointment.end_time.strftime("%I:%M %p").lstrip("0") }}{% endif %}</dd>
         {% if values.location %}<dt>Location</dt><dd>{{ values.location }}</dd>{% endif %}
         {% if appointment.assigned_user %}<dt>For</dt><dd>{{ appointment.assigned_user.display_name }}</dd>{% endif %}
+        {% if appointment.attendees %}<dt>Also attending</dt><dd>{{ appointment.attendees|map(attribute='user.display_name')|join(", ") }}</dd>{% endif %}
+        <dt>Who can see it</dt><dd>{{ "Only its owner (personal)" if appointment.is_personal else "Everyone in the company" }}</dd>
+        {% if appointment.created_by %}<dt>Made by</dt><dd>{{ appointment.created_by.display_name }}</dd>{% endif %}
         {% if appointment.client %}<dt>Client</dt><dd>{{ appointment.client.name }}</dd>{% endif %}
         {% if appointment.project %}<dt>Project</dt><dd><a href="{{ url_for('projects.view_project', id=appointment.project.id) }}">{{ appointment.project.name }}</a></dd>{% endif %}
         {% if values.notes %}<dt>Notes</dt><dd class="appt-notes">{{ values.notes }}</dd>{% endif %}
@@ -40,6 +35,12 @@
     <form method="post" class="form-grid appt-form" data-appointment-form="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="back" value="{{ back }}">
+        {% if request.values.get("scope") == "company" %}<input type="hidden" name="scope" value="company">{% endif %}
+        <fieldset class="appt-wide appt-visibility" data-appointment-visibility="true">
+            <legend>Who can see it</legend>
+            <label class="appt-choice"><input type="radio" name="visibility" value="COMPANY"{% if values.visibility != "PERSONAL" %} checked{% endif %}> <span><strong>Company</strong> — everyone in the company</span></label>
+            <label class="appt-choice"><input type="radio" name="visibility" value="PERSONAL"{% if values.visibility == "PERSONAL" %} checked{% endif %}> <span><strong>Personal</strong> — only you</span></label>
+        </fieldset>
         <label class="appt-wide">
             Title
             <input type="text" name="title" value="{{ values.title }}" maxlength="160" required autofocus>
@@ -92,10 +93,12 @@
             Notes
             <textarea name="notes" rows="4">{{ values.notes }}</textarea>
         </label>
-        <label class="checkbox-row appt-wide">
-            <input type="checkbox" name="is_private" value="1"{% if values.is_private %} checked{% endif %}>
-            Private — others see only that you are busy
-        </label>
+        <fieldset class="appt-wide appt-attendees" data-appointment-attendees="true">
+            <legend>Also attending (company appointments)</legend>
+            <div class="appt-attendee-list">
+            {% for p in people %}<label class="appt-choice"><input type="checkbox" name="attendee_user_ids" value="{{ p.id }}"{% if p.id in values.attendee_user_ids %} checked{% endif %}> {{ p.display_name }}</label>{% endfor %}
+            </div>
+        </fieldset>
         <p class="muted-copy appt-wide">Saving this does not change any project dates, crews or deliveries, and sends no messages.</p>
         <div class="form-actions appt-wide">
             <button type="submit" class="button">{% if appointment %}Save appointment{% else %}Add appointment{% endif %}</button>
@@ -108,13 +111,14 @@
     <form method="post" action="{{ url_for('schedule.cancel_appointment_route', appointment_id=appointment.id) }}" class="appt-cancel-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="back" value="{{ back }}">
+        {% if request.values.get("scope") == "company" %}<input type="hidden" name="scope" value="company">{% endif %}
         <button type="submit" class="button secondary">Cancel this appointment</button>
     </form>
     {% endif %}
 </section>
 {% endif %}
 
-{% if appointment and details and appointment.history %}
+{% if appointment and appointment.history %}
 <details class="panel appt-history" data-appointment-history="true">
     <summary>History ({{ appointment.history|length }})</summary>
     <ul>
@@ -134,6 +138,13 @@
   if (!box || !times) return;
   function sync() { times.hidden = box.checked; }
   box.addEventListener('change', sync); sync();
+  var attendees = document.querySelector('[data-appointment-attendees]');
+  var radios = document.querySelectorAll('input[name=visibility]');
+  function syncVis() {
+    var personal = document.querySelector('input[name=visibility][value=PERSONAL]').checked;
+    if (attendees) attendees.hidden = personal;
+  }
+  radios.forEach(function (r) { r.addEventListener('change', syncVis); }); syncVis();
 })();
 </script>
 {% endblock %}

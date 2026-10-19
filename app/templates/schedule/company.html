@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contractor_copy.COMPANY_CALENDAR_HEADING }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}{{ contractor_copy.COMPANY_CALENDAR_HEADING }}{% endblock %}
+{% set calendar_heading = "My Calendar" if scope == "mine" else contractor_copy.COMPANY_CALENDAR_HEADING %}
+{% block title %}{{ calendar_heading }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ calendar_heading }}{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
@@ -11,7 +12,8 @@
 {% set keep_view = calendar_view or None %}
 {% set nd = calendar.nav_dates %}
 {% set day_count = d.work|length + d.deliveries|length + d.appointments|length %}
-<div class="cal-workspace" data-calendar-view="{{ calendar_view or 'auto' }}">
+{% set appt_scope = "company" if scope == "company" else None %}
+<div class="cal-workspace" data-calendar-view="{{ calendar_view or 'auto' }}" data-calendar-scope="{{ scope }}">
 
 <div class="cal-toolbar" role="toolbar" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }}">
     <div class="cal-nav" aria-label="Move through the calendar">
@@ -53,10 +55,14 @@
         </nav>
     </div>
 
-    <a class="cal-new-appt" data-new-appointment="true" href="{{ url_for('schedule.new_appointment', date=calendar.selected.isoformat(), back=calendar_view or 'day') }}"><span aria-hidden="true">+</span> New Appointment</a>
+    <a class="cal-new-appt" data-new-appointment="true" href="{{ url_for('schedule.new_appointment', date=calendar.selected.isoformat(), back=calendar_view or 'day', scope=appt_scope) }}"><span aria-hidden="true">+</span> New Appointment</a>
 </div>
 
 <div class="cal-subbar">
+    <nav class="cal-scope" aria-label="Whose calendar" data-scope-switch="true">
+        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='mine' if selected_project_id else None, **scope_keep) }}"{% if scope == "mine" %} aria-current="page"{% endif %} data-scope="mine">My Calendar</a>
+        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='company', **scope_keep) }}"{% if scope == "company" %} aria-current="page"{% endif %} data-scope="company">Company Calendar</a>
+    </nav>
     <details class="cal-selected-day" data-selected-day="{{ calendar.selected.isoformat() }}">
         <summary>
             <span class="cal-chip-label">{{ contractor_copy.COMPANY_CALENDAR_DAY }}</span>
@@ -98,6 +104,7 @@
         {% if calendar_view %}<input type="hidden" name="view" value="{{ calendar_view }}">{% endif %}
         <input type="hidden" name="from" value="{{ view.window_start.isoformat() }}">
         <input type="hidden" name="to" value="{{ view.window_end.isoformat() }}">
+        <input type="hidden" name="scope" value="{{ scope }}">
         <label class="visually-hidden" for="cal-project">Project</label>
         <select id="cal-project" name="project_id" onchange="this.form.submit()">
             <option value="">All projects</option>
@@ -116,6 +123,7 @@
             <input type="hidden" name="day" value="{{ calendar.selected.day }}">
             {% if calendar_view %}<input type="hidden" name="view" value="{{ calendar_view }}">{% endif %}
             {% if selected_project_id %}<input type="hidden" name="project_id" value="{{ selected_project_id }}">{% endif %}
+            {% if appt_scope %}<input type="hidden" name="scope" value="company">{% endif %}
             <label>From <input type="date" name="from" value="{{ view.window_start.isoformat() }}"></label>
             <label>To <input type="date" name="to" value="{{ view.window_end.isoformat() }}"></label>
             <button type="submit" class="button">Show dates</button>
@@ -139,7 +147,7 @@
     <div class="cal-week-day{% if day.today %} is-today{% endif %}{% if day.selected %} is-selected{% endif %}">
         <div class="cal-week-head">
             <a class="cal-week-date" href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view='day', **calendar_keep) }}">{{ day.label }}</a>
-            <a class="cal-week-add" href="{{ url_for('schedule.new_appointment', date=day.date.isoformat(), back='week') }}" aria-label="New appointment {{ day.long_label }}">+</a>
+            <a class="cal-week-add" href="{{ url_for('schedule.new_appointment', date=day.date.isoformat(), back='week', scope=appt_scope) }}" aria-label="New appointment {{ day.long_label }}">+</a>
         </div>
         {% if day.entries %}
         <ul class="cal-entries">{% for e in day.entries %}{% include "schedule/_calendar_entry.html" %}{% endfor %}</ul>
@@ -169,6 +177,9 @@
     <li><span class="cal-swatch cal-appt-swatch cal-type-general"></span>Other appointment</li>
 </ul>
 
+{% if scope == "mine" %}
+<p class="muted-copy cal-planning-note" data-planning-note="true">Work waiting for dates, project dates, work order and project moves are on the <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='company', **scope_keep) }}">Company Calendar</a>.</p>
+{% else %}
 <details class="panel cal-fold" data-waiting="{{ view.unscheduled_elements|length }}"{% if view.unscheduled_elements %} open{% endif %}>
     <summary><h2>{{ contractor_copy.COMPANY_CALENDAR_WAITING }} ({{ view.unscheduled_elements|length }})</h2></summary>
     {% if view.unscheduled_elements %}
@@ -289,5 +300,6 @@
     </div>
     {% endif %}
 </details>
+{% endif %}
 </div>
 {% endblock %}

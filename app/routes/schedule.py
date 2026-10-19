@@ -5,10 +5,29 @@ Projects owns Schedule. Hub is a project-filtered view of the same service.
 
 from datetime import date, timedelta
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from app.services.home_planning import assemble_home_planning
+from app.services.appointments import (
+    DEFAULT_START_HOUR,
+    AppointmentError,
+    AppointmentNotFoundError,
+    AppointmentPermissionError,
+    calendar_rows,
+    can_manage,
+    can_see_details,
+    cancel_appointment,
+    create_appointment,
+    get_appointment,
+    hour_window,
+    list_clients,
+    list_people,
+    read_form,
+    time_grid,
+    type_choices,
+    update_appointment,
+)
+from app.services.home_planning import assemble_home_planning, month_grid_bounds
 from app.services.organizations import get_current_organization
 from app.services.schedule import (
     ScheduleError,
@@ -102,14 +121,29 @@ def company():
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
         return redirect(url_for("schedule.company"))
+    # Business appointments (Joel, 19 Oct 2026) for the whole month grid the page can show.
+    year, month = request.args.get("year", type=int), request.args.get("month", type=int)
+    selected_day_arg = request.args.get("day", type=int)
+    try:  # "Go to a date" (the calendar button between the arrows)
+        go_to = _optional_date(request.args.get("date"))
+    except ValueError:
+        go_to = None
+    if go_to is not None:
+        year, month, selected_day_arg = go_to.year, go_to.month, go_to.day
+    grid_year, grid_month = (year or today.year), (month or today.month)
+    if not 1 <= grid_month <= 12:
+        grid_year, grid_month = today.year, today.month
+    grid_start, grid_end = month_grid_bounds(grid_year, grid_month)
+    appointment_rows = calendar_rows(organization.id, grid_start, grid_end, current_user, project_id=project_id)
     calendar = assemble_home_planning(
         organization.id,
-        year=request.args.get("year", type=int),
-        month=request.args.get("month", type=int),
-        selected_day=request.args.get("day", type=int),
+        year=year,
+        month=month,
+        selected_day=selected_day_arg,
         today=today,
         viewer=current_user,
         project_id=project_id,
+        appointments=appointment_rows,
     )
     # Month / Week / Day (Joel, 18 Oct 2026). No choice = month on a computer, week list on a phone.
     calendar_view = request.args.get("view") if request.args.get("view") in ("month", "week", "day") else ""
@@ -119,6 +153,13 @@ def company():
     }
     if project_id is not None:
         calendar_keep["project_id"] = project_id
+    # Hourly Day and Week (Joel, 19 Oct 2026): 7 AM–6 PM unless the office moved the hours.
+    first_hour, _last = hour_window(request.args.get("hours"))
+    if first_hour != DEFAULT_START_HOUR:
+        calendar_keep["hours"] = first_hour
+    grid_days = [calendar["selected"]] if calendar_view == "day" else calendar["week_dates"]
+    hour_grid = time_grid(grid_days, appointment_rows, first_hour) if calendar_view in ("day", "week") else None
+    period_title = _period_title(calendar, calendar_view)
     from app.presentation.schedule_categories import legend
 
     return render_template(
@@ -130,7 +171,41 @@ def company():
         category_legend=legend(),
         projects=list_current_operating_projects(organization.id),
         selected_project_id=project_id,
+        hour_grid=hour_grid,
+        period_title=period_title,
+        day_columns=_day_columns(calendar, grid_days) if hour_grid else [],
     )
+
+
+def _period_title(calendar, calendar_view):
+    """Monday, October 19, 2026 · October 19 – 25, 2026 · October 2026."""
+    selected = calendar["selected"]
+    if calendar_view == "day":
+        return f"{selected.strftime('%A, %B')} {selected.day}, {selected.year}"
+    if calendar_view == "week":
+        first, last = calendar["week_dates"][0], calendar["week_dates"][-1]
+        if first.month == last.month:
+            return f"{first.strftime('%B')} {first.day} – {last.day}, {last.year}"
+        if first.year == last.year:
+            return f"{first.strftime('%B')} {first.day} – {last.strftime('%B')} {last.day}, {last.year}"
+        return f"{first.strftime('%B')} {first.day}, {first.year} – {last.strftime('%B')} {last.day}, {last.year}"
+    return calendar["month_label"]
+
+
+def _day_columns(calendar, grid_days):
+    """Construction work and deliveries for each grid day (they have dates, not times)."""
+    by_date = {day["date"]: day for day in calendar["week_days"]}
+    columns = []
+    for day in grid_days:
+        info = by_date.get(day) or {"entries": calendar["day_entries"], "today": day == calendar["today"]}
+        columns.append({
+            "date": day,
+            "label": day.strftime("%a") + " " + str(day.day),
+            "today": day == calendar["today"],
+            "selected": day == calendar["selected"],
+            "work": [e for e in info["entries"] if e["kind"] in ("work", "delivery")],
+        })
+    return columns
 
 
 @schedule_bp.route("/items/new", methods=["GET", "POST"])
@@ -385,3 +460,219 @@ def retire_dependency(dependency_id):
     if nxt == "hub":
         return redirect(url_for("projects.view_project", id=project_id) + "#hub-schedule")
     return redirect(url_for("schedule.company", project_id=project_id))
+
+
+# ---------------------------------------------------------------------------------------------
+# Business appointments (Joel, 19 Oct 2026). Separate from construction scheduling: these routes
+# never change project dates, crews, deliveries or work-order rules, and send nothing outside.
+
+
+def _appointment_return(appt_date, view_name="day"):
+    view_name = view_name if view_name in ("day", "week", "month") else "day"
+    return url_for("schedule.company", year=appt_date.year, month=appt_date.month, day=appt_date.day, view=view_name)
+
+
+def _appointment_form_context(organization, **extra):
+    return dict(
+        types=type_choices(),
+        people=list_people(organization.id),
+        clients=list_clients(organization.id),
+        projects=list_current_operating_projects(organization.id),
+        **extra,
+    )
+
+
+def _prefill_from_query():
+    from datetime import datetime as _dt
+
+    day = _optional_date(request.args.get("date")) or date.today()
+    start = (request.args.get("start") or "").strip()
+    end = ""
+    all_day = request.args.get("all_day") == "1"
+    if start:
+        try:
+            begin = _dt.combine(day, _dt.strptime(start, "%H:%M").time())
+            end = (begin + timedelta(hours=1)).strftime("%H:%M") if begin.hour < 23 else "23:59"
+        except ValueError:
+            start = ""
+    if not start and not all_day:
+        start, end = "09:00", "10:00"
+    project_id = None
+    try:
+        project_id = _optional_int(request.args.get("project_id"))
+    except (TypeError, ValueError):
+        project_id = None
+    return {
+        "title": "", "appointment_type": "GENERAL", "appointment_date": day.isoformat(),
+        "all_day": all_day, "start_time": start, "end_time": end, "location": "", "notes": "",
+        "is_private": False, "assigned_user_id": getattr(current_user, "id", None),
+        "client_id": None, "project_id": project_id,
+    }
+
+
+def _values_from_form():
+    form = request.form
+    def _int(name):
+        try:
+            return _optional_int(form.get(name))
+        except (TypeError, ValueError):
+            return None
+    return {
+        "title": form.get("title", ""), "appointment_type": form.get("appointment_type", "GENERAL"),
+        "appointment_date": form.get("appointment_date", ""), "all_day": bool(form.get("all_day")),
+        "start_time": form.get("start_time", ""), "end_time": form.get("end_time", ""),
+        "location": form.get("location", ""), "notes": form.get("notes", ""),
+        "is_private": bool(form.get("is_private")), "assigned_user_id": _int("assigned_user_id"),
+        "client_id": _int("client_id"), "project_id": _int("project_id"),
+    }
+
+
+def _values_from_appointment(appt):
+    return {
+        "title": appt.title, "appointment_type": appt.appointment_type,
+        "appointment_date": appt.appointment_date.isoformat(), "all_day": bool(appt.all_day),
+        "start_time": appt.start_time.strftime("%H:%M") if appt.start_time else "",
+        "end_time": appt.end_time.strftime("%H:%M") if appt.end_time else "",
+        "location": appt.location or "", "notes": appt.notes or "", "is_private": bool(appt.is_private),
+        "assigned_user_id": appt.assigned_user_id, "client_id": appt.client_id, "project_id": appt.project_id,
+    }
+
+
+@schedule_bp.route("/appointments/new", methods=["GET", "POST"])
+def new_appointment():
+    organization = _org()
+    back = (request.values.get("back") or "day").strip()
+    if request.method == "POST":
+        try:
+            appt = create_appointment(organization.id, read_form(request.form), current_user)
+        except (AppointmentError, AppointmentPermissionError) as exc:
+            flash(str(exc), "error")
+            return render_template(
+                "schedule/appointment_form.html", appointment=None, values=_values_from_form(), back=back,
+                cancel_url=_appointment_return(_optional_date_safe(request.form.get("appointment_date")), back),
+                **_appointment_form_context(organization),
+            ), 400
+        flash("Appointment added.", "success")
+        return redirect(_appointment_return(appt.appointment_date, back))
+    values = _prefill_from_query()
+    return render_template(
+        "schedule/appointment_form.html", appointment=None, values=values, back=back,
+        cancel_url=_appointment_return(date.fromisoformat(values["appointment_date"]), back),
+        **_appointment_form_context(organization),
+    )
+
+
+def _optional_date_safe(value):
+    try:
+        return _optional_date(value) or date.today()
+    except ValueError:
+        return date.today()
+
+
+@schedule_bp.route("/appointments/<int:appointment_id>", methods=["GET", "POST"])
+def edit_appointment(appointment_id):
+    organization = _org()
+    back = (request.values.get("back") or "day").strip()
+    try:
+        appt = get_appointment(appointment_id, organization.id)
+    except AppointmentNotFoundError:
+        abort(404)
+    if request.method == "POST":
+        try:
+            appt = update_appointment(appointment_id, organization.id, read_form(request.form), current_user)
+        except AppointmentPermissionError as exc:
+            flash(str(exc), "error")
+            return redirect(_appointment_return(appt.appointment_date, back))
+        except AppointmentError as exc:
+            flash(str(exc), "error")
+            return render_template(
+                "schedule/appointment_form.html", appointment=appt, values=_values_from_form(), back=back,
+                editable=True, details=True, cancel_url=_appointment_return(appt.appointment_date, back),
+                **_appointment_form_context(organization),
+            ), 400
+        flash("Appointment saved.", "success")
+        return redirect(_appointment_return(appt.appointment_date, back))
+    details = can_see_details(appt, current_user)
+    return render_template(
+        "schedule/appointment_form.html", appointment=appt,
+        values=_values_from_appointment(appt) if details else None, back=back,
+        editable=can_manage(appt, current_user), details=details,
+        cancel_url=_appointment_return(appt.appointment_date, back),
+        **_appointment_form_context(organization),
+    )
+
+
+@schedule_bp.route("/appointments/<int:appointment_id>/cancel", methods=["POST"])
+def cancel_appointment_route(appointment_id):
+    organization = _org()
+    back = (request.values.get("back") or "day").strip()
+    try:
+        appt = cancel_appointment(appointment_id, organization.id, current_user)
+    except AppointmentNotFoundError:
+        abort(404)
+    except AppointmentPermissionError as exc:
+        flash(str(exc), "error")
+        appt = get_appointment(appointment_id, organization.id)
+        return redirect(_appointment_return(appt.appointment_date, back))
+    flash("Appointment cancelled.", "success")
+    return redirect(_appointment_return(appt.appointment_date, back))
+
+
+# ---------------------------------------------------------------------------------------------
+# Outlook / Google Calendar / Apple Calendar (Joel, 19 Oct 2026).
+
+
+def _site_base_url() -> str:
+    from flask import current_app
+
+    configured = (current_app.config.get("PUBLIC_BASE_URL") or "").strip()
+    if configured:
+        return configured.rstrip("/")
+    root = request.host_url.rstrip("/")
+    host = request.host.split(":")[0]
+    if root.startswith("http://") and host not in ("localhost", "127.0.0.1"):
+        root = "https://" + root[len("http://"):]
+    return root
+
+
+@schedule_bp.route("/appointments/<int:appointment_id>/calendar.ics")
+def appointment_calendar_file(appointment_id):
+    from flask import Response
+
+    from app.services.appointments import appointment_file
+
+    organization = _org()
+    try:
+        appt = get_appointment(appointment_id, organization.id)
+    except AppointmentNotFoundError:
+        abort(404)
+    if not can_see_details(appt, current_user):
+        abort(404)
+    body = appointment_file(appt, _site_base_url())
+    response = Response(body, mimetype="text/calendar")
+    response.headers["Content-Disposition"] = f'attachment; filename="appointment-{appt.id}.ics"'
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@schedule_bp.route("/calendar-feed", methods=["GET", "POST"])
+def calendar_feed_settings():
+    from app.services.appointments import active_feed, turn_off_feed, turn_on_feed
+    from app.services.calendar_sync import feed_addresses
+
+    organization = _org()
+    addresses = None
+    if request.method == "POST":
+        action = (request.form.get("action") or "").strip()
+        if action == "off":
+            turn_off_feed(organization.id, current_user)
+            flash("Your calendar feed is off. Calendars that used it stop updating.", "success")
+            return redirect(url_for("schedule.calendar_feed_settings"))
+        if action in ("on", "new"):
+            key = turn_on_feed(organization.id, current_user)
+            addresses = feed_addresses(_site_base_url(), url_for("calendar_feed.feed", key=key))
+    return render_template(
+        "schedule/calendar_feed.html",
+        feed=active_feed(organization.id, current_user),
+        addresses=addresses,
+    )

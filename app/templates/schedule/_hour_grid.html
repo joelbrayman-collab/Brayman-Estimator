@@ -1,0 +1,73 @@
+{% from "schedule/_appt_icon.html" import appt_icon %}
+{# Hourly Day / Week grid (Joel, 19 Oct 2026). Construction work and deliveries have dates, not times,
+   so they sit in the "All day" row; business appointments are placed by their time. Every empty
+   half hour is a link that starts a new appointment there. #}
+{% set g = hour_grid %}
+{% set grid_kind = "day" if calendar_view == "day" else "week" %}
+{% set hour_keep = calendar_keep.copy() %}{% set _ = hour_keep.pop("hours", None) %}
+<section class="cal-hours is-{{ grid_kind }}" data-hour-grid="{{ grid_kind }}" style="--cal-cols: {{ day_columns|length }}; --cal-rows: {{ g.hours|length }};"
+         aria-label="{{ 'Hours for ' ~ d.title if grid_kind == 'day' else 'Hours for the week of ' ~ calendar.week_label }}">
+    <div class="cal-hours-bar">
+        {% if g.earlier_start is not none %}<a class="cal-hours-step" data-hours-earlier="true" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, hours=g.earlier_start, **hour_keep) }}">‹ Earlier</a>{% endif %}
+        <span class="cal-hours-range">{{ g.range_label }}</span>
+        {% if g.later_start is not none %}<a class="cal-hours-step" data-hours-later="true" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, hours=g.later_start, **hour_keep) }}">Later ›</a>{% endif %}
+        {% if not g.is_default %}<a class="cal-hours-reset" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, **hour_keep) }}">Working hours</a>{% endif %}
+    </div>
+
+    {% if grid_kind == "week" %}
+    <div class="cal-hours-row cal-hours-head">
+        <span class="cal-hours-gutter cal-hours-time">Time</span>
+        {% for col in day_columns %}
+        <a class="cal-hours-day{% if col.today %} is-today{% endif %}{% if col.selected %} is-selected{% endif %}" href="{{ url_for('schedule.company', year=col.date.year, month=col.date.month, day=col.date.day, view='day', **calendar_keep) }}">
+            <span class="cal-hours-dow">{{ col.date.strftime("%a") }}</span><span class="cal-hours-num">{{ col.date.strftime("%b") }} {{ col.date.day }}</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="cal-hours-row cal-hours-allday">
+        <span class="cal-hours-gutter">All day</span>
+        {% for col in day_columns %}
+        {% set gcol = g.columns[loop.index0] %}
+        <div class="cal-hours-allday-cell" data-allday-date="{{ col.date.isoformat() }}">
+            {% if col.work or gcol.all_day %}
+            <ul class="cal-entries is-compact">
+                {% for e in gcol.all_day %}{% include "schedule/_calendar_entry.html" %}{% endfor %}
+                {% for e in col.work %}{% include "schedule/_calendar_entry.html" %}{% endfor %}
+            </ul>
+            {% endif %}
+            <a class="cal-add-allday" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), all_day=1, back=grid_kind) }}" aria-label="New all-day appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }}">+ All day</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="cal-hours-body">
+        <div class="cal-hours-gutter cal-hours-labels" aria-hidden="true">
+            {% for h in g.hours %}<span class="cal-hour-label">{{ h.label }}</span>{% endfor %}
+        </div>
+        {% for col in day_columns %}
+        {% set gcol = g.columns[loop.index0] %}
+        <div class="cal-hours-col{% if col.today %} is-today{% endif %}" data-hours-date="{{ col.date.isoformat() }}">
+            {% for h in g.hours %}
+            <a class="cal-slot" data-slot="{{ col.date.isoformat() }}T{{ h.value }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.value, back=grid_kind) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label }}"></a>
+            <a class="cal-slot is-half" data-slot="{{ col.date.isoformat() }}T{{ h.half }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.half, back=grid_kind) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label|replace(' ', ':30 ') }}"></a>
+            {% endfor %}
+            {% if gcol.earlier %}<a class="cal-more is-earlier" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, hours=0, **hour_keep) }}">{{ gcol.earlier }} earlier</a>{% endif %}
+            {% for a in gcol.appointments %}
+            <a class="cal-appt cal-type-{{ a.type|lower }}{% if a.masked %} is-private{% endif %}{% if a.overlaps %} is-overlap{% endif %}{% if a.end_min - a.start_min < 45 %} is-short{% endif %}" data-appointment="{{ a.id }}" data-type="{{ a.type }}"
+               href="{{ a.href }}?back={{ grid_kind }}"
+               style="top: {{ a.top_pct }}%; height: {{ a.height_pct }}%; left: {{ a.left_pct }}%; width: calc({{ a.width_pct }}% - 6px);"
+               title="{{ a.time_label }} · {{ a.title }}{% if a.location %} · {{ a.location }}{% endif %}">
+                {{ appt_icon(a.type) }}
+                <span class="cal-appt-text">
+                    <span class="cal-appt-title">{{ a.title }}</span>
+                    {% set meta = ([a.time_label] if grid_kind == "day" else []) + ([a.location] if a.location else []) + ([a.person] if a.person and grid_kind == "day" else []) %}
+                    {% if meta %}<span class="cal-appt-meta">{{ meta|join(" · ") }}</span>{% endif %}
+                </span>
+            </a>
+            {% endfor %}
+            {% if gcol.later %}<a class="cal-more is-later" href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view, hours=13, **hour_keep) }}">{{ gcol.later }} later</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>

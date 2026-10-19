@@ -233,12 +233,14 @@ OFFICE_SCHEDULE = HelpTopic(
     title="Company Calendar",
     what=(
         "Company Calendar is the month of planned work, the selected day, "
-        "and the work that still needs dates."
+        "and the work that still needs dates. It also holds business appointments: "
+        "site visits, client and supplier meetings, estimate consultations."
     ),
     do=(
         "Choose a day, set dates on work that is waiting, and review this period "
         "by project. Moving a project changes its dates together. It does not "
-        "change what a date means."
+        "change what a date means. In Day or Week, click an empty time to add an "
+        "appointment; appointments never move project dates, crews or deliveries."
     ),
     next="Keep dates current, then record time against the work.",
     surface=SURFACE_OFFICE,

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{# Private calendar feed for Outlook, Google Calendar and Apple Calendar (Joel, 19 Oct 2026). #}
+{% block title %}Your appointments in Outlook, Google or Apple Calendar | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calendar connection{% endblock %}
+
+{% block content %}
+<div class="appt-page feed-page">
+<p class="appt-back"><a href="{{ url_for('schedule.company', view='week') }}">‹ Back to the calendar</a></p>
+
+<section class="form-panel">
+    <h2>Your appointments in Outlook, Google Calendar or Apple Calendar</h2>
+    <p>Your CalibraytAI appointments (the ones for you, and the ones you made for no one in particular) appear in your own calendar and update by themselves. Make and change appointments here; your calendar shows them.</p>
+    <p class="muted-copy">Nothing is sent anywhere. Your calendar program fetches a private address. Anyone with that address can see your appointments, including private ones, so keep it to yourself. You can replace it or turn it off at any time.</p>
+
+    {% if addresses %}
+    <div class="feed-address" data-feed-address="true">
+        <h3>Your private address</h3>
+        <p class="muted-copy">Copy it now: for your security it is shown only this once. If you lose it, make a new one.</p>
+        <div class="feed-copy">
+            <input type="text" readonly value="{{ addresses.https }}" id="feed-https" aria-label="Private calendar address">
+            <button type="button" class="button secondary" data-copy-target="feed-https">Copy</button>
+        </div>
+        <p><a class="button" href="{{ addresses.webcal }}">Open in Apple Calendar or Outlook</a></p>
+        <h3>How to add it</h3>
+        <ul class="feed-steps">
+            <li><strong>Google Calendar</strong> (computer): Other calendars → <em>+</em> → From URL → paste the address → Add calendar.</li>
+            <li><strong>Outlook</strong>: Add calendar → Subscribe from web (or From internet) → paste the address → Import / Add.</li>
+            <li><strong>Apple Calendar</strong> (Mac or iPhone): File → New Calendar Subscription (iPhone: Settings → Calendar → Accounts → Add Subscribed Calendar) → paste the address. Or use the button above.</li>
+        </ul>
+        <p class="muted-copy">Google and Outlook check for changes every few hours; Apple Calendar can be set to check every few minutes.</p>
+    </div>
+    {% elif feed %}
+    <p data-feed-on="true"><strong>Your calendar feed is on.</strong> Made {{ feed.created_at.strftime("%b %d, %Y").replace(" 0", " ") }}{% if feed.last_fetched_at %} · last fetched {{ feed.last_fetched_at.strftime("%b %d, %Y %I:%M %p").replace(" 0", " ") }} UTC{% endif %}.</p>
+    {% else %}
+    <p data-feed-off="true"><strong>Your calendar feed is off.</strong></p>
+    {% endif %}
+
+    <div class="form-actions feed-actions">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="{{ 'new' if feed else 'on' }}">
+            <button type="submit" class="button">{% if feed %}Make a new address{% else %}Turn on my calendar feed{% endif %}</button>
+        </form>
+        {% if feed %}
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="off">
+            <button type="submit" class="button secondary">Turn off</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if feed and not addresses %}<p class="muted-copy">A new address replaces the old one at once; calendars using the old one stop updating.</p>{% endif %}
+</section>
+</div>
+<script>
+(function () {
+  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var field = document.getElementById(btn.getAttribute('data-copy-target'));
+      field.select();
+      if (navigator.clipboard) { navigator.clipboard.writeText(field.value); } else { document.execCommand('copy'); }
+      btn.textContent = 'Copied';
+    });
+  });
+})();
+</script>
+{% endblock %}

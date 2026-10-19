@@ -1,4 +1,11 @@
-{# One work item or delivery in the Week and Day lists. #}
+{# One work item, delivery or business appointment in the Week and Day lists. #}
+{% from "schedule/_appt_icon.html" import appt_icon %}
+{% if e.kind == "appointment" %}
+<li class="cal-entry cal-entry-appt cal-cat-appointment cal-type-{{ e.type|lower }}{% if e.masked %} is-private{% endif %}" data-category="appointment" data-appointment="{{ e.id }}">
+    <a href="{{ e.href }}" class="cal-entry-title">{{ appt_icon(e.type) }} <span class="cal-entry-time">{{ e.time_label }}</span> {{ e.title }}</a>
+    {% if e.type_label or e.location or e.person %}<span class="cal-entry-meta">{{ e.type_label }}{% if e.location %} · {{ e.location }}{% endif %}{% if e.person %} · {{ e.person }}{% endif %}</span>{% endif %}
+</li>
+{% else %}
 <li class="cal-entry cal-cat-{{ e.category }}{% if e.conflict %} is-conflict{% endif %}" data-category="{{ e.category }}">
     {% if e.kind == "work" %}
     <a href="{{ e.href }}" class="cal-entry-title">{% if e.crew_letter %}<span class="home-band-crew" title="{{ e.crew_name }}">{{ e.crew_letter }}</span> {% endif %}{{ e.label }}</a>
@@ -8,3 +15,4 @@
     <span class="cal-entry-meta">{{ e.status }}</span>
     {% endif %}
 </li>
+{% endif %}

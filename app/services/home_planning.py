@@ -263,9 +263,12 @@ def assemble_home_planning(
     today: Optional[date] = None,
     viewer=None,
     project_id: Optional[int] = None,
+    appointments: Optional[list] = None,
 ) -> dict:
     """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
-    day and the week/day lists to one project; Home never passes it."""
+    day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
+    Calendar only, from ``app.services.appointments.calendar_rows``) adds business appointments to
+    the month, the selected day and the week/day lists; Home never passes them."""
     from app.presentation.schedule_categories import activity_category
 
     today = today or date.today()
@@ -373,6 +376,27 @@ def assemble_home_planning(
                         "category": "delivery",
                         "crew_letter": "",
                         "accent": "delivery-pending" if row["pending"] else "delivery",
+                        "conflict": False,
+                        "project_id": row["project_id"],
+                        "href": row["href"],
+                    }
+                )
+        for row in appointments or ():
+            if cursor <= row["date"] <= week_end:
+                segments.append(
+                    {
+                        "item_id": -1_000_000_000 + row["start_min"] * 100_000 + row["id"],
+                        "week_start": cursor,
+                        "start": row["date"],
+                        "end": row["date"],
+                        "col_start": row["date"].weekday() + 1,
+                        "col_end": row["date"].weekday() + 2,
+                        "label": f"{row['time_label']} · {row['title']}",
+                        "short_label": row["label"],
+                        "category": "appointment",
+                        "crew_letter": "",
+                        "accent": "appointment",
+                        "appt_type": row.get("type", "GENERAL"),
                         "conflict": False,
                         "project_id": row["project_id"],
                         "href": row["href"],
@@ -519,7 +543,11 @@ def assemble_home_planning(
             for row in delivery_rows
             if row["date"] == day
         ]
-        return work + deliveries
+        booked = sorted(
+            (dict(row, kind="appointment") for row in appointments or () if row["date"] == day),
+            key=lambda r: (not r["all_day"], r["start_min"], r["id"]),
+        )
+        return [r for r in booked if r["all_day"]] + work + deliveries + [r for r in booked if not r["all_day"]]
 
     week_start = selected - timedelta(days=selected.weekday())
     week_days = []
@@ -551,7 +579,8 @@ def assemble_home_planning(
         "selected": selected,
         "weeks": weeks,
         "detail": dict(_selected_detail(selected, item_rows, schedule.get("conflicts") or []),
-                       deliveries=[row for row in delivery_rows if row["date"] == selected]),
+                       deliveries=[row for row in delivery_rows if row["date"] == selected],
+                       appointments=[row for row in appointments or () if row["date"] == selected]),
         "pulse": pulse,
         "unscheduled": unscheduled_rows,
         "unscheduled_more": max(len(unscheduled) - len(unscheduled_rows), 0),
@@ -560,5 +589,6 @@ def assemble_home_planning(
         "prev": {"year": prev_month.year, "month": prev_month.month},
         "next": {"year": next_month.year, "month": next_month.month},
         "first_name": first_name,
-        "has_scheduled_work": bool(item_rows),
+        "has_scheduled_work": bool(item_rows) or bool(appointments),
+        "week_dates": [week_start + timedelta(days=offset) for offset in range(7)],
     }

@@ -149,6 +149,7 @@ from app.models.work_structure import (
 )
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
+from app.models.appointment import CalendarFeedKey, CompanyAppointment, CompanyAppointmentHistory
 from app.models.schedule import (
     ProjectWorkDependency,
     WorkScheduleAssignment,
@@ -325,6 +326,9 @@ __all__ = [
     "ProjectPunchListItem",
     "ProjectPunchListItemEvent",
     "ProjectWorkDependency",
+    "CalendarFeedKey",
+    "CompanyAppointment",
+    "CompanyAppointmentHistory",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",
     "WorkScheduleItem",

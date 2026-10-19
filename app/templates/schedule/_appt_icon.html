@@ -1,0 +1,12 @@
+{# Small line icon for a business appointment type (Joel, 19 Oct 2026). #}
+{% macro appt_icon(kind) -%}
+<svg class="cal-appt-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+{%- if kind == "SITE_VISIT" -%}<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>
+{%- elif kind == "CLIENT_MEETING" -%}<path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/><path d="M8 9.5h8M8 12.5h5"/>
+{%- elif kind == "SUPPLIER_MEETING" -%}<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.5 14.2A4.6 4.6 0 0 1 21 18.5"/>
+{%- elif kind == "ESTIMATE_CONSULTATION" -%}<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 12h2M12 12h3.5M8.5 15.5h2M12 15.5h3.5"/>
+{%- elif kind == "PRIVATE" -%}<rect x="5.5" y="10.5" width="13" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>
+{%- else -%}<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5.5h6v2M3.5 12.5h17"/>
+{%- endif -%}
+</svg>
+{%- endmacro %}

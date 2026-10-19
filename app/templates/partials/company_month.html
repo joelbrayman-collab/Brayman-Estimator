@@ -22,7 +22,7 @@
                 <div class="home-bands">
                     {% for band in week.bands %}
                     <a
-                        class="home-band accent-{{ band.accent }} cal-cat-{{ band.category or 'general' }}{% if band.conflict %} is-conflict{% endif %}"
+                        class="home-band accent-{{ band.accent }} cal-cat-{{ band.category or 'general' }}{% if band.appt_type %} cal-type-{{ band.appt_type|lower }}{% endif %}{% if band.conflict %} is-conflict{% endif %}"
                         style="grid-column: {{ band.col_start }} / {{ band.col_end }}; grid-row: {{ band.lane + 1 }};"
                         href="{{ band.href if band.href else url_for('projects.view_project', id=band.project_id) ~ '#hub-schedule' }}"
                         title="{{ band.label }}"

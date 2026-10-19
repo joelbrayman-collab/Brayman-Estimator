@@ -73,6 +73,7 @@ One CalibraytAI product and one development sequence: [../PROJECT_DEVELOPMENT_CH
 | [fg-026-takeoff-to-estimate-mapping-preflight.md](fg-026-takeoff-to-estimate-mapping-preflight.md) | **COMPLETE.** [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [fg-027-costing-approval-preflight.md](fg-027-costing-approval-preflight.md) | **COMPLETE.** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [permit-rules-ontario-ottawa-sources.md](permit-rules-ontario-ottawa-sources.md) | Ontario / Ottawa permit-rule source citations for [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
+| [calendar-integration.md](calendar-integration.md) | **Current** — Outlook / Google / Apple Calendar: subscription feed and calendar files **implemented** (development branch); two-way sync and free/busy **proposed only**; reusable by AiRIA (19 Oct 2026) |
 
 Platform map: [../architecture.md](../architecture.md).
 Principles: [../architecture-principles.md](../architecture-principles.md).

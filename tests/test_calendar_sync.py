@@ -161,3 +161,22 @@ def test_feed_settings_need_sign_in(client):
 def test_calendar_page_links_to_the_connection(client):
     html = client.get("/schedule?view=week").get_data(as_text=True)
     assert 'data-calendar-connect="true"' in html and 'href="/schedule/calendar-feed"' in html
+
+
+def test_the_reusable_calendar_module_depends_on_the_standard_library_only():
+    """AiRIA reuses app/services/calendar_sync.py as is (Joel, 19 Oct 2026): no CalibraytAI imports."""
+    import ast
+    import sys
+    from pathlib import Path
+
+    source = Path(__file__).resolve().parents[1] / "app" / "services" / "calendar_sync.py"
+    tree = ast.parse(source.read_text())
+    modules = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            modules.update(alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            modules.add(node.module.split(".")[0])
+    allowed = {"__future__", "hashlib", "secrets", "datetime", "typing"}
+    assert modules <= allowed, modules - allowed
+    assert all(name in sys.stdlib_module_names or name == "__future__" for name in modules) if hasattr(sys, "stdlib_module_names") else True

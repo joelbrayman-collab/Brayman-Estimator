@@ -46,6 +46,10 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # (status reports signed_in false, keep-alive answers 401) and expose nothing else.
     "session_status.status",
     "session_status.keepalive",
+    # Added 19 Oct 2026 (Joel: Outlook / Google / Apple Calendar): the private calendar feed. The
+    # secret key in the address is the only credential; a wrong, replaced or turned-off key, or a
+    # person who has left, gets 404 (tests/test_calendar_sync.py). It only reads.
+    "calendar_feed.feed",
 }
 EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools."}
 EXPECTED_SUPPLIER_EXEMPT = {"supplier_portal.login", "supplier_portal.logout"}
@@ -81,6 +85,7 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "supplier_portal.logout",
     "session_status.status",
     "session_status.keepalive",
+    "calendar_feed.feed",
 }
 
 

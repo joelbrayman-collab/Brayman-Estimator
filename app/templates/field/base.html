@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/field.css', v='d5-voice') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="field-body" data-field-page="{% block field_page %}today{% endblock %}">
+<body class="field-body" data-field-page="{% block field_page %}today{% endblock %}" data-field-copy="live" data-rendered-at="{{ field_rendered_at }}">
     <header class="field-header">
         <a class="field-brand" href="{{ url_for('field.today') }}">
             <img
@@ -35,9 +35,12 @@
         {% endif %}
         {% endwith %}
         <div class="field-status" id="field-live-status" role="status" aria-live="polite"></div>
+        <div class="field-offline-banner" id="field-offline-banner" role="alert" hidden>
+            <strong>Offline</strong> — showing the copy saved <span data-field-saved-at>earlier</span>. The schedule may be out of date. It refreshes when you are back online.
+        </div>
         {% block content %}{% endblock %}
     </main>
-    <script src="{{ url_for('static', filename='js/field.js', v='schd-addr2') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/field.js', v='g5-fresh') }}" defer></script>
     <script src="{{ url_for('static', filename='js/contextual_help.js', v='d5-voice') }}" defer></script>
     {% include "partials/session_timeout.html" %}
 </body>

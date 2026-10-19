@@ -2,7 +2,7 @@
 
 from app.navigation import NAV_SECTIONS
 
-PRIMARY_TITLES = ("Home", "Company Calendar", "Projects", "Clients")
+PRIMARY_TITLES = ("Home", "Calendar", "Projects", "Clients")  # "Calendar" since 19 Oct 2026 (Joel)
 REMOVED_FROM_DAILY_NAV = (
     "Purchase Orders",
     "Job Costing",

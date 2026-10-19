@@ -1,0 +1,199 @@
+"""Database migration for a release: rehearse on a copy, or apply on the live instance.
+
+Joel, 19 Oct 2026 (Calendar Appointments, migration z3c4d5e6f7a8). Prints KEY=VALUE lines and ends with
+MIGRATION_REHEARSAL=ok or MIGRATE=ok; anything else is a stop.
+
+  rehearse (office Mac, inside the release clone, on a COPY of the fresh production backup):
+      venv/bin/python tools/release/migration_check.py rehearse --db COPY.db --from REV --to REV --new-tables a,b
+  apply (on the Render instance, after Joel authorized the release and the migration and the
+  candidate is deployed, so its migration file is on the server):
+      $PY tools/release/migration_check.py apply --from REV --to REV --new-tables a,b --expect-sha SHA --label L
+
+Both modes prove the same things: the database starts at --from; every existing table keeps its
+exact schema and every row (count and SHA-256 of all rows, in rowid order); exactly the --new-tables
+appear, empty; the revision ends at --to; integrity is ok. "apply" first takes its own online
+backup next to the live database (instance/backups/pre-migrate-<label>-<UTC>.db) and refuses unless
+the instance runs --expect-sha. Nothing is downgraded: database recovery is that backup, with Joel.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import os
+import sqlite3
+import sys
+import time
+from pathlib import Path
+
+# The repository root: this file's folder when run as a file; the current folder when piped over SSH
+# (python - < migration_check.py, run from /opt/render/project/src like the other hosted helpers).
+ROOT = Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()
+# Where the live instance folder is (the release clone itself on Render; a temporary folder in tests).
+INSTANCE_ROOT = Path(os.environ.get("RELEASE_ROOT", str(ROOT)))
+
+
+def out(key: str, value) -> None:
+    print(f"{key}={value}", flush=True)
+
+
+def fail(message: str) -> None:
+    out("FAIL", message)
+    sys.exit(1)
+
+
+def _connect_ro(path: str) -> sqlite3.Connection:
+    return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+
+
+def snapshot(path: str) -> dict:
+    """Schema and content fingerprint of every table and index (except alembic_version)."""
+    con = _connect_ro(path)
+    try:
+        schema = {
+            (row[0], row[1]): row[2] or ""
+            for row in con.execute(
+                "SELECT type, name, sql FROM sqlite_master WHERE type IN ('table','index') AND name NOT LIKE 'sqlite_%'"
+            )
+        }
+        tables = sorted(name for kind, name in schema if kind == "table" and name != "alembic_version")
+        content = {}
+        for table in tables:
+            digest = hashlib.sha256()
+            count = 0
+            for row in con.execute(f'SELECT * FROM "{table}" ORDER BY rowid'):
+                digest.update(repr(row).encode("utf-8"))
+                count += 1
+            content[table] = (count, digest.hexdigest())
+        revision = con.execute("SELECT version_num FROM alembic_version").fetchone()[0]
+        integrity = con.execute("PRAGMA integrity_check").fetchone()[0]
+    finally:
+        con.close()
+    return {"schema": schema, "content": content, "revision": revision, "integrity": integrity}
+
+
+def upgrade(db_path: str, revision: str) -> None:
+    """Run the candidate's Alembic migrations on this database file, as the tests do."""
+    sys.path.insert(0, str(ROOT))
+    from flask_migrate import upgrade as flask_upgrade
+
+    from app import create_app
+
+    app = create_app({"TESTING": True, "CALIBRAYTAI_HOSTED": "0", "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}",
+                      "SECRET_KEY": "migration-check-not-used-for-requests"})
+    with app.app_context():
+        flask_upgrade(directory=str(ROOT / "migrations"), revision=revision)
+
+
+def compare(before: dict, after: dict, new_tables: list, to_rev: str) -> None:
+    out("REVISION_AFTER", after["revision"])
+    out("INTEGRITY_AFTER", after["integrity"])
+    if after["integrity"] != "ok":
+        fail("integrity is not ok after the migration")
+    if after["revision"] != to_rev:
+        fail(f"revision is {after['revision']}, expected {to_rev}")
+    changed = [t for t, fp in before["content"].items() if after["content"].get(t) != fp]
+    if changed:
+        fail("existing records changed in: " + ", ".join(changed))
+    altered = [f"{k[0]} {k[1]}" for k, sql in before["schema"].items() if after["schema"].get(k) != sql]
+    if altered:
+        fail("existing schema changed: " + ", ".join(altered))
+    added = sorted(set(after["content"]) - set(before["content"]))
+    if added != sorted(new_tables):
+        fail(f"new tables are {added}, expected {sorted(new_tables)}")
+    not_empty = [t for t in added if after["content"][t][0] != 0]
+    if not_empty:
+        fail("new tables are not empty: " + ", ".join(not_empty))
+    out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, schema and every row identical")
+    out("NEW_TABLES", ",".join(added) + " (empty)")
+
+
+def rehearse(args) -> None:
+    db = os.path.abspath(args.db)
+    if not os.path.exists(db):
+        fail(f"{db} does not exist")
+    before = snapshot(db)
+    out("REHEARSAL_DB", db)
+    out("REVISION_BEFORE", before["revision"])
+    out("INTEGRITY_BEFORE", before["integrity"])
+    if before["revision"] != args.from_rev:
+        fail(f"copy is at {before['revision']}, expected {args.from_rev}")
+    if before["integrity"] != "ok":
+        fail("copy integrity is not ok")
+    started = time.time()
+    upgrade(db, args.to_rev)
+    out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
+    compare(before, snapshot(db), args.new_tables, args.to_rev)
+    out("MIGRATION_REHEARSAL", "ok")
+
+
+def apply(args) -> None:
+    running = os.environ.get("RENDER_GIT_COMMIT", "")
+    out("RUNNING_SHA", running)
+    if running != args.expect_sha:
+        fail(f"the instance runs {running}, not the authorized release {args.expect_sha}")
+    db = str(INSTANCE_ROOT / "instance" / "brayman_estimator.db")
+    uri = os.environ.get("CALIBRAYTAI_DATABASE_URI", "")
+    uri_path = uri[len("sqlite:///"):] if uri.startswith("sqlite:///") else ""
+    if not uri_path or os.path.realpath(uri_path) != os.path.realpath(db):
+        fail(f"live database URI does not point at {db}")
+    live = _connect_ro(db)
+    current = live.execute("SELECT version_num FROM alembic_version").fetchone()[0]
+    live.close()
+    out("REVISION_BEFORE", current)
+    if current == args.to_rev:
+        out("ALREADY_MIGRATED", "yes (nothing done)")
+        out("MIGRATE", "ok")
+        return
+    if current != args.from_rev:
+        fail(f"live database is at {current}, expected {args.from_rev}")
+    # The pre-migration backup (database recovery point), taken with SQLite's online backup.
+    stamp = time.strftime("%Y%m%d-%H%M%S", time.gmtime())
+    backups = INSTANCE_ROOT / "instance" / "backups"
+    backups.mkdir(parents=True, exist_ok=True)
+    backup = backups / f"pre-migrate-{args.label}-{stamp}.db"
+    if backup.exists():
+        fail("backup file already exists")
+    src = sqlite3.connect(db)
+    dest = sqlite3.connect(str(backup))
+    src.backup(dest)
+    dest.close()
+    src.close()
+    saved = snapshot(str(backup))
+    if saved["integrity"] != "ok" or saved["revision"] != args.from_rev:
+        fail("pre-migration backup did not verify")
+    out("PRE_MIGRATION_BACKUP", backup)
+    out("PRE_MIGRATION_BACKUP_SHA256", hashlib.sha256(backup.read_bytes()).hexdigest())
+    before = snapshot(db)
+    out("INTEGRITY_BEFORE", before["integrity"])
+    if before["integrity"] != "ok":
+        fail("live integrity is not ok before the migration")
+    started = time.time()
+    upgrade(db, args.to_rev)
+    out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
+    after = snapshot(db)
+    # Someone may have used the app during the minute of the release; compare against the moment
+    # just before the upgrade, which is what the migration itself must not change.
+    compare(before, after, args.new_tables, args.to_rev)
+    out("MIGRATE", "ok")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest="mode", required=True)
+    for name in ("rehearse", "apply"):
+        p = sub.add_parser(name)
+        p.add_argument("--from", dest="from_rev", required=True)
+        p.add_argument("--to", dest="to_rev", required=True)
+        p.add_argument("--new-tables", required=True, type=lambda v: [t for t in v.split(",") if t])
+        if name == "rehearse":
+            p.add_argument("--db", required=True)
+        else:
+            p.add_argument("--expect-sha", required=True)
+            p.add_argument("--label", required=True)
+    args = parser.parse_args()
+    (rehearse if args.mode == "rehearse" else apply)(args)
+
+
+if __name__ == "__main__":
+    main()

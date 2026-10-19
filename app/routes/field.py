@@ -63,6 +63,15 @@ from app.services.work_structure import list_project_work_elements
 
 field_bp = Blueprint("field", __name__, url_prefix="/field")
 
+
+@field_bp.context_processor
+def _field_rendered_at():
+    """When the server made this page (UTC). Lets the phone tell a fresh page from a kept offline copy
+    and an old page brought back to the foreground (Joel, 19 Oct 2026, schedule freshness)."""
+    from datetime import datetime, timezone
+
+    return {"field_rendered_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+
 CONFIRMED_PROJECT_SESSION_KEY = "field_confirmed_project_id"
 LAST_TIME_ELEMENT_SESSION_KEY = "field_last_time_element_id"
 

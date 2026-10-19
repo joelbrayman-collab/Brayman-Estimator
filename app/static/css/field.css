@@ -789,3 +789,18 @@ input:focus-visible {
 .field-body .contextual-help-answer {
     font-size: 1.05rem;
 }
+
+/* Offline copy of a Field page (Joel, 19 Oct 2026): the crew must see that the schedule may be old. */
+.field-offline-banner {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 1px solid #c8871a;
+    border-left: 4px solid #c8871a;
+    border-radius: 8px;
+    background: #fbf3e4;
+    color: #3d2a06;
+    font-size: 15px;
+    line-height: 1.4;
+}
+.field-offline-banner[hidden] { display: none; }
+

@@ -446,6 +446,8 @@ SCHEDULE_NO_APPROVED_TIME = "Scheduled work has no approved Time"
 LABOUR_NOTHING_NEEDS_ATTENTION = "Nothing needs attention right now."
 ATTENTION_LINK_CHANGE_ORDERS = "Change orders"
 COMPANY_CALENDAR_HEADING = "Company Calendar"
+# Sidebar link (Joel, 19 Oct 2026): "Calendar"; the page opens on My Calendar with a switch to Company Calendar.
+CALENDAR_NAV_TITLE = "Calendar"
 COMPANY_CALENDAR_LEDE = (
     "The month, the selected day, work still waiting for dates, "
     "and the project dates in this period."

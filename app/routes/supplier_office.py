@@ -169,7 +169,11 @@ def project_requests(project_id):
     from app.services.supplier_hub import schedule_item_label, schedule_items_for_project
 
     schedule_options = [(item.id, schedule_item_label(item)) for item in schedule_items_for_project(project)]
+    from app.services.supplier_hub import concrete_delivery
+
+    concrete_deliveries = {c.id: concrete_delivery(c) for c in concrete}
     return render_template("suppliers/project_requests.html", project=project, rows=rows, concrete=concrete,
+                           concrete_deliveries=concrete_deliveries,
                            schedule_options=schedule_options,
                            reasons=CHANGE_REASONS,
                            deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),

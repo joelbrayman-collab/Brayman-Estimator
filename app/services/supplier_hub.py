@@ -881,6 +881,27 @@ def current_schedule(order) -> dict:
     }
 
 
+def concrete_delivery(concrete) -> dict:
+    """A concrete request's delivery: the date first requested, and the order's current delivery if it was ordered.
+
+    {"requested": (date, window), "order": order or None, "schedule": current_schedule or None, "pending": change or None}
+    """
+    from app.models.supplier_portal import SOURCE_CONCRETE, SupplierRequestShare
+
+    order = (SupplierPurchaseOrder.query.join(SupplierRequestShare, SupplierPurchaseOrder.share_id == SupplierRequestShare.id)
+             .filter(SupplierRequestShare.organization_id == concrete.organization_id,
+                     SupplierRequestShare.source_kind == SOURCE_CONCRETE,
+                     SupplierRequestShare.source_ref == str(concrete.id),
+                     SupplierPurchaseOrder.status.in_((PO_PLACED, PO_CONFIRMED, PO_PROBLEM)))
+             .order_by(SupplierPurchaseOrder.id.desc()).first())
+    return {
+        "requested": (concrete.delivery_date, concrete.delivery_window),
+        "order": order,
+        "schedule": current_schedule(order) if order is not None else None,
+        "pending": pending_change(order) if order is not None else None,
+    }
+
+
 def pending_change(order):
     from app.models.supplier_portal import CHANGE_PENDING, SupplierDeliveryChange
 
@@ -946,6 +967,10 @@ def answer_delivery_change(change, *, side: str, user, action: str, note: str = 
         order.scheduled_window = change.new_window
         order.delivery_date = change.new_date
         order.delivery_window = change.new_window
+        if order.expected_delivery is not None:
+            # Joel, 19 Oct 2026 (sync review G3): the date the supplier confirmed follows the agreed change, so no
+            # screen shows the old one as current. The earlier dates stay in the change history.
+            order.expected_delivery = change.new_date
         detail = f"{order.number}: now {_when(change.new_date, change.new_window)}"
         _event(order.share, "DELIVERY_CHANGE_ACCEPTED", side, who, detail)
         db.session.commit()

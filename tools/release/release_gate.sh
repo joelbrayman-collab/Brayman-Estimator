@@ -1,5 +1,6 @@
 #!/bin/bash
-# CalibraytAI release gate for a release WITHOUT a database change. Runs on the office Mac.
+# CalibraytAI release gate. Runs on the office Mac. A release with a database change adds
+# --migration-to <revision> --new-tables <t1,t2,...> (19 Oct 2026); without them a migration stops the gate.
 # It pushes nothing and deploys nothing: it stops at READY_FOR_PUSH. Production needs Joel's
 # separate authorization; then Claude pushes the tested commit itself to main and deploys it,
 # and Joel runs postrelease_check.sh.
@@ -13,6 +14,7 @@
 #   git -C ~/Desktop/Brayman-Estimator show <candidate>:tools/release/release_gate.sh > /tmp/release_gate.sh
 #   bash /tmp/release_gate.sh --label cal2 --candidate <sha> --branch v1/completion \
 #        --main-base <sha> --live-base <sha> --live-deploy <dep-id> [--browser-expected 43]
+#        [--migration-to <revision> --new-tables <t1,t2,...>]
 #
 # Gates (stops at the first failure):
 #   1 one run at a time; GitHub main = --main-base; --branch = --candidate; live instance (SSH) = --live-base
@@ -23,12 +25,16 @@
 #     folder and Python Playwright are present, so nothing may skip); the end-to-end contractor walk and the
 #     Cal tests must have run and passed; release browser checks in Google Chrome
 #   3 fresh hosted backup (SQLite online backup), copied to the Mac, checksum and integrity verified, rows counted
+#   3a with --migration-to: the candidate's single Alembic head is that revision and it follows the live
+#      revision; the migration is rehearsed on a copy of the fresh backup on this Mac (every existing table's
+#      schema and rows identical, exactly the new tables added and empty, integrity ok); the copy is deleted
 #   3b contract signing readiness (read-only)
 #   4 READY_FOR_PUSH — stop.
-# A release WITH a migration still needs its own rehearsal script, prepared and authorized separately.
+# After authorization of a release with a migration: Claude pushes and deploys; Joel runs
+# release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
 set -u
 usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=43
+LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=43; MIGRATION_TO=""; NEW_TABLES=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
@@ -38,6 +44,8 @@ while [ $# -gt 0 ]; do
     --live-base) LIVE_BASE=$2; shift 2;;
     --live-deploy) LIVE_DEPLOY=$2; shift 2;;
     --browser-expected) BROWSER_EXPECTED=$2; shift 2;;
+    --migration-to) MIGRATION_TO=$2; shift 2;;
+    --new-tables) NEW_TABLES=$2; shift 2;;
     *) usage;;
   esac
 done
@@ -46,6 +54,10 @@ for v in SHA MAIN_BASE LIVE_BASE; do
   [[ "${!v}" =~ ^[0-9a-f]{40}$ ]] || { echo "$v must be a full 40-character commit SHA"; exit 2; }
 done
 [[ "$LABEL" =~ ^[a-z0-9-]+$ ]] || { echo "--label: lower-case letters, digits and dashes only"; exit 2; }
+if [ -n "$MIGRATION_TO$NEW_TABLES" ]; then
+  [[ "$MIGRATION_TO" =~ ^[0-9a-f]{12}$ ]] && [[ "$NEW_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
+    || { echo "--migration-to <12-character revision> and --new-tables <t1,t2> go together"; exit 2; }
+fi
 
 REPO_URL=https://github.com/joelbrayman-collab/Brayman-Estimator.git
 # Release working files and office backups live outside the iCloud Desktop (18 Oct 2026):
@@ -100,12 +112,24 @@ git -c advice.detachedHead=false checkout -q "$SHA" || stop "checkout failed (is
 [ "$(git rev-parse HEAD)" = "$SHA" ] || stop "clone is not $SHA"
 git merge-base --is-ancestor "$MAIN_BASE" "$SHA" || stop "$SHA is not a fast-forward from main $MAIN_BASE"
 git merge-base --is-ancestor "$LIVE_BASE" "$SHA" || stop "$SHA does not descend from live $LIVE_BASE"
-[ -z "$(git diff --name-only "$LIVE_BASE" "$SHA" -- migrations app/models app/plan_intelligence/models.py)" ] \
-  || stop "migrations or models changed: this gate is for releases without a database change"
-OUTSIDE=$(git diff --name-only "$MAIN_BASE" "$SHA" | grep -vE '^(app/|tests/|docs/|tools/|calculation-engines/|requirements(-dev|-lock)?\.txt$)')
+if [ -z "$MIGRATION_TO" ]; then
+  [ -z "$(git diff --name-only "$LIVE_BASE" "$SHA" -- migrations app/models app/plan_intelligence/models.py)" ] \
+    || stop "migrations or models changed: this release needs --migration-to and --new-tables"
+  DBCHANGE="no migration or model change"
+else
+  ADDED=$(git diff --name-only --diff-filter=A "$LIVE_BASE" "$SHA" -- migrations/versions)
+  OTHER=$(git diff --name-only --diff-filter=MDR "$LIVE_BASE" "$SHA" -- migrations)
+  [ -z "$OTHER" ] || stop "an existing migration file was changed or removed: $OTHER"
+  [ "$(echo "$ADDED" | grep -c .)" = "1" ] && grep -q "^revision = \"$MIGRATION_TO\"" $ADDED \
+    || stop "the candidate must add exactly one migration, revision $MIGRATION_TO (added: $ADDED)"
+  DBCHANGE="one new migration $MIGRATION_TO ($ADDED), rehearsed below"
+fi
+ALLOWED='^(app/|tests/|docs/|tools/|calculation-engines/|requirements(-dev|-lock)?\.txt$)'
+[ -n "$MIGRATION_TO" ] && ALLOWED='^(app/|tests/|docs/|tools/|calculation-engines/|migrations/versions/|requirements(-dev|-lock)?\.txt$)'
+OUTSIDE=$(git diff --name-only "$MAIN_BASE" "$SHA" | grep -vE "$ALLOWED")
 [ -z "$OUTSIDE" ] || stop "unexpected files changed: $OUTSIDE"
-status "FAST_FORWARD main $MAIN_BASE -> $SHA ($(git rev-list --count "$MAIN_BASE..$SHA") commits); descends from live; no migration or model change"
-HELPERS=$(cd tools/release && shasum -a 256 hosted_preflight.py hosted_postcheck.py signing_readiness.py evidence_*.mjs | awk '{printf "%s=%s ", $2, substr($1,1,12)}')
+status "FAST_FORWARD main $MAIN_BASE -> $SHA ($(git rev-list --count "$MAIN_BASE..$SHA") commits); descends from live; $DBCHANGE"
+HELPERS=$(cd tools/release && shasum -a 256 hosted_preflight.py hosted_postcheck.py signing_readiness.py migration_check.py evidence_*.mjs | awk '{printf "%s=%s ", $2, substr($1,1,12)}')
 status "HELPERS from $SHA: $HELPERS"
 /usr/bin/python3 -m venv venv || stop "venv failed"
 ./venv/bin/python -m pip install -q --upgrade pip
@@ -151,6 +175,18 @@ grep -q '^PREFLIGHT=ok' "$OUT-preflight.txt" || stop "hosted preflight failed"
 REVISION=$(val LIVE_REVISION "$OUT-preflight.txt")
 [ -n "$REVISION" ] && [ "$(val BACKUP_REVISION "$OUT-preflight.txt")" = "$REVISION" ] || stop "backup revision differs from live"
 grep -q "^revision = \"$REVISION\"" migrations/versions/*.py || stop "live revision $REVISION is not a migration in the candidate"
+if [ -n "$MIGRATION_TO" ]; then
+  HEADINFO=$(./venv/bin/python - "$MIGRATION_TO" <<'PYEOF'
+import sys
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+cfg = Config(); cfg.set_main_option("script_location", "migrations")
+s = ScriptDirectory.from_config(cfg)
+print("HEADS=" + ",".join(s.get_heads()) + " DOWN=" + str(s.get_revision(sys.argv[1]).down_revision))
+PYEOF
+)
+  [ "$HEADINFO" = "HEADS=$MIGRATION_TO DOWN=$REVISION" ] || stop "migration graph: $HEADINFO (expected head $MIGRATION_TO following live $REVISION)"
+fi
 BPATH=$(val BACKUP_PATH "$OUT-preflight.txt"); BSHA=$(val BACKUP_SHA256 "$OUT-preflight.txt")
 mkdir -p "$BACKUPS"
 LOCALB="$BACKUPS/$(basename "$BPATH")"
@@ -170,6 +206,19 @@ PYEOF
 )
 status "BACKUP=$BPATH sha256=$BSHA $BROWS revision=$REVISION integrity=ok; Mac copy $LOCALB matches"
 
+if [ -n "$MIGRATION_TO" ]; then
+  echo "== 3a. Migration rehearsal on a copy of the fresh production backup (this Mac only)"
+  REHEARSAL="$GEN/$LABEL-rehearsal-$TS.db"
+  cp "$LOCALB" "$REHEARSAL" || stop "could not copy the backup for the rehearsal"
+  ./venv/bin/python tools/release/migration_check.py rehearse --db "$REHEARSAL" --from "$REVISION" \
+    --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" > "$OUT-rehearsal.txt" 2>&1
+  REH=$?
+  rm -f "$REHEARSAL"  # production data: no extra copy is kept
+  cat "$OUT-rehearsal.txt" | grep -E '^[A-Z_]+='
+  [ "$REH" -eq 0 ] && grep -q '^MIGRATION_REHEARSAL=ok' "$OUT-rehearsal.txt" || stop "migration rehearsal failed (see $OUT-rehearsal.txt)"
+  status "MIGRATION_REHEARSAL $REVISION -> $MIGRATION_TO on a copy of $(basename "$LOCALB"): $(val EXISTING_TABLES_UNCHANGED "$OUT-rehearsal.txt"); new: $(val NEW_TABLES "$OUT-rehearsal.txt"); integrity $(val INTEGRITY_AFTER "$OUT-rehearsal.txt"); $(val UPGRADE_SECONDS "$OUT-rehearsal.txt") s; copy deleted"
+fi
+
 echo "== 3b. Contract signing readiness on the live database (read-only)"
 ssh "${SSH_OPTS[@]}" "$HOST" "$REMOTE_PY" < tools/release/signing_readiness.py | tee "$OUT-signing-readiness.txt"
 grep -q '^READINESS=ok' "$OUT-signing-readiness.txt" || stop "no ACTIVE PRODUCTION contract package on the live database"
@@ -183,8 +232,15 @@ REVISION=$REVISION
 BACKUP=$LOCALB
 BACKUP_ROWS=$BROWS
 CLONE=$DEST
+MIGRATION_TO=$MIGRATION_TO
+NEW_TABLES=$NEW_TABLES
 EOF
 echo "== 4. READY_FOR_PUSH — stop here"
-status "ROLLBACK_TARGET=redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings); no database change to undo; restore only with Joel's approval from $LOCALB"
+if [ -n "$MIGRATION_TO" ]; then
+  status "ROLLBACK_TARGET=code: redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings) — it runs unchanged with the added tables present; database: only with Joel's approval, restore the pre-migration backup release_migrate.sh takes on the instance (or $LOCALB)"
+  status "AFTER_AUTHORIZATION Claude pushes $SHA and deploys it; Joel runs release_migrate.sh --label $LABEL (migration $REVISION -> $MIGRATION_TO), then postrelease_check.sh --label $LABEL"
+else
+  status "ROLLBACK_TARGET=redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings); no database change to undo; restore only with Joel's approval from $LOCALB"
+fi
 status "READY_FOR_PUSH commit=$SHA (nothing pushed, nothing deployed; production needs Joel's authorization)"
 echo "== DONE. All gates passed. Send Claude the status file: $STATUS"

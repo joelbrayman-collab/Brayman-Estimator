@@ -268,8 +268,16 @@ def records_for_project(dest: str, project, org_id: str) -> list:
                               " · ".join(x for x in (_supplier_name(s), s.status.title(), project.name) if x), "quote"))
         for c in (ConcreteRequest.query.filter_by(organization_id=org_id, project_id=pid)
                   .order_by(ConcreteRequest.id.desc()).all()):
-            items.append(Item(f"Concrete request {c.number}", f"{base}#concrete",
-                              f"{project.name} · delivery {_date(c.delivery_date)}", "quote"))
+            from app.services.supplier_hub import concrete_delivery
+
+            cd = concrete_delivery(c)
+            if cd["schedule"] and cd["schedule"]["date"]:
+                when = f"{'agreed' if cd['schedule']['agreed'] else 'ordered for'} {_date(cd['schedule']['date'])}"
+                if cd["pending"] is not None:
+                    when += f" (change waiting: {_date(cd['pending'].new_date)})"
+            else:
+                when = f"requested delivery {_date(c.delivery_date)}"
+            items.append(Item(f"Concrete request {c.number}", f"{base}#concrete", f"{project.name} · {when}", "quote"))
     elif dest == DEST_ORDERS:
         from app.models.supplier_portal import SupplierPurchaseOrder
 
@@ -285,8 +293,9 @@ def records_for_project(dest: str, project, org_id: str) -> list:
         for row in upcoming_deliveries(organization_id=org_id, project_id=pid):
             order, sched = row["order"], row["schedule"]
             when = _date(sched["date"]) or "date not set"
+            waiting = f" · change waiting: {_date(row['pending'].new_date)}" if row["pending"] is not None else ""
             items.append(Item(f"Delivery — {order.number}", f"{base}#share-{order.share_id}",
-                              f"{when}{' · ' + sched['window'] if sched['window'] else ''} · {project.name}", "delivery"))
+                              f"{when}{' · ' + sched['window'] if sched['window'] else ''}{waiting} · {project.name}", "delivery"))
     elif dest == DEST_CALENDAR:
         items.append(Item(f"Company Calendar — {project.name}", url_for("schedule.company", project_id=pid),
                           "This project's scheduled work", "calendar"))
@@ -322,7 +331,9 @@ def company_wide(dest: str, org_id: str) -> list:
             order, sched, project = row["order"], row["schedule"], row["project"]
             items.append(Item(f"Delivery — {order.number}",
                               url_for("supplier_office.project_requests", project_id=order.project_id) + f"#share-{order.share_id}",
-                              f"{_date(sched['date']) or 'date not set'} · {project.name if project else ''}", "delivery"))
+                              f"{_date(sched['date']) or 'date not set'}"
+                              f"{' · change waiting: ' + _date(row['pending'].new_date) if row['pending'] is not None else ''}"
+                              f" · {project.name if project else ''}", "delivery"))
         items.append(Item("All deliveries", url_for("supplier_office.deliveries"), "Every upcoming delivery", "tool"))
     elif dest == DEST_CALENDAR:
         items.append(Item("Company Calendar", url_for("schedule.company"), "Every crew, every job, by day", "tool"))

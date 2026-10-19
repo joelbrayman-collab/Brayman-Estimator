@@ -1,5 +1,5 @@
 {% extends "supplier/base.html" %}
-{% from "supplier/_delivery.html" import delivery_panel with context %}
+{% from "supplier/_delivery.html" import delivery_panel, when with context %}
 {% block title %}{{ share.number }}{% endblock %}
 {% block content %}
 {% set s = share.shared_json %}
@@ -14,7 +14,7 @@
 <section class="form-panel supplier-order" data-supplier-order="{{ order.status }}">
     <h2>Purchase order {{ order.number }}</h2>
     <p>Placed by {{ order.placed_by_name }} on {{ order.placed_at.strftime("%B %d, %Y") }} against quote {{ order.quote_ref }}. Total before tax <strong>{{ "${:,.2f}".format(order.total) }}</strong>.</p>
-    <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if order.delivery_date %} on {{ order.delivery_date.isoformat() }}{% if order.delivery_window %}, {{ order.delivery_window }}{% endif %}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
+    <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if schedule and schedule.date %} · {{ "Agreed delivery" if schedule.agreed else "Requested delivery" }} <strong data-order-delivery="{{ schedule.date.isoformat() }}">{{ when(schedule.date, schedule.window) }}</strong>{% if pending %} (a change is waiting: see Delivery){% endif %}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
     {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
     {% if share.request_kind != kind_concrete %}<p class="muted-copy">The order lists the lines the contractor can order now. Lines whose quantity or product is not final stay on your quote and are not ordered yet.</p>{% endif %}
     <div style="overflow-x: auto;"><table class="data-table">
@@ -34,7 +34,7 @@
     </form>
     <p class="muted-copy">Confirm order completes the agreement with the contractor under your account terms. Report a problem (for example a price change or an item out of stock) puts the order on hold; write what is wrong in the note.</p>
     {% else %}
-    <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else order.status|title) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.expected_delivery %} · Expected delivery {{ order.expected_delivery.isoformat() }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
+    <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else order.status|title) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.status == "CONFIRMED" and schedule and schedule.date %} · Delivery {{ when(schedule.date, schedule.window) }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
     {% endif %}
 </section>
 {% endif %}
@@ -52,7 +52,8 @@
         <div><p class="eyebrow">Exposure class</p><p>{{ c.exposure_class or "—" }}</p></div>
         <div><p class="eyebrow">Air</p><p>{{ c.air_entrainment or "—" }}</p></div>
         <div><p class="eyebrow">Slump</p><p>{{ (c.slump_mm ~ " mm") if c.slump_mm else "—" }}</p></div>
-        <div><p class="eyebrow">Delivery</p><p>{{ c.delivery_date }}{% if c.delivery_window %}, {{ c.delivery_window }}{% endif %}</p></div>
+        <div><p class="eyebrow">Requested delivery</p><p>{{ c.delivery_date }}{% if c.delivery_window %}, {{ c.delivery_window }}{% endif %}</p></div>
+        {% if order and schedule and schedule.date and schedule.date.isoformat() != c.delivery_date %}<div data-concrete-agreed="{{ schedule.date.isoformat() }}"><p class="eyebrow">{{ "Agreed delivery" if schedule.agreed else "Delivery now" }}</p><p><strong>{{ when(schedule.date, schedule.window) }}</strong></p></div>{% endif %}
         <div><p class="eyebrow">Placement</p><p>{{ c.placement }}</p></div>
     </div>
     {% if c.notes %}<p>Notes: {{ c.notes }}</p>{% endif %}

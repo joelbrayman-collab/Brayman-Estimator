@@ -2,7 +2,7 @@
 
 from app.presentation.contractor_copy import (
     ATTENTION_NAV_TITLE,
-    COMPANY_CALENDAR_HEADING,
+    CALENDAR_NAV_TITLE,
     COMPANY_LIBRARY_NAV_TITLE,
     COSTS_AND_PRICING_NAV_TITLE,
     HOW_WE_PRICE_NAV_TITLE,
@@ -28,7 +28,7 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": COMPANY_CALENDAR_HEADING,
+                "title": CALENDAR_NAV_TITLE,
                 "endpoint": "schedule.company",
                 "icon": "bi-calendar3",
                 "enabled": True,

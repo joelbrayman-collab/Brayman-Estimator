@@ -5,7 +5,8 @@
 # (fetch it from the released commit: git -C ~/Desktop/Brayman-Estimator show <sha>:tools/release/postrelease_check.sh > /tmp/postrelease_check.sh)
 #   1 the release gate reached READY_FOR_PUSH for this commit; GitHub main is that commit; git fsck
 #   2 the live instance reports it (waits up to 40 minutes)
-#   3 database re-read: revision unchanged, integrity ok, tables and rows equal to the pre-release backup
+#   3 database re-read: revision unchanged (or, for a release with a migration, at the new revision after
+#     release_migrate.sh), integrity ok, rows equal to the pre-release backup (plus the new, empty tables)
 #   4 signed-out public checks: sign-in required, supplier sign-in, material demand, manifest, icons and
 #     logo, Cal (signed-out /cal/find goes to sign-in, no Cal on sign-in, approved icon bytes, script, styles)
 # Safe to run more than once.
@@ -30,6 +31,13 @@ REMOTE_PY='cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.ve
 [ -f "$STATE" ] || stop "no release state for $LABEL ($STATE); run the release gate first"
 SHA=$(val SHA "$STATE"); LIVE_BASE=$(val LIVE_BASE "$STATE"); LIVE_DEPLOY=$(val LIVE_DEPLOY "$STATE")
 REVISION=$(val REVISION "$STATE"); LOCALB=$(val BACKUP "$STATE"); BROWS=$(val BACKUP_ROWS "$STATE"); DEST=$(val CLONE "$STATE")
+MIGRATION_TO=$(val MIGRATION_TO "$STATE"); NEW_TABLES=$(val NEW_TABLES "$STATE")
+EXPECT_REVISION=${MIGRATION_TO:-$REVISION}
+if [ -n "$MIGRATION_TO" ]; then
+  grep -q "^MIGRATED .*-> $MIGRATION_TO\|^MIGRATED already at $MIGRATION_TO" "$STATUS" || stop "run release_migrate.sh --label $LABEL first (migration $REVISION -> $MIGRATION_TO)"
+  NEWN=$(echo "$NEW_TABLES" | tr ',' '\n' | grep -c .)
+  BROWS=$(echo "$BROWS" | awk -v n="$NEWN" '{split($1,a,"="); split($2,b,"="); printf "TABLES=%d ROWS=%d", a[2]+n, b[2]}')
+fi
 grep -q "^READY_FOR_PUSH commit=$SHA" "$STATUS" 2>/dev/null || stop "the release gate did not reach READY_FOR_PUSH for $SHA"
 POST="$DEST/tools/release/hosted_postcheck.py"
 [ "$(git -C "$DEST" rev-parse HEAD)" = "$SHA" ] && [ -f "$POST" ] || stop "the release clone $DEST is not at $SHA"
@@ -56,11 +64,15 @@ for i in 1 2 3; do ssh "${SSH_OPTS[@]}" "$HOST" "$REMOTE_PY" < "$POST" > "$OUT-p
 cat "$OUT-postcheck.txt"
 grep -q '^POSTCHECK=ok' "$OUT-postcheck.txt" || stop "post-deploy database check failed"
 [ "$(val RUNNING_SHA "$OUT-postcheck.txt")" = "$SHA" ] || stop "post-check did not run on $SHA"
-[ "$(val REVISION "$OUT-postcheck.txt")" = "$REVISION" ] || stop "database revision changed"
+[ "$(val REVISION "$OUT-postcheck.txt")" = "$EXPECT_REVISION" ] || stop "database revision is $(val REVISION "$OUT-postcheck.txt"), expected $EXPECT_REVISION"
 [ "$(val INTEGRITY "$OUT-postcheck.txt")" = "ok" ] || stop "database integrity is not ok"
 LROWS=$(grep '^TABLES=' "$OUT-postcheck.txt")
 [ "$LROWS" = "$BROWS" ] || stop "records differ from the pre-release backup (backup: $BROWS; live: $LROWS) — check whether anyone used the app during the release"
-status "LIVE_RUNNING_SHA=$RUN; revision $REVISION unchanged; $LROWS equal to the pre-release backup; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+if [ -n "$MIGRATION_TO" ]; then
+  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new, empty tables; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+else
+  status "LIVE_RUNNING_SHA=$RUN; revision $REVISION unchanged; $LROWS equal to the pre-release backup; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+fi
 
 echo "== 4. Public and Cal checks (signed out)"
 CODE=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$SITE/projects/")
@@ -81,6 +93,10 @@ curl -fsS "$SITE/login" | grep -q 'id="cal-launch"' && stop "Cal appears on the 
 curl -fsS "$SITE/static/js/cal_assistant.js" | grep -q 'cal-launch' || stop "Cal script is not served"
 [ "$(curl -s -o /dev/null -w '%{http_code}' "$SITE/static/css/cal-assistant.css")" = "200" ] || stop "Cal styles are not served"
 status "PUBLIC_CHECKS signed-out redirect to sign-in; supplier sign-in served; material demand requires supplier sign-in; manifest CalibraytAI on Home; icons and logo served; CAL signed-out /cal/find goes to sign-in, no Cal on sign-in page, approved icon bytes match, script and styles served"
-status "ROLLBACK_TARGET=redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings); no database change to undo; restore only with Joel's approval from $LOCALB"
+if [ -n "$MIGRATION_TO" ]; then
+  status "ROLLBACK_TARGET=code: redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings), which runs unchanged with the added tables; database: only with Joel's approval, restore $(val PRE_MIGRATION_BACKUP_MAC "$STATE")"
+else
+  status "ROLLBACK_TARGET=redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings); no database change to undo; restore only with Joel's approval from $LOCALB"
+fi
 status "RELEASED $(date)"
 echo "== DONE. $SHA is live. Claude now checks the release signed in."

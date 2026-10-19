@@ -1023,9 +1023,81 @@
     }, 0);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
+  // Schedule freshness (Joel, 19 Oct 2026). No timers and no polling: the phone checks only when a Field
+  // page is opened again, comes back to the foreground, or the connection returns.
+  var SCHEDULE_PAGES = { today: true, week: true, month: true, "company-today": true };
+  var STALE_AFTER_MS = 2 * 60 * 1000;
+  var RELOAD_GUARD_KEY = "calibai-field-last-fresh-reload";
+
+  function initFreshness() {
+    var body = document.body;
+    if (!body) return;
+    var banner = document.getElementById("field-offline-banner");
+    var page = body.getAttribute("data-field-page") || "";
+    var renderedAt = Date.parse(body.getAttribute("data-rendered-at") || "");
+    var offlineCopy = body.getAttribute("data-field-copy") === "offline";
+    var schedulePage = SCHEDULE_PAGES[page] === true;
+
+    function showBanner() {
+      if (!banner) return;
+      var when = banner.querySelector("[data-field-saved-at]");
+      if (when && !isNaN(renderedAt)) {
+        when.textContent = new Date(renderedAt).toLocaleString([], {
+          weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+        });
+        when.textContent = "on " + when.textContent;
+      }
+      banner.hidden = false;
+    }
+
+    function stale() {
+      return offlineCopy || isNaN(renderedAt) || Date.now() - renderedAt > STALE_AFTER_MS;
+    }
+
+    function reloadForCurrentSchedule() {
+      try {
+        var last = parseInt(window.sessionStorage.getItem(RELOAD_GUARD_KEY) || "0", 10);
+        if (Date.now() - last < 30000) return; // never loop if the office is unreachable
+        window.sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
+      } catch (err) {
+        // Private browsing without storage: reload once anyway.
+      }
+      window.location.reload();
+    }
+
+    function checkFreshness() {
+      if (navigator.onLine === false) {
+        showBanner();
+        return;
+      }
+      if (schedulePage && stale()) reloadForCurrentSchedule();
+    }
+
+    if (offlineCopy || navigator.onLine === false) showBanner();
+    window.addEventListener("offline", showBanner);
+    window.addEventListener("online", function () {
+      if (schedulePage && offlineCopy) {
+        reloadForCurrentSchedule();
+      } else if (banner && !offlineCopy) {
+        banner.hidden = true;
+      }
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") checkFreshness();
+    });
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) checkFreshness();
+    });
+  }
+
+  function start() {
+    initFreshness();
     init();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
   }
 })();

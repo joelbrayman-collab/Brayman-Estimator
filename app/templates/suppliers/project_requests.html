@@ -38,7 +38,7 @@
         {% endif %}
         {% if order %}
         <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong>{% if order.schedule_item_id %} <span class="muted-copy">(follows the project schedule: moving that work proposes a new delivery to the supplier)</span>{% endif %} — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
-        {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if order.expected_delivery %}, delivery {{ order.expected_delivery.isoformat() }}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
+        {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if row.schedule and row.schedule.date %}; agreed delivery {{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
         {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
@@ -76,7 +76,7 @@
     <h2>Concrete</h2>
     <p class="muted-copy">Concrete is its own request, sent only to the concrete supplier and never combined with material requests.</p>
     {% if concrete %}
-    <ul>{% for c in concrete %}<li>{{ c.number }} — {{ c.volume_m3 }} m³, {{ c.strength_mpa }} MPa, {{ c.placement|lower }}, delivery {{ c.delivery_date.isoformat() }}{% if c.delivery_window %} {{ c.delivery_window }}{% endif %}, {{ c.delivery_town }}
+    <ul>{% for c in concrete %}{% set cd = concrete_deliveries.get(c.id) %}<li data-concrete-request="{{ c.id }}">{{ c.number }} — {{ c.volume_m3 }} m³, {{ c.strength_mpa }} MPa, {{ c.placement|lower }}, requested delivery {{ c.delivery_date.isoformat() }}{% if c.delivery_window %} {{ c.delivery_window }}{% endif %}{% if cd and cd.schedule and cd.schedule.date %}; <strong data-concrete-current="{{ cd.schedule.date.isoformat() }}">{{ "agreed" if cd.schedule.agreed else "ordered for" }} {{ cd.schedule.date.isoformat() }}{% if cd.schedule.window %} {{ cd.schedule.window }}{% endif %}</strong> ({{ cd.order.number }}){% if cd.pending %}, change waiting → {{ cd.pending.new_date.isoformat() }}{% endif %}{% endif %}, {{ c.delivery_town }}
         <form method="post" action="{{ url_for('supplier_office.send_concrete', project_id=project.id, concrete_id=c.id) }}" class="inline-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <select name="contractor_supplier_account_id">{% for a in accounts %}<option value="{{ a.id }}">{{ a.supplier.legal_name }}{% if not signed_in[a.supplier_id] %} (no sign-in yet){% endif %}</option>{% endfor %}</select>

@@ -1,15 +1,20 @@
 /* Field shell only. Office, estimating, pricing, suppliers, contracts, and QuickBooks are not cached. */
-var CACHE = "calibrayt-field-shell-v2";
+var CACHE = "calibrayt-field-shell-v3";
 var PRECACHE = [
   "/static/js/field.js",
   "/static/js/contextual_help.js",
   "/static/css/field.css",
   "/static/manifest.webmanifest",
   "/static/branding/calibraytai-app-icon-180.png",
+  "/static/branding/calibraytai-logo-v2.png",
 ];
 
 function isFieldDocument(pathname) {
   if (pathname === "/field" || pathname === "/field/" || pathname === "/field/today") {
+    return true;
+  }
+  // Week, Month and Company Today too (Joel, 19 Oct 2026): kept for offline use, always network first.
+  if (pathname === "/field/week" || pathname === "/field/month" || pathname === "/field/company-today") {
     return true;
   }
   if (pathname === "/field/projects") {
@@ -30,7 +35,8 @@ function isFieldAsset(pathname) {
     pathname === "/static/js/contextual_help.js" ||
     pathname === "/static/css/field.css" ||
     pathname === "/static/manifest.webmanifest" ||
-    pathname === "/static/branding/calibraytai-app-icon-180.png"
+    pathname === "/static/branding/calibraytai-app-icon-180.png" ||
+    pathname === "/static/branding/calibraytai-logo-v2.png"
   );
 }
 
@@ -68,6 +74,24 @@ self.addEventListener("activate", function (event) {
   );
 });
 
+// A Field page served from this phone's cache instead of the network is marked as an offline copy, so
+// the page can say so and refresh when the connection returns (Joel, 19 Oct 2026, schedule freshness).
+function markOfflineCopy(response) {
+  if (!response) {
+    return response;
+  }
+  var type = response.headers.get("Content-Type") || "";
+  if (type.indexOf("text/html") === -1) {
+    return response;
+  }
+  return response.text().then(function (html) {
+    return new Response(html.replace('data-field-copy="live"', 'data-field-copy="offline"'), {
+      status: 200,
+      headers: { "Content-Type": type },
+    });
+  });
+}
+
 function networkFirst(request) {
   return fetch(request)
     .then(function (response) {
@@ -93,10 +117,10 @@ function networkFirst(request) {
     .catch(function () {
       return caches.match(request, { ignoreSearch: true }).then(function (cached) {
         if (cached) {
-          return cached;
+          return markOfflineCopy(cached);
         }
         if (request.mode === "navigate") {
-          return caches.match("/field/today", { ignoreSearch: true });
+          return caches.match("/field/today", { ignoreSearch: true }).then(markOfflineCopy);
         }
         return new Response("", { status: 504, statusText: "Offline" });
       });
@@ -118,7 +142,7 @@ self.addEventListener("fetch", function (event) {
     event.respondWith(
       fetch(request).catch(function () {
         return caches.match("/field/today", { ignoreSearch: true }).then(function (cached) {
-          return cached || new Response("", { status: 504, statusText: "Offline" });
+          return cached ? markOfflineCopy(cached) : new Response("", { status: 504, statusText: "Offline" });
         });
       })
     );

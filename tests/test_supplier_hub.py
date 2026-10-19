@@ -754,3 +754,52 @@ def test_a_confirmed_sku_is_suggested_on_the_next_request_and_staff_can_change_i
     from app.models.supplier_catalogue import SupplierProduct
 
     assert {p.supplier_id for p in SupplierProduct.query.filter(SupplierProduct.sku.like("BMR-%"))} == {account.supplier_id}
+
+
+def test_after_an_accepted_change_every_screen_shows_the_agreed_delivery(app, client):
+    """Joel, 19 Oct 2026 (sync review G3): no screen shows an earlier date as the current delivery.
+
+    The first requested date stays visible as the requested date; the agreed date is shown as agreed;
+    a waiting change is shown as waiting; nothing changes before the other side agrees.
+    """
+    from app.models.supplier_portal import ConcreteRequest
+    from app.services.cal_find import DEST_QUOTES, DEST_DELIVERIES, records_for_project
+    from app.services.supplier_hub import request_delivery_change
+    from tests.auth_fixtures import ensure_office_user
+
+    project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
+    first = order.scheduled_date
+    moved = first + timedelta(days=3)
+    concrete = ConcreteRequest.query.one()
+    change = request_delivery_change(order, side="CONTRACTOR", user=ensure_office_user(), new_date=moved,
+                                     new_window="7:00–9:00", reason="Site not ready")
+    # Waiting: still the first date everywhere, with the change shown as waiting.
+    office = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    assert f'data-concrete-current="{first.isoformat()}"' in office and f"change waiting → {moved.isoformat()}" in office
+    with app.test_request_context():
+        quotes = [i.detail for i in records_for_project(DEST_QUOTES, project, project.organization_id)]
+    assert any("change waiting" in d for d in quotes)
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    order = db.session.get(SupplierPurchaseOrder, order.id)
+    assert order.scheduled_date == moved and order.expected_delivery == moved
+    # Supplier's own page: the order and the concrete details agree; the request date is labelled as requested.
+    page = darcy.get(f"/supplier/{tomlinson.supplier_id}/requests/{order.share_id}").get_data(as_text=True)
+    assert f'data-order-delivery="{moved.isoformat()}"' in page
+    assert f"Expected delivery {first.isoformat()}" not in page
+    assert "Requested delivery" in page and f'data-concrete-agreed="{moved.isoformat()}"' in page
+    # Office page: confirmed line and concrete list both show the agreed date; the request date stays labelled.
+    office = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    assert f"agreed delivery {moved.isoformat()}" in office and f"delivery {first.isoformat()}. The order is agreed" not in office
+    assert f'data-concrete-current="{moved.isoformat()}"' in office and f"requested delivery {first.isoformat()}" in office
+    # Cal: the concrete request and the delivery both give the agreed date.
+    with app.test_request_context():
+        quotes = [i.detail for i in records_for_project(DEST_QUOTES, project, project.organization_id)]
+        deliveries = [i.detail for i in records_for_project(DEST_DELIVERIES, project, project.organization_id)]
+    assert any(f"agreed {moved.strftime('%a %d %b %Y')}" in d for d in quotes)
+    assert not any(first.strftime("%a %d %b %Y") in d for d in quotes)
+    assert deliveries and all(moved.strftime("%a %d %b %Y") in d for d in deliveries)
+    # Calendar: the delivery is on the agreed day.
+    cal = client.get(f"/schedule?scope=company&year={moved.year}&month={moved.month}&day={moved.day}&view=day").get_data(as_text=True)
+    assert "Tomlinson concrete (synthetic)" in cal
+    # The earlier dates stay in the history.
+    assert change.previous_date == first and db.session.get(type(change), change.id).status == "ACCEPTED"

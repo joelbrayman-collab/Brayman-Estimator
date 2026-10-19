@@ -55,7 +55,7 @@ for v in SHA MAIN_BASE LIVE_BASE; do
 done
 [[ "$LABEL" =~ ^[a-z0-9-]+$ ]] || { echo "--label: lower-case letters, digits and dashes only"; exit 2; }
 if [ -n "$MIGRATION_TO$NEW_TABLES" ]; then
-  [[ "$MIGRATION_TO" =~ ^[0-9a-f]{12}$ ]] && [[ "$NEW_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
+  [[ "$MIGRATION_TO" =~ ^[0-9a-z]{12}$ ]] && [[ "$NEW_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
     || { echo "--migration-to <12-character revision> and --new-tables <t1,t2> go together"; exit 2; }
 fi
 

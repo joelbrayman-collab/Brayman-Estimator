@@ -166,3 +166,12 @@ def test_relocation_only_copies_and_never_overwrites(tmp_path):
     assert conflict.returncode == 1 and "nothing overwritten" in conflict.stdout
     assert copy.read_text() == "changed"
     assert {p: p.read_bytes() for p in (home / "Desktop").rglob("*") if p.is_file()} == before
+
+
+def test_gate_accepts_the_calendar_migration_revision():
+    """Alembic revisions here are 12 lower-case letters and digits, not only hex (z3c4d5e6f7a8)."""
+    match = re.search(r'\[\[ "\$MIGRATION_TO" =~ (\S+) \]\]', _code(GATE))
+    assert match, "gate must validate --migration-to"
+    for revision, ok in (("z3c4d5e6f7a8", True), ("y2b3c4d5e6f7", True), ("Z3C4", False), ("z3c4d5e6f7a8;", False)):
+        result = subprocess.run(["bash", "-c", f'[[ "$1" =~ {match.group(1)} ]]', "_", revision])
+        assert (result.returncode == 0) is ok, revision

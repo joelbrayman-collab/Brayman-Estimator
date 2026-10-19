@@ -13,7 +13,7 @@ Sections below this one are dated history. A heading such as "(not deployed)" wa
 
 | Item | Current value | Evidence |
 |---|---|---|
-| Production commit | `b399e43601b8d858a92bc912e0573064cdb22cb9` (security closure), deploy `dep-dbau5a67bikc73b0bp40`, live 19 Oct 09:29 UTC. Before it: `9b9acfc` (technical cleanup). | Render deploy list; post-release check (`RUNNING_SHA`) |
+| Production commit | `d450188ba6a3b923c3cba191395255c8206a0a23` (Company Calendar), deploy `dep-dbb0lejrjlhs73avpu10`, live 19 Oct 12:21 UTC. Before it: `b399e43` (security closure). | Render deploy list; post-release check (`RUNNING_SHA`) |
 | GitHub `main` | the same commit | `git ls-remote` 18 Oct |
 | Database | revision `y2b3c4d5e6f7` (repository head; 76 migration files), 164 tables, 3,669 rows, 19 proposals, integrity ok | post-release check 18 Oct |
 | Rollback | redeploy `0e2c917` (`dep-dbaa9p2jnfac73ev79h0`); restore only with Joel from `pre-cleanup1-20261018-2232.db` | release record |
@@ -34,13 +34,14 @@ Live features added since the 16 Oct sections below (all released with Joel's au
 | 18 Oct | `0e2c917` | Cal Assistant Phase 1 "Find It" (read-only) |
 | 18 Oct | `9b9acfc` | Technical cleanup (tests, environment, release scripts, documentation; no product change) |
 | 19 Oct | `b399e43` | Security closure (stored-file messages, bypass code removed, 30-minute inactivity sign-out, pinned dependencies, local backups outside iCloud) |
+| 19 Oct | `d450188` | Company Calendar (toolbar, full-width calendar, activity colours, Month/Week/Day) |
 
 Development work not in production:
 
 | Branch | Commit | Status |
 |---|---|---|
 | `v1/completion` | `a2774e0` | `main` + one documentation commit (Cal release record) |
-| `calendar/release-2026-10-19` | see the handoff | Company Calendar (toolbar, full-width calendar, activity colours, Month/Week/Day), rebuilt on `b399e43`; Release 3 candidate, **not released** |
+| `calendar/appointments-2026-10-19` | see the handoff | Business appointments, hourly Day/Week, My Calendar / Company Calendar, Company/Personal visibility, Outlook/Google/Apple Calendar file and private feed; migration `z3c4d5e6f7a8` (synthetic rehearsal only). **Development, not released** |
 
 Governance points that earlier text states differently:
 

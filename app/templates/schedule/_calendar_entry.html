@@ -2,7 +2,7 @@
 {% from "schedule/_appt_icon.html" import appt_icon %}
 {% if e.kind == "appointment" %}
 <li class="cal-entry cal-entry-appt cal-cat-appointment cal-type-{{ e.type|lower }}{% if e.personal %} is-personal{% endif %}" data-category="appointment" data-appointment="{{ e.id }}">
-    <a href="{{ e.href }}" class="cal-entry-title">{{ appt_icon(e.type) }} <span class="cal-entry-time">{{ e.time_label }}</span> {{ e.title }}{% if e.personal %} <span class="cal-personal-tag">Personal</span>{% endif %}</a>
+    <a href="{{ e.href }}" class="cal-entry-title">{{ appt_icon(e.type) }} <span class="cal-entry-time">{{ e.time_label }}</span> {% if e.personal %}<svg class="cal-lock" viewBox="0 0 24 24" width="12" height="12" aria-label="Personal: only you can see it" role="img" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg> {% endif %}{{ e.title }}{% if e.personal %} <span class="cal-personal-tag">Personal</span>{% endif %}</a>
     {% if e.type_label or e.location or e.person %}<span class="cal-entry-meta">{{ e.type_label }}{% if e.location %} · {{ e.location }}{% endif %}{% if e.person %} · {{ e.person }}{% endif %}</span>{% endif %}
 </li>
 {% else %}

@@ -60,7 +60,7 @@
                title="{{ a.time_label }} · {{ a.title }}{% if a.location %} · {{ a.location }}{% endif %}">
                 {{ appt_icon(a.type) }}
                 <span class="cal-appt-text">
-                    <span class="cal-appt-title">{{ a.title }}{% if a.personal %} <span class="cal-personal-tag" title="Personal: only you can see it">Personal</span>{% endif %}</span>
+                    <span class="cal-appt-title">{% if a.personal %}<svg class="cal-lock" viewBox="0 0 24 24" width="12" height="12" aria-label="Personal: only you can see it" role="img" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg> {% endif %}{{ a.title }}</span>
                     {% set meta = ([a.time_label] if grid_kind == "day" else []) + ([a.location] if a.location else []) + ([a.person] if a.person and grid_kind == "day" else []) %}
                     {% if meta %}<span class="cal-appt-meta">{{ meta|join(" · ") }}</span>{% endif %}
                 </span>

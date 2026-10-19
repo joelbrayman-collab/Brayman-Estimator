@@ -1024,6 +1024,10 @@ button.button-secondary {
 .cal-scope a[aria-current="page"] { background: var(--white); box-shadow: 0 1px 3px rgba(28, 31, 36, 0.14); font-weight: 600; }
 .cal-personal-tag { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(28, 31, 36, 0.08); color: #3f444b; vertical-align: 1px; }
 .cal-appt.is-personal, .cal-entry-appt.is-personal { border-style: dashed; border-left-style: solid; }
+.cal-lock { vertical-align: -1px; opacity: 0.8; }
+.appt-page .button.secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+.appt-page .button.secondary:hover { background: #f6f5f2; }
+.appt-cancel-form .button.secondary { color: #8a3b32; border-color: #e6cfcb; }
 .appt-visibility, .appt-attendees { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px 12px; margin: 0; }
 .appt-visibility legend, .appt-attendees legend { font-size: 13px; font-weight: 600; padding: 0 4px; }
 .appt-visibility { display: flex; flex-wrap: wrap; gap: 8px 22px; }

@@ -13,7 +13,7 @@ Sections below this one are dated history. A heading such as "(not deployed)" wa
 
 | Item | Current value | Evidence |
 |---|---|---|
-| Production commit | `9b9acfc6b7d8d640e907c052bdaaa245edd2b161` (technical cleanup), deploy `dep-dbakojmq1p3s73c2cugg`, live 18 Oct 22:48 UTC. Before it: `0e2c917` (Cal Assistant Phase 1). | Render deploy list; post-release check (`RUNNING_SHA`) |
+| Production commit | `b399e43601b8d858a92bc912e0573064cdb22cb9` (security closure), deploy `dep-dbau5a67bikc73b0bp40`, live 19 Oct 09:29 UTC. Before it: `9b9acfc` (technical cleanup). | Render deploy list; post-release check (`RUNNING_SHA`) |
 | GitHub `main` | the same commit | `git ls-remote` 18 Oct |
 | Database | revision `y2b3c4d5e6f7` (repository head; 76 migration files), 164 tables, 3,669 rows, 19 proposals, integrity ok | post-release check 18 Oct |
 | Rollback | redeploy `0e2c917` (`dep-dbaa9p2jnfac73ev79h0`); restore only with Joel from `pre-cleanup1-20261018-2232.db` | release record |
@@ -33,15 +33,14 @@ Live features added since the 16 Oct sections below (all released with Joel's au
 | 17 Oct | `fb754ed` | Supplier Hub B–D (needs attention, reporting periods, material demand) |
 | 18 Oct | `0e2c917` | Cal Assistant Phase 1 "Find It" (read-only) |
 | 18 Oct | `9b9acfc` | Technical cleanup (tests, environment, release scripts, documentation; no product change) |
+| 19 Oct | `b399e43` | Security closure (stored-file messages, bypass code removed, 30-minute inactivity sign-out, pinned dependencies, local backups outside iCloud) |
 
 Development work not in production:
 
 | Branch | Commit | Status |
 |---|---|---|
 | `v1/completion` | `a2774e0` | `main` + one documentation commit (Cal release record) |
-| `calendar/layout-proof-wip` | `117862b` | Company Calendar visual layout proof; awaiting Joel's review; no Calendar deployment without separate authorization |
-| `cleanup/technical-2026-10-18` | `3e36b9d` (tested code `5094a2e`) | Technical cleanup (tests, environment, release scripts, documentation); no product change. Accepted by Joel for release preparation 18 Oct; **not released** |
-| `security/closure-2026-10-18` | see the handoff | The six approved corrections on top of the cleanup: stored-file messages, 30-minute inactivity sign-out, bypass code removed, production dependencies pinned, local backups outside iCloud, September signing-file restoration plan. **Tested, not released** |
+| `calendar/release-2026-10-19` | see the handoff | Company Calendar (toolbar, full-width calendar, activity colours, Month/Week/Day), rebuilt on `b399e43`; Release 3 candidate, **not released** |
 
 Governance points that earlier text states differently:
 

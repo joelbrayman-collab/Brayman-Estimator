@@ -430,15 +430,71 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     assert "Foundation pour" in change.note and "+2 days" in change.note
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # not imposed
     assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 1
-    # A second move while the first is waiting does not stack a second change; it is noted in the history.
+    # Joel, 19 Oct 2026 (release blocker): a second move while our first request is waiting replaces it.
+    # The supplier is never left answering a date the work no longer has.
     shift_project_schedule(project.id, days=1, organization_id=project.organization_id)
-    assert SupplierDeliveryChange.query.count() == 1
-    assert SupplierRequestEvent.query.filter_by(event_type="SCHEDULE_MOVED_CHANGE_PENDING").count() == 1
+    first = db.session.get(SupplierDeliveryChange, change.id)
+    assert first.status == "WITHDRAWN"
+    fresh = SupplierDeliveryChange.query.filter_by(status="PENDING").one()
+    assert fresh.new_date == agreed + timedelta(days=3) and fresh.new_window == "7:00–9:00"
+    assert "replaces the earlier request" in fresh.note and "+1 day" in fresh.note
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # still not imposed
+    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 2
+    # The old request can no longer be accepted; the fresh one can, and then delivery and work agree.
     darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{fresh.id}/answer", data={"action": "accept"})
     order = db.session.get(SupplierPurchaseOrder, order.id)
-    assert order.scheduled_date == agreed + timedelta(days=2)
+    assert order.scheduled_date == agreed + timedelta(days=3) == db.session.get(type(item), item.id).scheduled_start
     events = [e.event_type for e in SupplierRequestEvent.query.filter_by(share_id=order.share_id).order_by(SupplierRequestEvent.id)]
-    assert events[-3:] == ["DELIVERY_CHANGE_REQUESTED", "SCHEDULE_MOVED_CHANGE_PENDING", "DELIVERY_CHANGE_ACCEPTED"]
+    assert events[-4:] == ["DELIVERY_CHANGE_REQUESTED", "DELIVERY_CHANGE_WITHDRAWN", "DELIVERY_CHANGE_REQUESTED", "DELIVERY_CHANGE_ACCEPTED"]
+
+
+def _linked_pour(app, client):
+    from app.services.schedule import create_schedule_item
+    from app.services.work_structure import add_project_element
+
+    project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
+    agreed = order.scheduled_date
+    element = add_project_element(project_id=project.id, display_name="Foundation pour",
+                                  organization_id=project.organization_id)
+    item = create_schedule_item(project_id=project.id, project_work_element_id=element.id, scheduled_start=agreed,
+                                scheduled_end=agreed, organization_id=project.organization_id)
+    order.schedule_item_id = item.id
+    db.session.commit()
+    return project, tomlinson, darcy, order, item, agreed
+
+
+def test_moving_the_work_back_withdraws_the_waiting_request_and_tells_the_supplier(app, client):
+    from app.models.supplier_portal import SupplierDeliveryChange
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+    from app.services.schedule import shift_project_schedule
+
+    project, tomlinson, darcy, order, item, agreed = _linked_pour(app, client)
+    shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
+    waiting = SupplierDeliveryChange.query.one()
+    before = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count()
+    shift_project_schedule(project.id, days=-2, organization_id=project.organization_id)  # back on the agreed day
+    assert db.session.get(SupplierDeliveryChange, waiting.id).status == "WITHDRAWN"
+    assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 0
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
+    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 1
+    assert SupplierRequestEvent.query.filter_by(event_type="DELIVERY_CHANGE_WITHDRAWN").count() == 1
+
+
+def test_a_suppliers_own_waiting_change_is_left_for_the_office_to_answer_and_the_office_is_told(app, client):
+    from app.models.supplier_portal import SupplierDeliveryChange
+
+    project, tomlinson, darcy, order, item, agreed = _linked_pour(app, client)
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/delivery-change",
+               data={"new_date": (agreed + timedelta(days=1)).isoformat(), "new_window": "8:00–10:00", "reason": "Weather"})
+    theirs = SupplierDeliveryChange.query.filter_by(requested_by_side="SUPPLIER", status="PENDING").one()
+    page = client.post(f"/schedule/projects/{project.id}/shift", data={"days": "3"}, follow_redirects=True).get_data(as_text=True)
+    assert db.session.get(SupplierDeliveryChange, theirs.id).status == "PENDING"  # theirs is not answered for them
+    assert SupplierDeliveryChange.query.count() == 1
+    assert "waiting for your answer" in page and order.number in page
+    assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
+    assert SupplierRequestEvent.query.filter_by(event_type="SCHEDULE_MOVED_CHANGE_PENDING").count() == 1
 
 
 def test_delivery_notices_email_the_right_people_and_texts_stay_not_sent_until_twilio_is_configured(app, client):

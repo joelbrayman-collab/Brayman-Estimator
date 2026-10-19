@@ -1146,11 +1146,28 @@ def _schedule_actor():
     return _ScheduleActor()
 
 
+def _schedule_attention(message: str) -> None:
+    """Tell the person who moved the schedule about a delivery they must answer themselves."""
+    from flask import g, has_app_context
+
+    if has_app_context():
+        g.schedule_delivery_attention = getattr(g, "schedule_delivery_attention", []) + [message]
+
+
 def propose_deliveries_for_schedule_moves(moves) -> list:
     """For each moved schedule item, propose moving its linked open deliveries by the same number of days.
 
     Proposed by the contractor side and sent to the supplier to accept, decline or counter; the agreed
-    delivery stands until then. An order that already has a change waiting is left alone and noted.
+    delivery stands until then.
+
+    A move while a change is already waiting (Joel, 19 Oct 2026, release blocker found by the
+    schedule synchronization review): the supplier must never be left answering a date the work no
+    longer has.
+    - Our own waiting request (the contractor's) is replaced: it is withdrawn and one fresh request
+      for the new date goes to the supplier, saying which request it replaces. If the work is back
+      on the agreed date, the request is withdrawn and the supplier is told the agreed delivery stands.
+    - A change the supplier asked for is theirs to have answered: it is not touched, and the person
+      who moved the work is told to answer it (the agreed delivery stands meanwhile).
     """
     from app.models.schedule import WorkScheduleItem
 
@@ -1166,20 +1183,47 @@ def propose_deliveries_for_schedule_moves(moves) -> list:
             SupplierPurchaseOrder.schedule_item_id == item.id,
             SupplierPurchaseOrder.status.in_((PO_PLACED, PO_CONFIRMED)),
         ).all()
+        work = schedule_item_label(item).rsplit(" (", 1)[0]
+        moved = (f"{work} moved from {prior_start.isoformat()} to {item.scheduled_start.isoformat()} "
+                 f"({delta.days:+d} day{'s' if abs(delta.days) != 1 else ''}).")
         for order in orders:
             schedule = current_schedule(order)
             if schedule["date"] is None:
                 continue
-            if pending_change(order) is not None:
+            waiting = pending_change(order)
+            if waiting is not None and waiting.requested_by_side == "SUPPLIER":
                 _event(order.share, "SCHEDULE_MOVED_CHANGE_PENDING", "CONTRACTOR", "CalibraytAI",
-                       f"{order.number}: schedule item moved {delta.days:+d} days; a delivery change is already waiting")
+                       f"{order.number}: schedule item moved {delta.days:+d} days; the supplier's own change is waiting for an answer")
                 db.session.commit()
+                _schedule_attention(
+                    f"{order.number} ({order.share.supplier.legal_name}): the supplier asked to move this delivery to "
+                    f"{_when(waiting.new_date, waiting.new_window)} and is waiting for your answer. The work now starts "
+                    f"{item.scheduled_start.isoformat()}. Answer it (accept, propose another time or decline) on the "
+                    f"project's supplier requests page. Until then the agreed delivery stands.")
+                continue
+            if waiting is not None:
+                replaced_date, replaced_window = waiting.new_date, waiting.new_window
+                target = replaced_date + delta
+                withdraw_delivery_change(waiting, side="CONTRACTOR", user=_schedule_actor())
+                if target == schedule["date"]:
+                    _notify_supplier(
+                        order,
+                        f"Delivery change withdrawn: {order.number} stays {_when(schedule['date'], schedule['window'])}",
+                        f"The request to move {order.number} to {_when(replaced_date, replaced_window)} is withdrawn: "
+                        f"{moved} The agreed delivery stands: {_when(schedule['date'], schedule['window'])}.",
+                    )
+                    continue
+                change = request_delivery_change(
+                    order, side="CONTRACTOR", user=_schedule_actor(), new_date=target,
+                    new_window=replaced_window or schedule["window"] or "", reason="Project schedule change",
+                    note=f"{moved} This replaces the earlier request for {_when(replaced_date, replaced_window)}.",
+                )
+                proposed.append(change)
                 continue
             change = request_delivery_change(
                 order, side="CONTRACTOR", user=_schedule_actor(), new_date=schedule["date"] + delta,
                 new_window=schedule["window"] or "", reason="Project schedule change",
-                note=(f"{schedule_item_label(item).rsplit(' (', 1)[0]} moved from {prior_start.isoformat()} to "
-                      f"{item.scheduled_start.isoformat()} ({delta.days:+d} day{'s' if abs(delta.days) != 1 else ''})."),
+                note=moved,
             )
             proposed.append(change)
     return proposed

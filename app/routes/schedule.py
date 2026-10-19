@@ -63,6 +63,8 @@ def _flash_delivery_proposals():
     if count:
         flash(f"{count} linked supplier deliver{'y' if count == 1 else 'ies'} proposed for the new date. "
               "The supplier is asked to accept; until then the agreed delivery stands.", "success")
+    for message in getattr(g, "schedule_delivery_attention", []):
+        flash(message, "error")
 
 
 def _org():

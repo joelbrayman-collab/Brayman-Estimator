@@ -24,6 +24,7 @@ from app.models.supplier_catalogue import (
 from app.services.material_requirements import FORBIDDEN_REQUIREMENT_ACTORS
 from app.services.supplier_catalogue import (
     CONFIRMED_CONTRACTOR_COST,
+    PUBLIC_LIST_FALLBACK,
     resolve_effective_contractor_cost,
 )
 
@@ -82,9 +83,13 @@ def record_contractor_cost_approval(
         as_of=as_of,
     )
     if resolved["resolution"] != CONFIRMED_CONTRACTOR_COST:
+        # Say why this cost cannot be approved: a public list price, or the resolver's own reason
+        # (for example two SKUs of the same supplier priced for one material).
+        detail = "A public list price stays unapproved."
+        if resolved["resolution"] != PUBLIC_LIST_FALLBACK and resolved.get("resolution_reason"):
+            detail = resolved["resolution_reason"]
         raise ContractorCostApprovalError(
-            "Only a contractor-confirmed price can be submitted for Brayman approval. "
-            "A public list price stays unapproved."
+            "Only a contractor-confirmed price can be submitted for Brayman approval. " + detail
         )
     evidence_id = resolved.get("price_evidence_id")
     evidence = (

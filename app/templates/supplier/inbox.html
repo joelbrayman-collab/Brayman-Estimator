@@ -17,19 +17,19 @@
     <h2>Requests</h2>
     {% if shares %}
     <div style="overflow-x: auto;">
-    <table class="data-table">
+    <table class="data-table pd-stack">
         <thead><tr><th>Request</th><th>From</th><th>Type</th><th>Needed by</th><th>Delivery town</th><th>Status</th><th>Order</th></tr></thead>
         <tbody>
         {% for share in shares %}
         {% set order = orders_by_share.get(share.id) %}
         <tr data-share="{{ share.number }}">
             <td><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=share.id) }}">{{ share.number }}</a></td>
-            <td>{{ share.shared_json.company }}<br><span class="muted-copy">{{ share.shared_json.contact_name }}</span></td>
-            <td>{{ "Concrete" if share.request_kind == "CONCRETE" else "Materials (" ~ (share.shared_json.lines|length) ~ " lines)" }}</td>
-            <td>{{ share.shared_json.needed_by or "—" }}</td>
-            <td>{{ share.shared_json.delivery_town }}</td>
-            <td>{{ {"SENT": "New", "OPENED": "Opened", "RETURNED": "Quote returned", "SUPERSEDED": "Replaced by a newer request"}.get(share.status, share.status) }}</td>
-            <td>{% if order %}{{ order.number }} — {{ {"PLACED": "to confirm", "CONFIRMED": "confirmed", "PROBLEM": "problem reported", "CANCELLED": "cancelled"}[order.status] }}{% else %}—{% endif %}</td>
+            <td data-label="From">{{ share.shared_json.company }}<br><span class="muted-copy">{{ share.shared_json.contact_name }}</span></td>
+            <td data-label="Type">{{ "Concrete" if share.request_kind == "CONCRETE" else "Materials (" ~ (share.shared_json.lines|length) ~ " lines)" }}</td>
+            <td data-label="Needed by">{{ share.shared_json.needed_by or "—" }}</td>
+            <td data-label="Delivery town">{{ share.shared_json.delivery_town }}</td>
+            <td data-label="Status">{{ {"SENT": "New", "OPENED": "Opened", "RETURNED": "Quote returned", "SUPERSEDED": "Replaced by a newer request"}.get(share.status, share.status) }}</td>
+            <td data-label="Order">{% if order %}{{ order.number }} — {{ {"PLACED": "to confirm", "CONFIRMED": "confirmed", "PROBLEM": "problem reported", "CANCELLED": "cancelled"}[order.status] }}{% else %}—{% endif %}</td>
         </tr>
         {% endfor %}
         </tbody>

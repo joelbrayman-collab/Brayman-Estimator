@@ -216,6 +216,25 @@ def test_public_list_price_cannot_be_approved(app):
     assert ContractorCostApproval.query.count() == 0
 
 
+def test_two_skus_priced_for_one_material_names_that_reason_not_a_public_price(app):
+    """Supplier Hub walk, 20 Oct 2026: the refusal said "public list price" when the real reason was
+    two confirmed SKUs of the same supplier for one material. The gate is unchanged; the words now say why."""
+    from app.services.supplier_catalogue import create_supplier_product
+
+    material = get_canonical_material_by_code("CAL-LUM-2X8-12")
+    supplier, account, first = _supplier("PROVE-A", "Proving Supplier A", "PROVE-A-2X8-12")
+    second = create_supplier_product(supplier_id=supplier.id, sku="PROVE-A-2X8-12-B", description="Second SKU",
+                                     sales_uom="EA", pack_qty=Decimal("1"), demo_synthetic=True)
+    for product, amount in ((first, "10.00"), (second, "11.00")):
+        _map(material, product)
+        _record(product, amount, "CONTRACTOR_CONFIRMED_PRICE", account.id, OPEN_FROM, OPEN_UNTIL)
+    with pytest.raises(ContractorCostApprovalError) as refused:
+        _approve(material, account, AS_OF)
+    assert "More than one supplier product has a valid contractor-confirmed price" in str(refused.value)
+    assert "public list price" not in str(refused.value)
+    assert ContractorCostApproval.query.count() == 0
+
+
 def test_rejected_approval_stays_and_is_not_rewritten(app):
     material = get_canonical_material_by_code("CAL-LUM-2X8-12")
     _supplier_a, account_a, product_a = _supplier(

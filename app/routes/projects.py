@@ -143,7 +143,44 @@ def view_project(id):
         **hub_operating_template_vars(project, org_id, current_user),
         **hub_punch_list_template_vars(project, org_id, current_user),
         **hub_walkthrough_template_vars(project, org_id, current_user),
+        **hub_record_template_vars(project, org_id),
     )
+
+
+def hub_record_template_vars(project, organization_id: str) -> dict:
+    """Read-only facts the Project page shows from records kept on other pages: the job address,
+    the generated contracts with their signing status, and the job's purchase orders."""
+    from app.services.contract_generation import _location_address
+    from app.services.supplier_hub import project_purchase_orders
+
+    return {
+        # The free-text address, else the structured job location (as the contract and the PO do).
+        "job_address": (project.address or "").strip() or _location_address(project),
+        "hub_contracts": _hub_contracts(project.id, organization_id),
+        "purchase_orders": project_purchase_orders(organization_id=organization_id, project_id=project.id),
+    }
+
+
+def _hub_contracts(project_id: int, organization_id: str) -> list[dict]:
+    """Generated contracts and their signing status, for the Project page (read only).
+
+    The Contract page stays where a contract is generated, sent and countersigned."""
+    from app.models.project_contract import GeneratedProjectContract
+    from app.services.signing import overlay_for_contract
+
+    rows = (GeneratedProjectContract.query.filter_by(project_id=project_id, organization_id=organization_id)
+            .order_by(GeneratedProjectContract.generated_at.desc(), GeneratedProjectContract.id.desc()).all())
+    contracts = []
+    for row in rows:
+        overlay = overlay_for_contract(row.id, organization_id)
+        if overlay.request_status == "EXECUTED":
+            label = "Signed — executed"
+        elif overlay.request_status:
+            label = overlay.hub_label
+        else:
+            label = "Generated — not signed"
+        contracts.append({"number": row.contract_number, "label": label})
+    return contracts
 
 
 @projects_bp.route("/<int:id>/print.pdf")

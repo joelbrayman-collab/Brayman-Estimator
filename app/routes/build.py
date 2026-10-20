@@ -99,6 +99,12 @@ def _hub_monitor_redirect(project):
     )
 
 
+def _hub_record_template_vars(project, org_id):
+    from app.routes.projects import hub_record_template_vars
+
+    return hub_record_template_vars(project, org_id)
+
+
 def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, status=400):
     org_id = get_current_organization_id()
     hub = assemble_project_hub(project, org_id)
@@ -124,6 +130,7 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
             **hub_operating_template_vars(project, org_id, current_user),
             **hub_punch_list_template_vars(project, org_id, current_user),
             **hub_walkthrough_template_vars(project, org_id, current_user),
+            **_hub_record_template_vars(project, org_id),
         ),
         status,
     )

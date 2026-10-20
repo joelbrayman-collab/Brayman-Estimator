@@ -32,6 +32,7 @@ from app.models.supplier_portal import (
     KIND_CONCRETE,
     KIND_MATERIAL,
     MEMBERSHIP_ACTIVE,
+    PO_CANCELLED,
     PO_CONFIRMED,
     PO_PLACED,
     PO_PROBLEM,
@@ -549,6 +550,21 @@ def return_concrete_quote(share: SupplierRequestShare, *, user, values: dict) ->
 
 def purchase_order_for(share: SupplierRequestShare) -> Optional[SupplierPurchaseOrder]:
     return SupplierPurchaseOrder.query.filter_by(share_id=share.id).first()
+
+
+_PO_STATUS_LABELS = {PO_PLACED: "Waiting for the supplier to confirm", PO_CONFIRMED: "Confirmed",
+                     PO_PROBLEM: "Supplier reported a problem", PO_CANCELLED: "Cancelled"}
+
+
+def project_purchase_orders(*, organization_id: str, project_id: int) -> list[dict]:
+    """The job's purchase orders for the Project page (read only): number, supplier, kind, total,
+    status and current delivery. Newest first. Changing them stays on the supplier requests page."""
+    orders = (SupplierPurchaseOrder.query.filter_by(organization_id=organization_id, project_id=project_id)
+              .order_by(SupplierPurchaseOrder.placed_at.desc(), SupplierPurchaseOrder.id.desc()).all())
+    return [{"order": order, "supplier": order.share.supplier.legal_name,
+             "kind": "concrete" if order.share.request_kind == KIND_CONCRETE else "materials",
+             "status": _PO_STATUS_LABELS.get(order.status, order.status), "schedule": current_schedule(order)}
+            for order in orders]
 
 
 def _site_address(project: Project) -> str:

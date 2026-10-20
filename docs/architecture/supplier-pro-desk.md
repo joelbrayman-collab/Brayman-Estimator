@@ -54,7 +54,12 @@ The customer is the supplier's customer. They never register with CalibraytAI an
 |---|---|
 | Development branch | `supplier/pro-desk-2026-10-20` (from `f30fb19`) |
 | Database migration | `pd1a2b3c4d5e` — new supplier-quote tables; canonical category list extended (no existing row changed) |
+| Tests | `tests/test_supplier_pro_desk.py` (15), `tests/test_supplier_pro_desk_migration.py` (3), route sweep, migration check `--altered-tables` |
+| Browser evidence | `tools/release/evidence_pro_desk.mjs` — desktop timed walk, phone walk (no sideways scrolling; pricing and order tables become cards), supplier and contractor isolation; release gate total 60 |
+| Release gate flags | `--migration-to pd1a2b3c4d5e --new-tables <the eight supplier_* tables> --altered-tables canonical_materials --browser-expected 60` |
 | Production | Not released |
+| Operational now (development branch only) | Walk-in customer with consent, sketch upload, post-frame steel gable building, plan + elevations, takeoff, price-file import, product matches, pricing with blockers, issue (frozen), revision, approval link, order package + CSV, quotation email (allowlist) |
+| Not built (planned only) | Stick-frame and shingle systems, foundation quantities, AI sketch reading, POS integration, supplier staff roles for who may import prices |
 | BMR reference package | **Not yet provided** (sketch, BMR takeoff, BMR prices, BMR quote). All demo data is synthetic and labelled so. |
 | Rollback | Code: redeploy the previous live commit. Database: restore the pre-migration backup (only with Joel). |
 

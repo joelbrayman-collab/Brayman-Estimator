@@ -259,6 +259,10 @@ def test_walk_in_quotation_from_sketch_to_order_ready_package(app, client):
     assert Decimal(frozen_total) == quote.total and quote.issued_json["totals"]["delivery"] == "150.00"
     pdf = store.get(f"{base}/quotation.pdf")
     assert pdf.status_code == 200 and pdf.data.startswith(b"%PDF")
+    from pypdf import PdfReader
+
+    pages = PdfReader(io.BytesIO(pdf.data)).pages  # quotation, then one page each for A-1 plan and A-2 elevations
+    assert sum("Preliminary sales drawing" in p.extract_text() for p in pages) == 2, len(pages)
     # A later price file change does not move the issued quotation.
     product = SupplierProduct.query.filter_by(supplier_id=supplier.id, sku="SYN-PANEL").one()
     P.import_price_file(supplier, filename="new.csv", authorized_by="Synthetic manager", user=User.query.filter_by(email=DARCY[1]).one(),

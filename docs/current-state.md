@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-18 (current status block below; dated sections after it are history) |
+| Updated | 2026-10-20 (current status block below; dated sections after it are history; calendar releases 0f4ff09 and 1c833ae on 20 Oct are recorded in the handoff) |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
@@ -41,6 +41,7 @@ Development work not in production:
 | Branch | Commit | Status |
 |---|---|---|
 | `v1/completion` | `a2774e0` | `main` + one documentation commit (Cal release record) |
+| `supplier/pro-desk-2026-10-20` | see the handoff | Supplier PRO Desk: walk-in materials quotation (post-frame steel building), price-file import, approval link, order-ready package; migration `pd1a2b3c4d5e` (synthetic rehearsal only). **Development, not released** |
 | `calendar/appointments-2026-10-19` | see the handoff | Business appointments, hourly Day/Week, My Calendar / Company Calendar, Company/Personal visibility, Outlook/Google/Apple Calendar file and private feed; migration `z3c4d5e6f7a8` (synthetic rehearsal only). **Development, not released** |
 
 Governance points that earlier text states differently:

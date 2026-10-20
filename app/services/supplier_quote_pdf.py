@@ -171,8 +171,9 @@ def render_quote_pdf(frozen: Dict, *, logo_bytes: Optional[bytes] = None, brand_
     story.append(Paragraph(f"Quotation record {_escape((frozen.get('_sha256') or '')[:16])} · prepared by "
                            f"{_escape(frozen.get('issued_by', ''))} with CalibraytAI", st["small"]))
 
-    if drawing_png:
+    sheets = [drawing_png] if isinstance(drawing_png, (bytes, bytearray)) else list(drawing_png or [])
+    for png in sheets:  # one page per drawing sheet (A-1 floor plan, A-2 elevations)
         story += [PageBreak(), Paragraph("Preliminary sales drawing — not for construction", st["h"]),
-                  Image(BytesIO(drawing_png), width=7.3 * inch, height=7.3 * inch * 11 / 17)]
+                  Image(BytesIO(png), width=7.3 * inch, height=7.3 * inch * 11 / 17)]
     doc.build(story)
     return buf.getvalue()

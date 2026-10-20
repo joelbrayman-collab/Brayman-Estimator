@@ -88,4 +88,13 @@
 .pd-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
 .pd-inline select, .pd-inline input { min-height: 38px; max-width: 100%; }
 .pd-table-wrap { overflow-x: auto; }
+/* Phones: each table row becomes a card so price and total stay on screen (no sideways scrolling). */
+@media (max-width: 640px) {
+  .pd-stack thead { display: none; }
+  .pd-stack, .pd-stack tbody, .pd-stack tr, .pd-stack td { display: block; width: 100%; }
+  .pd-stack tr { border: 1px solid var(--line, #d9dde3); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+  .pd-stack td { border: 0; padding: 3px 0; text-align: left; }
+  .pd-stack td[data-label] { display: flex; justify-content: space-between; gap: 12px; }
+  .pd-stack td[data-label]::before { content: attr(data-label); color: var(--muted, #5b6470); font-size: 0.85em; }
+}
 @media (max-width: 640px) { .pd-openings thead { display: none; } .pd-openings tr { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; } }

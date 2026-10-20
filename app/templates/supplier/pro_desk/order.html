@@ -8,10 +8,10 @@
 {% if f.demo_synthetic or f.demo_prices %}<p class="pd-synthetic">Synthetic demonstration data — do not enter as a real order.</p>{% endif %}
 <section class="form-panel" data-order-sheet="true">
     <p><strong>{{ f.customer.name }}</strong>{% if f.customer.phone %} · {{ f.customer.phone }}{% endif %}{% if f.customer.address or f.customer.town %} · {{ f.customer.address }} {{ f.customer.town }}{% endif %}</p>
-    <div class="pd-table-wrap"><table class="data-table">
+    <div class="pd-table-wrap"><table class="data-table pd-stack">
         <thead><tr><th>SKU</th><th>Description</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit price</th><th class="num">Discount</th><th class="num">Extended</th></tr></thead>
         <tbody>{% for r in package.lines %}<tr data-order-line="{{ r.sku }}"><td>{{ r.sku }}</td><td>{{ r.product_description }}<span class="pd-basis">{{ r.item }}{% if r.cut_list %} · cut list: {% for length, n in r.cut_list %}{{ n }} @ {{ length }}{{ ", " if not loop.last }}{% endfor %}{% endif %}</span></td>
-        <td class="num">{{ r.sales_qty }}</td><td>{{ r.sales_unit }}</td><td class="num">${{ r.unit_price }}</td><td class="num">{{ ("$" ~ r.line_discount) if r.line_discount and r.line_discount != "0.00" else "" }}</td><td class="num">${{ r.extended }}</td></tr>{% endfor %}</tbody>
+        <td class="num" data-label="Quantity">{{ r.sales_qty }}</td><td data-label="Unit">{{ r.sales_unit }}</td><td class="num" data-label="Unit price">${{ r.unit_price }}</td><td class="num" data-label="Discount">{{ ("$" ~ r.line_discount) if r.line_discount and r.line_discount != "0.00" else "—" }}</td><td class="num" data-label="Extended">${{ r.extended }}</td></tr>{% endfor %}</tbody>
     </table></div>
     {% set t = f.totals %}
     <table class="pd-totals"><tr><td>Materials</td><td class="num">${{ t.subtotal }}</td></tr>{% if t.quote_discount != "0.00" %}<tr><td>Quotation discount</td><td class="num">− ${{ t.quote_discount }}</td></tr>{% endif %}<tr><td>Delivery</td><td class="num">${{ t.delivery }}</td></tr><tr><td>{{ t.tax_label }} ({{ t.tax_rate_percent }}%)</td><td class="num">${{ t.tax }}</td></tr><tr><td>Total</td><td class="num">${{ t.total }}</td></tr></table>

@@ -614,7 +614,8 @@ def price_quote(quote: SupplierQuote, *, on: Optional[date] = None) -> Dict:
         unit_price = Decimal(price.amount)
         extended = (unit_price * sales_qty).quantize(CENT, rounding=ROUND_HALF_UP)
         discount = ((extended * Decimal(price.discount_percent or 0)) / 100).quantize(CENT, rounding=ROUND_HALF_UP)
-        row.update(price_status=PRICED, unit_price=str(unit_price.quantize(Decimal("0.0001"))), extended=str(extended),
+        shown = unit_price.quantize(CENT) if unit_price == unit_price.quantize(CENT) else unit_price.quantize(Decimal("0.0001"))
+        row.update(price_status=PRICED, unit_price=str(shown), extended=str(extended),
                    line_discount=str(discount), discount_percent=str(price.discount_percent or ""),
                    discount_rule=price.discount_rule or "", price_id=price.id, price_import_id=price.import_id,
                    price_effective_from=price.effective_from.isoformat(),

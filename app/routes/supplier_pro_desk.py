@@ -99,9 +99,9 @@ def quote_pdf_bytes(quote) -> bytes:
     frozen = dict(quote.issued_json or {})
     frozen["_sha256"] = quote.issued_sha256 or ""
     brand = supplier_brand(quote.supplier_id)
-    png = None
+    png = []
     if S.drawable(frozen.get("building") or {}):
-        png = drawing_bytes(quote, "png", 0, values=frozen["building"])
+        png = [drawing_bytes(quote, "png", sheet, values=frozen["building"]) for sheet in (0, 1)]
     note = ("Accepted by " + quote.accepted_by_name + f" on {quote.accepted_at:%Y-%m-%d}.") if quote.status == QUOTE_ACCEPTED else ""
     return render_quote_pdf(frozen, logo_bytes=brand.logo_bytes if brand else None,
                             brand_color=brand.primary_color if brand else None, drawing_png=png, approval_note=note)

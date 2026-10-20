@@ -92,12 +92,12 @@
     <h2>4 · Material list</h2>
     {% if p.takeoff.ready %}
     <p class="muted-copy">{{ summary.lines }} lines: {{ summary.ok }} calculated, {{ summary.review }} technical review, {{ summary.needs_answer }} need an answer. Each line shows how it was worked out. Rules {{ p.takeoff.ruleset }}.</p>
-    <div class="pd-table-wrap"><table class="data-table" data-takeoff="true">
+    <div class="pd-table-wrap"><table class="data-table pd-stack" data-takeoff="true">
         <thead><tr><th>Item</th><th class="num">Quantity</th><th>Unit</th><th>Status</th></tr></thead>
         <tbody>{% for l in p.takeoff.lines %}
         <tr data-takeoff-line="{{ l.code }}"><td><strong>{{ l.item }}</strong> <span class="muted-copy">· {{ l.group }}</span><span class="pd-basis">{{ l.basis }}{% if l.note %} — {{ l.note }}{% endif %}</span>
             {% if l.cut_list %}<span class="pd-basis">Cut list: {% for length, n in l.cut_list %}{{ n }} @ {{ length }}{{ ", " if not loop.last }}{% endfor %}</span>{% endif %}</td>
-            <td class="num">{{ l.qty if l.qty is not none else "—" }}</td><td>{{ l.uom }}</td><td>{{ status(l.status) }}</td></tr>
+            <td class="num" data-label="Quantity">{{ l.qty if l.qty is not none else "—" }}</td><td data-label="Unit">{{ l.uom }}</td><td data-label="Status">{{ status(l.status) }}</td></tr>
         {% endfor %}</tbody>
     </table></div>
     <p class="muted-copy">Roof steel {{ p.takeoff.areas.roof_sqft }} sq ft · wall steel {{ p.takeoff.areas.wall_cladding_sqft }} sq ft · floor {{ p.takeoff.areas.floor_sqft }} sq ft.</p>
@@ -108,7 +108,7 @@
     <h2>5 · Pricing</h2>
     {% if p.takeoff.ready %}
     <p class="muted-copy">Products and prices from {{ brand_for(supplier).name }}'s own price file{% if p.priced_on %}, in effect {{ p.priced_on }}{% endif %}. A line without a product or a current price is never filled in: choose one, or leave the line out with a reason.</p>
-    <div class="pd-table-wrap"><table class="data-table" data-pricing="true">
+    <div class="pd-table-wrap"><table class="data-table pd-stack" data-pricing="true">
         <thead><tr><th>Line</th><th>Product</th><th class="num">Sell qty</th><th class="num">Unit price</th><th class="num">Extended</th><th>Status</th></tr></thead>
         <tbody>{% for r in p.rows %}
         <tr data-price-line="{{ r.code }}" data-price-status="{{ r.price_status }}">
@@ -125,10 +125,10 @@
                 <details><summary class="muted-copy">Leave out</summary><form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><input type="text" name="exclude_reason" maxlength="200" required placeholder="Reason, e.g. truss quote to follow"><button class="button-quiet" type="submit">Leave out</button></form></details>
                 {% if r.price_status == "EXCLUDED" %}<form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><button class="button-quiet" type="submit">Put back</button></form>{% endif %}
             {% endif %}</td>
-            <td class="num">{{ r.sales_qty or "—" }} {{ r.sales_unit or "" }}</td>
-            <td class="num">{{ ("$" ~ r.unit_price) if r.unit_price else "—" }}</td>
-            <td class="num">{{ ("$" ~ r.extended) if r.extended else "—" }}{% if r.line_discount and r.line_discount != "0.00" %}<span class="pd-basis">− ${{ r.line_discount }}</span>{% endif %}</td>
-            <td>{{ status(r.price_status) }}</td>
+            <td class="num" data-label="Sell qty">{{ r.sales_qty or "—" }} {{ r.sales_unit or "" }}</td>
+            <td class="num" data-label="Unit price">{{ ("$" ~ r.unit_price) if r.unit_price else "—" }}</td>
+            <td class="num" data-label="Extended">{{ ("$" ~ r.extended) if r.extended else "—" }}{% if r.line_discount and r.line_discount != "0.00" %}<span class="pd-basis">− ${{ r.line_discount }}</span>{% endif %}</td>
+            <td data-label="Status">{{ status(r.price_status) }}</td>
         </tr>{% endfor %}</tbody>
     </table></div>
     {% else %}<p class="muted-copy">Pricing appears once the material list exists.</p>{% endif %}

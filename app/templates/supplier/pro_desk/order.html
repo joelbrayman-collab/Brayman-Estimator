@@ -1,0 +1,20 @@
+{% extends "supplier/base.html" %}
+{% block title %}Order {{ q.number }}{% endblock %}
+{% set f = package.frozen %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk · order-ready package</p><h1>Order for {{ q.number }}</h1>
+<p class="muted-copy">Accepted by {{ package.accepted_by }} on {{ package.accepted_at.strftime("%b %d, %Y") }} · record {{ (package.sha256 or "")[:12] }}. Enter it into {{ brand_for(supplier).name }}'s own sales system; quantities and prices are the accepted ones.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.order_csv', supplier_id=supplier.id, quote_id=q.id) }}">Order CSV</a> <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.quote', supplier_id=supplier.id, quote_id=q.id) }}">Back to the quotation</a></div></div>
+{% if f.demo_synthetic or f.demo_prices %}<p class="pd-synthetic">Synthetic demonstration data — do not enter as a real order.</p>{% endif %}
+<section class="form-panel" data-order-sheet="true">
+    <p><strong>{{ f.customer.name }}</strong>{% if f.customer.phone %} · {{ f.customer.phone }}{% endif %}{% if f.customer.address or f.customer.town %} · {{ f.customer.address }} {{ f.customer.town }}{% endif %}</p>
+    <div class="pd-table-wrap"><table class="data-table">
+        <thead><tr><th>SKU</th><th>Description</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit price</th><th class="num">Discount</th><th class="num">Extended</th></tr></thead>
+        <tbody>{% for r in package.lines %}<tr data-order-line="{{ r.sku }}"><td>{{ r.sku }}</td><td>{{ r.product_description }}<span class="pd-basis">{{ r.item }}{% if r.cut_list %} · cut list: {% for length, n in r.cut_list %}{{ n }} @ {{ length }}{{ ", " if not loop.last }}{% endfor %}{% endif %}</span></td>
+        <td class="num">{{ r.sales_qty }}</td><td>{{ r.sales_unit }}</td><td class="num">${{ r.unit_price }}</td><td class="num">{{ ("$" ~ r.line_discount) if r.line_discount and r.line_discount != "0.00" else "" }}</td><td class="num">${{ r.extended }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% set t = f.totals %}
+    <table class="pd-totals"><tr><td>Materials</td><td class="num">${{ t.subtotal }}</td></tr>{% if t.quote_discount != "0.00" %}<tr><td>Quotation discount</td><td class="num">− ${{ t.quote_discount }}</td></tr>{% endif %}<tr><td>Delivery</td><td class="num">${{ t.delivery }}</td></tr><tr><td>{{ t.tax_label }} ({{ t.tax_rate_percent }}%)</td><td class="num">${{ t.tax }}</td></tr><tr><td>Total</td><td class="num">${{ t.total }}</td></tr></table>
+    {% if package.not_included %}<h2 class="pd-group">Not included</h2><ul class="supplier-history">{% for r in package.not_included %}<li>{{ r.item }}{% if r.reason %} — {{ r.reason }}{% elif r.note %} — {{ r.note }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endblock %}

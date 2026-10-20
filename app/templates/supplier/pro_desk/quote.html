@@ -1,0 +1,200 @@
+{% extends "supplier/base.html" %}
+{% block title %}{{ q.number }} · {{ q.customer.display_name }}{% endblock %}
+{% set p = priced %}
+{% set money = "$%.2f" %}
+{% macro status(s) %}<span class="pd-status is-{{ s|lower }}">{{ {"OK": "Calculated", "REVIEW": "Technical review", "NEEDS_ANSWER": "Needs an answer", "PRICED": "Priced", "NO_PRODUCT": "Choose product", "NO_PRICE": "No current price", "NO_QUANTITY": "Needs an answer", "EXCLUDED": "Left out", "BY_DESIGN": "By design"}.get(s, s) }}</span>{% endmacro %}
+{% block content %}
+<div class="page-heading">
+    <div><p class="eyebrow">PRO Desk · {{ statuses[q.status] }}</p><h1>{{ q.number }} · {{ q.customer.display_name }}</h1>
+    <p class="muted-copy">{{ describe }}</p></div>
+    <div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}">All quotations</a></div>
+</div>
+{% if q.demo_synthetic or p.demo_prices %}<p class="pd-synthetic" data-synthetic="true">Synthetic demonstration data — not a real customer{% if p.demo_prices %} and not real store prices{% endif %}.</p>{% endif %}
+<ol class="pd-steps" aria-label="Steps">
+    <li><a href="#sketch" data-done="{{ 'true' if sketches else 'false' }}">1 Customer &amp; sketch</a></li>
+    <li><a href="#building" data-done="{{ 'true' if drawable and not p.takeoff.missing else 'false' }}">2 Building</a></li>
+    <li><a href="#drawing" data-done="{{ 'true' if drawable else 'false' }}">3 Drawing</a></li>
+    <li><a href="#materials" data-done="{{ 'true' if p.takeoff.ready and summary.needs_answer == 0 else 'false' }}">4 Materials</a></li>
+    <li><a href="#pricing" data-done="{{ 'true' if p.takeoff.ready and not p.blockers else 'false' }}">5 Pricing</a></li>
+    <li><a href="#quotation" data-done="{{ 'true' if q.issued_json else 'false' }}">6 Quotation</a></li>
+    <li><a href="#approval" data-done="{{ 'true' if q.status == 'ACCEPTED' else 'false' }}">7 Approval</a></li>
+    <li><a href="#order" data-done="{{ 'true' if q.order_ready_at else 'false' }}">8 Order</a></li>
+</ol>
+
+<section class="form-panel" id="sketch" data-step="sketch">
+    <h2>1 · Customer and sketch</h2>
+    <p>{{ q.customer.display_name }}{% if q.customer.phone %} · {{ q.customer.phone }}{% endif %}{% if q.customer.email %} · {{ q.customer.email }}{% endif %}{% if q.customer.town %} · {{ q.customer.town }}{% endif %}<br>
+    <span class="muted-copy">Consent: email {{ "yes" if q.customer.consent_email else "no" }}, text {{ "yes" if q.customer.consent_text else "no" }}{% if q.customer.consent_recorded_by_name %} (recorded by {{ q.customer.consent_recorded_by_name }}){% endif %}.</span></p>
+    {% if sketches %}<div class="pd-sketches">{% for f in sketches %}<figure data-sketch="{{ f.id }}">
+        {% if f.mime.startswith("image/") %}<a href="{{ url_for('supplier_pro_desk.sketch', supplier_id=supplier.id, quote_id=q.id, file_id=f.id) }}" target="_blank" rel="noopener"><img src="{{ url_for('supplier_pro_desk.sketch', supplier_id=supplier.id, quote_id=q.id, file_id=f.id) }}" alt="Customer sketch {{ loop.index }}"></a>
+        {% else %}<a class="button button-secondary" href="{{ url_for('supplier_pro_desk.sketch', supplier_id=supplier.id, quote_id=q.id, file_id=f.id) }}" target="_blank" rel="noopener">Open {{ f.filename }}</a>{% endif %}
+        <figcaption class="muted-copy">{{ f.filename }}{% if draft %} <form method="post" action="{{ url_for('supplier_pro_desk.remove_sketch', supplier_id=supplier.id, quote_id=q.id, file_id=f.id) }}" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button-quiet" type="submit">Remove</button></form>{% endif %}</figcaption></figure>{% endfor %}</div>{% endif %}
+    {% if draft %}
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_pro_desk.add_sketch', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="file" name="sketch" accept="image/jpeg,image/png,application/pdf" capture="environment" required>
+        <button type="submit" class="button button-secondary">Keep the sketch</button>
+    </form>
+    <p class="muted-copy">A photo or PDF of the customer's sketch, kept with the quotation. Staff read it with the customer; nothing reads it automatically.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" id="building" data-step="building">
+    <h2>2 · Building</h2>
+    <p class="muted-copy">Every answer comes from the sketch or the customer. Nothing is filled in for you. <span class="pd-structural">Amber</span> items are recorded as stated and always go to technical review.</p>
+    <p class="muted-copy">Not yet available here: {{ not_yet|join("; ") }}.</p>
+    <form method="post" action="{{ url_for('supplier_pro_desk.save_building', supplier_id=supplier.id, quote_id=q.id) }}" data-building-form="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% set ns = namespace(group="") %}
+        {% for f in fields %}
+            {% if f.group != ns.group %}{% if ns.group %}</div>{% endif %}<h3 class="pd-group">{{ f.group }}</h3><div class="pd-grid">{% set ns.group = f.group %}{% endif %}
+            <label>{{ f.label }}{% if f.unit not in ("text", "choice") %} ({{ f.unit }}){% endif %}{% if f.structural %} <span class="pd-structural">technical review</span>{% endif %}
+            {% if f.unit == "choice" %}<select name="{{ f.key }}" {{ "disabled" if not draft }}><option value="">Choose…</option>{% for k, label in f.choices.items() %}<option value="{{ k }}" {{ "selected" if values.get(f.key) == k }}>{{ label }}</option>{% endfor %}</select>
+            {% elif f.unit == "text" %}<input type="text" name="{{ f.key }}" maxlength="160" value="{{ values.get(f.key) or '' }}" {{ "disabled" if not draft }}>
+            {% else %}<input type="text" inputmode="decimal" name="{{ f.key }}" value="{{ values.get(f.key) or '' }}" {{ "disabled" if not draft }}>{% endif %}
+            <span class="pd-help">{{ f.help }}</span></label>
+        {% endfor %}</div>
+        <h3 class="pd-group">Doors and windows</h3>
+        <p class="muted-copy">Position = distance from the wall's left corner, standing outside facing that wall.</p>
+        <div class="pd-table-wrap"><table class="pd-openings">
+            <thead><tr><th>Type</th><th>Wall</th><th>Width (in)</th><th>Height (in)</th><th>Position (ft)</th></tr></thead>
+            <tbody>
+            {% set ops = values.get("openings") or [] %}
+            {% for i in range(6 if ops|length < 6 else ops|length) %}{% set o = ops[i] if i < ops|length else {} %}
+            <tr data-opening-row="{{ i }}">
+                <td><select name="opening_{{ i }}_kind" {{ "disabled" if not draft }}><option value="">—</option>{% for k, label in opening_kinds.items() %}<option value="{{ k }}" {{ "selected" if o.get("kind") == k }}>{{ label }}</option>{% endfor %}</select></td>
+                <td><select name="opening_{{ i }}_wall" {{ "disabled" if not draft }}><option value="">—</option>{% for k, label in walls.items() %}<option value="{{ k }}" {{ "selected" if o.get("wall") == k }}>{{ label }}</option>{% endfor %}</select></td>
+                <td><input type="text" inputmode="decimal" name="opening_{{ i }}_width_in" value="{{ o.get('width_in', '') }}" {{ "disabled" if not draft }} aria-label="Width in inches"></td>
+                <td><input type="text" inputmode="decimal" name="opening_{{ i }}_height_in" value="{{ o.get('height_in', '') }}" {{ "disabled" if not draft }} aria-label="Height in inches"></td>
+                <td><input type="text" inputmode="decimal" name="opening_{{ i }}_offset_ft" value="{{ o.get('offset_ft', '') }}" {{ "disabled" if not draft }} aria-label="Position in feet"></td>
+            </tr>{% endfor %}
+            </tbody>
+        </table></div>
+        {% if q.spec_json and q.spec_json.get("confirmed_by") %}<p class="muted-copy">Confirmed by {{ q.spec_json.confirmed_by }}.</p>{% endif %}
+        {% if draft %}<p><button type="submit" class="button">Confirm the building</button></p>{% endif %}
+    </form>
+    {% if p.takeoff.missing %}<p class="pd-blockers">Still needed: {{ p.takeoff.missing|join(", ") }}.</p>{% endif %}
+</section>
+
+<section class="form-panel" id="drawing" data-step="drawing">
+    <h2>3 · Preliminary sales drawing</h2>
+    {% if drawable %}
+    <p class="muted-copy">Drawn from the confirmed answers. Not for construction, not engineered, not a permit drawing.</p>
+    <div class="pd-drawings">
+        <a href="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='png') }}" target="_blank" rel="noopener"><img loading="lazy" src="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='png') }}" alt="Floor plan" data-drawing-sheet="1"></a>
+        <a href="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='png', sheet=2) }}" target="_blank" rel="noopener"><img loading="lazy" src="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='png', sheet=2) }}" alt="Elevations" data-drawing-sheet="2"></a>
+    </div>
+    <p><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='pdf') }}">Drawing PDF</a> <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.drawing', supplier_id=supplier.id, quote_id=q.id, fmt='dxf') }}">Drawing DXF</a></p>
+    {% else %}<p class="muted-copy">Enter the width, length, wall height, roof pitch and overhangs to draw the building.</p>{% endif %}
+</section>
+
+<section class="form-panel" id="materials" data-step="materials">
+    <h2>4 · Material list</h2>
+    {% if p.takeoff.ready %}
+    <p class="muted-copy">{{ summary.lines }} lines: {{ summary.ok }} calculated, {{ summary.review }} technical review, {{ summary.needs_answer }} need an answer. Each line shows how it was worked out. Rules {{ p.takeoff.ruleset }}.</p>
+    <div class="pd-table-wrap"><table class="data-table" data-takeoff="true">
+        <thead><tr><th>Item</th><th class="num">Quantity</th><th>Unit</th><th>Status</th></tr></thead>
+        <tbody>{% for l in p.takeoff.lines %}
+        <tr data-takeoff-line="{{ l.code }}"><td><strong>{{ l.item }}</strong> <span class="muted-copy">· {{ l.group }}</span><span class="pd-basis">{{ l.basis }}{% if l.note %} — {{ l.note }}{% endif %}</span>
+            {% if l.cut_list %}<span class="pd-basis">Cut list: {% for length, n in l.cut_list %}{{ n }} @ {{ length }}{{ ", " if not loop.last }}{% endfor %}</span>{% endif %}</td>
+            <td class="num">{{ l.qty if l.qty is not none else "—" }}</td><td>{{ l.uom }}</td><td>{{ status(l.status) }}</td></tr>
+        {% endfor %}</tbody>
+    </table></div>
+    <p class="muted-copy">Roof steel {{ p.takeoff.areas.roof_sqft }} sq ft · wall steel {{ p.takeoff.areas.wall_cladding_sqft }} sq ft · floor {{ p.takeoff.areas.floor_sqft }} sq ft.</p>
+    {% else %}<p class="muted-copy">The material list appears once the building is described.</p>{% endif %}
+</section>
+
+<section class="form-panel" id="pricing" data-step="pricing">
+    <h2>5 · Pricing</h2>
+    {% if p.takeoff.ready %}
+    <p class="muted-copy">Products and prices from {{ brand_for(supplier).name }}'s own price file{% if p.priced_on %}, in effect {{ p.priced_on }}{% endif %}. A line without a product or a current price is never filled in: choose one, or leave the line out with a reason.</p>
+    <div class="pd-table-wrap"><table class="data-table" data-pricing="true">
+        <thead><tr><th>Line</th><th>Product</th><th class="num">Sell qty</th><th class="num">Unit price</th><th class="num">Extended</th><th>Status</th></tr></thead>
+        <tbody>{% for r in p.rows %}
+        <tr data-price-line="{{ r.code }}" data-price-status="{{ r.price_status }}">
+            <td><strong>{{ r.item }}</strong><span class="pd-basis">{{ r.qty if r.qty is not none else "—" }} {{ r.uom }}</span></td>
+            <td>{% if r.sku %}{{ r.sku }} · {{ r.product_description }}<span class="pd-basis">{{ r.factor }} {{ r.sales_unit }} per {{ r.uom }}{% if r.discount_rule %} · {{ r.discount_rule }}{% endif %}{% if r.availability %} · {{ r.availability|replace("_", " ")|lower }}{% endif %}{% if r.substitution %} · substitution{% endif %}</span>{% elif r.reason %}<span class="muted-copy">Left out: {{ r.reason }}</span>{% else %}—{% endif %}
+            {% if draft and r.price_status not in ("BY_DESIGN",) %}
+                {% if r.matches|length > 1 %}<form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><select name="product_id" aria-label="Product for {{ r.item }}">{% for m in r.matches %}<option value="{{ m.product_id }}" {{ "selected" if m.product_id == r.product_id }}>{{ m.sku }} · {{ m.description }}</option>{% endfor %}</select><button class="button-quiet" type="submit">Use</button></form>{% endif %}
+                {% if r.qty is not none %}<details><summary class="muted-copy">Match a product</summary>
+                <form method="post" action="{{ url_for('supplier_pro_desk.match', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline" data-match-form="{{ r.code }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}">
+                    <select name="product_id" required aria-label="Product">{% for prod in products %}<option value="{{ prod.id }}">{{ prod.sku }} · {{ prod.description }} ({{ prod.sales_uom }})</option>{% endfor %}</select>
+                    <label>selling units per {{ r.uom }} <input type="text" inputmode="decimal" name="sales_per_unit" required size="6" aria-label="Selling units per takeoff unit"></label>
+                    <button class="button-quiet" type="submit">Match</button></form>
+                <p class="pd-basis">E.g. lumber sold in 16 ft pieces against a quantity in LF: 0.0625. Panels priced per LF: 1.</p></details>{% endif %}
+                <details><summary class="muted-copy">Leave out</summary><form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><input type="text" name="exclude_reason" maxlength="200" required placeholder="Reason, e.g. truss quote to follow"><button class="button-quiet" type="submit">Leave out</button></form></details>
+                {% if r.price_status == "EXCLUDED" %}<form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><button class="button-quiet" type="submit">Put back</button></form>{% endif %}
+            {% endif %}</td>
+            <td class="num">{{ r.sales_qty or "—" }} {{ r.sales_unit or "" }}</td>
+            <td class="num">{{ ("$" ~ r.unit_price) if r.unit_price else "—" }}</td>
+            <td class="num">{{ ("$" ~ r.extended) if r.extended else "—" }}{% if r.line_discount and r.line_discount != "0.00" %}<span class="pd-basis">− ${{ r.line_discount }}</span>{% endif %}</td>
+            <td>{{ status(r.price_status) }}</td>
+        </tr>{% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="muted-copy">Pricing appears once the material list exists.</p>{% endif %}
+</section>
+
+<section class="form-panel" id="quotation" data-step="quotation">
+    <h2>6 · Quotation</h2>
+    {% set t = p.totals if draft else frozen.totals %}
+    {% if draft %}
+    <form method="post" action="{{ url_for('supplier_pro_desk.commercials', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Delivery charge ($) <input type="text" inputmode="decimal" name="delivery_charge" value="{{ q.delivery_charge if q.delivery_charge is not none else '' }}"></label>
+        <label>Quotation discount (%) <input type="text" inputmode="decimal" name="discount_percent" value="{{ q.discount_percent if q.discount_percent is not none else '' }}"></label>
+        <label>Note for the customer <input type="text" name="notes" maxlength="2000" value="{{ q.notes or '' }}"></label>
+        <label>&nbsp;<button type="submit" class="button button-secondary">Update totals</button></label>
+    </form>
+    {% endif %}
+    <table class="pd-totals" data-totals="true">
+        <tr><td>Materials</td><td class="num">${{ t.subtotal }}</td></tr>
+        {% if t.line_discounts and t.line_discounts != "0.00" %}<tr><td>Line discounts</td><td class="num">− ${{ t.line_discounts }}</td></tr>{% endif %}
+        {% if t.quote_discount and t.quote_discount != "0.00" %}<tr><td>Quotation discount ({{ t.quote_discount_percent }}%)</td><td class="num">− ${{ t.quote_discount }}</td></tr>{% endif %}
+        <tr><td>Delivery</td><td class="num">${{ t.delivery }}</td></tr>
+        <tr><td>{{ t.tax_label or "Tax" }}{% if t.tax_rate_percent %} ({{ t.tax_rate_percent }}%){% endif %}</td><td class="num">{{ ("$" ~ t.tax) if t.tax else "—" }}</td></tr>
+        <tr><td>Total</td><td class="num" data-total="{{ t.total }}">{{ ("$" ~ t.total) if t.total else "—" }}</td></tr>
+    </table>
+    {% if draft %}
+        {% if p.blockers %}<div class="pd-blockers" data-blockers="{{ p.blockers|length }}"><strong>Before it can be issued</strong><ul>{% for b in p.blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>
+        {% else %}<form method="post" action="{{ url_for('supplier_pro_desk.issue', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p><button type="submit" class="button" data-issue="true">Issue the quotation</button> <span class="muted-copy">Freezes the building, quantities, products and prices.</span></p></form>{% endif %}
+    {% else %}
+        <p>Issued {{ q.issued_at.strftime("%b %d, %Y %H:%M") }} UTC by {{ q.issued_by_name }} · valid until <strong>{{ q.valid_until.strftime("%b %d, %Y") }}</strong> · record {{ q.issued_sha256[:12] }}</p>
+        <p><a class="button" href="{{ url_for('supplier_pro_desk.quote_pdf', supplier_id=supplier.id, quote_id=q.id) }}" target="_blank" rel="noopener" data-quote-pdf="true">Quotation PDF</a></p>
+        {% if q.status == "ISSUED" %}<form method="post" action="{{ url_for('supplier_pro_desk.revise', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="button-quiet">Start a revision</button></form>{% endif %}
+    {% endif %}
+</section>
+
+<section class="form-panel" id="approval" data-step="approval">
+    <h2>7 · Customer approval</h2>
+    {% if q.status == "ISSUED" %}
+        {% if credential %}<p>Approval link (shown once; copy it now):</p><p class="pd-link" data-approval-link="true">{{ request.host_url.rstrip('/') }}/quote/{{ credential }}</p>{% endif %}
+        <form method="post" action="{{ url_for('supplier_pro_desk.make_link', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if q.customer.email and q.customer.consent_email %}<label class="pd-inline"><input type="checkbox" name="send_email" value="yes" checked> Email it to {{ q.customer.email }}</label>{% else %}<span class="muted-copy">No email consent: give the customer the link or the printed quotation.</span>{% endif %}
+            <button type="submit" class="button button-secondary">Create approval link</button></form>
+        <h3 class="pd-group">Or record the customer's answer at the counter</h3>
+        <form method="post" action="{{ url_for('supplier_pro_desk.accept', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-grid" data-record-acceptance="true"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Customer's full name <input type="text" name="customer_name" maxlength="160" required value="{{ q.customer.display_name }}"></label>
+            <label>How <select name="method"><option value="in_person">In person, signed the printed quotation</option><option value="phone">By phone</option><option value="email">By email reply</option></select></label>
+            <label>Answer <select name="answer"><option value="accept">Accepts the quotation</option><option value="decline">Declines</option></select></label>
+            <label>&nbsp;<button type="submit" class="button">Record the answer</button></label>
+        </form>
+    {% elif q.status in ("ACCEPTED", "DECLINED") %}
+        <p data-answer="{{ q.status }}"><strong>{{ "Accepted" if q.status == "ACCEPTED" else "Declined" }}</strong> by {{ q.accepted_by_name }} on {{ q.accepted_at.strftime("%b %d, %Y %H:%M") }} UTC ({{ {"CUSTOMER_LINK": "approval link", "IN_PERSON": "in person", "PHONE": "phone", "EMAIL": "email"}[q.acceptance_method] }}{% if q.acceptance_recorded_by_name and q.acceptance_method != "CUSTOMER_LINK" %}, recorded by {{ q.acceptance_recorded_by_name }}{% endif %}). The accepted quotation is record {{ (q.accepted_sha256 or "")[:12] }}.</p>
+    {% else %}<p class="muted-copy">Issue the quotation first.</p>{% endif %}
+</section>
+
+<section class="form-panel" id="order" data-step="order">
+    <h2>8 · Order-ready package</h2>
+    {% if q.status == "ACCEPTED" %}
+        {% if q.order_ready_at %}<p>Prepared {{ q.order_ready_at.strftime("%b %d, %Y %H:%M") }} UTC by {{ q.order_ready_by_name }}.</p>
+        <p><a class="button" href="{{ url_for('supplier_pro_desk.order', supplier_id=supplier.id, quote_id=q.id) }}">Open the order sheet</a> <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.order_csv', supplier_id=supplier.id, quote_id=q.id) }}">Order CSV</a></p>
+        {% else %}<form method="post" action="{{ url_for('supplier_pro_desk.order_ready', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p><button type="submit" class="button" data-order-ready="true">Prepare the order for entry</button></p></form>{% endif %}
+        <p class="muted-copy">For entry into {{ brand_for(supplier).name }}'s own sales system. CalibraytAI does not connect to it, place the order or take payment.</p>
+    {% else %}<p class="muted-copy">Available once the customer accepts.</p>{% endif %}
+</section>
+
+<section class="form-panel" data-quote-history="true">
+    <h2>History</h2>
+    <ul class="supplier-history">{% for e in events %}<li>{{ e.at.strftime("%b %d %H:%M") }} UTC · {{ e.actor_name }}{% if e.actor_side == "CUSTOMER" %} (customer){% endif %} · {{ e.event_type|replace("_", " ")|lower }}{% if e.detail_json and e.detail_json.get("line") %} · {{ e.detail_json.line }}{% endif %}</li>{% endfor %}</ul>
+</section>
+{% endblock %}

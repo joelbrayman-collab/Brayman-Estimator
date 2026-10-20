@@ -1,0 +1,20 @@
+{% extends "supplier/base.html" %}
+{% block title %}Quote settings{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk</p><h1>Quote settings</h1>
+<p class="muted-copy">{{ brand_for(supplier).name }}'s own tax, validity, delivery and terms. They appear on every quotation.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}">Quotations</a></div></div>
+<form method="post" class="form-panel" data-quote-settings="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="pd-grid">
+        <label>Sales tax label <input type="text" name="tax_label" maxlength="20" value="{{ s.tax_label if s and s.tax_label else '' }}" placeholder="HST"></label>
+        <label>Sales tax rate (%) <input type="text" inputmode="decimal" name="tax_rate_percent" value="{{ s.tax_rate_percent if s and s.tax_rate_percent is not none else '' }}"></label>
+        <label>Quotation valid for (days) <input type="number" min="1" max="180" name="validity_days" value="{{ s.validity_days if s and s.validity_days else '' }}"></label>
+        <label>Default delivery charge ($) <input type="text" inputmode="decimal" name="default_delivery_charge" value="{{ s.default_delivery_charge if s and s.default_delivery_charge is not none else '' }}"></label>
+        <label>Contact line on quotations <input type="text" maxlength="300" name="contact_line" value="{{ s.contact_line if s and s.contact_line else '' }}" placeholder="Phone · email · address"></label>
+    </div>
+    <label style="display:block;margin-top:12px">Terms printed on quotations<br><textarea name="terms_text" rows="5" style="width:100%">{{ s.terms_text if s and s.terms_text else '' }}</textarea></label>
+    {% if s %}<p class="muted-copy">Last saved by {{ s.updated_by_name }}, {{ s.updated_at.strftime("%b %d, %Y") }}.</p>{% endif %}
+    <p><button type="submit" class="button">Save settings</button></p>
+</form>
+{% endblock %}

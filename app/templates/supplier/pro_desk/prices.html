@@ -1,0 +1,31 @@
+{% extends "supplier/base.html" %}
+{% block title %}Price file{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk</p><h1>{{ brand_for(supplier).name }} price file</h1>
+<p class="muted-copy">Quotations use only these prices. {{ brand_for(supplier).name }} controls them; CalibraytAI never types or estimates a price.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}">Quotations</a></div></div>
+<form method="post" enctype="multipart/form-data" class="form-panel" data-price-file-form="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Load a price file</h2>
+    <p>A CSV file with a header row. Required columns: <code>{{ required|join(", ") }}</code>. Optional: <code>{{ (columns|reject("in", required)|list)|join(", ") }}</code>. Dates as 2026-10-20. <code>store</code> is a store code for a store-only price; blank means every store.</p>
+    <div class="pd-grid">
+        <label>Price file (CSV) <input type="file" name="price_file" accept=".csv,text/csv" required></label>
+        <label>Authorized by <input type="text" name="authorized_by" maxlength="160" required placeholder="Name and role at {{ brand_for(supplier).name }}"></label>
+    </div>
+    <label class="pd-inline"><input type="checkbox" name="demo_synthetic" value="yes"> These are synthetic test prices, not real store prices.</label>
+    <p><button type="submit" class="button">Load prices</button></p>
+</form>
+<section class="form-panel">
+    <h2>Loaded files</h2>
+    {% if imports %}
+    <div class="pd-table-wrap"><table class="data-table">
+        <thead><tr><th>When</th><th>File</th><th>Authorized by</th><th>Loaded by</th><th class="num">Loaded</th><th class="num">Not loaded</th></tr></thead>
+        <tbody>{% for i in imports %}
+        <tr data-price-import="{{ i.id }}"><td>{{ i.imported_at.strftime("%b %d, %Y %H:%M") }} UTC</td><td>{{ i.filename }}{% if i.source == "DEMO_SYNTHETIC" %} <span class="demand-flag">synthetic</span>{% endif %}<br><span class="muted-copy">{{ i.file_sha256[:12] }}</span></td>
+        <td>{{ i.authorized_by_name }}</td><td>{{ i.imported_by_name }}</td><td class="num">{{ i.rows_loaded }}</td><td class="num">{{ i.rows_rejected }}</td></tr>
+        {% if i.rejections_json %}<tr><td colspan="6"><ul class="supplier-history">{% for r in i.rejections_json[:50] %}<li>Row {{ r.row }}{% if r.sku %} ({{ r.sku }}){% endif %}: {{ r.reason }}</li>{% endfor %}</ul></td></tr>{% endif %}
+        {% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="muted-copy">No price file loaded yet.</p>{% endif %}
+</section>
+{% endblock %}

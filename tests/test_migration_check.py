@@ -144,3 +144,24 @@ def test_release_migrate_runs_the_verified_deployed_file():
     assert "sha256sum tools/release/migration_check.py" in code and "$CHECK_SHA" in code
     assert "tools/release/migration_check.py apply" in code.replace('migration_check.py"\nssh', "") or \
         "$REMOTE_RUN apply" in code
+
+
+def test_a_declared_altered_table_may_change_its_schema_but_never_its_rows(tmp_path):
+    # pd1a2b3c4d5e (Supplier PRO Desk, 20 Oct 2026) widens the canonical_materials category check.
+    pd_new = ("supplier_customers,supplier_quotes,supplier_quote_files,supplier_quote_events,supplier_quote_links,"
+              "supplier_price_imports,supplier_selling_prices,supplier_quote_settings")
+    for declared, ok in (([], False), (["--altered-tables", "canonical_materials"], True)):
+        db_path = tmp_path / f"alt-{ok}.db"
+        _database_at_prior(db_path)
+        upgrade = subprocess.run([sys.executable, str(SCRIPT), "rehearse", "--db", str(db_path), "--from", PRIOR, "--to", HEAD,
+                                  "--new-tables", NEW], cwd=ROOT, capture_output=True, text=True, timeout=300)
+        assert upgrade.returncode == 0, upgrade.stdout + upgrade.stderr
+        result = _run("rehearse", "--db", str(db_path), "--from", HEAD, "--to", "pd1a2b3c4d5e", "--new-tables", pd_new, *declared)
+        values = _values(result.stdout)
+        if ok:
+            assert result.returncode == 0 and values["MIGRATION_REHEARSAL"] == "ok", result.stdout + result.stderr
+            assert "schema altered as declared: canonical_materials" in values["EXISTING_TABLES_UNCHANGED"]
+        else:
+            assert result.returncode == 1 and "existing schema changed: table canonical_materials" in values["FAIL"]
+    assert _run("rehearse", "--db", str(tmp_path / "alt-True.db"), "--from", "pd1a2b3c4d5e", "--to", "pd1a2b3c4d5e",
+                "--new-tables", pd_new, "--altered-tables", "no_such_table").returncode == 1

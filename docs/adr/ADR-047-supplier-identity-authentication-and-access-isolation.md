@@ -228,3 +228,21 @@ When later implemented: dedicated isolation tests (cross-supplier 404/403; contr
 | Joel | Joel Brayman (V1 supplier identity / isolation direction) | 2026-09-09 |
 | ChatGPT review | Define-and-govern brief into Cursor | 2026-09-09 |
 | Cursor implementation note | Docs/ADR/FG/architecture only. No product code. No migration. ADR-008 **not** accepted. | 2026-09-09 |
+
+## Amendment 1 — Supplier-owned quotation workspace (20 Oct 2026)
+
+| Attribute | Value |
+|-----------|--------|
+| Status | **Accepted** (Joel, 20 Oct 2026 execution authorization: "Update ADR-047 through the normal governance process to permit a supplier-owned quotation workspace") |
+| Changes | Decision 2 is narrowed, not reversed |
+
+**Decision 2a.** A supplier may own a **quotation workspace** for its own walk-in customers: supplier customers, quotations, sketches, quotation events, approval links, price-file imports and store selling prices. These records carry `supplier_id` and **no** `organization_id`.
+
+- A supplier is still **not** an `Organization` and still gets no `UserMembership`. Decisions 3 and 4 are unchanged: supplier staff use `SupplierUserMembership` only.
+- Every workspace query is scoped to a supplier the signed-in person belongs to (Decision 6); anything else is Not found.
+- Contractor records are never reachable from the workspace, and workspace records are never reachable from the office (Decision 8 unchanged in both directions). A supplier sees a contractor's data only through an explicit share (Decision 7).
+- A supplier quotation is **materials only**: no labour, installation, margin or contract. Accepting it starts no contract and no contractor record.
+- Prices on a supplier quotation come only from that supplier's own imported price file, kept apart from contractor-confirmed cost evidence (Decision 9).
+- The order-ready package is for entry into the supplier's own system. No POS or order-system connection exists (Decision 12 unchanged).
+
+Design and reuse map: [architecture/supplier-pro-desk.md](../architecture/supplier-pro-desk.md).

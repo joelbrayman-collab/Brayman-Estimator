@@ -238,13 +238,14 @@ def _register_office_auth(app: Flask) -> None:
             or endpoint.startswith("proposal_link.")
             or endpoint.startswith("walkthrough.")
             or endpoint.startswith("decision_tools.")
+            or endpoint.startswith("supplier_quote_link.")  # a supplier's customer approves a quotation (20 Oct 2026)
         ):
             return None
         # Supplier Hub (ADR-047, Joel 17 Oct 2026): suppliers sign in separately and land in their
         # own workspace. Office pages refuse them; supplier pages refuse office users.
         from app.services.supplier_hub import principal_class
 
-        if endpoint is not None and endpoint.startswith("supplier_portal."):
+        if endpoint is not None and endpoint.startswith(("supplier_portal.", "supplier_pro_desk.")):
             if endpoint in ("supplier_portal.login", "supplier_portal.logout"):
                 return None
             if not current_user.is_authenticated:
@@ -448,6 +449,8 @@ def create_app(config=None):
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
     from app.routes.sign import sign_bp
     from app.routes.proposal_link import proposal_link_bp
+    from app.routes.supplier_pro_desk import supplier_pro_desk_bp
+    from app.routes.supplier_quote_link import supplier_quote_link_bp
     from app.routes.supplier_portal import supplier_portal_bp
     from app.routes.supplier_office import supplier_office_bp
     from app.routes.signing import signing_office_bp
@@ -494,6 +497,8 @@ def create_app(config=None):
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)
     app.register_blueprint(proposal_link_bp)
+    app.register_blueprint(supplier_pro_desk_bp)
+    app.register_blueprint(supplier_quote_link_bp)
     app.register_blueprint(supplier_portal_bp)
     app.register_blueprint(supplier_office_bp)
     app.register_blueprint(signing_office_bp)

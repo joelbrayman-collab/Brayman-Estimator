@@ -155,6 +155,16 @@ from app.models.appointment import (
     CompanyAppointmentAttendee,
     CompanyAppointmentHistory,
 )
+from app.models.supplier_quote import (
+    SupplierCustomer,
+    SupplierPriceImport,
+    SupplierQuote,
+    SupplierQuoteEvent,
+    SupplierQuoteFile,
+    SupplierQuoteLink,
+    SupplierQuoteSettings,
+    SupplierSellingPrice,
+)
 from app.models.schedule import (
     ProjectWorkDependency,
     WorkScheduleAssignment,
@@ -335,6 +345,14 @@ __all__ = [
     "CompanyAppointment",
     "CompanyAppointmentAttendee",
     "CompanyAppointmentHistory",
+    "SupplierCustomer",
+    "SupplierPriceImport",
+    "SupplierQuote",
+    "SupplierQuoteEvent",
+    "SupplierQuoteFile",
+    "SupplierQuoteLink",
+    "SupplierQuoteSettings",
+    "SupplierSellingPrice",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",
     "WorkScheduleItem",

@@ -1,0 +1,24 @@
+{% extends "supplier/base.html" %}
+{% block title %}New walk-in quotation{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk · step 1</p><h1>New walk-in quotation</h1>
+<p class="muted-copy">The customer does not need an account. Their details stay with {{ brand_for(supplier).name }}.</p></div></div>
+<form method="post" class="form-panel" data-walk-in-form="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Customer</h2>
+    <div class="pd-grid">
+        <label>Name <input type="text" name="customer_name" required maxlength="160" value="{{ form.get('customer_name', '') }}" autocomplete="off"></label>
+        <label>Phone <input type="tel" name="customer_phone" maxlength="30" value="{{ form.get('customer_phone', '') }}" autocomplete="off"></label>
+        <label>Email <input type="email" name="customer_email" maxlength="254" value="{{ form.get('customer_email', '') }}" autocomplete="off"></label>
+        <label>Address <input type="text" name="customer_address" maxlength="300" value="{{ form.get('customer_address', '') }}" autocomplete="off"></label>
+        <label>Town <input type="text" name="customer_town" maxlength="120" value="{{ form.get('customer_town', '') }}" autocomplete="off"></label>
+        {% if locations|length > 1 %}<label>Store <select name="location_id">{% for l in locations %}<option value="{{ l.id }}">{{ l.display_name }}</option>{% endfor %}</select></label>{% endif %}
+    </div>
+    <h2 class="pd-group">Consent</h2>
+    <p class="muted-copy">Ask the customer. Nothing is sent without their yes.</p>
+    <label class="pd-inline"><input type="checkbox" name="consent_email" value="yes" {% if form.get('consent_email') == 'yes' %}checked{% endif %}> The customer agrees to receive this quotation by email.</label>
+    <label class="pd-inline"><input type="checkbox" name="consent_text" value="yes" {% if form.get('consent_text') == 'yes' %}checked{% endif %}> The customer agrees to receive text messages about this quotation.</label>
+    <label class="pd-inline"><input type="checkbox" name="demo_synthetic" value="yes" {% if form.get('demo_synthetic') == 'yes' %}checked{% endif %}> This is a training or demonstration quotation (synthetic customer).</label>
+    <p><button type="submit" class="button">Start the quotation</button></p>
+</form>
+{% endblock %}

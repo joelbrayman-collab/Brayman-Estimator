@@ -88,7 +88,16 @@ def upgrade(db_path: str, revision: str) -> None:
         flask_upgrade(directory=str(ROOT / "migrations"), revision=revision)
 
 
-def compare(before: dict, after: dict, new_tables: list, to_rev: str) -> None:
+def _belongs_to(key, tables) -> bool:
+    """A schema entry (table or index) of one of ``tables``."""
+    kind, name = key
+    if kind == "table":
+        return name in tables
+    return any(name.startswith(f"ix_{t}_") or name.startswith(f"uq_{t}_") or name.startswith(f"sqlite_autoindex_{t}_")
+               for t in tables)
+
+
+def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_tables: list = ()) -> None:
     out("REVISION_AFTER", after["revision"])
     out("INTEGRITY_AFTER", after["integrity"])
     if after["integrity"] != "ok":
@@ -98,16 +107,23 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str) -> None:
     changed = [t for t, fp in before["content"].items() if after["content"].get(t) != fp]
     if changed:
         fail("existing records changed in: " + ", ".join(changed))
-    altered = [f"{k[0]} {k[1]}" for k, sql in before["schema"].items() if after["schema"].get(k) != sql]
+    # A table the release declares as altered (e.g. a widened check constraint) may change its schema;
+    # every one of its rows must still be identical (checked above with all the others).
+    altered = [f"{k[0]} {k[1]}" for k, sql in before["schema"].items()
+               if after["schema"].get(k) != sql and not _belongs_to(k, altered_tables)]
     if altered:
         fail("existing schema changed: " + ", ".join(altered))
+    declared = [t for t in altered_tables if t not in before["content"]]
+    if declared:
+        fail("declared altered tables do not exist: " + ", ".join(declared))
     added = sorted(set(after["content"]) - set(before["content"]))
     if added != sorted(new_tables):
         fail(f"new tables are {added}, expected {sorted(new_tables)}")
     not_empty = [t for t in added if after["content"][t][0] != 0]
     if not_empty:
         fail("new tables are not empty: " + ", ".join(not_empty))
-    out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, schema and every row identical")
+    note = f"; schema altered as declared: {','.join(altered_tables)}" if altered_tables else ""
+    out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, schema and every row identical{note}")
     out("NEW_TABLES", ",".join(added) + " (empty)")
 
 
@@ -126,7 +142,7 @@ def rehearse(args) -> None:
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
-    compare(before, snapshot(db), args.new_tables, args.to_rev)
+    compare(before, snapshot(db), args.new_tables, args.to_rev, args.altered_tables)
     out("MIGRATION_REHEARSAL", "ok")
 
 
@@ -177,7 +193,7 @@ def apply(args) -> None:
     after = snapshot(db)
     # Someone may have used the app during the minute of the release; compare against the moment
     # just before the upgrade, which is what the migration itself must not change.
-    compare(before, after, args.new_tables, args.to_rev)
+    compare(before, after, args.new_tables, args.to_rev, args.altered_tables)
     out("MIGRATE", "ok")
 
 
@@ -189,6 +205,7 @@ def main() -> None:
         p.add_argument("--from", dest="from_rev", required=True)
         p.add_argument("--to", dest="to_rev", required=True)
         p.add_argument("--new-tables", required=True, type=lambda v: [t for t in v.split(",") if t])
+        p.add_argument("--altered-tables", default=[], type=lambda v: [t for t in v.split(",") if t])
         if name == "rehearse":
             p.add_argument("--db", required=True)
         else:

@@ -54,3 +54,38 @@
 .sku-suggested.is-several { color: #8a4b00; }
 .supplier-main [data-spaced] { margin-top: 14px; }
 .period-form [hidden] { display: none; }
+
+/* Supplier PRO Desk (Joel, 20 Oct 2026): a walk-in quotation at the counter, one page, eight steps. */
+.pd-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; padding: 0; list-style: none; }
+.pd-steps a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 12px; border-radius: 20px; background: #fff; border: 1px solid #d9d4c7; color: inherit; text-decoration: none; font-size: 0.9rem; }
+.pd-steps a[data-done="true"] { border-color: #2f7d4f; color: #1f5a37; }
+.pd-steps a[data-done="true"]::before { content: "✓"; font-weight: 700; }
+.pd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 16px; }
+.pd-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; min-width: 0; }
+.pd-grid input, .pd-grid select { min-height: 42px; width: 100%; box-sizing: border-box; }
+.pd-grid .pd-help { font-size: 0.78rem; color: #6b6b6b; }
+.pd-group { margin: 14px 0 6px; font-size: 0.95rem; }
+.pd-structural { color: #8a4b00; font-size: 0.78rem; }
+.pd-openings { width: 100%; border-collapse: collapse; }
+.pd-openings td { padding: 3px 4px; }
+.pd-openings select, .pd-openings input { min-height: 40px; width: 100%; box-sizing: border-box; }
+.pd-status { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; white-space: nowrap; background: #e7f1ea; color: #1f5a37; }
+.pd-status.is-review { background: #fbf1df; color: #7a4a00; }
+.pd-status.is-missing, .pd-status.is-no_product, .pd-status.is-no_price, .pd-status.is-no_quantity { background: #fbe4e2; color: #8f1d1d; }
+.pd-status.is-excluded, .pd-status.is-by_design { background: #eceff3; color: #3a414b; }
+.pd-basis { display: block; font-size: 0.76rem; color: #59606b; margin-top: 2px; }
+.pd-drawings { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.pd-drawings img { width: 100%; height: auto; border: 1px solid #d9d4c7; background: #fff; }
+.pd-sketches { display: flex; flex-wrap: wrap; gap: 10px; }
+.pd-sketches figure { margin: 0; width: 180px; }
+.pd-sketches img { width: 180px; height: 140px; object-fit: cover; border: 1px solid #d9d4c7; background: #fff; }
+.pd-totals { margin-left: auto; max-width: 360px; }
+.pd-totals td { padding: 3px 6px; }
+.pd-totals tr:last-child td { font-weight: 700; border-top: 2px solid #1f2a33; }
+.pd-blockers { border-left: 4px solid #c8871a; background: #fbf6ec; padding: 8px 14px; border-radius: 6px; }
+.pd-link { word-break: break-all; background: #fff; border: 1px dashed #c8871a; padding: 8px; border-radius: 6px; }
+.pd-synthetic { background: #fbe9e7; color: #9b1c1c; font-weight: 600; padding: 6px 12px; border-radius: 6px; }
+.pd-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+.pd-inline select, .pd-inline input { min-height: 38px; max-width: 100%; }
+.pd-table-wrap { overflow-x: auto; }
+@media (max-width: 640px) { .pd-openings thead { display: none; } .pd-openings tr { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; } }

@@ -4,7 +4,7 @@
 <div class="page-heading">
     <div><p class="eyebrow">Supplier Hub</p><h1>{{ brand_for(supplier).name }}</h1>
     <p class="muted-copy">Requests contractors sent to {{ brand_for(supplier).name }}. You see only what each contractor chose to send.</p></div>
-    <div><a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_deliveries', supplier_id=supplier.id) }}">Deliveries</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_demand', supplier_id=supplier.id) }}">Material demand</a></div>
+    <div><a class="button" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}" data-pro-desk-link="true">PRO Desk quotations</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_deliveries', supplier_id=supplier.id) }}">Deliveries</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_demand', supplier_id=supplier.id) }}">Material demand</a></div>
 </div>
 {% include "supplier/_attention.html" %}
 {% if changes_waiting %}

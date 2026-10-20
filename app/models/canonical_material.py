@@ -23,6 +23,12 @@ CANONICAL_MATERIAL_CATEGORIES = (
     "FOUNDATION",
     "CONNECTOR",
     "FASTENER",
+    # ROOFING through TRUSS: revision pd1a2b3c4d5e (Supplier PRO Desk outbuilding takeoff, 20 Oct 2026).
+    "ROOFING",
+    "CLADDING",
+    "TRIM",
+    "DOOR",
+    "TRUSS",
 )
 CANONICAL_MATERIAL_SUBSTITUTION_POLICIES = ("ALLOWED", "RESTRICTED", "PROHIBITED")
 
@@ -554,7 +560,8 @@ class CanonicalMaterial(db.Model):
         ),
         db.CheckConstraint(
             "category IN ('DIMENSIONAL_LUMBER', 'SHEET_GOODS', 'CONCRETE', "
-            "'DECKING', 'FASCIA', 'RAILING', 'GATE', 'FOUNDATION', 'CONNECTOR', 'FASTENER')",
+            "'DECKING', 'FASCIA', 'RAILING', 'GATE', 'FOUNDATION', 'CONNECTOR', 'FASTENER', "
+            "'ROOFING', 'CLADDING', 'TRIM', 'DOOR', 'TRUSS')",
             name="ck_canonical_materials_category",
         ),
         db.CheckConstraint(

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <title>Quotation {{ q.number }} | {{ frozen.supplier.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supplier-hub.css') }}">
+</head>
+<body class="supplier-hub" data-customer-quote="{{ q.number }}">
+<main class="supplier-main">
+    <div class="page-heading"><div><p class="eyebrow">{{ frozen.supplier.name }}{% if frozen.supplier.location %} · {{ frozen.supplier.location }}{% endif %}</p><h1>Material quotation {{ q.number }}</h1>
+    <p class="muted-copy">For {{ frozen.customer.name }} · {{ frozen.description }} · valid until {{ frozen.valid_until }}</p></div></div>
+    {% if frozen.demo_synthetic or frozen.demo_prices %}<p class="pd-synthetic">Synthetic demonstration data — not a real quotation.</p>{% endif %}
+    {% if error %}<div class="flash flash-error" role="alert">{{ error }}</div>{% endif %}
+    <section class="form-panel">
+        <p class="pd-totals" style="max-width:none"><strong>Total ${{ frozen.totals.total }}</strong> including {{ frozen.totals.tax_label }} · materials only</p>
+        <p><a class="button" href="{{ url_for('supplier_quote_link.pdf', credential=credential) }}" target="_blank" rel="noopener">Open the quotation and drawing (PDF)</a></p>
+        <p class="muted-copy">The drawing is a preliminary sales drawing, not for construction. Labour, installation and permits are not included.</p>
+    </section>
+    <section class="form-panel" data-customer-answer="true">
+        {% if answered or q.status in ("ACCEPTED", "DECLINED") %}
+        <h2>{{ "Thank you — accepted" if q.status == "ACCEPTED" else "Answer recorded: declined" }}</h2>
+        <p>{{ q.accepted_by_name }}, {{ q.accepted_at.strftime("%b %d, %Y") }}. {% if q.status == "ACCEPTED" %}{{ frozen.supplier.name }} will prepare your order and contact you about payment and delivery.{% endif %}</p>
+        {% elif expired %}
+        <h2>This quotation has expired</h2><p>Ask {{ frozen.supplier.name }} for a new quotation.</p>
+        {% else %}
+        <h2>Your answer</h2>
+        <form method="post" action="{{ url_for('supplier_quote_link.answer', credential=credential) }}">
+            <label>Your full name <input type="text" name="customer_name" maxlength="160" required value="{{ typed_name or '' }}" autocomplete="name"></label>
+            <label class="pd-inline"><input type="checkbox" name="agree" value="yes"> I accept material quotation {{ q.number }} for ${{ frozen.totals.total }} as shown in the PDF.</label>
+            <p><button type="submit" name="answer" value="accept" class="button">Accept</button> <button type="submit" name="answer" value="decline" class="button button-secondary" formnovalidate>Decline</button></p>
+        </form>
+        {% endif %}
+    </section>
+    <p class="muted-copy">Prepared by {{ frozen.supplier.name }} with CalibraytAI.</p>
+</main>
+</body>
+</html>

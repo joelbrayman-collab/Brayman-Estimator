@@ -28,7 +28,7 @@ val() { grep "^$1=" "$2" | head -1 | cut -d= -f2-; }
 REMOTE_PY='cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=$(command -v python3); fi; $PY -'
 [ -f "$STATE" ] || stop "no release state for $LABEL ($STATE); run the release gate first"
 SHA=$(val SHA "$STATE"); REVISION=$(val REVISION "$STATE"); DEST=$(val CLONE "$STATE")
-MIGRATION_TO=$(val MIGRATION_TO "$STATE"); NEW_TABLES=$(val NEW_TABLES "$STATE")
+MIGRATION_TO=$(val MIGRATION_TO "$STATE"); NEW_TABLES=$(val NEW_TABLES "$STATE"); ALTERED_TABLES=$(val ALTERED_TABLES "$STATE")
 [ -n "$MIGRATION_TO" ] || stop "this release has no migration; run postrelease_check.sh only"
 grep -q "^READY_FOR_PUSH commit=$SHA" "$STATUS" 2>/dev/null || stop "the release gate did not reach READY_FOR_PUSH for $SHA"
 grep -q "^MIGRATION_REHEARSAL $REVISION -> $MIGRATION_TO" "$STATUS" || stop "no successful rehearsal of $REVISION -> $MIGRATION_TO in this release"
@@ -56,7 +56,7 @@ CHECK_SHA=$(shasum -a 256 "$SCRIPT" | awk '{print $1}')
 REMOTE_RUN="cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=\$(command -v python3); fi; \
 [ \"\$(sha256sum tools/release/migration_check.py | cut -d' ' -f1)\" = $CHECK_SHA ] || { echo FAIL=the instance migration_check.py differs from the tested release; exit 1; }; \
 \$PY tools/release/migration_check.py"
-ssh "${SSH_OPTS[@]}" -n "$HOST" "$REMOTE_RUN apply --from $REVISION --to $MIGRATION_TO --new-tables $NEW_TABLES --expect-sha $SHA --label $LABEL" \
+ssh "${SSH_OPTS[@]}" -n "$HOST" "$REMOTE_RUN apply --from $REVISION --to $MIGRATION_TO --new-tables $NEW_TABLES${ALTERED_TABLES:+ --altered-tables $ALTERED_TABLES} --expect-sha $SHA --label $LABEL" \
   > "$OUT-migrate.txt" 2>&1
 cat "$OUT-migrate.txt" | grep -E '^[A-Z_]+='
 grep -q '^MIGRATE=ok' "$OUT-migrate.txt" || stop "migration did not complete (see $OUT-migrate.txt); the app keeps running; database recovery only with Joel"

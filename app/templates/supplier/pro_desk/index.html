@@ -1,0 +1,33 @@
+{% extends "supplier/base.html" %}
+{% block title %}PRO Desk quotations{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div><p class="eyebrow">PRO Desk</p><h1>Walk-in quotations</h1>
+    <p class="muted-copy">{{ brand_for(supplier).name }}'s own customers. Contractors never see these, and nothing here shows a contractor's records.</p></div>
+    <div><a class="button" href="{{ url_for('supplier_pro_desk.new_quote', supplier_id=supplier.id) }}" data-new-walk-in="true">New walk-in quotation</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.prices', supplier_id=supplier.id) }}">Price file</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.settings', supplier_id=supplier.id) }}">Quote settings</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Contractor requests</a></div>
+</div>
+{% if settings_blockers %}<section class="form-panel pd-blockers"><h2>Before the first quotation</h2><ul>{% for b in settings_blockers %}<li>{{ b }}</li>{% endfor %}</ul></section>{% endif %}
+{% if not imports %}<section class="form-panel pd-blockers"><h2>No price file loaded</h2><p>Quotations can be prepared, but no line can be priced until {{ brand_for(supplier).name }}'s own price file is loaded.</p></section>{% endif %}
+<section class="form-panel" data-pro-desk-quotes="{{ quotes|length }}">
+    <h2>Quotations</h2>
+    {% if quotes %}
+    <div class="pd-table-wrap"><table class="data-table">
+        <thead><tr><th>Quotation</th><th>Customer</th><th>Started</th><th>Status</th><th class="num">Total</th></tr></thead>
+        <tbody>
+        {% for q in quotes %}
+        <tr data-quote="{{ q.number }}">
+            <td><a href="{{ url_for('supplier_pro_desk.quote', supplier_id=supplier.id, quote_id=q.id) }}">{{ q.number }}</a>{% if q.demo_synthetic %} <span class="demand-flag">synthetic</span>{% endif %}</td>
+            <td>{{ q.customer.display_name }}{% if q.customer.town %}<br><span class="muted-copy">{{ q.customer.town }}</span>{% endif %}</td>
+            <td>{{ q.created_at.strftime("%b %d, %Y") }}</td>
+            <td>{{ {"DRAFT": "Draft", "ISSUED": "Issued", "ACCEPTED": "Accepted" ~ (", order ready" if q.order_ready_at else ""), "DECLINED": "Declined", "CANCELLED": "Replaced by a revision"}[q.status] }}</td>
+            <td class="num">{{ "$%.2f"|format(q.total) if q.total is not none else "—" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% else %}<p class="muted-copy">No quotations yet.</p>{% endif %}
+</section>
+{% endblock %}

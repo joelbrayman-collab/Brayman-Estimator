@@ -51,7 +51,10 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # person who has left, gets 404 (tests/test_calendar_sync.py). It only reads.
     "calendar_feed.feed",
 }
-EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools."}
+# supplier_quote_link. added 20 Oct 2026 (Supplier PRO Desk): a supplier's walk-in customer opens and answers
+# an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
+# gets 410 (tests/test_supplier_pro_desk.py). It shows one frozen quotation and records one answer.
+EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools.", "supplier_quote_link."}
 EXPECTED_SUPPLIER_EXEMPT = {"supplier_portal.login", "supplier_portal.logout"}
 
 # Frozen concrete set of endpoints the lists above exempt today. A new route under an
@@ -75,6 +78,9 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "proposal_link.accept",
     "proposal_link.pdf",
     "proposal_link.logo",
+    "supplier_quote_link.view",
+    "supplier_quote_link.pdf",
+    "supplier_quote_link.answer",
     "walkthrough.form",
     "walkthrough.submit",
     "decision_tools.decision_tools_index",
@@ -205,7 +211,7 @@ def test_every_non_public_route_refuses_a_signed_out_request(app):
             else:
                 if status != 405 or body != {"error": "Method not allowed."}:
                     problem = f"expected 405 JSON, got {status} {body}"
-        elif endpoint.startswith("supplier_portal."):
+        elif endpoint.startswith(("supplier_portal.", "supplier_pro_desk.")):  # the supplier wall (PRO Desk: 20 Oct 2026)
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/supplier/login" or nxt != [path]:
                 problem = f"expected 302 /supplier/login, got {status} {response.headers.get('Location')}"

@@ -14,7 +14,7 @@
 #   git -C ~/Desktop/Brayman-Estimator show <candidate>:tools/release/release_gate.sh > /tmp/release_gate.sh
 #   bash /tmp/release_gate.sh --label cal2 --candidate <sha> --branch v1/completion \
 #        --main-base <sha> --live-base <sha> --live-deploy <dep-id> [--browser-expected 43]
-#        [--migration-to <revision> --new-tables <t1,t2,...>]
+#        [--migration-to <revision> --new-tables <t1,t2,...> [--altered-tables <t1,...>]]
 #
 # Gates (stops at the first failure):
 #   1 one run at a time; GitHub main = --main-base; --branch = --candidate; live instance (SSH) = --live-base
@@ -34,7 +34,7 @@
 # release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
 set -u
 usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=43; MIGRATION_TO=""; NEW_TABLES=""
+LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=43; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
@@ -46,6 +46,7 @@ while [ $# -gt 0 ]; do
     --browser-expected) BROWSER_EXPECTED=$2; shift 2;;
     --migration-to) MIGRATION_TO=$2; shift 2;;
     --new-tables) NEW_TABLES=$2; shift 2;;
+    --altered-tables) ALTERED_TABLES=$2; shift 2;;
     *) usage;;
   esac
 done
@@ -57,6 +58,12 @@ done
 if [ -n "$MIGRATION_TO$NEW_TABLES" ]; then
   [[ "$MIGRATION_TO" =~ ^[0-9a-z]{12}$ ]] && [[ "$NEW_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
     || { echo "--migration-to <12-character revision> and --new-tables <t1,t2> go together"; exit 2; }
+fi
+# --altered-tables <t1,...> (20 Oct 2026): existing tables whose schema the migration changes (e.g. a widened
+# check constraint). Every one of their rows must still be identical; any other schema change still stops.
+if [ -n "$ALTERED_TABLES" ]; then
+  [ -n "$MIGRATION_TO" ] && [[ "$ALTERED_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
+    || { echo "--altered-tables <t1,t2> needs --migration-to and lower-case table names"; exit 2; }
 fi
 
 REPO_URL=https://github.com/joelbrayman-collab/Brayman-Estimator.git
@@ -211,7 +218,7 @@ if [ -n "$MIGRATION_TO" ]; then
   REHEARSAL="$GEN/$LABEL-rehearsal-$TS.db"
   cp "$LOCALB" "$REHEARSAL" || stop "could not copy the backup for the rehearsal"
   ./venv/bin/python tools/release/migration_check.py rehearse --db "$REHEARSAL" --from "$REVISION" \
-    --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" > "$OUT-rehearsal.txt" 2>&1
+    --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" ${ALTERED_TABLES:+--altered-tables "$ALTERED_TABLES"} > "$OUT-rehearsal.txt" 2>&1
   REH=$?
   rm -f "$REHEARSAL"  # production data: no extra copy is kept
   cat "$OUT-rehearsal.txt" | grep -E '^[A-Z_]+='
@@ -234,6 +241,7 @@ BACKUP_ROWS=$BROWS
 CLONE=$DEST
 MIGRATION_TO=$MIGRATION_TO
 NEW_TABLES=$NEW_TABLES
+ALTERED_TABLES=$ALTERED_TABLES
 EOF
 echo "== 4. READY_FOR_PUSH — stop here"
 if [ -n "$MIGRATION_TO" ]; then

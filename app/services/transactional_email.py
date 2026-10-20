@@ -34,6 +34,7 @@ from app.models.transactional_message import (
     TEMPLATE_SIGNING_COMPLETE,
     TEMPLATE_SIGNING_INVITATION,
     TEMPLATE_SIGNING_RESEND,
+    TEMPLATE_SUPPLIER_QUOTE,
     TRANSACTIONAL_TEMPLATE_IDS,
     TransactionalMessage,
 )
@@ -137,6 +138,21 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         body = str(variables.get("body") or "")
         url = str(variables.get("link") or "")
         return subject, body + (f"\n\nOpen it: {url}\n" if url else "\n")
+    if template_id == TEMPLATE_SUPPLIER_QUOTE:
+        supplier = str(variables.get("supplier_name") or "Your building supplier")
+        number = str(variables.get("quote_number") or "")
+        total = str(variables.get("total") or "")
+        valid = str(variables.get("valid_until") or "")
+        subject = f"{supplier}: material quotation {number}"
+        body = (
+            f"{supplier} has prepared material quotation {number} for you"
+            + (f", total ${total} including tax" if total else "") + ".\n\n"
+            "Open the link to review it and the preliminary drawing. If you agree, type your name and select Accept.\n"
+            + (f"The quotation is valid until {valid}.\n" if valid else "")
+            + f"{variables.get('link') or ''}\n\n"
+            "This is a materials-only quotation. The drawing is a preliminary sales drawing, not for construction.\n"
+        )
+        return subject, body
     if template_id == TEMPLATE_PROPOSAL_INVITATION:
         url = str(variables.get("invitation_url") or "")
         org = str(variables.get("organization_name") or "Brayman Construction")

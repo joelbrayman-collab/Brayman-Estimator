@@ -204,6 +204,12 @@ test("step 4: the office reviews the returned quote, records it and approves the
   W.approved = count;
 });
 
+// Supplier Native Signing (FG-041): placing, confirming and agreeing a delivery change are signed.
+async function sign(scope, name) {
+  await scope.locator("[name=sign_consent]").check();
+  await scope.locator("[name=signer_name]").fill(name);
+}
+
 test("step 5: the office places the purchase order", async () => {
   const { pg } = await office();
   await go(pg, requests());
@@ -214,10 +220,11 @@ test("step 5: the office places the purchase order", async () => {
   await form.locator("[name=delivery_window]").fill("7:00–9:00");
   await form.locator("[name=site_contact]").fill("Ben (synthetic)");
   await form.locator("[name=notes]").fill("Call Ben 30 minutes before arrival.");
+  await sign(form, "Ben Synthetic");
   await screen(pg, "office-place-order");
-  await form.locator("button:has-text('Place order')").click();
+  await form.locator("button:has-text('order')").first().click();
   await pg.waitForLoadState();
-  assert.match(await flash(pg), /It is agreed when they confirm it/);
+  assert.match(await flash(pg), /It is agreed when they sign and confirm it/);
   const po = article(pg).locator("[data-po]");
   assert.equal(await po.getAttribute("data-po"), "PLACED");
   W.poNumber = (await po.locator("strong").innerText()).replace("Purchase order ", "").trim();
@@ -249,9 +256,10 @@ test("step 6: Darcy confirms the order on the desktop; the office sees it agreed
   assert.equal(await pg.locator("[name=expected_delivery]").inputValue(), day(12), "the requested date is offered");
   await screen(pg, "darcy-desktop-order-to-confirm", { darcy: true });
   await pg.locator("[name=note]").first().fill("Boards from the Winchester yard (synthetic).");
+  await sign(pg.locator("[data-confirm-order]"), facts.darcy_name);
   await pg.click("button[value=confirm]");
   await pg.waitForLoadState();
-  assert.match(await flash(pg), new RegExp(`Order ${W.poNumber} confirmed`));
+  assert.match(await flash(pg), new RegExp(`Order ${W.poNumber} signed and confirmed`));
   assert.match(await pg.locator("[data-order-answer]").innerText(), new RegExp(`Confirmed.*by ${facts.darcy_name}`));
   await screen(pg, "darcy-desktop-order-confirmed", { darcy: true });
   const o = (await office()).pg;
@@ -290,6 +298,7 @@ test("step 8: either side asks to move the delivery, and the other answers", asy
   await panel.locator("[name=new_window]").fill("10:00–12:00");
   await panel.locator("[name=reason]").selectOption("Weather");
   await panel.locator("[name=note]").fill("Rain forecast (synthetic)");
+  await sign(panel.locator("[data-request-change]"), "Ben Synthetic");
   await panel.locator("button:has-text('Send the change')").click();
   await o.waitForLoadState();
   assert.match(await flash(o), /Delivery change sent/);
@@ -305,6 +314,7 @@ test("step 8: either side asks to move the delivery, and the other answers", asy
   assert.match(await pg.locator("[data-delivery-change]").innerText(), /Weather/);
   await noSideways(pg, "phone answer change");
   await screen(pg, "darcy-phone-answer-change", { darcy: true });
+  await sign(pg.locator("[data-answer-change]"), facts.darcy_name);
   await pg.click("[data-answer-change] button[value=accept]");
   await pg.waitForLoadState();
   assert.match(await flash(pg), /Answer sent to the contractor/);
@@ -319,6 +329,7 @@ test("step 8: either side asks to move the delivery, and the other answers", asy
   await pg.locator("[data-request-change] [name=new_date]").fill(day(15));
   await pg.locator("[data-request-change] [name=reason]").selectOption("Supplier availability");
   await pg.locator("[data-request-change] [name=note]").fill("Truck in for service (synthetic)");
+  await sign(pg.locator("[data-request-change]"), facts.darcy_name);
   await noSideways(pg, "phone request change");
   await pg.locator("button:has-text('Send the change')").click();
   await pg.waitForLoadState();

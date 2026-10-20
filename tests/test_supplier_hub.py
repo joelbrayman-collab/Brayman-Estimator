@@ -842,3 +842,21 @@ def test_the_quote_form_and_order_lines_become_cards_on_a_phone(app, client):
     assert 'class="data-table pd-stack"' in inbox and 'data-label="Status"' in inbox
     css = (Path(app.root_path) / "static/css/supplier-hub.css").read_text()
     assert ".pd-stack td[data-label]::before" in css
+
+
+def test_closing_a_job_lists_its_open_supplier_orders_without_blocking(app, client):
+    """Job lifecycle walk (20 Oct 2026): closing ignored a confirmed delivery still to come. The close page now
+    lists open orders as a notice; closing itself is unchanged and nothing is cancelled."""
+    from datetime import date, timedelta
+
+    from tests.test_core_close_close_reopen_fg035 import _make_owner
+
+    project, _tomlinson, _darcy, _user, order = _concrete_order(app, client)
+    _make_owner()  # closing a project is for the instance owner
+    order.scheduled_date = date.today() + timedelta(days=3)
+    db.session.commit()
+    page = client.get(f"/projects/{project.id}/close").get_data(as_text=True)
+    assert 'data-open-orders="1"' in page and order.number in page and "Closing does not cancel them" in page
+    order.scheduled_date = date.today() - timedelta(days=1)  # delivered in the past: nothing to warn about
+    db.session.commit()
+    assert "data-open-orders" not in client.get(f"/projects/{project.id}/close").get_data(as_text=True)

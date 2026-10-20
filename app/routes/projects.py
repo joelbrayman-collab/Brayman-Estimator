@@ -273,6 +273,22 @@ def _scoped_project(project_id):
     return Project.query.filter_by(id=project_id, organization_id=org_id).first_or_404()
 
 
+def _open_supplier_orders(project) -> list:
+    """Supplier orders still waiting or confirmed with a delivery today or later: shown before closing so a
+    delivery is not forgotten (job lifecycle walk, 20 Oct 2026). A notice only; closing is unchanged."""
+    from datetime import date as _date
+
+    from app.models.supplier_portal import PO_CONFIRMED, PO_PLACED
+    from app.services.supplier_hub import project_purchase_orders
+
+    rows = []
+    for row in project_purchase_orders(organization_id=project.organization_id, project_id=project.id):
+        when = row["schedule"]["date"]
+        if row["order"].status in (PO_PLACED, PO_CONFIRMED) and (when is None or when >= _date.today()):
+            rows.append(row)
+    return rows
+
+
 @projects_bp.route("/<int:id>/close", methods=["GET", "POST"], endpoint="close_project")
 def close_project_action(id):
     denied = _lifecycle_gate()
@@ -291,6 +307,7 @@ def close_project_action(id):
             "projects/close_confirm.html",
             project=project,
             open_punch_count=open_punch_count,
+            open_orders=_open_supplier_orders(project),
         )
     try:
         close_project(
@@ -307,6 +324,7 @@ def close_project_action(id):
                 "projects/close_confirm.html",
                 project=project,
                 open_punch_count=open_punch_count,
+                open_orders=_open_supplier_orders(project),
             ), 400
         return redirect(url_for("projects.view_project", id=project.id))
     flash(contractor_copy.PROJECT_CLOSED_FLASH, "success")

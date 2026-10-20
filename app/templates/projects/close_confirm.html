@@ -14,6 +14,12 @@
         Open Punch List items: {{ open_punch_count }}.
     </p>
     {% endif %}
+    {% if open_orders %}
+    <div class="warning-copy" data-open-orders="{{ open_orders|length }}">
+        <p>This job still has supplier orders open. Closing does not cancel them: tell the supplier if a delivery is no longer needed.</p>
+        <ul>{% for row in open_orders %}<li>{{ row.order.number }} · {{ row.supplier }} · {{ row.kind }} · {{ row.status }}{% if row.schedule.date %} · delivery {{ row.schedule.date.strftime('%b %d, %Y') }}{% endif %}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
     <form method="post" action="{{ url_for('projects.close_project', id=project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         {% if open_punch_count %}

@@ -43,6 +43,7 @@
         {% set groups = selected_day.groups %}
         {% set show_time = true %}
         {% include "field/_schedule_groups.html" %}
+        {% set deliveries = selected_day.deliveries %}{% include "field/_deliveries.html" %}
         {% else %}
         <p>{{ contractor_copy.FIELD_NO_WORK_DAY }}</p>
         {% endif %}

@@ -1,0 +1,7 @@
+{% if deliveries %}
+<ul class="field-deliveries" data-field-deliveries="{{ deliveries|length }}">
+    {% for d in deliveries %}
+    <li class="field-delivery"><span class="field-delivery-tag">Delivery</span> {{ d.label }} <span class="field-muted">· {{ d.status }}</span></li>
+    {% endfor %}
+</ul>
+{% endif %}

@@ -357,7 +357,8 @@ def edit_item(item_id):
                 )
             flash("Schedule updated.", "success")
             _flash_delivery_proposals()
-            return redirect(url_for("schedule.company", project_id=item.project_id))
+            # G8 (schedule review, 19 Oct): "Edit dates" from the Project page returns to the Project page.
+            return redirect(_return_after_item(item))
         except (ScheduleError, ScheduleNotFoundError) as exc:
             flash(str(exc), "error")
     return render_template(

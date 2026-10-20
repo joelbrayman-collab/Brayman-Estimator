@@ -191,6 +191,33 @@ def match_projects(org_id: str, words) -> list:
     return [p for p in projects if _contains_all(_project_haystack(p), words)]
 
 
+def match_scheduled_work(org_id: str, words) -> list:
+    """Scheduled work whose name (with its project) contains every word, with its dates (G9, 20 Oct). Read-only."""
+    from app.models.schedule import SCHEDULE_STATUS_ACTIVE, WorkScheduleItem
+
+    if not words:
+        return []
+    items = (WorkScheduleItem.query.filter_by(organization_id=org_id, status=SCHEDULE_STATUS_ACTIVE)
+             .order_by(WorkScheduleItem.scheduled_start, WorkScheduleItem.id).all())
+    out = []
+    for item in items:
+        element = item.element.display_name if item.element is not None else ""
+        activity = item.activity.display_name if item.activity is not None else ""
+        project = item.project.name if item.project is not None else ""
+        if not _contains_all(_normalize(" ".join((element, activity, project))), words):
+            continue
+        about_work = [w for w in words if w not in _normalize(project)]
+        if not about_work or not _contains_all(_normalize(" ".join((element, activity))), about_work):
+            continue  # at least one word must name the work itself, not just the project
+        when = _date(item.scheduled_start)
+        if item.scheduled_end and item.scheduled_end != item.scheduled_start:
+            when = f"{when} to {_date(item.scheduled_end)}"
+        title = element + (f" — {activity}" if activity else "")
+        out.append(Item(title or "Scheduled work", url_for("projects.view_project", id=item.project_id) + "#hub-schedule",
+                        f"{when} · {project}", "schedule"))
+    return out
+
+
 def _project_state(project) -> str:
     from app.models.project import OPERATING_STATE_CLOSED
 
@@ -557,6 +584,12 @@ def find(raw_query: str) -> dict:
         elif dest == DEST_PROJECTS and not project_words:
             groups.append(Group("Projects", company_wide(DEST_PROJECTS, org_id)))
 
+    if dest in (None, DEST_CALENDAR):
+        work = match_scheduled_work(org_id, [w for w in project_words if w not in ("schedule", "scheduled", "when")])
+        if work:
+            groups.insert(0, Group("Scheduled work", work))
+            if status == "none":
+                status, message = "results", ""
     if tools:
         groups.append(Group("Tools", tools))
     if help_items:

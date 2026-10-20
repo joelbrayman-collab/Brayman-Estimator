@@ -804,3 +804,8 @@ input:focus-visible {
 }
 .field-offline-banner[hidden] { display: none; }
 
+
+/* Supplier deliveries on Field (schedule review G10, 20 Oct 2026) */
+.field-deliveries { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.field-delivery { padding: 8px 10px; border-radius: 8px; background: #eef4fb; overflow-wrap: anywhere; }
+.field-delivery-tag { font-weight: 600; margin-right: 4px; }

@@ -211,8 +211,61 @@ def assemble_project_hub(project, organization_id: str) -> dict:
             project_id=project.id,
             include_activities=True,
             include_conflicts=True,
+            **_project_schedule_window(project.id, organization_id),
         ),
+        "schedule_history": project_schedule_history(project.id),
     }
+
+
+def _project_schedule_window(project_id: int, organization_id) -> dict:
+    """The whole of the project's active schedule, not just the next six weeks (G4, schedule review 19 Oct).
+
+    Work moved more than 41 days out, or still running from the past, stays listed on the Project page.
+    """
+    from datetime import date as _date
+
+    from app.models.schedule import SCHEDULE_STATUS_ACTIVE, WorkScheduleItem
+
+    rows = (WorkScheduleItem.query.with_entities(WorkScheduleItem.scheduled_start, WorkScheduleItem.scheduled_end)
+            .filter_by(project_id=project_id, status=SCHEDULE_STATUS_ACTIVE).all())
+    starts = [r[0] for r in rows if r[0]]
+    ends = [r[1] or r[0] for r in rows if (r[1] or r[0])]
+    if not starts:
+        return {}
+    today = _date.today()
+    return {"window_start": min(min(starts), today), "window_end": max(max(ends), today)}
+
+
+def project_schedule_history(project_id: int, limit: int = 15) -> list:
+    """Who changed this project's schedule, and how (G6, schedule review 19 Oct). Read-only."""
+    from app.models.schedule import WorkScheduleHistory
+
+    rows = (WorkScheduleHistory.query.filter_by(project_id=project_id)
+            .order_by(WorkScheduleHistory.created_at.desc(), WorkScheduleHistory.id.desc()).limit(limit).all())
+    labels = {"CREATED": "scheduled", "DATES_CHANGED": "moved", "RETIRED": "removed from the schedule",
+              "ASSIGNED": "assigned", "UNASSIGNED": "unassigned", "DEPENDENCY_ADDED": "work order added",
+              "DEPENDENCY_REMOVED": "work order removed"}
+
+    def span(a, b):
+        if not a:
+            return ""
+        return f"{a:%b %d}" if not b or a == b else f"{a:%b %d}–{b:%b %d}"
+
+    out = []
+    for h in rows:
+        item = h.schedule_item if h.work_schedule_item_id else None
+        name = "Work"
+        if item is not None and item.element is not None:
+            name = item.element.display_name + (f" · {item.activity.display_name}" if item.activity else "")
+        what = f"{name} {labels.get(h.event, h.event.lower().replace('_', ' '))}"
+        if h.event == "DATES_CHANGED":
+            what += f": {span(h.prior_scheduled_start, h.prior_scheduled_end)} → {span(h.new_scheduled_start, h.new_scheduled_end)}"
+        elif h.event == "CREATED" and h.new_scheduled_start:
+            what += f" for {span(h.new_scheduled_start, h.new_scheduled_end)}"
+        if h.reason:
+            what += f" ({h.reason})"
+        out.append({"when": h.created_at, "who": h.actor_display_name, "what": what})
+    return out
 
 
 def _legal_content_selection(project_id: int):

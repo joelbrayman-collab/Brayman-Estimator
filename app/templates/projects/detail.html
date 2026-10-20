@@ -1007,6 +1007,16 @@
         </ul>
         {% endif %}
         <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
+        {% if hub.schedule_history %}
+        <details class="schedule-history" data-schedule-history="{{ hub.schedule_history|length }}">
+            <summary>Recent schedule changes</summary>
+            <ul>
+            {% for h in hub.schedule_history %}
+                <li><strong>{{ h.when.strftime('%b %d, %Y %H:%M') }} UTC</strong> · {{ h.who }} · {{ h.what }}</li>
+            {% endfor %}
+            </ul>
+        </details>
+        {% endif %}
     </article>
     <article class="panel panel-wide" id="hub-time">
         <div class="panel-header">

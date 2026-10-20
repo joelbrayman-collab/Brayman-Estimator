@@ -82,6 +82,9 @@ def pytest_terminal_summary(terminalreporter):
         terminalreporter.write_line("FAMILY_05_MASTER=present (SHA-256 matches the governed file); contract tests ran normally")
         return
     tr = terminalreporter
+    if not _MASTER_STATE["failed"]:
+        tr.write_line(f"FAMILY_05_MASTER={status} at {path}; no test in this run needed it")
+        return
     tr.section("MISSING TEST DEPENDENCY — not an application failure", sep="=", red=True, bold=True)
     tr.write_line(f"FAMILY_05_MASTER={status} at {path}")
     tr.write_line(f"Failures in the contract tests that need it: {len(_MASTER_STATE['failed'])}")

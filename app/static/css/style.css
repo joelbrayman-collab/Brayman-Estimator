@@ -1,0 +1,6 @@
+
+/* Project page: recent schedule changes (schedule review G6, 20 Oct 2026) */
+.schedule-history { margin-top: 12px; }
+.schedule-history > summary { cursor: pointer; font-weight: 600; }
+.schedule-history ul { margin: 8px 0 0; padding-left: 18px; }
+.schedule-history li { margin: 4px 0; overflow-wrap: anywhere; }

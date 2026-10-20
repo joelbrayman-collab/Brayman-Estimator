@@ -19,6 +19,7 @@
         {% set groups = day.groups %}
         {% set show_time = true %}
         {% include "field/_schedule_groups.html" %}
+        {% set deliveries = day.deliveries %}{% include "field/_deliveries.html" %}
         {% else %}
         <p class="field-muted">—</p>
         {% endif %}

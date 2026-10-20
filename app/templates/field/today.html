@@ -19,6 +19,7 @@
     {% set groups = schedule.groups %}
     {% set show_time = true %}
     {% include "field/_schedule_groups.html" %}
+    {% set deliveries = schedule.days[0].deliveries if schedule.days else [] %}{% include "field/_deliveries.html" %}
     {% endif %}
 </section>
 

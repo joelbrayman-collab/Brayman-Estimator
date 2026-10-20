@@ -302,11 +302,24 @@ def _record_history(
 def _propose_linked_deliveries() -> None:
     from app.services.supplier_hub import propose_deliveries_for_schedule_moves
 
+    from flask import g, has_app_context
+
     moves = db.session.info.pop("schedule_moves", [])
     if moves:
-        proposed = propose_deliveries_for_schedule_moves(moves)
-        from flask import g, has_app_context
+        # G11 (schedule review, 19 Oct): the move is already saved. If proposing the delivery change fails,
+        # keep the move, undo only the half-made proposal, and tell the office plainly what to do.
+        try:
+            proposed = propose_deliveries_for_schedule_moves(moves)
+        except Exception:
+            db.session.rollback()
+            import logging
 
+            logging.getLogger(__name__).exception("delivery proposal after a schedule move failed")
+            if has_app_context():
+                g.schedule_delivery_attention = getattr(g, "schedule_delivery_attention", []) + [
+                    "The work was moved, but its linked supplier delivery could not be updated automatically. "
+                    "Open the delivery and ask the supplier for the new date."]
+            return
         if has_app_context() and proposed:
             g.schedule_delivery_proposals = getattr(g, "schedule_delivery_proposals", 0) + len(proposed)
 
@@ -1560,6 +1573,20 @@ def _field_card(item: WorkScheduleItem, *, visible_dates, warnings, worker_user_
     }
 
 
+def _field_deliveries(organization_id, start: date, end: date) -> list:
+    """Supplier deliveries in the window, without prices or office links (Field is read-only)."""
+    from app.services.home_planning import _delivery_rows
+
+    try:
+        rows = _delivery_rows(organization_id, start, end)
+    except Exception:  # deliveries are a convenience on Field; never break the crew's schedule
+        import logging
+
+        logging.getLogger(__name__).exception("field deliveries could not be read")
+        return []
+    return [{"date": r["date"], "project_id": r["project_id"], "label": r["label"], "status": r["status"]} for r in rows]
+
+
 def assemble_field_schedule(
     organization_id: str,
     *,
@@ -1640,9 +1667,11 @@ def assemble_field_schedule(
                 today=today,
             )
         )
+    deliveries = _field_deliveries(org_id, window_start, window_end)
     days = []
     for day in _dates_in_range(window_start, window_end):
         day_cards = [card for card in cards if day in card["visible_dates"]]
+        day_projects = {card["project_id"] for card in day_cards}
         days.append(
             {
                 "date": day,
@@ -1650,6 +1679,8 @@ def assemble_field_schedule(
                 "is_today": day == today,
                 "cards": day_cards,
                 "groups": field_group_schedule_cards(day_cards),
+                # G10 (schedule review, 19 Oct): the crew see when material arrives on the jobs they are on.
+                "deliveries": [d for d in deliveries if d["date"] == day and d["project_id"] in day_projects],
             }
         )
     weeks = []

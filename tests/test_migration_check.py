@@ -94,3 +94,53 @@ def test_apply_backs_up_first_refuses_the_wrong_release_and_is_safe_to_repeat(tm
     again = _run("apply", "--from", PRIOR, "--to", HEAD, "--new-tables", NEW, "--expect-sha", "a" * 40, "--label", "t", env=env)
     assert again.returncode == 0 and "ALREADY_MIGRATED=yes" in again.stdout
     assert len(list((instance / "backups").iterdir())) == 1
+
+
+def _instance_layout(tmp_path: Path) -> Path:
+    """A folder shaped like the Render instance (/opt/render/project/src): the app, its migrations, the
+    release helper and instance/brayman_estimator.db at the previous revision."""
+    src = tmp_path / "opt" / "render" / "project" / "src"
+    (src / "tools" / "release").mkdir(parents=True)
+    (src / "tools" / "release" / "migration_check.py").write_bytes(SCRIPT.read_bytes())
+    (src / "app").symlink_to(ROOT / "app")
+    (src / "migrations").symlink_to(ROOT / "migrations")
+    (src / "instance").mkdir()
+    _database_at_prior(src / "instance" / "brayman_estimator.db")
+    return src
+
+
+def _hosted_env(src: Path) -> dict:
+    env = {k: v for k, v in os.environ.items() if k != "RELEASE_ROOT"}
+    env.update({"CALIBRAYTAI_DATABASE_URI": f"sqlite:///{src / 'instance' / 'brayman_estimator.db'}",
+                "RENDER_GIT_COMMIT": "a" * 40})
+    return env
+
+
+APPLY = ["apply", "--from", PRIOR, "--to", HEAD, "--new-tables", NEW, "--expect-sha", "a" * 40, "--label", "t"]
+
+
+def test_apply_run_as_the_instance_file_finds_the_live_database(tmp_path):
+    # What release_migrate.sh runs on Render (20 Oct 2026): the deployed file itself, no RELEASE_ROOT.
+    src = _instance_layout(tmp_path)
+    result = subprocess.run([sys.executable, "tools/release/migration_check.py", *APPLY], cwd=src,
+                            env=_hosted_env(src), capture_output=True, text=True)
+    assert result.returncode == 0 and "MIGRATE=ok" in result.stdout, result.stdout + result.stderr
+    assert len(list((src / "instance" / "backups").iterdir())) == 1
+
+
+def test_apply_piped_from_the_instance_folder_finds_the_live_database(tmp_path):
+    # Piped (python - < migration_check.py), Python names the file "<stdin>"; the root must be the
+    # current folder, not two levels above it (the 20 Oct stop: "does not point at /opt/render/instance").
+    src = _instance_layout(tmp_path)
+    result = subprocess.run([sys.executable, "-", *APPLY], cwd=src, env=_hosted_env(src), input=SCRIPT.read_text(),
+                            capture_output=True, text=True)
+    assert result.returncode == 0 and "MIGRATE=ok" in result.stdout, result.stdout + result.stderr
+
+
+def test_release_migrate_runs_the_verified_deployed_file():
+    code = "\n".join(l for l in (ROOT / "tools/release/release_migrate.sh").read_text().splitlines()
+                     if not l.lstrip().startswith("#"))
+    assert '< "$SCRIPT"' not in code
+    assert "sha256sum tools/release/migration_check.py" in code and "$CHECK_SHA" in code
+    assert "tools/release/migration_check.py apply" in code.replace('migration_check.py"\nssh', "") or \
+        "$REMOTE_RUN apply" in code

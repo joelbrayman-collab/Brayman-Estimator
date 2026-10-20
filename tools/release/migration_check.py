@@ -28,7 +28,10 @@ from pathlib import Path
 
 # The repository root: this file's folder when run as a file; the current folder when piped over SSH
 # (python - < migration_check.py, run from /opt/render/project/src like the other hosted helpers).
-ROOT = Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()
+# Piped, Python sets __file__ to "<stdin>", so check for a real file (fixed 20 Oct 2026: the piped run
+# took /opt/render as the root and refused the live database, before any backup or change).
+_HERE = Path(globals().get("__file__") or "<stdin>")
+ROOT = _HERE.resolve().parents[2] if _HERE.is_file() else Path.cwd()
 # Where the live instance folder is (the release clone itself on Render; a temporary folder in tests).
 INSTANCE_ROOT = Path(os.environ.get("RELEASE_ROOT", str(ROOT)))
 

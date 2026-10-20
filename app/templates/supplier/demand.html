@@ -30,18 +30,18 @@
     <h2>Requested materials</h2>
     {% for cat in d.categories %}
     <h3 data-spaced>{{ cat.name }}</h3>
-    <div style="overflow-x: auto;"><table class="data-table" data-demand-category="{{ cat.name }}">
+    <div style="overflow-x: auto;"><table class="data-table pd-stack" data-demand-category="{{ cat.name }}">
         <thead><tr><th>Product</th><th>Unit</th><th>Requests</th><th>Contractors</th><th>Quantity requested</th><th>You priced</th><th>Ordered from you</th><th></th></tr></thead>
         <tbody>
         {% for r in cat.rows %}
         <tr data-demand-row="{{ r.name }}">
             <td>{{ r.name }}</td>
-            <td>{{ r.unit }}</td>
-            <td>{{ r.requests }}</td>
-            <td>{{ r.contractors }}</td>
-            <td>{{ r.quantity if r.quantity != "0" else "—" }}{% if r.without_quantity %}<div class="muted-copy">+{{ r.without_quantity }} without a final quantity</div>{% endif %}</td>
-            <td>{% if r.quoted or r.not_priced %}{{ r.quoted }} of {{ r.quoted + r.not_priced }}{% else %}—{% endif %}</td>
-            <td>{% if r.ordered_lines %}{{ r.ordered_quantity }} {{ r.unit }}{% else %}—{% endif %}</td>
+            <td data-label="Unit">{{ r.unit }}</td>
+            <td data-label="Requests">{{ r.requests }}</td>
+            <td data-label="Contractors">{{ r.contractors }}</td>
+            <td data-label="Quantity requested">{{ r.quantity if r.quantity != "0" else "—" }}{% if r.without_quantity %}<div class="muted-copy">+{{ r.without_quantity }} without a final quantity</div>{% endif %}</td>
+            <td data-label="You priced">{% if r.quoted or r.not_priced %}{{ r.quoted }} of {{ r.quoted + r.not_priced }}{% else %}—{% endif %}</td>
+            <td data-label="Ordered from you">{% if r.ordered_lines %}{{ r.ordered_quantity }} {{ r.unit }}{% else %}—{% endif %}</td>
             <td>{% if r.recurring %}<span class="demand-flag">Recurring</span>{% endif %}{% if not r.confirmed_sku %}<span class="demand-flag">No confirmed SKU</span>{% endif %}{% if r.possible_gap %}<span class="demand-flag is-gap">Possible gap</span>{% endif %}</td>
         </tr>
         {% endfor %}
@@ -54,9 +54,9 @@
 {% if d.concrete %}
 <section class="form-panel">
     <h2>Concrete</h2>
-    <div style="overflow-x: auto;"><table class="data-table" data-demand-concrete="true">
+    <div style="overflow-x: auto;"><table class="data-table pd-stack" data-demand-concrete="true">
         <thead><tr><th>Mix</th><th>Requests</th><th>Contractors</th><th>Volume requested</th><th>You quoted</th><th>Ordered from you</th></tr></thead>
-        <tbody>{% for c in d.concrete %}<tr><td>{{ c.label }}</td><td>{{ c.requests }}</td><td>{{ c.contractors }}</td><td>{{ c.volume }} m³</td><td>{{ c.quoted }}</td><td>{{ c.ordered }}</td></tr>{% endfor %}</tbody>
+        <tbody>{% for c in d.concrete %}<tr><td>{{ c.label }}</td><td data-label="Requests">{{ c.requests }}</td><td data-label="Contractors">{{ c.contractors }}</td><td data-label="Volume requested">{{ c.volume }} m³</td><td data-label="You quoted">{{ c.quoted }}</td><td data-label="Ordered from you">{{ c.ordered }}</td></tr>{% endfor %}</tbody>
     </table></div>
 </section>
 {% endif %}

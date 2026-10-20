@@ -828,8 +828,9 @@ button.button-secondary {
 /* Scrolling months (Joel, 20 Oct 2026): about five weeks on screen; weeks run on across months. */
 .home-month.is-scrolling .cal-month-scroll { position: relative; max-height: min(calc(128px * 5.5), 72vh); overflow-y: auto; overscroll-behavior: contain; }
 .home-month.is-scrolling .cal-month-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-.home-month.is-scrolling .home-week.is-month-start { border-top: 2px solid var(--text); }
-.home-month.is-scrolling .home-week-rail { font-size: 13px; font-weight: 600; color: var(--text); padding-left: 8px; }
+/* Month heading inside the scrolling calendar (Joel, 20 Oct 2026): compact, understated, and sticky, so the
+   month in view is always named; the next month's heading slides over it at the boundary. */
+.cal-month-band { position: sticky; top: 0; z-index: 4; padding: 6px 14px 6px 60px; font-size: 14px; font-weight: 600; letter-spacing: 0.01em; color: var(--text); background: #f3efe7; border-top: 1px solid #d9d2c4; border-bottom: 1px solid #d9d2c4; box-shadow: 0 1px 0 rgba(28, 31, 36, 0.04); }
 .home-month.is-scrolling .home-day.is-alt-month { background: #f6f3ee; }
 .home-month.is-scrolling .home-day.is-alt-month.is-weekend { background: #f1ede6; }
 .home-month.is-scrolling .home-day.is-first .home-day-num { font-weight: 700; }
@@ -909,6 +910,7 @@ button.button-secondary {
     .cal-workspace .home-bands { grid-auto-rows: 8px; row-gap: 3px; }
     .cal-workspace .home-week, .cal-workspace .home-day { min-height: 76px; }
     .home-month.is-scrolling .home-day-mon { display: block; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cal-month-band { padding: 4px 10px; font-size: 13px; }
 }
 @media (min-width: 701px) {
     .cal-workspace[data-calendar-view="auto"] .cal-week-view { display: none; }

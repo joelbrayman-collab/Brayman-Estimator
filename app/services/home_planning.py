@@ -151,6 +151,8 @@ def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: da
                 "month_anchor": first_of_month.strftime("%Y-%m") if first_of_month else "",
                 "month_title": thursday.strftime("%B %Y"),
                 "month_short": first_of_month.strftime("%b") if first_of_month else "",
+                # The in-calendar month heading (Joel, 20 Oct 2026), above the week holding the 1st.
+                "month_heading": first_of_month.strftime("%B %Y") if first_of_month else "",
                 "start": cursor,
                 "end": week_end,
                 "days": days,

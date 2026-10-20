@@ -437,6 +437,24 @@ def test_month_view_scrolls_from_three_months_back_to_a_year_ahead(client):
     assert 'data-month-later="true" href="/schedule?year=2027&amp;month=9' in html
 
 
+def test_each_month_opens_with_its_own_heading_inside_the_calendar(client):
+    # Joel, 20 Oct 2026: "the month isn't sufficiently identifiable as the user scrolls"; a compact
+    # month-and-year heading inside the calendar, sticky while that month is in view.
+    html = _month_page(client)
+    bands = re.findall(r'<div class="cal-month-band" role="heading" aria-level="3" data-month-band="([0-9-]+)">([^<]+)</div>', html)
+    assert bands[0] == ("2026-06", "June 2026") and ("2026-10", "October 2026") in bands
+    assert bands[-1] == ("2027-10", "October 2027") and len(bands) == 17
+    # Each heading sits directly above the week holding that month's 1st.
+    for anchor, _ in bands:
+        assert re.search(rf'data-month-band="{anchor}">[^<]+</div>\s*<div class="home-week is-month-start" '
+                         rf'data-week-start="[0-9-]+" data-month-anchor="{anchor}"', html), anchor
+    # No second page title: the calendar's own heading is the only <h1>/<h2>-level title text added.
+    assert html.count('class="cal-period-title"') == 1
+    # The single-month Home grid and the Week / Day views have no month headings.
+    assert "cal-month-band" not in client.get(_url(view="week", scope="company")).get_data(as_text=True)
+    assert "cal-month-band" not in client.get("/").get_data(as_text=True)
+
+
 def test_appointments_months_ahead_are_on_the_scrolling_month(client, app):
     with app.app_context():
         office = _office()

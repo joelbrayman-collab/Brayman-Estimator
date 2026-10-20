@@ -1,22 +1,26 @@
-// Calendar month view (Joel, 20 Oct 2026): weeks scroll from 3 months back to 12 ahead. Open on the
-// chosen month and keep the title on the month at the top. No timers, nothing sent anywhere.
+// Calendar month view (Joel, 20 Oct 2026): weeks scroll from 3 months back to 12 ahead. Each month opens
+// with a heading that CSS keeps at the top while that month is in view; this opens the view on the chosen
+// month and keeps the page title on the same month as that heading. No timers, nothing sent anywhere.
 (function () {
   function setUp(box) {
     var title = document.querySelector("[data-month-title-live]");
-    var weeks = box.querySelectorAll(".home-week[data-month-title]");
-    var anchor = box.querySelector('[data-month-anchor="' + box.getAttribute("data-open-month") + '"]');
-    if (anchor) box.scrollTop = anchor.offsetTop;  // the box is positioned, so offsets are inside it
+    var starts = box.querySelectorAll(".home-week[data-month-anchor]");
+    var band = box.querySelector(".cal-month-band");
+    var bandHeight = band ? band.offsetHeight : 0;
+    var anchor = box.querySelector('.home-week[data-month-anchor="' + box.getAttribute("data-open-month") + '"]');
+    // The box is positioned, so offsets are inside it; open with the month's heading at the top.
+    if (anchor) box.scrollTop = anchor.offsetTop - bandHeight;
     // The weekday header leaves room for the scrollbar, so the day columns line up.
     var head = box.parentNode.querySelector(".home-dow");
     if (head) head.style.paddingRight = (box.offsetWidth - box.clientWidth) + "px";
-    if (!title || !weeks.length) return;
+    if (!title || !starts.length) return;
     var pending = false;
     function follow() {
       pending = false;
-      var top = box.scrollTop + 24;
-      var current = weeks[0];
-      for (var i = 0; i < weeks.length; i++) {
-        if (weeks[i].offsetTop <= top) current = weeks[i]; else break;
+      // The month whose heading is at the top: the last month whose heading has reached the top.
+      var current = starts[0];
+      for (var i = 0; i < starts.length; i++) {
+        if (starts[i].offsetTop - bandHeight <= box.scrollTop + 1) current = starts[i]; else break;
       }
       var text = current.getAttribute("data-month-title");
       if (text && title.textContent !== text) title.textContent = text;

@@ -1,8 +1,9 @@
 {# Company Calendar month grid (Joel, 18 Oct 2026: full width, bars coloured by activity, work named first). #}
 <section class="home-planning cal-month-view" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }} — {{ calendar.month_label }}">
     {# Scrolling months (Joel, 20 Oct 2026): weeks run on from 3 months back to 12 ahead, so the end of one
-       month and the start of the next sit together. Each month's first week is marked; every other
-       month is shaded; the title follows the month at the top. #}
+       month and the start of the next sit together. Each month opens with a compact heading that stays at
+       the top while that month is in view (Joel, 20 Oct 2026: "the new month should be immediately
+       identifiable"); every other month is shaded; the page title follows the heading. #}
     <div class="home-month{% if month_edges %} is-scrolling{% endif %}" id="home-month">
         <div class="home-dow">
             <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
@@ -10,8 +11,9 @@
         <div class="cal-month-scroll"{% if month_edges %} data-month-scroll="true" data-open-month="{{ '%04d-%02d'|format(calendar.year, calendar.month) }}" tabindex="0" aria-label="Months, scrollable"{% endif %}>
         {% if month_edges %}<a class="cal-month-edge" data-month-earlier="true" href="{{ url_for('schedule.company', year=month_edges.earlier.year, month=month_edges.earlier.month, view=calendar_view or None, **calendar_keep) }}">‹ Earlier months</a>{% endif %}
         {% for week in calendar.weeks %}
-        <div class="home-week{% if week.month_anchor %} is-month-start{% endif %}" data-week-start="{{ week.start.isoformat() }}" data-month-title="{{ week.month_title }}"{% if week.month_anchor %} data-month-anchor="{{ week.month_anchor }}"{% endif %}>
-            <div class="home-week-rail">{% if month_edges %}{{ week.month_short }}{% else %}{{ week.label }}{% endif %}</div>
+        {% if month_edges and week.month_anchor %}<div class="cal-month-band" role="heading" aria-level="3" data-month-band="{{ week.month_anchor }}">{{ week.month_heading }}</div>{% endif %}
+        <div class="home-week{% if week.month_anchor %} is-month-start{% endif %}" data-week-start="{{ week.start.isoformat() }}"{% if week.month_anchor %} data-month-anchor="{{ week.month_anchor }}" data-month-title="{{ week.month_heading }}"{% endif %}>
+            <div class="home-week-rail">{% if not month_edges %}{{ week.label }}{% endif %}</div>
             <div class="home-week-grid">
                 {% for day in week.days %}
                 <a

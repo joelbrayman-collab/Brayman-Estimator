@@ -1,19 +1,24 @@
 {# Company Calendar month grid (Joel, 18 Oct 2026: full width, bars coloured by activity, work named first). #}
 <section class="home-planning cal-month-view" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }} — {{ calendar.month_label }}">
-    <div class="home-month" id="home-month">
+    {# Scrolling months (Joel, 20 Oct 2026): weeks run on from 3 months back to 12 ahead, so the end of one
+       month and the start of the next sit together. Each month's first week is marked; every other
+       month is shaded; the title follows the month at the top. #}
+    <div class="home-month{% if month_edges %} is-scrolling{% endif %}" id="home-month">
         <div class="home-dow">
             <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
         </div>
+        <div class="cal-month-scroll"{% if month_edges %} data-month-scroll="true" data-open-month="{{ '%04d-%02d'|format(calendar.year, calendar.month) }}" tabindex="0" aria-label="Months, scrollable"{% endif %}>
+        {% if month_edges %}<a class="cal-month-edge" data-month-earlier="true" href="{{ url_for('schedule.company', year=month_edges.earlier.year, month=month_edges.earlier.month, view=calendar_view or None, **calendar_keep) }}">‹ Earlier months</a>{% endif %}
         {% for week in calendar.weeks %}
-        <div class="home-week">
-            <div class="home-week-rail">{{ week.label }}</div>
+        <div class="home-week{% if week.month_anchor %} is-month-start{% endif %}" data-week-start="{{ week.start.isoformat() }}" data-month-title="{{ week.month_title }}"{% if week.month_anchor %} data-month-anchor="{{ week.month_anchor }}"{% endif %}>
+            <div class="home-week-rail">{% if month_edges %}{{ week.month_short }}{% else %}{{ week.label }}{% endif %}</div>
             <div class="home-week-grid">
                 {% for day in week.days %}
                 <a
-                    class="home-day{% if not day.in_month %} is-out{% endif %}{% if day.weekend %} is-weekend{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.today %} is-today{% endif %}"
+                    class="home-day{% if month_edges %}{% if day.alt_month %} is-alt-month{% endif %}{% elif not day.in_month %} is-out{% endif %}{% if day.weekend %} is-weekend{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.today %} is-today{% endif %}{% if day.month_start %} is-first{% endif %}"
                     href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view=calendar_view or None, **calendar_keep) }}"
                 >
-                    <span class="home-day-num">{{ day.number }}</span>
+                    <span class="home-day-num">{% if day.month_start and month_edges %}<span class="home-day-mon">{{ day.month_short }} </span>{% endif %}{{ day.number }}</span>
                     {% if day.overflow %}
                     <span class="home-overflow">+{{ day.overflow }} {{ contractor_copy.HOME_OVERFLOW_MORE }}</span>
                     {% endif %}
@@ -37,6 +42,8 @@
             </div>
         </div>
         {% endfor %}
+        {% if month_edges %}<a class="cal-month-edge" data-month-later="true" href="{{ url_for('schedule.company', year=month_edges.later.year, month=month_edges.later.month, view=calendar_view or None, **calendar_keep) }}">Later months ›</a>{% endif %}
+        </div>
     </div>
     {% if not calendar.has_scheduled_work %}
     <p class="muted-copy home-cal-empty">{{ contractor_copy.HOME_CALENDAR_EMPTY }}</p>

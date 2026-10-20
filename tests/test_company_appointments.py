@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import time, timedelta
+from datetime import date, time, timedelta
 
 import pytest
 
@@ -405,3 +405,52 @@ def test_history_rows_belong_to_the_organization(app):
         appt = _create(_office())
         rows = CompanyAppointmentHistory.query.filter_by(appointment_id=appt.id).all()
         assert [r.organization_id for r in rows] == [ORG]
+
+
+# ---------------------------------------------------------------------------------------------
+# Scrolling months (Joel, 20 Oct 2026: "can we scroll thru months instead of clicking? That way you
+# can see half of two months"; "at least a year out. Build schedules are long": 3 months back, 12 ahead)
+
+
+def _month_page(client, **extra):
+    return client.get(_url(view="month", scope="company", **extra)).get_data(as_text=True)
+
+
+def test_month_view_scrolls_from_three_months_back_to_a_year_ahead(client):
+    html = _month_page(client)  # TODAY is 21 Sep 2026
+    assert 'data-month-scroll="true"' in html and 'data-open-month="2026-09"' in html
+    starts = re.findall(r'data-week-start="([0-9-]+)"', html)
+    assert starts[0] == "2026-06-01"  # 1 June 2026 is a Monday
+    assert starts[-1] == "2027-09-27"  # the week holding 30 September 2027
+    assert len(starts) == len(set(starts)) and all(
+        (date.fromisoformat(b) - date.fromisoformat(a)).days == 7 for a, b in zip(starts, starts[1:]))
+    anchors = re.findall(r'data-month-anchor="([0-9-]+)"', html)
+    assert anchors == ["2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12",
+                       "2027-01", "2027-02", "2027-03", "2027-04", "2027-05", "2027-06", "2027-07",
+                       "2027-08", "2027-09", "2027-10"]  # the last week runs into October
+    assert ">Oct </span>1</span>" in html and ">Jan </span>1</span>" in html  # each month's first day is named
+    # The selected month is plain; the months either side are shaded, so two months read apart.
+    assert html.count("is-alt-month") > 0 and 'data-month-title="September 2026"' in html
+    assert "js/calendar-months.js" in html and 'data-month-title-live="true"' in html
+    # Past the ends, one click opens the next stretch.
+    assert 'data-month-earlier="true" href="/schedule?year=2026&amp;month=6' in html
+    assert 'data-month-later="true" href="/schedule?year=2027&amp;month=9' in html
+
+
+def test_appointments_months_ahead_are_on_the_scrolling_month(client, app):
+    with app.app_context():
+        office = _office()
+        _create(office, title="February site visit", appointment_date="2027-02-10")
+        _create(office, title="A year out", appointment_date="2027-09-14")
+        _create(office, title="Too far ahead", appointment_date="2027-11-10")
+        _create(office, title="July walkthrough", appointment_date="2026-07-02")
+    html = _month_page(client)
+    assert "February site visit" in html and "July walkthrough" in html and "A year out" in html
+    assert "Too far ahead" not in html
+
+
+def test_week_and_day_keep_a_single_month_and_home_is_unchanged(client):
+    week = client.get(_url(view="week", scope="company")).get_data(as_text=True)
+    assert "data-month-scroll" not in week and "calendar-months.js" not in week
+    home = client.get("/").get_data(as_text=True)
+    assert "data-month-scroll" not in home

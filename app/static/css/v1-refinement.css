@@ -825,6 +825,17 @@ button.button-secondary {
 /* Full-width month with taller rows. */
 .cal-workspace .home-planning { display: block; }
 .cal-workspace .home-week, .cal-workspace .home-day { min-height: 128px; }
+/* Scrolling months (Joel, 20 Oct 2026): about five weeks on screen; weeks run on across months. */
+.home-month.is-scrolling .cal-month-scroll { position: relative; max-height: min(calc(128px * 5.5), 72vh); overflow-y: auto; overscroll-behavior: contain; }
+.home-month.is-scrolling .cal-month-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.home-month.is-scrolling .home-week.is-month-start { border-top: 2px solid var(--text); }
+.home-month.is-scrolling .home-week-rail { font-size: 13px; font-weight: 600; color: var(--text); padding-left: 8px; }
+.home-month.is-scrolling .home-day.is-alt-month { background: #f6f3ee; }
+.home-month.is-scrolling .home-day.is-alt-month.is-weekend { background: #f1ede6; }
+.home-month.is-scrolling .home-day.is-first .home-day-num { font-weight: 700; }
+.cal-month-edge { display: block; padding: 10px 14px; font-size: 13px; color: var(--muted); text-align: center; text-decoration: none; background: #fbfaf8; border-bottom: 1px solid var(--border); }
+.cal-month-edge[data-month-later] { border-top: 1px solid var(--border); border-bottom: 0; }
+.cal-month-edge:hover, .cal-month-edge:focus-visible { color: var(--text); background: rgba(199, 154, 43, 0.10); }
 .cal-workspace .home-bands { grid-auto-rows: 20px; row-gap: 4px; }
 .cal-workspace .home-band { height: 20px; font-size: 12px; line-height: 18px; border-left-width: 4px; }
 
@@ -897,6 +908,7 @@ button.button-secondary {
     .cal-workspace .home-band { height: 8px; margin: 0 2px; padding: 0; border-left-width: 3px; }
     .cal-workspace .home-bands { grid-auto-rows: 8px; row-gap: 3px; }
     .cal-workspace .home-week, .cal-workspace .home-day { min-height: 76px; }
+    .home-month.is-scrolling .home-day-mon { display: block; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
 }
 @media (min-width: 701px) {
     .cal-workspace[data-calendar-view="auto"] .cal-week-view { display: none; }

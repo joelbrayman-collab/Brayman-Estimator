@@ -114,6 +114,31 @@ for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844
   });
 }
 
+test("desktop: the month view scrolls across months and the title follows", async () => {
+  // Joel, 20 Oct 2026: scroll through months instead of clicking; see half of two months at once.
+  const { ctx, pg, errors } = await signedIn(1280, 900);
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month&scope=company`);
+  const box = pg.locator("[data-month-scroll]");
+  const opened = await box.evaluate((el) => {
+    const anchor = el.querySelector(`[data-month-anchor="${el.dataset.openMonth}"]`);
+    return { top: el.scrollTop, anchor: anchor.offsetTop, view: el.clientHeight, all: el.scrollHeight };
+  });
+  assert.ok(Math.abs(opened.top - opened.anchor) <= 2, JSON.stringify(opened));  // opens on this month
+  assert.ok(opened.all > opened.view * 4, JSON.stringify(opened));  // months above and below
+  const title = pg.locator("[data-month-title-live]");
+  const first = (await title.innerText()).trim();
+  await box.evaluate((el) => { el.scrollTop += el.clientHeight * 1.6; });
+  await pg.waitForFunction((t) => document.querySelector("[data-month-title-live]").textContent.trim() !== t, first);
+  const later = (await title.innerText()).trim();
+  assert.notEqual(later, first);
+  assert.match(later, /^[A-Z][a-z]+ 20\d\d$/);
+  await box.evaluate((el) => { el.scrollTop = 0; });
+  assert.equal(await pg.locator("[data-month-earlier]").isVisible(), true);
+  await noSideways(pg, "desktop month");
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
 test("desktop: overlapping appointments sit side by side on the company week", async () => {
   const { ctx, pg } = await signedIn(1280, 900);
   await pg.goto(`${base}/schedule?${at(facts.monday)}&view=week&scope=company`);

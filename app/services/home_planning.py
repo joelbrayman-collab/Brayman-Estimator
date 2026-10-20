@@ -41,6 +41,19 @@ def month_grid_bounds(year: int, month: int) -> tuple[date, date]:
     return grid_start, grid_end
 
 
+def _shift_month(year: int, month: int, months: int) -> tuple[int, int]:
+    index = year * 12 + (month - 1) + months
+    return index // 12, index % 12 + 1
+
+
+def scroll_month_bounds(year: int, month: int, before: int = 0, after: int = 0) -> tuple[date, date]:
+    """Weeks for a scrolling month view (Joel, 20 Oct 2026): from the first week of ``before`` months
+    earlier to the last week of ``after`` months later. 0 and 0 is the single month grid."""
+    grid_start, _ = month_grid_bounds(*_shift_month(year, month, -before))
+    _, grid_end = month_grid_bounds(*_shift_month(year, month, after))
+    return grid_start, grid_end
+
+
 def _clip(start: date, end: date, window_start: date, window_end: date):
     clipped_start = max(start, window_start)
     clipped_end = min(end, window_end)
@@ -98,12 +111,17 @@ def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: da
         days = []
         for offset in range(7):
             day = cursor + timedelta(days=offset)
+            months_from_selected = (day.year - selected.year) * 12 + day.month - selected.month
             days.append(
                 {
                     "date": day,
                     "iso": day.isoformat(),
                     "number": day.day,
                     "in_month": day.month == selected.month and day.year == selected.year,
+                    # Scrolling month view: every other month is shaded, the selected month is not.
+                    "alt_month": months_from_selected % 2 == 1,
+                    "month_start": day.day == 1,
+                    "month_short": day.strftime("%b"),
                     "weekend": day.weekday() >= 5,
                     "selected": day == selected,
                     "today": False,
@@ -125,9 +143,14 @@ def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: da
         for day in days:
             hidden = overflow_by_day.get(day["date"], 0)
             day["overflow"] = hidden
+        first_of_month = next((d["date"] for d in days if d["date"].day == 1), None)
+        thursday = cursor + timedelta(days=3)  # the week belongs to the month of its Thursday
         weeks.append(
             {
                 "label": f"Wk {week_number}",
+                "month_anchor": first_of_month.strftime("%Y-%m") if first_of_month else "",
+                "month_title": thursday.strftime("%B %Y"),
+                "month_short": first_of_month.strftime("%b") if first_of_month else "",
                 "start": cursor,
                 "end": week_end,
                 "days": days,
@@ -282,13 +305,16 @@ def assemble_home_planning(
     project_id: Optional[int] = None,
     appointments: Optional[list] = None,
     mine_user_id: Optional[int] = None,
+    months_before: int = 0,
+    months_after: int = 0,
 ) -> dict:
     """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
     day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
     Calendar only, from ``app.services.appointments.calendar_rows``) adds business appointments to
     the month, the selected day and the week/day lists; Home never passes them. ``mine_user_id``
     (My Calendar) keeps only work assigned to that person, directly or through a crew they are on
-    at the time, and deliveries for those projects."""
+    at the time, and deliveries for those projects. ``months_before`` / ``months_after`` (Calendar
+    month view) extend the weeks so the month view scrolls through several months."""
     from app.presentation.schedule_categories import activity_category
 
     today = today or date.today()
@@ -304,7 +330,7 @@ def assemble_home_planning(
         day_number = max(1, min(int(selected_day), last))
         selected = date(year, month, day_number)
 
-    grid_start, grid_end = month_grid_bounds(year, month)
+    grid_start, grid_end = scroll_month_bounds(year, month, months_before, months_after)
     schedule = assemble_schedule(
         organization_id,
         window_start=grid_start,

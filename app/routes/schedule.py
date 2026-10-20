@@ -26,7 +26,7 @@ from app.services.appointments import (
     type_choices,
     update_appointment,
 )
-from app.services.home_planning import assemble_home_planning, month_grid_bounds
+from app.services.home_planning import assemble_home_planning, scroll_month_bounds
 from app.services.organizations import get_current_organization
 from app.services.schedule import (
     ScheduleError,
@@ -52,6 +52,8 @@ from app.services.schedule import (
 from app.services.shared_api import list_current_operating_projects
 
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
+
+MONTHS_BACK, MONTHS_AHEAD = 3, 12  # scrolling month view (Joel, 20 Oct 2026: at least a year out)
 
 
 def _flash_delivery_proposals():
@@ -134,7 +136,10 @@ def company():
     grid_year, grid_month = (year or today.year), (month or today.month)
     if not 1 <= grid_month <= 12:
         grid_year, grid_month = today.year, today.month
-    grid_start, grid_end = month_grid_bounds(grid_year, grid_month)
+    # Month view scrolls from 3 months back to 12 ahead (Joel, 20 Oct 2026: build schedules are long); week and day keep one month.
+    month_scroll = request.args.get("view") not in ("week", "day")
+    months_before, months_after = (MONTHS_BACK, MONTHS_AHEAD) if month_scroll else (0, 0)
+    grid_start, grid_end = scroll_month_bounds(grid_year, grid_month, months_before, months_after)
     # My Calendar | Company Calendar (Joel, 19 Oct 2026): everyone opens their own; every office
     # member may switch to the company view.
     # A project's own calendar (project filter, e.g. from the Project Hub or Cal) is the company
@@ -156,6 +161,8 @@ def company():
         project_id=project_id,
         appointments=appointment_rows,
         mine_user_id=int(current_user.id) if mine else None,
+        months_before=months_before,
+        months_after=months_after,
     )
     # Month / Week / Day (Joel, 18 Oct 2026). No choice = month on a computer, week list on a phone.
     calendar_view = request.args.get("view") if request.args.get("view") in ("month", "week", "day") else ""
@@ -192,7 +199,16 @@ def company():
         scope=scope,
         scope_keep={k: v for k, v in calendar_keep.items() if k != "scope"},
         day_columns=_day_columns(calendar, grid_days) if hour_grid else [],
+        month_edges=_month_edges(calendar) if month_scroll else None,
     )
+
+
+def _month_edges(calendar):
+    """Where "Earlier months" / "Later months" open: the first and last month of the scroll."""
+    def shift(months):
+        index = calendar["year"] * 12 + calendar["month"] - 1 + months
+        return {"year": index // 12, "month": index % 12 + 1}
+    return {"earlier": shift(-MONTHS_BACK), "later": shift(MONTHS_AHEAD)}
 
 
 def _period_title(calendar, calendar_view):

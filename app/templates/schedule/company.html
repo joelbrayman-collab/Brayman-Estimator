@@ -41,7 +41,7 @@
         <h2 class="cal-period-title">{{ period_title }}</h2>
         {% else %}
         <a class="cal-nav-step" aria-label="Next month" href="{{ url_for('schedule.company', year=calendar.next.year, month=calendar.next.month, view=keep_view, **calendar_keep) }}">›</a>
-        <h2 class="cal-period-title"><span class="cal-when-month">{{ calendar.month_label }}</span><span class="cal-when-week">{{ calendar.week_label }}</span></h2>
+        <h2 class="cal-period-title"><span class="cal-when-month" data-month-title-live="true">{{ calendar.month_label }}</span><span class="cal-when-week">{{ calendar.week_label }}</span></h2>
         {% endif %}
     </div>
 
@@ -303,4 +303,5 @@
 {% endif %}
 </div>
 {% if hour_grid %}<script src="{{ url_for('static', filename='js/calendar-hours.js') }}" defer></script>{% endif %}
+{% if month_edges %}<script src="{{ url_for('static', filename='js/calendar-months.js') }}" defer></script>{% endif %}
 {% endblock %}

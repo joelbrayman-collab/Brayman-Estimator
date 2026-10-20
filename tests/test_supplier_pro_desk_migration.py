@@ -15,7 +15,8 @@ from app import create_app, db
 ROOT = Path(__file__).resolve().parents[1]
 REVISION, PRIOR = "pd1a2b3c4d5e", "z3c4d5e6f7a8"
 NEW_TABLES = {"supplier_customers", "supplier_quotes", "supplier_quote_files", "supplier_quote_events",
-              "supplier_quote_links", "supplier_price_imports", "supplier_selling_prices", "supplier_quote_settings"}
+              "supplier_quote_links", "supplier_price_imports", "supplier_selling_prices", "supplier_quote_settings",
+              "supplier_building_assemblies"}
 
 
 def _config(path) -> Config:
@@ -39,7 +40,7 @@ def test_the_pro_desk_revision_follows_the_calendar_and_is_the_head():
     assert script.get_revision(REVISION).down_revision == PRIOR
 
 
-def test_upgrade_adds_eight_tables_keeps_every_existing_row_and_matches_the_models(tmp_path):
+def test_upgrade_adds_nine_tables_keeps_every_existing_row_and_matches_the_models(tmp_path):
     db_path = tmp_path / "synthetic.db"
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
     with application.app_context():

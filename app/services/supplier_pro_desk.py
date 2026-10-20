@@ -41,6 +41,9 @@ from app.models.supplier_quote import (
     SupplierQuoteLink,
     SupplierQuoteSettings,
     SupplierSellingPrice,
+    ASSEMBLY_ACTIVE,
+    ASSEMBLY_RETIRED,
+    SupplierBuildingAssembly,
 )
 from app.services.outbuilding import spec as S
 from app.services.outbuilding import takeoff as T
@@ -295,7 +298,14 @@ def save_spec(quote: SupplierQuote, form, *, user) -> List[str]:
     values, errors = S.read_answers(form)
     before = spec_values(quote)
     changed = sorted(k for k in set(before) | set(values) if before.get(k) != values.get(k))
-    quote.spec_json = {"values": values, "confirmed_by": actor, "confirmed_at": _now().isoformat(timespec="seconds")}
+    meta = {k: v for k, v in (quote.spec_json or {}).items() if k not in ("values", "confirmed_by", "confirmed_at")}
+    assembly = meta.get("assembly")
+    if assembly:  # say plainly where the detailed form departs from the store's standard
+        overridden = sorted(set(meta.get("assembly_overridden") or []) |
+                            {k for k in S.ASSEMBLY_KEYS if values.get(k) != (assembly.get("values") or {}).get(k)})
+        meta["assembly_overridden"] = overridden
+    quote.spec_json = {**meta, "values": values, "confirmed_by": actor,
+                       "confirmed_at": _now().isoformat(timespec="seconds")}
     quote.building_system = values.get("building_system")
     quote.updated_at = _now()
     if changed:
@@ -306,6 +316,168 @@ def save_spec(quote: SupplierQuote, form, *, user) -> List[str]:
 
 def takeoff_for(quote: SupplierQuote) -> Dict:
     return T.takeoff(spec_values(quote))
+
+
+# ------------------------------------------------------------------ standard assemblies and Quick Quote
+
+
+def active_assemblies(supplier_id: int) -> List[SupplierBuildingAssembly]:
+    return (SupplierBuildingAssembly.query.filter_by(supplier_id=supplier_id, status=ASSEMBLY_ACTIVE)
+            .order_by(SupplierBuildingAssembly.name, SupplierBuildingAssembly.id).all())
+
+
+def assembly_for(supplier_id: int, assembly_id) -> SupplierBuildingAssembly:
+    try:
+        ident = int(assembly_id)
+    except (TypeError, ValueError):
+        raise ProDeskError("Choose one of this store's standard buildings.")
+    row = SupplierBuildingAssembly.query.filter_by(id=ident, supplier_id=supplier_id).first()
+    if row is None:
+        raise ProDeskError("Choose one of this store's standard buildings.")
+    return row
+
+
+def save_assembly(supplier, form, *, user, demo_synthetic: bool = False) -> Tuple[Optional[SupplierBuildingAssembly], List[str]]:
+    """Record a store standard. Every answer is typed by the store; the basis says who it was checked with."""
+    actor = _actor(user)
+    values, errors = S.read_assembly(form)
+    name = _clean(form.get("name"), 120)
+    basis = _clean(form.get("basis"), 300)
+    if not name:
+        errors.insert(0, "Give the standard a name, e.g. \"Post-frame steel, 8 ft bays\".")
+    if not basis:
+        errors.insert(0, "Say what the standard is based on, e.g. who it was confirmed with.")
+    if errors:
+        return None, errors
+    row = SupplierBuildingAssembly(supplier_id=supplier.id, name=name, building_system=values["building_system"],
+                                   values_json=values, basis=basis, status=ASSEMBLY_ACTIVE, approved_by_name=actor,
+                                   approved_at=_now(), demo_synthetic=demo_synthetic)
+    db.session.add(row)
+    db.session.commit()
+    return row, []
+
+
+def retire_assembly(supplier, assembly_id, *, user) -> SupplierBuildingAssembly:
+    actor = _actor(user)
+    row = assembly_for(supplier.id, assembly_id)
+    if row.status != ASSEMBLY_RETIRED:
+        row.status, row.retired_by_name, row.retired_at = ASSEMBLY_RETIRED, actor, _now()
+        db.session.commit()
+    return row
+
+
+def _started_at(raw) -> Optional[str]:
+    """When the Quick Quote page was opened (written by the server into the form), for the timing record."""
+    try:
+        at = datetime.fromisoformat((raw or "").strip())
+    except ValueError:
+        return None
+    now = _now()
+    return at.isoformat(timespec="seconds") if now - timedelta(hours=4) <= at <= now else None
+
+
+def quick_quote(supplier, form, *, user, demo_synthetic: bool = False) -> Tuple[Optional[SupplierQuote], List[str]]:
+    """Customer, standard building and the answers that change per building, in one step.
+
+    Nothing is created when an answer is missing or wrong: the page comes back with the messages.
+    """
+    _actor(user)
+    if not (form.get("assembly_id") or "").strip():
+        return None, ["Choose one of this store's standard buildings, or use the detailed form."]
+    try:
+        assembly = assembly_for(supplier.id, form.get("assembly_id"))
+    except ProDeskError as exc:
+        return None, [str(exc)]
+    if assembly.status != ASSEMBLY_ACTIVE:
+        return None, ["That standard building has been retired. Choose a current one."]
+    values, errors = S.read_quick(form, assembly.values_json or {})
+    if not (form.get("customer_name") or "").strip():
+        errors.insert(0, "Enter the customer's name.")
+    if errors:
+        return None, errors
+    quote = start_quote(supplier, form, user=user, demo_synthetic=demo_synthetic)
+    actor = _actor(user)
+    quote.spec_json = {
+        "values": values, "confirmed_by": actor, "confirmed_at": _now().isoformat(timespec="seconds"),
+        "quick": True, "openings_placed": bool(values.get("openings")),
+        "intake_started_at": _started_at(form.get("started_at")),
+        "assembly": {"id": assembly.id, "name": assembly.name, "basis": assembly.basis,
+                     "approved_by": assembly.approved_by_name,
+                     "approved_at": assembly.approved_at.isoformat(timespec="seconds"),
+                     "values": dict(assembly.values_json or {})},
+    }
+    quote.building_system = values.get("building_system")
+    quote.updated_at = _now()
+    _event(quote, "QUICK_QUOTE", actor, assembly=assembly.name, assembly_id=assembly.id,
+           openings=len(values.get("openings") or []))
+    db.session.commit()
+    return quote, []
+
+
+def record_printed(quote: SupplierQuote, *, user):
+    """The first time the store opens the issued quotation PDF (the printable quotation) is timed."""
+    if quote.status == QUOTE_DRAFT:
+        return
+    if SupplierQuoteEvent.query.filter_by(quote_id=quote.id, event_type="QUOTATION_PRINTED").first():
+        return
+    _event(quote, "QUOTATION_PRINTED", _actor(user))
+    db.session.commit()
+
+
+EXCEPTION_EVENTS = ("PRODUCT_MATCHED", "LINE_EXCLUDED", "LINE_RESET", "PRODUCT_CHOSEN")
+
+
+def _seconds(a, b) -> Optional[int]:
+    return int((b - a).total_seconds()) if a and b and b >= a else None
+
+
+def quote_timing(quote: SupplierQuote) -> Dict:
+    """Elapsed time per stage for one walk-in quotation, from what the store actually did (event times).
+
+    Setup the store does once (price file, product matches, standard buildings) is not part of it; time
+    spent matching products or leaving lines out during the quotation is reported as exception time.
+    """
+    events = quote_events(quote)
+    first = {}
+    for e in events:
+        first.setdefault(e.event_type, e.at)
+    meta = quote.spec_json or {}
+    started = datetime.fromisoformat(meta["intake_started_at"]) if meta.get("intake_started_at") else None
+    created = first.get("CREATED")
+    confirmed = [e.at for e in events if e.event_type in ("BUILDING_CONFIRMED", "QUICK_QUOTE")]
+    building_done = confirmed[-1] if confirmed else None
+    issued = first.get("ISSUED")
+    printed = first.get("QUOTATION_PRINTED")
+    exceptions = [e for e in events if e.event_type in EXCEPTION_EVENTS and building_done and issued
+                  and building_done <= e.at <= issued]
+    exception_end = exceptions[-1].at if exceptions else None
+    stages = [
+        ("Customer and building answers", started, building_done if meta.get("quick") else created),
+    ]
+    if not meta.get("quick"):
+        stages.append(("Building answers (detailed form)", created, building_done))
+    stages += [
+        ("Missing prices, product matches and lines left out (exceptions)", building_done, exception_end),
+        ("Price review and issue", exception_end or building_done, issued),
+        ("Open the printable quotation", issued, printed),
+    ]
+    rows = [{"stage": label, "seconds": _seconds(a, b), "from": a, "to": b} for label, a, b in stages]
+    walk_in = _seconds(started or created, printed or issued)
+    exception_seconds = _seconds(building_done, exception_end) or 0
+    return {"rows": rows, "walk_in_seconds": walk_in, "exception_seconds": exception_seconds,
+            "exception_actions": len(exceptions), "started_recorded": started is not None,
+            "quick": bool(meta.get("quick")), "printed": printed is not None}
+
+
+def setup_record(supplier_id: int) -> Dict:
+    """The one-time store setup behind quotations, kept apart from walk-in quotation time."""
+    from app.models.supplier_catalogue import CanonicalMaterialSupplierMap as Map
+
+    product_ids = [p.id for p in supplier_products_for(supplier_id)]
+    maps = (Map.query.filter(Map.supplier_product_id.in_(product_ids)).all() if product_ids else [])
+    imports = price_imports(supplier_id)
+    assemblies = SupplierBuildingAssembly.query.filter_by(supplier_id=supplier_id).order_by(SupplierBuildingAssembly.id).all()
+    return {"price_files": imports, "product_matches": len(maps), "assemblies": assemblies}
 
 
 # ------------------------------------------------------------------ price file
@@ -697,6 +869,10 @@ def issue_quote(quote: SupplierQuote, *, user, drawing_fingerprint: str = "") ->
         "valid_until": (today + timedelta(days=int(settings.validity_days))).isoformat(),
         "drawing_fingerprint": drawing_fingerprint,
         "demo_prices": priced["demo_prices"],
+        "standard": ({k: (quote.spec_json or {})["assembly"].get(k) for k in ("id", "name", "basis", "approved_by", "approved_at")}
+                     | {"changed": list((quote.spec_json or {}).get("assembly_overridden") or []),
+                        "openings_placed": bool((quote.spec_json or {}).get("openings_placed"))}
+                     if (quote.spec_json or {}).get("assembly") else None),
         "demo_synthetic": bool(quote.demo_synthetic),
         "issued_by": actor,
         "issued_at": _now().isoformat(timespec="seconds"),

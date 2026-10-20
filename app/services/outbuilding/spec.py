@@ -212,3 +212,111 @@ def describe(values: Dict) -> str:
     if values.get("building_system"):
         parts.append(BUILDING_SYSTEMS.get(values["building_system"], values["building_system"]).split(",")[0].lower())
     return ", ".join(parts)
+
+
+# ------------------------------------------------------------------ Quick Quote (Joel, 20 Oct 2026)
+#
+# A store approves its own standard assembly once (framing, lumber, panels, fastening). At the counter,
+# Quick Quote asks only what changes from building to building. Both halves go through ``read_answers``
+# above, so the same ranges and checks apply; nothing is defaulted by the system.
+
+ASSEMBLY_KEYS = (
+    "building_system", "roof_type", "eave_overhang_in", "gable_overhang_in", "post_spacing_ft",
+    "endwall_post_spacing_ft", "post_description", "truss_spacing_ft", "purlin_spacing_in", "purlin_lumber",
+    "girt_spacing_in", "girt_lumber", "skirt_lumber", "roof_panel_coverage_in", "wall_panel_coverage_in",
+    "screws_per_sqft",
+)
+ASSEMBLY_OPTIONAL = ("screws_per_sqft",)  # blank: fastener lines are flagged instead
+QUICK_KEYS = ("width_ft", "length_ft", "wall_height_ft", "roof_pitch", "foundation", "slab_thickness_in",
+              "concrete_waste_percent")
+QUICK_DOOR_ROWS = 4
+MIN_GAP_IN = D("12")  # at least 1 ft of wall between automatically placed openings and from the corners
+
+
+def read_assembly(form) -> Tuple[Dict, List[str]]:
+    """The store's standard assembly answers, checked with the same rules as the detailed form."""
+    values, errors = read_answers({k: form.get(k, "") for k in ASSEMBLY_KEYS})
+    values = {k: values.get(k) for k in ASSEMBLY_KEYS}
+    errors = [e for e in errors if not e.startswith("Opening")]
+    for key in ASSEMBLY_KEYS:
+        if key not in ASSEMBLY_OPTIONAL and not values.get(key):
+            message = f"{FIELD_BY_KEY[key].label}: required for a standard assembly."
+            if not any(e.startswith(FIELD_BY_KEY[key].label + ":") for e in errors):
+                errors.append(message)
+    return values, errors
+
+
+def _quick_rows(form) -> Tuple[List[Dict], List[str]]:
+    rows, errors = [], []
+    for i in range(QUICK_DOOR_ROWS):
+        kind = (form.get(f"qd_{i}_kind") or "").strip()
+        count_raw = (form.get(f"qd_{i}_count") or "").strip()
+        if not kind and not count_raw:
+            continue
+        label = f"Door/window row {i + 1}"
+        if kind not in OPENING_KINDS:
+            errors.append(f"{label}: choose overhead door, man door or window.")
+            continue
+        if not count_raw.isdigit() or not 1 <= int(count_raw) <= 6:
+            errors.append(f"{label}: how many (1 to 6)?")
+            continue
+        wall = (form.get(f"qd_{i}_wall") or "").strip()
+        if wall not in WALLS:
+            errors.append(f"{label}: choose which wall.")
+            continue
+        try:
+            width, height = _number(form.get(f"qd_{i}_width_in")), _number(form.get(f"qd_{i}_height_in"))
+        except ValueError:
+            errors.append(f"{label}: width and height must be numbers in inches.")
+            continue
+        if width is None or height is None or width <= 0 or height <= 0:
+            errors.append(f"{label}: enter the width and height in inches.")
+            continue
+        rows += [{"kind": kind, "wall": wall, "width_in": width, "height_in": height}] * int(count_raw)
+    return rows, errors
+
+
+def place_openings(rows: List[Dict], values: Dict) -> Tuple[List[Dict], List[str]]:
+    """Space each wall's openings evenly for the sales drawing (positions are to be confirmed on site)."""
+    placed, errors = [], []
+    for wall in WALLS:
+        on_wall = [r for r in rows if r["wall"] == wall]
+        if not on_wall:
+            continue
+        span_ft = values.get("width_ft") if wall in ENDWALLS else values.get("length_ft")
+        if not span_ft:
+            continue
+        span = D(span_ft) * 12
+        gap = (span - sum(r["width_in"] for r in on_wall)) / (len(on_wall) + 1)
+        if gap < MIN_GAP_IN:
+            errors.append(f"The openings on the {WALLS[wall].lower()} do not fit with 1 ft between them; "
+                          "use the detailed building form to place them.")
+            continue
+        at = gap
+        for r in on_wall:
+            offset_ft = (at / 12).quantize(D("0.01"), rounding="ROUND_DOWN")
+            placed.append({"kind": r["kind"], "wall": wall, "width_in": str(r["width_in"]),
+                           "height_in": str(r["height_in"]), "offset_ft": str(offset_ft)})
+            at += r["width_in"] + gap
+    return placed, errors
+
+
+def read_quick(form, assembly_values: Dict) -> Tuple[Dict, List[str]]:
+    """Quick Quote answers on top of a store's approved assembly: one set of values, fully validated."""
+    combined = {k: (assembly_values.get(k) or "") for k in ASSEMBLY_KEYS}
+    combined.update({k: form.get(k, "") for k in QUICK_KEYS})
+    first, errors = read_answers(combined)  # sizes, needed to place the openings
+    rows, row_errors = _quick_rows(form)
+    placed, place_errors = place_openings(rows, first)
+    for i, o in enumerate(placed):
+        combined.update({f"opening_{i}_{k}": v for k, v in o.items()})
+    values, errors = read_answers(combined)
+    errors = row_errors + place_errors + errors
+    for key in ("width_ft", "length_ft", "wall_height_ft", "roof_pitch", "foundation"):
+        if not values.get(key) and not any(e.startswith(FIELD_BY_KEY[key].label + ":") for e in errors):
+            errors.append(f"{FIELD_BY_KEY[key].label}: required.")
+    if values.get("foundation") == FOUNDATION_SLAB:
+        for key in ("slab_thickness_in", "concrete_waste_percent"):
+            if not values.get(key) and not any(e.startswith(FIELD_BY_KEY[key].label + ":") for e in errors):
+                errors.append(f"{FIELD_BY_KEY[key].label}: required for a concrete slab.")
+    return values, errors

@@ -163,6 +163,7 @@ from app.models.supplier_quote import (
     SupplierQuoteFile,
     SupplierQuoteLink,
     SupplierQuoteSettings,
+    SupplierBuildingAssembly,
     SupplierSellingPrice,
 )
 from app.models.schedule import (
@@ -352,6 +353,7 @@ __all__ = [
     "SupplierQuoteFile",
     "SupplierQuoteLink",
     "SupplierQuoteSettings",
+    "SupplierBuildingAssembly",
     "SupplierSellingPrice",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",

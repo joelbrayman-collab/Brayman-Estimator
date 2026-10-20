@@ -156,6 +156,15 @@ def render_quote_pdf(frozen: Dict, *, logo_bytes: Optional[bytes] = None, brand_
     story.append(Paragraph("Assumptions and exclusions", st["h"]))
     for a in ASSUMPTIONS:
         story.append(Paragraph("• " + _escape(a), st["body"]))
+    standard = frozen.get("standard")
+    if standard:
+        line = (f"Framing, panel and fastening details from the store's standard building \u201c{standard.get('name')}\u201d "
+                f"({standard.get('basis')}).")
+        if standard.get("changed"):
+            line += " Some answers were changed for this building."
+        if standard.get("openings_placed"):
+            line += " Door and window positions on the drawing are approximate; confirm on site."
+        story.append(Paragraph("• " + _escape(line), st["body"]))
     if frozen.get("terms"):
         story.append(Paragraph("Terms", st["h"]))
         story.append(Paragraph(_escape(frozen["terms"]).replace("\n", "<br/>"), st["body"]))

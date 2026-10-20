@@ -226,7 +226,8 @@ def _match_all(store, base, supplier_id):
 def test_walk_in_quotation_from_sketch_to_order_ready_package(app, client):
     supplier, store = _ready_supplier(app, client)
     counts_before = (Project.query.count(), Estimate.query.count(), Proposal.query.count())
-    assert b"New walk-in quotation" in store.get(f"/supplier/{supplier.id}/pro-desk/").data
+    index = store.get(f"/supplier/{supplier.id}/pro-desk/").data
+    assert b"Quick Quote" in index and b"Detailed quotation" in index
     quote, base = _start(store, supplier)
     assert quote.customer.consent_email and quote.customer.consent_recorded_by_name == DARCY[0]
     png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
@@ -465,8 +466,151 @@ def test_pages_render_for_phone_and_desktop_without_errors(app, client):
     supplier, store = _ready_supplier(app, client)
     quote, base = _start(store, supplier)
     for path in (f"/supplier/{supplier.id}/pro-desk/", f"/supplier/{supplier.id}/pro-desk/new", base,
+                 f"/supplier/{supplier.id}/pro-desk/quick", f"/supplier/{supplier.id}/pro-desk/standards",
+                 f"/supplier/{supplier.id}/pro-desk/timing",
                  f"/supplier/{supplier.id}/pro-desk/prices", f"/supplier/{supplier.id}/pro-desk/settings"):
         page = store.get(path)
         assert page.status_code == 200, path
         assert b'name="viewport"' in page.data
     assert b"PRO Desk quotations" in store.get(f"/supplier/{supplier.id}/").data
+
+
+# ---------------------------------------------------------------------------------------------
+# Quick Quote: store standards plus the answers that change per building (Joel, 20 Oct 2026)
+
+STANDARD = {k: REFERENCE[k] for k in S.ASSEMBLY_KEYS}
+QUICK = {"width_ft": "30", "length_ft": "40", "wall_height_ft": "12", "roof_pitch": "4", "foundation": "NONE",
+         "qd_0_kind": "OVERHEAD_DOOR", "qd_0_count": "1", "qd_0_width_in": "120", "qd_0_height_in": "120", "qd_0_wall": "LEFT",
+         "qd_1_kind": "MAN_DOOR", "qd_1_count": "1", "qd_1_width_in": "36", "qd_1_height_in": "80", "qd_1_wall": "FRONT"}
+
+
+def test_a_standard_needs_every_answer_and_nothing_is_filled_in_for_the_store():
+    values, errors = S.read_assembly({})
+    assert all(v is None for v in values.values())
+    required = [k for k in S.ASSEMBLY_KEYS if k not in S.ASSEMBLY_OPTIONAL]
+    assert len(errors) == len(required)
+    values, errors = S.read_assembly({**STANDARD, "post_spacing_ft": "40"})
+    assert any("Sidewall post spacing" in e for e in errors)  # same ranges as the detailed form
+    values, errors = S.read_assembly(STANDARD)
+    assert errors == [] and values["screws_per_sqft"] is None
+
+
+def test_quick_answers_give_the_same_takeoff_as_the_detailed_form():
+    standard, _ = S.read_assembly(STANDARD)
+    values, errors = S.read_quick(QUICK, standard)
+    assert errors == [] and S.missing_answers(values) == []
+    # Openings spaced evenly: endwall 360 in − 120 in → 120 in gaps; sidewall 480 − 36 → 222 in = 18.5 ft.
+    assert {(o["wall"], o["offset_ft"]) for o in values["openings"]} == {("LEFT", "10.00"), ("FRONT", "18.50")}
+    quick = {l["code"]: (l["qty"], l["status"]) for l in T.takeoff(values)["lines"]}
+    detailed = {l["code"]: (l["qty"], l["status"]) for l in T.takeoff(_values())["lines"]}
+    assert quick == detailed
+
+
+def test_quick_answers_are_checked_and_never_guessed():
+    standard, _ = S.read_assembly(STANDARD)
+    _values_, errors = S.read_quick({}, standard)
+    assert {"Width (endwall): required.", "Length (sidewall): required.", "Wall height (eave): required.",
+            "Roof pitch: required.", "Floor / foundation: required."} <= set(errors)
+    _v, errors = S.read_quick({**QUICK, "qd_0_count": "3"}, standard)  # three 10 ft doors in a 30 ft endwall
+    assert any("do not fit" in e for e in errors)
+    _v, errors = S.read_quick({**QUICK, "foundation": "SLAB"}, standard)
+    assert "Slab thickness: required for a concrete slab." in errors
+    _v, errors = S.read_quick({**QUICK, "qd_1_wall": ""}, standard)
+    assert any("choose which wall" in e for e in errors)
+
+
+def _standard(store, supplier, **over):
+    data = {"name": "Post-frame steel, 8 ft bays (synthetic)", "basis": "Synthetic store standard for tests",
+            "demo_synthetic": "yes", **STANDARD, **over}
+    return store.post(f"/supplier/{supplier.id}/pro-desk/standards", data=data)
+
+
+def test_quick_quote_from_customer_to_printable_quotation_with_timing(app, client):
+    from app.models.supplier_quote import SupplierBuildingAssembly
+
+    supplier, store = _ready_supplier(app, client)
+    assert b"No standard buildings yet" in store.get(f"/supplier/{supplier.id}/pro-desk/quick").data
+    assert _standard(store, supplier, basis="").status_code == 400  # the basis is required
+    assert _standard(store, supplier).status_code == 302
+    standard = SupplierBuildingAssembly.query.filter_by(supplier_id=supplier.id).one()
+    assert standard.approved_by_name == DARCY[0] and standard.values_json["post_spacing_ft"] == "8"
+    page = store.get(f"/supplier/{supplier.id}/pro-desk/quick").data.decode()
+    started = re.search(r'name="started_at" value="([^"]+)"', page).group(1)
+    form = {"customer_name": "Synthetic Farmer", "customer_email": "joel.brayman@gmail.com", "consent_email": "yes",
+            "demo_synthetic": "yes", "assembly_id": str(standard.id), "started_at": started, **QUICK}
+    before = SupplierQuote.query.count()
+    bad = store.post(f"/supplier/{supplier.id}/pro-desk/quick", data={**form, "width_ft": ""})
+    assert bad.status_code == 400 and b"Width (endwall): required." in bad.data and SupplierQuote.query.count() == before
+    png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
+    done = store.post(f"/supplier/{supplier.id}/pro-desk/quick", data={**form, "sketch": (io.BytesIO(png), "sketch.png")},
+                      content_type="multipart/form-data")
+    assert done.status_code == 302 and done.headers["Location"].endswith("#pricing")
+    quote = SupplierQuote.query.order_by(SupplierQuote.id.desc()).first()
+    base = f"/supplier/{supplier.id}/pro-desk/{quote.id}"
+    assert quote.spec_json["quick"] and quote.spec_json["assembly"]["id"] == standard.id
+    assert quote.spec_json["intake_started_at"] == started and len(P.active_sketches(quote)) == 1
+    page = store.get(base).data.decode()
+    assert "Quick Quote from the store standard" in page and "change any answer (detailed building form)" in page
+    _match_all(store, base, supplier.id)
+    assert P.price_quote(db.session.get(SupplierQuote, quote.id))["blockers"] == []
+    assert store.post(f"{base}/issue").status_code == 302
+    quote = db.session.get(SupplierQuote, quote.id)
+    assert quote.issued_json["standard"]["name"] == standard.name and quote.issued_json["standard"]["openings_placed"]
+    from pypdf import PdfReader
+
+    for _ in range(2):  # printing twice records one printed time
+        pdf = store.get(f"{base}/quotation.pdf")
+    text = PdfReader(io.BytesIO(pdf.data)).pages[0].extract_text() + PdfReader(io.BytesIO(pdf.data)).pages[1].extract_text()
+    assert "store's standard building" in " ".join(text.split())
+    assert SupplierQuoteEvent.query.filter_by(quote_id=quote.id, event_type="QUOTATION_PRINTED").count() == 1
+    timing = P.quote_timing(quote)
+    assert timing["quick"] and timing["started_recorded"] and timing["printed"]
+    assert timing["walk_in_seconds"] is not None and timing["walk_in_seconds"] >= 0
+    assert timing["exception_actions"] >= len(MATCHES)  # matching products during the quote is exception time
+    stages = [r["stage"] for r in timing["rows"]]
+    assert stages[0] == "Customer and building answers" and "Open the printable quotation" in stages
+    timing_page = store.get(f"/supplier/{supplier.id}/pro-desk/timing").data.decode()
+    assert "One-time store setup (not part of quotation time)" in timing_page and quote.number in timing_page
+
+
+def test_changing_a_standard_answer_on_one_quotation_is_recorded(app, client):
+    from app.models.supplier_quote import SupplierBuildingAssembly
+
+    supplier, store = _ready_supplier(app, client)
+    _standard(store, supplier)
+    standard = SupplierBuildingAssembly.query.filter_by(supplier_id=supplier.id).one()
+    store.post(f"/supplier/{supplier.id}/pro-desk/quick",
+               data={"customer_name": "Synthetic Farmer", "demo_synthetic": "yes", "assembly_id": str(standard.id), **QUICK})
+    quote = SupplierQuote.query.order_by(SupplierQuote.id.desc()).first()
+    base = f"/supplier/{supplier.id}/pro-desk/{quote.id}"
+    store.post(f"{base}/building", data={**REFERENCE, "purlin_spacing_in": "16"})
+    quote = db.session.get(SupplierQuote, quote.id)
+    assert quote.spec_json["assembly_overridden"] == ["purlin_spacing_in"] and quote.spec_json["quick"]
+    assert "Purlin spacing" in store.get(base).data.decode().split("Changed from the standard")[1][:200]
+
+
+def test_standards_belong_to_one_store_and_retired_ones_are_not_offered(app, client):
+    from app.models.supplier_quote import SupplierBuildingAssembly
+
+    supplier, store = _ready_supplier(app, client)
+    _standard(store, supplier)
+    standard = SupplierBuildingAssembly.query.filter_by(supplier_id=supplier.id).one()
+    other = create_supplier(code="TEST-HH2", legal_name="Other supply (synthetic)", demo_synthetic=True)
+    location = create_supplier_location(supplier_id=other.id, code="MAIN", display_name="Main", demo_synthetic=True)
+    account = create_contractor_supplier_account(organization_id=DEFAULT_ORGANIZATION_ID, supplier_id=other.id,
+                                                 supplier_location_id=location.id, demo_synthetic=True)
+    _give_sign_in(client, account, name="Other Synthetic", email="other2.store@example.invalid")
+    rival = _supplier_client(app, email="other2.store@example.invalid")
+    for path in ("quick", "standards", "timing"):
+        assert rival.get(f"/supplier/{supplier.id}/pro-desk/{path}").status_code == 404
+    assert standard.name.encode() not in rival.get(f"/supplier/{other.id}/pro-desk/standards").data
+    used = rival.post(f"/supplier/{other.id}/pro-desk/quick",
+                      data={"customer_name": "X", "assembly_id": str(standard.id), **QUICK})
+    assert used.status_code == 400 and SupplierQuote.query.filter_by(supplier_id=other.id).count() == 0
+    assert rival.post(f"/supplier/{other.id}/pro-desk/standards", data={"retire": str(standard.id)}).status_code == 404
+    store.post(f"/supplier/{supplier.id}/pro-desk/standards", data={"retire": str(standard.id)})
+    assert db.session.get(SupplierBuildingAssembly, standard.id).status == "RETIRED"
+    assert b"No standard buildings yet" in store.get(f"/supplier/{supplier.id}/pro-desk/quick").data
+    refused = store.post(f"/supplier/{supplier.id}/pro-desk/quick", data={"customer_name": "X", "assembly_id": str(standard.id), **QUICK})
+    assert refused.status_code == 400 and b"retired" in refused.data
+    assert client.get(f"/supplier/{supplier.id}/pro-desk/quick").status_code == 403  # contractor office

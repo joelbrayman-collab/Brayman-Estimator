@@ -43,6 +43,11 @@
     <h2>2 · Building</h2>
     <p class="muted-copy">Every answer comes from the sketch or the customer. Nothing is filled in for you. <span class="pd-structural">Amber</span> items are recorded as stated and always go to technical review.</p>
     <p class="muted-copy">Not yet available here: {{ not_yet|join("; ") }}.</p>
+    {% set meta = q.spec_json or {} %}
+    {% if meta.get("assembly") %}<div class="pd-provenance" data-from-standard="{{ meta.assembly.id }}"><strong>Quick Quote from the store standard “{{ meta.assembly.name }}”</strong>
+        <span class="pd-basis">Approved by {{ meta.assembly.approved_by }} on {{ meta.assembly.approved_at[:10] }} · {{ meta.assembly.basis }}{% if meta.get("openings_placed") %} · doors and windows placed evenly for the drawing; confirm on site{% endif %}</span>
+        {% if meta.get("assembly_overridden") %}<span class="pd-basis" data-overridden="true">Changed from the standard on this quotation: {% for k in meta.assembly_overridden %}{{ field_labels.get(k, k) }}{{ ", " if not loop.last }}{% endfor %}.</span>{% endif %}</div>{% endif %}
+    {% if meta.get("quick") %}<details class="pd-detailed"><summary>{{ describe }} — change any answer (detailed building form)</summary>{% endif %}
     <form method="post" action="{{ url_for('supplier_pro_desk.save_building', supplier_id=supplier.id, quote_id=q.id) }}" data-building-form="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         {% set ns = namespace(group="") %}
@@ -73,6 +78,7 @@
         {% if q.spec_json and q.spec_json.get("confirmed_by") %}<p class="muted-copy">Confirmed by {{ q.spec_json.confirmed_by }}.</p>{% endif %}
         {% if draft %}<p><button type="submit" class="button">Confirm the building</button></p>{% endif %}
     </form>
+    {% if meta.get("quick") %}</details>{% endif %}
     {% if p.takeoff.missing %}<p class="pd-blockers">Still needed: {{ p.takeoff.missing|join(", ") }}.</p>{% endif %}
 </section>
 

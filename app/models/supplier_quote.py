@@ -206,3 +206,35 @@ class SupplierQuoteSettings(db.Model):
     contact_line = db.Column(db.String(300), nullable=True)
     updated_by_name = db.Column(db.String(160), nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+ASSEMBLY_ACTIVE = "ACTIVE"
+ASSEMBLY_RETIRED = "RETIRED"
+
+
+class SupplierBuildingAssembly(db.Model):
+    """A store's own standard building assembly for Quick Quote (Joel, 20 Oct 2026).
+
+    The framing, lumber, panel and fastening answers the store has approved as its standard for one
+    building system. Typed by the store and recorded with who approved it and on what basis; nothing is
+    defaulted by CalibraytAI. Structural items stay flagged for technical review on every quotation.
+    A changed standard is a new row; the old one is retired, so issued quotations keep their source.
+    """
+
+    __tablename__ = "supplier_building_assemblies"
+    __table_args__ = (
+        db.CheckConstraint("status IN ('ACTIVE', 'RETIRED')", name="ck_supplier_building_assemblies_status"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=False, index=True)
+    name = db.Column(db.String(120), nullable=False)
+    building_system = db.Column(db.String(40), nullable=False)
+    values_json = db.Column(db.JSON, nullable=False)
+    basis = db.Column(db.String(300), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default=ASSEMBLY_ACTIVE)
+    approved_by_name = db.Column(db.String(160), nullable=False)
+    approved_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    retired_by_name = db.Column(db.String(160), nullable=True)
+    retired_at = db.Column(db.DateTime, nullable=True)
+    demo_synthetic = db.Column(db.Boolean, nullable=False, default=False)

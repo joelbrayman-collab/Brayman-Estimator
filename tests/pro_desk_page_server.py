@@ -101,7 +101,13 @@ def seed() -> dict:
     for code, (sku, factor) in MATCHES.items():
         product = SupplierProduct.query.filter_by(supplier_id=supplier.id, sku=sku).one()
         P.match_product(supplier, lines[code], product_id=product.id, sales_per_unit=factor, user=store_user)
-    return {"supplier_id": supplier.id, "rival_id": rival.id, "store": list(STORE), "rival": list(RIVAL)}
+    standard, errors = P.save_assembly(supplier, {"name": "Post-frame steel, 8 ft bays (synthetic)",
+                                                  "basis": "Synthetic demonstration standard, not a real store's",
+                                                  **{k: REFERENCE_FORM[k] for k in S.ASSEMBLY_KEYS}},
+                                       user=store_user, demo_synthetic=True)
+    assert not errors, errors
+    return {"supplier_id": supplier.id, "rival_id": rival.id, "store": list(STORE), "rival": list(RIVAL),
+            "standard_id": standard.id}
 
 
 REFERENCE_FORM = {
@@ -117,6 +123,12 @@ REFERENCE_FORM = {
 }
 
 
+QUICK_FORM = {"width_ft": "30", "length_ft": "40", "wall_height_ft": "12", "roof_pitch": "4", "foundation": "NONE",
+              "qd_0_kind": "OVERHEAD_DOOR", "qd_0_count": "1", "qd_0_width_in": "120", "qd_0_height_in": "120",
+              "qd_0_wall": "LEFT", "qd_1_kind": "MAN_DOOR", "qd_1_count": "1", "qd_1_width_in": "36",
+              "qd_1_height_in": "80", "qd_1_wall": "FRONT"}
+
+
 def main():
     database = tempfile.NamedTemporaryFile(prefix="pro-desk-", suffix=".db", delete=False)
     database.close()
@@ -126,6 +138,7 @@ def main():
         db.create_all()
         facts = seed()
     facts["reference"] = REFERENCE_FORM
+    facts["quick"] = QUICK_FORM
     port = int(os.environ["PRO_DESK_PAGE_PORT"])
     print("FACTS " + json.dumps(facts), flush=True)
     print(f"READY {port}", flush=True)

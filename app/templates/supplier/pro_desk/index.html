@@ -4,7 +4,10 @@
 <div class="page-heading">
     <div><p class="eyebrow">PRO Desk</p><h1>Walk-in quotations</h1>
     <p class="muted-copy">{{ brand_for(supplier).name }}'s own customers. Contractors never see these, and nothing here shows a contractor's records.</p></div>
-    <div><a class="button" href="{{ url_for('supplier_pro_desk.new_quote', supplier_id=supplier.id) }}" data-new-walk-in="true">New walk-in quotation</a>
+    <div><a class="button" href="{{ url_for('supplier_pro_desk.quick', supplier_id=supplier.id) }}" data-quick-quote="true">Quick Quote</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.new_quote', supplier_id=supplier.id) }}" data-new-walk-in="true">Detailed quotation</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.standards', supplier_id=supplier.id) }}">Standard buildings</a>
+    <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.timing', supplier_id=supplier.id) }}">Timing</a>
     <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.prices', supplier_id=supplier.id) }}">Price file</a>
     <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.settings', supplier_id=supplier.id) }}">Quote settings</a>
     <a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Contractor requests</a></div>

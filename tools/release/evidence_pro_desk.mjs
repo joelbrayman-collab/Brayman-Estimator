@@ -70,45 +70,55 @@ async function fillBuilding(pg, ref) {
   }
 }
 
+async function fillQuick(pg, quick) {
+  for (const [key, value] of Object.entries(quick)) {
+    const field = pg.locator(`[name="${key}"]`);
+    const tag = await field.evaluate((el) => el.tagName);
+    if (tag === "SELECT") await field.selectOption(value); else await field.fill(value);
+  }
+}
+
+// One walk-in through Quick Quote: customer, standard building, size, doors, floor, sketch → price review →
+// issue → printable quotation → customer approval on a phone → order-ready package. The duration printed is
+// the automated check's own run time, NOT a person's quotation time (that is measured on the Timing page).
 async function walk(width, height, label) {
   const started = Date.now();
   const { ctx, pg, errors } = await session(width, height, facts.store);
   const sid = facts.supplier_id;
   await pg.goto(`${base}/supplier/${sid}/pro-desk/`);
   await shot(pg, `${label}-01-pro-desk`);
-  await pg.click("[data-new-walk-in]");
+  await pg.click("[data-quick-quote]");
+  await pg.waitForURL(/pro-desk\/quick$/);
   await pg.fill("[name=customer_name]", `Synthetic Farmer ${label}`);
   await pg.fill("[name=customer_phone]", "613-555-0101");
   await pg.fill("[name=customer_email]", "joel.brayman@gmail.com");
   await pg.fill("[name=customer_town]", "Winchester");
   await pg.check("[name=consent_email]");
   await pg.check("[name=demo_synthetic]");
-  await shot(pg, `${label}-02-customer`);
-  await pg.click("button:has-text('Start the quotation')");
-  await pg.waitForURL(/pro-desk\/\d+/);
-  const quoteUrl = pg.url().split("#")[0];
+  assert.equal(await pg.locator(`[data-standard="${facts.standard_id}"] input`).isChecked(), true, "the only standard is preselected");
+  await fillQuick(pg, facts.quick);
   await pg.setInputFiles("[name=sketch]", SKETCH);
-  await pg.click("button:has-text('Keep the sketch')");
-  await pg.waitForLoadState();
+  await shot(pg, `${label}-02-quick-quote`, true);
+  await noSideways(pg, `${label} quick quote`);
+  await pg.click("[data-quick-submit]");
+  await pg.waitForURL(/pro-desk\/\d+#pricing$/);
+  const quoteUrl = pg.url().split("#")[0];
   assert.equal(await pg.locator("[data-sketch]").count(), 1);
-  await shotOf(pg, "#sketch", `${label}-03-sketch`);
-  await fillBuilding(pg, facts.reference);
-  await shotOf(pg, "#building", `${label}-04-building`);
-  await pg.click("button:has-text('Confirm the building')");
-  await pg.waitForLoadState();
+  assert.equal(await pg.locator("[data-from-standard]").count(), 1);
   await pg.locator("[data-drawing-sheet='1']").evaluate((img) => img.complete || new Promise((r) => (img.onload = r)));
   await pg.locator("[data-drawing-sheet='2']").evaluate((img) => img.complete || new Promise((r) => (img.onload = r)));
-  await shotOf(pg, "#drawing", `${label}-05-drawing`);
-  await shotOf(pg, "#materials", `${label}-06-materials`);
-  // Trusses: the store has no truss price; the truss manufacturer quotes them.
+  await shotOf(pg, "#building", `${label}-03-building-from-standard`);
+  await shotOf(pg, "#drawing", `${label}-04-drawing`);
+  await shotOf(pg, "#materials", `${label}-05-materials`);
+  // Trusses: the store has no truss price; the truss manufacturer quotes them (an exception, timed as such).
   const truss = pg.locator("[data-price-line^='CAL-OB-TRUSS']");
   await truss.locator("summary:has-text('Leave out')").click();
   await truss.locator("[name=exclude_reason]").fill("Truss quote to follow from the truss manufacturer");
   await truss.locator("button:has-text('Leave out')").click();
   await pg.waitForLoadState();
-  await shotOf(pg, "#pricing", `${label}-07-pricing`);
+  await shotOf(pg, "#pricing", `${label}-06-pricing`);
   assert.equal(await pg.locator("[data-blockers]").count(), 0, "nothing left open before issue");
-  await shotOf(pg, "#quotation", `${label}-08-totals`);
+  await shotOf(pg, "#quotation", `${label}-07-totals`);
   await pg.click("[data-issue]");
   await pg.waitForLoadState();
   const total = await pg.locator("[data-total]").getAttribute("data-total");
@@ -120,27 +130,32 @@ async function walk(width, height, label) {
   await pg.click("button:has-text('Create approval link')");
   await pg.waitForLoadState();
   const link = (await pg.locator("[data-approval-link]").innerText()).trim();
-  await shotOf(pg, "#approval", `${label}-09-approval-link`);
-  // The customer, on their phone, opens the link and accepts.
+  await shotOf(pg, "#approval", `${label}-08-approval-link`);
   const phone = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const cp = await phone.newPage();
   await cp.goto(link);
-  await shot(cp, `${label}-10-customer-link`, true);
+  await shot(cp, `${label}-09-customer-link`, true);
   await noSideways(cp, `${label} customer`);
   await cp.fill("[name=customer_name]", `Synthetic Farmer ${label}`);
   await cp.check("[name=agree]");
   await cp.click("button[value=accept]");
   await cp.waitForLoadState();
   assert.ok((await cp.locator("h2").first().innerText()).includes("accepted"));
-  await shot(cp, `${label}-11-customer-accepted`, true);
+  await shot(cp, `${label}-10-customer-accepted`, true);
   await phone.close();
   await pg.goto(quoteUrl);
   await pg.click("[data-order-ready]");
   await pg.waitForURL(/\/order$/);
   assert.ok(await pg.locator("[data-order-line='SYN-PANEL']").count() >= 1);
-  await shot(pg, `${label}-12-order`, true);
+  await shot(pg, `${label}-11-order`, true);
   const csv = await ctx.request.get(`${quoteUrl}/order.csv`);
   assert.ok((await csv.text()).includes(total));
+  // The Timing page shows this quotation stage by stage, with setup kept apart.
+  await pg.goto(`${base}/supplier/${sid}/pro-desk/timing`);
+  const number = (await pg.locator("[data-timing]").first().getAttribute("data-timing"));
+  assert.ok(number, "timing row present");
+  assert.ok((await pg.locator("[data-setup-record]").innerText()).includes("not part of quotation time"));
+  await shot(pg, `${label}-12-timing`, true);
   const seconds = (Date.now() - started) / 1000;
   await noSideways(pg, label);
   assert.deepEqual(errors, []);
@@ -148,15 +163,15 @@ async function walk(width, height, label) {
   return { seconds, total, quoteUrl };
 }
 
-test("desktop: walk-in quotation, sketch to order-ready package, timed", async () => {
+test("desktop: Quick Quote walk-in, customer to order-ready package and its timing record", async () => {
   const { seconds, total } = await walk(1280, 900, "desktop");
-  console.log(`PRO_DESK_DESKTOP_SECONDS=${seconds.toFixed(1)} TOTAL=${total}`);
+  console.log(`PRO_DESK_AUTOMATED_CHECK_SECONDS_DESKTOP=${seconds.toFixed(1)} (machine run time, not human quotation time) TOTAL=${total}`);
   assert.ok(seconds < 300, `took ${seconds} s`);
 });
 
-test("phone: the same walk on a 390 px phone, no sideways scrolling", async () => {
+test("phone: the same Quick Quote on a 390 px phone, no sideways scrolling", async () => {
   const { seconds } = await walk(390, 844, "phone");
-  console.log(`PRO_DESK_PHONE_SECONDS=${seconds.toFixed(1)}`);
+  console.log(`PRO_DESK_AUTOMATED_CHECK_SECONDS_PHONE=${seconds.toFixed(1)} (machine run time, not human quotation time)`);
 });
 
 test("another supplier and the contractor office cannot open the quotation", async () => {
@@ -171,4 +186,28 @@ test("another supplier and the contractor office cannot open the quotation", asy
   const office = await session(1280, 900, ["office@example.com", "office-test-password"], "/login");
   assert.equal((await office.ctx.request.get(`${base}${href}`)).status(), 403);
   await office.ctx.close();
+});
+
+test("the detailed building form stays available and records a change from the store standard", async () => {
+  const { ctx, pg, errors } = await session(1280, 900, facts.store);
+  const sid = facts.supplier_id;
+  await pg.goto(`${base}/supplier/${sid}/pro-desk/quick`);
+  await pg.fill("[name=customer_name]", "Synthetic Farmer detailed");
+  await pg.check("[name=demo_synthetic]");
+  await fillQuick(pg, facts.quick);
+  await pg.click("[data-quick-submit]");
+  await pg.waitForURL(/pro-desk\/\d+#pricing$/);
+  await pg.click(".pd-detailed > summary");
+  await pg.fill("[data-building-form] [name=purlin_spacing_in]", "16");
+  await pg.click("[data-building-form] button:has-text('Confirm the building')");
+  await pg.waitForLoadState();
+  const note = await pg.locator("[data-overridden]").innerText();
+  assert.ok(note.includes("Purlin spacing"), note);
+  await shotOf(pg, "#building", "desktop-13-detailed-override");
+  // A new detailed (non-quick) quotation is still offered.
+  await pg.goto(`${base}/supplier/${sid}/pro-desk/`);
+  await pg.click("[data-new-walk-in]");
+  await pg.waitForURL(/pro-desk\/new$/);
+  assert.deepEqual(errors, []);
+  await ctx.close();
 });

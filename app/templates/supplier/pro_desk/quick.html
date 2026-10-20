@@ -1,0 +1,79 @@
+{% extends "supplier/base.html" %}
+{% block title %}Quick Quote{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk · Quick Quote</p><h1>Quick Quote</h1>
+<p class="muted-copy">For one of {{ brand_for(supplier).name }}'s standard buildings: the customer, the size, the doors and the floor. The framing, panels and fastening come from the standard you choose. Anything that needs technical review is still shown before you issue.</p></div>
+<div class="pd-actions"><a class="button-quiet" href="{{ url_for('supplier_pro_desk.new_quote', supplier_id=supplier.id) }}">Detailed quotation instead</a></div></div>
+
+{% if errors %}<div class="pd-blockers" data-quick-errors="true" role="alert"><strong>Not started yet: please fix</strong><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+{% if settings_blockers %}<div class="pd-blockers"><strong>Before issuing any quotation:</strong> <a href="{{ url_for('supplier_pro_desk.settings', supplier_id=supplier.id) }}">{{ settings_blockers|join(" ") }}</a></div>{% endif %}
+
+{% if not assemblies %}
+<div class="form-panel" data-no-standards="true"><h2>No standard buildings yet</h2>
+<p>Quick Quote needs at least one standard building that the store has approved (framing spacing, lumber, panels, fastening). It is set up once.</p>
+<p><a class="button" href="{{ url_for('supplier_pro_desk.standards', supplier_id=supplier.id) }}">Set up a standard building</a>
+<a class="button-quiet" href="{{ url_for('supplier_pro_desk.new_quote', supplier_id=supplier.id) }}">Use the detailed quotation</a></p></div>
+{% else %}
+<form method="post" enctype="multipart/form-data" class="form-panel" data-quick-form="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="started_at" value="{{ started_at }}">
+
+    <h2>1 · Customer</h2>
+    <div class="pd-grid">
+        <label>Name <input type="text" name="customer_name" required maxlength="160" value="{{ form.get('customer_name', '') }}" autocomplete="off"></label>
+        <label>Phone <input type="tel" name="customer_phone" maxlength="30" value="{{ form.get('customer_phone', '') }}" autocomplete="off"></label>
+        <label>Email <input type="email" name="customer_email" maxlength="254" value="{{ form.get('customer_email', '') }}" autocomplete="off"></label>
+        <label>Town <input type="text" name="customer_town" maxlength="120" value="{{ form.get('customer_town', '') }}" autocomplete="off"></label>
+        {% if locations|length > 1 %}<label>Store <select name="location_id">{% for l in locations %}<option value="{{ l.id }}" {{ "selected" if form.get('location_id') == l.id|string }}>{{ l.display_name }}</option>{% endfor %}</select></label>{% endif %}
+    </div>
+    <label class="pd-inline"><input type="checkbox" name="consent_email" value="yes" {{ "checked" if form.get('consent_email') == 'yes' }}> The customer agrees to receive this quotation by email.</label>
+    <label class="pd-inline"><input type="checkbox" name="consent_text" value="yes" {{ "checked" if form.get('consent_text') == 'yes' }}> The customer agrees to receive text messages about this quotation.</label>
+    <label class="pd-inline"><input type="checkbox" name="demo_synthetic" value="yes" {{ "checked" if form.get('demo_synthetic') == 'yes' }}> Training or demonstration quotation (synthetic customer).</label>
+
+    <h2 class="pd-group">2 · Standard building</h2>
+    <div class="pd-standards">
+    {% for a in assemblies %}{% set v = a.values_json %}
+        <label class="pd-standard" data-standard="{{ a.id }}"><input type="radio" name="assembly_id" value="{{ a.id }}" required
+            {{ "checked" if form.get('assembly_id') == a.id|string or (not form.get('assembly_id') and assemblies|length == 1) }}>
+            <span><strong>{{ a.name }}</strong>{% if a.demo_synthetic %} <span class="pd-tag">synthetic</span>{% endif %}
+            <span class="pd-basis">{{ v.post_spacing_ft }} ft bays · trusses at {{ v.truss_spacing_ft }} ft · purlins {{ v.purlin_lumber }} at {{ v.purlin_spacing_in }} in · girts {{ v.girt_lumber }} at {{ v.girt_spacing_in }} in · {{ v.roof_panel_coverage_in }} in panels · {{ v.eave_overhang_in }} in eaves</span>
+            <span class="pd-basis">Approved by {{ a.approved_by_name }} on {{ a.approved_at.strftime('%b %d, %Y') }} · {{ a.basis }}</span></span></label>
+    {% endfor %}
+    </div>
+
+    <h2 class="pd-group">3 · Size and roof</h2>
+    <div class="pd-grid pd-grid-4">
+        {% for key in ("width_ft", "length_ft", "wall_height_ft", "roof_pitch") %}{% set f = fields[key] %}
+        <label>{{ f.label }} ({{ f.unit }}) <input type="text" inputmode="decimal" name="{{ key }}" required value="{{ form.get(key, '') }}" autocomplete="off"><span class="pd-basis">{{ f.help }}</span></label>
+        {% endfor %}
+    </div>
+
+    <h2 class="pd-group">4 · Doors and windows</h2>
+    <p class="muted-copy">Placed evenly on their wall for the sales drawing; confirm positions on site. For exact positions use the detailed building form after this step.</p>
+    <div class="pd-quick-doors">
+    {% for i in range(rows) %}
+        <div class="pd-quick-door" data-door-row="{{ i }}">
+            <select name="qd_{{ i }}_kind" aria-label="Type, row {{ i + 1 }}"><option value="">—</option>{% for k, label in opening_kinds.items() %}<option value="{{ k }}" {{ "selected" if form.get('qd_%d_kind' % i) == k }}>{{ label }}</option>{% endfor %}</select>
+            <input type="text" inputmode="numeric" name="qd_{{ i }}_count" placeholder="How many" value="{{ form.get('qd_%d_count' % i, '') }}" aria-label="How many, row {{ i + 1 }}">
+            <input type="text" inputmode="decimal" name="qd_{{ i }}_width_in" placeholder="Width in" value="{{ form.get('qd_%d_width_in' % i, '') }}" aria-label="Width in inches, row {{ i + 1 }}">
+            <input type="text" inputmode="decimal" name="qd_{{ i }}_height_in" placeholder="Height in" value="{{ form.get('qd_%d_height_in' % i, '') }}" aria-label="Height in inches, row {{ i + 1 }}">
+            <select name="qd_{{ i }}_wall" aria-label="Wall, row {{ i + 1 }}"><option value="">Wall</option>{% for k, label in walls.items() %}<option value="{{ k }}" {{ "selected" if form.get('qd_%d_wall' % i) == k }}>{{ label }}</option>{% endfor %}</select>
+        </div>
+    {% endfor %}
+    </div>
+
+    <h2 class="pd-group">5 · Floor</h2>
+    <div class="pd-grid">
+        <label>{{ fields.foundation.label }} <select name="foundation" required><option value="">Choose</option>{% for k, label in foundations.items() %}<option value="{{ k }}" {{ "selected" if form.get('foundation') == k }}>{{ label }}</option>{% endfor %}</select></label>
+        <label>{{ fields.slab_thickness_in.label }} (in, slab only) <input type="text" inputmode="decimal" name="slab_thickness_in" value="{{ form.get('slab_thickness_in', '') }}"></label>
+        <label>{{ fields.concrete_waste_percent.label }} (%, slab only) <input type="text" inputmode="decimal" name="concrete_waste_percent" value="{{ form.get('concrete_waste_percent', '') }}"></label>
+    </div>
+
+    <h2 class="pd-group">6 · Sketch (optional)</h2>
+    <label>Photo or PDF of the customer's sketch <input type="file" name="sketch" accept="image/jpeg,image/png,application/pdf"></label>
+
+    <p class="pd-basis">Trusses are quoted by the truss manufacturer. Posts, door headers and jamb framing are listed for technical review. Nothing structural is sized here.</p>
+    <p><button type="submit" class="button" data-quick-submit="true">Price this building</button></p>
+</form>
+{% endif %}
+{% endblock %}

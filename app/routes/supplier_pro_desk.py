@@ -135,6 +135,75 @@ def new_quote(supplier_id):
     return render_template("supplier/pro_desk/new.html", supplier=supplier, areas=_areas(), locations=locations, form={})
 
 
+@supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/quick", methods=["GET", "POST"])
+def quick(supplier_id):
+    """Quick Quote: customer, the store's standard building, size, doors and floor on one page."""
+    supplier = _supplier(supplier_id)
+    assemblies = P.active_assemblies(supplier.id)
+    locations = SupplierLocation.query.filter_by(supplier_id=supplier.id, status="ACTIVE").order_by(SupplierLocation.id).all()
+    context = dict(supplier=supplier, areas=_areas(), assemblies=assemblies, locations=locations, fields=S.FIELD_BY_KEY,
+                   opening_kinds=S.OPENING_KINDS, walls=S.WALLS, foundations=S.FOUNDATIONS, rows=S.QUICK_DOOR_ROWS,
+                   settings_blockers=P.settings_blockers(supplier.id))
+    if request.method == "POST":
+        try:
+            quote, errors = P.quick_quote(supplier, request.form, user=current_user,
+                                          demo_synthetic=request.form.get("demo_synthetic") == "yes")
+        except P.ProDeskError as exc:
+            quote, errors = None, [str(exc)]
+        if errors:
+            return render_template("supplier/pro_desk/quick.html", form=request.form, errors=errors,
+                                   started_at=request.form.get("started_at", ""), **context), 400
+        upload = request.files.get("sketch")
+        if upload and upload.filename:
+            try:
+                P.add_sketch(quote, filename=upload.filename, content=upload.read(P.MAX_SKETCH_BYTES + 1), user=current_user)
+            except P.ProDeskError as exc:
+                flash(f"Quotation started, but the sketch was not kept: {exc}", "error")
+        flash(f"Quotation {quote.number} for {quote.customer.display_name}: check the price review, then issue.", "success")
+        return _back(supplier, quote, "#pricing")
+    from datetime import datetime
+
+    return render_template("supplier/pro_desk/quick.html", form={}, errors=[],
+                           started_at=datetime.utcnow().isoformat(timespec="seconds"), **context)
+
+
+@supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/standards", methods=["GET", "POST"])
+def standards(supplier_id):
+    """The store's standard buildings for Quick Quote: set up once, used on every walk-in."""
+    supplier = _supplier(supplier_id)
+    form, errors = {}, []
+    if request.method == "POST":
+        if request.form.get("retire"):
+            try:
+                row = P.retire_assembly(supplier, request.form.get("retire"), user=current_user)
+            except P.ProDeskError:
+                abort(404)
+            flash(f"\u201c{row.name}\u201d retired. Quotations already made keep their record of it.", "success")
+            return redirect(url_for("supplier_pro_desk.standards", supplier_id=supplier.id))
+        row, errors = P.save_assembly(supplier, request.form, user=current_user,
+                                      demo_synthetic=request.form.get("demo_synthetic") == "yes")
+        if row is not None:
+            flash(f"Standard building \u201c{row.name}\u201d saved for Quick Quote.", "success")
+            return redirect(url_for("supplier_pro_desk.standards", supplier_id=supplier.id))
+        form = request.form
+    from app.models.supplier_quote import SupplierBuildingAssembly
+
+    rows = (SupplierBuildingAssembly.query.filter_by(supplier_id=supplier.id)
+            .order_by(SupplierBuildingAssembly.status, SupplierBuildingAssembly.name).all())
+    return render_template("supplier/pro_desk/standards.html", supplier=supplier, areas=_areas(), rows=rows, form=form,
+                           errors=errors, keys=S.ASSEMBLY_KEYS, fields=S.FIELD_BY_KEY, systems=S.BUILDING_SYSTEMS,
+                           roofs=S.ROOF_TYPES), (400 if errors else 200)
+
+
+@supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/timing")
+def timing(supplier_id):
+    """How long each walk-in quotation took, stage by stage, apart from the store's one-time setup."""
+    supplier = _supplier(supplier_id)
+    quotes = P.supplier_quotes(supplier.id)
+    return render_template("supplier/pro_desk/timing.html", supplier=supplier, areas=_areas(),
+                           timings=[(q, P.quote_timing(q)) for q in quotes], setup=P.setup_record(supplier.id))
+
+
 @supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/<int:quote_id>")
 def quote(supplier_id, quote_id):
     supplier = _supplier(supplier_id)
@@ -142,7 +211,7 @@ def quote(supplier_id, quote_id):
     values = P.spec_values(q)
     priced = P.price_quote(q)
     return render_template(
-        "supplier/pro_desk/quote.html", supplier=supplier, areas=_areas(), q=q, values=values, fields=S.FIELDS,
+        "supplier/pro_desk/quote.html", supplier=supplier, areas=_areas(), q=q, values=values, fields=S.FIELDS, field_labels={f.key: f.label for f in S.FIELDS},
         systems=S.BUILDING_SYSTEMS, not_yet=S.SYSTEMS_NOT_YET_AVAILABLE, opening_kinds=S.OPENING_KINDS, walls=S.WALLS,
         max_openings=S.MAX_OPENINGS, drawable=S.drawable(values), describe=S.describe(values), priced=priced,
         summary=T.summary(priced["takeoff"]), sketches=P.active_sketches(q), events=P.quote_events(q),
@@ -288,7 +357,9 @@ def quote_pdf(supplier_id, quote_id):
     q = _quote(supplier, quote_id)
     if not q.issued_json:
         abort(404)
-    return Response(quote_pdf_bytes(q), mimetype="application/pdf",
+    data = quote_pdf_bytes(q)
+    P.record_printed(q, user=current_user)
+    return Response(data, mimetype="application/pdf",
                     headers={**NO_STORE, "Content-Disposition": f'inline; filename="{q.number}-material-quotation.pdf"'})
 
 

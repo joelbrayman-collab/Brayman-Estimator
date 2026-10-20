@@ -7,8 +7,8 @@ Create Date: 2026-10-20
 ADR-047 Amendment 1 (Joel, 20 Oct 2026). Eight new tables, all scoped to a
 supplier and none to a contractor organization: supplier_customers,
 supplier_quotes, supplier_quote_files, supplier_quote_events,
-supplier_quote_links, supplier_price_imports, supplier_selling_prices and
-supplier_quote_settings.
+supplier_quote_links, supplier_price_imports, supplier_selling_prices,
+supplier_quote_settings and supplier_building_assemblies (Quick Quote).
 
 The canonical material catalogue gains five categories for the outbuilding
 takeoff (ROOFING, CLADDING, TRIM, DOOR, TRUSS). No existing row is inserted,
@@ -30,6 +30,7 @@ branch_labels = None
 depends_on = None
 
 NEW_TABLES = (
+    "supplier_building_assemblies",
     "supplier_quote_settings",
     "supplier_selling_prices",
     "supplier_price_imports",
@@ -213,6 +214,24 @@ def upgrade():
         sa.Column("updated_by_name", sa.String(160), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
     )
+
+    op.create_table(
+        "supplier_building_assemblies",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("supplier_id", sa.Integer(), _fk("supplier_id", "suppliers.id"), nullable=False),
+        sa.Column("name", sa.String(120), nullable=False),
+        sa.Column("building_system", sa.String(40), nullable=False),
+        sa.Column("values_json", sa.JSON(), nullable=False),
+        sa.Column("basis", sa.String(300), nullable=False),
+        sa.Column("status", sa.String(20), nullable=False),
+        sa.Column("approved_by_name", sa.String(160), nullable=False),
+        sa.Column("approved_at", sa.DateTime(), nullable=False),
+        sa.Column("retired_by_name", sa.String(160), nullable=True),
+        sa.Column("retired_at", sa.DateTime(), nullable=True),
+        sa.Column("demo_synthetic", sa.Boolean(), nullable=False),
+        sa.CheckConstraint("status IN ('ACTIVE', 'RETIRED')", name="ck_supplier_building_assemblies_status"),
+    )
+    op.create_index("ix_supplier_building_assemblies_supplier_id", "supplier_building_assemblies", ["supplier_id"])
 
     _replace_check("canonical_materials", "ck_canonical_materials_category", _CATEGORY)
 

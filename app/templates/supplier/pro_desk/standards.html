@@ -1,0 +1,37 @@
+{% extends "supplier/base.html" %}
+{% block title %}Standard buildings{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PRO Desk · one-time setup</p><h1>Standard buildings</h1>
+<p class="muted-copy">The framing, lumber, panel and fastening answers {{ brand_for(supplier).name }} uses for its usual buildings. Quick Quote fills these in, so the counter only asks for the size, doors and floor. Every value here is the store's own; CalibraytAI does not supply or check structural values, and posts, trusses and headers stay flagged for technical review on every quotation.</p></div>
+<div class="pd-actions"><a class="button-quiet" href="{{ url_for('supplier_pro_desk.quick', supplier_id=supplier.id) }}">Quick Quote</a></div></div>
+
+{% for a in rows %}{% set v = a.values_json %}
+<div class="form-panel" data-standard-row="{{ a.id }}" data-standard-status="{{ a.status }}">
+    <h2>{{ a.name }} {% if a.status == "RETIRED" %}<span class="pd-tag">retired</span>{% endif %}{% if a.demo_synthetic %} <span class="pd-tag">synthetic</span>{% endif %}</h2>
+    <p class="pd-basis">{{ systems.get(a.building_system, a.building_system) }} · approved by {{ a.approved_by_name }} on {{ a.approved_at.strftime('%b %d, %Y %H:%M') }} UTC · basis: {{ a.basis }}{% if a.retired_at %} · retired by {{ a.retired_by_name }} on {{ a.retired_at.strftime('%b %d, %Y') }}{% endif %}</p>
+    <table class="data-table pd-stack"><tbody>
+    {% for key in keys if key not in ("building_system",) %}<tr><td>{{ fields[key].label }}</td><td data-label="Value">{{ v.get(key) or "— (flagged on each quotation)" }} {% if v.get(key) and fields[key].unit not in ("text", "choice") %}{{ fields[key].unit }}{% endif %}{% if fields[key].structural %} <span class="pd-tag">technical review</span>{% endif %}</td></tr>{% endfor %}
+    </tbody></table>
+    {% if a.status == "ACTIVE" %}<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="retire" value="{{ a.id }}"><button class="button-quiet" type="submit">Retire this standard</button></form>{% endif %}
+</div>
+{% endfor %}
+
+<form method="post" class="form-panel" data-standard-form="true">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Add a standard building</h2>
+    {% if errors %}<div class="pd-blockers" role="alert"><strong>Not saved:</strong><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+    <p class="muted-copy">To change a standard, add the new one and retire the old: quotations keep a record of the standard they used.</p>
+    <div class="pd-grid">
+        <label>Name <input type="text" name="name" maxlength="120" required value="{{ form.get('name', '') }}" placeholder="e.g. Post-frame steel, 8 ft bays"></label>
+        <label>Based on <input type="text" name="basis" maxlength="300" required value="{{ form.get('basis', '') }}" placeholder="e.g. store standard confirmed with our truss supplier"></label>
+        {% for key in keys %}{% set f = fields[key] %}
+        <label>{{ f.label }}{% if f.unit not in ("text", "choice") %} ({{ f.unit }}){% endif %}{% if f.structural %} <span class="pd-tag">technical review</span>{% endif %}
+            {% if f.unit == "choice" %}<select name="{{ key }}"><option value="">Choose</option>{% for k, label in f.choices.items() %}<option value="{{ k }}" {{ "selected" if form.get(key) == k }}>{{ label }}</option>{% endfor %}</select>
+            {% else %}<input type="text" {% if f.unit != "text" %}inputmode="decimal"{% endif %} name="{{ key }}" value="{{ form.get(key, '') }}">{% endif %}
+            <span class="pd-basis">{{ f.help }}</span></label>
+        {% endfor %}
+    </div>
+    <label class="pd-inline"><input type="checkbox" name="demo_synthetic" value="yes" {{ "checked" if form.get('demo_synthetic') == 'yes' }}> Training or demonstration standard (synthetic).</label>
+    <p><button type="submit" class="button">Save the standard</button></p>
+</form>
+{% endblock %}

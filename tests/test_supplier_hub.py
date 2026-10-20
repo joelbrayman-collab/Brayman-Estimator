@@ -803,3 +803,21 @@ def test_after_an_accepted_change_every_screen_shows_the_agreed_delivery(app, cl
     assert "Tomlinson concrete (synthetic)" in cal
     # The earlier dates stay in the history.
     assert change.previous_date == first and db.session.get(type(change), change.id).status == "ACCEPTED"
+
+
+def test_the_project_page_links_to_its_supplier_requests_and_lists_its_purchase_orders(app, client):
+    """Job lifecycle walk (20 Oct 2026): a job without a deck takeoff had no way from the Project page to
+    its concrete request or orders, and a placed PO never showed on the Project page."""
+    from app.models import Project
+
+    project, tomlinson, _darcy, _user, order = _concrete_order(app, client)
+    other = Project.query.filter_by(name="Another synthetic deck").one()
+    empty = client.get(f"/projects/{other.id}").get_data(as_text=True)
+    assert f'href="/projects/{other.id}/supplier-requests">Supplier requests, concrete and orders</a>' in empty
+    assert "No purchase orders yet." in empty, empty.split("hub-purchasing")[1][:600]
+    assert f"data-hub-po=\"{order.number}\"" not in empty
+    page = client.get(f"/projects/{project.id}").get_data(as_text=True)
+    row = page.split(f'data-hub-po="{order.number}"', 1)[1].split("</tr>", 1)[0]
+    assert f"#share-{order.share_id}" in row and "Tomlinson concrete (synthetic) · concrete" in row
+    assert "$945.00" in row and "Confirmed" in row and order.scheduled_date.isoformat() in row
+    assert "(requested)" not in row  # the supplier confirmed it, so the date is agreed

@@ -55,7 +55,7 @@
     <p class="hub-section-label">Project</p>
     <div class="form-grid">
         <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
-        <div><p class="eyebrow">Address</p><p>{{ project.address or "—" }}</p></div>
+        <div><p class="eyebrow">Address</p><p>{{ job_address or "—" }}</p></div>
         <div><p class="eyebrow">Client</p><p>{{ project.client.name }} · <a href="{{ url_for('projects.correct_project_client_page', id=project.id) }}">Correct client</a></p></div>
         <div><p class="eyebrow">Created</p><p>{{ project.created_at.strftime("%Y-%m-%d") }}</p></div>
     </div>
@@ -597,6 +597,9 @@
         {% if contract_copy.counsel_approved %}<p>Counsel approved</p>{% endif %}
         <p><a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a></p>
         {% endif %}
+        {% for contract in hub_contracts %}
+        <p data-hub-contract="{{ contract.number }}"><strong>{{ contract.number }}</strong> · {{ contract.label }}{% if loop.first and not contract_copy.show_package %} · <a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a>{% endif %}</p>
+        {% endfor %}
         {% if contract_copy.warned %}
         <p class="muted-copy">{{ contractor_copy.CONTRACT_PENDING_UPDATE_WARN }}</p>
         <p class="muted-copy">{{ contractor_copy.CONTRACT_ACTIVE_REMAINS_AUTHORITY }}</p>
@@ -1018,6 +1021,31 @@
         </details>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-purchasing">
+        <div class="panel-header">
+            <h2>Purchasing</h2>
+            <a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests, concrete and orders</a>
+        </div>
+        {% if purchase_orders %}
+        <table class="data-table">
+            <thead><tr><th>Order</th><th>Supplier</th><th>Total</th><th>Status</th><th>Delivery</th></tr></thead>
+            <tbody>
+                {% for row in purchase_orders %}
+                <tr data-hub-po="{{ row.order.number }}">
+                    <td><a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}#share-{{ row.order.share_id }}">{{ row.order.number }}</a></td>
+                    <td>{{ row.supplier }} · {{ row.kind }}</td>
+                    <td>{{ "${:,.2f}".format(row.order.total) }}</td>
+                    <td>{{ row.status }}</td>
+                    <td>{% if row.schedule.date %}{{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% if not row.schedule.agreed %} (requested){% endif %}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted-copy">No purchase orders yet. Send a material or concrete request to a supplier, then place the order on the returned quote.</p>
+        {% endif %}
+    </article>
+
     <article class="panel panel-wide" id="hub-time">
         <div class="panel-header">
             <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>

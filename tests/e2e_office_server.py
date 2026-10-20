@@ -21,13 +21,19 @@ from alembic.config import Config  # noqa: E402
 from app import create_app, db  # noqa: E402
 from tests.auth_fixtures import ensure_office_user  # noqa: E402
 
+FIELD_WORKER = ("kevin.field@example.invalid", "field-test-password", "Kevin Field (synthetic crew)")
+
 
 def main():
     database = tempfile.NamedTemporaryFile(prefix="e2e-office-", suffix=".db", delete=False)
     database.close()
     uri = f"sqlite:///{database.name}"
-    application = create_app({"TESTING": True, "CALIBRAYTAI_HOSTED": "0", "SQLALCHEMY_DATABASE_URI": uri,
-                              "SECRET_KEY": "e2e-secret-key"})
+    config = {"TESTING": True, "CALIBRAYTAI_HOSTED": "0", "SQLALCHEMY_DATABASE_URI": uri,
+              "SECRET_KEY": "e2e-secret-key"}
+    # The job-lifecycle walk reads captured mail (a supplier's choose-a-password link) from here.
+    if os.environ.get("E2E_MAIL_CAPTURE_ROOT"):
+        config["MAIL_CAPTURE_ROOT"] = os.environ["E2E_MAIL_CAPTURE_ROOT"]
+    application = create_app(config)
     with application.app_context():
         cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
         cfg.set_main_option("script_location", str(ROOT / "migrations"))
@@ -44,6 +50,16 @@ def main():
         membership = UserMembership.query.filter_by(user_id=user.id, organization_id=DEFAULT_ORGANIZATION_ID).one()
         set_instance_owner(DEFAULT_ORGANIZATION_ID, membership.id, user.id)
         db.session.commit()
+        if os.environ.get("E2E_LIFECYCLE") == "1":
+            # Operator set-up the hosted office already has, done here as the operator does it (the
+            # flask commands), not from a page: a crew member with an ordinary membership and no
+            # management access, and the Ontario Brayman V1 interim contract package
+            # (flask legal-content install-brayman-v1-interim).
+            from app.services.brayman_v1_interim_contract import ensure_brayman_v1_interim_ontario_package
+
+            ensure_office_user(email=FIELD_WORKER[0], password=FIELD_WORKER[1], display_name=FIELD_WORKER[2])
+            ensure_brayman_v1_interim_ontario_package()
+            db.session.commit()
     port = int(os.environ["E2E_OFFICE_PORT"])
     print(f"READY {port}", flush=True)
     application.run(host="127.0.0.1", port=port, use_reloader=False, threaded=True)

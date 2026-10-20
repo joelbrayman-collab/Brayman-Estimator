@@ -428,7 +428,7 @@ EXCEPTION_EVENTS = ("PRODUCT_MATCHED", "LINE_EXCLUDED", "LINE_RESET", "PRODUCT_C
 
 
 def _seconds(a, b) -> Optional[int]:
-    return int((b - a).total_seconds()) if a and b and b >= a else None
+    return round((b - a).total_seconds()) if a and b and b >= a else None
 
 
 def quote_timing(quote: SupplierQuote) -> Dict:
@@ -463,6 +463,8 @@ def quote_timing(quote: SupplierQuote) -> Dict:
     ]
     rows = [{"stage": label, "seconds": _seconds(a, b), "from": a, "to": b} for label, a, b in stages]
     walk_in = _seconds(started or created, printed or issued)
+    if walk_in is not None:  # shown as the sum of the stages, so the table adds up
+        walk_in = sum(r["seconds"] or 0 for r in rows)
     exception_seconds = _seconds(building_done, exception_end) or 0
     return {"rows": rows, "walk_in_seconds": walk_in, "exception_seconds": exception_seconds,
             "exception_actions": len(exceptions), "started_recorded": started is not None,

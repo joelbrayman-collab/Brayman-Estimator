@@ -68,7 +68,7 @@ def test_gate_stops_at_ready_for_push_after_every_gate():
         "test_contractor_workflow_e2e",  # end-to-end walk ran
         "evidence_cal_find_it.mjs",  # browser checks
         "evidence_calendar.mjs",  # the 12 calendar browser checks (gate total 57)
-        "evidence_pro_desk.mjs",  # the 3 Supplier PRO Desk browser checks (gate total 60)
+        "evidence_pro_desk.mjs",  # the 4 Supplier PRO Desk browser checks (gate total 61)
         "< tools/release/hosted_preflight.py",  # fresh backup
         "BACKUP_SHA256",
         "PRAGMA integrity_check",

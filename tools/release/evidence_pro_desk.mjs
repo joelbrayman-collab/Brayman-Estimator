@@ -70,6 +70,15 @@ async function fillBuilding(pg, ref) {
   }
 }
 
+// The drawing images are lazy-loaded: bring each into view, then wait (bounded) for it to load.
+async function drawingLoaded(pg) {
+  for (const sheet of ["1", "2"]) {
+    const img = pg.locator(`[data-drawing-sheet='${sheet}']`);
+    await img.scrollIntoViewIfNeeded();
+    await pg.waitForFunction((el) => el.complete && el.naturalWidth > 0, await img.elementHandle(), { timeout: 20000 });
+  }
+}
+
 async function fillQuick(pg, quick) {
   for (const [key, value] of Object.entries(quick)) {
     const field = pg.locator(`[name="${key}"]`);
@@ -105,8 +114,7 @@ async function walk(width, height, label) {
   const quoteUrl = pg.url().split("#")[0];
   assert.equal(await pg.locator("[data-sketch]").count(), 1);
   assert.equal(await pg.locator("[data-from-standard]").count(), 1);
-  await pg.locator("[data-drawing-sheet='1']").evaluate((img) => img.complete || new Promise((r) => (img.onload = r)));
-  await pg.locator("[data-drawing-sheet='2']").evaluate((img) => img.complete || new Promise((r) => (img.onload = r)));
+  await drawingLoaded(pg);
   await shotOf(pg, "#building", `${label}-03-building-from-standard`);
   await shotOf(pg, "#drawing", `${label}-04-drawing`);
   await shotOf(pg, "#materials", `${label}-05-materials`);

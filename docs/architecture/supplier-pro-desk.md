@@ -53,11 +53,13 @@ The customer is the supplier's customer. They never register with CalibraytAI an
 | Item | State |
 |---|---|
 | Development branch | `supplier/pro-desk-2026-10-20` (from `f30fb19`) |
-| Database migration | `pd1a2b3c4d5e` — new supplier-quote tables; canonical category list extended (no existing row changed) |
+| Database migration | `pd1a2b3c4d5e` — nine new supplier tables (incl. `supplier_building_assemblies` for Quick Quote); canonical category list extended (no existing row changed) |
 | Tests | `tests/test_supplier_pro_desk.py` (15), `tests/test_supplier_pro_desk_migration.py` (3), route sweep, migration check `--altered-tables` |
-| Browser evidence | `tools/release/evidence_pro_desk.mjs` — desktop timed walk, phone walk (no sideways scrolling; pricing and order tables become cards), supplier and contractor isolation; release gate total 60 |
-| Release gate flags | `--migration-to pd1a2b3c4d5e --new-tables <the eight supplier_* tables> --altered-tables canonical_materials --browser-expected 60` |
+| Browser evidence | `tools/release/evidence_pro_desk.mjs` — Quick Quote walk on desktop and phone (no sideways scrolling; tables become cards), supplier and contractor isolation, detailed form override; release gate total 61. The run time it prints is machine time, not human quotation time |
+| Release gate flags | `--migration-to pd1a2b3c4d5e --new-tables <the nine supplier_* tables> --altered-tables canonical_materials --browser-expected 61` |
 | Production | Not released |
+| Quick Quote (20 Oct) | Store-approved standard buildings (store's own values, who approved, basis; retire, never edit); one-page intake: customer, standard, size, pitch, doors/windows (placed evenly for the drawing, confirm on site), floor, sketch; same validation and takeoff as the detailed form (test proves identical quantities); detailed form kept, changes from the standard recorded on the quotation and PDF |
+| Timing | `/pro-desk/timing`: per-stage time from the person's own button presses, exceptions separate, one-time setup separate; protocol in [../supplier-hub/pro-desk-human-timing-test.md](../supplier-hub/pro-desk-human-timing-test.md). **Human timing not yet run.** |
 | Operational now (development branch only) | Walk-in customer with consent, sketch upload, post-frame steel gable building, plan + elevations, takeoff, price-file import, product matches, pricing with blockers, issue (frozen), revision, approval link, order package + CSV, quotation email (allowlist) |
 | Not built (planned only) | Stick-frame and shingle systems, foundation quantities, AI sketch reading, POS integration, supplier staff roles for who may import prices |
 | BMR reference package | **Not yet provided** (sketch, BMR takeoff, BMR prices, BMR quote). All demo data is synthetic and labelled so. |

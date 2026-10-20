@@ -149,7 +149,7 @@ def test_release_migrate_runs_the_verified_deployed_file():
 def test_a_declared_altered_table_may_change_its_schema_but_never_its_rows(tmp_path):
     # pd1a2b3c4d5e (Supplier PRO Desk, 20 Oct 2026) widens the canonical_materials category check.
     pd_new = ("supplier_customers,supplier_quotes,supplier_quote_files,supplier_quote_events,supplier_quote_links,"
-              "supplier_price_imports,supplier_selling_prices,supplier_quote_settings")
+              "supplier_price_imports,supplier_selling_prices,supplier_quote_settings,supplier_building_assemblies")
     for declared, ok in (([], False), (["--altered-tables", "canonical_materials"], True)):
         db_path = tmp_path / f"alt-{ok}.db"
         _database_at_prior(db_path)

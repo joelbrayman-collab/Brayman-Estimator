@@ -111,4 +111,5 @@
 @media (max-width: 640px) { .pd-quick-door { grid-template-columns: 1fr 1fr; } .pd-quick-door select:first-child { grid-column: 1 / -1; } .pd-quick-door select:last-child { grid-column: 1 / -1; } }
 .pd-provenance { display: flex; flex-direction: column; gap: 2px; border-left: 4px solid var(--accent, #c9a227); padding: 6px 10px; margin: 8px 0; background: rgba(201, 162, 39, 0.08); }
 .pd-detailed > summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
-.pd-tag { font-size: 0.75em; padding: 1px 6px; border-radius: 10px; background: #eef0f3; color: #4a5260; font-weight: 500; }
+.pd-tag { align-self: flex-start; display: inline-block; font-size: 0.75em; padding: 1px 6px; border-radius: 10px; background: #eef0f3; color: #4a5260; font-weight: 500; }
+label.pd-inline { display: flex; flex-wrap: nowrap; gap: 10px; align-items: flex-start; } label.pd-inline input[type=checkbox] { margin-top: 3px; min-width: 20px; min-height: 20px; flex: none; }

@@ -95,16 +95,21 @@ def _snapshot_schedule():
 # Empty hourly views
 
 
-def test_empty_day_view_shows_the_working_hours_grid(client):
+ALL_HOURS = ["12 AM"] + [f"{h} AM" for h in range(1, 12)] + ["12 PM"] + [f"{h} PM" for h in range(1, 12)]
+
+
+def test_empty_day_view_scrolls_through_all_24_hours_opening_at_7_am(client):
+    # Joel, 20 Oct 2026: crews can start at 5 AM and a long pour can run to 11 PM or midnight.
     html = client.get(_url(view="day")).get_data(as_text=True)
     assert 'data-hour-grid="day"' in html and 'data-day-view="true"' in html
     labels = re.findall(r'class="cal-hour-label">([^<]+)<', html)
-    assert labels == ["7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"]
-    assert "7 AM – 6 PM" in html
-    # Every half hour of the day is a link that starts an appointment there.
-    assert html.count(f'data-slot="{TODAY.isoformat()}T') == 22
-    assert f'/schedule/appointments/new?date={TODAY.isoformat()}&amp;start=07:00' in html
-    assert f'start=17:30' in html
+    assert labels == ALL_HOURS
+    assert 'data-open-hour="7"' in html and "--cal-visible: 11;" in html  # about 11 hours on screen
+    assert "js/calendar-hours.js" in html
+    # Every half hour of the day is a link that starts an appointment there, early and late included.
+    assert html.count(f'data-slot="{TODAY.isoformat()}T') == 48
+    for start in ("05:00", "07:00", "17:30", "22:00", "23:30"):
+        assert f'/schedule/appointments/new?date={TODAY.isoformat()}&amp;start={start}' in html
 
 
 def test_empty_week_view_shows_seven_days_of_hours(client):
@@ -113,20 +118,22 @@ def test_empty_week_view_shows_seven_days_of_hours(client):
     monday = TODAY - timedelta(days=TODAY.weekday())
     dates = re.findall(r'data-hours-date="([0-9-]+)"', html)
     assert dates == [(monday + timedelta(days=i)).isoformat() for i in range(7)]
-    assert html.count('class="cal-slot') == 7 * 22
+    assert html.count('class="cal-slot') == 7 * 48
+    assert re.findall(r'class="cal-hour-label">([^<]+)<', html) == ALL_HOURS
     assert 'data-week-view="true"' in html  # the phone list stays on the page
 
 
-def test_other_hours_can_be_reached(client):
-    early = client.get(_url(view="day", hours=0)).get_data(as_text=True)
-    assert re.findall(r'class="cal-hour-label">([^<]+)<', early)[0] == "12 AM"
-    assert "Working hours" in early and 'data-hours-earlier' not in early
-    late = client.get(_url(view="day", hours=13)).get_data(as_text=True)
-    assert re.findall(r'class="cal-hour-label">([^<]+)<', late)[-1] == "11 PM"
-    assert 'data-hours-later' not in late
-    default = client.get(_url(view="day")).get_data(as_text=True)
-    assert "hours=4" in default and "hours=10" in default  # Earlier / Later
-    assert client.get(_url(view="day", hours="junk")).status_code == 200
+def test_the_grid_can_be_opened_at_any_hour(client):
+    assert 'data-open-hour="0"' in client.get(_url(view="day", hours=0)).get_data(as_text=True)
+    assert 'data-open-hour="5"' in client.get(_url(view="day", hours=5)).get_data(as_text=True)
+    # Never so late that the bottom of the grid is empty: 11 PM opens at 1 PM, with 11 PM in view.
+    assert 'data-open-hour="13"' in client.get(_url(view="day", hours=23)).get_data(as_text=True)
+    for junk in ("junk", "-3", "40"):
+        page = client.get(_url(view="day", hours=junk))
+        assert page.status_code == 200 and 'data-open-hour="7"' in page.get_data(as_text=True)
+    # The old Earlier / Later buttons are gone: the hours scroll instead.
+    html = client.get(_url(view="day")).get_data(as_text=True)
+    assert "data-hours-earlier" not in html and "data-hours-later" not in html
 
 
 # ---------------------------------------------------------------------------------------------
@@ -153,8 +160,8 @@ def test_create_without_a_project_and_see_it_on_day_week_and_month(client, app):
         assert appt.history[0].actor_display_name
     day = client.get(_url(view="day")).get_data(as_text=True)
     assert 'class="cal-appt' in day and "Kitchen walkthrough" in day and "9:00 AM – 10:00 AM" in day
-    # 9:00–10:00 inside 7 AM–6 PM (660 minutes): top 120/660, height 60/660.
-    assert "top: 18.182%; height: 9.091%; left: 0.0%; width: calc(100.0% - 6px);" in day
+    # 9:00–10:00 in the 24-hour grid (1440 minutes): top 540/1440, height 60/1440.
+    assert "top: 37.5%; height: 4.167%; left: 0.0%; width: calc(100.0% - 6px);" in day
     week = client.get(_url(view="week")).get_data(as_text=True)
     assert week.count("Kitchen walkthrough") >= 2  # grid and phone list
     month = client.get(_url(view="month")).get_data(as_text=True)
@@ -248,16 +255,26 @@ def test_overlapping_appointments_share_the_hour_side_by_side(app):
         assert items["D"]["lanes"] == 1 and items["D"]["width_pct"] == 100.0
 
 
-def test_appointments_outside_the_hours_are_counted_not_hidden(app):
+def test_early_and_late_appointments_are_placed_and_the_grid_opens_early_enough(app):
     with app.app_context():
         office = _office()
-        _create(office, title="Early", start_time="06:00", end_time="06:30")
-        _create(office, title="Late", start_time="19:00", end_time="20:00")
-        _create(office, title="Straddle", start_time="06:30", end_time="08:00")
-        grid = time_grid([TODAY], calendar_rows(ORG, TODAY, TODAY, office), 7)
-        column = grid["columns"][0]
-        assert column["earlier"] == 1 and column["later"] == 1
-        assert [i["title"] for i in column["appointments"]] == ["Straddle"] and column["appointments"][0]["top_pct"] == 0.0
+        _create(office, title="Early start", start_time="05:00", end_time="06:30")
+        _create(office, title="Long pour", start_time="16:00", end_time="23:59")
+        grid = time_grid([TODAY], calendar_rows(ORG, TODAY, TODAY, office))
+        items = {i["title"]: i for i in grid["columns"][0]["appointments"]}
+        assert set(items) == {"Early start", "Long pour"}  # nothing hidden or counted away
+        assert items["Early start"]["top_pct"] == round(300 / 1440 * 100, 3)
+        assert items["Long pour"]["top_pct"] == round(960 / 1440 * 100, 3)
+        assert items["Long pour"]["height_pct"] == round(479 / 1440 * 100, 3)  # to midnight
+        assert grid["open_hour"] == 5  # opens at the earliest start, not 7 AM
+        late_only = [r for r in calendar_rows(ORG, TODAY, TODAY, office) if r["title"] == "Long pour"]
+        assert time_grid([TODAY], late_only)["open_hour"] == 7
+
+
+def test_a_day_with_an_early_appointment_opens_there(client):
+    client.post("/schedule/appointments/new", data=_form(start_time="05:00", end_time="06:00", back="day"))
+    html = client.get(_url(view="day")).get_data(as_text=True)
+    assert 'data-open-hour="5"' in html and "5:00 AM – 6:00 AM" in html
 
 
 # ---------------------------------------------------------------------------------------------

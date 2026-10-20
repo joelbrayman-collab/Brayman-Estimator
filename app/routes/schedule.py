@@ -9,7 +9,6 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user
 
 from app.services.appointments import (
-    DEFAULT_START_HOUR,
     AppointmentError,
     AppointmentNotFoundError,
     AppointmentPermissionError,
@@ -19,7 +18,7 @@ from app.services.appointments import (
     cancel_appointment,
     create_appointment,
     get_appointment,
-    hour_window,
+    requested_hour,
     list_clients,
     list_people,
     read_form,
@@ -170,12 +169,12 @@ def company():
         calendar_keep["scope"] = "company"
     elif project_id is not None:
         calendar_keep["scope"] = "mine"
-    # Hourly Day and Week (Joel, 19 Oct 2026): 7 AM–6 PM unless the office moved the hours.
-    first_hour, _last = hour_window(request.args.get("hours"))
-    if first_hour != DEFAULT_START_HOUR:
-        calendar_keep["hours"] = first_hour
+    # Hourly Day and Week (Joel, 20 Oct 2026): all 24 hours, scrolling; ?hours= opens at that hour.
+    asked_hour = requested_hour(request.args.get("hours"))
+    if asked_hour is not None:
+        calendar_keep["hours"] = asked_hour
     grid_days = [calendar["selected"]] if calendar_view == "day" else calendar["week_dates"]
-    hour_grid = time_grid(grid_days, appointment_rows, first_hour) if calendar_view in ("day", "week") else None
+    hour_grid = time_grid(grid_days, appointment_rows, asked_hour) if calendar_view in ("day", "week") else None
     period_title = _period_title(calendar, calendar_view)
     from app.presentation.schedule_categories import legend
 

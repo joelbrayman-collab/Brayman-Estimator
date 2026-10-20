@@ -51,10 +51,11 @@ from app.models.user import User, UserMembership
 
 TITLE_MAX = 160
 
-# Hourly Day and Week views: 7 AM–6 PM by default; the office can move earlier or later.
+# Hourly Day and Week views (Joel, 20 Oct 2026): all 24 hours, scrolling. About 11 hours show at a
+# time, opening at 7 AM, or earlier when an appointment starts earlier (5 AM summer starts; a long
+# pour can run to 11 PM or midnight).
 DEFAULT_START_HOUR = 7
 VISIBLE_HOURS = 11
-HOUR_STEP = 3
 
 
 class AppointmentError(ValueError):
@@ -523,13 +524,24 @@ def calendar_rows(organization_id: str, start: date, end: date, viewer, project_
 # Hourly grid (Day and Week)
 
 
-def hour_window(start_hour) -> tuple[int, int]:
+def requested_hour(value):
+    """The hour the office asked the grid to open at (?hours=), or None."""
     try:
-        first = int(start_hour)
+        hour = int(value)
     except (TypeError, ValueError):
-        first = DEFAULT_START_HOUR
-    first = max(0, min(first, 24 - VISIBLE_HOURS))
-    return first, first + VISIBLE_HOURS
+        return None
+    return hour if 0 <= hour <= 23 else None
+
+
+def opening_hour(days: list[date], appointments: list[dict], requested=None) -> int:
+    """Where the scrolling grid opens: the asked hour; otherwise 7 AM, or the hour of the earliest
+    timed appointment in view when that is earlier. Never so late that the bottom is empty."""
+    if requested is not None:
+        hour = requested
+    else:
+        starts = [r["start_min"] // 60 for r in appointments if r["date"] in days and not r["all_day"]]
+        hour = min([DEFAULT_START_HOUR] + starts)
+    return max(0, min(hour, 24 - VISIBLE_HOURS))
 
 
 def _lay_out(items: list[dict]) -> None:
@@ -561,48 +573,30 @@ def _lay_out(items: list[dict]) -> None:
             item["overlaps"] = len(group) > 1
 
 
-def time_grid(days: list[date], appointments: list[dict], start_hour) -> dict:
-    """Hour rows for the window, and for each day its timed appointments placed by minute.
+def time_grid(days: list[date], appointments: list[dict], start_hour=None) -> dict:
+    """All 24 hour rows, and for each day its timed appointments placed by minute (none hidden).
 
-    Appointments outside the visible hours are counted ("2 earlier") so nothing is hidden.
+    start_hour is the hour the office asked to open at (?hours=); the page scrolls there.
     """
-    first, last = hour_window(start_hour)
-    lo, hi = first * 60, last * 60
-    span = hi - lo
+    span = 24 * 60
     columns = []
     for day in days:
         timed = [dict(r) for r in appointments if r["date"] == day and not r["all_day"]]
         _lay_out(timed)
-        visible, earlier, later = [], 0, 0
         for item in timed:
-            if item["end_min"] <= lo:
-                earlier += 1
-                continue
-            if item["start_min"] >= hi:
-                later += 1
-                continue
-            top = max(item["start_min"], lo)
-            bottom = min(item["end_min"], hi)
-            item["top_pct"] = round((top - lo) / span * 100, 3)
-            item["height_pct"] = round(max(bottom - top, 15) / span * 100, 3)
+            item["top_pct"] = round(item["start_min"] / span * 100, 3)
+            item["height_pct"] = round(max(item["end_min"] - item["start_min"], 15) / span * 100, 3)
             item["left_pct"] = round(item["lane"] / item["lanes"] * 100, 3)
             item["width_pct"] = round(100 / item["lanes"], 3)
-            visible.append(item)
         columns.append({
             "date": day,
-            "appointments": visible,
-            "earlier": earlier,
-            "later": later,
+            "appointments": timed,
             "all_day": [r for r in appointments if r["date"] == day and r["all_day"]],
         })
     return {
-        "first_hour": first,
-        "last_hour": last,
-        "hours": [{"hour": h, "label": hour_label(h), "value": f"{h:02d}:00", "half": f"{h:02d}:30"} for h in range(first, last)],
-        "range_label": f"{hour_label(first)} – {hour_label(last)}",
-        "earlier_start": max(0, first - HOUR_STEP) if first > 0 else None,
-        "later_start": min(24 - VISIBLE_HOURS, first + HOUR_STEP) if last < 24 else None,
-        "is_default": first == DEFAULT_START_HOUR,
+        "hours": [{"hour": h, "label": hour_label(h), "value": f"{h:02d}:00", "half": f"{h:02d}:30"} for h in range(24)],
+        "open_hour": opening_hour(days, appointments, requested_hour(start_hour)),
+        "visible_hours": VISIBLE_HOURS,
         "columns": columns,
     }
 

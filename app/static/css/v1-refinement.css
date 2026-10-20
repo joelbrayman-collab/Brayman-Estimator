@@ -961,6 +961,11 @@ button.button-secondary {
 .cal-hours-step:hover { background: rgba(28, 31, 36, 0.06); }
 .cal-hours-reset { border-bottom: 1px solid var(--gold); border-radius: 0; padding: 3px 0; }
 .cal-hours-row, .cal-hours-body { display: grid; grid-template-columns: var(--gutter) repeat(var(--cal-cols), minmax(0, 1fr)); }
+/* All 24 hours scroll inside the grid (Joel, 20 Oct 2026); about 11 hours show at a time. The header and
+   all-day rows leave room for the scrollbar (measured by calendar-hours.js) so the day columns line up. */
+.cal-hours-body { max-height: min(calc(var(--hour-h) * var(--cal-visible, 11)), 70vh); overflow-y: auto; overscroll-behavior: contain; }
+.cal-hours-row { padding-right: var(--cal-scrollbar, 0px); }
+.cal-hours-body:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .cal-hours-gutter { background: #f5f6f7; font-size: 13px; font-weight: 500; color: #2c3440; text-align: right; padding-right: 14px; border-right: 1px solid var(--border); }
 .cal-hours-head { border-bottom: 1px solid var(--border); }
 .cal-hours-time { display: flex; align-items: center; justify-content: center; padding: 0; font-size: 14px; }

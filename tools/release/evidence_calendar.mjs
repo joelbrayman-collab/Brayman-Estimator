@@ -65,12 +65,22 @@ for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844
     await ctx.close();
   });
 
-  test(`${label}: an empty day shows the hourly grid, 7 AM to 6 PM, and every half hour starts an appointment`, async () => {
+  test(`${label}: an empty day scrolls through all 24 hours, opens at 7 AM, and every half hour starts an appointment`, async () => {
     const { ctx, pg, errors } = await signedIn(width, height);
     await pg.goto(`${base}/schedule?${at(facts.empty_day)}&view=day`);
     const labels = (await pg.locator(".cal-hour-label").allInnerTexts()).map((s) => s.trim());
-    assert.equal(labels[0], "7 AM"); assert.equal(labels.at(-1), "5 PM"); assert.equal(labels.length, 11);
+    assert.equal(labels[0], "12 AM"); assert.equal(labels.at(-1), "11 PM"); assert.equal(labels.length, 24);
     assert.equal(await pg.locator(".cal-hours-body .cal-appt").count(), 0);
+    // About 11 hours on screen, opening at 7 AM; 5 AM and 11 PM are a scroll away (Joel, 20 Oct 2026).
+    const body = pg.locator(".cal-hours-body");
+    const box = await body.evaluate((el) => ({ top: el.scrollTop, view: el.clientHeight, all: el.scrollHeight }));
+    const hour = box.all / 24;
+    assert.ok(Math.abs(box.top - 7 * hour) <= 2, JSON.stringify(box));
+    assert.ok(box.view <= 11 * hour + 2 && box.view >= 6 * hour, JSON.stringify(box));
+    await body.evaluate((el) => { el.scrollTop = 0; });
+    assert.ok(await pg.locator(`[data-slot="${facts.empty_day}T05:00"]`).isVisible());
+    await body.evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    assert.ok(await pg.locator(`[data-slot="${facts.empty_day}T23:30"]`).isVisible());
     await pg.locator(`[data-slot="${facts.empty_day}T14:30"]`).click();
     await pg.waitForURL(/appointments\/new/);
     assert.equal(await pg.inputValue("[name=start_time]"), "14:30");

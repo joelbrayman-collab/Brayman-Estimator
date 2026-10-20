@@ -41,6 +41,19 @@ CHANGE_ORDER_PROJECT_MISMATCH = "That project is not the project for this change
 project_controls_bp = Blueprint("project_controls", __name__)
 
 
+def _signer_prefill(change_order, organization_id):
+    """The customer who accepted this project's proposal, to fill in the change order signer
+    (as the contract form already does). Read-only; the office can change both fields."""
+    from app.models.proposal import Proposal
+    from app.models.proposal_acceptance import ProposalAcceptance
+
+    row = (ProposalAcceptance.query.join(Proposal, ProposalAcceptance.proposal_id == Proposal.id)
+           .join(Estimate, Proposal.estimate_id == Estimate.id)
+           .filter(Estimate.project_id == change_order.project_id, ProposalAcceptance.organization_id == organization_id)
+           .order_by(ProposalAcceptance.accepted_at.desc(), ProposalAcceptance.id.desc()).first())
+    return {"name": row.accepted_name, "email": row.accepted_email or ""} if row is not None else None
+
+
 def _parse_date(value):
     value = (value or "").strip()
     if not value:
@@ -434,6 +447,7 @@ def view_change_order(id):
         item_edit_form=item_edit_form,
         signing_overlay=signing_overlay,
         invitation_url=invitation_url,
+        signer_prefill=_signer_prefill(change_order, organization_id),
         extra_work=change_order_is_extra_work(change_order),
         approved_internal_cost_frozen=change_order.status in ("Approved", "Invoiced"),
         next_view=next_view,
@@ -570,6 +584,7 @@ def edit_item(id, item_id):
             },
             signing_overlay=overlay_for_change_order(change_order.id, organization_id),
             invitation_url="",
+            signer_prefill=_signer_prefill(change_order, organization_id),
         )
     flash("Line item updated.", "success")
     return redirect(

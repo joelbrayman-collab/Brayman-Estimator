@@ -130,8 +130,9 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <h3>Send for Signature</h3>
         <div class="form-grid">
-            <label>Signer name * <input type="text" name="signer_name" required autocomplete="name"></label>
-            <label>Signer email * <input type="email" name="signer_email" required autocomplete="email"></label>
+            {% if signer_prefill %}<p class="muted-copy" data-signer-from-acceptance="true">Filled in from the customer who accepted the proposal. Check it, then send.</p>{% endif %}
+            <label>Signer name * <input type="text" name="signer_name" required autocomplete="name" value="{{ signer_prefill.name if signer_prefill else '' }}"></label>
+            <label>Signer email * <input type="email" name="signer_email" required autocomplete="email" value="{{ signer_prefill.email if signer_prefill else '' }}"></label>
             <label>Invitation days <input type="number" name="expiry_days" value="7" min="1" max="30"></label>
             <label class="sign-office-check">
                 <input type="checkbox" name="countersign_required" value="yes" checked>

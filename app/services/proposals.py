@@ -5,6 +5,7 @@ import re
 from app import db
 from app.models.estimate import Estimate, EstimateVersion
 from app.models.proposal import (
+    customer_line_note,
     PROPOSAL_STATUSES,
     Proposal,
     ProposalLineItem,
@@ -444,7 +445,7 @@ def snapshot_estimate_version_content(proposal, version):
                     markup_percent=Decimal("0"),
                     extended_cost=_as_decimal(item.extended_cost),
                     extended_price=extended_price,
-                    notes=item.notes,
+                    notes=customer_line_note(item.notes),
                 )
             else:
                 markup = _as_decimal(item.markup_percent)
@@ -462,7 +463,7 @@ def snapshot_estimate_version_content(proposal, version):
                     markup_percent=markup,
                     extended_cost=_as_decimal(item.extended_cost),
                     extended_price=_as_decimal(item.sell_price),
-                    notes=item.notes,
+                    notes=customer_line_note(item.notes),
                 )
                 apply_proposal_line_calculations(line_item)
             db.session.add(line_item)

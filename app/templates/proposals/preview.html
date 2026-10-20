@@ -141,8 +141,8 @@
                                     {% if item.item_type == 'Allowance' %}
                                     <span class="badge text-bg-secondary ms-1">Allowance</span>
                                     {% endif %}
-                                    {% if item.notes %}
-                                    <div class="small text-muted">{{ item.notes }}</div>
+                                    {% if item.customer_notes %}
+                                    <div class="small text-muted">{{ item.customer_notes }}</div>
                                     {% endif %}
                                 </td>
                                 <td class="text-end">{{ item.quantity }}</td>

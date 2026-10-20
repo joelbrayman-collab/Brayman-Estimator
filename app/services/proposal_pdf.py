@@ -349,8 +349,8 @@ def _pricing_table(items, styles, *, detailed: bool):
         description = _escape(item.description)
         if item.item_type == "Allowance":
             description = f"{description} (Allowance)"
-        if item.notes:
-            description = f"{description}<br/><font color='#666666'>{_escape(item.notes)}</font>"
+        if item.customer_notes:
+            description = f"{description}<br/><font color='#666666'>{_escape(item.customer_notes)}</font>"
         row = [
             Paragraph(description, styles["table_cell"]),
             Paragraph(_qty(item.quantity), styles["table_cell"]),

@@ -1,8 +1,25 @@
+import re
 from datetime import datetime
 from decimal import Decimal
 
 from app import db
 from app.services.organizations import get_current_organization_id
+
+# Notes the platform itself writes on an estimate line to record where a cost or quantity came from: the
+# approved-cost hand-off ("Approved contractor cost #7; quantity confirmed by ...") and the calculator
+# hand-offs ("...; rule ...; quantity ...; canonical ..."). They are office provenance, not proposal
+# wording: a customer never sees them (roles and isolation walk, 20 Oct 2026). Notes a person typed are kept.
+_PROVENANCE_NOTE = re.compile(
+    r"^Approved contractor cost #\d+; quantity confirmed by |; rule [^;]*; quantity [^;]*; canonical ",
+)
+
+
+def customer_line_note(note):
+    """The line note a customer may see: None for the platform's own provenance notes."""
+    text = (note or "").strip()
+    if not text or _PROVENANCE_NOTE.search(text):
+        return None
+    return text
 
 PROPOSAL_STATUSES = (
     "Draft",
@@ -280,6 +297,10 @@ class ProposalLineItem(db.Model):
     notes = db.Column(db.Text)
 
     section = db.relationship("ProposalSection", back_populates="line_items")
+
+    @property
+    def customer_notes(self):
+        return customer_line_note(self.notes)
 
     def __repr__(self):
         return f"<ProposalLineItem {self.description}>"

@@ -34,10 +34,11 @@ def _rows(engine, skip=()):
     return out
 
 
-def test_the_pro_desk_revision_follows_the_calendar_and_is_the_head():
+def test_the_pro_desk_revision_follows_the_calendar_and_is_followed_by_supplier_signing():
     script = ScriptDirectory.from_config(_config(":memory:"))
-    assert script.get_heads() == [REVISION]
+    assert script.get_heads() == ["a4d5e6f7a8b9"]  # Supplier Native Signing (20 Oct 2026) follows it
     assert script.get_revision(REVISION).down_revision == PRIOR
+    assert script.get_revision("a4d5e6f7a8b9").down_revision == REVISION
 
 
 def test_upgrade_adds_nine_tables_keeps_every_existing_row_and_matches_the_models(tmp_path):

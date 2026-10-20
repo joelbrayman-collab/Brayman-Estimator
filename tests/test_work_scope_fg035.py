@@ -526,7 +526,7 @@ def test_alembic_fg035_scope_upgrade_downgrade_and_backfill(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["pd1a2b3c4d5e"]
+        assert script.get_heads() == ["a4d5e6f7a8b9"]
 
         command.upgrade(alembic_cfg, "f3b4c5d6e7f8")
         engine = db.engine
@@ -649,4 +649,4 @@ def test_alembic_fg035_scope_upgrade_downgrade_and_backfill(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["pd1a2b3c4d5e"]
+            assert [row[0] for row in heads] == ["a4d5e6f7a8b9"]

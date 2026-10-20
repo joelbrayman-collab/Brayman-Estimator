@@ -12,7 +12,13 @@ from app import db
 
 DOCUMENT_FAMILY_CHANGE_ORDER = "CHANGE_ORDER"
 DOCUMENT_FAMILY_CONTRACT = "CONTRACT"
-DOCUMENT_FAMILIES = (DOCUMENT_FAMILY_CHANGE_ORDER, DOCUMENT_FAMILY_CONTRACT)
+# Supplier signing (Joel, 20 Oct 2026): a purchase order signed by the contractor and countersigned by the
+# store when it confirms; every agreed delivery change signed by both sides. Same engine, same records.
+DOCUMENT_FAMILY_SUPPLIER_ORDER = "SUPPLIER_ORDER"
+DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE = "SUPPLIER_DELIVERY_CHANGE"
+SUPPLIER_DOCUMENT_FAMILIES = (DOCUMENT_FAMILY_SUPPLIER_ORDER, DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE)
+DOCUMENT_FAMILIES = (DOCUMENT_FAMILY_CHANGE_ORDER, DOCUMENT_FAMILY_CONTRACT) + SUPPLIER_DOCUMENT_FAMILIES
+DOCUMENT_FAMILY_CHECK = "document_family IN ('CHANGE_ORDER', 'CONTRACT', 'SUPPLIER_ORDER', 'SUPPLIER_DELIVERY_CHANGE')"
 
 AUTHORITY_SYNTHETIC_UAT = "SYNTHETIC_UAT"
 AUTHORITY_PRODUCTION = "PRODUCTION"
@@ -39,7 +45,10 @@ SIGNING_REQUEST_STATUSES = (
 
 ROLE_CUSTOMER = "CUSTOMER"
 ROLE_ORGANIZATION_COUNTERSIGN = "ORGANIZATION_COUNTERSIGN"
-SIGNING_PARTICIPANT_ROLES = (ROLE_CUSTOMER, ROLE_ORGANIZATION_COUNTERSIGN)
+ROLE_CONTRACTOR = "CONTRACTOR"  # signs for the contractor (buyer) on a supplier document
+ROLE_SUPPLIER = "SUPPLIER"  # signs for the store on a supplier document
+SIGNING_PARTICIPANT_ROLES = (ROLE_CUSTOMER, ROLE_ORGANIZATION_COUNTERSIGN, ROLE_CONTRACTOR, ROLE_SUPPLIER)
+PARTICIPANT_ROLE_CHECK = "role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUPPLIER')"
 
 EVENT_REQUEST_CREATED = "REQUEST_CREATED"
 EVENT_APPROVED_FOR_SIGNATURE = "APPROVED_FOR_SIGNATURE"
@@ -127,7 +136,7 @@ class SigningFrozenArtifact(db.Model):
     __tablename__ = "signing_frozen_artifacts"
     __table_args__ = (
         db.CheckConstraint(
-            "document_family IN ('CHANGE_ORDER', 'CONTRACT')",
+            DOCUMENT_FAMILY_CHECK,
             name="ck_signing_frozen_artifacts_document_family",
         ),
     )
@@ -210,7 +219,7 @@ class SigningRequest(db.Model):
     __tablename__ = "signing_requests"
     __table_args__ = (
         db.CheckConstraint(
-            "document_family IN ('CHANGE_ORDER', 'CONTRACT')",
+            DOCUMENT_FAMILY_CHECK,
             name="ck_signing_requests_document_family",
         ),
         db.CheckConstraint(
@@ -337,7 +346,7 @@ class SigningParticipant(db.Model):
     __tablename__ = "signing_participants"
     __table_args__ = (
         db.CheckConstraint(
-            "role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN')",
+            PARTICIPANT_ROLE_CHECK,
             name="ck_signing_participants_role",
         ),
         db.UniqueConstraint(

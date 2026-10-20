@@ -72,7 +72,8 @@ def world(app, client):  # noqa: F811
     # A pending contractor delivery change on A's order.
     client.post(
         f"/projects/{project.id}/orders/{order.id}/delivery-change",
-        data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"},
+        data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather",
+              "sign_consent": "yes", "signer_name": "Test Signer"},
     )
     change = SupplierDeliveryChange.query.one()
     assert change.status == "PENDING" and change.requested_by_side == "CONTRACTOR"

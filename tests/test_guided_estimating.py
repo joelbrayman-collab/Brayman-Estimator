@@ -818,7 +818,7 @@ def test_the_migration_adds_exactly_the_guided_tables_and_columns(tmp_path):
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["q4c7l2n8t3a6"] and script.get_revision("g5e7c2a9d1b4").down_revision == "u7b3d9f2a4c6"
+    assert script.get_heads() == ["a4d5e6f7a8b9"] and script.get_revision("g5e7c2a9d1b4").down_revision == "u7b3d9f2a4c6"
     command.upgrade(cfg, "u7b3d9f2a4c6")
     engine = sa.create_engine(uri)
     with engine.begin() as conn:  # an existing linked result, made before this release (SQLite: no FK check here)

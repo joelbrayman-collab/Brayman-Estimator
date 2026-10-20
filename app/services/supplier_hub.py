@@ -711,7 +711,12 @@ def order_lines(share):
 
 
 def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_contact: str = "",
-                notes: str = "", delivery_window: str = "", schedule_item_id=None) -> SupplierPurchaseOrder:
+                notes: str = "", delivery_window: str = "", schedule_item_id=None, signature=None) -> SupplierPurchaseOrder:
+    """Place the purchase order. With a signature (every order placed from the office), the contractor signs it."""
+    from app.services import supplier_signing
+
+    if signature is not None:
+        supplier_signing._require_valid(signature)
     if purchase_order_for(share) is not None:
         raise SupplierHubError("An order was already placed on this request.")
     lines, blockers = order_lines(share)
@@ -741,6 +746,9 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
     )
     db.session.add(order)
     _event(share, "ORDER_PLACED", "CONTRACTOR", order.placed_by_name, f"{order.number}: ${total}")
+    supplier_signing.open_order_signing(order, user=user, signature=signature)
+    if signature is not None:
+        _event(share, "ORDER_SIGNED", "CONTRACTOR", order.placed_by_name, f"{order.number} signed by {signature.name}")
     db.session.commit()
     _notify_supplier(order, f"New purchase order {order.number}",
                      f"{order.placed_by_name} placed purchase order {order.number} (${total} before tax)"
@@ -750,9 +758,14 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
 
 
 def confirm_order(order: SupplierPurchaseOrder, *, user, expected_delivery=None, note: str = "",
-                  delivery_window: str = "") -> None:
+                  delivery_window: str = "", signature=None) -> None:
+    """Confirm the order. With a signature (every confirmation from the Supplier Hub), the store signs it."""
+    from app.services import supplier_signing
+
     if order.status != PO_PLACED:
         raise SupplierHubError("This order has already been answered.")
+    if signature is not None:
+        supplier_signing._require_valid(signature)
     order.status = PO_CONFIRMED
     order.expected_delivery = _date(expected_delivery, "expected delivery date", required=False) if isinstance(expected_delivery, str) else expected_delivery
     order.supplier_note = (note or "").strip() or None
@@ -762,6 +775,10 @@ def confirm_order(order: SupplierPurchaseOrder, *, user, expected_delivery=None,
     order.scheduled_window = (delivery_window or "").strip()[:60] or order.delivery_window
     _event(order.share, "ORDER_CONFIRMED", "SUPPLIER", order.supplier_responded_by_name,
            f"{order.number}" + (f", delivery {_when(order.scheduled_date, order.scheduled_window)}" if order.scheduled_date else ""))
+    if signature is not None:
+        supplier_signing.sign_order_confirmation(order, user=user, signature=signature)
+        _event(order.share, "ORDER_SIGNED", "SUPPLIER", order.supplier_responded_by_name,
+               f"{order.number} signed by {signature.name}; signed purchase order completed")
     db.session.commit()
     _notify_contractor(order, f"{order.number} confirmed by {order.supplier_responded_by_name}",
                        f"{order.supplier_responded_by_name} confirmed purchase order {order.number}"
@@ -779,6 +796,9 @@ def report_order_problem(order: SupplierPurchaseOrder, *, user, note: str) -> No
     order.supplier_responded_by_name = _display(user)
     order.supplier_responded_at = datetime.utcnow()
     _event(order.share, "ORDER_PROBLEM", "SUPPLIER", order.supplier_responded_by_name, detail)
+    from app.services.supplier_signing import void_order_signing
+
+    void_order_signing(order, reason=f"Supplier reported a problem: {detail}", user=user)
     db.session.commit()
 
 
@@ -791,8 +811,9 @@ CANCELLABLE_PO_STATUSES = (PO_PLACED, PO_CONFIRMED, PO_PROBLEM)
 _DELIVERED_DETAIL = re.compile(r"^(?P<number>\S+) delivered (?P<day>\d{4}-\d{2}-\d{2})(?: · (?P<note>.*))?$", re.S)
 
 
-def _withdraw_open_changes(order, *, side: str, who: str, why: str) -> int:
+def _withdraw_open_changes(order, *, side: str, who: str, why: str, user=None) -> int:
     from app.models.supplier_portal import CHANGE_PENDING, SupplierDeliveryChange
+    from app.services.supplier_signing import void_change_signing
 
     count = 0
     for change in SupplierDeliveryChange.query.filter_by(order_id=order.id, status=CHANGE_PENDING):
@@ -800,6 +821,8 @@ def _withdraw_open_changes(order, *, side: str, who: str, why: str) -> int:
         change.answered_by_name = who
         change.answered_at = datetime.utcnow()
         change.answer_note = why
+        # A withdrawn change is voided, not signed (FG-041, reconciled with cancel/delivered 28 Oct 2026).
+        void_change_signing(change, reason=why, user=user)
         _event(order.share, "DELIVERY_CHANGE_WITHDRAWN", side, who, f"{order.number}: {why}")
         count += 1
     return count
@@ -816,7 +839,12 @@ def cancel_order(order: SupplierPurchaseOrder, *, user, reason: str) -> None:
         raise SupplierHubError("Say why the order is cancelled. The supplier sees the reason.")
     who = _display(user)
     order.status = PO_CANCELLED
-    _withdraw_open_changes(order, side="CONTRACTOR", who=who, why="Order cancelled")
+    _withdraw_open_changes(order, side="CONTRACTOR", who=who, why="Order cancelled", user=user)
+    # An order the store has not yet signed is voided (the contractor's signature stays in its history);
+    # a fully signed order keeps its executed record.
+    from app.services.supplier_signing import void_order_signing
+
+    void_order_signing(order, reason=f"Order cancelled: {detail}", user=user)
     _event(order.share, "ORDER_CANCELLED", "CONTRACTOR", who, f"{order.number}: {detail}")
     db.session.commit()
     _notify_supplier(order, f"Purchase order {order.number} cancelled",
@@ -841,7 +869,7 @@ def mark_order_delivered(order: SupplierPurchaseOrder, *, side: str, user, deliv
     who = _display(user)
     text = (note or "").strip().replace("\n", " ")[:500]
     order.status = PO_DELIVERED
-    _withdraw_open_changes(order, side=side, who=who, why="Order delivered")
+    _withdraw_open_changes(order, side=side, who=who, why="Order delivered", user=user)
     _event(order.share, "ORDER_DELIVERED", side, who, f"{order.number} delivered {day.isoformat()}" + (f" · {text}" if text else ""))
     db.session.commit()
     message = f"{who} recorded that purchase order {order.number} was delivered on {_when(day)}." + (f" Note: {text}" if text else "")
@@ -1084,8 +1112,14 @@ def _other_side(side: str) -> str:
 
 
 def request_delivery_change(order, *, side: str, user, new_date, new_window: str = "", reason: str = "",
-                            note: str = "", counter_of=None):
+                            note: str = "", counter_of=None, signature=None):
+    """Ask for a new delivery. With a signature (every change asked for on screen), the asking side signs it.
+    A change proposed automatically when the schedule moves carries no typed signature."""
     from app.models.supplier_portal import CHANGE_REASONS, SupplierDeliveryChange
+    from app.services import supplier_signing
+
+    if signature is not None:
+        supplier_signing._require_valid(signature)
 
     if order.status not in (PO_PLACED, PO_CONFIRMED):
         raise SupplierHubError("Only an open order's delivery can be changed.")
@@ -1103,7 +1137,9 @@ def request_delivery_change(order, *, side: str, user, new_date, new_window: str
     )
     db.session.add(change)
     _event(order.share, "DELIVERY_CHANGE_REQUESTED", side, change.requested_by_name,
-           f"{order.number}: {_when(schedule['date'], schedule['window'])} → {_when(day, change.new_window)} ({reason})")
+           f"{order.number}: {_when(schedule['date'], schedule['window'])} → {_when(day, change.new_window)} ({reason})"
+           + (f"; signed by {signature.name}" if signature is not None else ""))
+    supplier_signing.open_change_signing(change, user=user, signature=signature)
     db.session.commit()
     message = (f"{change.requested_by_name} asks to move the delivery for {order.number} "
                f"from {_when(schedule['date'], schedule['window'])} to {_when(day, change.new_window)}. "
@@ -1115,12 +1151,18 @@ def request_delivery_change(order, *, side: str, user, new_date, new_window: str
 
 
 def answer_delivery_change(change, *, side: str, user, action: str, note: str = "", counter_date=None,
-                           counter_window: str = "", counter_reason: str = "Other"):
+                           counter_window: str = "", counter_reason: str = "Other", signature=None):
+    """Accept (signed), decline, or propose another time (signed, as a new change). Accepting or proposing from a
+    screen always carries a signature; declining needs none, because nothing is agreed."""
+    from app.services import supplier_signing
+
     order = change.order
     if change.status != "PENDING":
         raise SupplierHubError("This change has already been answered.")
     if side != _other_side(change.requested_by_side):
         raise SupplierHubError("The other side answers this change.")
+    if signature is not None and action in ("accept", "counter"):
+        supplier_signing._require_valid(signature)
     who = _display(user)
     change.answered_by_name = who
     change.answered_at = datetime.utcnow()
@@ -1136,6 +1178,9 @@ def answer_delivery_change(change, *, side: str, user, action: str, note: str = 
             # screen shows the old one as current. The earlier dates stay in the change history.
             order.expected_delivery = change.new_date
         detail = f"{order.number}: now {_when(change.new_date, change.new_window)}"
+        if signature is not None:
+            supplier_signing.sign_change_acceptance(change, side=side, user=user, signature=signature)
+            detail += f"; signed by {signature.name}; signed delivery change completed"
         _event(order.share, "DELIVERY_CHANGE_ACCEPTED", side, who, detail)
         db.session.commit()
         subject = f"Delivery change accepted: {order.number} is now {_when(change.new_date, change.new_window)}"
@@ -1145,6 +1190,7 @@ def answer_delivery_change(change, *, side: str, user, action: str, note: str = 
             raise SupplierHubError("Say why you cannot accept the change.")
         change.status = "DECLINED"
         current = current_schedule(order)
+        supplier_signing.void_change_signing(change, reason=f"Declined: {change.answer_note}", user=user)
         _event(order.share, "DELIVERY_CHANGE_DECLINED", side, who, f"{order.number}: {change.answer_note}")
         db.session.commit()
         subject = f"Delivery change declined: {order.number}"
@@ -1152,10 +1198,11 @@ def answer_delivery_change(change, *, side: str, user, action: str, note: str = 
                 f"{order.number} stays scheduled for {_when(current['date'], current['window'])}.")
     elif action == "counter":
         change.status = "COUNTERED"
+        supplier_signing.void_change_signing(change, reason="Another time was proposed", user=user)
         db.session.flush()
         counter = request_delivery_change(order, side=side, user=user, new_date=counter_date,
                                           new_window=counter_window, reason=counter_reason,
-                                          note=note, counter_of=change)
+                                          note=note, counter_of=change, signature=signature)
         return counter
     else:
         raise SupplierHubError("Choose accept, propose another time or decline.")
@@ -1171,6 +1218,9 @@ def withdraw_delivery_change(change, *, side: str, user):
     change.status = "WITHDRAWN"
     change.answered_by_name = _display(user)
     change.answered_at = datetime.utcnow()
+    from app.services.supplier_signing import void_change_signing
+
+    void_change_signing(change, reason="Withdrawn by the side that asked", user=user)
     _event(change.order.share, "DELIVERY_CHANGE_WITHDRAWN", side, change.answered_by_name, change.order.number)
     db.session.commit()
 

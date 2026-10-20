@@ -20,6 +20,7 @@ from app.models.supplier_portal import (
     SupplierUserMembership,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.supplier_signing import signature_from_form, signing_template_helpers
 from app.services.supplier_hub import (
     SupplierHubError,
     add_supplier_user,
@@ -249,11 +250,12 @@ def order(project_id, share_id):
         po = place_order(share, user=current_user, delivery_date=request.form.get("delivery_date", ""),
                          site_contact=request.form.get("site_contact", ""), notes=request.form.get("notes", ""),
                          delivery_window=request.form.get("delivery_window", ""),
-                         schedule_item_id=request.form.get("schedule_item_id") or None)
+                         schedule_item_id=request.form.get("schedule_item_id") or None,
+                         signature=signature_from_form(request.form, request))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
-        flash(f"Purchase order {po.number} sent to {share.supplier.legal_name}. It is agreed when they confirm it.", "success")
+        flash(f"Purchase order {po.number} signed and sent to {share.supplier.legal_name}. It is agreed when they sign and confirm it.", "success")
     return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")
 
 
@@ -320,7 +322,7 @@ def request_change(project_id, order_id):
     try:
         request_delivery_change(order, side="CONTRACTOR", user=current_user, new_date=request.form.get("new_date", ""),
                                 new_window=request.form.get("new_window", ""), reason=request.form.get("reason", ""),
-                                note=request.form.get("note", ""))
+                                note=request.form.get("note", ""), signature=signature_from_form(request.form, request))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -338,7 +340,8 @@ def answer_change(project_id, change_id):
         answer_delivery_change(change, side="CONTRACTOR", user=current_user, action=request.form.get("action", ""),
                                note=request.form.get("note", ""), counter_date=request.form.get("counter_date", ""),
                                counter_window=request.form.get("counter_window", ""),
-                               counter_reason=request.form.get("counter_reason", "Other"))
+                               counter_reason=request.form.get("counter_reason", "Other"),
+                               signature=signature_from_form(request.form, request))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -399,3 +402,23 @@ def approve_quote(project_id, share_id):
     else:
         flash("Concrete quote approved. Placing the order is a separate step.", "success")
     return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")
+
+
+@supplier_office_bp.context_processor
+def _signing_helpers():
+    return signing_template_helpers()
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/supplier-signed/<int:request_id>.pdf")
+def signed_document(project_id, request_id):
+    """A purchase order or delivery change on this project: the signed copy once both sides signed."""
+    from app.services.supplier_signing import document_for_contractor
+
+    project, org_id = _project(project_id)
+    found = document_for_contractor(org_id, project.id, request_id)
+    if found is None:
+        abort(404)
+    data, filename = found
+    return Response(data, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="{filename}"', "Cache-Control": "private, no-store",
+                             "X-Content-Type-Options": "nosniff"})

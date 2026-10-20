@@ -34,9 +34,10 @@ def _snapshot(engine, skip=()):
     return out
 
 
-def test_the_appointment_revision_is_the_single_head():
+def test_the_appointment_revision_follows_its_prior_in_the_single_chain():
+    # Supplier Native Signing (a4d5e6f7a8b9, 20 Oct 2026) now follows this revision.
     script = ScriptDirectory.from_config(_config(":memory:"))
-    assert script.get_heads() == [REVISION]
+    assert len(script.get_heads()) == 1
     assert script.get_revision(REVISION).down_revision == PRIOR
 
 
@@ -53,7 +54,7 @@ def test_upgrade_adds_two_tables_changes_nothing_else_and_matches_the_models(tmp
                 "'1 Test Rd', 'Ontario', 'CAD', 'Ontario (HST 13%)', 1, '2026-10-19 00:00:00', '2026-10-19 00:00:00')"))
         before_tables = set(sa.inspect(db.engine).get_table_names())
         before = _snapshot(db.engine)
-        command.upgrade(cfg, "head")
+        command.upgrade(cfg, REVISION)
         after_tables = set(sa.inspect(db.engine).get_table_names())
         assert after_tables - before_tables == NEW_TABLES and before_tables <= after_tables
         assert _snapshot(db.engine, skip=NEW_TABLES) == before
@@ -72,7 +73,7 @@ def test_database_rules_hold_and_downgrade_is_guarded(tmp_path):
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
     with application.app_context():
         cfg = _config(db_path)
-        command.upgrade(cfg, "head")
+        command.upgrade(cfg, REVISION)
         insert = sa.text(
             "INSERT INTO company_appointments (organization_id, title, appointment_type, appointment_date, all_day, "
             "start_time, end_time, visibility, status, created_at, updated_at) VALUES ('ORG-MIG', 'T', :type, "

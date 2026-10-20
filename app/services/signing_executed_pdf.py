@@ -179,3 +179,18 @@ def assemble_executed_pdf(
     output = BytesIO()
     writer.write(output)
     return output.getvalue()
+
+
+def assemble_signed_record_pdf(frozen_pdf_bytes: bytes, *, rows: list[tuple[str, str]], is_synthetic: bool) -> bytes:
+    """Supplier documents (Joel, 20 Oct 2026): the frozen document plus one signing-record page, rows given by the caller."""
+    if not frozen_pdf_bytes:
+        raise ValueError("Frozen pre-sign PDF is empty.")
+    audit_bytes = _audit_page_pdf(rows=rows, is_synthetic=is_synthetic)
+    writer = PdfWriter()
+    for page in PdfReader(BytesIO(frozen_pdf_bytes)).pages:
+        writer.add_page(page)
+    for page in PdfReader(BytesIO(audit_bytes)).pages:
+        writer.add_page(page)
+    output = BytesIO()
+    writer.write(output)
+    return output.getvalue()

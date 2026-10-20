@@ -56,6 +56,8 @@ def _fresh_login_per_request(app):
     yield
 PASSWORD = "Synthetic-supplier-pass-1"
 
+SIGN = {"sign_consent": "yes", "signer_name": "Test Signer"}  # supplier Native Signing (20 Oct 2026)
+
 
 def _supplier_client(app, email=DARCY[1], password=PASSWORD):
     supplier = app.test_client()
@@ -154,21 +156,21 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     placed = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-                         data={"delivery_date": (date.today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"},
+                         data={**SIGN, "delivery_date": (date.today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"},
                          follow_redirects=True)
-    assert b"It is agreed when they confirm it" in placed.data
+    assert b"It is agreed when they sign and confirm it" in placed.data
     order = SupplierPurchaseOrder.query.one()
     assert order.status == "PLACED" and order.total == Decimal("9.00") * Decimal(str(lines[0]["quantity"]))
 
     # The order carries the site address; the supplier confirms it.
     order_page = supplier.get(f"/supplier/{account.supplier_id}/requests/{share.id}")
-    assert b"Arcy" in order_page.data and b"Confirm order" in order_page.data
+    assert b"Arcy" in order_page.data and b"Sign and confirm order" in order_page.data
     supplier.post(f"/supplier/{account.supplier_id}/orders/{order.id}/confirm",
-                  data={"action": "confirm", "expected_delivery": (date.today() + timedelta(days=12)).isoformat()})
+                  data={**SIGN, "action": "confirm", "expected_delivery": (date.today() + timedelta(days=12)).isoformat()})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.status == "CONFIRMED" and order.supplier_responded_by_name == DARCY[0]
     events = [e.event_type for e in SupplierRequestEvent.query.filter_by(share_id=share.id).order_by(SupplierRequestEvent.id)]
-    assert events == ["SENT", "OPENED", "RETURNED", "ORDER_PLACED", "ORDER_CONFIRMED"]
+    assert events == ["SENT", "OPENED", "RETURNED", "ORDER_PLACED", "ORDER_SIGNED", "ORDER_CONFIRMED", "ORDER_SIGNED"]
 
     figures = H.dashboard(account.supplier_id)
     assert figures["requests_received"] == 1 and figures["quotes_returned"] == 1
@@ -222,18 +224,18 @@ def test_concrete_is_its_own_request_to_its_own_supplier_and_is_ordered_and_conf
     })
     share = db.session.get(SupplierRequestShare, share.id)
     assert share.quote_json["concrete_value"] == "945.00" and share.quote_json["total_before_tax"] == "1020.00"
-    blocked = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={"site_contact": "Ben"},
+    blocked = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={**SIGN, "site_contact": "Ben"},
                           follow_redirects=True)
     assert b"Approve the concrete quote first" in blocked.data and SupplierPurchaseOrder.query.count() == 0
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")  # demo step 5, separate from the order
     assert db.session.get(SupplierRequestShare, share.id).quote_json["approved_by"]
-    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={"site_contact": "Ben"})
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={**SIGN, "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.one()
     assert order.total == Decimal("1020.00") and order.supplier_id == tomlinson.supplier_id
     problem = darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm",
-                         data={"action": "problem", "note": ""}, follow_redirects=True)
+                         data={**SIGN, "action": "problem", "note": ""}, follow_redirects=True)
     assert b"Describe the problem" in problem.data
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm", data={"action": "confirm"})
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm", data={**SIGN, "action": "confirm"})
     assert db.session.get(SupplierPurchaseOrder, order.id).status == "CONFIRMED"
     office_page = client.get(f"/projects/{project.id}/supplier-requests")
     assert b"The order is agreed." in office_page.data
@@ -312,9 +314,9 @@ def _concrete_order(app, client):
                data={"price_per_m3": "210", "valid_until": delivery})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-                data={"delivery_date": delivery, "delivery_window": "7:00–9:00"})
+                data={**SIGN, "delivery_date": delivery, "delivery_window": "7:00–9:00"})
     order = SupplierPurchaseOrder.query.one()
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm", data={"action": "confirm",
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm", data={**SIGN, "action": "confirm",
                "expected_delivery": delivery, "delivery_window": "7:00–9:00"})
     return project, tomlinson, darcy, darcy_user, db.session.get(SupplierPurchaseOrder, order.id)
 
@@ -335,22 +337,22 @@ def test_a_weather_change_needs_the_other_sides_acceptance_and_is_texted(app, cl
 
     new_day = (agreed + timedelta(days=1)).isoformat()
     client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                data={"new_date": new_day, "new_window": "7:00–9:00", "reason": "Weather", "note": "Rain Thursday"})
+                data={**SIGN, "new_date": new_day, "new_window": "7:00–9:00", "reason": "Weather", "note": "Rain Thursday"})
     change = SupplierDeliveryChange.query.one()
     assert change.status == "PENDING"
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # nothing changes until accepted
     assert {p for p, _ in sent} >= {"+16135550101", "+16135550102"}  # Darcy and his staff number are texted
     assert any("Rain Thursday" in body and "/supplier/" in body for _, body in sent)
     again = client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                        data={"new_date": new_day, "reason": "Weather"}, follow_redirects=True)
+                        data={**SIGN, "new_date": new_day, "reason": "Weather"}, follow_redirects=True)
     assert b"already waiting for an answer" in again.data
     # The contractor cannot accept its own request.
-    client.post(f"/projects/{project.id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    client.post(f"/projects/{project.id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "accept"})
     assert db.session.get(SupplierDeliveryChange, change.id).status == "PENDING"
     inbox = darcy.get(f"/supplier/{tomlinson.supplier_id}/").get_data(as_text=True)
     assert "Delivery changes waiting for your answer" in inbox
     sent.clear()
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "accept"})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.scheduled_date.isoformat() == new_day and db.session.get(SupplierDeliveryChange, change.id).status == "ACCEPTED"
     assert any(p == "+16135550100" and "accepted" in body for p, body in sent)  # Ben gets the acceptance by text
@@ -362,17 +364,17 @@ def test_the_supplier_can_propose_another_time_and_decline_needs_a_reason(app, c
 
     project, tomlinson, darcy, _user, order = _concrete_order(app, client)
     first = (order.scheduled_date + timedelta(days=1)).isoformat()
-    client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change", data={"new_date": first, "new_window": "7:00–9:00", "reason": "Weather"})
+    client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change", data={**SIGN, "new_date": first, "new_window": "7:00–9:00", "reason": "Weather"})
     change = SupplierDeliveryChange.query.one()
-    no_reason = darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "decline"}, follow_redirects=True)
+    no_reason = darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "decline"}, follow_redirects=True)
     assert b"Say why" in no_reason.data
     darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer",
-               data={"action": "counter", "counter_date": first, "counter_window": "10:00–12:00", "counter_reason": "Supplier availability"})
+               data={**SIGN, "action": "counter", "counter_date": first, "counter_window": "10:00–12:00", "counter_reason": "Supplier availability"})
     counter = SupplierDeliveryChange.query.filter_by(requested_by_side="SUPPLIER").one()
     assert db.session.get(SupplierDeliveryChange, change.id).status == "COUNTERED" and counter.counter_of_id == change.id
     page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
     assert "Change requested by Darcy Synthetic" in page and "10:00–12:00" in page
-    client.post(f"/projects/{project.id}/delivery-changes/{counter.id}/answer", data={"action": "accept"})
+    client.post(f"/projects/{project.id}/delivery-changes/{counter.id}/answer", data={**SIGN, "action": "accept"})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.scheduled_window == "10:00–12:00"
     # Deliveries everywhere: the office list, the supplier list and the Company Calendar.
@@ -441,9 +443,9 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # still not imposed
     assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 2
     # The old request can no longer be accepted; the fresh one can, and then delivery and work agree.
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "accept"})
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{fresh.id}/answer", data={"action": "accept"})
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{fresh.id}/answer", data={**SIGN, "action": "accept"})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.scheduled_date == agreed + timedelta(days=3) == db.session.get(type(item), item.id).scheduled_start
     events = [e.event_type for e in SupplierRequestEvent.query.filter_by(share_id=order.share_id).order_by(SupplierRequestEvent.id)]
@@ -487,7 +489,7 @@ def test_a_suppliers_own_waiting_change_is_left_for_the_office_to_answer_and_the
 
     project, tomlinson, darcy, order, item, agreed = _linked_pour(app, client)
     darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/delivery-change",
-               data={"new_date": (agreed + timedelta(days=1)).isoformat(), "new_window": "8:00–10:00", "reason": "Weather"})
+               data={**SIGN, "new_date": (agreed + timedelta(days=1)).isoformat(), "new_window": "8:00–10:00", "reason": "Weather"})
     theirs = SupplierDeliveryChange.query.filter_by(requested_by_side="SUPPLIER", status="PENDING").one()
     page = client.post(f"/schedule/projects/{project.id}/shift", data={"days": "3"}, follow_redirects=True).get_data(as_text=True)
     assert db.session.get(SupplierDeliveryChange, theirs.id).status == "PENDING"  # theirs is not answered for them
@@ -511,7 +513,7 @@ def test_delivery_notices_email_the_right_people_and_texts_stay_not_sent_until_t
     app.config["TESTING"] = False  # production behaviour without Twilio settings
     try:
         client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                    data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
+                    data={**SIGN, "new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
     finally:
         app.config["TESTING"] = True
     texts = TextMessage.query.filter_by(to_phone="+16135550101").all()
@@ -543,9 +545,9 @@ def test_one_contractors_requests_orders_and_deliveries_are_invisible_to_another
     assert other.get(f"/projects/{project.id}/supplier-requests").status_code == 404
     assert order.number.encode() not in other.get("/deliveries").data
     assert other.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                      data={"new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
+                      data={**SIGN, "new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
     assert other.post(f"/projects/{theirs.id}/orders/{order.id}/delivery-change",
-                      data={"new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
+                      data={**SIGN, "new_date": "2030-01-01", "reason": "Weather"}).status_code == 404
     assert b"Tomlinson concrete (synthetic)" not in other.get("/suppliers").data  # the account belongs to the first contractor
     assert other.post(f"/suppliers/{tomlinson.supplier_id}/users", data={"display_name": "x", "email": "x@example.invalid"}).status_code == 404
 
@@ -618,7 +620,7 @@ def _material_round(app, client, project, account, *, sku="TEST-SKU-1", minutes=
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-                data={"delivery_date": (date.today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
+                data={**SIGN, "delivery_date": (date.today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
     return supplier, share, keys, first
 
 
@@ -636,7 +638,7 @@ def test_needs_attention_lists_what_waits_for_the_store_and_period_figures_use_a
     assert attention["orders_count"] == 0 and attention["changes_count"] == 0
     assert attention["upcoming_count"] == 1 and attention["upcoming"][0]["order"].id == order.id
     client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
+                data={**SIGN, "new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
     inbox = darcy.get(f"/supplier/{tomlinson.supplier_id}/").get_data(as_text=True)
     assert 'data-attention-quotes="1"' in inbox and 'data-attention-changes="1"' in inbox
     assert 'data-attention-upcoming="1"' in inbox and waiting.number in inbox
@@ -779,7 +781,7 @@ def test_after_an_accepted_change_every_screen_shows_the_agreed_delivery(app, cl
     with app.test_request_context():
         quotes = [i.detail for i in records_for_project(DEST_QUOTES, project, project.organization_id)]
     assert any("change waiting" in d for d in quotes)
-    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={"action": "accept"})
+    darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "accept"})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.scheduled_date == moved and order.expected_delivery == moved
     # Supplier's own page: the order and the concrete details agree; the request date is labelled as requested.

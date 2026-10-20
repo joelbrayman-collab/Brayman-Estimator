@@ -10,7 +10,8 @@ MIGRATION_REHEARSAL=ok or MIGRATE=ok; anything else is a stop.
       $PY tools/release/migration_check.py apply --from REV --to REV --new-tables a,b --expect-sha SHA --label L
 
 Both modes prove the same things: the database starts at --from; every existing table keeps its
-exact schema and every row (count and SHA-256 of all rows, in rowid order); exactly the --new-tables
+exact schema (or, for a table rebuilt only to change the named --altered-checks, the same columns,
+keys, foreign keys and other check constraints) and every row (count and SHA-256 of all rows, in rowid order); exactly the --new-tables
 appear, empty; the revision ends at --to; integrity is ok. "apply" first takes its own online
 backup next to the live database (instance/backups/pre-migrate-<label>-<UTC>.db) and refuses unless
 the instance runs --expect-sha. Nothing is downgraded: database recovery is that backup, with Joel.
@@ -21,6 +22,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -75,6 +77,38 @@ def snapshot(path: str) -> dict:
     return {"schema": schema, "content": content, "revision": revision, "integrity": integrity}
 
 
+_CHECK = re.compile(r"CONSTRAINT\s+(\w+)\s+CHECK\s*\(")
+
+
+def _checks(sql: str) -> dict:
+    """Named CHECK constraints in a CREATE TABLE statement, with their bodies (balanced parentheses)."""
+    found = {}
+    for match in _CHECK.finditer(sql or ""):
+        depth, i = 1, match.end()
+        while i < len(sql) and depth:
+            depth += {"(": 1, ")": -1}.get(sql[i], 0)
+            i += 1
+        found[match.group(1)] = " ".join(sql[match.end():i - 1].split())
+    return found
+
+
+def structure(path: str, table: str) -> dict:
+    """What a table is, independent of how its CREATE TABLE text is laid out (Supplier signing, 20 Oct 2026:
+    a rebuilt table keeps its meaning but SQLite stores re-formatted text)."""
+    con = _connect_ro(path)
+    try:
+        columns = [tuple(r) for r in con.execute(f'PRAGMA table_xinfo("{table}")')]
+        fks = sorted(tuple(r[2:]) for r in con.execute(f'PRAGMA foreign_key_list("{table}")'))
+        keys = []
+        for row in con.execute(f'PRAGMA index_list("{table}")'):
+            cols = tuple(r[2] for r in con.execute(f'PRAGMA index_info("{row[1]}")'))
+            keys.append((row[1] if row[3] == "c" else "", bool(row[2]), row[3], cols))
+        sql = con.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()[0]
+    finally:
+        con.close()
+    return {"columns": columns, "foreign_keys": fks, "keys": sorted(keys), "checks": _checks(sql)}
+
+
 def upgrade(db_path: str, revision: str) -> None:
     """Run the candidate's Alembic migrations on this database file, as the tests do."""
     sys.path.insert(0, str(ROOT))
@@ -88,7 +122,7 @@ def upgrade(db_path: str, revision: str) -> None:
         flask_upgrade(directory=str(ROOT / "migrations"), revision=revision)
 
 
-def compare(before: dict, after: dict, new_tables: list, to_rev: str) -> None:
+def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_checks=(), paths=None) -> None:
     out("REVISION_AFTER", after["revision"])
     out("INTEGRITY_AFTER", after["integrity"])
     if after["integrity"] != "ok":
@@ -98,17 +132,49 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str) -> None:
     changed = [t for t, fp in before["content"].items() if after["content"].get(t) != fp]
     if changed:
         fail("existing records changed in: " + ", ".join(changed))
-    altered = [f"{k[0]} {k[1]}" for k, sql in before["schema"].items() if after["schema"].get(k) != sql]
+    altered = [k for k, sql in before["schema"].items() if after["schema"].get(k) != sql]
+    rebuilt = []
+    if altered and altered_checks and paths:
+        for kind, name in altered:
+            if kind != "table":
+                continue
+            old, new = structure(paths[0], name), structure(paths[1], name)
+            same = all(old[part] == new[part] for part in ("columns", "foreign_keys", "keys"))
+            others_same = ({k: v for k, v in old["checks"].items() if k not in altered_checks}
+                           == {k: v for k, v in new["checks"].items() if k not in altered_checks})
+            named = set(old["checks"]) & set(altered_checks)
+            if same and others_same and named and set(old["checks"]) == set(new["checks"]):
+                rebuilt.append((kind, name))
+                for check in sorted(named):
+                    out("ALTERED_CHECK", f"{name}.{check}: {new['checks'][check]}")
+        altered = [k for k in altered if k not in rebuilt]
     if altered:
-        fail("existing schema changed: " + ", ".join(altered))
+        fail("existing schema changed: " + ", ".join(f"{k[0]} {k[1]}" for k in altered))
+    if altered_checks and not rebuilt:
+        fail("the named check constraints did not change: " + ", ".join(altered_checks))
     added = sorted(set(after["content"]) - set(before["content"]))
     if added != sorted(new_tables):
         fail(f"new tables are {added}, expected {sorted(new_tables)}")
     not_empty = [t for t in added if after["content"][t][0] != 0]
     if not_empty:
         fail("new tables are not empty: " + ", ".join(not_empty))
-    out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, schema and every row identical")
+    detail = "schema and every row identical"
+    if rebuilt:
+        detail = (f"every row identical; schema identical except the named check constraints on "
+                  f"{', '.join(n for _k, n in rebuilt)}")
+    out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, {detail}")
     out("NEW_TABLES", ",".join(added) + " (empty)")
+
+
+def _reference_copy(db: str) -> str:
+    """A throwaway copy of the database before the upgrade, to compare a rebuilt table's structure."""
+    reference = f"{db}.before-{os.getpid()}"
+    src = sqlite3.connect(db)
+    dest = sqlite3.connect(reference)
+    src.backup(dest)
+    dest.close()
+    src.close()
+    return reference
 
 
 def rehearse(args) -> None:
@@ -123,10 +189,15 @@ def rehearse(args) -> None:
         fail(f"copy is at {before['revision']}, expected {args.from_rev}")
     if before["integrity"] != "ok":
         fail("copy integrity is not ok")
+    reference = _reference_copy(db) if args.altered_checks else None
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
-    compare(before, snapshot(db), args.new_tables, args.to_rev)
+    try:
+        compare(before, snapshot(db), args.new_tables, args.to_rev, args.altered_checks, (reference, db))
+    finally:
+        if reference:
+            os.remove(reference)
     out("MIGRATION_REHEARSAL", "ok")
 
 
@@ -176,8 +247,9 @@ def apply(args) -> None:
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
     after = snapshot(db)
     # Someone may have used the app during the minute of the release; compare against the moment
-    # just before the upgrade, which is what the migration itself must not change.
-    compare(before, after, args.new_tables, args.to_rev)
+    # just before the upgrade, which is what the migration itself must not change. The structure of a
+    # rebuilt table is compared with the verified pre-migration backup.
+    compare(before, after, args.new_tables, args.to_rev, args.altered_checks, (str(backup), db))
     out("MIGRATE", "ok")
 
 
@@ -189,6 +261,8 @@ def main() -> None:
         p.add_argument("--from", dest="from_rev", required=True)
         p.add_argument("--to", dest="to_rev", required=True)
         p.add_argument("--new-tables", required=True, type=lambda v: [t for t in v.split(",") if t])
+        p.add_argument("--altered-checks", default=[], type=lambda v: [t for t in v.split(",") if t],
+                       help="check constraints the migration is authorized to change (tables rebuilt for them)")
         if name == "rehearse":
             p.add_argument("--db", required=True)
         else:

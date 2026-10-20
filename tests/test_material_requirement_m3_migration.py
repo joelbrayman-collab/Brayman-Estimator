@@ -15,7 +15,7 @@ PRIOR = "q7d8e9f0a1b2"
 M3_REVISION = "r8e9f0a1b2c3"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "z3c4d5e6f7a8"
+GRAPH_HEAD = "a4d5e6f7a8b9"
 PRESERVED = (
     "organizations",
     "projects",

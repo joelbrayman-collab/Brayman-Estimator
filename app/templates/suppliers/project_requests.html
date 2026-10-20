@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "supplier/_delivery.html" import delivery_panel, when with context %}
+{% from "supplier/_sign.html" import sign_fields, signing_line with context %}
 {% block title %}Supplier requests | {{ project.name }}{% endblock %}
 {% block page_title %}Supplier requests{% endblock %}
 {% block content %}
@@ -39,6 +40,8 @@
         {% if order %}
         <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong>{% if order.schedule_item_id %} <span class="muted-copy">(follows the project schedule: moving that work proposes a new delivery to the supplier)</span>{% endif %} — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
         {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if row.schedule and row.schedule.date %}; agreed delivery {{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
+        {% set osign = order_signing(order) %}
+        {% if osign %}{{ signing_line(osign, url_for('supplier_office.signed_document', project_id=project.id, request_id=osign.id)) }}{% endif %}
         {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
@@ -55,7 +58,8 @@
             </label>
             <label>Site contact <input type="text" name="site_contact"></label>
             <label>Notes for the supplier <input type="text" name="notes"></label>
-            <div class="form-actions"><button type="submit" class="button is-primary">Place order</button></div>
+            {{ sign_fields(share) }}
+            <div class="form-actions"><button type="submit" class="button is-primary">Sign and place order</button></div>
         </form>
         {% endif %}
         {% endif %}

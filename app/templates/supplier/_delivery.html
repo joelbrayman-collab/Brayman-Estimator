@@ -1,5 +1,6 @@
 {# Delivery schedule panel, shared by the office and the Supplier Hub (Joel, 17 Oct 2026).
    my_side: CONTRACTOR or SUPPLIER. ep: endpoint prefix. kw: url arguments for this side. #}
+{% from "supplier/_sign.html" import sign_fields, signing_line with context %}
 {% macro when(day, window) %}{% if day %}{{ day.strftime("%a %b %d, %Y").replace(" 0", " ") }}{% if window %}, {{ window }}{% endif %}{% else %}date to be set{% endif %}{% endmacro %}
 {% macro delivery_panel(order, schedule, pending, changes, reasons, my_side, ep, kw, other_label) %}
 <section class="form-panel delivery-panel" id="delivery" data-delivery-order="{{ order.number }}">
@@ -12,21 +13,25 @@
     <div class="delivery-change is-pending" data-delivery-change="PENDING">
         <p><strong>Change requested by {{ pending.requested_by_name }}</strong> on {{ pending.requested_at.strftime("%b %d at %H:%M") }}:
             {{ when(pending.previous_date, pending.previous_window) }} → <strong>{{ when(pending.new_date, pending.new_window) }}</strong>. Reason: {{ pending.reason }}.{% if pending.note %} “{{ pending.note }}”{% endif %}</p>
+        {% set csign = change_signing(pending) %}
+        {% if csign %}{{ signing_line(csign, url_for(ep ~ '.signed_document', request_id=csign.id, **kw)) }}{% endif %}
         {% if pending.requested_by_side != my_side %}
         <p class="muted-copy">The delivery above stands until you answer.</p>
         <form method="post" action="{{ url_for(ep ~ '.answer_change', change_id=pending.id, **kw) }}" class="form-grid" data-answer-change="{{ pending.id }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label>Note (required to decline) <input type="text" name="note"></label>
+            {{ sign_fields(order) }}
             <div class="form-actions">
-                <button type="submit" name="action" value="accept" class="button is-primary">Accept {{ when(pending.new_date, pending.new_window) }}</button>
+                <button type="submit" name="action" value="accept" class="button is-primary">Sign and accept {{ when(pending.new_date, pending.new_window) }}</button>
                 <button type="submit" name="action" value="decline" class="button-secondary">Decline</button>
             </div>
+            <p class="muted-copy">To accept, or to propose another time, tick the box and type your name: that is your signature on the change. Declining needs no signature.</p>
             <details><summary>Propose another time instead</summary>
                 <div class="form-grid">
                     <label>Date <input type="date" name="counter_date"></label>
                     <label>Time window <input type="text" name="counter_window" placeholder="10:00–12:00"></label>
                     <label>Reason <select name="counter_reason">{% for r in reasons %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
-                    <div class="form-actions"><button type="submit" name="action" value="counter" class="button-secondary">Propose this time</button></div>
+                    <div class="form-actions"><button type="submit" name="action" value="counter" class="button-secondary">Sign and propose this time</button></div>
                 </div>
             </details>
         </form>
@@ -46,9 +51,10 @@
             <label>Time window <input type="text" name="new_window" placeholder="7:00–9:00"></label>
             <label>Reason * <select name="reason">{% for r in reasons %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
             <label>Note <input type="text" name="note" placeholder="Rain forecast Thursday"></label>
-            <div class="form-actions"><button type="submit" class="button-secondary">Send the change to {{ other_label }}</button></div>
+            {{ sign_fields(order) }}
+            <div class="form-actions"><button type="submit" class="button-secondary">Sign and send the change to {{ other_label }}</button></div>
         </form>
-        <p class="muted-copy">{{ other_label|capitalize }} is notified and must accept. Until then the current delivery stands.</p>
+        <p class="muted-copy">{{ other_label|capitalize }} is notified and must accept and sign. Until then the current delivery stands.</p>
     </details>
     {% endif %}
     {% if changes %}
@@ -56,7 +62,7 @@
         <ul class="delivery-history">
         {% for c in changes %}
             <li data-change-status="{{ c.status }}">{{ c.requested_at.strftime("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} ({{ c.reason }}{% if c.note %}: {{ c.note }}{% endif %}) —
-                <strong>{{ {"PENDING": "waiting", "ACCEPTED": "accepted", "DECLINED": "declined", "COUNTERED": "another time proposed", "WITHDRAWN": "withdrawn"}[c.status] }}</strong>{% if c.answered_by_name and c.status != "PENDING" %} by {{ c.answered_by_name }} {{ c.answered_at.strftime("%Y-%m-%d %H:%M") }}{% if c.answer_note %} (“{{ c.answer_note }}”){% endif %}{% endif %}</li>
+                <strong>{{ {"PENDING": "waiting", "ACCEPTED": "accepted", "DECLINED": "declined", "COUNTERED": "another time proposed", "WITHDRAWN": "withdrawn"}[c.status] }}</strong>{% if c.answered_by_name and c.status != "PENDING" %} by {{ c.answered_by_name }} {{ c.answered_at.strftime("%Y-%m-%d %H:%M") }}{% if c.answer_note %} (“{{ c.answer_note }}”){% endif %}{% endif %}{% if c.status == "ACCEPTED" %}{% set hs = change_signing(c) %}{% if hs and hs.executed %} · <a href="{{ url_for(ep ~ '.signed_document', request_id=hs.id, **kw) }}" target="_blank" rel="noopener" data-signed-change="{{ c.id }}">Signed change (PDF)</a>{% endif %}{% endif %}</li>
         {% endfor %}
         </ul>
     </details>

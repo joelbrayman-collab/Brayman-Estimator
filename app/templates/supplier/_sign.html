@@ -1,0 +1,19 @@
+{# Native Signing on supplier documents (Joel, 20 Oct 2026). Shared by the office and the Supplier Hub. #}
+{% macro sign_fields(order, prefix="") %}
+<div class="sign-box" data-sign-box="true" style="grid-column: 1 / -1; max-width: 44rem;">
+    <p class="muted-copy sign-consent-text">{{ supplier_consent_text(order) }}</p>
+    <label class="sign-consent"><input type="checkbox" name="sign_consent" value="yes"> I agree to sign electronically</label>
+    <label>Your full name (your signature) <input type="text" name="signer_name" autocomplete="name" maxlength="150"></label>
+</div>
+{% endmacro %}
+{% macro signing_line(summary, url) %}
+{% if summary %}
+<p class="signing-line" data-signing="{{ summary.status }}">
+    {% for side in ("CONTRACTOR", "SUPPLIER") %}{% set s = summary.sides.get(side) %}{% if s %}
+    <span>{{ s.company }}: {% if s.name %}<strong>signed by {{ s.name }}</strong> {{ s.at.strftime("%b %d, %Y %H:%M") }} UTC{% elif summary.voided %}not signed{% else %}waiting to sign{% endif %}</span>{% if not loop.last %} · {% endif %}
+    {% endif %}{% endfor %}
+    {% if summary.voided %} · <em>no longer open for signing</em>{% endif %}
+    · <a href="{{ url }}" target="_blank" rel="noopener">{{ "Signed copy (PDF)" if summary.executed else "Document (PDF)" }}</a>
+</p>
+{% endif %}
+{% endmacro %}

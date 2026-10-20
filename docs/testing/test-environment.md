@@ -42,6 +42,17 @@ The script installs `requirements.txt` + `requirements-dev.txt` constrained by `
 | `PLAYWRIGHT_BROWSERS_PATH` | Where Playwright finds Chromium (cloud: `/opt/pw-browsers`). |
 | `E2E_BROWSER_EXECUTABLE` | Optional Chromium for `tests/e2e/contractor_workflow.mjs` where Google Chrome is absent. |
 
+## Family 05 master: how a run reports it (20 Oct 2026)
+
+Joel, 20 Oct: the recurring cloud failures are the confidential Family 05 Ontario contract master, not application code; report the dependency clearly; never skip, disable or weaken the contract tests; never commit the master.
+
+- `tests/conftest.py` checks the master the tests will read (SHA-256 against the governed value) and ends every run with one line:
+  - `FAMILY_05_MASTER=present (SHA-256 matches the governed file); contract tests ran normally`, or
+  - a red section **MISSING TEST DEPENDENCY — not an application failure** giving the status (`missing` / `sha-mismatch`), the path, the number of contract-test failures that need the master, and the number of **other** failures it does not explain. The run still fails.
+- The ten files that need it are listed in `FAMILY_05_DEPENDENT_FILES` (`tests/conftest.py`); `tests/test_family_05_test_dependency.py` fails if a listed file disappears, if a test reading the master directly is not listed, if any of them gains a skip, or if the master is ever tracked by Git.
+- Cloud workspace procedure (each new session): stage the master from the connected Mac folder `~/Documents/CalibAi/Approved Document Templates/Reusable Master Template Family V1/MASTER DOCX/` through the device bridge, copy it to `/home/claude/fixtures-confidential/` (outside every repository, read-only), and run with `CALIBRAYTAI_FAMILY_05_MASTER_PATH` set to that copy. Check the summary line says `present`.
+- The Mac release gate reads the code's default path, checks the SHA-256 before the regression, and requires zero failures and zero skips.
+
 ## Never committed
 
 The Family 05 master, the historical workbooks, any office database (`instance/`), backups, passwords and tokens. `instance/` and `*.db` are in `.gitignore`. A local `instance/brayman_estimator.db` does not affect the suite: tests use in-memory databases, and `test_af_no_live_db_mutation_and_memory_only` proves the file is byte-for-byte unchanged.

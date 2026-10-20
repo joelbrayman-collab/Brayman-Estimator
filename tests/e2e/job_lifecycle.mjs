@@ -390,14 +390,20 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await order.locator("[name=delivery_window]").fill("7:00–9:00");
     await order.locator("[name=schedule_item_id]").selectOption({ label: `Labour — E2E lifecycle ready-mix 25 MPa (${iso(today)} – ${iso(inDays(2))})` });
     await order.locator("[name=site_contact]").fill(KEVIN[2]);
-    await ben.submit(order.getByRole("button", { name: "Place order" }));
-    const po = (await ben.flash()).match(/Purchase order (PO-\d{4}-\d{4}) sent/)[1];
+    // Supplier Native Signing (FG-041): Ben signs the order; the store signs when it confirms.
+    await order.locator("[name=sign_consent]").check();
+    await order.locator("[name=signer_name]").fill("Ben Synthetic");
+    await ben.submit(order.getByRole("button", { name: "Sign and place order" }));
+    const po = (await ben.flash()).match(/Purchase order (PO-\d{4}-\d{4}) signed and sent/)[1];
     assert.match(await page.locator("[data-po]").innerText(), /Waiting for the supplier to confirm/);
     // Dana confirms: the delivery is agreed.
     await dana.page.reload();
     assert.match(await dana.main(), new RegExp(`Purchase order ${po}`));
-    await dana.submit(dana.page.getByRole("button", { name: "Confirm order" }));
-    assert.match(await dana.flash(), new RegExp(`Order ${po} confirmed`));
+    const confirm = dana.page.locator("[data-confirm-order]");
+    await confirm.locator("[name=sign_consent]").check();
+    await confirm.locator("[name=signer_name]").fill("Dana Synthetic");
+    await dana.submit(confirm.getByRole("button", { name: "Sign and confirm order" }));
+    assert.match(await dana.flash(), new RegExp(`Order ${po} signed and confirmed`));
     await ben.go(`/projects/${projectId}/supplier-requests`);
     assert.match(await page.locator("[data-po]").innerText(), new RegExp(`agreed delivery ${iso(inDays(1))} 7:00–9:00\\. The order is agreed`));
     // The purchase order shows on the Project page, the deliveries list and the Company Calendar.

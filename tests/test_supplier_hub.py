@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
@@ -803,3 +804,23 @@ def test_after_an_accepted_change_every_screen_shows_the_agreed_delivery(app, cl
     assert "Tomlinson concrete (synthetic)" in cal
     # The earlier dates stay in the history.
     assert change.previous_date == first and db.session.get(type(change), change.id).status == "ACCEPTED"
+
+
+def test_the_quote_form_and_order_lines_become_cards_on_a_phone(app, client):
+    """Supplier Hub walk, 20 Oct 2026: at 390 px the price boxes sat off screen inside the table. The quote
+    lines, the order lines, the inbox and deliveries use the same phone card layout as the PRO Desk."""
+    project, _other, account = _setup()
+    _give_sign_in(client, account)
+    _pdf, fields, _keys = _issue(client, project, account)
+    client.post(f"/projects/{project.id}/deck-takeoff/requests/{fields['request_id']['/V']}/send-to-supplier")
+    share = SupplierRequestShare.query.one()
+    darcy = _supplier_client(app)
+    page = darcy.get(f"/supplier/{account.supplier_id}/requests/{share.id}").get_data(as_text=True)
+    assert 'class="data-table pd-stack" data-quote-lines="true"' in page
+    assert page.count('data-label="Unit cost"') == len(share.shared_json["lines"])
+    assert page.count('data-label="Discount %"') == len(share.shared_json["lines"])
+    assert 'aria-label="Unit cost, line 1"' in page
+    inbox = darcy.get(f"/supplier/{account.supplier_id}/").get_data(as_text=True)
+    assert 'class="data-table pd-stack"' in inbox and 'data-label="Status"' in inbox
+    css = (Path(app.root_path) / "static/css/supplier-hub.css").read_text()
+    assert ".pd-stack td[data-label]::before" in css

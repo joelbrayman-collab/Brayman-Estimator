@@ -7,15 +7,15 @@
 <div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div></div>
 <section class="form-panel" data-supplier-deliveries="{{ supplier.id }}">
     {% if deliveries %}
-    <div style="overflow-x: auto;"><table class="data-table">
+    <div style="overflow-x: auto;"><table class="data-table pd-stack">
         <thead><tr><th>Delivery</th><th>Order</th><th>Contractor</th><th>Deliver to</th><th>Status</th></tr></thead>
         <tbody>{% for d in deliveries %}
         <tr data-delivery="{{ d.order.number }}">
             <td><strong>{{ when(d.schedule.date, d.schedule.window) }}</strong></td>
-            <td><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=d.order.share_id) }}#delivery">{{ d.order.number }}</a></td>
-            <td>{{ d.order.share.shared_json.company }}</td>
-            <td>{{ d.order.delivery_address }}</td>
-            <td>{% if d.pending %}<span class="delivery-flag">{{ "Answer needed: " if d.pending.requested_by_side == "CONTRACTOR" else "Waiting for the contractor: " }}{{ when(d.pending.new_date, d.pending.new_window) }}</span>{% elif d.order.status == "PLACED" %}Confirm the order{% elif d.order.status == "PROBLEM" %}Problem reported{% else %}Agreed{% endif %}</td>
+            <td data-label="Order"><a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=d.order.share_id) }}#delivery">{{ d.order.number }}</a></td>
+            <td data-label="Contractor">{{ d.order.share.shared_json.company }}</td>
+            <td data-label="Deliver to">{{ d.order.delivery_address }}</td>
+            <td data-label="Status">{% if d.pending %}<span class="delivery-flag">{{ "Answer needed: " if d.pending.requested_by_side == "CONTRACTOR" else "Waiting for the contractor: " }}{{ when(d.pending.new_date, d.pending.new_window) }}</span>{% elif d.order.status == "PLACED" %}Confirm the order{% elif d.order.status == "PROBLEM" %}Problem reported{% else %}Agreed{% endif %}</td>
         </tr>{% endfor %}</tbody>
     </table></div>
     {% else %}<p class="muted-copy">No open deliveries.</p>{% endif %}

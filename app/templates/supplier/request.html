@@ -17,9 +17,9 @@
     <p>Deliver to <strong>{{ order.delivery_address }}</strong>{% if schedule and schedule.date %} · {{ "Agreed delivery" if schedule.agreed else "Requested delivery" }} <strong data-order-delivery="{{ schedule.date.isoformat() }}">{{ when(schedule.date, schedule.window) }}</strong>{% if pending %} (a change is waiting: see Delivery){% endif %}{% endif %}{% if order.site_contact %} · Site contact {{ order.site_contact }}{% endif %}.</p>
     {% if order.notes %}<p>Notes: {{ order.notes }}</p>{% endif %}
     {% if share.request_kind != kind_concrete %}<p class="muted-copy">The order lists the lines the contractor can order now. Lines whose quantity or product is not final stay on your quote and are not ordered yet.</p>{% endif %}
-    <div style="overflow-x: auto;"><table class="data-table">
+    <div style="overflow-x: auto;"><table class="data-table pd-stack" data-order-lines="true">
         <thead><tr><th>No.</th><th>Item</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Net unit cost</th><th>Total</th></tr></thead>
-        <tbody>{% for line in order.lines_json %}<tr><td>{{ line.number }}</td><td>{{ line.description }}</td><td>{{ line.sku }}</td><td>{{ line.quantity }}</td><td>{{ line.unit }}</td><td>{{ line.net_unit_cost }}</td><td>{{ line.line_value }}</td></tr>{% endfor %}</tbody>
+        <tbody>{% for line in order.lines_json %}<tr><td data-label="No.">{{ line.number }}</td><td>{{ line.description }}</td><td data-label="SKU">{{ line.sku }}</td><td data-label="Qty">{{ line.quantity }}</td><td data-label="Unit">{{ line.unit }}</td><td data-label="Net unit cost">{{ line.net_unit_cost }}</td><td data-label="Total">{{ line.line_value }}</td></tr>{% endfor %}</tbody>
     </table></div>
     {% if order.status == "PLACED" %}
     <form method="post" action="{{ url_for('supplier_portal.confirm', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid" data-confirm-order="true">
@@ -86,18 +86,18 @@
     {% if remembered %}<p class="muted-copy" data-sku-prefill="{{ remembered|length }}">SKUs you quoted before for the same product are filled in for you. Check each one and change it if it is not right. Prices and discounts are never filled in: enter today's.</p>{% endif %}
     <form method="post" enctype="multipart/form-data" action="{{ url_for('supplier_portal.return_quote', supplier_id=supplier.id, share_id=share.id) }}" data-material-quote="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div style="overflow-x: auto;"><table class="data-table">
+        <div style="overflow-x: auto;"><table class="data-table pd-stack" data-quote-lines="true">
             <thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Unit</th><th>SKU</th><th>Unit cost</th><th>Discount %</th></tr></thead>
             <tbody>
             {% for line in s.lines %}{% set n = '%02d'|format(line.number) %}
             <tr data-line="{{ n }}">
-                <td>{{ line.number }}</td>
+                <td data-label="No.">{{ line.number }}</td>
                 <td>{{ line.description }}{% if line.status_label %}<div class="muted-copy">{{ line.status_label }}</div>{% endif %}</td>
-                <td>{{ line.qty }}</td><td>{{ line.unit }}</td>
+                <td data-label="Qty">{{ line.qty }}</td><td data-label="Unit">{{ line.unit }}</td>
                 {% set hint = remembered.get(line.number) %}
-                <td>{% if hint and hint.sku %}<input name="sku_{{ n }}" size="10" value="{{ hint.sku }}" data-sku-suggested="{{ hint.sku }}" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested" id="sku-hint-{{ n }}">Your confirmed SKU — check it</span>{% elif hint and hint.several %}<input name="sku_{{ n }}" size="10" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested is-several" id="sku-hint-{{ n }}" data-sku-several="true">On record: {{ hint.several|join(", ") }}</span>{% else %}<input name="sku_{{ n }}" size="10">{% endif %}</td>
-                <td><input name="unit_cost_{{ n }}" size="8" inputmode="decimal"></td>
-                <td><input name="discount_{{ n }}" size="5" inputmode="decimal"></td>
+                <td data-label="SKU">{% if hint and hint.sku %}<input name="sku_{{ n }}" size="10" value="{{ hint.sku }}" data-sku-suggested="{{ hint.sku }}" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested" id="sku-hint-{{ n }}">Your confirmed SKU — check it</span>{% elif hint and hint.several %}<input name="sku_{{ n }}" size="10" aria-describedby="sku-hint-{{ n }}"><span class="sku-suggested is-several" id="sku-hint-{{ n }}" data-sku-several="true">On record: {{ hint.several|join(", ") }}</span>{% else %}<input name="sku_{{ n }}" size="10">{% endif %}</td>
+                <td data-label="Unit cost"><input name="unit_cost_{{ n }}" size="8" inputmode="decimal" aria-label="Unit cost, line {{ line.number }}"></td>
+                <td data-label="Discount %"><input name="discount_{{ n }}" size="5" inputmode="decimal" aria-label="Discount %, line {{ line.number }}"></td>
             </tr>
             {% endfor %}
             </tbody>

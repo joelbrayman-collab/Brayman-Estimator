@@ -894,9 +894,10 @@ def test_a_sent_concrete_request_is_not_offered_for_sending_again(app, client):
 
 
 def test_suppliers_page_offers_platform_suppliers_by_public_name_only(app, client):
-    """Defect 4 (21 Oct 2026): Company → Suppliers offers the suppliers already on CalibraytAI (their own
-    store sign-in) to pick, besides typing a new one. Only the supplier's public name: nothing about other
-    contractors — not their private suppliers, accounts, store people, or that they exist."""
+    """Defect 4 (21 Oct 2026): Company → Suppliers offers the suppliers already on CalibraytAI (a store
+    sign-in set up in this company, e.g. at platform set-up) to pick, besides typing a new one. Only the
+    supplier's public name: nothing about other contractors — a supplier whose store sign-in another
+    contractor gave is that contractor's private supplier and is never offered."""
     import re
 
     from app.models import Organization
@@ -906,11 +907,17 @@ def test_suppliers_page_offers_platform_suppliers_by_public_name_only(app, clien
 
     other_org = Organization(id="ORG-SYN-3", legal_name="Rival Builders Inc. (synthetic)", display_name="Rival Builders")
     db.session.add(other_org); db.session.commit()
-    # On the platform: its own store sign-in (given by the other contractor).
+    # On the platform: its own store sign-in, set up in this company (platform set-up).
     platform = create_supplier(code="TEST-PLATFORM", legal_name="Platform Lumber (synthetic)", demo_synthetic=True)
     create_supplier_location(supplier_id=platform.id, code="MAIN", display_name="Platform Lumber Main", demo_synthetic=True)
     store_user = create_user(email="platform.store@example.invalid", password=PASSWORD, display_name="Pat Platform Store")
     db.session.add(SupplierUserMembership(user_id=store_user.id, supplier_id=platform.id, status=MEMBERSHIP_ACTIVE,
+                                          created_by_name="Platform set-up", created_by_organization_id=DEFAULT_ORGANIZATION_ID))
+    # The other contractor's supplier with a store sign-in THEY gave: private to them, never offered here.
+    rival_store = create_supplier(code="TEST-RIVAL-STORE", legal_name="Rival Signed-in Store (synthetic)", demo_synthetic=True)
+    create_supplier_location(supplier_id=rival_store.id, code="MAIN", display_name="Rival Store Main", demo_synthetic=True)
+    rival_store_user = create_user(email="rival.store@example.invalid", password=PASSWORD, display_name="Rory Rival Store")
+    db.session.add(SupplierUserMembership(user_id=rival_store_user.id, supplier_id=rival_store.id, status=MEMBERSHIP_ACTIVE,
                                           created_by_name="Rival office", created_by_organization_id=other_org.id))
     # The other contractor's private supplier: typed by them, no store sign-in.
     private = create_supplier(code="TEST-PRIVATE", legal_name="Rival Private Yard (synthetic)", demo_synthetic=True)
@@ -933,10 +940,10 @@ def test_suppliers_page_offers_platform_suppliers_by_public_name_only(app, clien
     # Ids not offered are refused with the same answer, whether or not such a supplier exists.
     accounts_before = ContractorSupplierAccount.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID).count()
     answers = []
-    for probe in (private.id, 999999, "x"):
+    for probe in (private.id, rival_store.id, 999999, "x"):
         answers.append(client.post("/suppliers", data={"supplier_id": probe}, follow_redirects=True).get_data(as_text=True))
         assert "Choose a supplier from the list" in answers[-1]
-    assert "Rival Private Yard" not in "".join(answers)
+    assert "Rival Private Yard" not in "".join(answers) and "Rival Signed-in Store" not in "".join(answers)
     assert ContractorSupplierAccount.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID).count() == accounts_before
 
     added = client.post("/suppliers", data={"supplier_id": platform.id}, follow_redirects=True).get_data(as_text=True)

@@ -29,6 +29,7 @@ from app.models.proposal_acceptance import (
     OFFICE_ACCEPTANCE_CHANNELS,
     ProposalAcceptance,
     ProposalClientLink,
+    ProposalDecline,
 )
 from app.services.proposals import (
     ProposalServiceError,
@@ -90,6 +91,14 @@ def proposal_content_sha256(proposal: Proposal) -> str:
     }
     raw = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _advance_stage(proposal: Proposal, stage: str, *, event: str) -> None:
+    from app.services.project_stage import advance_project_stage
+
+    estimate = proposal.estimate
+    if estimate is not None and estimate.project is not None:
+        advance_project_stage(estimate.project, stage, event=event)
 
 
 # ---------------------------------------------------------------- 1. Sign-off
@@ -210,6 +219,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
         view_count=0,
     )
     db.session.add(link)
+    _advance_stage(proposal, "Proposal Sent", event="proposal sent to the client")
     db.session.commit()
     path = proposal_link_path(lookup_key, secret)
     message = _send_mail(proposal, link, path)
@@ -250,9 +260,11 @@ def resolve_link(credential: str, *, record_view: bool = True) -> ProposalClient
     link = ProposalClientLink.query.filter_by(lookup_key=match.group(1)).first()
     if link is None or not secrets.compare_digest(link.token_hash, _hash(match.group(2))):
         raise ProposalAcceptanceError(LINK_INVALID)
-    if link.revoked_at is not None and acceptance_for(link.proposal) is None:
+    # A link the client has answered (accepted or declined) keeps showing that answer.
+    answered = acceptance_for(link.proposal) is not None or decline_on_link(link) is not None
+    if link.revoked_at is not None and not answered:
         raise ProposalAcceptanceError(LINK_REPLACED)
-    if link.expires_at <= datetime.utcnow() and acceptance_for(link.proposal) is None:
+    if link.expires_at <= datetime.utcnow() and not answered:
         raise ProposalAcceptanceError(LINK_EXPIRED)
     if record_view:
         now = datetime.utcnow()
@@ -267,6 +279,79 @@ def acceptance_for(proposal: Proposal) -> Optional[ProposalAcceptance]:
     if proposal is None:
         return None
     return ProposalAcceptance.query.filter_by(proposal_id=proposal.id).first()
+
+
+def decline_for(proposal: Proposal) -> Optional[ProposalDecline]:
+    if proposal is None:
+        return None
+    return ProposalDecline.query.filter_by(proposal_id=proposal.id).first()
+
+
+def decline_on_link(link: ProposalClientLink) -> Optional[ProposalDecline]:
+    """The decline given on this very link (a later, replaced link does not show it)."""
+    return ProposalDecline.query.filter_by(proposal_id=link.proposal_id, link_id=link.id).first()
+
+
+def decline_via_link(credential: str, *, confirmed_name: str, reason: str,
+                     client_ip: Optional[str], user_agent: Optional[str]) -> ProposalDecline:
+    """The client declines on the link: recorded with the acceptance evidence; no contract (21 Oct 2026)."""
+    link = resolve_link(credential, record_view=False)
+    proposal = link.proposal
+    if acceptance_for(proposal) is not None:
+        raise ProposalAcceptanceError("This proposal has already been accepted.")
+    if decline_for(proposal) is not None:
+        raise ProposalAcceptanceError("This proposal has already been declined.")
+    if link.revoked_at is not None or proposal.status != "Issued":
+        raise ProposalAcceptanceError(LINK_REPLACED)
+    name = (confirmed_name or "").strip()
+    if not name:
+        raise ProposalAcceptanceError("Type your full name to decline the proposal.")
+    now = datetime.utcnow()
+    decline = ProposalDecline(
+        organization_id=proposal.organization_id,
+        proposal_id=proposal.id,
+        link_id=link.id,
+        declined_name=name[:160],
+        declined_email=link.sent_to_email,
+        declined_at=now,
+        reason=(reason or "").strip()[:2000] or None,
+        client_ip=(client_ip or "")[:64] or None,
+        user_agent=(user_agent or "")[:255] or None,
+        proposal_content_sha256=proposal_content_sha256(proposal),
+    )
+    db.session.add(decline)
+    db.session.flush()
+    update_proposal(proposal, status="Rejected")  # commits
+    for row in ProposalClientLink.query.filter_by(proposal_id=proposal.id, revoked_at=None):
+        row.revoked_at = now  # the link is used up
+    db.session.commit()
+    _notify_office_of_decline(proposal, decline, link)
+    return decline
+
+
+def _notify_office_of_decline(proposal, decline, link) -> None:
+    """Email the person who sent the proposal. A notice never undoes the decline."""
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+    from app.models.user import User
+    from app.services.signing_mail import public_signing_url
+    from app.services.transactional_email import send_transactional_message
+
+    user = db.session.get(User, link.sent_by_user_id) if link.sent_by_user_id else None
+    if user is None or not getattr(user, "email", None):
+        return
+    body = (f"{decline.declined_name} declined proposal {proposal.proposal_number} — {proposal.title}"
+            + (f". Reason: {decline.reason}" if decline.reason else ". No reason given."))
+    try:
+        send_transactional_message(
+            TEMPLATE_DELIVERY_SCHEDULE,
+            user.email,
+            variables={"subject": f"Proposal {proposal.proposal_number} declined", "body": body,
+                       "link": public_signing_url(f"/proposals/{proposal.id}#client-acceptance")},
+            related_type="proposal_decline",
+            related_id=decline.id,
+        )
+    except Exception:
+        pass
 
 
 def accept_via_link(credential: str, *, confirmed_name: str, accepted: bool,
@@ -356,6 +441,7 @@ def _complete_acceptance(proposal, *, method, link, accepted_name, accepted_emai
     for row in ProposalClientLink.query.filter_by(proposal_id=proposal.id, revoked_at=None):
         if link is None or row.id != link.id:
             row.revoked_at = now
+    _advance_stage(proposal, "Contracted", event="proposal accepted")
     db.session.commit()
     _generate_contract(acceptance, actor=contract_actor)
     return acceptance

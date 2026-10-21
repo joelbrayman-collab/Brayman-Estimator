@@ -76,6 +76,7 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "sign.decline",
     "proposal_link.view",
     "proposal_link.accept",
+    "proposal_link.decline",  # Joel, 21 Oct 2026: the client may decline on the link
     "proposal_link.pdf",
     "proposal_link.logo",
     "supplier_quote_link.view",

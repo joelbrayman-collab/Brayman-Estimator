@@ -106,7 +106,7 @@ from app.models.calculation_estimate_mapping import (
     CalculationResultIntake,
 )
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
-from app.models.proposal_acceptance import ProposalAcceptance, ProposalClientLink
+from app.models.proposal_acceptance import ProposalAcceptance, ProposalClientLink, ProposalDecline
 from app.models.supplier_portal import (
     ConcreteRequest,
     NotificationContact,
@@ -210,6 +210,7 @@ __all__ = [
     "SupplierRequestShare",
     "SupplierUserMembership",
     "ProposalAcceptance",
+    "ProposalDecline",
     "ProposalClientLink",
     "Assembly",
     "AssemblyItem",

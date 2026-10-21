@@ -96,3 +96,38 @@ class ProposalAcceptance(db.Model):
 
     proposal = db.relationship("Proposal")
     link = db.relationship("ProposalClientLink")
+
+
+class ProposalDecline(db.Model):
+    """The client declined the proposal on the CalibraytAI link (Joel, 21 Oct 2026).
+
+    Same evidence as an acceptance: who, when, from where, and the fingerprint of the proposal
+    they saw. A decline consumes the link and generates nothing.
+    """
+
+    __tablename__ = "proposal_declines"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    proposal_id = db.Column(
+        db.Integer,
+        db.ForeignKey("proposals.id", ondelete="RESTRICT"),
+        nullable=False,
+        unique=True,
+    )
+    link_id = db.Column(db.Integer, db.ForeignKey("proposal_client_links.id", ondelete="RESTRICT"), nullable=True)
+    declined_name = db.Column(db.String(160), nullable=False)
+    declined_email = db.Column(db.String(255), nullable=True)
+    declined_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    reason = db.Column(db.Text, nullable=True)
+    client_ip = db.Column(db.String(64), nullable=True)
+    user_agent = db.Column(db.String(255), nullable=True)
+    proposal_content_sha256 = db.Column(db.String(64), nullable=False)
+
+    proposal = db.relationship("Proposal")
+    link = db.relationship("ProposalClientLink")

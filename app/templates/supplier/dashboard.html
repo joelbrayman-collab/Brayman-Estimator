@@ -22,7 +22,7 @@
         <div class="form-panel" data-figure="effort"><p class="eyebrow">Measured quotation effort</p><p class="supplier-figure">{{ ("%.0f min"|format(pf.average_minutes)) if pf.average_minutes is not none else "—" }}</p><p class="muted-copy supplier-figure-note">{% if pf.quotes_with_minutes %}Average per quote from {{ pf.quotes_with_minutes }} quote{{ "s" if pf.quotes_with_minutes != 1 }} where your staff entered the time; {{ pf.hours_recorded }} h recorded in total. Self-reported.{% else %}Your staff can enter the minutes a quote took when returning it.{% endif %}</p></div>
         <div class="form-panel" data-figure="upcoming"><p class="eyebrow">Deliveries in the next 14 days</p><p class="supplier-figure">{{ pf.upcoming_deliveries }}</p></div>
     </div>
-    <p class="muted-copy" data-spaced>Orders placed are purchase orders contractors sent through CalibraytAI. Whether an order was delivered, invoiced or paid is in your own store system, not here.</p>
+    <p class="muted-copy" data-spaced>Orders placed are purchase orders contractors sent through CalibraytAI. A confirmed order is marked delivered here by you or the contractor; whether it was invoiced or paid is in your own store system, not here.</p>
 </section>
 
 <section class="form-panel">

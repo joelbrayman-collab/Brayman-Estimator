@@ -228,6 +228,9 @@ def close_project(
             created_at=now,
         )
     )
+    from app.services.project_stage import STAGE_COMPLETED, advance_project_stage
+
+    advance_project_stage(loaded, STAGE_COMPLETED, event="project closed")
     try:
         _revoke_open_invitations(loaded, now=now)
         db.session.commit()
@@ -278,6 +281,9 @@ def reopen_project(project, actor, *, organization_id=None):
             created_at=now,
         )
     )
+    from app.services.project_stage import reopen_project_stage
+
+    reopen_project_stage(loaded)
     db.session.commit()
     db.session.refresh(loaded)
     return loaded

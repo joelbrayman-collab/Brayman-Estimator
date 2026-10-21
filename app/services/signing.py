@@ -1199,6 +1199,10 @@ def _retain_executed_artifact(
     db.session.flush()
     request.status = STATUS_EXECUTED
     request.executed_at = now
+    if request.document_family == DOCUMENT_FAMILY_CONTRACT:
+        from app.services.project_stage import STAGE_CONTRACTED, advance_project_stage
+
+        advance_project_stage(request.project_id, STAGE_CONTRACTED, event="contract executed")
     _append_event(
         request,
         event_type=EVENT_EXECUTED,

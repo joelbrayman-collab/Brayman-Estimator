@@ -6,6 +6,8 @@ supplier, sends concrete as its own request, and places orders on returned quote
 
 from __future__ import annotations
 
+from datetime import date
+
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -161,7 +163,10 @@ def project_requests(project_id):
     from app.services.supplier_hub import change_history, current_schedule, pending_change, upcoming_deliveries
     from app.models.supplier_portal import CHANGE_REASONS
 
+    from app.services.supplier_hub import order_closure
+
     for row in rows:
+        row["closure"] = order_closure(row["order"])
         if row["order"] is not None:
             row["schedule"] = current_schedule(row["order"])
             row["pending"] = pending_change(row["order"])
@@ -178,7 +183,8 @@ def project_requests(project_id):
                            reasons=CHANGE_REASONS,
                            deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),
                            accounts=accounts, placements=CONCRETE_PLACEMENT,
-                           signed_in={a.supplier_id: supplier_has_sign_in(a.supplier_id) for a in accounts})
+                           signed_in={a.supplier_id: supplier_has_sign_in(a.supplier_id) for a in accounts},
+                           today=date.today())
 
 
 @supplier_office_bp.route("/projects/<int:project_id>/deck-takeoff/requests/<request_id>/send-to-supplier", methods=["POST"])
@@ -359,6 +365,37 @@ def withdraw_change(project_id, change_id):
     else:
         flash("Delivery change withdrawn.", "success")
     return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{change.order.share_id}")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/orders/<int:order_id>/cancel", methods=["POST"])
+def cancel_order(project_id, order_id):
+    from app.services.supplier_hub import cancel_order as cancel
+
+    project, org_id = _project(project_id)
+    order = _order_for(project, org_id, order_id)
+    try:
+        cancel(order, user=current_user, reason=request.form.get("reason", ""))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Order {order.number} cancelled. The supplier has been told.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{order.share_id}")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/orders/<int:order_id>/delivered", methods=["POST"])
+def mark_delivered(project_id, order_id):
+    from app.services.supplier_hub import mark_order_delivered
+
+    project, org_id = _project(project_id)
+    order = _order_for(project, org_id, order_id)
+    try:
+        mark_order_delivered(order, side="CONTRACTOR", user=current_user,
+                             delivered_on=request.form.get("delivered_on", ""), note=request.form.get("note", ""))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Order {order.number} marked delivered.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{order.share_id}")
 
 
 @supplier_office_bp.route("/deliveries")

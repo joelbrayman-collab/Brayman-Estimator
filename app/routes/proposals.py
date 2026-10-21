@@ -39,6 +39,7 @@ from app.services.proposals import (
 from app.services.proposal_acceptance import (
     ProposalAcceptanceError,
     acceptance_for,
+    decline_for,
     current_link,
     estimate_sign_off_blockers,
     proposal_content_sha256,
@@ -214,6 +215,7 @@ def _flow_context(proposal):
         "client_link": current_link(proposal),
         "client_link_url": link_url,
         "acceptance": acceptance_for(proposal),
+        "decline": decline_for(proposal),
         "acceptance_channels": OFFICE_ACCEPTANCE_CHANNELS,
         "signed_off": bool(proposal.estimate_version and proposal.estimate_version.signed_off_at),
     }

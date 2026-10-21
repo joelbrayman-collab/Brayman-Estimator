@@ -22,6 +22,7 @@ from app.models.supplier_portal import (
     KIND_MATERIAL,
     PO_CANCELLED,
     PO_CONFIRMED,
+    PO_DELIVERED,
     PO_PLACED,
     SHARE_OPENED,
     SHARE_RETURNED,
@@ -163,8 +164,9 @@ def period_figures(supplier_id: int, period: Period, *, today: Optional[date] = 
     returned = [s for s in shares if s.returned_at is not None and period.contains(s.returned_at)]
     converted = [s for s in returned if s.id in ordered_share_ids]
     placed = [o for o in live_orders if period.contains(o.placed_at)]
-    confirmed = [o for o in orders if o.status == PO_CONFIRMED and period.contains(o.supplier_responded_at)]
-    valued = [o for o in placed if o.status in (PO_PLACED, PO_CONFIRMED)]
+    # a delivered order was confirmed first (21 Oct 2026)
+    confirmed = [o for o in orders if o.status in (PO_CONFIRMED, PO_DELIVERED) and period.contains(o.supplier_responded_at)]
+    valued = [o for o in placed if o.status in (PO_PLACED, PO_CONFIRMED, PO_DELIVERED)]
     value_total = sum((Decimal(o.total) for o in valued), Decimal("0"))
     minutes = [s.minutes_reported for s in returned if s.minutes_reported is not None]
     returned_count = len(returned)

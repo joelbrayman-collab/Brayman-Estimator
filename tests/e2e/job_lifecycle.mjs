@@ -5,6 +5,10 @@
 // Kevin's crew → concrete request, supplier quote, purchase order and agreed delivery (Supplier Hub)
 // → Kevin (field-only crew, 390 px phone; office pages and schedule changes refused) sees the work and delivery on Today / Week, records time and an
 // observation → Ben approves the time → change order → punch list → project closed.
+// V1 defects of 21 Oct 2026 are walked too: the project stage advances at each real event, the
+// proposal carries the structured job location, a second proposal is declined on its link, a
+// second concrete order is cancelled, the first is marked delivered, and the change order made from
+// Field extra work takes the proposal's 13 % HST without anyone typing it.
 // Every transition is checked where it should show up. Synthetic data only.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -180,12 +184,19 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.submit(page.getByRole("button", { name: "Send proposal to client" }));
     assert.match(await ben.flash(), /Proposal sent to/);
     const proposalLink = (await page.locator("[data-proposal-link-url]").inputValue()).replace(/^https?:\/\/[^/]+/, base);
+    // The job has only the structured job location: the proposal carries it (as the contract and PO do).
+    const JOB_ADDRESS = "12 Synthetic Concession, Merrickville, Ontario K0G 1N0";
+    assert.match(await ben.main(), new RegExp(JOB_ADDRESS));
+    const stage = async () => { await ben.go(hubUrl); return (await ben.main()).match(/Project stage\s+([^\n]+)/i)[1].trim(); };
+    assert.equal(await stage(), "Proposal Sent");
 
 
     // ---------------------------------------------------------------- 2. the customer accepts on the link
     const customer = await person(browser, base, { width: 390, height: 844 }, pageErrors, "customer");
     await customer.go(proposalLink);
     await customer.noSideways("the proposal link");
+    assert.match(await customer.body(), new RegExp(JOB_ADDRESS));
+    assert.match(await customer.body(), /Decline this proposal/);
     await customer.page.check("[name=accept]");
     await customer.page.fill("[name=confirmed_name]", "E2E Lifecycle Client");
     await customer.submit(customer.page.getByRole("button", { name: "Accept Proposal" }));
@@ -196,6 +207,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(await ben.main(), /The contract was generated from this proposal/);
     await ben.go(hubUrl);
     assert.match(await page.locator("article", { hasText: "Related Proposals" }).innerText(), /PROP-\d{4}-\d{4} · Accepted/);
+    assert.equal(await stage(), "Contracted");
 
     // ---------------------------------------------------------------- 3. contract: sent, signed, countersigned
     await submitLink(ben, page.locator("#hub-contract-legal").getByRole("link", { name: "Review contract" }));
@@ -225,6 +237,59 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     // The Project page tells Ben the contract is signed.
     await ben.go(hubUrl);
     assert.match(await page.locator("#hub-contract-legal").innerText(), /CTR-\d{4}-\d{4}\s*·\s*Signed — executed/);
+    assert.equal(await stage(), "Contracted");
+
+    // ---------------------------------------------------------------- 3b. a second proposal (an added shed slab) is declined
+    await ben.go(`/estimates/new?project_id=${projectId}`);
+    await page.fill("[name=title]", "E2E lifecycle add-on estimate");
+    await ben.submit(page.locator("main form button[type=submit]"));
+    const addOnEstimateId = page.url().match(/estimates\/(\d+)/)[1];
+    const addOnHref = await page.locator(`a[href*="/estimates/${addOnEstimateId}/versions/"]`).first().getAttribute("href");
+    const addOnVersionId = addOnHref.match(/versions\/(\d+)/)[1];
+    const addOnUrl = `/estimates/${addOnEstimateId}/versions/${addOnVersionId}`;
+    await ben.go(addOnUrl);
+    await page.fill('form[action$="sections/new"] [name=name]', "Foundation");
+    await ben.submit(page.locator('form[action$="sections/new"] button[type=submit]'));
+    await ben.go(`${addOnUrl}/footing-quantities`);
+    for (const [f, v] of [["footing_length_1", "10"], ["footing_width_1", "2"], ["footing_thickness_1", "12"],
+                          ["footing_count_1", "1"], ["waste_percent", "5"]]) await page.fill(`#${f}`, v);
+    await ben.submit(page.locator("button[value=calculate]"));
+    await ben.submit(page.locator("button[value=review]"));
+    await page.selectOption("[name=target]", { label: "E2E lifecycle ready-mix 25 MPa (yd3)" });
+    await ben.submit(page.getByRole("button", { name: "Add to estimate" }));
+    await ben.go(`${addOnUrl}/labour-hours`);
+    await page.locator("tr", { hasText: "E2E lifecycle ready-mix 25 MPa" }).locator("input[name^=hours_]").fill("3");
+    await ben.submit(page.getByRole("button", { name: "Save labour hours" }));
+    await ben.go(`/projects/${projectId}/scope-delivery?version_id=${addOnVersionId}&estimate_id=${addOnEstimateId}`);
+    await ben.submit(page.getByRole("button", { name: "Approve All Scope Routing" }));
+    await ben.go(addOnUrl);
+    await ben.submit(page.locator('form[action$="approve-all-costing"] button[type=submit]'));
+    await ben.submit(page.locator('form[action$="apply-org-pricing"] button[type=submit]'));
+    await ben.go(addOnUrl);
+    await ben.submit(page.getByRole("button", { name: "Sign off estimate" }));
+    assert.match(await ben.flash(), /Estimate signed off and locked/);
+    const addOnProposalUrl = page.url();
+    await page.fill("[data-proposal-send] [name=client_email]", "e2e.lifecycle.client@example.invalid");
+    await ben.submit(page.getByRole("button", { name: "Send proposal to client" }));
+    assert.match(await ben.flash(), /Proposal sent to/);
+    const addOnLink = (await page.locator("[data-proposal-link-url]").inputValue()).replace(/^https?:\/\/[^/]+/, base);
+    await customer.go(addOnLink);
+    await customer.page.locator("[data-proposal-decline] summary").click();
+    await customer.noSideways("the decline form");
+    await customer.page.fill("[name=declined_name]", "E2E Lifecycle Client");
+    await customer.page.fill("[name=reason]", "We will build the shed next year (synthetic)");
+    await customer.submit(customer.page.getByRole("button", { name: "Decline Proposal" }));
+    assert.match(await customer.body(), /Proposal declined/);
+    await customer.go(addOnLink);  // the used link keeps showing the answer and offers nothing more
+    assert.match(await customer.body(), /Proposal declined/);
+    assert.equal(await customer.page.getByRole("button", { name: "Accept Proposal" }).count(), 0);
+    await ben.go(addOnProposalUrl);
+    assert.match(await page.locator("[data-proposal-client-flow]").innerText(),
+                 /Declined by E2E Lifecycle Client[\s\S]*We will build the shed next year[\s\S]*No contract was generated/);
+    assert.match(await ben.main(), /STATUS\s+Rejected/i);
+    await ben.go(`/projects/${projectId}/contract`);
+    assert.equal(await page.locator("[id^=contract-snapshot-]").count(), 1, "a declined proposal generates no contract");
+    assert.equal(await stage(), "Contracted", "a later proposal never moves the stage back");
 
     // ---------------------------------------------------------------- 4. schedule the work, assign Kevin's crew
     await ben.submit(page.getByRole("button", { name: "Build project work" }));
@@ -255,6 +320,8 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.ok(page.url().includes(hubUrl), "assignment returns to the Project page");
     assert.match(await labourRow.innerText(), new RegExp(`${iso(today)}\\s+${iso(inDays(2))}\\s+E2E Footing Crew`));
     const labourItemPath = (await labourRow.getByRole("link", { name: "Edit dates" }).getAttribute("href")).split("?")[0];
+    // The scheduled work starts today: the job is in progress.
+    assert.equal(await stage(), "Active");
     // Company Calendar (from the Project page) and Home show the scheduled job.
     await submitLink(ben, page.locator("#hub-schedule").getByRole("link", { name: "Company Calendar" }));
     await ben.go(`/schedule?project_id=${projectId}&view=week`);
@@ -339,6 +406,45 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.go(`/schedule?project_id=${projectId}&view=week&date=${iso(inDays(1))}`);
     assert.match(await ben.main(), new RegExp(`Concrete · ${SUPPLIER} · ${JOB.replace(/[()]/g, "\\$&")} · 7:00–9:00`));
 
+    // A second concrete order (a pad) is placed, confirmed, then cancelled by Ben with a reason; Dana sees it cancelled.
+    await ben.go(`/projects/${projectId}/supplier-requests`);
+    const pad = page.locator("[data-new-concrete]");
+    await pad.locator("[name=volume_m3]").fill("1.0");
+    await pad.locator("[name=strength_mpa]").fill("25");
+    await pad.locator("[name=delivery_date]").fill(iso(inDays(3)));
+    await pad.locator("[name=contractor_supplier_account_id]").selectOption({ label: SUPPLIER });
+    await ben.submit(pad.locator("button"));
+    const padNo = (await ben.flash()).match(/\((SRQ-\d{4}-\d{4})\)/)[1];
+    await dana.go(dana.page.url().replace(/\/requests\/.*$/, "/"));
+    await dana.submit(dana.page.getByRole("link", { name: padNo }).first());
+    const padQuote = dana.page.locator("[data-concrete-quote]");
+    await padQuote.locator("[name=price_per_m3]").fill("200");
+    await padQuote.locator("[name=valid_until]").fill(iso(inDays(14)));
+    await dana.submit(padQuote.getByRole("button", { name: "Return quote" }));
+    const padUrl = dana.page.url();
+    await ben.go(`/projects/${projectId}/supplier-requests`);
+    const padCard = page.locator(`article[data-share="${padNo}"]`);
+    await ben.submit(padCard.locator("[data-approve-quote] button"));
+    await ben.submit(page.locator(`article[data-share="${padNo}"] [data-place-order]`).getByRole("button", { name: "Place order" }));
+    const padPo = (await ben.flash()).match(/Purchase order (PO-\d{4}-\d{4}) sent/)[1];
+    await dana.go(padUrl);
+    await dana.submit(dana.page.getByRole("button", { name: "Confirm order" }));
+    await ben.go(`/projects/${projectId}/supplier-requests`);
+    const padCancel = page.locator(`article[data-share="${padNo}"] [data-cancel-order]`);
+    await padCancel.locator("summary").click();
+    await padCancel.locator("[name=reason]").fill("Customer dropped the pad (synthetic)");
+    await ben.submit(padCancel.getByRole("button", { name: `Cancel order ${padPo}` }));
+    assert.match(await ben.flash(), new RegExp(`Order ${padPo} cancelled`));
+    assert.match(await page.locator(`article[data-share="${padNo}"] [data-po]`).innerText(), /Cancelled by .+Reason: Customer dropped the pad/);
+    await dana.go(padUrl);
+    assert.match(await dana.page.locator("[data-order-cancelled]").innerText(), /Cancelled by the contractor[\s\S]*Customer dropped the pad/);
+    await dana.go(dana.page.url().replace(/\/requests\/.*$/, "/deliveries"));
+    assert.match(await dana.page.locator("[data-supplier-cancelled]").innerText(), new RegExp(`${padPo}[\\s\\S]*Cancelled: Customer dropped the pad`));
+    assert.match(await dana.page.locator("[data-supplier-deliveries]").innerText(), new RegExp(po));
+    assert.doesNotMatch(await dana.page.locator("[data-supplier-deliveries]").innerText(), new RegExp(padPo));
+    await ben.go("/deliveries");
+    assert.doesNotMatch(await ben.main(), new RegExp(padPo));
+
     // ---------------------------------------------------------------- 6. Kevin on a phone: his work, time and an observation
     const kevin = await person(browser, base, { width: 390, height: 844 }, pageErrors, "field");
     await kevin.signIn(KEVIN[0], KEVIN[1]);
@@ -391,6 +497,21 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
       assert.equal(r.status(), 403, `Kevin POST ${url}: ${r.status()}`);
     }
 
+    // The footing concrete arrives early, today: Dana marks the order delivered. It leaves upcoming deliveries.
+    await dana.go(dana.page.url().replace(/\/deliveries$/, "/"));
+    await dana.submit(dana.page.getByRole("link", { name: requestNo }).first());
+    await dana.page.locator("[data-mark-delivered] summary").click();
+    await dana.page.locator("[data-mark-delivered] [name=note]").fill("Poured at 7:40 (synthetic)");
+    await dana.submit(dana.page.locator("[data-mark-delivered]").getByRole("button", { name: "Mark delivered" }));
+    assert.match(await dana.flash(), new RegExp(`Order ${po} marked delivered`));
+    assert.match(await dana.page.locator("[data-order-delivered]").innerText(), /Delivered on .+Poured at 7:40/);
+    await ben.go(`/projects/${projectId}/supplier-requests`);
+    assert.match(await page.locator(`[data-po-delivered="${iso(today)}"]`).innerText(), /Delivered/);
+    await ben.go("/deliveries");
+    assert.doesNotMatch(await ben.main(), new RegExp(po));
+    await kevin.go("/field/week");
+    assert.doesNotMatch(await kevin.main(), new RegExp(`Delivery Concrete · ${SUPPLIER}`));
+
     // Ben sees Kevin's time and observation on the Project page and approves the time.
     await ben.go(hubUrl);
     assert.match(await labourRow.innerText(), new RegExp(`${iso(today)}\\s+${iso(inDays(2))}`), "Kevin did not move the work");
@@ -413,9 +534,10 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.submit(extraRow.getByRole("button", { name: "Create change order" }));
     assert.match(await ben.flash(), /Change order created from extra work/);
     const coUrl = page.url().split("?")[0].split("#")[0];
+    // Nobody types the tax: the change order took the accepted proposal's 13 % HST.
     await submitLink(ben, page.getByRole("link", { name: "Edit" }).first());
-    await page.fill("[name=tax_percent]", "13");
-    await ben.submit(page.locator("main form button[type=submit]").last());
+    assert.equal(await page.locator("[name=tax_percent]").inputValue(), "13.00");
+    await ben.go(coUrl);
     await ben.go(`${coUrl}?tab=items`);
     await page.fill("[name=description]", "Footing step, formed and placed");
     await page.fill("[name=quantity]", "1");
@@ -463,9 +585,12 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.submit(page.locator(`form[action^="/projects/${projectId}/punch-list/"][action$="/complete"] button`).first());
     assert.match(await ben.flash(), /marked complete/);
     await submitLink(ben, page.getByRole("link", { name: "Close Project" }));
+    // The delivered and the cancelled orders are not listed as open on the close page.
+    assert.equal(await page.locator("[data-open-orders]").count(), 0);
     await ben.submit(page.locator(`form[action="/projects/${projectId}/close"] button[type=submit]`));
     assert.match(await ben.flash(), /closed/i);
     assert.match(await ben.main(), /This Project is closed\.[\s\S]*Closed\s+Reopen Project/);
+    assert.equal(await stage(), "Completed");
     // Closed: Field no longer offers the job or its work.
     await kevin.go("/field/projects");
     assert.doesNotMatch(await kevin.main(), /E2E Lifecycle Footing Job/);

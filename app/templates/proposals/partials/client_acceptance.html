@@ -5,6 +5,12 @@
         <p class="mb-1">Accepted by <strong>{{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at.strftime("%B %d, %Y at %H:%M") }} UTC.</p>
         <p class="text-muted mb-0">Thank you. {{ brand.customer_facing_name or "Brayman Construction" }} will send the contract for your electronic signature.</p>
     </div>
+    {% elif decline %}
+    <div data-proposal-declined="true">
+        <h2 class="h4">Proposal declined</h2>
+        <p class="mb-1">Declined by <strong>{{ decline.declined_name }}</strong> on {{ decline.declined_at.strftime("%B %d, %Y at %H:%M") }} UTC.{% if decline.reason %} Reason: {{ decline.reason }}{% endif %}</p>
+        <p class="text-muted mb-0">Thank you for letting us know. {{ brand.customer_facing_name or "Brayman Construction" }} has been told.</p>
+    </div>
     {% else %}
     <h2 class="h4">Accept this proposal</h2>
     <p class="text-muted">If you agree with this proposal, tick the box, type your full name and select Accept Proposal. {{ brand.customer_facing_name or "Brayman Construction" }} will then send the contract for your electronic signature.</p>
@@ -22,6 +28,23 @@
         </label>
         <button type="submit" class="btn btn-dark btn-lg">Accept Proposal</button>
     </form>
+    <details class="mt-4" style="max-width: 32rem;" data-proposal-decline="true"{% if decline_error %} open{% endif %}>
+        <summary class="fw-semibold">Decline this proposal</summary>
+        <p class="text-muted mt-2">If you do not want to go ahead, type your full name and select Decline Proposal. A reason is optional but helps us.</p>
+        {% if decline_error %}
+        <div class="alert alert-danger" role="alert">{{ decline_error }}</div>
+        {% endif %}
+        <form method="post" action="{{ decline_url }}" class="d-grid gap-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="form-label mb-0">Your full name
+                <input class="form-control" type="text" name="declined_name" autocomplete="name" required value="{{ typed_name or '' }}">
+            </label>
+            <label class="form-label mb-0">Reason (optional)
+                <textarea class="form-control" name="reason" rows="3" maxlength="2000">{{ typed_reason or '' }}</textarea>
+            </label>
+            <button type="submit" class="btn btn-outline-danger btn-lg">Decline Proposal</button>
+        </form>
+    </details>
     <p class="small text-muted mt-3 mb-0">Questions? Contact {{ brand.customer_facing_name or "Brayman Construction" }}{% if brand.phone %} at {{ brand.phone }}{% endif %}{% if brand.email %} or {{ brand.email }}{% endif %}.</p>
     {% endif %}
 </section>

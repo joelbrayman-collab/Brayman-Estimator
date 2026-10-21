@@ -427,6 +427,9 @@ def submit_time(
             prior_status=None,
             new_status=TIME_STATUS_SUBMITTED,
         )
+        from app.services.project_stage import STAGE_ACTIVE, advance_project_stage
+
+        advance_project_stage(project, STAGE_ACTIVE, event="field time recorded")
         db.session.commit()
     except Exception:
         db.session.rollback()

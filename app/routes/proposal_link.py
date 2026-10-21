@@ -18,6 +18,8 @@ from app.services.proposal_acceptance import (
     ProposalAcceptanceError,
     accept_via_link,
     acceptance_for,
+    decline_on_link,
+    decline_via_link,
     resolve_link,
 )
 
@@ -37,7 +39,8 @@ def _unavailable(message, status=410):
     return render_template("proposals/link_unavailable.html", message=message), status
 
 
-def _render(link, credential, *, error=None, typed_name=None, status=200):
+def _render(link, credential, *, error=None, typed_name=None, decline_error=None, typed_reason=None,
+            status=200):
     proposal = link.proposal
     try:
         brand = get_proposal_brand_render_context(proposal)
@@ -57,8 +60,12 @@ def _render(link, credential, *, error=None, typed_name=None, status=200):
         client_pdf_url=url_for("proposal_link.pdf", credential=credential),
         accept_url=url_for("proposal_link.accept", credential=credential),
         acceptance=acceptance_for(proposal),
+        decline=decline_on_link(link),
+        decline_url=url_for("proposal_link.decline", credential=credential),
         error=error,
         typed_name=typed_name,
+        decline_error=decline_error,
+        typed_reason=typed_reason,
     )
     return response, status, {"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"}
 
@@ -89,6 +96,28 @@ def accept(credential):
         except ProposalAcceptanceError as inner:
             return _unavailable(str(inner))
         return _render(link, credential, error=str(exc), typed_name=name, status=400)
+    link = resolve_link(credential, record_view=False)
+    return _render(link, credential)
+
+
+@proposal_link_bp.route("/<credential>/decline", methods=["POST"])
+def decline(credential):
+    name = request.form.get("declined_name", "")
+    reason = request.form.get("reason", "")
+    try:
+        decline_via_link(
+            credential,
+            confirmed_name=name,
+            reason=reason,
+            client_ip=request.remote_addr,
+            user_agent=request.headers.get("User-Agent", ""),
+        )
+    except ProposalAcceptanceError as exc:
+        try:
+            link = resolve_link(credential, record_view=False)
+        except ProposalAcceptanceError as inner:
+            return _unavailable(str(inner))
+        return _render(link, credential, decline_error=str(exc), typed_name=name, typed_reason=reason, status=400)
     link = resolve_link(credential, record_view=False)
     return _render(link, credential)
 

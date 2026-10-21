@@ -24,10 +24,7 @@
             Email
             <input type="email" name="email" value="{{ values.email }}" maxlength="255" required autocomplete="off">
         </label>
-        {# TODO(field-only marker, branch v1/field-role-permissions-2026-10-21): after that branch merges, add
-           the checkbox here, e.g.
-           <label><input type="checkbox" name="field_only" value="yes"> Field only (crew: Field pages, no office pages)</label>
-           and wire it in app/routes/people_access.py new() (see the matching TODO there). #}
+        <label class="people-access-check"><input type="checkbox" name="field_only" value="yes" {{ "checked" if values.get("field_only") }}> Field only: crew see Field pages and their own account, never office pages, costs or prices</label>
         <div class="form-actions">
             <button type="submit" class="button">Add and email the link</button>
         </div>

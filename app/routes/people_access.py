@@ -13,7 +13,13 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from app.services.access_domains import RECOGNIZED_STORED_DOMAINS
+from app.models.user import UserMembership
+from app.services.access_domains import (
+    RECOGNIZED_STORED_DOMAINS,
+    AccessDomainError,
+    membership_is_field_only,
+    set_field_only,
+)
 from app.services.instance_authority import (
     is_instance_owner,
     require_instance_owner_or_system_administrator,
@@ -87,6 +93,7 @@ def new():
         values = {
             "display_name": (request.form.get("display_name") or "").strip(),
             "email": (request.form.get("email") or "").strip(),
+            "field_only": request.form.get("field_only") == "yes",
         }
         try:
             membership = add_person(
@@ -98,10 +105,11 @@ def new():
         except PeopleAccessError as exc:
             flash(str(exc), "error")
             return render_template("settings/people/new.html", values=values), 400
-        # TODO(field-only marker, branch v1/field-role-permissions-2026-10-21): after that branch merges,
-        # read the form's "field_only" checkbox here and call its service function to set the marker on
-        # this new membership, e.g. set_field_only(membership, request.form.get("field_only") == "yes",
-        # actor=current_user). The checkbox placeholder is in templates/settings/people/new.html.
+        if request.form.get("field_only") == "yes":
+            try:
+                set_field_only(membership, True, current_user)
+            except AccessDomainError as exc:
+                flash(f"Added, but not marked Field only: {exc}", "error")
         flash(f"{membership.user.display_name} was added.", "success")
         _send_link(membership.user)
         return redirect(url_for("people_access.detail", membership_id=membership.id))
@@ -117,6 +125,7 @@ def detail(membership_id):
         domains=sorted(RECOGNIZED_STORED_DOMAINS),
         domain_labels=ACCESS_DOMAIN_LABELS,
         viewer_is_owner=is_instance_owner(current_user, _org()),
+        field_only=membership_is_field_only(UserMembership.query.get(membership_id)),
     )
 
 
@@ -177,9 +186,27 @@ def administrator(membership_id):
     appointed = request.form.get("action") == "appoint"
 
     def run():
+        if appointed and membership_is_field_only(UserMembership.query.get(membership_id)):
+            raise PeopleAccessError("Remove Field only first: a System Administrator needs the office.")
         set_system_administrator(
             organization_id=_org(), membership_id=membership_id, actor=current_user, appointed=appointed
         )
         return "Appointed System Administrator." if appointed else "No longer a System Administrator."
+
+    return _act(membership_id, run)
+
+
+@people_access_bp.route("/<int:membership_id>/field-only", methods=["POST"])
+def field_only(membership_id):
+    """Mark or clear Field only (crew: Field pages and their own account, no office pages)."""
+    marked = request.form.get("action") == "mark"
+
+    def run():
+        try:
+            set_field_only(membership_id, marked, current_user)
+        except AccessDomainError as exc:
+            raise PeopleAccessError(str(exc))
+        return ("Marked Field only: Field pages and their own account, no office pages or costs."
+                if marked else "Field only removed: office access as before.")
 
     return _act(membership_id, run)

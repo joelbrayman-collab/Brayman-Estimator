@@ -52,12 +52,16 @@ def main():
         db.session.commit()
         if os.environ.get("E2E_LIFECYCLE") == "1":
             # Operator set-up the hosted office already has, done here as the operator does it (the
-            # flask commands), not from a page: a crew member with an ordinary membership and no
-            # management access, and the Ontario Brayman V1 interim contract package
+            # flask commands), not from a page: a crew member marked field-only, and the Ontario Brayman V1 interim contract package
             # (flask legal-content install-brayman-v1-interim).
             from app.services.brayman_v1_interim_contract import ensure_brayman_v1_interim_ontario_package
 
-            ensure_office_user(email=FIELD_WORKER[0], password=FIELD_WORKER[1], display_name=FIELD_WORKER[2])
+            kevin = ensure_office_user(email=FIELD_WORKER[0], password=FIELD_WORKER[1], display_name=FIELD_WORKER[2])
+            # Kevin is crew: marked field-only (flask auth set-field-only), so he reaches Field and his
+            # own account only, and cannot change the schedule (Joel, 21 Oct 2026).
+            from app.services.access_domains import set_field_only
+
+            set_field_only(UserMembership.query.filter_by(user_id=kevin.id).one(), True, user)
             ensure_brayman_v1_interim_ontario_package()
             db.session.commit()
     port = int(os.environ["E2E_OFFICE_PORT"])

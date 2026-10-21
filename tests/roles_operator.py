@@ -1,9 +1,10 @@
 """Operator steps for the roles walk (tools/release/evidence_roles.mjs), run against its temporary database.
 
 This runs the ``flask auth`` operator commands (through Flask's CLI runner) for one person named by email,
-so the walk proves the commands still work. Since 21 Oct 2026 the owner can do the same from the People &
-Access pages (/settings/people), which the walk also exercises. ``deactivate-user`` / ``reactivate-user``
-set the account's ``is_active`` flag directly (the same flag the People & Access page uses).
+so the walk proves the commands still work, including the field-only mark (``set-field-only``). Since 21 Oct
+2026 the owner can also manage people from the People & Access pages (/settings/people), which the walk
+exercises. ``deactivate-user`` / ``reactivate-user`` set the account's ``is_active`` flag directly (the same
+flag the People & Access page uses).
 
 Usage: python tests/roles_operator.py <database-uri> <action> <email>
 """
@@ -23,6 +24,7 @@ COMMANDS = {
     "revoke-management": ["revoke-access-domain", "--domain", "COMPANY_MANAGEMENT"],
     "appoint-administrator": ["appoint-system-administrator"],
     "remove-administrator": ["remove-system-administrator"],
+    "mark-field-only": ["set-field-only"],  # crew: Field and own account only (Joel, 21 Oct 2026)
 }
 
 
@@ -43,6 +45,8 @@ def main(uri: str, action: str, email: str) -> int:
         args = ["auth", *COMMANDS[action][:1], "--membership-id", str(membership.id), *COMMANDS[action][1:]]
         if action.endswith("administrator"):
             args += ["--organization-id", ORG, "--actor-user-id", str(owner.id)]
+        if action == "mark-field-only":
+            args += ["--actor-user-id", str(owner.id)]
         result = application.test_cli_runner().invoke(args=args)
         print(result.output.strip())
         return result.exit_code

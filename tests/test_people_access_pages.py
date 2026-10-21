@@ -372,3 +372,31 @@ def test_service_refuses_an_ordinary_actor(app):
         with pytest.raises(PeopleAccessError):
             add_person(organization_id=ORG, actor=ids["bea"], display_name="X", email="x3@example.invalid")
         assert User.query.filter(User.email.in_(["x2@example.invalid", "x3@example.invalid"])).count() == 0
+
+
+def test_owner_marks_and_clears_field_only_from_people_and_access(app):
+    """Joel, 21 Oct 2026: crew are marked Field only from the People & Access pages (same service as the
+    operator command); a Field only person cannot be made a System Administrator until it is removed."""
+    from app.services.access_domains import membership_is_field_only
+
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": "Kevin Synthetic Crew",
+                                                        "email": "kevin.crew@example.invalid", "field_only": "yes"})
+    assert response.status_code == 302, response.get_data(as_text=True)[:300]
+    membership_id = int(response.headers["Location"].rstrip("/").rsplit("/", 1)[1])
+
+    def marked():
+        with app.app_context():
+            return membership_is_field_only(db.session.get(UserMembership, membership_id))
+
+    assert marked()
+    assert 'data-field-only="yes"' in owner.get(f"/settings/people/{membership_id}").get_data(as_text=True)
+    refused = owner.post(f"/settings/people/{membership_id}/administrator", data={"action": "appoint"}, follow_redirects=True)
+    assert "Remove Field only first" in refused.get_data(as_text=True)
+    owner.post(f"/settings/people/{membership_id}/field-only", data={"action": "clear"})
+    assert not marked()
+    owner.post(f"/settings/people/{membership_id}/field-only", data={"action": "mark"})
+    assert marked()
+    staff = _client(app, STAFF)
+    assert staff.post(f"/settings/people/{membership_id}/field-only", data={"action": "clear"}).status_code == 403
+    assert marked()

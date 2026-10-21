@@ -9,7 +9,7 @@
 // the Field offline cache, signed-out access goes to the right sign-in. Customer, on a 390 px phone: proposal
 // link (view, PDF, accept), contract signing, change order signing and declining, PRO Desk quotation link
 // (accept, decline) — no sideways scrolling, nothing internal, replaced/expired/used/tampered links refused.
-// Isolation: organization A vs B, field user vs office pages (recorded, not changed), supplier vs contractor,
+// Isolation: organization A vs B, field-only user vs office pages and schedule changes (refused), supplier vs contractor,
 // supplier A vs B, customer link holder vs everything else.
 // Run: EVIDENCE_REPO=$PWD EVIDENCE_EXECUTABLE=/path/to/chromium node --test tools/release/evidence_roles.mjs
 // EVIDENCE_SHOTS=<folder> also saves a screenshot of each customer screen.
@@ -680,34 +680,52 @@ test("organization A and organization B never see each other's projects, clients
   assert.ok(!(await o.pg.locator("main").innerText()).includes(facts.org_b_client));
 });
 
-test("field user (crew): what Kevin can and cannot open is recorded; owner-only and management pages are refused", async () => {
+test("field user (crew, marked field-only): Kevin reaches Field only, sees no costs and cannot move scheduled work", async () => {
+  // Joel, 21 Oct 2026: crew are marked field-only by the operator command (flask auth set-field-only).
+  assert.match(operator("mark-field-only", facts.kevin[0]), /field_only: yes/);
   const k = await kevin();
   await go(k.pg, "/field/today");
   await noSideways(k.pg, "Field today");
+  assert.ok(!/Projects|Estimates|Proposals|Clients|Costs/.test(await navText(k.pg)), "Field shows office navigation");
   const probes = {
-    "Office home /": "/", "Projects": "/projects", "Project page": `/projects/${facts.project_id}`,
+    "Office home /": "/", "Projects": "/projects/", "Project page": `/projects/${facts.project_id}`,
     "Estimate (internal costs)": `/estimates/${facts.estimate_id}/versions/${facts.version_id}`,
+    "Estimates": "/estimates/", "Proposals": "/proposals/",
     "Proposal": `/proposals/${facts.proposal_id}`, "Contract": `/projects/${facts.signed_project_id}/contract`,
-    "Clients": "/clients", "Company calendar": "/schedule", "Crews": "/settings/crews",
-    "Brand profile": "/settings/brand-profile", "Costs and pricing": "/costs-and-pricing",
-    "New schedule item": "/schedule/items/new",
+    "Clients": "/clients/", "Company calendar": "/schedule", "Crews": "/settings/crews",
+    "Brand profile": "/settings/brand-profile", "Costs and pricing": "/costs-and-pricing/",
+    "New schedule item": "/schedule/items/new", "Schedule item": `/schedule/items/${facts.schedule_item_id}`,
     "Close project": `/projects/${facts.project_id}/close`, "Needs attention": "/company-attention",
     "People & Access": "/settings/people",
   };
-  const seen = {};
-  for (const [label, url] of Object.entries(probes)) seen[label] = (await status(k.ctx, url)).code;
-  assert.equal(seen["Close project"], 403);
-  assert.equal(seen["Needs attention"], 403);
-  assert.equal(seen["People & Access"], 403);
-  const open = Object.entries(seen).filter(([, c]) => c === 200).map(([l]) => l);
-  const other = Object.entries(seen).filter(([, c]) => c !== 200).map(([l, c]) => `${l} ${c}`);
-  recorded.push(`Field user (crew member, ordinary membership) opens these office pages (200): ${open.join(", ")}; others: ${other.join(", ")}. ` +
-    "There is no field-only role in V1; any signed-in member reaches the office. With the schedule review (G7: any signed-in " +
-    "user can move scheduled work) this is an owner policy decision, not changed here.");
-  const estimate = await k.ctx.request.get(`${base}/estimates/${facts.estimate_id}/versions/${facts.version_id}`);
-  if (estimate.status() === 200 && (await estimate.text()).includes(facts.internal.code)) {
-    recorded.push("A field user can read the estimate's internal unit cost and markup (same as above; owner policy).");
+  for (const [label, url] of Object.entries(probes)) {
+    const r = await status(k.ctx, url);
+    assert.equal(r.code, 302, `Kevin on ${label} (${url}): ${r.code}`);
+    assert.equal(new URL(r.location, base).pathname, "/field/today", `Kevin on ${label} → ${r.location}`);
   }
+  for (const url of ["/field/today", "/field/week", "/field/month", "/field/company-today", "/field/projects", "/field/time",
+    "/account/password"]) {
+    assert.equal((await status(k.ctx, url)).code, 200, `Kevin on ${url}`);
+  }
+  // No internal cost, markup or customer commercial detail on any page Kevin reaches.
+  const estimate = await k.ctx.request.get(`${base}/estimates/${facts.estimate_id}/versions/${facts.version_id}`);
+  const landed = await estimate.text();
+  for (const marker of [facts.internal.code, facts.internal.unit_cost, facts.internal.markup + "%", "Approved contractor cost"]) {
+    assert.ok(!landed.includes(String(marker)), `Kevin sees ${marker}`);
+  }
+  // Kevin cannot move, retire or add scheduled work (G7), even with a valid form token.
+  await go(k.pg, "/field/today");
+  const token = await k.pg.locator("meta[name=csrf-token]").getAttribute("content");
+  const moved = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  for (const [url, form] of [[`/schedule/items/${facts.schedule_item_id}`, { scheduled_start: moved, scheduled_end: moved }],
+    [`/schedule/items/${facts.schedule_item_id}/retire`, {}], ["/schedule/items/new", { scheduled_start: moved, scheduled_end: moved }],
+    [`/schedule/projects/${facts.project_id}/shift`, { days: "3" }]]) {
+    const r = await k.ctx.request.post(`${base}${url}`, { form: { csrf_token: token, ...form }, maxRedirects: 0 });
+    assert.equal(r.status(), 403, `Kevin POST ${url}: ${r.status()}`);
+  }
+  const o = await owner();
+  await go(o.pg, `/schedule/items/${facts.schedule_item_id}`);
+  assert.equal(await o.pg.locator("[name=scheduled_start]").inputValue(), facts.schedule_item_start, "the work did not move");
 });
 
 test("supplier and contractor: each is kept to its own side", async () => {

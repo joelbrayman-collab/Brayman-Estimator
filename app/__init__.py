@@ -131,6 +131,27 @@ def _is_allowed_build_api_post() -> bool:
     return bool(_BUILD_API_POST_RE.fullmatch(request.path or ""))
 
 
+def _field_only_wall(endpoint, organization_id):
+    """Field crew (a membership marked FIELD_ONLY, Joel 21 Oct 2026) reach only the Field pages and
+    their own account pages. Any other page redirects to Field Today; any other POST or API call is
+    refused with 403. Users without the mark are not affected."""
+    from app.services.access_domains import field_only_endpoint_allowed, user_is_field_only
+
+    if not user_is_field_only(current_user, organization_id):
+        g.field_only = False
+        return None
+    g.field_only = True
+    if field_only_endpoint_allowed(endpoint):
+        return None
+    if _is_api_request():
+        from app.services.shared_api import api_error
+
+        return api_error("Not available to field users.", 403)
+    if request.method in ("GET", "HEAD"):
+        return redirect(url_for("field.today"))
+    abort(403)
+
+
 def _apply_logging(app: Flask) -> None:
     """Send application errors and warnings to stderr, which Render keeps in its logs."""
     import logging
@@ -270,7 +291,7 @@ def _register_office_auth(app: Flask) -> None:
                 g.organization_id = resolve_membership_organization_id(current_user)
             except OrganizationAccessError:
                 return api_error(ERROR_ORGANIZATION_CONTEXT, 403)
-            return None
+            return _field_only_wall(endpoint, g.organization_id)
         if endpoint is None:
             if not current_user.is_authenticated:
                 return login_manager.unauthorized()
@@ -281,7 +302,7 @@ def _register_office_auth(app: Flask) -> None:
             g.organization_id = resolve_membership_organization_id(current_user)
         except OrganizationAccessError:
             abort(403)
-        return None
+        return _field_only_wall(endpoint, g.organization_id)
 
     @app.errorhandler(404)
     def handle_404(err):

@@ -39,8 +39,14 @@
         <button type="submit" class="button button-secondary">Email a link to choose a password</button>
     </form>
     {% endif %}
-    {# TODO(field-only marker, branch v1/field-role-permissions-2026-10-21): show and change the person's
-       "Field only" marker here once that branch's service function is merged. #}
+    {% if not person.is_self %}
+    <form method="post" action="{{ url_for('people_access.field_only', membership_id=person.membership_id) }}" class="people-access-actions" data-field-only="{{ 'yes' if field_only else 'no' }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p>{% if field_only %}<strong>Field only</strong>: Field pages and their own account; no office pages, costs or prices.{% else %}Office access (not Field only).{% endif %}</p>
+        {% if field_only %}<button type="submit" name="action" value="clear" class="button button-secondary">Remove Field only</button>
+        {% else %}<button type="submit" name="action" value="mark" class="button button-secondary">Make Field only</button>{% endif %}
+    </form>
+    {% endif %}
 </section>
 
 <section class="form-panel" aria-labelledby="access-heading">

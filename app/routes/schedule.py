@@ -55,6 +55,34 @@ schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 
 MONTHS_BACK, MONTHS_AHEAD = 3, 12  # scrolling month view (Joel, 20 Oct 2026: at least a year out)
 
+# G7 (Joel, 21 Oct 2026): only office users with scheduling authority (office members, so the owner and
+# System Administrators) create, move or retire scheduled work, assignments, dependencies and business
+# appointments. A field-only member never does, whatever reaches this blueprint. Reading stays as it is.
+SCHEDULE_WRITE_ENDPOINTS = frozenset(
+    {
+        "schedule.new_item",
+        "schedule.edit_item",
+        "schedule.create_assignment",
+        "schedule.remove_assignment",
+        "schedule.retire",
+        "schedule.shift_project",
+        "schedule.create_dependency",
+        "schedule.retire_dependency",
+        "schedule.new_appointment",
+        "schedule.edit_appointment",
+        "schedule.cancel_appointment_route",
+    }
+)
+
+
+@schedule_bp.before_request
+def _require_scheduling_authority():
+    if request.endpoint in SCHEDULE_WRITE_ENDPOINTS:
+        from app.services.access_domains import require_office_scheduling_authority
+
+        return require_office_scheduling_authority()
+    return None
+
 
 def _flash_delivery_proposals():
     """Tell the office when moving work proposed new dates for linked supplier deliveries."""

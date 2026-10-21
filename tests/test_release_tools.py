@@ -73,6 +73,7 @@ def test_gate_stops_at_ready_for_push_after_every_gate():
         "evidence_roles.mjs",  # the 26 administrator, customer and isolation browser checks (gate total 101)
         "evidence_first_day.mjs",  # Ben's First Day: the 15 Getting started steps on a fresh synthetic company
         "evidence_training.mjs",  # the Training & Acceptance Centre on a local training site
+        "evidence_workflow_map.mjs",  # the 9 Workflow Map checks (contractor, supplier, Field, Training Centre)
         "< tools/release/hosted_preflight.py",  # fresh backup
         "BACKUP_SHA256",
         "PRAGMA integrity_check",

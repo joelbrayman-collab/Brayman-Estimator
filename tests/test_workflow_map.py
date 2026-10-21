@@ -329,10 +329,10 @@ def test_back_next_and_the_stage_parameter(site):
     app, f = site
     html = _get(_client(app, "ben"), "/workflow?stage=c-win").get_data(as_text=True)
     assert 'data-wf-current="c-win"' in html
-    assert 'data-wf-back data-wf-goto="c-price"' in html and 'data-wf-next data-wf-goto="c-build"' in html
+    assert 'data-wf-control-back data-wf-goto="c-price"' in html and 'data-wf-control-next data-wf-goto="c-build"' in html
     assert html.count('data-wf-page="') == 6 and html.count('" hidden>') >= 5
     first = _get(_client(app, "ben"), "/workflow?stage=nonsense").get_data(as_text=True)
-    assert 'data-wf-current="c-setup"' in first and 'data-wf-back aria-disabled="true"' in first
+    assert 'data-wf-current="c-setup"' in first and 'data-wf-control-back aria-disabled="true"' in first
 
 
 # ------------------------------------------------------------------ the Training Centre

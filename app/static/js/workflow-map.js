@@ -43,8 +43,8 @@
       nav.classList.toggle("is-current-journey", !!nav.querySelector('[data-wf-step="' + id + '"]'));
     });
     root.setAttribute("data-wf-current", id);
-    setLink(root.querySelector("[data-wf-back]"), target.getAttribute("data-wf-prev"));
-    setLink(root.querySelector("[data-wf-next]"), target.getAttribute("data-wf-next"));
+    setLink(root.querySelector("[data-wf-control-back]"), target.getAttribute("data-wf-prev"));
+    setLink(root.querySelector("[data-wf-control-next]"), target.getAttribute("data-wf-next"));
     var count = root.querySelector("[data-wf-count]");
     if (count) count.textContent = target.getAttribute("data-wf-position") + " of " + total + " · " + target.getAttribute("data-wf-label");
     var stageInput = root.querySelector("[data-wf-stage-input]");

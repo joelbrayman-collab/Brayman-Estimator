@@ -25,7 +25,7 @@
   overflow-wrap: anywhere;
 }
 .wf *, .wf *::before, .wf *::after { box-sizing: border-box; }
-.wf a { color: inherit; }
+:where(.wf) a { color: inherit; }
 .wf-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .wf [hidden] { display: none !important; }
 
@@ -198,4 +198,9 @@
   .wf-control, .wf-map-control { padding: 10px 12px; font-size: 13px; }
   .wf-count { min-width: 0; flex-basis: 100%; order: -1; font-size: 12px; }
   .wf-hint { display: none; }
+}
+
+/* Desktop: the stage page stays in view beside the long journey map. */
+@media (min-width: 960px) {
+  .wf-page { position: sticky; top: 12px; max-height: calc(100vh - 110px); overflow-y: auto; }
 }

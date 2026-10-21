@@ -33,7 +33,7 @@ from app.models.training import (
     ROLE_SUPPLIER_OWNER,
 )
 
-DEFINITION_VERSION = "2026-10-21.1"
+DEFINITION_VERSION = "2026-10-21.2"
 
 # ------------------------------------------------------------------ vocabulary
 

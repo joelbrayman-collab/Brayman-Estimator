@@ -207,9 +207,9 @@
 
   <nav class="wf-controls" aria-label="Move between stages">
     <a class="wf-map-control" href="#wf-overview" data-wf-show-map>Journey map</a>
-    <a class="wf-control" href="{{ cur.prev.href if cur.prev else '#workflow-stage' }}" data-wf-back{% if cur.prev %} data-wf-goto="{{ cur.prev.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Back to the previous stage">← Back</a>
+    <a class="wf-control" href="{{ cur.prev.href if cur.prev else '#workflow-stage' }}" data-wf-control-back{% if cur.prev %} data-wf-goto="{{ cur.prev.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Back to the previous stage">← Back</a>
     <span class="wf-count" data-wf-count aria-live="polite">{{ cur.position }} of {{ wf.total }} · {{ cur.label }}</span>
-    <a class="wf-control" href="{{ cur.next.href if cur.next else '#workflow-stage' }}" data-wf-next{% if cur.next %} data-wf-goto="{{ cur.next.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Next stage">Next →</a>
+    <a class="wf-control" href="{{ cur.next.href if cur.next else '#workflow-stage' }}" data-wf-control-next{% if cur.next %} data-wf-goto="{{ cur.next.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Next stage">Next →</a>
   </nav>
   <p class="wf-hint">Use the ← and → keys to move between stages.</p>
 </section>

@@ -43,9 +43,16 @@ class Viewer:
                                       # read-only and lead back to this map at the same stage
 
 
+REVIEW_SUPPLIER_REASON = ("Opens in the Supplier Hub for the supplier's own staff. On the training site, sign in as a "
+                          "supplier trainee to try it.")
+
+
 def can_open(dest: D.Destination, viewer: Viewer):
     """(allowed, reason). The reason names who can open it, never what is there."""
     req = dest.requires
+    if viewer.review_map and viewer.kind == KIND_SUPPLIER and not viewer.supplier_id:
+        # Owner review of the supplier map: the contractor's administrator reads it but is not supplier staff.
+        return False, REVIEW_SUPPLIER_REASON
     if req == D.REQ_SUPPLIER:
         ok = viewer.kind == KIND_SUPPLIER
     elif req == D.REQ_CONTRACTOR:

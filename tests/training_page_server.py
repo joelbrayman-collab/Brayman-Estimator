@@ -23,7 +23,8 @@ from alembic.config import Config  # noqa: E402
 
 from app import create_app, db  # noqa: E402
 
-PASSWORDS = {k: f"Synthetic-{k}-training-1" for k in ("ben", "olivia", "kevin", "liam", "darcy", "pat")}
+PASSWORDS = {k: f"Synthetic-{k}-training-1" for k in ("ben", "olivia", "kevin", "liam", "darcy", "pat", "admin")}
+ADMINISTRATOR = ("Training Administrator (synthetic)", "administrator@training-test.invalid")
 
 
 def main():
@@ -44,7 +45,7 @@ def main():
         command.upgrade(cfg, "head")
         from app.training.environment import build
 
-        people = build(application, PASSWORDS)
+        people = build(application, PASSWORDS, administrator=ADMINISTRATOR)
         facts = {"people": {k: v for k, v in people.items() if not k.startswith("_")}, **people["_facts"],
                  "mail_dir": config["MAIL_CAPTURE_ROOT"], "database_uri": uri, "workdir": workdir}
     port = int(os.environ["TRAINING_PAGE_PORT"])

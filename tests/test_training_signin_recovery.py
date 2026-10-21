@@ -21,6 +21,7 @@ from app.models.password_reset import PasswordResetToken
 from app.models.supplier_portal import SupplierUserMembership
 from app.models.user import User
 from app.services.instance_authority import is_system_administrator
+from app.services.organizations import DEFAULT_ORGANIZATION_ID
 from app.services.transactional_email import TransportResult
 from app.training import environment
 
@@ -323,3 +324,10 @@ def test_owner_review_is_for_administrators_only(app):
     darcy.post("/supplier/login", data={"email": _email("darcy"), "password": PW["darcy"], "next": "/training"})
     assert _get(darcy, "/training/review/contractor").status_code == 403
     assert _get(app.test_client(), "/training/review/contractor").status_code == 302  # signed out -> sign in
+
+
+def test_supplier_map_review_explains_supplier_screens(app):
+    admin, _r = _sign_in(app, ADMIN[1], PW["admin"])
+    page = _get(admin, "/training/review/supplier").get_data(as_text=True)
+    assert "Opens in the Supplier Hub for the supplier" in page
+    assert 'href="/supplier/' not in page, "no Supplier Hub link the administrator cannot open"

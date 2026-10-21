@@ -1,0 +1,21 @@
+{% extends "training/base.html" %}
+{% block title %}Acceptance tests{% endblock %}
+{% block content %}
+<section class="tc-card tc-hero">
+  <p class="tc-eyebrow">Acceptance tests · {{ trainee.role_label }}</p>
+  <h1>Acceptance tests</h1>
+  <p>Separate from the lessons. For each test: start where it says, do the action, and compare with the expected result. Choose Pass, Fail or Blocked. A failed or blocked test is tested again after it is fixed; your earlier results are kept.</p>
+  <p data-uat-counts>{{ uat.counts.PASS }} passed · {{ uat.counts.FAIL }} failed · {{ uat.counts.BLOCKED }} blocked · {{ uat.counts.NOT_TESTED }} not tested, of {{ uat.total }}</p>
+  {% if uat.resume %}<a class="tc-btn tc-btn-primary" href="{{ url_for('training.uat_case', key=uat.resume) }}" data-uat-continue>Continue testing</a>{% endif %}
+</section>
+<section class="tc-card">
+  <table class="tc-table">
+    <thead><tr><th>Test</th><th>Latest result</th><th>Attempts</th></tr></thead>
+    <tbody>{% for r in uat.rows %}
+      <tr data-uat-row="{{ r.case.key }}"><td><a href="{{ url_for('training.uat_case', key=r.case.key) }}">{{ r.case.title }}</a></td>
+        <td>{% if r.latest %}<span class="tc-status tc-{{ r.latest.status|lower }}">{{ r.latest.status|title }}</span>{% if r.retest %} · retest{% endif %}{% else %}Not tested{% endif %}</td>
+        <td>{{ r.attempts|length }}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+</section>
+{% endblock %}

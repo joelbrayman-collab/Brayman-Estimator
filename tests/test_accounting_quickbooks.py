@@ -241,7 +241,7 @@ def test_the_v1_release_5_revision_adds_six_empty_tables_and_keeps_every_row(tmp
     db_path = tmp_path / "v1rel5.db"
     cfg = _config(db_path)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == [revision] and script.get_revision(revision).down_revision == prior
+    assert script.get_revision(revision).down_revision == prior
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
     with application.app_context():
         command.upgrade(cfg, prior)

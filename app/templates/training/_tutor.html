@@ -1,0 +1,29 @@
+<aside class="tc-tutor{% if trainee.tutor_minimized %} is-min{% endif %}" id="tutor" data-tutor data-lesson="{{ lesson.key if lesson else '' }}" data-step="{{ step if step is defined else 0 }}">
+  <div class="tc-tutor-head">
+    <strong>Training Tutor</strong>
+    <form method="post" action="{{ url_for('training.tutor_state') }}" data-tutor-toggle>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="minimized" value="{{ '0' if trainee.tutor_minimized else '1' }}">
+      <input type="hidden" name="back" value="{{ request.full_path }}">
+      <button type="submit" class="tc-link" data-tutor-button>{{ 'Open the Tutor' if trainee.tutor_minimized else 'Minimize' }}</button>
+    </form>
+  </div>
+  <div class="tc-tutor-body">
+    {% if current is defined %}
+    <p><b>In plain words:</b> {{ current.why or lesson.why }}</p>
+    <p><b>Where:</b> {{ current.app }} → {{ current.where }}</p>
+    <p><b>You should see:</b> {{ current.expect }}</p>
+    {% endif %}
+    {% with messages = get_flashed_messages(category_filter=['tutor']) %}{% for m in messages %}<p class="tc-answer" data-tutor-answer>{{ m }}</p>{% endfor %}{% endwith %}
+    <p class="tc-answer" data-tutor-answer hidden></p>
+    <form method="post" action="{{ url_for('training.tutor_ask') }}" data-tutor-ask>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="lesson" value="{{ lesson.key if lesson else '' }}">
+      <input type="hidden" name="step" value="{{ step if step is defined else 0 }}">
+      <label for="tutor-q">Ask the Tutor</label>
+      <input id="tutor-q" name="question" maxlength="500" placeholder="Where is the button? What should I see?">
+      <button class="tc-btn" type="submit">Ask</button>
+    </form>
+    <p class="tc-small">The Tutor answers from this lesson and the training guide. It does not read anyone's records.</p>
+  </div>
+</aside>

@@ -1,0 +1,37 @@
+{% extends "training/base.html" %}
+{% block title %}My training{% endblock %}
+{% block content %}
+<section class="tc-card tc-hero">
+  <p class="tc-eyebrow">{{ 'Contractor training' if trainee.pathway == 'CONTRACTOR' else 'Supplier training' }} · {{ trainee.role_label }}</p>
+  <h1>{{ trainee.display_name }}</h1>
+  <div class="tc-bar" role="progressbar" aria-valuenow="{{ ov.percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ ov.percent }}%"></span></div>
+  <p data-progress>{{ ov.done }} of {{ ov.total }} lessons done ({{ ov.percent }} %) · Acceptance tests: {{ uat.counts.PASS }} passed, {{ uat.counts.FAIL }} failed, {{ uat.counts.BLOCKED }} blocked, {{ uat.counts.NOT_TESTED }} not tested</p>
+  <div class="tc-actions">
+    {% if ov.resume %}<a class="tc-btn tc-btn-primary" data-continue href="{{ url_for('training.lesson', key=ov.resume[0], step=ov.resume[1]) }}">Continue where I left off</a>
+    {% else %}<span class="tc-done">All lessons done.</span>{% endif %}
+    <a class="tc-btn" href="{{ url_for('training.uat') }}">Acceptance tests</a>
+    {% if admin %}<a class="tc-btn" href="{{ url_for('training.admin') }}" data-admin-link>Administrator</a>{% endif %}
+  </div>
+</section>
+{% for row in ov.modules %}
+<section class="tc-card tc-module" data-module="{{ row.module.key }}">
+  <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small>{{ row.done }}/{{ row.total }}</small></h2>
+  <p>{{ row.module.summary }}</p>
+  <ol class="tc-lessons">
+    {% for x in row.lessons %}
+    <li class="tc-lesson tc-{{ x.state }}"><a href="{{ url_for('training.lesson', key=x.lesson.key, step=x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a>
+      <span class="tc-state">{{ {'done': 'Done', 'started': 'Started', 'new': ''}[x.state] }}</span></li>
+    {% endfor %}
+  </ol>
+</section>
+{% endfor %}
+{% if roles|length > 1 %}
+<details class="tc-card"><summary>Change my role</summary>
+  <form method="post" action="{{ url_for('training.register') }}" class="tc-roles">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% for role in roles %}<label class="tc-role"><input type="radio" name="role" value="{{ role }}" {% if role == trainee.role %}checked{% endif %}> <span>{{ labels[role] }}</span></label>{% endfor %}
+    <button class="tc-btn" type="submit">Change role (keeps my progress)</button>
+  </form>
+</details>
+{% endif %}
+{% endblock %}

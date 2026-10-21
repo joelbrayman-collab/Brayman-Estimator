@@ -1,0 +1,23 @@
+{% extends "training/base.html" %}
+{% block title %}Administrator{% endblock %}
+{% block content %}
+<section class="tc-card tc-hero"><h1>Training administrator</h1>
+  <p>Trainees in your company and in the suppliers you work with.</p></section>
+<section class="tc-card">
+  <div class="tc-scroll"><table class="tc-table" data-admin-table>
+    <thead><tr><th>Trainee</th><th>Pathway · role</th><th>Lessons</th><th>Progress</th><th>Acceptance tests</th><th>Failed / blocked</th><th>Retested</th><th>Notes</th><th>Readiness</th></tr></thead>
+    <tbody>{% for r in report.rows %}
+      <tr data-admin-trainee="{{ r.trainee.display_name }}"><td>{{ r.trainee.display_name }}</td>
+        <td>{{ r.trainee.pathway|title }} · {{ r.role }}</td>
+        <td>{{ r.overview.done }}/{{ r.overview.total }}</td><td>{{ r.overview.percent }} %</td>
+        <td>{{ r.uat.counts.PASS }} pass · {{ r.uat.counts.FAIL }} fail · {{ r.uat.counts.BLOCKED }} blocked · {{ r.uat.counts.NOT_TESTED }} to do</td>
+        <td>{{ r.failing|length }}</td><td>{{ r.retested|length }}</td><td>{{ r.feedback }}</td>
+        <td data-readiness>{{ r.readiness }}</td></tr>
+    {% else %}<tr><td colspan="9">No one has registered yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<section class="tc-card"><h2>Outstanding issues</h2>
+  {% if report.issues %}<ul data-issues>{% for t, r in report.issues %}<li>{{ t.display_name }} · {{ r.case.title }} · {{ r.latest.status|title }} (attempt {{ r.latest.attempt }}): {{ r.latest.issue }}</li>{% endfor %}</ul>
+  {% else %}<p>None.</p>{% endif %}
+</section>
+{% endblock %}

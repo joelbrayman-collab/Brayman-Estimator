@@ -152,6 +152,7 @@ from app.models.work_structure import (
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
 from app.models.onboarding import OrganizationOnboardingStep
+from app.models.training import TrainingFeedback, TrainingLessonProgress, TrainingTrainee, TrainingUatResult
 from app.models.appointment import (
     CalendarFeedKey,
     CompanyAppointment,

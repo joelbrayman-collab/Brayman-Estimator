@@ -1,0 +1,13 @@
+{% extends "training/base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<section class="tc-card tc-hero">
+  <h1>Welcome to CalibraytAI training</h1>
+  <p>Learn CalibraytAI step by step, practise on a training company with synthetic jobs, then complete the acceptance tests. Your place is saved, so you can stop and come back any time, on your computer or your iPhone.</p>
+  <p>Sign in with the email and password from your training invitation.</p>
+  <div class="tc-choice">
+    <a class="tc-btn tc-btn-primary" href="{{ url_for('auth.login', next=url_for('training.home')) }}" data-signin="contractor">I work for a contractor</a>
+    <a class="tc-btn tc-btn-primary" href="{{ url_for('supplier_portal.login', next=url_for('training.home')) }}" data-signin="supplier">I work for a building supplier</a>
+  </div>
+</section>
+{% endblock %}

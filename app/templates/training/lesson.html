@@ -1,0 +1,66 @@
+{% extends "training/base.html" %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block content %}
+<div class="tc-layout">
+<article class="tc-card tc-lesson-page" data-lesson-page="{{ lesson.key }}" data-step-index="{{ step }}">
+  <p class="tc-eyebrow">Module {{ module.number }} · {{ module.title }}</p>
+  <h1>{{ lesson.title }}</h1>
+  {% if step == 0 %}
+  <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p></div>
+  {% endif %}
+  <p class="tc-stepcount" data-stepcount>Step {{ step + 1 }} of {{ lesson.steps|length }}</p>
+  <div class="tc-step">
+    <div class="tc-step-text">
+      <h2>{{ current.title }}</h2>
+      <dl>
+        <dt>Open</dt><dd>{{ current.app }}</dd>
+        <dt>Go to</dt><dd>{{ current.where }}</dd>
+        <dt>Do this</dt><dd>{{ current.do }}</dd>
+        {% if current.enter %}<dt>Enter</dt><dd>{{ current.enter }}</dd>{% endif %}
+        <dt>You should see</dt><dd>{{ current.expect }}</dd>
+        {% if current.why %}<dt>Why</dt><dd>{{ current.why }}</dd>{% endif %}
+      </dl>
+      <details class="tc-wrong"><summary>If something goes wrong</summary><p>{{ current.if_wrong }}</p></details>
+    </div>
+    {% if current.shot %}
+    <figure class="tc-shot">
+      <button type="button" class="tc-shot-btn" data-enlarge aria-label="Show the screenshot full size">
+        <img src="{{ url_for('static', filename='training/shots/' ~ current.shot) }}" alt="Screen: {{ current.title }}" loading="lazy">
+      </button>
+      <figcaption>Press the picture to see it full size.</figcaption>
+    </figure>
+    {% endif %}
+  </div>
+  {% if step == lesson.steps|length - 1 %}
+  <form method="post" action="{{ url_for('training.complete', key=lesson.key) }}" class="tc-exercise">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Practice exercise</h2>
+    <p>{{ lesson.exercise }}</p>
+    <label><input type="checkbox" name="exercise_done" value="1" {% if progress and progress.exercise_done %}checked{% endif %} data-exercise> I did the practice exercise on the training site</label>
+    <button class="tc-btn tc-btn-primary" type="submit" data-complete>Finish this lesson</button>
+  </form>
+  {% endif %}
+  <form method="post" action="{{ url_for('training.move', key=lesson.key) }}" class="tc-moves">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="step" value="{{ step }}">
+    <button class="tc-btn" name="action" value="back" type="submit" {% if step == 0 %}disabled{% endif %} data-back>Back</button>
+    <button class="tc-btn" name="action" value="exit" type="submit" data-exit>Save and exit</button>
+    {% if step < lesson.steps|length - 1 %}<button class="tc-btn tc-btn-primary" name="action" value="next" type="submit" data-next>Next</button>{% endif %}
+  </form>
+  <details class="tc-notes"><summary>My notes and feedback ({{ notes|length }})</summary>
+    <form method="post" action="{{ url_for('training.add_feedback', key=lesson.key) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="step" value="{{ step }}">
+      <textarea name="body" rows="3" maxlength="4000" aria-label="Note or feedback" placeholder="Something unclear, a problem, a suggestion"></textarea>
+      <button class="tc-btn" type="submit" data-save-note>Save note</button>
+    </form>
+    <ul>{% for n in notes %}<li data-note>{{ n.created_at.strftime('%d %b %H:%M') }} UTC · {{ n.body }}</li>{% endfor %}</ul>
+  </details>
+  <p class="tc-small">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}">Previous lesson</a>{% endif %}
+    {% if next_key %} · <a href="{{ url_for('training.lesson', key=next_key) }}">Next lesson</a>{% endif %}
+    · <a href="{{ url_for('training.home') }}">All my lessons</a></p>
+</article>
+{% include "training/_tutor.html" %}
+</div>
+<dialog class="tc-lightbox" data-lightbox><img alt=""><form method="dialog"><button class="tc-btn">Close</button></form></dialog>
+{% endblock %}

@@ -145,7 +145,7 @@ def _seed(engine):
 def test_the_revision_follows_pro_desk():
     script = ScriptDirectory.from_config(_config(":memory:"))
     assert script.get_revision(REVISION).down_revision == PRIOR
-    assert script.get_heads() == [REVISION]  # one migration for the release (the gate allows exactly one)
+    assert script.get_revision("t6a2c8e4f1b3").down_revision == REVISION  # v1rel6 (Training Centre) follows
 
 
 def test_upgrade_only_widens_the_status_check_and_keeps_every_row(tmp_path):

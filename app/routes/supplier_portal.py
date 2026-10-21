@@ -64,7 +64,9 @@ def login():
             return render_template("supplier/login.html"), 401
         login_user(user, remember=False)
         target = request.form.get("next") or ""
-        return redirect(target if target.startswith("/supplier") else url_for("supplier_portal.home"))
+        # A supplier trainee signs in here and goes back to the Training Centre (training site only).
+        return redirect(target if target.startswith(("/supplier", "/training")) and not target.startswith("//")
+                        else url_for("supplier_portal.home"))
     return render_template("supplier/login.html")
 
 

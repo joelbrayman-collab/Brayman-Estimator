@@ -1,0 +1,243 @@
+"""Training & Acceptance Centre (Joel, 21 Oct 2026): registration, role-specific lessons, saved progress,
+Back/Next, Save and exit, Tutor, training/UAT separation, Pass/Fail/Blocked with retests, notes,
+administrator report, organization isolation, and the site switch. Synthetic data only."""
+
+from __future__ import annotations
+
+import pytest
+from flask import g
+
+from app import create_app, db
+from app.models.training import TrainingLessonProgress, TrainingTrainee, TrainingUatResult
+from app.training import content as C
+from app.training import environment, service
+
+pytestmark = pytest.mark.no_office_auth
+PW = {k: f"Synthetic-{k}-training-1" for k in ("ben", "olivia", "kevin", "liam", "darcy", "pat")}
+
+
+def _app(enabled=True):
+    return create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", "SECRET_KEY": "t",
+                       "WTF_CSRF_ENABLED": False, "TRAINING_ENVIRONMENT": enabled})
+
+
+@pytest.fixture
+def app():
+    application = _app()
+    with application.app_context():
+        db.create_all()
+        environment.build(application, PW)
+        yield application
+        db.session.remove()
+        db.drop_all()
+
+
+def _email(key):
+    return next(e for k, _n, e, *_ in environment.OFFICE_PEOPLE + environment.SUPPLIER_PEOPLE if k == key)
+
+
+def _client(app, key):
+    g.pop("_login_user", None)
+    client = app.test_client()
+    if key in ("darcy", "pat"):
+        r = client.post("/supplier/login", data={"email": _email(key), "password": PW[key], "next": "/training"})
+    else:
+        r = client.post("/login", data={"email": _email(key), "password": PW[key]})
+    assert r.status_code == 302, key
+    return client
+
+
+def _get(client, path, **kw):
+    g.pop("_login_user", None)
+    return client.get(path, **kw)
+
+
+def _post(client, path, **kw):
+    g.pop("_login_user", None)
+    return client.post(path, **kw)
+
+
+def test_switched_off_everywhere_but_the_training_site():
+    application = _app(enabled=False)
+    with application.app_context():
+        db.create_all()
+        assert application.test_client().get("/training").status_code == 404
+        assert application.test_client().get("/training/admin").status_code == 404
+        with pytest.raises(environment.TrainingEnvironmentError):
+            environment.build(application)
+        db.drop_all()
+
+
+def test_signed_out_goes_to_the_training_sign_in(app):
+    r = app.test_client().get("/training/lessons/c01-sign-in")
+    assert r.status_code == 302 and r.headers["Location"].endswith("/training/signin")
+    page = app.test_client().get("/training/signin").get_data(as_text=True)
+    assert "I work for a contractor" in page and "I work for a building supplier" in page
+
+
+def test_registration_offers_the_roles_each_person_may_take(app):
+    ben, kevin, darcy = _client(app, "ben"), _client(app, "kevin"), _client(app, "darcy")
+    page = _get(ben, "/training").get_data(as_text=True)
+    assert "Contractor owner" in page and "Office staff" in page and "Field worker" in page
+    kev = _get(kevin, "/training").get_data(as_text=True)
+    assert "Field worker" in kev and "Contractor owner" not in kev  # Field-only crew register as field workers
+    assert _post(kevin, "/training/register", data={"role": "OWNER"}).status_code == 302
+    assert TrainingTrainee.query.count() == 0
+    dar = _get(darcy, "/training").get_data(as_text=True)
+    assert "Supplier owner" in dar and "PRO Desk staff" in dar and "Contractor owner" not in dar
+    _post(darcy, "/training/register", data={"role": "SUPPLIER_ADMIN"})
+    t = TrainingTrainee.query.one()
+    assert t.pathway == "SUPPLIER" and t.supplier_id is not None and t.organization_id is None
+
+
+def test_field_workers_get_only_field_lessons():
+    for module, lesson in C.lessons_for("CONTRACTOR", "FIELD"):
+        assert "FIELD" in C.lesson_roles(module, lesson)
+    office_only = [lesson.key for m in C.modules() for lesson in m.lessons
+                   if m.pathway == "CONTRACTOR" and "FIELD" not in C.lesson_roles(m, lesson)]
+    field_keys = {lesson.key for _m, lesson in C.lessons_for("CONTRACTOR", "FIELD")}
+    assert not field_keys & set(office_only)
+
+
+def test_lessons_save_resume_back_next_and_complete(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    module, lesson = C.lessons_for("CONTRACTOR", "OWNER")[0]
+    page = _get(ben, f"/training/lessons/{lesson.key}").get_data(as_text=True)
+    assert lesson.steps[0].title in page and "Step 1 of" in page
+    r = _post(ben, f"/training/lessons/{lesson.key}/move", data={"step": 0, "action": "next"})
+    assert r.headers["Location"].endswith(f"/training/lessons/{lesson.key}?step=1")
+    _post(ben, f"/training/lessons/{lesson.key}/move", data={"step": 1, "action": "back"})
+    r = _post(ben, f"/training/lessons/{lesson.key}/move", data={"step": 1, "action": "exit"})
+    assert r.headers["Location"].endswith("/training")
+    home = _get(ben, "/training").get_data(as_text=True)
+    assert f"/training/lessons/{lesson.key}?step=1" in home and "Continue where I left off" in home
+    last = len(lesson.steps) - 1
+    refused = _post(ben, f"/training/lessons/{lesson.key}/complete", data={}, follow_redirects=True)
+    assert "I did the practice exercise" in refused.get_data(as_text=True)
+    assert TrainingLessonProgress.query.one().completed_at is None
+    _post(ben, f"/training/lessons/{lesson.key}/complete", data={"exercise_done": "1"})
+    p = TrainingLessonProgress.query.one()
+    assert p.completed_at is not None and p.exercise_done and p.step_reached == last
+    assert "1 of" in _get(ben, "/training").get_data(as_text=True)
+    # A lesson outside the person's pathway is not theirs.
+    supplier_lesson = C.lessons_for("SUPPLIER", "PRO_DESK")[0][1]
+    assert _get(ben, f"/training/lessons/{supplier_lesson.key}").status_code == 404
+
+
+def test_tutor_minimize_restore_and_answers(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    _m, lesson = C.lessons_for("CONTRACTOR", "OWNER")[0]
+    _post(ben, "/training/tutor", data={"minimized": "1"}, headers={"X-Requested-With": "fetch"})
+    assert TrainingTrainee.query.one().tutor_minimized is True
+    assert "is-min" in _get(ben, f"/training/lessons/{lesson.key}").get_data(as_text=True)
+    _post(ben, "/training/tutor", data={"minimized": "0"}, headers={"X-Requested-With": "fetch"})
+    assert TrainingTrainee.query.one().tutor_minimized is False
+    answer = _post(ben, "/training/tutor/ask", json={"lesson": lesson.key, "step": 0, "question": "Where is the button?"})
+    assert lesson.steps[0].where in answer.get_json()["answer"]
+    saved = _post(ben, "/training/tutor/ask", json={"lesson": lesson.key, "step": 0, "question": "how do I save and continue later"})
+    assert "Continue where I left off" in saved.get_json()["answer"]
+    # The tutor's answer does not move or lose the lesson position.
+    assert TrainingTrainee.query.one().training_resume == f"{lesson.key}:0"
+
+
+def test_uat_is_separate_with_pass_fail_blocked_and_retests(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    case = C.uat_for("CONTRACTOR", "OWNER")[0]
+    refused = _post(ben, f"/training/uat/{case.key}", data={"status": "FAIL"}, follow_redirects=True)
+    assert "Say what went wrong" in refused.get_data(as_text=True) and TrainingUatResult.query.count() == 0
+    _post(ben, f"/training/uat/{case.key}", data={"status": "FAIL", "issue": "Password page error (synthetic)"})
+    _post(ben, f"/training/uat/{case.key}", data={"status": "BLOCKED", "issue": "Waiting for the fix (synthetic)"})
+    _post(ben, f"/training/uat/{case.key}", data={"status": "PASS", "notes": "Retested after the fix"})
+    attempts = TrainingUatResult.query.order_by(TrainingUatResult.attempt).all()
+    assert [(a.attempt, a.status) for a in attempts] == [(1, "FAIL"), (2, "BLOCKED"), (3, "PASS")]
+    page = _get(ben, f"/training/uat/{case.key}").get_data(as_text=True)
+    assert "Attempt 1" in page and "Password page error" in page
+    assert TrainingLessonProgress.query.count() == 0  # UAT never counts as training
+    assert _post(ben, f"/training/uat/{case.key}", data={"status": "MAYBE"}).status_code == 302
+    assert TrainingUatResult.query.count() == 3
+    other = C.uat_for("SUPPLIER", "PRO_DESK")[0]
+    assert _get(ben, f"/training/uat/{other.key}").status_code == 404
+
+
+def test_notes_and_feedback_persist(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    _m, lesson = C.lessons_for("CONTRACTOR", "OWNER")[0]
+    _post(ben, f"/training/lessons/{lesson.key}/feedback", data={"body": "The key button is small (synthetic)", "step": 0})
+    assert "The key button is small" in _get(ben, f"/training/lessons/{lesson.key}").get_data(as_text=True)
+
+
+def test_admin_dashboard_access_and_isolation(app):
+    from app.models import Organization
+    from app.models.supplier_catalogue import Supplier
+    from app.models.supplier_portal import MEMBERSHIP_ACTIVE, SupplierUserMembership
+    from app.models.user import User, UserMembership
+    from app.services.auth import hash_password
+
+    ben, olivia, kevin, darcy = (_client(app, k) for k in ("ben", "olivia", "kevin", "darcy"))
+    _post(olivia, "/training/register", data={"role": "OFFICE"})
+    _post(kevin, "/training/register", data={"role": "FIELD"})
+    _post(darcy, "/training/register", data={"role": "SUPPLIER_OWNER"})
+    case = C.uat_for("CONTRACTOR", "FIELD")[0]
+    _post(kevin, f"/training/uat/{case.key}", data={"status": "BLOCKED", "issue": "No signal on site (synthetic)"})
+    # Another company and an unrelated supplier, each with a trainee.
+    db.session.add(Organization(id="ORG-OTHER", legal_name="Other Co (synthetic)", display_name="Other Co", is_active=True))
+    other = User(email="other@example.invalid", display_name="Other Person", password_hash=hash_password("x-pass-1234567"), is_active=True)
+    stranger = User(email="stranger@example.invalid", display_name="Stranger Supplier", password_hash=hash_password("x-pass-1234567"), is_active=True)
+    db.session.add_all([other, stranger])
+    db.session.flush()
+    db.session.add(UserMembership(user_id=other.id, organization_id="ORG-OTHER", is_active=True))
+    lone = Supplier(code="LONE-SUPPLY", legal_name="Lone Supply (synthetic)", status="ACTIVE", demo_synthetic=True)
+    db.session.add(lone)
+    db.session.flush()
+    db.session.add(SupplierUserMembership(user_id=stranger.id, supplier_id=lone.id, status=MEMBERSHIP_ACTIVE,
+                                          created_by_name="test", created_by_organization_id="ORG-OTHER"))
+    db.session.commit()
+    service.register(other, "OWNER")
+    service.register(stranger, "PRO_DESK")
+    page = _get(ben, "/training/admin")
+    assert page.status_code == 200
+    text = page.get_data(as_text=True)
+    assert "Olivia Office" in text and "Kevin Field" in text and "Darcy" in text
+    assert "Other Person" not in text and "Stranger Supplier" not in text
+    assert "No signal on site" in text  # outstanding issue listed
+    for c in (olivia, kevin, darcy):
+        assert _get(c, "/training/admin").status_code == 403
+
+
+def test_environment_build_is_repeatable_and_synthetic(app):
+    again = environment.build(app)
+    assert all(row["password"] is None for k, row in again.items() if not k.startswith("_"))
+    from app.models import Client, Project
+
+    assert Client.query.filter_by(name=environment.CUSTOMER).count() == 1
+    assert Project.query.filter_by(name=environment.JOB).count() == 1
+
+
+def test_content_points_only_at_real_pages_and_screenshots(app):
+    from pathlib import Path
+
+    shots = Path(app.static_folder) / "training" / "shots"
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+    keys = set()
+    for module in C.modules():
+        assert module.lessons, module.key
+        for lesson in module.lessons:
+            assert lesson.key not in keys, lesson.key
+            keys.add(lesson.key)
+            assert lesson.steps and lesson.exercise and lesson.what and lesson.why, lesson.key
+            for step in lesson.steps:
+                assert step.app in C.APPS, (lesson.key, step.title)
+                assert step.where and step.do and step.expect and step.if_wrong, (lesson.key, step.title)
+                if step.endpoint:
+                    assert step.endpoint in endpoints, (lesson.key, step.endpoint)
+                if step.shot:
+                    assert (shots / step.shot).is_file(), (lesson.key, step.shot)
+    module_keys = {m.key for m in C.modules()}
+    case_keys = [c.key for c in C.uat_cases()]
+    assert len(case_keys) == len(set(case_keys))
+    for case in C.uat_cases():
+        assert case.module_key in module_keys and case.start and case.action and case.expected and case.roles

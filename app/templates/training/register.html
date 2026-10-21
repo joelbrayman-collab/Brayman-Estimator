@@ -1,0 +1,16 @@
+{% extends "training/base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<section class="tc-card">
+  <p class="tc-eyebrow">{{ 'Contractor training' if pathway == 'CONTRACTOR' else 'Supplier training' }}</p>
+  <h1>Welcome, {{ current_user.display_name }}</h1>
+  <p>Choose the job you do. Your lessons and acceptance tests follow it; you can change it later without losing your progress.</p>
+  <form method="post" action="{{ url_for('training.register') }}" class="tc-roles">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% for role in roles %}
+    <label class="tc-role"><input type="radio" name="role" value="{{ role }}" {% if loop.first %}checked{% endif %}> <span>{{ labels[role] }}</span></label>
+    {% endfor %}
+    <button class="tc-btn tc-btn-primary" type="submit" data-register>Start my training</button>
+  </form>
+</section>
+{% endblock %}

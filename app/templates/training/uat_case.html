@@ -1,0 +1,28 @@
+{% extends "training/base.html" %}
+{% block title %}{{ case.title }}{% endblock %}
+{% block content %}
+<section class="tc-card" data-uat-case="{{ case.key }}">
+  <p class="tc-eyebrow">Acceptance test{% if module %} · Module {{ module.number }} {{ module.title }}{% endif %}</p>
+  <h1>{{ case.title }}</h1>
+  <dl>
+    <dt>Start here</dt><dd>{{ case.start }}</dd>
+    <dt>Do this</dt><dd>{{ case.action }}</dd>
+    <dt>Expected result</dt><dd>{{ case.expected }}</dd>
+  </dl>
+  <form method="post" class="tc-uat-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset><legend>Result</legend>
+      {% for s in statuses %}<label class="tc-role"><input type="radio" name="status" value="{{ s }}" required> {{ s|title }}</label>{% endfor %}
+    </fieldset>
+    <label>Notes (optional)<textarea name="notes" rows="2" maxlength="4000"></textarea></label>
+    <label>What went wrong (needed for Fail or Blocked)<textarea name="issue" rows="2" maxlength="4000"></textarea></label>
+    <button class="tc-btn tc-btn-primary" type="submit" data-record>Save result</button>
+    <a class="tc-btn" href="{{ url_for('training.uat') }}">Save and exit</a>
+  </form>
+</section>
+{% if attempts %}
+<section class="tc-card"><h2>Earlier results</h2>
+  <ol class="tc-attempts">{% for a in attempts|reverse %}<li data-attempt="{{ a.attempt }}">Attempt {{ a.attempt }} · <span class="tc-status tc-{{ a.status|lower }}">{{ a.status|title }}</span> · {{ a.recorded_at.strftime('%d %b %Y %H:%M') }} UTC{% if a.issue %} · Issue: {{ a.issue }}{% endif %}{% if a.notes %} · {{ a.notes }}{% endif %}</li>{% endfor %}</ol>
+</section>
+{% endif %}
+{% endblock %}

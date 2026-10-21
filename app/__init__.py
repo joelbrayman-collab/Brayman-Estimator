@@ -199,6 +199,9 @@ def _register_office_auth(app: Flask) -> None:
     app.cli.add_command(build_cli)
     app.cli.add_command(legal_content_cli)
     app.cli.add_command(signing_cli)
+    from app.training.environment import register_cli as register_training_cli
+
+    register_training_cli(app)
 
     # 30-minute inactivity sign-out (Joel, 18 Oct 2026). Runs before the sign-in wall, so an idle
     # session is ended first and the wall then treats the request as signed out.
@@ -261,6 +264,10 @@ def _register_office_auth(app: Flask) -> None:
             or endpoint.startswith("decision_tools.")
             or endpoint.startswith("supplier_quote_link.")  # a supplier's customer approves a quotation (20 Oct 2026)
         ):
+            return None
+        # Training & Acceptance Centre (21 Oct 2026): only on the training site; the blueprint checks the
+        # site switch, sign-in and roles itself, for contractor and supplier trainees alike.
+        if endpoint is not None and endpoint.startswith("training."):
             return None
         # Supplier Hub (ADR-047, Joel 17 Oct 2026): suppliers sign in separately and land in their
         # own workspace. Office pages refuse them; supplier pages refuse office users.
@@ -483,6 +490,7 @@ def create_app(config=None):
     from app.routes.people_access import people_access_bp
     from app.routes.getting_started import getting_started_bp
     from app.routes.accounting import accounting_bp
+    from app.routes.training import training_bp
     from app.routes.company_attention import company_attention_bp
     from app.routes.business_owner_assessment import decision_tools_bp
     from app.routes.calculators import calculators_bp
@@ -534,6 +542,7 @@ def create_app(config=None):
     app.register_blueprint(people_access_bp)
     app.register_blueprint(getting_started_bp)
     app.register_blueprint(accounting_bp)
+    app.register_blueprint(training_bp)
     app.register_blueprint(company_attention_bp)
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)

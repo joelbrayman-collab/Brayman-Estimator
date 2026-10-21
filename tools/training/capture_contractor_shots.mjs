@@ -335,7 +335,6 @@ step("c02: People & Access: add a Field-only person, the access controls, Crews"
   const crew = await pg.locator("main").innerText();
   assert.match(crew, /Kevin Field/);
   assert.match(crew, /Liam Field/);
-  await shot(pg, "c02-crew-members");
 });
 
 // ================================================================== Module 3: workers and iPhones
@@ -377,7 +376,7 @@ step("c05: My Calendar, Company Calendar, a company site visit and a personal ap
   await shot(pg, "c05-my-company-switch", pg.getByRole("link", { name: "Company Calendar" }).first());
   for (const [visibility, title, type, start, shotName] of [
     ["COMPANY", "Site visit: Harbour Lane Pool Deck (training)", "SITE_VISIT", "10:00", "c05-appointment-company"],
-    ["PERSONAL", "Truck service (training, personal)", "GENERAL", "15:00", "c05-appointment-personal"]]) {
+    ["PERSONAL", "Truck service (training, personal)", "GENERAL", "15:00", ""]]) {
     await go(pg, "/schedule");
     await submit(pg, pg.locator("a[data-new-appointment]").first());
     await pg.check(`[name=visibility][value=${visibility}]`);
@@ -393,7 +392,7 @@ step("c05: My Calendar, Company Calendar, a company site visit and a personal ap
       await pg.selectOption("[name=project_id]", { label: JOB });
       await shot(pg, "c05-appointment-form");
     }
-    await shot(pg, shotName, pg.getByRole("button", { name: "Add appointment" }));
+    if (shotName) await shot(pg, shotName, pg.getByRole("button", { name: "Add appointment" }));
     await submit(pg, pg.getByRole("button", { name: "Add appointment" }));
     assert.doesNotMatch(await flash(pg), /error|could not|required/i);
   }
@@ -410,10 +409,8 @@ step("c05: My Calendar, Company Calendar, a company site visit and a personal ap
   const otext = await o.pg.locator("main").innerText();
   assert.match(otext, /Site visit: Harbour Lane/);
   assert.doesNotMatch(otext, /Truck service/);
-  await shot(o.pg, "c05-company-calendar-office");
   const phone = await person("ben", PHONE);
   await go(phone.pg, dayUrl(day(1), "&view=day"));
-  await shot(phone.pg, "c05-day-phone");
   // The feed.
   await go(pg, "/schedule");
   await submit(pg, pg.getByRole("link", { name: /Outlook · Google · Apple Calendar/ }));
@@ -454,7 +451,6 @@ step("c06: Clients, Morgan Ellis, the Harbour Lane project hub, setup, location 
   await shot(pg, "c06-location", pg.locator("main form button[type=submit]").last());
   await submit(pg, pg.locator("main form button[type=submit]").last());
   await go(pg, `/projects/${W.projectId}/setup`);
-  await shot(pg, "c06-setup-after");
   await go(pg, "/projects/new");
   await pg.fill("[name=name]", "Ellis Front Steps (training, existing job)");
   await pg.selectOption("[name=client_id]", { label: CUSTOMER });
@@ -479,7 +475,6 @@ step("c07: the plan PDF on the project, the concrete calculator, Deck Takeoff an
   await shot(pg, "c07-upload", pg.getByRole("button", { name: "Upload" }));
   await submit(pg, pg.getByRole("button", { name: "Upload" }));
   assert.doesNotMatch(await flash(pg), /error|could not/i);
-  await shot(pg, "c07-uploaded");
   await go(pg, `/projects/${W.projectId}/plans`);
   assert.match(await pg.locator("main").innerText(), /harbour-lane-deck-plan-training/);
   await shot(pg, "c07-plan-listed", pg.locator("main", { hasText: "harbour-lane-deck-plan-training" }).locator("a", { hasText: /harbour-lane-deck-plan-training/ }));
@@ -503,7 +498,6 @@ step("c07: the plan PDF on the project, the concrete calculator, Deck Takeoff an
   await go(pg, `/projects/${W.projectId}/drawings`);
   await shot(pg, "c07-construction-drawings");
   await go(pg, `/projects/${W.projectId}/setup`);
-  await shot(pg, "c07-setup-after");
 });
 
 // ================================================================== Module 8: suppliers, quotes (the order is placed after acceptance)
@@ -516,7 +510,6 @@ step("c08: Suppliers, a concrete request to BMR, Darcy quotes in the Supplier Hu
   await go(pg, `/projects/${W.projectId}`);
   await shot(pg, "c08-hub-purchasing", pg.getByRole("link", { name: "Supplier requests, concrete and orders" }));
   await submit(pg, pg.getByRole("link", { name: "Supplier requests, concrete and orders" }));
-  await shot(pg, "c08-supplier-requests");
   const f = pg.locator("form[action$='/concrete-requests']");
   await f.locator("[name=volume_m3]").fill("2.5");
   await f.locator("[name=strength_mpa]").fill("32");
@@ -637,7 +630,6 @@ step("c10: a proposal template, sign off, send to Morgan, Morgan accepts on her 
   await shot(pg, "c10-send", send.locator("button[type=submit]"));
   await submit(pg, send.locator("button[type=submit]"));
   assert.match(await flash(pg), /Proposal sent to/);
-  await shot(pg, "c10-sent");
   const mail = newestMail("PROPOSAL_INVITATION", "morgan.ellis@training.calibraytai.invalid");
   assert.equal(mail.count, 1);
   const c = await context(PHONE, { isMobile: true, hasTouch: true });
@@ -646,18 +638,15 @@ step("c10: a proposal template, sign off, send to Morgan, Morgan accepts on her 
   const page = await c.pg.locator("body").innerText();
   for (const marker of ["6800", "6,800", "Unit cost", "Markup"]) assert.ok(!page.includes(marker), `the customer sees ${marker}`);
   await shot(c.pg, "c10-customer-link");
-  await shot(c.pg, "c10-customer-total", c.pg.getByText(/Grand Total/).first());
   await c.pg.check("[name=accept]");
   await c.pg.fill("[name=confirmed_name]", CUSTOMER);
   await shot(c.pg, "c10-customer-accept", c.pg.getByRole("button", { name: "Accept Proposal" }));
   await submit(c.pg, c.pg.getByRole("button", { name: "Accept Proposal" }));
   assert.match(await c.pg.locator("body").innerText(), /Proposal accepted/);
-  await shot(c.pg, "c10-customer-accepted");
   await go(pg, W.proposalUrl);
   assert.match(await pg.locator("main").innerText(), /Accepted/);
   await shot(pg, "c10-accepted");
   await go(pg, `/projects/${W.projectId}`);
-  await shot(pg, "c10-hub-contract", pg.getByRole("link", { name: "Review contract" }).first());
   await submit(pg, pg.getByRole("link", { name: "Review contract" }).first());
   await shot(pg, "c10-contract-review");
   const gen = pg.getByRole("button", { name: "Generate contract" });
@@ -692,9 +681,7 @@ step("c11: a work item with an activity, Set dates on the calendar, the crew ass
   await submit(pg, original.getByRole("button", { name: "Record as original work" }));
   assert.doesNotMatch(await flash(pg), /can no longer/);
   console.log("RECORDED original work: " + (await flash(pg)));
-  await shot(pg, "c11-original-recorded");
   await go(pg, "/schedule");
-  await shot(pg, "c11-set-dates-link", pg.getByRole("link", { name: "Set dates" }).first());
   await submit(pg, pg.getByRole("link", { name: "Set dates" }).first());
   await Promise.all([pg.waitForNavigation(), pg.selectOption("[name=project_id]", { label: JOB })]);
   await pg.selectOption("[name=project_work_element_id]", { label: WORK_ITEM });
@@ -707,7 +694,6 @@ step("c11: a work item with an activity, Set dates on the calendar, the crew ass
   if ((await dates.getAttribute("open")) === null) await dates.locator("summary").first().click();
   const card = pg.locator(`details[data-project-card="${W.projectId}"]`);
   if ((await card.getAttribute("open")) === null) await card.locator("summary").click();
-  await shot(pg, "c11-edit-dates-link", card.getByRole("link", { name: "Edit dates" }).first());
   await submit(pg, card.getByRole("link", { name: "Edit dates" }).first());
   W.itemUrl = new URL(pg.url()).pathname;
   await pg.selectOption("[name=crew_id]", { label: CREW });
@@ -716,9 +702,7 @@ step("c11: a work item with an activity, Set dates on the calendar, the crew ass
   assert.match(await flash(pg), /Assignment saved/);
   await go(pg, W.itemUrl);
   assert.match(await pg.locator("main").innerText(), /Pool deck crew \(training\)/);
-  await shot(pg, "c11-assigned");
   await go(pg, dayUrl(day(0), "&view=week&scope=company"));
-  await shot(pg, "c05-company-week-scheduled");
 });
 
 // ================================================================== Module 8 (order): after acceptance, linked to the schedule
@@ -745,7 +729,6 @@ step("c08: Ben places the concrete order for today's work; Darcy confirms; Deliv
   await submit(store.pg, store.pg.getByRole("button", { name: "Confirm order" }));
   await go(pg, `/projects/${W.projectId}/supplier-requests`);
   assert.match(await pg.locator("main").innerText(), /[Cc]onfirmed/);
-  await shot(pg, "c08-order-confirmed", pg.locator("details[data-mark-delivered] summary"));
   await go(pg, "/deliveries");
   assert.match(await pg.locator("main").innerText(), new RegExp(W.po));
   await shot(pg, "c08-deliveries");
@@ -821,7 +804,6 @@ step("c11: the office sees the field note, turns the extra work into an approved
   await go(pg, `/work-structure/projects/${W.projectId}`);
   await shot(pg, "c11-extra-work-office", pg.locator("h2", { hasText: "Extra steps to the lawn" }));
   await go(pg, `/projects/${W.projectId}`);
-  await shot(pg, "c11-new-change-order-link", pg.getByRole("link", { name: "New Change Order" }));
   await submit(pg, pg.getByRole("link", { name: "New Change Order" }));
   await pg.fill("[name=title]", "Extra steps to the lawn (training)");
   const pick = pg.locator("[name=project_id]");
@@ -834,7 +816,6 @@ step("c11: the office sees the field note, turns the extra work into an approved
   await submit(pg, pg.getByRole("button", { name: "Create Change Order" }));
   console.log("RECORDED change order: " + (await flash(pg)) + " -> " + pg.url());
   W.coUrl = new URL(pg.url()).pathname;
-  await shot(pg, "c11-change-order");
   await go(pg, `${W.coUrl}?tab=items`);
   const add = pg.locator("form").filter({ has: pg.getByRole("button", { name: "Add Item" }) });
   await add.locator("[name=description]").fill("Two extra steps to the lawn, composite, supplied and installed (training)");
@@ -848,7 +829,6 @@ step("c11: the office sees the field note, turns the extra work into an approved
   await shot(pg, "c11-change-order-approve", pg.getByRole("button", { name: "Save Status" }));
   await submit(pg, pg.getByRole("button", { name: "Save Status" }));
   console.log("RECORDED change order status: " + (await flash(pg)));
-  await shot(pg, "c11-change-order-approved");
   // Time review.
   await go(pg, `/time?project_id=${W.projectId}`);
   assert.match(await pg.locator("main").innerText(), /Kevin Field/);
@@ -864,7 +844,6 @@ step("c11: the office sees the field note, turns the extra work into an approved
   await shot(pg, "c11-mark-delivered", pg.getByRole("button", { name: "Mark delivered" }));
   await submit(pg, pg.getByRole("button", { name: "Mark delivered" }));
   console.log("RECORDED delivered: " + (await flash(pg)));
-  await shot(pg, "c11-delivered");
 });
 
 // ================================================================== Module 4: QuickBooks
@@ -911,7 +890,6 @@ step("c04: invoices from the proposal and the change order; files for QuickBooks
   await shot(pg, "c04-check-quickbooks", pg.getByRole("button", { name: "Check" }));
   const o = await olivia();
   await go(o.pg, "/accounting");
-  await shot(o.pg, "c04-accounting-office");
 });
 
 // ================================================================== Module 12: the working day and closeout
@@ -922,7 +900,6 @@ step("c12: Home in the morning, the final invoice, Getting started 15 of 15, clo
   await shot(pg, "c12-home-morning");
   const o = await olivia();
   await go(o.pg, "/");
-  await shot(o.pg, "c12-home-office");
   const phone = await person("ben", PHONE);
   await go(phone.pg, "/");
   await shot(phone.pg, "c12-home-phone");
@@ -936,14 +913,12 @@ step("c12: Home in the morning, the final invoice, Getting started 15 of 15, clo
   await shot(pg, "c12-final-invoice", pg.getByRole("button", { name: "Make the invoice" }));
   await submit(pg, pg.getByRole("button", { name: "Make the invoice" }));
   console.log("RECORDED final invoice: " + (await flash(pg)));
-  await shot(pg, "c12-final-invoice-made");
   await markDone(pg, "working_day");
   await go(pg, "/getting-started");
   const [done, total] = (await pg.locator("[data-getting-started]").getAttribute("data-getting-started")).split("/").map(Number);
   console.log(`RECORDED Getting started ${done} of ${total}`);
   await shot(pg, "c12-getting-started-done");
   await go(pg, `/projects/${W.projectId}`);
-  await shot(pg, "c12-close-link", pg.getByRole("link", { name: "Close Project" }));
   await submit(pg, pg.getByRole("link", { name: "Close Project" }));
   await shot(pg, "c12-close-confirm");
   const box = pg.locator("main form input[type=checkbox]");
@@ -952,14 +927,14 @@ step("c12: Home in the morning, the final invoice, Getting started 15 of 15, clo
   console.log("RECORDED close: " + (await flash(pg)));
   await shot(pg, "c12-closed");
   await go(pg, "/projects/?view=closed");
-  await shot(pg, "c12-closed-list");
+  assert.match(await pg.locator("main").innerText(), /Harbour Lane Pool Deck/);
   const reopen = pg.locator(`a[href="/projects/${W.projectId}/reopen"]`);
   await go(pg, `/projects/${W.projectId}`);
-  if (await reopen.count()) {
-    await shot(pg, "c12-reopen-link", reopen);
-    await submit(pg, reopen.first());
-    await shot(pg, "c12-reopen-confirm");
-  }
+  assert.equal(await reopen.count() > 0, true, "the owner is offered Reopen Project");
+  await submit(pg, reopen.first());
+  await shot(pg, "c12-reopen-confirm");
+  await submit(pg, pg.locator("main form button[type=submit]", { hasText: "Reopen Project" }));
+  assert.match(await flash(pg), /This Project is current/);
   // Office staff are not offered Close Project.
   await go(o.pg, `/projects/${W.projectId}`);
   assert.equal(await o.pg.locator(`a[href="/projects/${W.projectId}/close"]`).count(), 0);

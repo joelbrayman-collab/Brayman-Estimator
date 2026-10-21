@@ -441,3 +441,88 @@ def test_invitation_activation_and_history_are_recorded(app):
     assert actions[:4] == ["ADDED", "FIELD_ONLY_MARKED", "INVITATION_SENT", "ACTIVATED"] and actions[-1] == "DEACTIVATED"
     page = owner.get(f"/settings/people/{membership_id}").get_data(as_text=True)
     assert "Invitation emailed" in page and "Chose a password (account active)" in page and "Deactivated" in page
+
+
+# ------------------------------------------------------------------ email not delivered (defect 9, 21 Oct 2026)
+
+def _one_time_link(html):
+    match = re.search(r'id="one-time-link" value="([^"]+)"', html)
+    return match.group(1) if match else None
+
+
+@pytest.mark.parametrize("setting", ["allowlist", "postmark_without_token", "postmark_refused", "hosted_local"])
+def test_owner_gets_a_one_time_link_when_the_invitation_email_is_not_delivered(app, caplog, setting):
+    """Production sends through Postmark (TRANSACTIONAL_EMAIL_PROVIDER=postmark) with a UAT allowlist.
+    When the email is held back, not configured, refused, or only captured on a hosted server, the owner
+    is told plainly and is shown the person's set-password link once, on the person's page: the same
+    token (72 h invitation, one use), audited in people_access_events, never logged."""
+    from datetime import datetime, timedelta
+
+    from app.models.people_access_event import PeopleAccessEvent
+    from app.services.transactional_email import TransportResult
+
+    if setting == "allowlist":
+        app.config["TRANSACTIONAL_UAT_ALLOWLIST"] = "joel@example.invalid"
+    elif setting == "postmark_without_token":
+        app.config["TRANSACTIONAL_EMAIL_PROVIDER"] = "postmark"
+        app.config["POSTMARK_SERVER_TOKEN"] = ""
+    elif setting == "postmark_refused":
+        app.config["TRANSACTIONAL_EMAIL_PROVIDER"] = "postmark"
+        app.config["POSTMARK_SERVER_TOKEN"] = "synthetic-token"
+        app.config["POSTMARK_HTTP_SEND"] = lambda payload: TransportResult(status="FAILED", provider="postmark",
+                                                                            error_code="POSTMARK_406")
+    else:
+        app.config["CALIBRAYTAI_HOSTED"] = "1"
+    caplog.set_level(logging.DEBUG)
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]})
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200 and response.headers["Cache-Control"] == "no-store"
+    assert "was not delivered" in html and "data-one-time-link" in html
+    link = _one_time_link(html)
+    assert link and "/reset-password/" in link
+    path = link[link.index("/reset-password/"):]
+    with app.app_context():
+        user = User.query.filter_by(email=NEW_PERSON[1]).one()
+        membership = UserMembership.query.filter_by(user_id=user.id).one()
+        token = PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).one()
+        assert timedelta(hours=71) < token.expires_at - datetime.utcnow() <= timedelta(hours=72)  # 72 h invitation
+        assert path.split("/reset-password/")[1].split(".")[0] == token.lookup_key
+        event = PeopleAccessEvent.query.filter_by(membership_id=membership.id, action="INVITATION_SENT").one()
+        assert event.detail.startswith("Not emailed") and "shown to" in event.detail
+        assert path.split(".")[-1] not in (event.detail or "")
+    secret = path.rsplit(".", 1)[1]
+    assert all(secret not in record.getMessage() for record in caplog.records)  # never logged
+
+    # Only in that one response: the person's page does not show it again.
+    again = owner.get(f"/settings/people/{membership.id}").get_data(as_text=True)
+    assert secret not in again and "data-one-time-link" not in again
+    assert "Invitation link given in person" in again
+
+    # The person uses it once; a second use is refused.
+    person = app.test_client()
+    assert person.post(path, data={"password": "Synthetic-nora-pass-1",
+                                   "confirm_password": "Synthetic-nora-pass-1"}).status_code == 302
+    assert login_office_user(person, email=NEW_PERSON[1], password="Synthetic-nora-pass-1").status_code == 302
+    reuse = app.test_client().post(path, data={"password": "Synthetic-other-pass-1", "confirm_password": "Synthetic-other-pass-1"})
+    assert reuse.status_code != 302 or "/login" not in reuse.headers.get("Location", "")
+    with app.app_context():
+        assert PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).count() == 0
+
+
+def test_a_delivered_email_shows_no_link_to_the_owner(app):
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
+                          follow_redirects=True)
+    html = response.get_data(as_text=True)
+    assert "was emailed to" in html and "expires in 72 hours" in html
+    assert "data-one-time-link" not in html and "/reset-password/" not in html
+
+
+def test_only_the_owner_side_ever_sees_the_link(app):
+    """Another office user cannot send links at all (403), so cannot be shown one."""
+    ids = _ids(app)
+    app.config["TRANSACTIONAL_UAT_ALLOWLIST"] = "joel@example.invalid"
+    staff = _client(app, STAFF)
+    response = staff.post(f"/settings/people/{ids['admin_m']}/send-link")
+    assert response.status_code == 403 and b"reset-password" not in response.data

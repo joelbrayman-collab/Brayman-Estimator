@@ -239,7 +239,7 @@ def request_password_reset(
         )
         db.session.commit()
         return PublicResetRequestResult()
-    lookup_key = _issue_token_and_send(user, ip=ip, now=now)
+    lookup_key = _issue_token_and_send(user, ip=ip, now=now).lookup_key
     _record_attempt(
         client_ip=ip,
         email_key_hash=email_key,
@@ -253,7 +253,14 @@ def request_password_reset(
 INVITATION_TTL_SECONDS = 72 * 3600  # an invitation waits for the person longer than a reset link
 
 
-def _issue_token_and_send(user: User, *, ip: str, now: datetime, invitation: Optional[dict] = None) -> str:
+class _IssuedLink(NamedTuple):
+    lookup_key: str
+    path: str          # the secret path; held in memory only, never stored or logged
+    message: object    # the TransactionalMessage row (delivery status)
+    expires_at: datetime
+
+
+def _issue_token_and_send(user: User, *, ip: str, now: datetime, invitation: Optional[dict] = None) -> _IssuedLink:
     """Replace the user's unused links with one new link and send the PASSWORD_RESET email
     (or, for People & Access invitations, the ACCOUNT_INVITATION email with a 72-hour link)."""
     _invalidate_unused_tokens(user.id, now=now)
@@ -275,15 +282,15 @@ def _issue_token_and_send(user: User, *, ip: str, now: datetime, invitation: Opt
     if invitation is not None:
         from app.models.transactional_message import TEMPLATE_ACCOUNT_INVITATION
 
-        send_transactional_message(
+        message = send_transactional_message(
             TEMPLATE_ACCOUNT_INVITATION,
             user.email,
             variables={"reset_url": reset_url, "expires_hours": str(INVITATION_TTL_SECONDS // 3600), **invitation},
             related_type="user",
             related_id=user.id,
         )
-        return lookup_key
-    send_transactional_message(
+        return _IssuedLink(lookup_key, path, message, token.expires_at)
+    message = send_transactional_message(
         TEMPLATE_PASSWORD_RESET,
         user.email,
         variables={
@@ -293,10 +300,39 @@ def _issue_token_and_send(user: User, *, ip: str, now: datetime, invitation: Opt
         related_type="user",
         related_id=user.id,
     )
-    return lookup_key
+    return _IssuedLink(lookup_key, path, message, token.expires_at)
 
 
-def send_set_password_link(user: User, *, client_ip: Optional[str] = None, invitation: Optional[dict] = None) -> None:
+@dataclass(frozen=True)
+class SetPasswordLinkOutcome:
+    """What happened to a link the owner sent (defect 9, 21 Oct 2026).
+
+    ``delivered`` is False when the email was not handed to the mail service: delivery not configured
+    (FAILED_CONFIG), refused or errored (FAILED), held back by the UAT recipient allowlist
+    (SKIPPED_ALLOWLIST), or only written to a file on a hosted server (LOCAL_CAPTURED with hosting on).
+    Then, and only then, ``path`` carries the one-time secret path so the owner's page can show it once
+    for the owner to give the person; it is the same token (same expiry, one use) the email carried.
+    """
+
+    delivered: bool
+    status: str
+    expires_at: datetime
+    path: Optional[str] = None
+
+
+def _delivered(status: str) -> bool:
+    from app import _is_hosted
+    from app.models.transactional_message import STATUS_ACCEPTED, STATUS_LOCAL_CAPTURED
+
+    if status == STATUS_ACCEPTED:
+        return True
+    # Local capture is the delivery on a development or test office (the captured file is read there);
+    # on a hosted office it means the email went nowhere.
+    return status == STATUS_LOCAL_CAPTURED and not _is_hosted(current_app)
+
+
+def send_set_password_link(user: User, *, client_ip: Optional[str] = None,
+                           invitation: Optional[dict] = None) -> SetPasswordLinkOutcome:
     """People & Access (21 Oct 2026): the owner sends a person the set-password email.
 
     Same token table, same PASSWORD_RESET email and the same delivery service (allowlist
@@ -316,16 +352,20 @@ def send_set_password_link(user: User, *, client_ip: Optional[str] = None, invit
     )
     if _count_attempts(now=now, window_seconds=email_window, email_key_hash=email_key) >= email_limit:
         raise PasswordResetServiceError(BLOCK_RATE_LIMITED)
-    lookup_key = _issue_token_and_send(user, ip=ip, now=now, invitation=invitation)
+    issued = _issue_token_and_send(user, ip=ip, now=now, invitation=invitation)
     # Recorded under a fixed marker, not the office's address, so links the owner sends never
     # use up the office's own forgot-password budget; they do count for this person's email.
     _record_attempt(
         client_ip=OWNER_SENT_ATTEMPT_MARKER,
         email_key_hash=email_key,
-        lookup_key=lookup_key,
+        lookup_key=issued.lookup_key,
         outcome=OUTCOME_OK,
     )
     db.session.commit()
+    status = getattr(issued.message, "status", "") or ""
+    delivered = _delivered(status)
+    return SetPasswordLinkOutcome(delivered=delivered, status=status, expires_at=issued.expires_at,
+                                  path=None if delivered else issued.path)
 
 
 def parse_reset_credential(credential: str) -> tuple:

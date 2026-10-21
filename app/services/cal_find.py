@@ -513,13 +513,116 @@ MSG_AMBIGUOUS = "More than one project matches “{words}”. Which one do you m
 MSG_PROJECT_EMPTY = "{project} has no {what} yet."
 
 
-def find(raw_query: str) -> dict:
+# ---------------------------------------------------------------- the Workflow Guide (21 Oct 2026)
+
+# "Where am I?", "What's next?", "workflow", "next step": answered from the governed workflow definition
+# (app/workflow_map/definition.py) and the page Cal was opened on. Read-only; nothing is generated.
+_WORKFLOW_PHRASES = ("where am i", "what next", "whats next", "what comes next", "next step", "what stage",
+                     "which stage", "workflow", "work flow")
+_WORKFLOW_WORDS = frozenset({"workflow", "guide", "stage", "stages", "step", "steps", "am", "comes", "flow", "work"})
+
+
+def wants_workflow(raw: str) -> bool:
+    text = f" {_normalize(raw).replace(chr(39), '')} "
+    return any(f" {p} " in text for p in _WORKFLOW_PHRASES)
+
+
+def _here(here: str):
+    """(endpoint, view args, query project id) of the office page Cal was opened on, or (None, {}, None)."""
+    from flask import current_app
+
+    if not here or not here.startswith("/") or here.startswith("//"):
+        return None, {}, None
+    path = here.split("#", 1)[0].split("?", 1)[0]
+    try:
+        endpoint, args = current_app.url_map.bind("localhost").match(path, method="GET")
+    except Exception:
+        return None, {}, None
+    try:
+        project_id = int(_query_value(here, "project_id") or "")
+    except ValueError:
+        project_id = None
+    return endpoint, args, project_id
+
+
+def _query_value(here: str, name: str):
+    query = here.split("#", 1)[0].partition("?")[2]
+    for pair in query.split("&"):
+        key, _, value = pair.partition("=")
+        if key == name:
+            return value
+    return None
+
+
+def workflow_items(here: str = "", words=()) -> list:
+    """Where the page Cal was opened on sits in the contractor workflow, what comes next, and stages whose
+    name was asked for. Links go to the Workflow Guide; a project is used only if it is this company's."""
+    from app.models import Project
+    from app.workflow_map import definition as WD
+
+    endpoint, args, project_id = _here(here)
+    if endpoint == "workflow_map.contractor":
+        stage_q = parse_qs_stage(here)
+    else:
+        stage_q = None
+    project_id = project_id or (args.get("id") if endpoint and endpoint.startswith("projects.") else None) \
+        or args.get("project_id")
+    project = None
+    if project_id:
+        project = Project.query.filter_by(id=project_id, organization_id=_org_id()).first()
+    extra = {"project_id": project.id} if project else {}
+
+    def link(stage_id):
+        return url_for("workflow_map.contractor", stage=stage_id, **extra) + "#workflow-stage"
+
+    candidates = [s for s in WD.CONTRACTOR_STAGES
+                  if endpoint and ((s.primary and s.primary.endpoint == endpoint)
+                                   or any(x.dest and x.dest.endpoint == endpoint for x in s.substeps))]
+    current = WD.stage(stage_q) if stage_q and WD.stage(stage_q) in WD.CONTRACTOR_STAGES else None
+    if current is None and project is not None:
+        by_status = WD.stage(WD.stage_for_project_status(project.status) or "")
+        if by_status is not None and (not candidates or by_status in candidates):
+            current = by_status
+    if current is None and candidates:
+        current = candidates[0]
+    items = []
+    if current is not None:
+        where = f" · {project.name}" if project else ""
+        items.append(Item(f"You are in {current.label} — {current.title}", link(current.id),
+                          f"Stage {current.number} of {len(WD.CONTRACTOR_STAGES)}{where}. {current.summary}", "workflow"))
+        nxt = WD.CONTRACTOR_STAGES[current.number] if current.number < len(WD.CONTRACTOR_STAGES) else None
+        if nxt is not None:
+            items.append(Item(f"Next: {nxt.label} — {nxt.title}", link(nxt.id), nxt.summary, "workflow"))
+        elif current.loops:
+            back = WD.stage(current.loops[0].target)
+            items.append(Item(f"Next: {back.label} — {current.loops[0].text}", link(back.id), back.summary, "workflow"))
+    asked = {w for w in words if w not in _WORKFLOW_WORDS}
+    for s in WD.CONTRACTOR_STAGES:
+        label_words = set(_normalize(s.label).split()) | {s.label.lower().replace(" ", "")}
+        if asked and asked <= label_words and not any(i.url == link(s.id) for i in items):
+            items.append(Item(f"{s.label} — {s.title}", link(s.id), s.summary, "workflow"))
+    items.append(Item("Workflow Guide", url_for("workflow_map.contractor", **extra), "The whole contractor workflow, "
+                      "stage by stage", "tool"))
+    return items
+
+
+def parse_qs_stage(here: str):
+    return _query_value(here, "stage")
+
+
+def find(raw_query: str, here: str = "") -> dict:
     """Answer one Find It query for the signed-in office user. Read-only."""
     parsed = parse_query(raw_query)
-    if not parsed.raw or not (parsed.words or parsed.intents or parsed.wants_help):
+    workflow_asked = wants_workflow(parsed.raw)
+    if workflow_asked:
+        parsed.words = [w for w in parsed.words if w not in _WORKFLOW_WORDS and w not in ("what", "whats", "next")]
+    if not parsed.raw or not (parsed.words or parsed.intents or parsed.wants_help or workflow_asked):
         return {"query": parsed.raw, "status": "empty", "message": MSG_EMPTY, "groups": []}
     if not getattr(current_user, "is_authenticated", False):
         return {"query": parsed.raw, "status": "signed_out", "message": "Sign in to use Cal.", "groups": []}
+    if workflow_asked and not parsed.words and not parsed.intents:
+        return {"query": parsed.raw, "status": "results", "message": "",
+                "groups": [Group("Workflow", workflow_items(here)).as_dict()]}
 
     org_id = _org_id()
     groups: list = []
@@ -595,6 +698,8 @@ def find(raw_query: str) -> dict:
     if help_items:
         groups.append(Group("Help", help_items))
 
+    if workflow_asked:
+        groups.insert(0, Group("Workflow", workflow_items(here, parsed.words)))
     groups = [g for g in groups if g.items]
     if not groups:
         status = "none"

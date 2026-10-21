@@ -81,7 +81,18 @@ def lesson(key):
     ticked = set(svc.steps_ticked(trainee, key))
     return render_template("training/lesson.html", trainee=trainee, module=module, lesson=item, step=step,
                            current=item.steps[step], prev_key=prev_key, next_key=next_key, ticked=ticked,
-                           progress=progress, notes=svc.feedback(trainee, key))
+                           progress=progress, notes=svc.feedback(trainee, key),
+                           workflow_stages=_workflow_stages(trainee, key))
+
+
+def _workflow_stages(trainee, lesson_key):
+    """The Workflow map stages this lesson belongs to, on the trainee's own map (link back to the map)."""
+    from app.workflow_map import definition as WD
+    from app.workflow_map.pages import training_viewer
+
+    map_key, _viewer = training_viewer(trainee)
+    on_map = {s.id for s in WD.map_stages(map_key)}
+    return [s for s in WD.stages_for_lesson(lesson_key) if s.id in on_map]
 
 
 @training_bp.route("/lessons/<key>/check", methods=["POST"])
@@ -232,8 +243,13 @@ def uat_case(key):
     svc.save_uat_position(trainee, key)
     attempts = svc.uat_history(trainee).get(key, [])
     module = next((m for m in C.modules() if m.key == case.module_key), None)
+    from app.workflow_map import definition as WD
+    from app.workflow_map.pages import training_viewer
+
+    on_map = {s.id for s in WD.map_stages(training_viewer(trainee)[0])}
     return render_template("training/uat_case.html", trainee=trainee, case=case, attempts=attempts, module=module,
-                           statuses=UAT_STATUSES)
+                           statuses=UAT_STATUSES,
+                           workflow_stages=[s for s in WD.stages_for_uat(key) if s.id in on_map])
 
 
 @training_bp.route("/admin")

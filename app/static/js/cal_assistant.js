@@ -81,7 +81,7 @@
         pending = window.AbortController ? new AbortController() : null;
         results.textContent = "";
         results.appendChild(el("p", "cal-message is-none", panel.getAttribute("data-cal-searching")));
-        fetch(findUrl + "?q=" + encodeURIComponent(query), {
+        fetch(findUrl + "?q=" + encodeURIComponent(query) + "&here=" + encodeURIComponent(window.location.pathname + window.location.search), {
             method: "GET",
             credentials: "same-origin",
             headers: { "Accept": "application/json" },

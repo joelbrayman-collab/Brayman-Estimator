@@ -11,4 +11,4 @@ CAL_SEARCHING = "Looking…"
 CAL_FOOTNOTE = "Cal finds records you can already open. It does not change anything."
 CAL_ERROR = "Cal couldn't search just now. Try again in a moment."
 CAL_SIGNED_OUT = "Your session has ended. Sign in again to use Cal."
-CAL_EXAMPLES = ("Harbour Lane drawings", "proposals", "Upcoming deliveries", "stair calculator")
+CAL_EXAMPLES = ("Harbour Lane drawings", "proposals", "Upcoming deliveries", "stair calculator", "What's next?")

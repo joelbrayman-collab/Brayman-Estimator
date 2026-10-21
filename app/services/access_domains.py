@@ -29,6 +29,8 @@ ACCESS_DOMAIN_SENSITIVE_FINANCIAL = "SENSITIVE_FINANCIAL"
 MEMBERSHIP_RESTRICTION_FIELD_ONLY = "FIELD_ONLY"
 
 # What a field-only user may open. Everything else: pages redirect to /field/today, POST and API 403.
+# "field." includes field.workflow, the simplified Field workflow (Workflow Maps, 21 Oct 2026): it links only
+# to Field pages and the person's own password page; the office Workflow Guide redirects there instead.
 FIELD_ONLY_ALLOWED_PREFIXES = ("field.",)
 FIELD_ONLY_ALLOWED_ENDPOINTS = frozenset(
     {

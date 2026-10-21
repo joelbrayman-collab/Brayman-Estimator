@@ -14,6 +14,7 @@ from app.services.access_domains import (
     describe_access_domains,
     grant_access_domain,
     revoke_access_domain,
+    set_field_only,
 )
 from app.services.instance_authority import (
     InstanceAuthorityError,
@@ -195,6 +196,22 @@ def show_access_domains_command(membership_id):
     click.echo(f"membership_active: {'yes' if info['membership_active'] else 'no'}")
     click.echo(f"stored_domains: {stored}")
     click.echo(f"effective_{ACCESS_DOMAIN_COMPANY_MANAGEMENT}: {effective}")
+    click.echo(f"field_only: {'yes' if info['field_only'] else 'no'}")
+
+
+@auth_cli.command("set-field-only")
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--actor-user-id", "actor_user_id", required=True, type=int)
+@click.option("--off", "turn_off", is_flag=True, default=False, help="Clear the mark (office access again).")
+@with_appcontext
+def set_field_only_command(membership_id, actor_user_id, turn_off):
+    """Mark one membership field-only (Field pages and own account only), or clear it with --off.
+    Owner or System Administrator actor only. Idempotent."""
+    try:
+        state = set_field_only(membership_id, not turn_off, actor_user_id)
+    except AccessDomainError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(f"Membership {membership_id} field_only: {'yes' if state else 'no'}.")
 
 
 @auth_cli.command("create-person")

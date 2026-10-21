@@ -1,6 +1,6 @@
 """Operator steps for the roles walk (tools/release/evidence_roles.mjs), run against its temporary database.
 
-Access domains and System Administrator appointments have no office page in V1: the operator runs the
+Access domains, field-only marks and System Administrator appointments have no office page in V1: the operator runs the
 ``flask auth`` commands. This runs those same commands (through Flask's CLI runner) for one person named by
 email. ``deactivate-user`` / ``reactivate-user`` have no command at all in V1; they set the account's
 ``is_active`` flag directly, which is what an operator would have to do today (recorded in the report).
@@ -23,6 +23,7 @@ COMMANDS = {
     "revoke-management": ["revoke-access-domain", "--domain", "COMPANY_MANAGEMENT"],
     "appoint-administrator": ["appoint-system-administrator"],
     "remove-administrator": ["remove-system-administrator"],
+    "mark-field-only": ["set-field-only"],  # crew: Field and own account only (Joel, 21 Oct 2026)
 }
 
 
@@ -43,6 +44,8 @@ def main(uri: str, action: str, email: str) -> int:
         args = ["auth", *COMMANDS[action][:1], "--membership-id", str(membership.id), *COMMANDS[action][1:]]
         if action.endswith("administrator"):
             args += ["--organization-id", ORG, "--actor-user-id", str(owner.id)]
+        if action == "mark-field-only":
+            args += ["--actor-user-id", str(owner.id)]
         result = application.test_cli_runner().invoke(args=args)
         print(result.output.strip())
         return result.exit_code

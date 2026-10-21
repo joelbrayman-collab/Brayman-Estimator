@@ -235,3 +235,107 @@ def test_signed_out_supplier_pages_redirect_to_supplier_login(app):
         assert target == "/supplier/login", path
         assert nxt == [path]
     assert client.get("/supplier/login").status_code == 200
+
+
+# ---------------------------------------------------------------------------------------------------
+# Field-only members (Joel, 21 Oct 2026, V1 defect: crew reached office costs). A membership marked
+# FIELD_ONLY (app/services/access_domains.py set_field_only) reaches only these endpoints besides the
+# public ones above. Frozen: widening what crew can open must be a deliberate change here.
+EXPECTED_FIELD_ONLY_ENDPOINTS = {
+    "field.field_root",
+    "field.today",
+    "field.print_today",
+    "field.week",
+    "field.month",
+    "field.schedule_today",
+    "field.company_today",
+    "field.projects",
+    "field.project_confirm",
+    "field.capture",
+    "field.extra_work",
+    "field.my_time",
+    "field.time_entry",
+    "auth.change_password",
+    "help.ask_help",
+    "api_v1.me",
+    "api_v1.list_projects",
+    "api_v1.get_project",
+    "api_v1.field_events",
+    "api_v1.field_event_detail",
+    "api_v1.field_event_originals",
+    "api_v1.field_event_original_detail",
+    "api_v1.field_event_original_content",
+    "api_v1.field_event_original_display",
+}
+FIELD_WALL_JSON = {"error": "Not available to field users."}
+
+
+def test_field_only_endpoint_set_is_frozen(app):
+    from app.services.access_domains import field_only_endpoint_allowed
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+    allowed = {e for e in endpoints if not _is_public(e) and field_only_endpoint_allowed(e)}
+    assert allowed == EXPECTED_FIELD_ONLY_ENDPOINTS
+
+
+def _field_only_client(app):
+    from app.models.user import UserMembership
+    from app.services.access_domains import set_field_only
+    from app.services.instance_authority import set_instance_owner
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID
+    from tests.auth_fixtures import ensure_office_user, login_office_user
+
+    owner = ensure_office_user(email="owner.sweep@example.invalid", password="owner-pw", display_name="Owner")
+    owner_membership = UserMembership.query.filter_by(user_id=owner.id).one()
+    set_instance_owner(DEFAULT_ORGANIZATION_ID, owner_membership.id, owner.id)
+    crew = ensure_office_user(email="crew.sweep@example.invalid", password="crew-pw", display_name="Crew")
+    set_field_only(UserMembership.query.filter_by(user_id=crew.id).one(), True, owner)
+    client = app.test_client()
+    assert login_office_user(client, "crew.sweep@example.invalid", "crew-pw").status_code == 302
+    return client
+
+
+def test_every_office_route_refuses_a_signed_in_field_only_user(app):
+    client = _field_only_client(app)
+    failures = []
+    exercised = 0
+    for rule, method, path, endpoint in _requests(app):
+        if _is_public(endpoint) or endpoint in EXPECTED_FIELD_ONLY_ENDPOINTS:
+            continue
+        response = client.open(path, method=method, follow_redirects=False)
+        exercised += 1
+        status = response.status_code
+        problem = None
+        if path == "/api" or path.startswith("/api/"):
+            body = response.get_json(silent=True)
+            if method == "GET" or (method == "POST" and _BUILD_API_POST_RE.fullmatch(path)):
+                if status != 403 or body != FIELD_WALL_JSON:
+                    problem = f"expected 403 field wall JSON, got {status} {body}"
+            elif status != 405:
+                problem = f"expected 405, got {status}"
+        elif endpoint.startswith(("supplier_portal.", "supplier_pro_desk.")):
+            if status != 403:
+                problem = f"expected 403 (supplier wall), got {status}"
+        elif method == "GET":
+            if status != 302 or urlparse(response.headers.get("Location", "")).path != "/field/today":
+                problem = f"expected 302 /field/today, got {status} {response.headers.get('Location')}"
+        elif status != 403:
+            problem = f"expected 403, got {status}"
+        if problem:
+            failures.append(f"{method} {path} ({endpoint}): {problem}")
+    assert exercised > 400
+    assert failures == []
+
+
+def test_field_only_user_still_reaches_field_endpoints(app):
+    client = _field_only_client(app)
+    failures = []
+    for rule, method, path, endpoint in _requests(app):
+        if endpoint not in EXPECTED_FIELD_ONLY_ENDPOINTS or method != "GET":
+            continue
+        response = client.open(path, method=method, follow_redirects=False)
+        if response.status_code == 403 or response.status_code >= 500:
+            failures.append(f"{method} {path} ({endpoint}): {response.status_code}")
+        if response.status_code == 302 and not urlparse(response.headers["Location"]).path.startswith("/field"):
+            failures.append(f"{method} {path} ({endpoint}): left Field for {response.headers['Location']}")
+    assert failures == []

@@ -3,7 +3,7 @@
 // Ben (office) estimates and issues a proposal → the customer accepts on the link → the contract is
 // generated, sent, signed by the customer and countersigned → Ben schedules the work and assigns
 // Kevin's crew → concrete request, supplier quote, purchase order and agreed delivery (Supplier Hub)
-// → Kevin (field, 390 px phone) sees the work and delivery on Today / Week, records time and an
+// → Kevin (field-only crew, 390 px phone; office pages and schedule changes refused) sees the work and delivery on Today / Week, records time and an
 // observation → Ben approves the time → change order → punch list → project closed.
 // Every transition is checked where it should show up. Synthetic data only.
 import assert from "node:assert/strict";
@@ -254,6 +254,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(await ben.flash(), /Assignment saved/);
     assert.ok(page.url().includes(hubUrl), "assignment returns to the Project page");
     assert.match(await labourRow.innerText(), new RegExp(`${iso(today)}\\s+${iso(inDays(2))}\\s+E2E Footing Crew`));
+    const labourItemPath = (await labourRow.getByRole("link", { name: "Edit dates" }).getAttribute("href")).split("?")[0];
     // Company Calendar (from the Project page) and Home show the scheduled job.
     await submitLink(ben, page.locator("#hub-schedule").getByRole("link", { name: "Company Calendar" }));
     await ben.go(`/schedule?project_id=${projectId}&view=week`);
@@ -375,9 +376,24 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await kevin.page.selectOption("[name=project_work_element_id]", { label: "Foundation" });
     await kevin.submit(kevin.page.getByRole("button", { name: "Record extra work" }));
     assert.match(await kevin.flash(), /Extra work recorded/);
+    // Kevin is crew, marked field-only (Joel, 21 Oct 2026): every office page sends him back to Field, so
+    // no estimate cost, markup, proposal, contract or client detail reaches him, and he cannot move work.
+    for (const url of ["/", "/projects/", hubUrl, versionUrl, "/estimates/", "/proposals/", `/projects/${projectId}/contract`,
+      "/clients/", "/costs-and-pricing/", "/schedule", "/schedule/items/new", labourItemPath, "/settings/crews"]) {
+      const r = await kevin.ctx.request.get(`${base}${url}`, { maxRedirects: 0 });
+      assert.equal(r.status(), 302, `Kevin on ${url}: ${r.status()}`);
+      assert.equal(new URL(r.headers()["location"], base).pathname, "/field/today", `Kevin on ${url}`);
+    }
+    const kevinToken = await kevin.page.locator("meta[name=csrf-token]").getAttribute("content");
+    for (const url of [labourItemPath, `${labourItemPath}/retire`, `/schedule/projects/${projectId}/shift`]) {
+      const r = await kevin.ctx.request.post(`${base}${url}`, {
+        form: { csrf_token: kevinToken, scheduled_start: iso(inDays(9)), scheduled_end: iso(inDays(9)), days: "7" }, maxRedirects: 0 });
+      assert.equal(r.status(), 403, `Kevin POST ${url}: ${r.status()}`);
+    }
 
     // Ben sees Kevin's time and observation on the Project page and approves the time.
     await ben.go(hubUrl);
+    assert.match(await labourRow.innerText(), new RegExp(`${iso(today)}\\s+${iso(inDays(2))}`), "Kevin did not move the work");
     assert.match(await page.locator("#hub-time").innerText(), /Waiting for approval: 4\.00/);
     const observations = page.locator("article", { has: page.getByRole("heading", { name: "Field Observations" }) });
     assert.match(await observations.innerText(), /Kevin Field \(synthetic crew\)\s+text\s+Current/i);

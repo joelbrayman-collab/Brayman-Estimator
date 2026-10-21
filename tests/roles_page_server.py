@@ -176,6 +176,22 @@ def _proposals(users):
     return facts
 
 
+def _scheduled_work(project_id):
+    """One scheduled work item, so the walk can prove a field user cannot move it (G7, 21 Oct 2026)."""
+    from datetime import date
+
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID as ORG
+    from app.services.schedule import create_schedule_item
+    from app.services.work_structure import add_project_element, ensure_baseline_work_catalog
+
+    ensure_baseline_work_catalog()
+    element = add_project_element(project_id=project_id, display_name="Deck framing (synthetic)", organization_id=ORG)
+    today = date.today()
+    item = create_schedule_item(project_id=project_id, project_work_element_id=element.id,
+                                scheduled_start=today, scheduled_end=today, organization_id=ORG)
+    return {"schedule_item_id": item.id, "schedule_item_start": today.isoformat()}
+
+
 def _signing(users, facts):
     from app.models.signing import SigningRequest
     from app.project_controls.models import ChangeOrderItem
@@ -288,6 +304,7 @@ def main():
         facts = _signing(users, facts)
         facts.update(crew_id=users["crew_id"], org_b_project_id=org_b.id, staff_user_id=users["staff"].id,
                      kevin_user_id=users["kevin"].id)
+        facts.update(_scheduled_work(facts["project_id"]))
     facts.update(_pro_desk(application))
     application.config["WTF_CSRF_ENABLED"] = True  # seed only; the browser walk runs with CSRF on
     _install_clock(clock)

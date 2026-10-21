@@ -144,6 +144,6 @@
 
 <section class="form-panel">
     <h2>History</h2>
-    <ul class="supplier-history">{% for e in events %}<li>{{ e.at.strftime("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} by {{ e.actor_name }}{% if e.detail %} ({{ e.detail }}){% endif %}</li>{% endfor %}</ul>
+    <ul class="supplier-history">{% for e in events %}<li>{{ e.at|local_time("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} by {{ e.actor_name }}{% if e.detail %} ({{ e.detail }}){% endif %}</li>{% endfor %}</ul>
 </section>
 {% endblock %}

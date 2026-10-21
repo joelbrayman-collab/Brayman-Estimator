@@ -2,13 +2,13 @@
     {% if acceptance %}
     <div data-proposal-accepted="true">
         <h2 class="h4">Proposal accepted</h2>
-        <p class="mb-1">Accepted by <strong>{{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at.strftime("%B %d, %Y at %H:%M") }} UTC.</p>
+        <p class="mb-1">Accepted by <strong>{{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at|local_time("%B %d, %Y at %H:%M") }}.</p>
         <p class="text-muted mb-0">Thank you. {{ brand.customer_facing_name or "Brayman Construction" }} will send the contract for your electronic signature.</p>
     </div>
     {% elif decline %}
     <div data-proposal-declined="true">
         <h2 class="h4">Proposal declined</h2>
-        <p class="mb-1">Declined by <strong>{{ decline.declined_name }}</strong> on {{ decline.declined_at.strftime("%B %d, %Y at %H:%M") }} UTC.{% if decline.reason %} Reason: {{ decline.reason }}{% endif %}</p>
+        <p class="mb-1">Declined by <strong>{{ decline.declined_name }}</strong> on {{ decline.declined_at|local_time("%B %d, %Y at %H:%M") }}.{% if decline.reason %} Reason: {{ decline.reason }}{% endif %}</p>
         <p class="text-muted mb-0">Thank you for letting us know. {{ brand.customer_facing_name or "Brayman Construction" }} has been told.</p>
     </div>
     {% else %}

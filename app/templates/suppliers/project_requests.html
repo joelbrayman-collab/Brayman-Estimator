@@ -62,7 +62,7 @@
             </details>
         </div>
         {% elif row.changes %}
-        <details><summary>Delivery changes ({{ row.changes|length }})</summary><ul class="delivery-history">{% for c in row.changes %}<li data-change-status="{{ c.status }}">{{ c.requested_at.strftime("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} — {{ c.status|lower }}</li>{% endfor %}</ul></details>
+        <details><summary>Delivery changes ({{ row.changes|length }})</summary><ul class="delivery-history">{% for c in row.changes %}<li data-change-status="{{ c.status }}">{{ c.requested_at|local_time("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} — {{ c.status|lower }}</li>{% endfor %}</ul></details>
         {% endif %}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
@@ -89,7 +89,7 @@
             <button type="submit" class="button-secondary">Withdraw this request</button>
         </form>
         {% endif %}
-        <details><summary>History</summary><ul>{% for e in row.events %}<li>{{ e.at.strftime("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} ({{ e.actor_side|lower }}: {{ e.actor_name }}){% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul></details>
+        <details><summary>History</summary><ul>{% for e in row.events %}<li>{{ e.at|local_time("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} ({{ e.actor_side|lower }}: {{ e.actor_name }}){% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul></details>
     </article>
     {% else %}
     <p class="muted-copy">Nothing sent yet. Issue the deck supplier request on the <a href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">deck takeoff</a> and select Send to the supplier in CalibraytAI.</p>

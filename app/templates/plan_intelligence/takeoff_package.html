@@ -25,7 +25,7 @@
         <div><p class="eyebrow">Drawing revision</p><p>{{ package.drawing_revision_id }}</p></div>
         <div><p class="eyebrow">Created by</p><p>{{ package.created_by }}</p></div>
         <div><p class="eyebrow">Approved by</p><p>{{ package.approved_by or "—" }}</p></div>
-        <div><p class="eyebrow">Approved at</p><p>{% if package.approved_at %}{{ package.approved_at.strftime("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}</p></div>
+        <div><p class="eyebrow">Approved at</p><p>{% if package.approved_at %}{{ package.approved_at|local_time("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}</p></div>
         <div><p class="eyebrow">Superseded by</p><p>{{ package.superseded_by_id or "—" }}</p></div>
     </div>
     {% if package.provenance %}

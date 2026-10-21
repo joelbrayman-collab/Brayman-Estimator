@@ -33,7 +33,7 @@
     <p>Branch: {{ package.supplier_location.display_name }}</p>
     <p>Package status: {{ contractor_copy.office_status_label(package.status) }}</p>
     <p>Readiness: {{ readiness }}</p>
-    <p>Issued: {% if package.issued_at %}{{ package.issued_at.strftime("%Y-%m-%d %H:%M UTC") }} · {{ package.issued_by_display_name }}{% else %}—{% endif %}</p>
+    <p>Issued: {% if package.issued_at %}{{ package.issued_at|local_time("%Y-%m-%d %H:%M") }} · {{ package.issued_by_display_name }}{% else %}—{% endif %}</p>
 </div>
 
 <table class="data-table">

@@ -3,7 +3,7 @@
     <h2>Client acceptance</h2>
     {% if acceptance %}
     <div data-proposal-acceptance="{{ acceptance.method }}">
-        <p><strong>Accepted by {{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at.strftime("%B %d, %Y at %H:%M") }} UTC
+        <p><strong>Accepted by {{ acceptance.accepted_name }}</strong> on {{ acceptance.accepted_at|local_time("%B %d, %Y at %H:%M") }}
             {% if acceptance.method == "CLIENT_LINK" %}— accepted on the CalibraytAI proposal link.{% else %}— recorded by {{ acceptance.recorded_by_name }} ({{ acceptance.office_channel|lower }}): {{ acceptance.office_note }}{% endif %}</p>
         {% set project_id = proposal.estimate.project_id if proposal.estimate else None %}
         {% if acceptance.contract_id %}
@@ -16,7 +16,7 @@
     </div>
     {% elif decline %}
     <div data-proposal-declined="true">
-        <p><strong>Declined by {{ decline.declined_name }}</strong> on {{ decline.declined_at.strftime("%B %d, %Y at %H:%M") }} UTC — declined on the CalibraytAI proposal link.
+        <p><strong>Declined by {{ decline.declined_name }}</strong> on {{ decline.declined_at|local_time("%B %d, %Y at %H:%M") }} — declined on the CalibraytAI proposal link.
             {% if decline.reason %}Reason: {{ decline.reason }}{% else %}No reason given.{% endif %}</p>
         <p class="muted-copy">No contract was generated. The proposal is marked Rejected.</p>
     </div>

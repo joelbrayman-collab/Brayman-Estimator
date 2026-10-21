@@ -161,7 +161,7 @@
                     <button type="submit">Save mapping</button>
                 </form>
                 {% if row.mapping %}
-                <div class="muted-copy">{{ row.mapping.actor_display_name }}{% if row.mapping.mapped_at %} · {{ row.mapping.mapped_at.strftime("%Y-%m-%d %H:%M") }}{% endif %}</div>
+                <div class="muted-copy">{{ row.mapping.actor_display_name }}{% if row.mapping.mapped_at %} · {{ row.mapping.mapped_at|local_time("%Y-%m-%d %H:%M") }}{% endif %}</div>
                 {% endif %}
                 {% else %}
                 —

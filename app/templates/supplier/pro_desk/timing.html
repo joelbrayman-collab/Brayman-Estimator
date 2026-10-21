@@ -8,7 +8,7 @@
 <div class="form-panel" data-setup-record="true">
     <h2>One-time store setup (not part of quotation time)</h2>
     <table class="data-table pd-stack"><tbody>
-        <tr><td>Price files imported</td><td data-label="Count">{{ setup.price_files|length }}{% if setup.price_files %} · latest {{ setup.price_files[0].imported_at.strftime('%b %d %H:%M') }}{% endif %}</td></tr>
+        <tr><td>Price files imported</td><td data-label="Count">{{ setup.price_files|length }}{% if setup.price_files %} · latest {{ setup.price_files[0].imported_at|local_time("%b %d %H:%M") }}{% endif %}</td></tr>
         <tr><td>Products matched to takeoff lines</td><td data-label="Count">{{ setup.product_matches }}</td></tr>
         <tr><td>Standard buildings approved</td><td data-label="Count">{{ setup.assemblies|length }}{% for a in setup.assemblies %} · {{ a.name }} ({{ a.approved_at.strftime('%b %d') }}{{ ", retired" if a.status == "RETIRED" }}){% endfor %}</td></tr>
     </tbody></table>

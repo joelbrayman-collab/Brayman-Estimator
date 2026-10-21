@@ -10,7 +10,7 @@
     </p>
     {% if pending %}
     <div class="delivery-change is-pending" data-delivery-change="PENDING">
-        <p><strong>Change requested by {{ pending.requested_by_name }}</strong> on {{ pending.requested_at.strftime("%b %d at %H:%M") }}:
+        <p><strong>Change requested by {{ pending.requested_by_name }}</strong> on {{ pending.requested_at|local_time("%b %d at %H:%M") }}:
             {{ when(pending.previous_date, pending.previous_window) }} → <strong>{{ when(pending.new_date, pending.new_window) }}</strong>. Reason: {{ pending.reason }}.{% if pending.note %} “{{ pending.note }}”{% endif %}</p>
         {% if pending.requested_by_side != my_side %}
         <p class="muted-copy">The delivery above stands until you answer.</p>
@@ -55,8 +55,8 @@
     <details><summary>Delivery changes ({{ changes|length }})</summary>
         <ul class="delivery-history">
         {% for c in changes %}
-            <li data-change-status="{{ c.status }}">{{ c.requested_at.strftime("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} ({{ c.reason }}{% if c.note %}: {{ c.note }}{% endif %}) —
-                <strong>{{ {"PENDING": "waiting", "ACCEPTED": "accepted", "DECLINED": "declined", "COUNTERED": "another time proposed", "WITHDRAWN": "withdrawn"}[c.status] }}</strong>{% if c.answered_by_name and c.status != "PENDING" %} by {{ c.answered_by_name }} {{ c.answered_at.strftime("%Y-%m-%d %H:%M") }}{% if c.answer_note %} (“{{ c.answer_note }}”){% endif %}{% endif %}</li>
+            <li data-change-status="{{ c.status }}">{{ c.requested_at|local_time("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} ({{ c.reason }}{% if c.note %}: {{ c.note }}{% endif %}) —
+                <strong>{{ {"PENDING": "waiting", "ACCEPTED": "accepted", "DECLINED": "declined", "COUNTERED": "another time proposed", "WITHDRAWN": "withdrawn"}[c.status] }}</strong>{% if c.answered_by_name and c.status != "PENDING" %} by {{ c.answered_by_name }} {{ c.answered_at|local_time("%Y-%m-%d %H:%M") }}{% if c.answer_note %} (“{{ c.answer_note }}”){% endif %}{% endif %}</li>
         {% endfor %}
         </ul>
     </details>

@@ -230,7 +230,9 @@ def monitor_source_detail(provenance: dict | None, authorized_co_count: int = 0)
     co_line = f"Authorized change orders: {int(authorized_co_count)}."
     last = provenance.get("last_actual_created_at")
     if isinstance(last, datetime):
-        last_line = f"Last actual cost recorded: {last.strftime('%Y-%m-%d %H:%M')}."
+        from app.services.local_time import format_local
+
+        last_line = f"Last actual cost recorded: {format_local(last)}."
     else:
         last_line = "No actual cost recorded yet."
     return f"{source} {co_line} {last_line}"

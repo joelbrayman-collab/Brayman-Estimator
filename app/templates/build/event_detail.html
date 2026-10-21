@@ -17,8 +17,8 @@
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <div class="form-grid">
-        <div><p class="eyebrow">Occurred at</p><p>{{ event.occurred_at.strftime("%Y-%m-%d %H:%M") }} UTC</p></div>
-        <div><p class="eyebrow">Recorded at</p><p>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p></div>
+        <div><p class="eyebrow">Occurred at</p><p>{{ event.occurred_at|local_time("%Y-%m-%d %H:%M") }}</p></div>
+        <div><p class="eyebrow">Recorded at</p><p>{{ event.created_at|local_time("%Y-%m-%d %H:%M") }}</p></div>
         <div><p class="eyebrow">Actor</p><p>{{ event.actor_display_name }}</p></div>
         <div>
             <p class="eyebrow">Status</p>
@@ -53,25 +53,25 @@
         <article class="panel" style="margin-top: 16px;">
             {% if original.kind == "text" %}
             <p class="eyebrow">Text</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             <p style="white-space: pre-wrap; margin-top: 12px;">{{ original.text_body }}</p>
             {% elif original.kind == "image" and item.browser_image %}
             <p class="eyebrow">Photo</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             <p style="margin-top: 12px;">
                 <img src="{{ item.content_url }}" alt="Photo" style="max-width: 100%; height: auto;">
             </p>
             <p><a href="{{ item.download_url }}">Original</a></p>
             {% elif original.kind == "image" and item.display_url %}
             <p class="eyebrow">Photo</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             <p style="margin-top: 12px;">
                 <img src="{{ item.display_url }}" alt="Photo" style="max-width: 100%; height: auto;">
             </p>
             <p><a href="{{ item.download_url }}">Original</a></p>
             {% elif original.kind == "image" %}
             <p class="eyebrow">Photo</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             <p class="muted-copy" style="margin-top: 12px;">
                 This photo is saved. A display copy is not available in this browser yet. The original was not converted.
             </p>
@@ -82,7 +82,7 @@
             <p><a href="{{ item.download_url }}">Original</a></p>
             {% elif original.kind == "audio" %}
             <p class="eyebrow">Audio</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             {% if item.browser_audio %}
             <p style="margin-top: 12px;">
                 <audio controls src="{{ item.content_url }}" preload="metadata">
@@ -136,7 +136,7 @@
                 <td>{{ candidate.proposer_display_name }}</td>
                 <td>
                     {% if candidate.decided_at %}
-                    {{ candidate.decided_by_display_name }} · {{ candidate.decided_at.strftime("%Y-%m-%d %H:%M") }} UTC
+                    {{ candidate.decided_by_display_name }} · {{ candidate.decided_at|local_time("%Y-%m-%d %H:%M") }}
                     {% else %}
                     —
                     {% endif %}
@@ -181,7 +181,7 @@
         </label>
         <div class="form-grid">
             <label>
-                Occurred at (optional)
+                Occurred at (optional, {{ company_time_zone }} time)
                 <input type="datetime-local" name="occurred_at">
             </label>
         </div>

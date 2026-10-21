@@ -27,7 +27,7 @@
         <div><p class="eyebrow">PDF title</p><p>{{ document.pdf_title or "—" }}</p></div>
         <div><p class="eyebrow">PDF author</p><p>{{ document.pdf_author or "—" }}</p></div>
         <div><p class="eyebrow">SHA-256</p><p style="word-break: break-all;">{{ document.sha256_hex }}</p></div>
-        <div><p class="eyebrow">Uploaded</p><p>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</p></div>
+        <div><p class="eyebrow">Uploaded</p><p>{{ document.created_at|local_time("%Y-%m-%d %H:%M") }}</p></div>
     </div>
     {% if document.notes %}
     <p style="margin-top: 16px;"><strong>Notes:</strong> {{ document.notes }}</p>
@@ -93,7 +93,7 @@
                 <td>{{ attempt.id }}</td>
                 <td>{{ attempt.extractor_name }} {{ attempt.extractor_version }}</td>
                 <td>{{ attempt.status }}</td>
-                <td>{{ attempt.started_at.strftime("%Y-%m-%d %H:%M") if attempt.started_at else "—" }}</td>
+                <td>{{ attempt.started_at|local_time("%Y-%m-%d %H:%M") }}</td>
                 <td>{% if attempt.result %}#{{ attempt.result.id }} (raw preserved){% else %}—{% endif %}</td>
             </tr>
             {% endfor %}
@@ -111,7 +111,7 @@
         {% for event in audit_events %}
         <li>
             <span class="activity-title">{{ event.event_type }}</span>
-            <span class="activity-meta">{{ event.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</span>
+            <span class="activity-meta">{{ event.created_at|local_time("%Y-%m-%d %H:%M:%S") }}</span>
         </li>
         {% endfor %}
     </ul>

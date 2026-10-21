@@ -53,7 +53,7 @@
     <ul class="field-recent">
         {% for card in recent %}
         <li class="field-recent-item">
-            <p class="field-recent-meta">{{ card.event.actor_display_name }} · {{ card.event.occurred_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p class="field-recent-meta">{{ card.event.actor_display_name }} · {{ card.event.occurred_at|local_time("%Y-%m-%d %H:%M") }}</p>
             {% if card.text_excerpt %}<p>{{ card.text_excerpt }}</p>{% endif %}
             {% if card.image_original_id and project %}
             <img

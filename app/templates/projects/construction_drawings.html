@@ -56,7 +56,7 @@
                 PRELIMINARY — NOT FOR CONSTRUCTION<br>
                 {% if row.state.current %}<strong>Current</strong>{% else %}<strong>Outdated</strong><br><small>{{ row.state.reasons|join(' ') }}</small>{% endif %}
             </td>
-            <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M') }} UTC<br><small>{{ s.created_by }}</small></td>
+            <td>{{ s.created_at|local_time("%Y-%m-%d %H:%M") }}<br><small>{{ s.created_by }}</small></td>
             <td>
                 <a href="{{ url_for('construction_drawings.pdf', project_id=project.id, set_id=s.id) }}">PDF</a> ·
                 <a href="{{ url_for('construction_drawings.dxf', project_id=project.id, set_id=s.id) }}">DXF</a><br>
@@ -116,7 +116,7 @@
         <input type="hidden" name="target_kind" value="supplier_request">
         <label>BMR supplier request
             <select name="supplier_request_id">
-                {% for r in requests %}<option value="{{ r.request_id }}">{{ r.request_id }} — {{ r.supplier_name }} — {{ r.issued_at }}{% if r.takeoff_fingerprint != s.takeoff_fingerprint %} (different takeoff){% endif %}</option>{% else %}<option value="">No supplier request issued</option>{% endfor %}
+                {% for r in requests %}<option value="{{ r.request_id }}">{{ r.request_id }} — {{ r.supplier_name }} — {{ r.issued_at|local_time }}{% if r.takeoff_fingerprint != s.takeoff_fingerprint %} (different takeoff){% endif %}</option>{% else %}<option value="">No supplier request issued</option>{% endfor %}
             </select>
         </label>
         <label>Attached by <input type="text" name="actor_display_name" required maxlength="120"></label>

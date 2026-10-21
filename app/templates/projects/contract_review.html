@@ -78,7 +78,7 @@
             <p>Package code {{ snapshot.package_code }}</p>
             <p>Effective date {{ snapshot.package_effective_from }}</p>
             <p>Status {% if snapshot.package_library_state == "ACTIVE" %}Active{% else %}{{ snapshot.package_library_state }}{% endif %}</p>
-            <p>Generated {{ snapshot.generated_at }}</p>
+            <p>Generated {{ snapshot.generated_at|local_time }}</p>
             <p>Customer {{ snapshot.client_name }}</p>
             <p>Project {{ snapshot.project_name }}</p>
             <p>Contract amount {{ snapshot.commercial_variables_json.total }}</p>

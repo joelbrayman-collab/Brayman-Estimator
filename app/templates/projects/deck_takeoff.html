@@ -127,7 +127,7 @@
         <tbody>
         {% for r in requests %}
         <tr>
-            <td>{{ r.request_id }}</td><td>{{ r.supplier_name }}</td><td>{{ r.issued_at }} by {{ r.issued_by }}</td><td>{{ r.lines|length }}</td>
+            <td>{{ r.request_id }}</td><td>{{ r.supplier_name }}</td><td>{{ r.issued_at|local_time }} by {{ r.issued_by }}</td><td>{{ r.lines|length }}</td>
             <td>
                 <a href="{{ url_for('deck_takeoff.download_request', project_id=project.id, request_id=r.request_id) }}">PDF</a> ·
                 <a href="{{ url_for('deck_takeoff.enter_response', project_id=project.id, request_id=r.request_id) }}">Enter response by hand</a>
@@ -158,7 +158,7 @@
         {% for r in imported %}
         <tr>
             <td><a href="{{ url_for('deck_takeoff.view_response', project_id=project.id, response_id=r.response_id) }}">{{ r.response_id }}</a></td>
-            <td>{{ r.request_id }}</td><td>{{ r.imported_at }} ({{ r.source }})</td>
+            <td>{{ r.request_id }}</td><td>{{ r.imported_at|local_time }} ({{ r.source }})</td>
             <td>{% for k, v in r.summary.items() %}{{ k|replace('_', ' ')|lower }} {{ v }}{% if not loop.last %} · {% endif %}{% endfor %}</td>
         </tr>
         {% endfor %}

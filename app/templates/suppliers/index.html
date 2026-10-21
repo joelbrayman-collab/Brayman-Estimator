@@ -59,7 +59,16 @@
     <h2>Add a supplier</h2>
     <form method="post" action="{{ url_for('supplier_office.create_supplier_account') }}" class="form-grid" data-add-supplier="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Supplier name <input type="text" name="legal_name" placeholder="BMR Winchester" required></label>
+        {% if platform_suppliers %}
+        <label>Already on CalibraytAI
+            <select name="supplier_id" data-platform-suppliers="{{ platform_suppliers|length }}">
+                <option value="">— A new supplier (type the name below) —</option>
+                {% for sid, sname in platform_suppliers %}<option value="{{ sid }}">{{ sname }}</option>{% endfor %}
+            </select>
+        </label>
+        <p class="muted-copy">These suppliers have their own Supplier Hub sign-in. Pick yours to connect to it; nothing about other contractors is shown.</p>
+        {% endif %}
+        <label>New supplier name <input type="text" name="legal_name" placeholder="BMR Winchester"{% if not platform_suppliers %} required{% endif %}></label>
         <label>Store or location <input type="text" name="location_name" placeholder="Winchester"></label>
         <div class="form-actions"><button type="submit" class="button-secondary">Add supplier</button></div>
     </form>

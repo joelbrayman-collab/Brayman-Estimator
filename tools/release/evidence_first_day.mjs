@@ -355,10 +355,13 @@ step("09 suppliers: Ben adds his supplier, already on the platform with its own 
   const { pg } = await owner();
   await menu(pg, "Company", "/suppliers");
   assert.match(await pg.locator("main").innerText(), /No supplier accounts yet/);
-  await pg.fill("[data-add-supplier] [name=legal_name]", facts.supplier_name);
+  // Picked from the suppliers already on CalibraytAI, by public name only (defect 4, 21 Oct 2026).
+  const picker = pg.locator("[data-add-supplier] select[name=supplier_id]");
+  assert.deepEqual((await picker.locator("option").allInnerTexts()).filter((t) => !t.startsWith("—")), [facts.supplier_name]);
+  await picker.selectOption({ label: facts.supplier_name });
   await shot(pg, "09-suppliers", "add");
   await submit(pg, pg.locator("[data-add-supplier] button"));
-  assert.match(await flash(pg), new RegExp(`${facts.supplier_name} added`));
+  assert.match(await flash(pg), new RegExp(`${facts.supplier_name.replace(/[()]/g, "\\$&")} added`));
   const account = pg.locator(`#supplier-${facts.supplier_id}`);
   assert.equal(await account.count(), 1, "the platform supplier is the one added (no duplicate company)");
   assert.match(await account.innerText(), new RegExp(facts.store_name.replace(/[()]/g, "\\$&") + ".*can sign in"));

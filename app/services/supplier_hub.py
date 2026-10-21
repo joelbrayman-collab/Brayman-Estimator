@@ -214,6 +214,23 @@ def supplier_has_sign_in(supplier_id: int) -> bool:
     return SupplierUserMembership.query.filter_by(supplier_id=supplier_id, status=MEMBERSHIP_ACTIVE).first() is not None
 
 
+def platform_suppliers_to_add(organization_id: str) -> list[tuple[int, str]]:
+    """Suppliers already on CalibraytAI that this contractor may pick on Company → Suppliers (defect 4).
+
+    "On the platform" means the supplier company is active and has its own Supplier Hub sign-in (store
+    staff sign in). Only the supplier's id and public name are returned: nothing about which or how many
+    other contractors use it, their accounts, requests, prices, people or locations. Suppliers already
+    on this contractor's list are left out. A supplier typed by another contractor that has no store
+    sign-in is not listed, so a contractor cannot learn another contractor's private supplier names.
+    """
+    already = {row.supplier_id for row in ContractorSupplierAccount.query.filter_by(organization_id=organization_id)}
+    rows = (db.session.query(Supplier.id, Supplier.legal_name)
+            .join(SupplierUserMembership, SupplierUserMembership.supplier_id == Supplier.id)
+            .filter(Supplier.status == "ACTIVE", SupplierUserMembership.status == MEMBERSHIP_ACTIVE)
+            .distinct().order_by(Supplier.legal_name.asc(), Supplier.id.asc()).all())
+    return [(sid, name) for sid, name in rows if sid not in already]
+
+
 def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep_id=None):
     for old in SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == organization_id,

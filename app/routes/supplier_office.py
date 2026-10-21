@@ -73,8 +73,10 @@ def suppliers():
     from app.services.supplier_hub import readable_text_color
 
     brand_text = {sid: readable_text_color(b.primary_color if b else None) for sid, b in brands.items()}
+    from app.services.supplier_hub import platform_suppliers_to_add
+
     return render_template("suppliers/index.html", accounts=accounts, members=members, brands=brands,
-                           brand_text=brand_text)
+                           brand_text=brand_text, platform_suppliers=platform_suppliers_to_add(org_id))
 
 
 @supplier_office_bp.route("/suppliers", methods=["POST"])
@@ -86,10 +88,13 @@ def create_supplier_account():
     )
 
     org_id = get_current_organization_id()
+    picked = (request.form.get("supplier_id") or "").strip()
+    if picked:
+        return _add_platform_supplier(org_id, picked)
     name = (request.form.get("legal_name") or "").strip()
     location_name = (request.form.get("location_name") or "").strip() or name
     if not name:
-        flash("Enter the supplier's name.", "error")
+        flash("Choose a supplier already on CalibraytAI, or enter a new supplier's name.", "error")
         return redirect(url_for("supplier_office.suppliers"))
     code = "".join(ch if ch.isalnum() else "-" for ch in name.upper()).strip("-")[:60] or "SUPPLIER"
     try:
@@ -104,6 +109,34 @@ def create_supplier_account():
         flash(str(exc) or "The supplier could not be added.", "error")
         return redirect(url_for("supplier_office.suppliers"))
     flash(f"{name} added. Add the store people who will sign in.", "success")
+    return redirect(url_for("supplier_office.suppliers"))
+
+
+def _add_platform_supplier(org_id, picked):
+    """Add a supplier chosen from the platform list. Only an id offered by that list is accepted; any
+    other id gets the same answer whether or not such a supplier exists (nothing to probe)."""
+    from app.services.supplier_catalogue import create_contractor_supplier_account, create_supplier_location
+    from app.services.supplier_hub import platform_suppliers_to_add
+
+    offered = dict(platform_suppliers_to_add(org_id))
+    try:
+        supplier_id = int(picked)
+    except ValueError:
+        supplier_id = None
+    if supplier_id not in offered:
+        flash("Choose a supplier from the list, or enter a new supplier's name.", "error")
+        return redirect(url_for("supplier_office.suppliers"))
+    supplier = db.session.get(Supplier, supplier_id)
+    try:
+        location = (SupplierLocation.query.filter_by(supplier_id=supplier.id).order_by(SupplierLocation.id.asc()).first()
+                    or create_supplier_location(supplier_id=supplier.id, code="MAIN", display_name=supplier.legal_name))
+        create_contractor_supplier_account(organization_id=org_id, supplier_id=supplier.id,
+                                           supplier_location_id=location.id)
+    except Exception as exc:  # the catalogue services raise their own errors with readable messages
+        db.session.rollback()
+        flash(str(exc) or "The supplier could not be added.", "error")
+        return redirect(url_for("supplier_office.suppliers"))
+    flash(f"{supplier.legal_name} added. It is already on CalibraytAI with its own store sign-in.", "success")
     return redirect(url_for("supplier_office.suppliers"))
 
 

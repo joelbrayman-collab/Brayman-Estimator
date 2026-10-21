@@ -291,7 +291,7 @@ def test_owner_post_close_active_records_event_and_metadata(app, client):
     assert project.operating_state == OPERATING_STATE_CLOSED
     assert project.operating_state_changed_at != prior_changed_at
     assert project.operating_state_changed_by_user_id == owner.id
-    assert project.status == "Estimating"
+    assert project.status == "Completed"  # Joel, 21 Oct 2026: closing completes the project stage too
     events = _events(project)
     assert len(events) == 1
     event = events[0]
@@ -797,7 +797,7 @@ def test_no_punch_list_sign_off_sys_admin_or_migration():
     alembic_cfg = Config(cfg_path)
     alembic_cfg.set_main_option("script_location", "migrations")
     script = ScriptDirectory.from_config(alembic_cfg)
-    assert script.get_current_head() == "pd1a2b3c4d5e"
+    assert script.get_current_head() == "pr6b3d8e0f1c"
 
 
 def test_sys_admin_remains_unimplemented(app):

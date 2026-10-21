@@ -34,6 +34,7 @@ from app.models.supplier_portal import (
     MEMBERSHIP_ACTIVE,
     PO_CANCELLED,
     PO_CONFIRMED,
+    PO_DELIVERED,
     PO_PLACED,
     PO_PROBLEM,
     SHARE_OPENED,
@@ -553,7 +554,7 @@ def purchase_order_for(share: SupplierRequestShare) -> Optional[SupplierPurchase
 
 
 _PO_STATUS_LABELS = {PO_PLACED: "Waiting for the supplier to confirm", PO_CONFIRMED: "Confirmed",
-                     PO_PROBLEM: "Supplier reported a problem", PO_CANCELLED: "Cancelled"}
+                     PO_PROBLEM: "Supplier reported a problem", PO_CANCELLED: "Cancelled", PO_DELIVERED: "Delivered"}
 
 
 def project_purchase_orders(*, organization_id: str, project_id: int) -> list[dict]:
@@ -737,6 +738,108 @@ def report_order_problem(order: SupplierPurchaseOrder, *, user, note: str) -> No
     db.session.commit()
 
 
+# ------------------------------------------------------------------ cancel and delivered (Joel, 21 Oct 2026)
+# The office may cancel an order before it is delivered; either side may record that a confirmed order was
+# delivered. Both end the order: open delivery changes are withdrawn and the order leaves upcoming deliveries.
+# The reason, the delivery date and the note are kept in the request history (SupplierRequestEvent).
+
+CANCELLABLE_PO_STATUSES = (PO_PLACED, PO_CONFIRMED, PO_PROBLEM)
+_DELIVERED_DETAIL = re.compile(r"^(?P<number>\S+) delivered (?P<day>\d{4}-\d{2}-\d{2})(?: · (?P<note>.*))?$", re.S)
+
+
+def _withdraw_open_changes(order, *, side: str, who: str, why: str) -> int:
+    from app.models.supplier_portal import CHANGE_PENDING, SupplierDeliveryChange
+
+    count = 0
+    for change in SupplierDeliveryChange.query.filter_by(order_id=order.id, status=CHANGE_PENDING):
+        change.status = "WITHDRAWN"
+        change.answered_by_name = who
+        change.answered_at = datetime.utcnow()
+        change.answer_note = why
+        _event(order.share, "DELIVERY_CHANGE_WITHDRAWN", side, who, f"{order.number}: {why}")
+        count += 1
+    return count
+
+
+def cancel_order(order: SupplierPurchaseOrder, *, user, reason: str) -> None:
+    """Office only (the route is office-side). Before delivery, with a reason the supplier sees."""
+    if order.status == PO_DELIVERED:
+        raise SupplierHubError("This order was delivered. A delivered order cannot be cancelled.")
+    if order.status not in CANCELLABLE_PO_STATUSES:
+        raise SupplierHubError("This order is already cancelled.")
+    detail = (reason or "").strip()
+    if not detail:
+        raise SupplierHubError("Say why the order is cancelled. The supplier sees the reason.")
+    who = _display(user)
+    order.status = PO_CANCELLED
+    _withdraw_open_changes(order, side="CONTRACTOR", who=who, why="Order cancelled")
+    _event(order.share, "ORDER_CANCELLED", "CONTRACTOR", who, f"{order.number}: {detail}")
+    db.session.commit()
+    _notify_supplier(order, f"Purchase order {order.number} cancelled",
+                     f"{who} cancelled purchase order {order.number}. Reason: {detail}. Please do not deliver it.")
+
+
+def mark_order_delivered(order: SupplierPurchaseOrder, *, side: str, user, delivered_on=None, note: str = "") -> None:
+    """Either side records that a confirmed order was delivered (date, optional note)."""
+    if side not in ("CONTRACTOR", "SUPPLIER"):
+        raise SupplierHubError("Not allowed.")
+    if order.status == PO_DELIVERED:
+        raise SupplierHubError("This order is already marked delivered.")
+    if order.status != PO_CONFIRMED:
+        raise SupplierHubError("Only a confirmed order can be marked delivered.")
+    day = _date(delivered_on, "delivery date", required=False) if isinstance(delivered_on, str) else delivered_on
+    day = day or date.today()
+    if day > date.today():
+        raise SupplierHubError("The delivery date cannot be in the future.")
+    if order.placed_at and day < order.placed_at.date():
+        raise SupplierHubError("The delivery date cannot be before the order was placed.")
+    who = _display(user)
+    text = (note or "").strip().replace("\n", " ")[:500]
+    order.status = PO_DELIVERED
+    _withdraw_open_changes(order, side=side, who=who, why="Order delivered")
+    _event(order.share, "ORDER_DELIVERED", side, who, f"{order.number} delivered {day.isoformat()}" + (f" · {text}" if text else ""))
+    db.session.commit()
+    message = f"{who} recorded that purchase order {order.number} was delivered on {_when(day)}." + (f" Note: {text}" if text else "")
+    (_notify_supplier if side == "CONTRACTOR" else _notify_contractor)(order, f"{order.number} delivered", message)
+
+
+def order_closure(order) -> Optional[dict]:
+    """How a cancelled or delivered order ended: {"kind", "by", "side", "at", "reason" | "day", "note"}."""
+    if order is None or order.status not in (PO_CANCELLED, PO_DELIVERED):
+        return None
+    event_type = "ORDER_CANCELLED" if order.status == PO_CANCELLED else "ORDER_DELIVERED"
+    event = (SupplierRequestEvent.query.filter_by(share_id=order.share_id, event_type=event_type)
+             .order_by(SupplierRequestEvent.id.desc()).first())
+    if event is None:
+        return {"kind": order.status, "by": None, "side": None, "at": None, "reason": None, "day": None, "note": None}
+    result = {"kind": order.status, "by": event.actor_name, "side": event.actor_side, "at": event.at,
+              "reason": None, "day": None, "note": None}
+    detail = event.detail or ""
+    if order.status == PO_CANCELLED:
+        prefix = f"{order.number}: "
+        result["reason"] = detail[len(prefix):] if detail.startswith(prefix) else detail
+    else:
+        match = _DELIVERED_DETAIL.match(detail)
+        if match:
+            result["day"] = date.fromisoformat(match.group("day"))
+            result["note"] = match.group("note")
+    return result
+
+
+def recently_cancelled_orders(*, supplier_id: int, days: int = 30):
+    """Cancelled orders whose delivery was still ahead (or recent), so the supplier's deliveries list shows them."""
+    from datetime import timedelta
+
+    since = date.today() - timedelta(days=days)
+    rows = []
+    for order in SupplierPurchaseOrder.query.filter_by(supplier_id=supplier_id, status=PO_CANCELLED).all():
+        schedule = current_schedule(order)
+        if schedule["date"] is None or schedule["date"] >= since:
+            rows.append({"order": order, "schedule": schedule, "closure": order_closure(order)})
+    rows.sort(key=lambda r: (r["schedule"]["date"] or date.max, r["order"].id))
+    return rows
+
+
 # ------------------------------------------------------------------ supplier-side queries (fail closed)
 
 def supplier_shares(supplier_id: int, *, kind: Optional[str] = None):
@@ -801,9 +904,9 @@ def dashboard(supplier_id: int) -> dict:
         "lines_recorded": lines_recorded,
         "costs_approved": costs_approved,
         "orders_placed": len(orders),
-        "orders_confirmed": sum(1 for o in orders if o.status == PO_CONFIRMED),
+        "orders_confirmed": sum(1 for o in orders if o.status in (PO_CONFIRMED, PO_DELIVERED)),
         "orders_with_problem": sum(1 for o in orders if o.status == PO_PROBLEM),
-        "ordered_value": sum((Decimal(o.total) for o in orders if o.status in (PO_PLACED, PO_CONFIRMED)), Decimal("0")),
+        "ordered_value": sum((Decimal(o.total) for o in orders if o.status in (PO_PLACED, PO_CONFIRMED, PO_DELIVERED)), Decimal("0")),
         "average_minutes": (sum(minutes) / len(minutes)) if minutes else None,
         "quotes_with_minutes": len(minutes),
         "lines_per_request": (lines_requested / len(visible)) if visible else None,

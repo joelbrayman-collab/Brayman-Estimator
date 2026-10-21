@@ -16,7 +16,7 @@ from app import create_app, db
 PRIOR = "s9f0a1b2c3d4"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "pd1a2b3c4d5e"
+GRAPH_HEAD = "pr6b3d8e0f1c"
 
 
 def _cfg(db_uri):

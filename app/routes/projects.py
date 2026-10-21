@@ -119,6 +119,9 @@ def list_projects():
 def view_project(id):
     org_id = get_current_organization_id()
     project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    from app.services.project_stage import sync_started_work_stage
+
+    sync_started_work_stage(project)  # the first scheduled work has started: the job is in progress
     hub = assemble_project_hub(project, org_id)
     drawing_state = derive_drawing_state(
         project.drawing_requirement,

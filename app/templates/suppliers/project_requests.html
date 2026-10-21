@@ -38,8 +38,32 @@
         {% endif %}
         {% if order %}
         <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong>{% if order.schedule_item_id %} <span class="muted-copy">(follows the project schedule: moving that work proposes a new delivery to the supplier)</span>{% endif %} — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
-        {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if row.schedule and row.schedule.date %}; agreed delivery {{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% endif %}</p>
+        {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if row.schedule and row.schedule.date %}; agreed delivery {{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% elif order.status == "CANCELLED" %}<strong data-po-cancelled="true">Cancelled</strong>{% if row.closure and row.closure.by %} by {{ row.closure.by }} on {{ row.closure.at.strftime("%B %d, %Y") }}{% endif %}{% if row.closure and row.closure.reason %}. Reason: {{ row.closure.reason }}{% endif %}.{% elif order.status == "DELIVERED" %}<strong data-po-delivered="{{ row.closure.day.isoformat() if row.closure and row.closure.day else '' }}">Delivered</strong>{% if row.closure and row.closure.day %} on {{ when(row.closure.day, None) }}{% endif %}{% if row.closure and row.closure.by %} (recorded by {{ row.closure.by }}){% endif %}{% if row.closure and row.closure.note %}. Note: {{ row.closure.note }}{% endif %}.{% endif %}</p>
+        {% if order.status in ("PLACED", "CONFIRMED", "PROBLEM") %}
         {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
+        <div class="order-actions" data-order-actions="{{ order.id }}">
+            {% if order.status == "CONFIRMED" %}
+            <details data-mark-delivered="{{ order.id }}"><summary>Mark delivered</summary>
+                <form method="post" action="{{ url_for('supplier_office.mark_delivered', project_id=project.id, order_id=order.id) }}" class="form-grid">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>Delivered on <input type="date" name="delivered_on" value="{{ today.isoformat() }}" max="{{ today.isoformat() }}" required></label>
+                    <label>Note (optional) <input type="text" name="note" placeholder="Left at the side of the garage"></label>
+                    <div class="form-actions"><button type="submit" class="button is-primary">Mark delivered</button></div>
+                </form>
+            </details>
+            {% endif %}
+            <details data-cancel-order="{{ order.id }}"><summary>Cancel this order</summary>
+                <form method="post" action="{{ url_for('supplier_office.cancel_order', project_id=project.id, order_id=order.id) }}" class="form-grid">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>Reason (the supplier sees it) * <input type="text" name="reason" required></label>
+                    <div class="form-actions"><button type="submit" class="button-secondary">Cancel order {{ order.number }}</button></div>
+                </form>
+                <p class="muted-copy">The supplier is told at once. A waiting delivery change is withdrawn.</p>
+            </details>
+        </div>
+        {% elif row.changes %}
+        <details><summary>Delivery changes ({{ row.changes|length }})</summary><ul class="delivery-history">{% for c in row.changes %}<li data-change-status="{{ c.status }}">{{ c.requested_at.strftime("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} — {{ c.status|lower }}</li>{% endfor %}</ul></details>
+        {% endif %}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
         <p class="muted-copy" data-order-blocked="true">To place the order: {{ row.blockers|join(" ") }}</p>

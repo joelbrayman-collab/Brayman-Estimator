@@ -32,7 +32,8 @@ PO_PLACED = "PLACED"
 PO_CONFIRMED = "CONFIRMED"
 PO_PROBLEM = "PROBLEM"
 PO_CANCELLED = "CANCELLED"
-PO_STATUSES = (PO_PLACED, PO_CONFIRMED, PO_PROBLEM, PO_CANCELLED)
+PO_DELIVERED = "DELIVERED"  # Joel, 21 Oct 2026: the delivery was made; the order is complete
+PO_STATUSES = (PO_PLACED, PO_CONFIRMED, PO_PROBLEM, PO_CANCELLED, PO_DELIVERED)
 
 CONCRETE_PLACEMENT = ("Pump", "Chute", "Wheelbarrow or buggy")
 
@@ -133,7 +134,7 @@ class SupplierPurchaseOrder(db.Model):
     __table_args__ = (
         db.UniqueConstraint("organization_id", "number", name="uq_supplier_purchase_orders_org_number"),
         db.CheckConstraint(
-            "status IN ('PLACED', 'CONFIRMED', 'PROBLEM', 'CANCELLED')",
+            "status IN ('PLACED', 'CONFIRMED', 'PROBLEM', 'CANCELLED', 'DELIVERED')",
             name="ck_supplier_purchase_orders_status",
         ),
     )

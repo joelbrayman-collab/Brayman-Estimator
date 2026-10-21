@@ -874,7 +874,7 @@ def create_change_order_from_extra_work(
     requested_by=None,
     requested_date=None,
     markup_percent=0,
-    tax_percent=0,
+    tax_percent=None,
     notes=None,
     status="Draft",
     link_reason: Optional[str] = None,

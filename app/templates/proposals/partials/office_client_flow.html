@@ -14,6 +14,12 @@
         {% if project_id %}<p><a class="button button-secondary" href="{{ url_for('projects.review_contract', id=project_id) }}">Open the Contract page</a></p>{% endif %}
         {% endif %}
     </div>
+    {% elif decline %}
+    <div data-proposal-declined="true">
+        <p><strong>Declined by {{ decline.declined_name }}</strong> on {{ decline.declined_at.strftime("%B %d, %Y at %H:%M") }} UTC — declined on the CalibraytAI proposal link.
+            {% if decline.reason %}Reason: {{ decline.reason }}{% else %}No reason given.{% endif %}</p>
+        <p class="muted-copy">No contract was generated. The proposal is marked Rejected.</p>
+    </div>
     {% else %}
     {% if client_link %}
     <p data-proposal-link-status="sent">Sent to <strong>{{ client_link.sent_to_name }}</strong> ({{ client_link.sent_to_email }}) on {{ client_link.sent_at.strftime("%B %d, %Y") }} by {{ client_link.sent_by_name }}. Link valid until {{ client_link.expires_at.strftime("%B %d, %Y") }}.

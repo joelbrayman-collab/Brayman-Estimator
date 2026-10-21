@@ -3,7 +3,8 @@
 // material request → 2 Darcy signs in and receives it → 3 Darcy returns the quotation on screen →
 // 4 the office reviews, records and approves it → 5 the office places the purchase order → 6 Darcy
 // confirms it → 7 the delivery is scheduled on both sides → 8 a delivery change from either side and its
-// answer → 9 completion. Then Darcy's dashboard, reporting periods, needs attention and material demand,
+// answer → 9 completion: Darcy marks the order delivered → 10 the office cancels another (the rival
+// store's) confirmed order and that store sees it cancelled. Then Darcy's dashboard, reporting periods, needs attention and material demand,
 // and isolation (a second supplier, the contractor's internal costs). Office on desktop; Darcy on desktop
 // and a 390 px phone with no sideways scrolling. Local office on a temporary database
 // (tests/supplier_hub_page_server.py), synthetic data only.
@@ -338,14 +339,82 @@ test("step 8: either side asks to move the delivery, and the other answers", asy
   await screen(pg, "darcy-phone-change-declined", { darcy: true });
 });
 
-test("step 9: completion — the order stays confirmed; delivered is recorded in the store's own system", async () => {
-  // CalibraytAI has no delivered or completed state for a supplier order (statuses: placed, confirmed,
-  // problem, cancelled). The pages say so plainly rather than implying a delivery was recorded.
-  const { pg } = await darcyDesk();
+test("step 9: completion — Darcy marks the confirmed order delivered on his phone", async () => {
+  // Joel, 21 Oct 2026: a confirmed order can be marked delivered by either side (date, optional note).
+  const { pg } = await darcyPhone();
   await go(pg, hub(`requests/${W.shareId}`));
   assert.equal(await pg.locator("[data-supplier-order]").getAttribute("data-supplier-order"), "CONFIRMED");
+  const form = pg.locator("[data-mark-delivered]");
+  await form.locator("summary").click();
+  assert.equal(await form.locator("[name=delivered_on]").inputValue(), facts.today, "today is offered");
+  await form.locator("[name=note]").fill("Unloaded at the side gate (synthetic)");
+  await noSideways(pg, "phone mark delivered");
+  await screen(pg, "darcy-phone-mark-delivered", { darcy: true });
+  await form.locator("button:has-text('Mark delivered')").click();
+  await pg.waitForLoadState();
+  assert.match(await flash(pg), new RegExp(`Order ${W.poNumber} marked delivered`));
+  assert.equal(await pg.locator("[data-supplier-order]").getAttribute("data-supplier-order"), "DELIVERED");
+  assert.equal(await pg.locator("[data-order-delivered]").getAttribute("data-order-delivered"), facts.today);
+  assert.match(await pg.locator("[data-order-delivered]").innerText(), /Delivered on .+Unloaded at the side gate/);
+  assert.equal(await pg.locator("summary:has-text('Change the delivery')").count(), 0, "a delivered order cannot be moved");
+  await screen(pg, "darcy-phone-order-delivered", { darcy: true });
+  await go(pg, hub("deliveries"));
+  assert.equal(await pg.locator(`tr[data-delivery="${W.poNumber}"]`).count(), 0, "it leaves upcoming deliveries");
   await go(pg, hub("dashboard"));
-  assert.match(await pg.locator("main").innerText(), /Whether an order was delivered, invoiced or paid is in your own store system/);
+  assert.match(await pg.locator("main").innerText(), /marked delivered here by you or the contractor/);
+  const o = (await office()).pg;
+  await go(o, requests());
+  assert.equal(await article(o).locator("[data-po]").getAttribute("data-po"), "DELIVERED");
+  assert.match(await article(o).locator("[data-po]").innerText(), new RegExp(`Delivered on .+recorded by ${facts.darcy_name}.+Unloaded at the side gate`));
+  assert.equal(await article(o).locator("[data-cancel-order]").count(), 0, "a delivered order cannot be cancelled");
+  await go(o, "/deliveries");
+  assert.ok(!(await o.locator("main").innerText()).includes(W.poNumber), "gone from the office's deliveries");
+  await screen(o, "office-order-delivered");
+});
+
+test("step 10: the office cancels a confirmed order with a reason; the supplier sees it cancelled", async () => {
+  // The rival store's concrete request (seeded) is quoted, ordered and confirmed, then cancelled before delivery.
+  const rival = await session("rival", PHONE, facts.rival, "/supplier/login");
+  const rp = rival.pg;
+  const rhub = (rest = "") => `/supplier/${facts.rival_id}/${rest}`;
+  await go(rp, rhub(`requests/${facts.rival_share_id}`));
+  const quote = rp.locator("[data-concrete-quote]");
+  await quote.locator("[name=price_per_m3]").fill("205");
+  await quote.locator("[name=valid_until]").fill(day(20));
+  await quote.locator("button:has-text('Return quote')").click();
+  await rp.waitForLoadState();
+  const o = (await office()).pg;
+  const second = `/projects/${facts.second_id}/supplier-requests`;
+  await go(o, second);
+  const art = o.locator(`article#share-${facts.rival_share_id}`);
+  await art.locator("[data-approve-quote] button").click();
+  await o.waitForLoadState();
+  await o.locator(`article#share-${facts.rival_share_id} [data-place-order] button:has-text('Place order')`).click();
+  await o.waitForLoadState();
+  const rivalPo = (await flash(o)).match(/Purchase order (PO-\d{4}-\d{4})/)[1];
+  await go(rp, rhub(`requests/${facts.rival_share_id}`));
+  await rp.click("button[value=confirm]");
+  await rp.waitForLoadState();
+  await go(o, second);
+  const cancel = o.locator(`article#share-${facts.rival_share_id} [data-cancel-order]`);
+  await cancel.locator("summary").click();
+  await cancel.locator("[name=reason]").fill("Pour moved to the spring (synthetic)");
+  await screen(o, "office-cancel-order");
+  await cancel.locator("button:has-text('Cancel order')").click();
+  await o.waitForLoadState();
+  assert.match(await flash(o), new RegExp(`Order ${rivalPo} cancelled`));
+  const po = o.locator(`article#share-${facts.rival_share_id} [data-po]`);
+  assert.equal(await po.getAttribute("data-po"), "CANCELLED");
+  assert.match(await po.innerText(), /Cancelled by .+Reason: Pour moved to the spring/);
+  await go(rp, rhub(`requests/${facts.rival_share_id}`));
+  assert.match(await rp.locator("[data-order-cancelled]").innerText(), /Cancelled by the contractor[\s\S]*Do not deliver[\s\S]*Pour moved to the spring/);
+  await noSideways(rp, "rival phone cancelled order");
+  await screen(rp, "rival-phone-order-cancelled");
+  await go(rp, rhub("deliveries"));
+  assert.match(await rp.locator(`[data-cancelled-delivery="${rivalPo}"]`).innerText(), /Cancelled: Pour moved to the spring/);
+  assert.equal(await rp.locator(`tr[data-delivery="${rivalPo}"]`).count(), 0);
+  await noSideways(rp, "rival phone deliveries");
+  await go(rp, rhub());  // back to the inbox for the isolation check
 });
 
 test("Darcy's dashboard, reporting periods and needs attention show the recorded figures", async () => {
@@ -359,7 +428,7 @@ test("Darcy's dashboard, reporting periods and needs attention show the recorded
     assert.match(await fig("orders-placed"), /\b1\b[\s\S]*1 confirmed/);
     assert.equal(money((await fig("average-order")).split("\n").find((l) => l.startsWith("$"))), W.orderPreview);
     assert.match(await fig("effort"), /12 min/); // 9 and 15 minutes entered by Darcy
-    assert.match(await fig("upcoming"), /\b1\b/);
+    assert.match(await fig("upcoming"), /\b0\b/); // the one order was delivered in step 9
     assert.equal(await pg.locator("[data-attention]").getAttribute("data-attention"), "0", "nothing waiting");
     await noSideways(pg, `${label} dashboard`);
     await screen(pg, `darcy-${label}-dashboard`, { darcy: true });

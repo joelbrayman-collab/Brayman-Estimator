@@ -33,8 +33,24 @@
         </div>
     </form>
     <p class="muted-copy">Confirm order completes the agreement with the contractor under your account terms. Report a problem (for example a price change or an item out of stock) puts the order on hold; write what is wrong in the note.</p>
+    {% elif order.status == "CANCELLED" %}
+    <div class="delivery-change" data-order-cancelled="true">
+        <p><strong>Cancelled by the contractor</strong>{% if closure and closure.by %} ({{ closure.by }}, {{ closure.at.strftime("%B %d, %Y") }}){% endif %}. Do not deliver this order.{% if closure and closure.reason %} Reason: {{ closure.reason }}{% endif %}</p>
+    </div>
     {% else %}
-    <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else order.status|title) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.status == "CONFIRMED" and schedule and schedule.date %} · Delivery {{ when(schedule.date, schedule.window) }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
+    <p data-order-answer="true"><strong>{{ "Confirmed" if order.status == "CONFIRMED" else ("Problem reported" if order.status == "PROBLEM" else ("Confirmed" if order.status == "DELIVERED" else order.status|title)) }}</strong> by {{ order.supplier_responded_by_name }} on {{ order.supplier_responded_at.strftime("%B %d, %Y") if order.supplier_responded_at else "" }}{% if order.status == "CONFIRMED" and schedule and schedule.date %} · Delivery {{ when(schedule.date, schedule.window) }}{% endif %}{% if order.supplier_note %} · {{ order.supplier_note }}{% endif %}</p>
+    {% if order.status == "DELIVERED" %}
+    <p data-order-delivered="{{ closure.day.isoformat() if closure and closure.day else '' }}"><strong>Delivered</strong>{% if closure and closure.day %} on {{ when(closure.day, None) }}{% endif %}{% if closure and closure.by %} (recorded by {{ closure.by }}){% endif %}{% if closure and closure.note %} · {{ closure.note }}{% endif %}</p>
+    {% elif order.status == "CONFIRMED" %}
+    <details data-mark-delivered="{{ order.id }}"><summary>Mark delivered</summary>
+        <form method="post" action="{{ url_for('supplier_portal.mark_delivered', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Delivered on <input type="date" name="delivered_on" value="{{ today.isoformat() }}" max="{{ today.isoformat() }}" required></label>
+            <label>Note (optional) <input type="text" name="note"></label>
+            <div class="form-actions"><button type="submit" class="button is-primary">Mark delivered</button></div>
+        </form>
+    </details>
+    {% endif %}
     {% endif %}
 </section>
 {% endif %}

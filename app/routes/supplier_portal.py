@@ -6,6 +6,8 @@ a supplier the signed-in person belongs to; anything else is Not found.
 
 from __future__ import annotations
 
+from datetime import date
+
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
@@ -18,6 +20,7 @@ from app.services.supplier_hub import (
     confirm_order,
     dashboard,
     mark_opened,
+    order_closure,
     principal_class,
     purchase_order_for,
     report_order_problem,
@@ -123,6 +126,8 @@ def request_detail(supplier_id, share_id):
                            schedule=current_schedule(order) if order else None,
                            pending=pending_change(order) if order else None,
                            changes=change_history(order) if order else [],
+                           closure=order_closure(order),
+                           today=date.today(),
                            concrete_charges=CONCRETE_CHARGES, kind_concrete=KIND_CONCRETE)
 
 
@@ -168,6 +173,25 @@ def confirm(supplier_id, order_id):
             flash(f"Order {order.number} confirmed.", "success")
     except SupplierHubError as exc:
         flash(str(exc), "error")
+    return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=order.share_id))
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/orders/<int:order_id>/delivered", methods=["POST"])
+def mark_delivered(supplier_id, order_id):
+    from app.services.supplier_hub import mark_order_delivered
+
+    supplier = _supplier(supplier_id)
+    try:
+        order = supplier_order(supplier.id, order_id)
+    except SupplierHubError:
+        abort(404)
+    try:
+        mark_order_delivered(order, side="SUPPLIER", user=current_user,
+                             delivered_on=request.form.get("delivered_on", ""), note=request.form.get("note", ""))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Order {order.number} marked delivered. The contractor has been told.", "success")
     return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=order.share_id))
 
 
@@ -289,8 +313,11 @@ def supplier_deliveries(supplier_id):
     from app.services.supplier_hub import upcoming_deliveries
 
     supplier = _supplier(supplier_id)
+    from app.services.supplier_hub import recently_cancelled_orders
+
     return render_template("supplier/deliveries.html", supplier=supplier, areas=_areas(),
-                           deliveries=upcoming_deliveries(supplier_id=supplier.id))
+                           deliveries=upcoming_deliveries(supplier_id=supplier.id),
+                           cancelled=recently_cancelled_orders(supplier_id=supplier.id))
 
 
 @supplier_portal_bp.route("/account", methods=["GET", "POST"])

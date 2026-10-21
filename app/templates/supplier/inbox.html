@@ -29,7 +29,7 @@
             <td data-label="Needed by">{{ share.shared_json.needed_by or "—" }}</td>
             <td data-label="Delivery town">{{ share.shared_json.delivery_town }}</td>
             <td data-label="Status">{{ {"SENT": "New", "OPENED": "Opened", "RETURNED": "Quote returned", "SUPERSEDED": "Replaced by a newer request"}.get(share.status, share.status) }}</td>
-            <td data-label="Order">{% if order %}{{ order.number }} — {{ {"PLACED": "to confirm", "CONFIRMED": "confirmed", "PROBLEM": "problem reported", "CANCELLED": "cancelled"}[order.status] }}{% else %}—{% endif %}</td>
+            <td data-label="Order">{% if order %}{{ order.number }} — {{ {"PLACED": "to confirm", "CONFIRMED": "confirmed", "PROBLEM": "problem reported", "CANCELLED": "cancelled", "DELIVERED": "delivered"}.get(order.status, order.status|lower) }}{% else %}—{% endif %}</td>
         </tr>
         {% endfor %}
         </tbody>

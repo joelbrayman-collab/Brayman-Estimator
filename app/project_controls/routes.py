@@ -30,6 +30,7 @@ from app.project_controls.services import (
     create_change_order,
     delete_change_order_item,
     form_approved_internal_direct_cost,
+    project_default_tax_percent,
     update_change_order,
     update_change_order_item,
     update_change_order_status,
@@ -248,7 +249,7 @@ def create_change_order_route():
                     requested_by=form_actor("requested_by"),
                     requested_date=_parse_date(request.form.get("requested_date")),
                     markup_percent=request.form.get("markup_percent") or 0,
-                    tax_percent=request.form.get("tax_percent") or 0,
+                    tax_percent=request.form.get("tax_percent") or None,
                     notes=request.form.get("notes", ""),
                     status=request.form.get("status") or "Draft",
                     actor_user_id=getattr(current_user, "id", None),
@@ -269,7 +270,7 @@ def create_change_order_route():
                     requested_by=form_actor("requested_by"),
                     requested_date=_parse_date(request.form.get("requested_date")),
                     markup_percent=request.form.get("markup_percent") or 0,
-                    tax_percent=request.form.get("tax_percent") or 0,
+                    tax_percent=request.form.get("tax_percent") or None,
                     notes=request.form.get("notes", ""),
                     status=request.form.get("status") or "Draft",
                     organization_id=org_id,
@@ -300,7 +301,9 @@ def create_change_order_route():
         "requested_date": datetime.utcnow().date().isoformat(),
         "project_id": str(bound_project.id) if bound_project else "",
         "markup_percent": "0.00",
-        "tax_percent": "0.00",
+        # The project's established rate (accepted proposal / estimate / organization), never a silent 0 %.
+        # With no project chosen yet the field stays blank and the chosen project's rate is used.
+        "tax_percent": f"{project_default_tax_percent(bound_project):.2f}" if bound_project else "",
         "notes": "",
     }
     return _render_change_order_form(

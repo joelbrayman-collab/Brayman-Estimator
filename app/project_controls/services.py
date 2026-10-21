@@ -1,5 +1,6 @@
 """Business logic for Change Orders."""
 
+import re
 from datetime import date, datetime
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
@@ -128,6 +129,60 @@ def recalculate_change_order(change_order):
     return change_order
 
 
+_TAX_PERCENT_IN_TEXT = re.compile(r"(\d+(?:\.\d+)?)\s*%")
+
+
+def _version_tax_percent(version):
+    """The tax rate the version's proposal would quote (pricing snapshot first, as the proposal does)."""
+    from app.services.estimate_output import named_method_governs
+
+    pricing = getattr(version, "pricing_snapshot", None)
+    if named_method_governs(pricing) and pricing.tax_percent is not None:
+        return Decimal(pricing.tax_percent)
+    if version.tax_percent is not None:
+        return Decimal(version.tax_percent)
+    return None
+
+
+def project_default_tax_percent(project):
+    """The project's established tax rate for a new change order (Joel, 21 Oct 2026: never silently 0 %).
+
+    1. The project's accepted proposal (newest), as quoted to the customer.
+    2. Else the current version of the project's newest estimate, when it carries a rate.
+    3. Else the organization's tax jurisdiction setting (for example "Ontario (HST 13%)").
+    The office can still change it on the change order.
+    """
+    from app.models.estimate import Estimate
+    from app.models.organization import Organization
+    from app.models.proposal import Proposal
+
+    if project is None:
+        return Decimal("0")
+    accepted = (
+        Proposal.query.join(Estimate, Proposal.estimate_id == Estimate.id)
+        .filter(Estimate.project_id == project.id, Proposal.status == "Accepted")
+        .order_by(Proposal.id.desc())
+        .first()
+    )
+    if accepted is not None and accepted.tax_percent is not None:
+        return as_decimal(accepted.tax_percent)
+    estimates = (
+        Estimate.query.filter_by(project_id=project.id).order_by(Estimate.id.desc()).all()
+    )
+    for estimate in estimates:
+        version = estimate.current_version
+        if version is None:
+            continue
+        rate = _version_tax_percent(version)
+        if rate is not None and rate > 0:
+            return rate
+    org = db.session.get(Organization, project.organization_id)
+    match = _TAX_PERCENT_IN_TEXT.search(getattr(org, "tax_jurisdiction", None) or "")
+    if match:
+        return Decimal(match.group(1))
+    return Decimal("0")
+
+
 def create_change_order(
     *,
     project,
@@ -138,7 +193,7 @@ def create_change_order(
     requested_date=None,
     estimate_version=None,
     markup_percent=0,
-    tax_percent=0,
+    tax_percent=None,
     notes=None,
     copy_estimate_lines=False,
     number=None,
@@ -189,7 +244,11 @@ def create_change_order(
         requested_date=requested_date or date.today(),
         approved_date=date.today() if status == "Approved" else None,
         markup_percent=as_decimal(markup_percent),
-        tax_percent=as_decimal(tax_percent),
+        tax_percent=(
+            project_default_tax_percent(project)
+            if tax_percent is None or (isinstance(tax_percent, str) and not tax_percent.strip())
+            else as_decimal(tax_percent)
+        ),
         notes=(notes or "").strip() or None,
     )
     repo.add_change_order(change_order)

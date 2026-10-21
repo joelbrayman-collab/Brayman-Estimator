@@ -249,6 +249,12 @@ def toggle_template_active(template):
     return template
 
 
+def _job_address(project):
+    from app.services.contract_generation import _location_address
+
+    return (project.address or "").strip() or _location_address(project) or None
+
+
 def build_proposal_snapshot(estimate, version, template):
     """Return snapshot dict from estimate/version/template without persisting."""
     project = estimate.project
@@ -281,7 +287,9 @@ def build_proposal_snapshot(estimate, version, template):
         "client_email": client.email,
         "client_phone": client.phone,
         "project_name": project.name,
-        "project_address": project.address,
+        # The free-text address, else the structured job location: the same fallback as the contract
+        # and the purchase order (21 Oct 2026). Frozen on the proposal when it is created.
+        "project_address": _job_address(project),
         "estimate_number": estimate.estimate_number,
         "estimate_version_number": version.version_number,
         "estimate_version_label": version.version_label,

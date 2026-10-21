@@ -20,4 +20,14 @@
     </table></div>
     {% else %}<p class="muted-copy">No open deliveries.</p>{% endif %}
 </section>
+{% if cancelled %}
+<section class="form-panel" data-supplier-cancelled="{{ cancelled|length }}">
+    <h2>Cancelled by the contractor</h2>
+    <p class="muted-copy">Do not deliver these orders.</p>
+    <ul class="delivery-list">{% for c in cancelled %}
+        <li data-cancelled-delivery="{{ c.order.number }}"><strong>{{ c.order.number }}</strong> — was {{ when(c.schedule.date, c.schedule.window) }} · {{ c.order.share.shared_json.company }} · <strong>Cancelled</strong>{% if c.closure and c.closure.reason %}: {{ c.closure.reason }}{% endif %}
+            · <a href="{{ url_for('supplier_portal.request_detail', supplier_id=supplier.id, share_id=c.order.share_id) }}">Open</a></li>
+    {% endfor %}</ul>
+</section>
+{% endif %}
 {% endblock %}

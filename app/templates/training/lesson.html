@@ -12,7 +12,9 @@
 
   <ol class="tc-checklist">
   {% for s in lesson.steps %}{% set i = loop.index0 %}
-    <li class="tc-step-card{% if i in ticked %} is-done{% endif %}{% if i == step %} is-current{% endif %}" id="step-{{ loop.index }}" data-step-card="{{ i }}">
+    <li class="tc-step-card{% if i in ticked %} is-done{% endif %}{% if i == step %} is-current{% endif %}" id="step-{{ loop.index }}" data-step-card="{{ i }}"
+        data-t-title="{{ s.title }}" data-t-why="{{ s.why or lesson.why }}" data-t-app="{{ s.app }}" data-t-where="{{ s.where }}"
+        data-t-do="{{ s.do }}" data-t-expect="{{ s.expect }}">
       <div class="tc-step-head">
         <span class="tc-check" aria-hidden="true">{% if i in ticked %}&#10003;{% else %}{{ loop.index }}{% endif %}</span>
         <h2>{{ s.title }}</h2>

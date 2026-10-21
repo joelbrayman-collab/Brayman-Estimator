@@ -1,6 +1,7 @@
 {% extends "training/base.html" %}
 {% block title %}My training{% endblock %}
 {% block content %}
+<div class="tc-layout"><div>
 <section class="tc-card tc-hero">
   <p class="tc-eyebrow">{{ 'Contractor training' if trainee.pathway == 'CONTRACTOR' else 'Supplier training' }} · {{ trainee.role_label }}</p>
   <h1>{{ trainee.display_name }}</h1>
@@ -34,4 +35,7 @@
   </form>
 </details>
 {% endif %}
+</div>
+{% set tutor_mode = "home" %}{% include "training/_tutor.html" %}
+</div>
 {% endblock %}

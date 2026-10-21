@@ -264,3 +264,59 @@ def test_signing_in_on_the_training_site_lands_in_training(app):
     g.pop("_login_user", None)
     r = app.test_client().post("/supplier/login", data={"email": _email("darcy"), "password": PW["darcy"]})
     assert r.headers["Location"].endswith("/training")
+
+
+def _ask(client, **data):
+    return _post(client, "/training/tutor/ask", data=data, headers={"X-Requested-With": "fetch"}).get_json()["answer"]
+
+
+def test_tutor_follows_the_lesson_troubleshoots_and_stays_within_the_trainees_lessons(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    _m, lesson = next((m, l) for m, l in C.lessons_for("CONTRACTOR", "OWNER") if len(l.steps) >= 2)
+    first, second = lesson.steps[0], lesson.steps[1]
+    assert first.if_wrong in _ask(ben, lesson=lesson.key, step=0, question="It didn't work")
+    typed = _ask(ben, lesson=lesson.key, step=0, question="What do I type?")
+    assert (first.enter and first.enter in typed) or "Nothing needs typing" in typed
+    assert second.title in _ask(ben, lesson=lesson.key, step=0, question="What comes next?")
+    last = len(lesson.steps) - 1
+    assert "practice exercise" in _ask(ben, lesson=lesson.key, step=last, question="What comes next?")
+    assert second.expect in _ask(ben, lesson=lesson.key, step=1, question="What should I see?")
+    # Another pathway's lesson is not the trainee's: the Tutor gives general help, never that lesson's text.
+    _sm, supplier_lesson = C.lessons_for("SUPPLIER", "PRO_DESK")[-1]
+    answer = _ask(ben, lesson=supplier_lesson.key, step=0, question="Where is it?")
+    assert all(s.where not in answer for s in supplier_lesson.steps)
+    # The Tutor's answers never move the trainee's saved place.
+    before = TrainingTrainee.query.one().training_resume
+    _ask(ben, lesson=lesson.key, step=last, question="Where is it?")
+    assert TrainingTrainee.query.one().training_resume == before
+
+
+def test_tutor_on_home_and_acceptance_tests_and_minimized_everywhere(app):
+    ben = _client(app, "ben")
+    _post(ben, "/training/register", data={"role": "OWNER"})
+    home = _get(ben, "/training").get_data(as_text=True)
+    assert 'data-tutor-mode="home"' in home and "Continue where I left off" in home
+    case = C.uat_for("CONTRACTOR", "OWNER")[0]
+    page = _get(ben, f"/training/uat/{case.key}").get_data(as_text=True)
+    assert 'data-tutor-mode="uat"' in page and "How to do this test" in page
+    assert "Fail:" in _ask(ben, case=case.key, question="When is it a fail or blocked?")
+    assert case.start in _ask(ben, case=case.key, question="Where do I start?")
+    other = C.uat_for("SUPPLIER", "PRO_DESK")[0]
+    assert other.start not in _ask(ben, case=other.key, question="Where do I start?")
+    _post(ben, "/training/tutor", data={"minimized": "1"}, headers={"X-Requested-With": "fetch"})
+    assert 'class="tc-tutor is-min"' in _get(ben, "/training").get_data(as_text=True)
+    assert 'class="tc-tutor is-min"' in _get(ben, f"/training/uat/{case.key}").get_data(as_text=True)
+
+
+def test_field_and_supplier_tutors_answer_from_their_own_lessons(app):
+    kevin, pat = _client(app, "kevin"), _client(app, "pat")
+    _post(kevin, "/training/register", data={"role": "FIELD"})
+    _post(pat, "/training/register", data={"role": "PRO_DESK"})
+    _fm, field_lesson = C.lessons_for("CONTRACTOR", "FIELD")[0]
+    assert field_lesson.steps[0].where in _ask(kevin, lesson=field_lesson.key, step=0, question="Where is it?")
+    office_only = next(l for m, l in C.lessons_for("CONTRACTOR", "OWNER")
+                       if "FIELD" not in C.lesson_roles(m, l))
+    assert office_only.steps[0].where not in _ask(kevin, lesson=office_only.key, step=0, question="Where is it?")
+    _pm, pd_lesson = C.lessons_for("SUPPLIER", "PRO_DESK")[-1]
+    assert pd_lesson.steps[0].where in _ask(pat, lesson=pd_lesson.key, step=0, question="Where is it?")

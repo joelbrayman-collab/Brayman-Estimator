@@ -178,12 +178,23 @@ def tutor_ask():
             item = svc.lesson_for_trainee(trainee, data.get("lesson"))[1]
         except svc.TrainingError:
             item = None
-    answer = svc.tutor_answer(item, int(data.get("step") or 0), str(data.get("question") or "")[:500])
+    case = None
+    if data.get("case"):
+        try:
+            case = svc.uat_case_for_trainee(trainee, data.get("case"))  # only the trainee's own tests
+        except svc.TrainingError:
+            case = None
+    try:
+        step = int(data.get("step") or 0)
+    except (TypeError, ValueError):
+        step = 0
+    answer = svc.tutor_answer(item, step, str(data.get("question") or "")[:500], case=case)
     if request.headers.get("X-Requested-With") == "fetch" or request.is_json:
         return jsonify({"answer": answer})
     flash(answer, "tutor")
-    return redirect(url_for("training.lesson", key=data.get("lesson"), step=data.get("step") or 0)
-                    if item else url_for("training.home"))
+    if item:
+        return redirect(url_for("training.lesson", key=data.get("lesson"), step=step))
+    return redirect(url_for("training.uat_case", key=case.key) if case else url_for("training.home"))
 
 
 @training_bp.route("/uat")
@@ -217,7 +228,7 @@ def uat_case(key):
     attempts = svc.uat_history(trainee).get(key, [])
     module = next((m for m in C.modules() if m.key == case.module_key), None)
     return render_template("training/uat_case.html", trainee=trainee, case=case, attempts=attempts, module=module,
-                           statuses=UAT_STATUSES)
+                           statuses=UAT_STATUSES, tutor_mode="uat")
 
 
 @training_bp.route("/admin")

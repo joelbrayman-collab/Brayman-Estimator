@@ -353,37 +353,81 @@ GENERAL_HELP = (
 )
 
 
-def tutor_answer(lesson: Optional[C.Lesson], step_index: int, question: str) -> str:
-    """Answer from the current lesson and step first, then general help. No outside service; nothing
-    from the company's records is read."""
-    words = {w for w in _WORDS.findall((question or "").lower()) if w not in _STOP}
-    if not words:
+GENERAL_HELP = GENERAL_HELP + (
+    ("next comes after then", "Do the step, press I did this step (it turns green), and the lesson moves you to the next "
+                              "step. After the last step, do the practice exercise and press Finish this lesson."),
+    ("fail blocked retest again", "Fail: it did something different from the expected result; say what you saw. "
+                                  "Blocked: you could not get as far as the test; say what stopped you. After a fix, open "
+                                  "the same test and record the new result; your earlier results stay."),
+    ("role job lessons missing", "Your lessons follow the job you chose. Change it at the bottom of your training home "
+                                 "(your progress is kept). Field crew only get the Field lessons."),
+)
+
+_WHERE = {"where", "find", "menu", "button", "press", "click", "open", "locate"}
+_SEE = {"see", "expect", "result", "happen", "look", "appear"}
+_WRONG = {"wrong", "error", "problem", "stuck", "doesn't", "didn't", "work", "broken", "refused", "can't", "cannot"}
+_TYPE = {"type", "enter", "fill", "write", "put"}
+_WHY = {"why", "matter", "reason", "point"}
+_NEXT = {"next", "after", "then"}
+
+
+def _lower_first(text: str) -> str:
+    return text[:1].lower() + text[1:] if text else text
+
+
+def tutor_answer(lesson: Optional[C.Lesson], step_index: int, question: str, *, case: Optional[C.UatCase] = None) -> str:
+    """Answer from the trainee's current lesson and step (or acceptance test) first, then the training guide.
+    Only the trainee's own lessons are ever passed in (the route checks), nothing from anyone's records is read,
+    and no outside service is called."""
+    q = set(_WORDS.findall((question or "").lower()))
+    words = {w for w in q if w not in _STOP}
+    if not q:
         return "Ask in your own words, for example “where is the button?” or “what should I see?”."
     candidates: List[Tuple[int, str]] = []
     if lesson is not None:
-        step = lesson.steps[max(0, min(step_index, len(lesson.steps) - 1))]
-        where_words = {"where", "find", "menu", "button", "press", "click", "open", "locate"}
-        q = set(_WORDS.findall((question or "").lower()))
-        if q & where_words:
-            candidates.append((100, f"Open {step.app}. Go to {step.where}. Then {step.do[0].lower() + step.do[1:]}"))
-        if q & {"see", "expect", "result", "happen", "next", "after"}:
+        i = max(0, min(step_index, len(lesson.steps) - 1))
+        step = lesson.steps[i]
+        if q & _WHERE:
+            candidates.append((100, f"Open {step.app}. Go to {step.where}. Then {_lower_first(step.do)}."))
+        if q & _SEE:
             candidates.append((100, f"You should see: {step.expect}"))
-        if q & {"wrong", "error", "problem", "stuck", "doesn't", "didn't", "not", "help"}:
-            candidates.append((90, f"If something went wrong: {step.if_wrong}"))
-        if q & {"type", "enter", "fill", "write"} and step.enter:
-            candidates.append((90, f"Enter: {step.enter}"))
-        if q & {"why", "matter", "reason"}:
-            candidates.append((90, step.why or lesson.why))
-        for s in lesson.steps:
+        if q & _WRONG:
+            candidates.append((110, f"If it did not work: {step.if_wrong} Check you are on {step.where} in "
+                                    f"{step.app}. Nothing on the training site affects real customers, so you can try "
+                                    "again. If it still does not work, write a note under My notes and feedback."))
+        if q & _TYPE:
+            candidates.append((95, f"Enter: {step.enter}" if step.enter else "Nothing needs typing in this step: "
+                                                                                 f"{_lower_first(step.do)}."))
+        if q & _WHY:
+            candidates.append((95, step.why or lesson.why))
+        if q & _NEXT:
+            nxt = (f"Next is step {i + 2}: {lesson.steps[i + 1].title}. Press I did this step first."
+                   if i + 1 < len(lesson.steps) else
+                   "This is the last step. Then do the practice exercise below and press Finish this lesson.")
+            candidates.append((90, nxt))
+        for n, s in enumerate(lesson.steps):
             text = " ".join((s.title, s.where, s.do, s.enter, s.expect))
             score = len(words & set(_WORDS.findall(text.lower())))
             if score:
-                candidates.append((10 * score, f"In “{s.title}”: go to {s.where}. {s.do}. You should see: {s.expect}"))
+                candidates.append((10 * score, f"Step {n + 1}, “{s.title}”: go to {s.where}. {s.do}. You should see: "
+                                               f"{s.expect}"))
+    if q & {"fail", "blocked", "retest", "again"}:
+        candidates.append((120, "Fail: it did something different from the expected result; say what you saw. Blocked: "
+                                "you could not get as far as the test (for example a page would not open); say what "
+                                "stopped you. After a fix, open the same test and record the new result; your earlier "
+                                "results stay."))
+    if case is not None:
+        if q & (_WHERE | {"start"}):
+            candidates.append((100, f"Start here: {case.start}"))
+        if q & (_SEE | {"pass", "expected"}):
+            candidates.append((100, f"It is a Pass when: {case.expected}"))
+        if q & {"do", "action", "how"} and not q & {"retest", "fail", "blocked"}:
+            candidates.append((80, f"Do this: {case.action}"))
     for keys, answer in GENERAL_HELP:
         score = len(words & set(keys.split()))
         if score:
             candidates.append((20 * score, answer))
     if not candidates:
-        return ("I can help with this lesson: ask where something is, what to type, what you should see, or what "
-                "to do if it went wrong. For anything else, ask Joel.")
+        return ("I can help with this lesson: ask where something is, what to type, what you should see, what comes "
+                "next, or what to do if it went wrong. For anything else, ask Joel.")
     return max(candidates, key=lambda c: c[0])[1]

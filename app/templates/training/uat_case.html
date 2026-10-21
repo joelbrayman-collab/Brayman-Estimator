@@ -1,6 +1,7 @@
 {% extends "training/base.html" %}
 {% block title %}{{ case.title }}{% endblock %}
 {% block content %}
+<div class="tc-layout"><div>
 <section class="tc-card" data-uat-case="{{ case.key }}">
   <p class="tc-eyebrow">Acceptance test{% if module %} · Module {{ module.number }} {{ module.title }}{% endif %}</p>
   <h1>{{ case.title }}</h1>
@@ -25,4 +26,7 @@
   <ol class="tc-attempts">{% for a in attempts|reverse %}<li data-attempt="{{ a.attempt }}">Attempt {{ a.attempt }} · <span class="tc-status tc-{{ a.status|lower }}">{{ a.status|title }}</span> · {{ a.recorded_at.strftime('%d %b %Y %H:%M') }} UTC{% if a.issue %} · Issue: {{ a.issue }}{% endif %}{% if a.notes %} · {{ a.notes }}{% endif %}</li>{% endfor %}</ol>
 </section>
 {% endif %}
+</div>
+{% include "training/_tutor.html" %}
+</div>
 {% endblock %}

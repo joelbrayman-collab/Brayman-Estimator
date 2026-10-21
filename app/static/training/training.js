@@ -10,6 +10,33 @@
     });
   });
   if (box) box.addEventListener("click", function (e) { if (e.target === box || e.target.tagName === "IMG") box.close(); });
+  // The Tutor follows the step the trainee is on (a ticked step moves it on; tapping a step points it there).
+  function followStep(card) {
+    var tutor = document.querySelector("[data-tutor]");
+    if (!tutor || !card) return;
+    var n = Number(card.getAttribute("data-step-card"));
+    var set = function (sel, val) { var el = tutor.querySelector(sel); if (el) el.textContent = val; };
+    set("[data-tutor-number]", String(n + 1));
+    var title = tutor.querySelector("[data-tutor-title]");
+    if (title) title.innerHTML = "Step <span data-tutor-number>" + (n + 1) + "</span>: ";
+    if (title) title.appendChild(document.createTextNode(card.getAttribute("data-t-title")));
+    set("[data-tutor-why]", card.getAttribute("data-t-why"));
+    set("[data-tutor-app]", card.getAttribute("data-t-app"));
+    set("[data-tutor-where]", card.getAttribute("data-t-where"));
+    set("[data-tutor-do]", card.getAttribute("data-t-do"));
+    set("[data-tutor-expect]", card.getAttribute("data-t-expect"));
+    var input = tutor.querySelector("[data-tutor-step-input]"); if (input) input.value = String(n);
+    tutor.setAttribute("data-step", String(n));
+  }
+  document.querySelectorAll("[data-step-card]").forEach(function (card) {
+    card.addEventListener("click", function (e) {
+      if (e.target.closest("button, a, input, summary, form")) return;
+      document.querySelectorAll("[data-step-card]").forEach(function (c) { c.classList.remove("is-current"); });
+      card.classList.add("is-current");
+      followStep(card);
+    });
+  });
+
   // Step check-offs: tick a step and it turns green at once; the tick is saved on the server.
   document.querySelectorAll("[data-tick-form]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
@@ -32,7 +59,7 @@
           document.querySelectorAll("[data-step-card]").forEach(function (c) { c.classList.remove("is-current"); });
           var next = document.querySelector("[data-step-card]:not(.is-done)");
           if (data.done) {
-            if (next) { next.classList.add("is-current"); next.scrollIntoView({ behavior: "smooth", block: "start" }); }
+            if (next) { next.classList.add("is-current"); followStep(next); next.scrollIntoView({ behavior: "smooth", block: "start" }); }
             else { var ex = document.getElementById("exercise"); if (ex) ex.scrollIntoView({ behavior: "smooth", block: "start" }); }
           }
         })
@@ -52,12 +79,20 @@
       .then(function (data) {
         tutor.classList.toggle("is-min", data.minimized);
         input.value = data.minimized ? "0" : "1";
-        toggle.querySelector("[data-tutor-button]").textContent = data.minimized ? "Open the Tutor" : "Minimize";
+        var b = toggle.querySelector("[data-tutor-button]");
+        b.textContent = data.minimized ? "Open the Tutor" : "Minimize";
+        b.setAttribute("aria-expanded", data.minimized ? "false" : "true");
       })
       .catch(function () { toggle.submit(); });
   });
   var ask = tutor.querySelector("[data-tutor-ask]");
-  var out = tutor.querySelector("[data-tutor-answer][hidden]") || tutor.querySelector("[data-tutor-answer]");
+  tutor.querySelectorAll("[data-tutor-quick]").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      ask.querySelector('[name="question"]').value = chip.getAttribute("data-tutor-quick");
+      if (ask.requestSubmit) ask.requestSubmit(); else ask.dispatchEvent(new Event("submit", { cancelable: true }));
+    });
+  });
+  var out = tutor.querySelector("[data-tutor-live]");
   ask.addEventListener("submit", function (e) {
     e.preventDefault();
     var body = new FormData(ask);

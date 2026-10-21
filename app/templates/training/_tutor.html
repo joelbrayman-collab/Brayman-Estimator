@@ -1,29 +1,68 @@
-<aside class="tc-tutor{% if trainee.tutor_minimized %} is-min{% endif %}" id="tutor" data-tutor data-lesson="{{ lesson.key if lesson else '' }}" data-step="{{ step if step is defined else 0 }}">
+{# Training Tutor (21 Oct 2026): follows the trainee's lesson and step, explains in plain words, helps find the
+   control, says what to expect and how to recover. Answers come only from this trainee's own lessons and the
+   training guide (app/training/service.tutor_answer); it reads no records and calls no outside service.
+   tutor_mode: "lesson" (a lesson page), "home" (the training home) or "uat" (an acceptance test). #}
+{% set mode = tutor_mode if tutor_mode is defined else ('lesson' if lesson is defined and lesson else 'home') %}
+<aside class="tc-tutor{% if trainee.tutor_minimized %} is-min{% endif %}" id="tutor" data-tutor data-tutor-mode="{{ mode }}"
+       data-lesson="{{ lesson.key if lesson is defined and lesson else '' }}" data-step="{{ step if step is defined else 0 }}"
+       aria-label="Training Tutor">
   <div class="tc-tutor-head">
     <strong>Training Tutor</strong>
     <form method="post" action="{{ url_for('training.tutor_state') }}" data-tutor-toggle>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="minimized" value="{{ '0' if trainee.tutor_minimized else '1' }}">
       <input type="hidden" name="back" value="{{ request.full_path }}">
-      <button type="submit" class="tc-link" data-tutor-button>{{ 'Open the Tutor' if trainee.tutor_minimized else 'Minimize' }}</button>
+      <button type="submit" class="tc-link" data-tutor-button aria-expanded="{{ 'false' if trainee.tutor_minimized else 'true' }}" aria-controls="tutor-body">{{ 'Open the Tutor' if trainee.tutor_minimized else 'Minimize' }}</button>
     </form>
   </div>
-  <div class="tc-tutor-body">
-    {% if current is defined %}
-    <p><b>In plain words:</b> {{ current.why or lesson.why }}</p>
-    <p><b>Where:</b> {{ current.app }} → {{ current.where }}</p>
-    <p><b>You should see:</b> {{ current.expect }}</p>
+  <div class="tc-tutor-body" id="tutor-body">
+    {% if mode == 'lesson' %}
+    <div data-tutor-step>
+      <p class="tc-tutor-now" data-tutor-title>Step <span data-tutor-number>{{ step + 1 }}</span>: {{ current.title }}</p>
+      <p><b>In plain words:</b> <span data-tutor-why>{{ current.why or lesson.why }}</span></p>
+      <p><b>Open:</b> <span data-tutor-app>{{ current.app }}</span></p>
+      <p><b>Go to:</b> <span data-tutor-where>{{ current.where }}</span></p>
+      <p><b>Then:</b> <span data-tutor-do>{{ current.do }}</span></p>
+      <p><b>You should see:</b> <span data-tutor-expect>{{ current.expect }}</span></p>
+    </div>
+    {% elif mode == 'uat' %}
+    <p class="tc-tutor-now">How to do this test</p>
+    <p>1. Go to the place under <b>Start here</b> on the training site. 2. Do exactly what <b>Do this</b> says. 3. Compare what you see with <b>Expected result</b>.</p>
+    <p><b>Pass</b> when it matches. <b>Fail</b> when it does something different, and say what you saw. <b>Blocked</b> when you could not get as far as the test (for example a page would not open), and say what stopped you.</p>
+    <p>Your earlier results stay; a retest adds a new attempt.</p>
+    {% else %}
+    <p class="tc-tutor-now">Start here</p>
+    {% if ov is defined and ov.resume %}<p>Press <b>Continue where I left off</b>: it opens your next lesson at the first step you have not ticked.</p>
+    {% else %}<p>All your lessons are done. Open <b>Acceptance tests</b> to finish your training.</p>{% endif %}
+    <p>In each lesson, do the step on the training site, then press <b>I did this step</b>; it turns green and is saved.</p>
     {% endif %}
+    <div class="tc-quick" role="group" aria-label="Quick help">
+      {% if mode == 'lesson' %}
+      <button type="button" class="tc-chip" data-tutor-quick="Where is it?">Where is it?</button>
+      <button type="button" class="tc-chip" data-tutor-quick="What should I see?">What should I see?</button>
+      <button type="button" class="tc-chip" data-tutor-quick="It didn't work">It didn't work</button>
+      <button type="button" class="tc-chip" data-tutor-quick="What do I type?">What do I type?</button>
+      <button type="button" class="tc-chip" data-tutor-quick="Why does this matter?">Why does this matter?</button>
+      <button type="button" class="tc-chip" data-tutor-quick="What comes next?">What comes next?</button>
+      {% elif mode == 'uat' %}
+      <button type="button" class="tc-chip" data-tutor-quick="When is it a fail or blocked?">Fail or Blocked?</button>
+      <button type="button" class="tc-chip" data-tutor-quick="How do I retest?">How do I retest?</button>
+      {% else %}
+      <button type="button" class="tc-chip" data-tutor-quick="How do I save and continue later?">Save and continue later</button>
+      <button type="button" class="tc-chip" data-tutor-quick="How do the acceptance tests work?">Acceptance tests</button>
+      {% endif %}
+    </div>
     {% with messages = get_flashed_messages(category_filter=['tutor']) %}{% for m in messages %}<p class="tc-answer" data-tutor-answer>{{ m }}</p>{% endfor %}{% endwith %}
-    <p class="tc-answer" data-tutor-answer hidden></p>
+    <p class="tc-answer" data-tutor-answer data-tutor-live hidden aria-live="polite"></p>
     <form method="post" action="{{ url_for('training.tutor_ask') }}" data-tutor-ask>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="lesson" value="{{ lesson.key if lesson else '' }}">
-      <input type="hidden" name="step" value="{{ step if step is defined else 0 }}">
+      <input type="hidden" name="lesson" value="{{ lesson.key if lesson is defined and lesson else '' }}">
+      <input type="hidden" name="step" value="{{ step if step is defined else 0 }}" data-tutor-step-input>
+      <input type="hidden" name="case" value="{{ case.key if case is defined and case else '' }}">
       <label for="tutor-q">Ask the Tutor</label>
       <input id="tutor-q" name="question" maxlength="500" placeholder="Where is the button? What should I see?">
       <button class="tc-btn" type="submit">Ask</button>
     </form>
-    <p class="tc-small">The Tutor answers from this lesson and the training guide. It does not read anyone's records.</p>
+    <p class="tc-small">The Tutor answers from your own lessons and the training guide. It does not read anyone's records and uses no outside service. For anything else, ask Joel.</p>
   </div>
 </aside>

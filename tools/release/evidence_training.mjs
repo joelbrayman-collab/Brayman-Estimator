@@ -134,20 +134,44 @@ test("tick each step: it turns green and is saved; screenshot enlargement; Save 
   assert.match(await pg.locator(`[data-lesson="${lesson}"]`).locator("xpath=..").textContent(), new RegExp(`1 of ${total} steps`));
 });
 
-test("Tutor: minimize and restore are kept after reloading; it answers from the lesson", async () => {
+test("Training Tutor: follows the step, quick help, troubleshooting, minimize and restore kept on every page", async () => {
   const { pg } = sessions.ben;
+  await pg.goto(`${base}/training`);
+  assert.equal(await pg.getAttribute("[data-tutor]", "data-tutor-mode"), "home");
   await Promise.all([pg.waitForNavigation(), pg.click("[data-continue]")]);
-  await pg.click("[data-tutor-button]");
-  await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-min"));
-  await pg.reload();
-  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still minimized after reload");
-  await pg.click("[data-tutor-button]");
-  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-min"));
+  assert.equal(await pg.getAttribute("[data-tutor]", "data-tutor-mode"), "lesson");
+  // The Tutor follows the step: point it at a step and it shows that step.
+  const cards = await pg.locator("[data-step-card]").count();
+  const target = cards > 1 ? 1 : 0;
+  const title = await pg.getAttribute(`[data-step-card="${target}"]`, "data-t-title");
+  await pg.locator(`[data-step-card="${target}"] .tc-step-head h2`).click();
+  assert.ok((await pg.textContent("[data-tutor-title]")).includes(title), "the Tutor shows the step the trainee is on");
+  // Quick help: "It didn't work" gives that step's recovery.
+  await pg.click('[data-tutor-quick="It didn\'t work"]');
+  await pg.waitForFunction(() => { const a = document.querySelector("[data-tutor-live]"); return a && !a.hidden && a.textContent.length > 20; });
+  assert.match(await pg.textContent("[data-tutor-live]"), /If it did not work/);
+  await pg.click('[data-tutor-quick="What comes next?"]');
+  await pg.waitForFunction(() => /Next is step|last step/.test(document.querySelector("[data-tutor-live]").textContent));
   await pg.fill("#tutor-q", "Where is the button?");
   await pg.locator("[data-tutor-ask] button").click();
-  await pg.waitForFunction(() => { const a = document.querySelector("[data-tutor-answer]:not([hidden])"); return a && a.textContent.length > 10; });
-  assert.match(await pg.locator("[data-tutor-answer]:not([hidden])").last().textContent(), /Go to|Open/);
+  await pg.waitForFunction(() => /Go to/.test(document.querySelector("[data-tutor-live]").textContent));
   await shot(pg, "training-tutor");
+  // Minimize: kept after reloading and on the other training pages; restore brings it back.
+  await pg.click("[data-tutor-button]");
+  await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-min"));
+  assert.equal(await pg.getAttribute("[data-tutor-button]", "aria-expanded"), "false");
+  await pg.reload();
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still minimized after reload");
+  await pg.goto(`${base}/training`);
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still minimized on the home page");
+  await pg.click("[data-tutor-button]");
+  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-min"));
+  await pg.goto(`${base}/training/uat`);
+  const first = await pg.locator("[data-uat-row] a").first().getAttribute("href");
+  await pg.goto(`${base}${first}`);
+  assert.equal(await pg.getAttribute("[data-tutor]", "data-tutor-mode"), "uat");
+  await pg.click('[data-tutor-quick="When is it a fail or blocked?"]');
+  await pg.waitForFunction(() => /Blocked:/.test(document.querySelector("[data-tutor-live]").textContent));
 });
 
 test("a lesson completes only when its exercise is ticked; notes are kept", async () => {
@@ -207,10 +231,13 @@ test("field worker on an iPhone: Field lessons only, no sideways scrolling", asy
   await register(kevin, "Field worker");
   await noSideways(kevin.pg, "home (phone)");
   await shot(kevin.pg, "training-home-field-phone");
-  for (const href of await kevin.pg.locator("[data-lesson]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {
+  for (const href of await kevin.pg.locator("a[data-lesson]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {
     await kevin.pg.goto(`${base}${href}`);
     await noSideways(kevin.pg, href);
   }
+  await kevin.pg.click('[data-tutor-quick="Where is it?"]');
+  await kevin.pg.waitForFunction(() => /Go to/.test(document.querySelector("[data-tutor-live]").textContent));
+  await noSideways(kevin.pg, "lesson with the Tutor answer (phone)");
   await kevin.pg.goto(`${base}/training/uat`);
   await noSideways(kevin.pg, "acceptance tests (phone)");
   const r = await kevin.pg.goto(`${base}/training/admin`);

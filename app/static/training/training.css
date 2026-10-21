@@ -81,3 +81,9 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 .tc-tick-btn.is-done .tc-tick-box { background:#fff; color:var(--green); border-color:#fff; }
 .tc-lesson-done { color:var(--green); font-weight:700; margin:0; }
 .tc-lesson.tc-done a::before { content:"\2713  "; color:var(--green); font-weight:700; }
+/* Training Tutor (21 Oct 2026) */
+.tc-tutor-now { font-weight:700; color:var(--black); margin:6px 0; }
+.tc-quick { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.tc-chip { border:1px solid #c9c4b8; background:#faf7ef; border-radius:999px; padding:6px 12px; min-height:36px; font:inherit; font-size:.9rem; cursor:pointer; }
+.tc-chip:hover, .tc-chip:focus-visible { border-color:var(--gold); outline:none; }
+.tc-step-card { cursor:pointer; }

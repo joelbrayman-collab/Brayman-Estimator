@@ -667,3 +667,300 @@ step("c10: a proposal template, sign off, send to Morgan, Morgan accepts on her 
     await shot(pg, "c10-contract-generated", pg.locator("#contract-snapshots"));
   } else console.log("RECORDED no Generate contract button");
 });
+
+// ================================================================== Module 11 (office part): work item, dates, crew
+step("c11: a work item with an activity, Set dates on the calendar, the crew assigned", async () => {
+  const { pg } = await ben();
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c11-hub-project-work", pg.getByRole("link", { name: "Open project work" }));
+  await submit(pg, pg.getByRole("link", { name: "Open project work" }));
+  const element = pg.locator("form[action$='/elements']");
+  await element.locator("[name=display_name]").fill(WORK_ITEM);
+  await shot(pg, "c11-work-item", element.locator("button[type=submit]"));
+  await submit(pg, element.locator("button[type=submit]"));
+  assert.match(await flash(pg), /Work item added/);
+  const activity = pg.locator("form[action*='/activities']").last();
+  await activity.locator("[name=display_name]").fill(ACTIVITY);
+  await shot(pg, "c11-activity", activity.locator("button[type=submit]"));
+  await submit(pg, activity.locator("button[type=submit]"));
+  assert.match(await pg.locator("main").innerText(), /Framing and decking \(training\)/);
+  // The framing was added after the proposal was accepted, so it shows as extra work until reviewed:
+  // it is the accepted proposal's work, so it is recorded as original work.
+  const original = pg.locator("form").filter({ has: pg.getByRole("button", { name: "Record as original work" }) }).first();
+  await original.locator("[name=reason]").fill("Part of the accepted proposal (training)");
+  await shot(pg, "c11-record-original", original.getByRole("button", { name: "Record as original work" }));
+  await submit(pg, original.getByRole("button", { name: "Record as original work" }));
+  assert.doesNotMatch(await flash(pg), /can no longer/);
+  console.log("RECORDED original work: " + (await flash(pg)));
+  await shot(pg, "c11-original-recorded");
+  await go(pg, "/schedule");
+  await shot(pg, "c11-set-dates-link", pg.getByRole("link", { name: "Set dates" }).first());
+  await submit(pg, pg.getByRole("link", { name: "Set dates" }).first());
+  await Promise.all([pg.waitForNavigation(), pg.selectOption("[name=project_id]", { label: JOB })]);
+  await pg.selectOption("[name=project_work_element_id]", { label: WORK_ITEM });
+  await pg.fill("[name=scheduled_start]", day(0));
+  await pg.fill("[name=scheduled_end]", day(2));
+  await shot(pg, "c11-set-dates", pg.getByRole("button", { name: "Set dates" }));
+  await submit(pg, pg.getByRole("button", { name: "Set dates" }));
+  assert.match(await flash(pg), /Schedule saved/);
+  const dates = pg.locator("details[data-project-dates]");
+  if ((await dates.getAttribute("open")) === null) await dates.locator("summary").first().click();
+  const card = pg.locator(`details[data-project-card="${W.projectId}"]`);
+  if ((await card.getAttribute("open")) === null) await card.locator("summary").click();
+  await shot(pg, "c11-edit-dates-link", card.getByRole("link", { name: "Edit dates" }).first());
+  await submit(pg, card.getByRole("link", { name: "Edit dates" }).first());
+  W.itemUrl = new URL(pg.url()).pathname;
+  await pg.selectOption("[name=crew_id]", { label: CREW });
+  await shot(pg, "c11-assign-crew", pg.getByRole("button", { name: "Assign" }));
+  await submit(pg, pg.getByRole("button", { name: "Assign" }));
+  assert.match(await flash(pg), /Assignment saved/);
+  await go(pg, W.itemUrl);
+  assert.match(await pg.locator("main").innerText(), /Pool deck crew \(training\)/);
+  await shot(pg, "c11-assigned");
+  await go(pg, dayUrl(day(0), "&view=week&scope=company"));
+  await shot(pg, "c05-company-week-scheduled");
+});
+
+// ================================================================== Module 8 (order): after acceptance, linked to the schedule
+step("c08: Ben places the concrete order for today's work; Darcy confirms; Deliveries", async () => {
+  const { pg } = await ben();
+  await go(pg, `/projects/${W.projectId}/supplier-requests`);
+  const order = pg.locator("form[action$='/order']");
+  await order.locator("[name=delivery_date]").fill(day(0));
+  await order.locator("[name=delivery_window]").fill("7:00–9:00");
+  const link = order.locator("[name=schedule_item_id] option").nth(1);
+  if (await link.count()) await order.locator("[name=schedule_item_id]").selectOption(await link.getAttribute("value"));
+  await order.locator("[name=site_contact]").fill("Kevin Field (training crew) 613-555-0101");
+  await order.locator("[name=notes]").fill("Chute from the driveway, equipment pad beside the pool (training)");
+  await shot(pg, "c08-place-order", order.locator("button[type=submit]"));
+  await submit(pg, order.locator("button[type=submit]"));
+  const placed = await flash(pg);
+  assert.match(placed, /Purchase order PO-\d{4}-\d{4} sent/);
+  W.po = placed.match(/PO-\d{4}-\d{4}/)[0];
+  await shot(pg, "c08-order-sent");
+  const store = await person("darcy");
+  await go(store.pg, "/supplier/");
+  await submit(store.pg, store.pg.getByRole("link", { name: W.po }).first());
+  await shot(store.pg, "c08-supplier-order", store.pg.getByRole("button", { name: "Confirm order" }));
+  await submit(store.pg, store.pg.getByRole("button", { name: "Confirm order" }));
+  await go(pg, `/projects/${W.projectId}/supplier-requests`);
+  assert.match(await pg.locator("main").innerText(), /[Cc]onfirmed/);
+  await shot(pg, "c08-order-confirmed", pg.locator("details[data-mark-delivered] summary"));
+  await go(pg, "/deliveries");
+  assert.match(await pg.locator("main").innerText(), new RegExp(W.po));
+  await shot(pg, "c08-deliveries");
+  const o = await olivia();
+  await go(o.pg, "/deliveries");
+  await shot(o.pg, "c08-deliveries-office");
+});
+
+// ================================================================== Module 11 (Field): Kevin's day
+step("c11: Kevin on Field: Today with the job and the delivery, confirm, capture, drawings, extra work, time", async () => {
+  const k = await kevinPhone();
+  await go(k.pg, "/field/today");
+  const today = await k.pg.locator("body").innerText();
+  assert.match(today, /Harbour Lane Pool Deck/);
+  for (const m of ["$", "6800", "6,800", "612.50", "Unit cost", "Markup"]) assert.ok(!today.includes(m), `Kevin sees ${m}`);
+  await shot(k.pg, "c11-field-today");
+  const deliveries = k.pg.locator("[data-field-deliveries]");
+  if (await deliveries.count()) await shot(k.pg, "c11-field-delivery", deliveries);
+  else console.log("RECORDED no delivery shown on Field Today");
+  await go(k.pg, "/field/week");
+  await shot(k.pg, "c11-field-week");
+  await go(k.pg, "/field/month");
+  await shot(k.pg, "c11-field-month");
+  await go(k.pg, "/field/company-today");
+  await shot(k.pg, "c11-field-company-today");
+  await go(k.pg, "/field/today");
+  await submit(k.pg, k.pg.getByRole("link", { name: "Choose Project" }));
+  await shot(k.pg, "c11-field-projects", k.pg.locator(`a[href="/field/projects/${W.projectId}"]`));
+  await submit(k.pg, k.pg.locator(`a[href="/field/projects/${W.projectId}"]`).first());
+  await shot(k.pg, "c11-field-confirm", k.pg.getByRole("button", { name: "Confirm for Today" }));
+  await submit(k.pg, k.pg.getByRole("link", { name: "Drawings and plans" }));
+  assert.match(await k.pg.locator("body").innerText(), /harbour-lane-deck-plan-training/);
+  await shot(k.pg, "c07-field-drawings");
+  await go(k.pg, `/field/projects/${W.projectId}`);
+  await submit(k.pg, k.pg.getByRole("button", { name: "Confirm and Capture" }));
+  assert.match(k.pg.url(), /\/capture/);
+  await k.pg.fill("#field-text", "Ledger and joists in on the north side. Pool coping protected with plywood. (training)");
+  await k.pg.setInputFiles("#field-choose-photo", { name: "joists-training.jpg", mimeType: "image/jpeg", buffer: syntheticPhoto() });
+  await shot(k.pg, "c11-capture", k.pg.locator("#field-save"));
+  await k.pg.locator("#field-save").click();
+  await k.pg.waitForFunction(() => /Saved/.test(document.querySelector("#field-feedback")?.innerText || ""), null, { timeout: 30000 });
+  await k.pg.waitForFunction(() => document.querySelector("#field-retry-panel")?.hidden !== false, null, { timeout: 20000 }).catch(() => console.log("RECORDED capture still pending on the phone after 20 s"));
+  await shot(k.pg, "c11-capture-saved", k.pg.locator("#field-feedback"));
+  await go(k.pg, `/field/projects/${W.projectId}/extra-work`);
+  await k.pg.fill("[name=description]", "Morgan asked for two extra steps down to the lawn on the east side. (training)");
+  await k.pg.fill("[name=new_element_name]", "Extra steps to the lawn (training)");
+  await shot(k.pg, "c11-extra-work", k.pg.getByRole("button", { name: "Record extra work" }));
+  await submit(k.pg, k.pg.getByRole("button", { name: "Record extra work" }));
+  assert.match(await flash(k.pg), /Extra work recorded/);
+  await shot(k.pg, "c11-extra-work-recorded");
+  await go(k.pg, "/field/today");
+  await submit(k.pg, k.pg.getByRole("link", { name: "Enter time" }).first());
+  const other = k.pg.locator("#field-time-other-toggle");
+  if (await other.count()) await other.click();
+  await k.pg.selectOption("[name=project_work_element_id]", { label: WORK_ITEM });
+  const v = await k.pg.locator("[name=project_work_activity_id] option", { hasText: "Framing and decking" }).first().getAttribute("value");
+  await k.pg.selectOption("[name=project_work_activity_id]", v);
+  await k.pg.fill("[name=hours]", "8");
+  await k.pg.fill("[name=worker_note]", "Ledger and joists, north side (training)");
+  await shot(k.pg, "c11-time", k.pg.getByRole("button", { name: "Send time" }));
+  await submit(k.pg, k.pg.getByRole("button", { name: "Send time" }));
+  assert.match(await flash(k.pg), /Time sent for approval/);
+  await shot(k.pg, "c11-time-sent");
+  await go(k.pg, "/field/time");
+  await shot(k.pg, "c11-my-time");
+});
+
+// ================================================================== Module 11 (office): observations, extra work → change order, time, delivered
+step("c11: the office sees the field note, turns the extra work into an approved change order, approves time, marks delivered", async () => {
+  const { pg } = await ben();
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c11-field-observations", pg.locator("h2", { hasText: "Field Observations" }));
+  await go(pg, `/work-structure/projects/${W.projectId}`);
+  await shot(pg, "c11-extra-work-office", pg.locator("h2", { hasText: "Extra steps to the lawn" }));
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c11-new-change-order-link", pg.getByRole("link", { name: "New Change Order" }));
+  await submit(pg, pg.getByRole("link", { name: "New Change Order" }));
+  await pg.fill("[name=title]", "Extra steps to the lawn (training)");
+  const pick = pg.locator("[name=project_id]");
+  if (!(await pick.inputValue())) await pick.selectOption({ label: JOB });
+  await pg.fill("[name=requested_by]", CUSTOMER);
+  await pg.fill("[name=requested_date]", day(0));
+  await pg.fill("[name=description]", "Two composite steps from the east side of the deck down to the lawn.");
+  await pg.fill("[name=reason]", "Customer request on site, recorded by Kevin on Field as extra work.");
+  await shot(pg, "c11-change-order-form", pg.getByRole("button", { name: "Create Change Order" }));
+  await submit(pg, pg.getByRole("button", { name: "Create Change Order" }));
+  console.log("RECORDED change order: " + (await flash(pg)) + " -> " + pg.url());
+  W.coUrl = new URL(pg.url()).pathname;
+  await shot(pg, "c11-change-order");
+  await go(pg, `${W.coUrl}?tab=items`);
+  const add = pg.locator("form").filter({ has: pg.getByRole("button", { name: "Add Item" }) });
+  await add.locator("[name=description]").fill("Two extra steps to the lawn, composite, supplied and installed (training)");
+  await add.locator("[name=quantity]").fill("1");
+  await add.locator("[name=unit]").fill("ls");
+  await add.locator("[name=unit_price]").fill("850");
+  await shot(pg, "c11-change-order-item", add.getByRole("button", { name: "Add Item" }));
+  await submit(pg, add.getByRole("button", { name: "Add Item" }));
+  await go(pg, W.coUrl);
+  await pg.selectOption("form[action$='/status'] [name=status]", "Approved");
+  await shot(pg, "c11-change-order-approve", pg.getByRole("button", { name: "Save Status" }));
+  await submit(pg, pg.getByRole("button", { name: "Save Status" }));
+  console.log("RECORDED change order status: " + (await flash(pg)));
+  await shot(pg, "c11-change-order-approved");
+  // Time review.
+  await go(pg, `/time?project_id=${W.projectId}`);
+  assert.match(await pg.locator("main").innerText(), /Kevin Field/);
+  await shot(pg, "c11-time-review");
+  await submit(pg, pg.locator('main a[href^="/time/"]').filter({ hasText: day(0) }).first());
+  await shot(pg, "c11-time-approve", pg.getByRole("button", { name: "Approve", exact: true }));
+  await submit(pg, pg.getByRole("button", { name: "Approve", exact: true }));
+  assert.match(await pg.locator("main").innerText(), /Approved/);
+  // The concrete arrived.
+  await go(pg, `/projects/${W.projectId}/supplier-requests`);
+  await pg.locator("details[data-mark-delivered] summary").first().click();
+  await pg.fill("details[data-mark-delivered] [name=note]", "Poured at the equipment pad (training)");
+  await shot(pg, "c11-mark-delivered", pg.getByRole("button", { name: "Mark delivered" }));
+  await submit(pg, pg.getByRole("button", { name: "Mark delivered" }));
+  console.log("RECORDED delivered: " + (await flash(pg)));
+  await shot(pg, "c11-delivered");
+});
+
+// ================================================================== Module 4: QuickBooks
+step("c04: invoices from the proposal and the change order; files for QuickBooks; Check QuickBooks", async () => {
+  const { pg } = await ben();
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c04-hub-invoice", pg.getByRole("link", { name: "Make an invoice" }));
+  await submit(pg, pg.getByRole("link", { name: "Make an invoice" }));
+  await pg.selectOption("[name=kind]", "DEPOSIT");
+  await pg.fill("[name=percent]", "30");
+  await shot(pg, "c04-make-invoice", pg.getByRole("button", { name: "Make the invoice" }));
+  await submit(pg, pg.getByRole("button", { name: "Make the invoice" }));
+  const made = await flash(pg);
+  assert.match(made, /Invoice INV-\d{4}-\d{4} made/);
+  console.log("RECORDED deposit invoice: " + made);
+  await shot(pg, "c04-invoice-made");
+  await go(pg, `/accounting/projects/${W.projectId}/invoices/new`);
+  const co = pg.getByRole("button", { name: "Invoice the change order" });
+  if (await co.count()) {
+    await shot(pg, "c04-invoice-change-order", co);
+    await submit(pg, co);
+    console.log("RECORDED change order invoice: " + (await flash(pg)));
+  } else console.log("RECORDED no approved change order offered for invoicing");
+  await menu(pg, "Company", "/accounting");
+  await shot(pg, "c04-accounting");
+  await shot(pg, "c04-files", pg.locator('main a[href="/accounting/export/customers"]'));
+  for (const kind of ["customers", "suppliers", "invoices", "bills"]) {
+    await go(pg, "/accounting");
+    await submit(pg, pg.locator(`main a[href="/accounting/export/${kind}"]`).first());
+    await shot(pg, `c04-export-${kind}`);
+    const button = pg.getByRole("button", { name: /Download the file/ });
+    if (await button.count()) {
+      const [download] = await Promise.all([pg.waitForEvent("download"), button.click()]);
+      const body = fs.readFileSync(await download.path(), "utf8");
+      if (kind === "customers") assert.ok(body.includes("Morgan Ellis"), "the Customers file has Morgan Ellis");
+      console.log(`RECORDED ${kind} file ${download.suggestedFilename()} ${body.split("\n")[0]}`);
+    } else console.log(`RECORDED ${kind}: nothing to download`);
+  }
+  await go(pg, "/accounting/export/invoices");
+  await shot(pg, "c04-nothing-new");
+  await go(pg, "/accounting/invoices");
+  await shot(pg, "c04-invoices");
+  await go(pg, "/accounting/reconcile");
+  await shot(pg, "c04-check-quickbooks", pg.getByRole("button", { name: "Check" }));
+  const o = await olivia();
+  await go(o.pg, "/accounting");
+  await shot(o.pg, "c04-accounting-office");
+});
+
+// ================================================================== Module 12: the working day and closeout
+step("c12: Home in the morning, the final invoice, Getting started 15 of 15, closing and reopening the project", async () => {
+  const { pg } = await ben();
+  await go(pg, "/");
+  assert.match(await pg.locator("main").innerText(), /Harbour Lane Pool Deck/);
+  await shot(pg, "c12-home-morning");
+  const o = await olivia();
+  await go(o.pg, "/");
+  await shot(o.pg, "c12-home-office");
+  const phone = await person("ben", PHONE);
+  await go(phone.pg, "/");
+  await shot(phone.pg, "c12-home-phone");
+  const k = await kevinPhone();
+  await go(k.pg, "/field/today");
+  await shot(k.pg, "c12-field-day");
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c12-hub-money", pg.locator('a[href="#hub-monitor"]'));
+  await go(pg, `/accounting/projects/${W.projectId}/invoices/new`);
+  await pg.selectOption("[name=kind]", "FINAL");
+  await shot(pg, "c12-final-invoice", pg.getByRole("button", { name: "Make the invoice" }));
+  await submit(pg, pg.getByRole("button", { name: "Make the invoice" }));
+  console.log("RECORDED final invoice: " + (await flash(pg)));
+  await shot(pg, "c12-final-invoice-made");
+  await markDone(pg, "working_day");
+  await go(pg, "/getting-started");
+  const [done, total] = (await pg.locator("[data-getting-started]").getAttribute("data-getting-started")).split("/").map(Number);
+  console.log(`RECORDED Getting started ${done} of ${total}`);
+  await shot(pg, "c12-getting-started-done");
+  await go(pg, `/projects/${W.projectId}`);
+  await shot(pg, "c12-close-link", pg.getByRole("link", { name: "Close Project" }));
+  await submit(pg, pg.getByRole("link", { name: "Close Project" }));
+  await shot(pg, "c12-close-confirm");
+  const box = pg.locator("main form input[type=checkbox]");
+  if (await box.count()) await box.first().check();
+  await submit(pg, pg.locator("main form button[type=submit]", { hasText: "Close Project" }));
+  console.log("RECORDED close: " + (await flash(pg)));
+  await shot(pg, "c12-closed");
+  await go(pg, "/projects/?view=closed");
+  await shot(pg, "c12-closed-list");
+  const reopen = pg.locator(`a[href="/projects/${W.projectId}/reopen"]`);
+  await go(pg, `/projects/${W.projectId}`);
+  if (await reopen.count()) {
+    await shot(pg, "c12-reopen-link", reopen);
+    await submit(pg, reopen.first());
+    await shot(pg, "c12-reopen-confirm");
+  }
+  // Office staff are not offered Close Project.
+  await go(o.pg, `/projects/${W.projectId}`);
+  assert.equal(await o.pg.locator(`a[href="/projects/${W.projectId}/close"]`).count(), 0);
+});

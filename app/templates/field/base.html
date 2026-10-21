@@ -10,6 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="field-body" data-field-page="{% block field_page %}today{% endblock %}" data-field-copy="live" data-rendered-at="{{ field_rendered_at }}">
+    {% include "training/_site_bar.html" %}
     <header class="field-header">
         <a class="field-brand" href="{{ url_for('field.today') }}">
             <img

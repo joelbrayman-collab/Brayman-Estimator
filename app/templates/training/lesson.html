@@ -9,7 +9,7 @@
   <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p></div>
   {% endif %}
   <p class="tc-stepcount" data-stepcount>Step {{ step + 1 }} of {{ lesson.steps|length }}</p>
-  <div class="tc-step">
+  <div class="tc-step{% if not current.shot %} tc-step-text-only{% endif %}">
     <div class="tc-step-text">
       <h2>{{ current.title }}</h2>
       <dl>
@@ -56,9 +56,9 @@
     </form>
     <ul>{% for n in notes %}<li data-note>{{ n.created_at.strftime('%d %b %H:%M') }} UTC · {{ n.body }}</li>{% endfor %}</ul>
   </details>
-  <p class="tc-small">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}">Previous lesson</a>{% endif %}
-    {% if next_key %} · <a href="{{ url_for('training.lesson', key=next_key) }}">Next lesson</a>{% endif %}
-    · <a href="{{ url_for('training.home') }}">All my lessons</a></p>
+  <p class="tc-small tc-lesson-links">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}">Previous lesson</a>{% endif %}
+    {% if next_key %}<a href="{{ url_for('training.lesson', key=next_key) }}">Next lesson</a>{% endif %}
+    <a href="{{ url_for('training.home') }}">All my lessons</a></p>
 </article>
 {% include "training/_tutor.html" %}
 </div>

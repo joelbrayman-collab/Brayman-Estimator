@@ -54,7 +54,8 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
 # supplier_quote_link. added 20 Oct 2026 (Supplier PRO Desk): a supplier's walk-in customer opens and answers
 # an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
 # gets 410 (tests/test_supplier_pro_desk.py). It shows one frozen quotation and records one answer.
-EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools.", "supplier_quote_link."}
+EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools.", "supplier_quote_link.",
+                            "training."}  # training.: own guard, 404 off the training site (21 Oct 2026)
 EXPECTED_SUPPLIER_EXEMPT = {"supplier_portal.login", "supplier_portal.logout"}
 
 # Frozen concrete set of endpoints the lists above exempt today. A new route under an
@@ -126,7 +127,8 @@ def _protect_source() -> str:
 def _is_public(endpoint: str) -> bool:
     if endpoint in EXPECTED_EXEMPT_ENDPOINT_LITERALS or endpoint in EXPECTED_SUPPLIER_EXEMPT:
         return True
-    return any(endpoint.startswith(prefix) for prefix in EXPECTED_EXEMPT_PREFIXES)
+    # training. skips the office wall but is not public: it has its own guard (tested below).
+    return any(endpoint.startswith(prefix) for prefix in EXPECTED_EXEMPT_PREFIXES - {"training."})
 
 
 def _fill(rule) -> dict:
@@ -212,6 +214,9 @@ def test_every_non_public_route_refuses_a_signed_out_request(app):
             else:
                 if status != 405 or body != {"error": "Method not allowed."}:
                     problem = f"expected 405 JSON, got {status} {body}"
+        elif endpoint.startswith("training."):  # Training Centre: not on this office at all (21 Oct 2026)
+            if status != 404:
+                problem = f"expected 404 off the training site, got {status}"
         elif endpoint.startswith(("supplier_portal.", "supplier_pro_desk.")):  # the supplier wall (PRO Desk: 20 Oct 2026)
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/supplier/login" or nxt != [path]:
@@ -343,6 +348,9 @@ def test_every_office_route_refuses_a_signed_in_field_only_user(app):
                     problem = f"expected 403 field wall JSON, got {status} {body}"
             elif status != 405:
                 problem = f"expected 405, got {status}"
+        elif endpoint.startswith("training."):  # Training Centre: not on this office at all (21 Oct 2026)
+            if status != 404:
+                problem = f"expected 404 off the training site, got {status}"
         elif endpoint.startswith(("supplier_portal.", "supplier_pro_desk.")):
             if status != 403:
                 problem = f"expected 403 (supplier wall), got {status}"
@@ -369,3 +377,33 @@ def test_field_only_user_still_reaches_field_endpoints(app):
         if response.status_code == 302 and not urlparse(response.headers["Location"]).path.startswith("/field"):
             failures.append(f"{method} {path} ({endpoint}): left Field for {response.headers['Location']}")
     assert failures == []
+
+
+# Added 21 Oct 2026 (Training & Acceptance Centre): on the training site, signed out goes to the training
+# sign-in; a field-only crew member reaches their training but not the administrator page.
+def test_training_centre_guard_on_the_training_site():
+    from app import create_app, db
+    from app.training import environment
+
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", "SECRET_KEY": "x",
+                              "WTF_CSRF_ENABLED": False, "TRAINING_ENVIRONMENT": True})
+    with application.app_context():
+        db.create_all()
+        pw = {k: f"Synthetic-{k}-sweep-1" for k in ("ben", "olivia", "kevin", "liam", "darcy", "pat")}
+        environment.build(application, pw)
+        rules = [r for r in application.url_map.iter_rules() if r.endpoint.startswith("training.")]
+        client = application.test_client()
+        for rule in rules:
+            path = rule.rule.replace("<key>", "c01-sign-in")
+            for method in sorted(rule.methods - {"HEAD", "OPTIONS"}):
+                r = client.open(path, method=method)
+                if rule.endpoint == "training.signin":
+                    assert r.status_code == 200
+                else:
+                    assert r.status_code == 302 and r.headers["Location"].endswith("/training/signin"), (method, path)
+        crew = application.test_client()
+        crew.post("/login", data={"email": "kevin@training.calibraytai.invalid", "password": pw["kevin"]})
+        assert crew.get("/training").status_code == 200
+        assert crew.get("/training/admin").status_code == 403
+        assert crew.get("/projects/").headers["Location"].endswith("/field/today")  # the field wall still holds
+        db.drop_all()

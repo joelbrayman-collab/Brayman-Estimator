@@ -12,6 +12,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="supplier-hub" data-workspace="supplier">
+    {% include "training/_site_bar.html" %}
     {% set area = supplier if supplier is defined and supplier else None %}
     {% set brand = brand_for(area) if area else None %}
     <header class="supplier-header{% if brand %} is-branded{% endif %}"{% if brand and brand.color %} style="--supplier-brand: {{ brand.color }}; --supplier-brand-text: {{ brand.text }};"{% endif %} data-supplier-brand="{{ area.id if area else '' }}">

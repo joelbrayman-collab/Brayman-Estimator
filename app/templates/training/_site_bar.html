@@ -1,0 +1,4 @@
+{% if training_site %}<div class="training-site-bar" style="background:#efe4c4;color:#3b2e0b;font:600 14px/1.4 'IBM Plex Sans',system-ui,sans-serif;padding:6px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;" data-training-site>
+  <span>Training site · synthetic records only</span>
+  <a href="{{ url_for('training.home') }}" style="color:#3b2e0b;" data-training-link>Open the Training Centre</a>
+</div>{% endif %}

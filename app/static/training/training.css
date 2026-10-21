@@ -62,3 +62,6 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
   .tc-table thead { display:none; } .tc-table tr { display:block; border-bottom:1px solid var(--border); padding:6px 0; } .tc-table td { display:block; border:0; padding:3px 0; }
   .tc-moves .tc-btn, .tc-actions .tc-btn, .tc-choice .tc-btn { flex:1 1 140px; }
 }
+.tc-step-text-only { grid-template-columns:minmax(0,1fr); max-width:720px; }
+.tc-lesson-links { display:flex; flex-wrap:wrap; gap:14px; }
+.tc-tutor form { display:grid; gap:8px; }

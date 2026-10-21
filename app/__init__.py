@@ -229,6 +229,12 @@ def _register_office_auth(app: Flask) -> None:
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}
 
+    @app.context_processor
+    def _training_site():
+        from app.training.service import enabled
+
+        return {"training_site": enabled(app)}
+
     @app.before_request
     def protect_office_routes():
         from app.services.organizations import (

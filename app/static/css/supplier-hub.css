@@ -113,3 +113,4 @@
 .pd-detailed > summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
 .pd-tag { align-self: flex-start; display: inline-block; font-size: 0.75em; padding: 1px 6px; border-radius: 10px; background: #eef0f3; color: #4a5260; font-weight: 500; }
 label.pd-inline { display: flex; flex-wrap: nowrap; gap: 10px; align-items: flex-start; min-width: 0; max-width: 100%; overflow-wrap: anywhere; } label.pd-inline input[type=checkbox] { margin-top: 3px; min-width: 20px; min-height: 20px; flex: none; }
+label.pd-inline > .pd-inline-text { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }

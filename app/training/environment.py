@@ -134,13 +134,37 @@ def build(app, passwords: Dict[str, str] | None = None) -> Dict[str, dict]:
                         phone="613-555-0142", address=JOB_ADDRESS)
         db.session.add(client)
         db.session.flush()
-    if Project.query.filter_by(organization_id=ORG, name=JOB).first() is None:
-        db.session.add(Project(organization_id=ORG, name=JOB, client_id=client.id, status="Estimating",
-                               address=JOB_ADDRESS))
+    project = Project.query.filter_by(organization_id=ORG, name=JOB).first()
+    if project is None:
+        project = Project(organization_id=ORG, name=JOB, client_id=client.id, status="Estimating", address=JOB_ADDRESS)
+        db.session.add(project)
+        db.session.commit()
+    _job_location_and_model(project)
     db.session.commit()
     out["_facts"] = {"organization_id": ORG, "supplier_id": supplier.id, "company": COMPANY, "customer": CUSTOMER,
                      "job": JOB, "supplier": SUPPLIER}
     return out
+
+
+def _job_location_and_model(project) -> None:
+    """The job's civic location (so suppliers see the delivery town) and its construction model (the
+    drawing a supplier request is built from). Added once."""
+    from app.models.project import ProjectLocation
+    from app.services.permit_foundation import establish_project_location_and_profile
+    from app.services.project_construction_model import save_construction_model_revision
+    from app.training.harbour_lane_model import SOURCE_REFERENCE, model
+
+    if ProjectLocation.query.filter_by(project_id=project.id).first() is None:
+        establish_project_location_and_profile(
+            project.id, {"street": "14 Harbour Lane", "municipality": "Merrickville", "province_state": "Ontario",
+                         "postal_zip": "K0G 1N0", "country": "Canada"},
+            organization_id=project.organization_id, generated_by="Training site set-up", commit=True)
+    from app.models.project_construction_model import ProjectConstructionModelRevision
+
+    if ProjectConstructionModelRevision.query.filter_by(project_id=project.id).first() is None:
+        save_construction_model_revision(organization_id=project.organization_id, project_id=project.id,
+                                         content=model(), source_kind="source_document",
+                                         source_reference=SOURCE_REFERENCE, actor_display_name="Training site set-up")
 
 
 def register_cli(app) -> None:

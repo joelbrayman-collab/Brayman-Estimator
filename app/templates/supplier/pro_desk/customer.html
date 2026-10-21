@@ -30,7 +30,7 @@
         <form method="post" action="{{ url_for('supplier_quote_link.answer', credential=credential) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label>Your full name <input type="text" name="customer_name" maxlength="160" required value="{{ typed_name or '' }}" autocomplete="name"></label>
-            <label class="pd-inline"><input type="checkbox" name="agree" value="yes"> I accept material quotation {{ q.number }} for ${{ frozen.totals.total }} as shown in the PDF.</label>
+            <label class="pd-inline"><input type="checkbox" name="agree" value="yes"> <span class="pd-inline-text">I accept material quotation {{ q.number }} for ${{ frozen.totals.total }} as shown in the PDF.</span></label>
             <p><button type="submit" name="answer" value="accept" class="button">Accept</button> <button type="submit" name="answer" value="decline" class="button button-secondary" formnovalidate>Decline</button></p>
         </form>
         {% endif %}

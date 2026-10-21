@@ -4,6 +4,6 @@
         <h1>{{ contractor_copy.RESET_PASSWORD_SUCCESS_HEADING }}</h1>
         <p class="login-lede">{{ contractor_copy.RESET_PASSWORD_SUCCESS_BODY }}</p>
         <p class="login-secondary">
-            <a class="login-primary-link button login-primary" href="{{ url_for('auth.login') }}">{{ contractor_copy.RETURN_TO_SIGN_IN }}</a>
+            <a class="login-primary-link button login-primary" href="{{ url_for('supplier_portal.login') if supplier else url_for('auth.login') }}">{{ contractor_copy.RETURN_TO_SIGN_IN }}</a>
         </p>
 {% endblock %}

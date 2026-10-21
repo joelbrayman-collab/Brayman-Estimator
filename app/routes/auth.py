@@ -107,14 +107,15 @@ def forgot_password_sent():
 
 @auth_bp.route("/reset-password/complete", methods=["GET"])
 def reset_password_complete():
-    return render_template("auth/reset_complete.html")
+    # A supplier's sign-in is the Supplier Hub's (21 Oct 2026); the query only chooses which sign-in link to show.
+    return render_template("auth/reset_complete.html", supplier=request.args.get("side") == "supplier")
 
 
 @auth_bp.route("/reset-password/<credential>", methods=["GET", "POST"])
 def reset_password(credential):
     if request.method == "POST":
         try:
-            complete_password_reset(
+            reset_user = complete_password_reset(
                 credential,
                 request.form.get("password", ""),
                 confirm_password=request.form.get("confirm_password", ""),
@@ -129,6 +130,10 @@ def reset_password(credential):
                 credential=credential,
                 form_error=form_error,
             )
+        from app.services.supplier_hub import principal_class
+
+        if principal_class(reset_user) == "SUPPLIER":
+            return redirect(url_for("auth.reset_password_complete", side="supplier"))
         return redirect(url_for("auth.reset_password_complete"))
     try:
         validate_password_reset_credential(credential, client_ip=_client_ip())

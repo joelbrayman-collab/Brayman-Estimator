@@ -9,7 +9,7 @@
 //   Pat sets up the PRO Desk (quote settings, price file, a standard building, product matches) and quotes
 //   a walk-in customer: sketch → quotation → customer link on a phone → order-ready package.
 // The one record with no office page (the job's construction model, which comes with the estimate's
-// drawings) is added by tools/training/seed_harbour_lane_model.py. Synthetic data only.
+// drawings) comes with the training site (app/training/environment.py). Synthetic data only.
 //
 // Saves PNGs into app/static/training/shots/ named s<module>-<name>.png: desktop 1280x900, phone 390x844,
 // viewport shots with the control scrolled into view, each kept under about 350 KB.
@@ -216,9 +216,7 @@ test("office: Ben sends the Harbour Lane material request and a separate concret
   await pg.locator(`a:has-text("${facts.job}")`).first().click();
   await pg.waitForLoadState();
   W.projectId = Number(pg.url().match(/\/projects\/(\d+)/)[1]);
-  const seeded = spawnSync(path.join(REPO, "venv/bin/python"),
-    [path.join(REPO, "tools/training/seed_harbour_lane_model.py"), facts.database_uri], { encoding: "utf8", cwd: REPO });
-  assert.equal(seeded.status, 0, seeded.stderr);
+  // The job's construction model comes with the training site (flask training build-environment).
   await sendMaterialRequest(pg, FACTS_V1, day(10));
   W.first = await newestShare(pg);
   // Concrete is its own request, sent only to the concrete supplier (here BMR, who buys it from Tomlinson).

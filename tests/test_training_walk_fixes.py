@@ -94,3 +94,20 @@ def test_getting_started_all_done_names_the_company_and_proposal_lines_are_phone
     assert "set up for Brayman Construction." not in page and "company_name or 'your company'" in page
     preview = (ROOT / "app/templates/proposals/preview.html").read_text()
     assert 'data-label="Description"' in preview and 'data-label="Amount"' in preview
+
+
+def test_build_environment_from_settings_prints_no_password(monkeypatch, tmp_path):
+    uri = f"sqlite:///{tmp_path}/t.db"
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": uri, "SECRET_KEY": "t", "TRAINING_ENVIRONMENT": True})
+    monkeypatch.setenv("TRAINING_PASSWORD_BEN", "Synthetic-ben-from-env-1")
+    with application.app_context():
+        db.create_all()
+        result = application.test_cli_runner().invoke(args=["training", "build-environment", "--passwords-from-env"])
+        assert result.exit_code == 0, result.output
+        assert "Synthetic-ben-from-env-1" not in result.output and "Training-" not in result.output
+        from app.models.user import User
+        from app.services.auth import verify_password
+
+        ben = User.query.filter_by(email="ben@training.calibraytai.invalid").one()
+        assert verify_password(ben.password_hash, "Synthetic-ben-from-env-1")
+        db.drop_all()

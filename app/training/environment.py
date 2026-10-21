@@ -175,15 +175,27 @@ def register_cli(app) -> None:
         """Training site (TRAINING_ENVIRONMENT=1 only)."""
 
     @training_group.command("build-environment")
-    def build_environment():
+    @click.option("--passwords-from-env", is_flag=True,
+                  help="Take each person's first password from TRAINING_PASSWORD_<NAME> (e.g. TRAINING_PASSWORD_BEN) "
+                       "and print no passwords. For a site started without a shell.")
+    def build_environment(passwords_from_env):
         """Add the synthetic training company, its people, BMR Winchester (training) and the example job."""
+        given = {}
+        if passwords_from_env:
+            keys = [k for k, *_ in OFFICE_PEOPLE] + [k for k, *_ in SUPPLIER_PEOPLE]
+            given = {k: os.environ[f"TRAINING_PASSWORD_{k.upper()}"] for k in keys
+                     if os.environ.get(f"TRAINING_PASSWORD_{k.upper()}")}
         try:
-            people = build(app)
+            people = build(app, given)
         except TrainingEnvironmentError as exc:
             raise click.ClickException(str(exc))
         for key, row in people.items():
             if key.startswith("_"):
                 continue
-            pw = row["password"] or "(already existed; password unchanged)"
+            if passwords_from_env:
+                pw = "(password from the site's settings)" if key in given else "(random; reset it to sign in)"
+            else:
+                pw = row["password"] or "(already existed; password unchanged)"
             click.echo(f"{row['role']:<9} {row['name']:<48} {row['email']:<42} {pw}")
-        click.echo("Give each person their own email and password privately. Passwords are not shown again.")
+        if not passwords_from_env:
+            click.echo("Give each person their own email and password privately. Passwords are not shown again.")

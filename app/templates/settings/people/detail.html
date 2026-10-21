@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ person.display_name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ person.display_name }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">People &amp; Access</p>
+        <h1>{{ person.display_name }}{% if person.is_self %} (you){% endif %}</h1>
+        <p class="people-access-email">{{ person.email }}</p>
+    </div>
+    <a href="{{ url_for('people_access.index') }}">Back to People &amp; Access</a>
+</div>
+
+<section class="form-panel" aria-labelledby="sign-in-heading">
+    <h2 id="sign-in-heading">Sign-in</h2>
+    <p><span class="status{% if not person.can_sign_in %} status-locked{% endif %}" data-sign-in-status>{{ person.status_label }}</span>
+       <span class="muted-copy">{{ person.role_label }}</span></p>
+    {% if person.is_owner %}
+    <p class="muted-copy">The owner's sign-in cannot be deactivated here.</p>
+    {% elif person.is_self %}
+    <p class="muted-copy">You cannot deactivate your own sign-in.</p>
+    {% elif person.can_sign_in %}
+    <form method="post" action="{{ url_for('people_access.deactivate', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p class="muted-copy">Deactivating signs {{ person.display_name }} out at once and stops them signing in. Their work stays in the records.</p>
+        <button type="submit" class="button button-destructive">Deactivate sign-in</button>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('people_access.reactivate', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button">Reactivate sign-in</button>
+    </form>
+    {% endif %}
+    {% if person.can_sign_in and not person.is_self %}
+    <form method="post" action="{{ url_for('people_access.send_link', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button button-secondary">Email a link to choose a password</button>
+    </form>
+    {% endif %}
+    {# TODO(field-only marker, branch v1/field-role-permissions-2026-10-21): show and change the person's
+       "Field only" marker here once that branch's service function is merged. #}
+</section>
+
+<section class="form-panel" aria-labelledby="access-heading">
+    <h2 id="access-heading">Access</h2>
+    {% for domain in domains %}
+    {% set has = domain in person.domains %}
+    <form method="post" action="{{ url_for('people_access.access', membership_id=person.membership_id) }}" class="people-access-actions" data-domain="{{ domain }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="domain" value="{{ domain }}">
+        <p><strong>{{ domain_labels.get(domain, domain) }}</strong>: {% if has %}given{% else %}not given{% endif %}</p>
+        {% if person.can_sign_in or has %}
+        <button type="submit" name="action" value="{% if has %}remove{% else %}grant{% endif %}" class="button button-secondary">{% if has %}Remove{% else %}Give{% endif %}</button>
+        {% endif %}
+    </form>
+    {% endfor %}
+</section>
+
+<section class="form-panel" aria-labelledby="role-heading">
+    <h2 id="role-heading">System Administrator</h2>
+    <p class="muted-copy">A System Administrator can manage people and access, close and reopen projects, and see wages. Only the owner appoints one.</p>
+    {% if person.is_owner %}
+    <p>The owner already has every administrator permission.</p>
+    {% elif person.is_administrator %}
+    <form method="post" action="{{ url_for('people_access.administrator', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" name="action" value="remove" class="button button-secondary">Remove System Administrator</button>
+    </form>
+    {% elif viewer_is_owner and person.can_sign_in %}
+    <form method="post" action="{{ url_for('people_access.administrator', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" name="action" value="appoint" class="button button-secondary">Appoint System Administrator</button>
+    </form>
+    {% else %}
+    <p>Not a System Administrator.</p>
+    {% endif %}
+</section>
+<style>
+    .people-access-email { overflow-wrap: anywhere; }
+    .people-access-actions { margin: 12px 0; }
+    .people-access-actions .button { max-width: 100%; white-space: normal; }
+</style>
+{% endblock %}

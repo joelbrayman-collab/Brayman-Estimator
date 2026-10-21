@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}People &amp; Access | Brayman Construction Platform{% endblock %}
+{% block page_title %}People &amp; Access{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h2 class="page-title">People &amp; Access</h2>
+        <p class="page-purpose">Everyone who can sign in to this company's office and Field. Add a person, deactivate a sign-in, and choose what each person can see.</p>
+    </div>
+    <a class="button-primary" href="{{ url_for('people_access.new') }}">Add a person</a>
+</section>
+
+<div class="projects-workspace people-access-list">
+    <div class="register-head">
+        <span>Person</span>
+        <span>Sign-in and access</span>
+    </div>
+    {% for person in people %}
+    <a class="register-row" href="{{ url_for('people_access.detail', membership_id=person.membership_id) }}" data-person-email="{{ person.email }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ person.display_name }}{% if person.is_self %} (you){% endif %}</span>
+            <span class="muted-copy people-access-email">{{ person.email }}</span>
+        </span>
+        <span class="projects-row-stage">
+            <span class="status{% if not person.can_sign_in %} status-locked{% endif %}" data-sign-in-status>{{ person.status_label }}</span>
+            <span class="muted-copy">{{ person.role_label }}{% for domain in person.domains %} · {{ domain_labels.get(domain, domain).split(' (')[0] }}{% endfor %}</span>
+        </span>
+    </a>
+    {% endfor %}
+</div>
+<style>
+    .people-access-email, .people-access-list .projects-row-stage { display: block; overflow-wrap: anywhere; }
+    .people-access-list .projects-row-stage .muted-copy { display: block; margin-top: 6px; }
+</style>
+{% endblock %}

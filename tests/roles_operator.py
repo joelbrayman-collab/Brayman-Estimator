@@ -1,9 +1,9 @@
 """Operator steps for the roles walk (tools/release/evidence_roles.mjs), run against its temporary database.
 
-Access domains and System Administrator appointments have no office page in V1: the operator runs the
-``flask auth`` commands. This runs those same commands (through Flask's CLI runner) for one person named by
-email. ``deactivate-user`` / ``reactivate-user`` have no command at all in V1; they set the account's
-``is_active`` flag directly, which is what an operator would have to do today (recorded in the report).
+This runs the ``flask auth`` operator commands (through Flask's CLI runner) for one person named by email,
+so the walk proves the commands still work. Since 21 Oct 2026 the owner can do the same from the People &
+Access pages (/settings/people), which the walk also exercises. ``deactivate-user`` / ``reactivate-user``
+set the account's ``is_active`` flag directly (the same flag the People & Access page uses).
 
 Usage: python tests/roles_operator.py <database-uri> <action> <email>
 """

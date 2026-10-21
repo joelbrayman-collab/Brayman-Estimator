@@ -3,7 +3,8 @@
 //
 // Administrator: owner-only actions shown to the owner and refused (403, not offered) to an ordinary office
 // user; crews; brand profile; account password; access domain and System Administrator grants (operator
-// commands, tests/roles_operator.py); a deactivated account. Security: 30-minute inactivity sign-out (the
+// commands, tests/roles_operator.py); a deactivated account; People & Access pages (add a person, deactivate,
+// reactivate, give/remove access; refused to others). Security: 30-minute inactivity sign-out (the
 // office clock is moved forward, nothing waits), password recovery from the captured mail, sign-out empties
 // the Field offline cache, signed-out access goes to the right sign-in. Customer, on a 390 px phone: proposal
 // link (view, PDF, accept), contract signing, change order signing and declining, PRO Desk quotation link
@@ -183,7 +184,6 @@ test("access domain and System Administrator: granted and removed by the operato
   await go(s.pg, `/projects/${facts.project_id}`);
   assert.equal(await s.pg.locator(`a[href="/projects/${facts.project_id}/close"]`).count(), 0);
   assert.equal((await status(s.ctx, `/projects/${facts.project_id}/close`)).code, 403);
-  recorded.push("No office page adds a person, gives or removes access, sets roles or deactivates a sign-in: V1 does it by operator command (flask auth ...); adding an office/field sign-in and deactivating one have no command at all.");
 });
 
 test("crew management: create a crew, add a person with dates, close the dates, retire the crew", async () => {
@@ -265,6 +265,83 @@ test("a deactivated account is signed out on its next page and cannot sign in ag
     operator("reactivate-user", facts.staff[0]);
   }
   await s.ctx.close();
+});
+
+test("People & Access on a 390 px phone: the owner adds a person (set-password email), deactivates and reactivates them; others are refused", async () => {
+  const o = await context(PHONE);
+  await signIn(o, ...facts.owner);
+  await go(o.pg, "/settings/people");
+  await noSideways(o.pg, "People & Access");
+  await shot(o.pg, "people-access");
+  assert.match(await o.pg.locator("main").innerText(), new RegExp(facts.staff[0].replace(/\./g, "\\.")));
+  assert.ok(!(await o.pg.locator("main").innerText()).includes(facts.bea[0]), "organization B's people are not listed");
+  await Promise.all([o.pg.waitForURL(/\/settings\/people\/new$/), o.pg.locator('a[href="/settings/people/new"]').click()]);
+  await o.pg.waitForLoadState("load");
+  await noSideways(o.pg, "Add a person");
+  const person = ["Petra Newhire (synthetic)", "petra.newhire@example.invalid", "Synthetic-petra-pass-1"];
+  await o.pg.fill("[name=display_name]", person[0]);
+  await o.pg.fill("[name=email]", person[1]);
+  await Promise.all([o.pg.waitForURL(/\/settings\/people\/\d+$/), o.pg.locator("main form button[type=submit]").click()]);
+  await o.pg.waitForLoadState("load");
+  assert.match(await flash(o.pg), /was added/);
+  assert.match(await flash(o.pg), /link to choose a password was emailed/);
+  const personUrl = o.pg.url();
+  await noSideways(o.pg, "person page");
+  // The same email again is refused.
+  await go(o.pg, "/settings/people/new");
+  await o.pg.fill("[name=display_name]", "Duplicate (synthetic)");
+  await o.pg.fill("[name=email]", person[1]);
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator("main form button[type=submit]").click()]);
+  assert.match(await flash(o.pg), /already has a sign-in/);
+  // The new person chooses a password from the captured email and signs in.
+  const mail = newestMail("PASSWORD_RESET", person[1]);
+  assert.equal(mail.count, 1, "one set-password email captured");
+  const p = await context(PHONE);
+  await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+  await p.pg.fill("[name=password]", person[2]);
+  await p.pg.fill("[name=confirm_password]", person[2]);
+  await Promise.all([p.pg.waitForLoadState(), p.pg.locator("form button[type=submit]").click()]);
+  await signIn(p, person[1], person[2]);
+  assert.doesNotMatch(p.pg.url(), /\/login/, "the new person signs in");
+  assert.equal((await status(p.ctx, "/projects/")).code, 200);
+  assert.equal((await status(p.ctx, "/settings/people")).code, 403, "a new person is not an administrator");
+  // Deactivate: their open session ends on the next page and they cannot sign in.
+  await go(o.pg, personUrl);
+  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Deactivate sign-in" }).click()]);
+  assert.match(await flash(o.pg), /is deactivated/);
+  assert.match(await o.pg.locator("[data-sign-in-status]").innerText(), /Deactivated/);
+  const ended = await status(p.ctx, "/projects/");
+  assert.equal(ended.code, 302); assert.match(ended.location, /\/login/);
+  await signIn(p, person[1], person[2]);
+  assert.match(p.pg.url(), /\/login/, "a deactivated person cannot sign in");
+  // Reactivate: they sign in again.
+  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Reactivate sign-in" }).click()]);
+  assert.match(await flash(o.pg), /can sign in again/);
+  await signIn(p, person[1], person[2]);
+  assert.doesNotMatch(p.pg.url(), /\/login/, "reactivated person signs in");
+  // Give and remove Company Management from the page.
+  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Give" }).click()]);
+  assert.equal((await status(p.ctx, "/company-attention")).code, 200);
+  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Remove", exact: true }).click()]);
+  assert.equal((await status(p.ctx, "/company-attention")).code, 403);
+  // The owner is not offered deactivation of their own sign-in.
+  await go(o.pg, "/settings/people");
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator(".register-row", { hasText: "(you)" }).click()]);
+  assert.equal(await o.pg.getByRole("button", { name: "Deactivate sign-in" }).count(), 0);
+  await p.ctx.close(); await o.ctx.close();
+  // An ordinary office user is neither offered nor allowed the pages; organization B's owner never reaches A's people.
+  const s = await staff();
+  await go(s.pg, "/projects/");
+  assert.equal(await s.pg.locator('a[href="/settings/people"]').count(), 0, "staff is not offered People & Access");
+  for (const url of ["/settings/people", "/settings/people/new"]) assert.equal((await status(s.ctx, url)).code, 403, url);
+  const refused = await s.ctx.request.post(`${base}/settings/people/new`, { form: { display_name: "X", email: "x.staff@example.invalid" }, maxRedirects: 0 });
+  assert.ok([400, 403].includes(refused.status()), `staff add-person POST: ${refused.status()}`);
+  // A separate session: the password-recovery check later changes Bea's password.
+  const b = await context(DESK);
+  await signIn(b, facts.bea[0], facts.bea[1]);
+  const personId = personUrl.split("/").pop();
+  assert.ok([403, 404].includes((await status(b.ctx, `/settings/people/${personId}`)).code), "org B cannot open org A's person");
+  await b.ctx.close();
 });
 
 // ================================================================== 2. Security behaviours
@@ -615,11 +692,13 @@ test("field user (crew): what Kevin can and cannot open is recorded; owner-only 
     "Brand profile": "/settings/brand-profile", "Costs and pricing": "/costs-and-pricing",
     "New schedule item": "/schedule/items/new",
     "Close project": `/projects/${facts.project_id}/close`, "Needs attention": "/company-attention",
+    "People & Access": "/settings/people",
   };
   const seen = {};
   for (const [label, url] of Object.entries(probes)) seen[label] = (await status(k.ctx, url)).code;
   assert.equal(seen["Close project"], 403);
   assert.equal(seen["Needs attention"], 403);
+  assert.equal(seen["People & Access"], 403);
   const open = Object.entries(seen).filter(([, c]) => c === 200).map(([l]) => l);
   const other = Object.entries(seen).filter(([, c]) => c !== 200).map(([l, c]) => `${l} ${c}`);
   recorded.push(`Field user (crew member, ordinary membership) opens these office pages (200): ${open.join(", ")}; others: ${other.join(", ")}. ` +

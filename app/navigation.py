@@ -171,6 +171,14 @@ NAV_SECTIONS = (
                 "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT,
             },
             {
+                "title": "People & Access",
+                "endpoint": "people_access.index",
+                "icon": "bi-person-badge",
+                "enabled": True,
+                # Shown only to the owner or a System Administrator (app/shell.py).
+                "requires_people_admin": True,
+            },
+            {
                 "title": "Crews",
                 "endpoint": "organization_crew.index",
                 "icon": "bi-people-fill",

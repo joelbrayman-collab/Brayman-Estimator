@@ -102,6 +102,8 @@
             <input id="waste_percent" name="waste_percent" inputmode="decimal" value="{{ purchase_values.waste_percent }}">
             <label for="plate_stock_length_ft">Plate stock length (feet)</label>
             <input id="plate_stock_length_ft" name="plate_stock_length_ft" inputmode="decimal" value="{{ purchase_values.plate_stock_length_ft }}">
+            <label for="stud_stock_length_in">Stud stock length (inches, optional — for example a precut)</label>
+            <input id="stud_stock_length_in" name="stud_stock_length_in" inputmode="decimal" value="{{ purchase_values.stud_stock_length_in }}">
         </fieldset>
         <button type="submit" name="action" value="calculate">Calculate</button>
         <button type="submit" name="action" value="review">Calculate and send to the estimate review</button>
@@ -118,6 +120,7 @@
         {{ drawing|safe }}
     </div>
     <h2>Quantities</h2>
+    <p data-stud-length>Stud length {{ result.displays.stud_length_in }} in ({{ result.displays.stud_length_note }})</p>
     {% if result.intersecting_positions_in %}
     <p data-stud-count>{{ result.displays.stud_count }} original layout studs</p>
     <p data-remaining-count>{{ result.displays.remaining_stud_count }} full-height studs</p>

@@ -23,7 +23,9 @@ function geometry(totalRiseM,totalRunM,riserCount){
   const treadRunM=totalRunM/treadCount;
   return {riserCount,treadCount,riserHeightM,treadRunM,totalRiseM,totalRunM,
     stringerLengthM:Math.hypot(totalRiseM,totalRunM),
-    angleDegrees:Math.atan2(totalRiseM,totalRunM)*180/Math.PI};
+    // Corrected (Joel, 21 Oct 2026): the stair pitch is atan(riser ÷ tread). Total rise ÷ total
+    // run overstates it because the run spans one fewer tread than there are risers.
+    angleDegrees:Math.atan2(riserHeightM,treadRunM)*180/Math.PI};
 }
 
 export function calculateStairCandidates(input){

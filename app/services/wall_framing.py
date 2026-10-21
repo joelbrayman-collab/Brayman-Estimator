@@ -17,6 +17,14 @@ class WallFramingInputError(ValueError):
     """A required wall measurement is missing or cannot be used."""
 
 
+# Joel, 21 Oct 2026: a stud runs between the plates, so its length is the wall height less
+# the plates. The calculator models the plate counts (entered) but not a plate thickness, so
+# the actual dressed thickness of 2x plate stock, 1-1/2 in, is used: the same value the
+# drawings use for 2x lumber (app/services/drawings/deck.py, DRESSED_IN). 1.5 in = 0.125 ft
+# exactly, so the stud length in feet stays an exact decimal.
+PLATE_THICKNESS_IN = Decimal("1.5")
+
+
 def stud_positions_inches(length_ft, spacing_in):
     """Place one stud at the left end, at each spacing, and at the right end.
 
@@ -249,7 +257,14 @@ def calculate_straight_wall(
     last_gap = positions[-1] - positions[-2]
     short_final = last_gap if last_gap < spacing else None
     area = rectangular_area_square_feet(length, height)
-    stud_lineal = Decimal(stud_count) * height
+    plate_depth_in = Decimal(top_count + bottom_count) * PLATE_THICKNESS_IN
+    stud_length_in = height * Decimal(12) - plate_depth_in
+    if stud_length_in <= 0:
+        raise WallFramingInputError(
+            "The wall height must be taller than its plates ({0} in).".format(_plain(plate_depth_in))
+        )
+    stud_length_ft = stud_length_in / Decimal(12)
+    stud_lineal = Decimal(stud_count) * stud_length_ft
     top_lineal = length * Decimal(top_count)
     bottom_lineal = length * Decimal(bottom_count)
     opening_rows = _validated_openings(openings, positions[-1], height)
@@ -264,7 +279,7 @@ def calculate_straight_wall(
         )
     )
     remaining = tuple(position for position in positions if position not in intersecting)
-    remaining_lineal = Decimal(len(remaining)) * height
+    remaining_lineal = Decimal(len(remaining)) * stud_length_ft
     corner_lineal = sum((row["lineal_ft"] for row in corner_rows), Decimal(0))
     extra_lineal = sum((row["lineal_ft"] for row in member_rows), Decimal(0))
     accounted = remaining_lineal + top_lineal + bottom_lineal + corner_lineal + extra_lineal
@@ -275,6 +290,9 @@ def calculate_straight_wall(
         "stud_size": size,
         "top_plate_count": top_count,
         "bottom_plate_count": bottom_count,
+        "plate_thickness_in": PLATE_THICKNESS_IN,
+        "stud_length_in": stud_length_in,
+        "stud_length_ft": stud_length_ft,
         "positions_in": positions,
         "stud_count": stud_count,
         "short_final_spacing_in": short_final,
@@ -293,6 +311,10 @@ def calculate_straight_wall(
         "displays": {
             "length_ft": _plain(length),
             "height_ft": _plain(height),
+            "stud_length_in": _plain(stud_length_in),
+            "stud_length_note": "{0} ft wall less {1} plates at {2} in".format(
+                _plain(height), top_count + bottom_count, _plain(PLATE_THICKNESS_IN)
+            ),
             "spacing_in": _plain(spacing),
             "stud_count": str(stud_count),
             "short_final_spacing_in": None if short_final is None else _plain(short_final),

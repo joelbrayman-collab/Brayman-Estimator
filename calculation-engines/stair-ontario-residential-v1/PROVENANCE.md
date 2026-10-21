@@ -11,7 +11,7 @@ This folder preserves the original Website stair calculator. It is the calculati
 | Archive | `calibraytai-website-v31-concrete-stair-source-recovery.zip` |
 | Archive SHA-256 | `c991ee6418da69a134a615a77dfa403b914cb2f90537a64c8c9896093eacc240` |
 | Engine | `website-source/lib/useful-tools/stairs.mjs` |
-| Engine SHA-256 | `b14e5c718ca2608f941e93f5829a56f3915cf0f61377d382f81cdb0dc23828d6` |
+| Engine SHA-256 | `ce97f4ada8f7b6eb6a3a6a06dbee968ed869731c8d74b3c026ea533df46a919c` (recovered archive: `b14e5c718ca2608f941e93f5829a56f3915cf0f61377d382f81cdb0dc23828d6`; see Correction below) |
 | Units SHA-256 | `f24960c6c5202be6d9334593cfca791bc48eccf79e2399c476fbeca01fee2686` |
 | Profile SHA-256 | `b510265cfc1bc70b45d754fdc8751c414c52fa184a9fe187cc4c318654dd4b76` |
 | Diagram geometry SHA-256 | `dbf5957f9e1a45de33f9afa2a566a7fadd36431c73acf47e45d2bf4b1110a74c` |
@@ -23,3 +23,7 @@ This folder preserves the original Website stair calculator. It is the calculati
 The result is stair geometry and profile checks. It is not a Contract V1 envelope. Width and tread thickness are recorded for the diagram label. The profile evaluates rise and run.
 
 The recovered conformance script also calls the dormant concrete prototype. That prototype is not copied here. The stair fixture loop is run by `tests/stair-conformance.mjs`.
+
+## Correction (21 Oct 2026)
+
+Joel ruled that incorrect calculator results are not acceptable V1 defects and authorized this one edit to the formula file. `stairs.mjs` reported the stair angle as atan(total rise ÷ total run). The run spans one fewer tread than there are risers, so that overstated the pitch (2600 mm rise in 3300 mm run: 38.2° reported, 36.0° actual). The angle is now atan(riser height ÷ tread run). Riser count, rise, run, stringer length and the profile checks are unchanged. The office bundle `app/static/js/stair-calculator.js` carries the same one-line change. The diagram geometry file is not changed; it draws its own angle from the drawing box.

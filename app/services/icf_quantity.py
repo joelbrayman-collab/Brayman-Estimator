@@ -176,6 +176,20 @@ def build_icf_standard_quantities(
                 concrete += _decimal(count) * corner_volume
         quantities.append(_quantity("concrete", concrete, "yd3"))
         methods.append("concrete uses verified per-form volume")
+    elif per_form is not None:
+        # Joel, 21 Oct 2026: the profile does carry a per-form volume; concrete is withheld
+        # only because the standard form count waits on a requested corner's coverage.
+        inputs_required.append(
+            {
+                "field": "standard_8.concrete_volume_yd3",
+                "classification": "TRUE PLATFORM DEPENDENCY",
+                "reason": (
+                    "Concrete uses the verified per-form volume times the standard form count. "
+                    "The standard form count waits on the requested corner coverage that is "
+                    "not in the profile, so concrete is withheld."
+                ),
+            }
+        )
     else:
         inputs_required.append(
             {

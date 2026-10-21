@@ -10,7 +10,11 @@ documented rule itself departs from usual construction practice, the test says s
 FLAG comment and pins the documented behaviour (it is not changed here).
 
 Nothing in this file edits or loosens an existing calculator test or an accepted
-contract. Conversions used in the hand work: 1 ft = 0.3048 m exactly, 1 in = 25.4 mm,
+contract.
+
+21 Oct 2026: Joel ruled that incorrect calculator results are not acceptable V1 defects.
+The three findings first recorded here (ICF withheld-concrete wording, stair angle, stud
+length) are corrected; their tests say CORRECTED and keep the before and after hand work. Conversions used in the hand work: 1 ft = 0.3048 m exactly, 1 in = 25.4 mm,
 1 yd³ = 27 ft³ = 0.764554857984 m³, 1 ft² = 0.09290304 m².
 """
 
@@ -226,11 +230,13 @@ def test_ontario_stair_recommendations_match_hand_worked_layouts():
     assert metric["overallStatus"] == "pass"
     # Stringer = √(2.6² + 3.3²) = 4.2012 m.
     assert metric["stringerLengthM"] == pytest.approx(math.hypot(2.6, 3.3))
-    # FLAG (preserved engine, not changed): the reported angle is atan(total rise ÷ total run)
-    # = atan(2600/3300) = 38.2°. The pitch a carpenter lays out is atan(riser ÷ tread)
-    # = atan(200/275) = 36.0°, because the run spans one fewer tread than there are risers.
-    assert metric["angleDegrees"] == pytest.approx(math.degrees(math.atan2(2600, 3300)))
-    assert metric["angleDegrees"] - math.degrees(math.atan2(200, 275)) == pytest.approx(2.2, abs=0.1)
+    # CORRECTED (Joel, 21 Oct 2026): the angle is the pitch a carpenter lays out, atan(riser ÷ tread)
+    # = atan(200/275) = 36.03°. Before the fix the engine reported atan(total rise ÷ total run)
+    # = atan(2600/3300) = 38.23°, which overstates it because the run spans one fewer tread than
+    # there are risers.
+    assert metric["angleDegrees"] == pytest.approx(math.degrees(math.atan2(200, 275)))
+    assert metric["angleDegrees"] == pytest.approx(36.03, abs=0.005)
+    assert metric["angleDegrees"] != pytest.approx(math.degrees(math.atan2(2600, 3300)))
 
     # 108 in rise, 140 in run: 14 risers → 7.714 in = 195.9 mm, 140 ÷ 13 = 10.769 in = 273.5 mm (pass);
     # 15 risers → run 140 ÷ 14 = 10 in = 254 mm (fails 255); 13 risers → 8.31 in = 211 mm (fails 200).
@@ -238,6 +244,12 @@ def test_ontario_stair_recommendations_match_hand_worked_layouts():
     assert imperial["riserHeightM"] / 0.0254 == pytest.approx(108 / 14)
     assert imperial["treadRunM"] / 0.0254 == pytest.approx(140 / 13)
     assert imperial["overallStatus"] == "pass"
+    # Angle = atan(7.714 / 10.769) = 35.615° (the old total-based figure was atan(108/140) = 37.65°).
+    assert imperial["angleDegrees"] == pytest.approx(math.degrees(math.atan2(108 / 14, 140 / 13)))
+    assert imperial["angleDegrees"] == pytest.approx(35.615, abs=0.001)
+    # The profile checks still use the Ontario limits: rise 125–200 mm, run 255–355 mm.
+    assert {c["id"]: c["limit"] for c in metric["checks"]} == {
+        "riser-height-min": 125, "riser-height-max": 200, "tread-run-min": 255, "tread-run-max": 355}
 
     # Edge: 2600 mm of rise in 1000 mm of run cannot meet the profile; the best candidate is still
     # shown, marked FAIL, never as a compliant stair.
@@ -280,12 +292,11 @@ def test_icf_edge_corners_larger_than_the_wall_are_refused():
         _icf("nudura", "10", 2, 0)
 
 
-def test_icf_missing_corner_fact_withholds_quantities_defect_recorded():
-    """DEFECT RECORDED FOR JOEL (not fixed: icf_quantity.py is SHA-pinned in
-    tests/test_icf_wall_calculator_access.py::test_existing_icf_engine_and_wall_form_page_are_unchanged).
+def test_icf_missing_corner_fact_withholds_quantities_with_the_true_reason():
+    """CORRECTED (Joel, 21 Oct 2026: incorrect calculator results are not acceptable V1 defects).
 
     BuildBlock has a verified per-form volume (0.131687 yd³) but no 45° corner. Requesting a
-    45° corner correctly withholds standard forms and concrete, but the page also lists
+    45° corner correctly withholds standard forms and concrete. Before the fix the page said
     "Neither a per-form volume nor a cavity-width factor is in the profile", which is untrue for
     this profile: concrete is missing only because the standard form count waits on the corner.
     """
@@ -293,8 +304,21 @@ def test_icf_missing_corner_fact_withholds_quantities_defect_recorded():
     fields = {item["field"]: item for item in result["inputs_required"]}
     assert "corner_45_8.wall_coverage_ft2" in fields
     assert set(_icf_q(result)) == {"corner_90_8_forms"}  # no standard forms, no concrete invented
-    # Pins today's misleading wording so a later approved fix shows up here.
-    assert fields["standard_8.concrete_volume_yd3"]["reason"].startswith("Neither a per-form volume")
+    reason = fields["standard_8.concrete_volume_yd3"]["reason"]
+    assert not reason.startswith("Neither a per-form volume")
+    assert "verified per-form volume" in reason and "corner coverage" in reason
+    # Without the 45° corner the same profile computes concrete from its per-form volume:
+    # BuildBlock 90° corners exist, so the message must not appear when nothing is withheld.
+    ok = _icf("styrorail_buildblock", "1000", 0, 0)
+    assert "standard_8.concrete_volume_yd3" not in {i["field"] for i in ok["inputs_required"]}
+
+
+def test_icf_page_states_the_true_reason_for_withheld_concrete(client):
+    page = _text(client.post("/calculators/wall-form", data={"manufacturer_id": "styrorail_buildblock",
+                                                              "net_wall_area": "1000", "corner_90": "4",
+                                                              "corner_45": "1"}))
+    assert "Neither a per-form volume" not in page
+    assert "waits on the requested corner coverage" in page
 
 
 def test_icf_page_shows_the_service_numbers_and_only_the_8_inch_core(client):
@@ -445,10 +469,13 @@ def test_trade_pages_show_the_service_numbers(client):
 
 def test_wall_framing_short_final_bay_and_exact_bay_edge():
     # 10 ft = 120 in at 16 in: studs at 0,16,…,112 (8) + 120 = 9; last bay 8 in (short).
-    # Studs 9 × 8 = 72 lf; plates 2 × 10 + 1 × 10 = 30; total 102 lf.
+    # CORRECTED (Joel, 21 Oct 2026): a stud runs between the plates. 8 ft = 96 in less
+    # 3 plates × 1.5 in (dressed 2x) = 91.5 in = 7.625 ft. Studs 9 × 7.625 = 68.625 lf;
+    # plates 2 × 10 + 1 × 10 = 30; total 98.625 lf (was 9 × 8 + 30 = 102, studs at full wall height).
     ten = calculate_straight_wall(length_ft="10", height_ft="8", spacing_in="16", stud_size="2x4",
                                   top_plate_count="2", bottom_plate_count="1")
-    assert (ten["stud_count"], ten["short_final_spacing_in"], ten["total_lineal_ft"]) == (9, D("8"), D("102"))
+    assert ten["stud_length_in"] == D("91.5")
+    assert (ten["stud_count"], ten["short_final_spacing_in"], ten["total_lineal_ft"]) == (9, D("8"), D("98.625"))
     # Edge: 12 ft = 144 in = 9 × 16 exactly → studs 0…128 (9) + 144 = 10; last bay is a full 16 in, not short.
     twelve = calculate_straight_wall(length_ft="12", height_ft="8", spacing_in="16", stud_size="2x4",
                                      top_plate_count="2", bottom_plate_count="1")
@@ -469,14 +496,20 @@ _FRAMED = dict(length_ft="12", height_ft="8", spacing_in="16", stud_size="2x4", 
 def test_wall_framing_with_an_opening_and_purchase():
     w = calculate_straight_wall(**_FRAMED)
     # Window 30–66 in removes the layout studs strictly inside: 32, 48, 64 → 10 − 3 = 7 full-height studs.
-    # Lineal: 7 × 8 = 56 + plates 24 + 12 + corners 2 × 8 = 16 + kings 16 + header 3.5 = 127.5 lf.
+    # CORRECTED (Joel, 21 Oct 2026): studs are 96 − 3 × 1.5 = 91.5 in = 7.625 ft, not 8 ft.
+    # Lineal: 7 × 7.625 = 53.375 + plates 24 + 12 + corners 2 × 8 = 16 + kings 16 + header 3.5
+    # = 124.875 lf (was 7 × 8 = 56 → 127.5). Corner and member lengths are entered, so unchanged.
     assert w["intersecting_positions_in"] == (D("32"), D("48"), D("64"))
-    assert (w["remaining_stud_count"], w["total_lineal_ft"]) == (7, D("127.5"))
+    assert (w["remaining_stud_count"], w["total_lineal_ft"]) == (7, D("124.875"))
     b = buy.purchase(w, waste_percent="10", plate_stock_length_ft="12")
     # Studs (7 + 2 corner) × 1.10 = 9.9 → 10. Plates 36 lf × 1.10 = 39.6 ÷ 12 = 3.3 → 4 pieces.
-    # FLAG (documented rule, not changed): studs are bought at the full wall height (8 ft); in
-    # practice a stud is the wall height less the plates (e.g. a 92-5/8 in precut for an 8 ft wall).
+    # Each stud is cut to 91.5 in (was bought "8 ft", the full wall height).
     assert (b["stud_pieces_net"], b["stud_pieces"], b["plate_order_lineal_ft"], b["plate_pieces"]) == (9, 10, D("39.6"), 4)
+    assert b["stud_length_in"] == D("91.5") and "cut to 91.5 in" in b["displays"]["studs"]
+    # A 92-5/8 in precut covers 91.5 in → one stud per piece, 10 pieces; a 16 ft (192 in) piece
+    # yields 2 studs (2 × 91.5 = 183 ≤ 192) → 10 ÷ 2 = 5 pieces.
+    assert buy.purchase(w, waste_percent="10", stud_stock_length_in="92.625")["stud_pieces"] == 10
+    assert buy.purchase(w, waste_percent="10", stud_stock_length_in="192")["stud_pieces"] == 5
     q = {row["code"]: row["quantity"] for row in buy.contract_v1(w, b, "verify")["quantities"]}
     assert q == {"studs": "10", "plates": "4", "headers_3_5ft": "1", "king_studs_8ft": "2"}
 
@@ -492,13 +525,26 @@ def test_wall_framing_estimate_hand_off_carries_the_page_numbers(app, client):
             "opening_position_in": ["30"], "opening_sill_ft": ["3"], "corner_end": ["left"], "corner_count": ["2"],
             "corner_stud_size": ["2x4"], "corner_length_ft": ["8"], "member_kind": ["king", "header"],
             "member_name": ["", ""], "member_count": ["2", "1"], "member_length_ft": ["8", "3.5"],
-            "waste_percent": "10", "plate_stock_length_ft": "12"}
+            "waste_percent": "10", "plate_stock_length_ft": "12", "stud_stock_length_in": "92.625"}
     page = _text(client.post(url, data=dict(form, action="calculate")))
-    assert "127.5 total lineal feet" in page and "7 full-height studs" in page
+    # CORRECTED (Joel, 21 Oct 2026): 124.875 lf (was 127.5, studs at the full 8 ft wall height).
+    assert "124.875 total lineal feet" in page and "7 full-height studs" in page
+    assert "Stud length 91.5 in" in page and "92.625 in stock cut to 91.5 in" in page
     assert client.post(url, data=dict(form, action="review")).status_code == 302
     frozen = CalculationResultIntake.query.one().frozen_result
     assert {q["code"]: q["quantity"] for q in frozen["quantities"]} == {
         "studs": "10", "plates": "4", "headers_3_5ft": "1", "king_studs_8ft": "2"}
+    # The stud length the page shows travels with the frozen result.
+    assumptions = {a["code"]: a["value"] for a in frozen["assumptions"]}
+    assert (assumptions["stud_length"], assumptions["stud_stock_length"], assumptions["plate_thickness"]) == (
+        "91.5", "92.625", "1.5")
+
+
+def test_wall_framing_edge_a_wall_no_taller_than_its_plates_is_refused():
+    # 0.375 ft = 4.5 in wall with 3 plates of 1.5 in leaves no stud.
+    with pytest.raises(WallFramingInputError, match="taller than its plates"):
+        calculate_straight_wall(length_ft="10", height_ft="0.375", spacing_in="16", stud_size="2x4",
+                                top_plate_count="2", bottom_plate_count="1")
 
 
 # ================================================================ post-frame outbuilding takeoff

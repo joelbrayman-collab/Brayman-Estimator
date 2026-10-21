@@ -3,8 +3,14 @@
 Reads the accepted straight-wall count (``wall_framing.calculate_straight_wall``)
 and turns it into what is bought, using only what the contractor enters:
 
-* Studs: the full-height studs left after openings, plus corner studs, as pieces
-  of the wall height. Waste is entered (0 allowed); pieces round up.
+* Studs: the full-height studs left after openings, plus corner studs. Each stud is
+  cut to the stud length (wall height less the plates, ``wall_framing``; corrected
+  Joel 21 Oct 2026, it was the full wall height). Waste is entered (0 allowed); the
+  stud count rounds up. When the contractor enters a stud stock length (for example a
+  92-5/8 in precut or a 96 in piece) it must cover the stud length, and the pieces are
+  the studs divided by how many whole studs one stock piece yields, rounded up — the
+  same "entered stock length, pieces round up" rule as the plates. No stock length, the
+  pieces are the studs, cut to the stud length.
 * Plates: the top and bottom plate lineal feet, with waste, in pieces of the
   stock length the contractor enters; pieces round up. No stock length, no piece count.
 * Extra members (king, jack, cripple, header, other): pieces of their entered
@@ -61,14 +67,44 @@ def _stock(raw):
     return value
 
 
-def purchase(result: dict, *, waste_percent, plate_stock_length_ft="") -> dict:
+def _stud_stock(raw, stud_length_in):
+    text = ("" if raw is None else str(raw)).strip()
+    if not text:
+        return None
+    try:
+        value = Decimal(text)
+    except InvalidOperation:
+        raise FramingPurchaseError("The stud stock length must be a number of inches.") from None
+    if not value.is_finite() or value <= 0:
+        raise FramingPurchaseError("The stud stock length must be greater than zero.")
+    if value < stud_length_in:
+        raise FramingPurchaseError(
+            f"The stud stock length ({_plain(value)} in) is shorter than the {_plain(stud_length_in)} in stud."
+        )
+    return value
+
+
+def purchase(result: dict, *, waste_percent, plate_stock_length_ft="", stud_stock_length_in="") -> dict:
     waste = _waste(waste_percent)
     stock = _stock(plate_stock_length_ft)
+    stud_length_in = result["stud_length_in"]
+    stud_stock = _stud_stock(stud_stock_length_in, stud_length_in)
     factor = Decimal(1) + waste / Decimal(100)
-    height = result["height_ft"]
     corner_studs = sum((row["count"] for row in result["corners"]), 0)
     stud_pieces_net = result["remaining_stud_count"] + corner_studs
-    stud_pieces = _ceil(Decimal(stud_pieces_net) * factor)
+    studs_ordered = _ceil(Decimal(stud_pieces_net) * factor)
+    studs_per_piece = 1 if stud_stock is None else int(stud_stock // stud_length_in)
+    stud_pieces = _ceil(Decimal(studs_ordered) / Decimal(studs_per_piece))
+    if stud_stock is None:
+        stud_text = (f"{stud_pieces} studs ({result['stud_size']}, cut to {_plain(stud_length_in)} in) — "
+                     f"{stud_pieces_net} counted + {_plain(waste)}% waste. Enter a stud stock length to name the stock.")
+    elif studs_per_piece == 1:
+        stud_text = (f"{stud_pieces} studs ({result['stud_size']}, {_plain(stud_stock)} in stock cut to "
+                     f"{_plain(stud_length_in)} in) — {stud_pieces_net} counted + {_plain(waste)}% waste")
+    else:
+        stud_text = (f"{stud_pieces} pieces of {_plain(stud_stock)} in stock ({result['stud_size']}) for "
+                     f"{studs_ordered} studs cut to {_plain(stud_length_in)} in, {studs_per_piece} per piece — "
+                     f"{stud_pieces_net} counted + {_plain(waste)}% waste")
     plate_lf = result["top_plate_lineal_ft"] + result["bottom_plate_lineal_ft"]
     plate_order_lf = plate_lf * factor
     plate_pieces = None if stock is None else _ceil(plate_order_lf / stock)
@@ -79,8 +115,11 @@ def purchase(result: dict, *, waste_percent, plate_stock_length_ft="") -> dict:
     return {
         "waste_percent": waste,
         "stud_size": result["stud_size"],
-        "stud_length_ft": height,
+        "stud_length_in": stud_length_in,
+        "stud_stock_length_in": stud_stock,
+        "studs_per_piece": studs_per_piece,
         "stud_pieces_net": stud_pieces_net,
+        "studs_ordered": studs_ordered,
         "stud_pieces": stud_pieces,
         "plate_lineal_ft": plate_lf,
         "plate_order_lineal_ft": plate_order_lf,
@@ -89,8 +128,7 @@ def purchase(result: dict, *, waste_percent, plate_stock_length_ft="") -> dict:
         "members": [{"label": label, "length_ft": length, "count": count}
                     for (label, length), count in sorted(members.items(), key=lambda kv: (kv[0][0], kv[0][1]))],
         "displays": {
-            "studs": f"{stud_pieces} studs ({result['stud_size']}, {_plain(height)} ft) — {stud_pieces_net} counted"
-                     f" + {_plain(waste)}% waste",
+            "studs": stud_text,
             "plates": (f"{plate_pieces} plates at {_plain(stock)} ft — {_plain(plate_lf)} lineal ft + {_plain(waste)}% waste"
                        if plate_pieces is not None else
                        f"{_plain(plate_order_lf)} lineal ft of plates with {_plain(waste)}% waste. Enter a stock length to count pieces."),
@@ -123,7 +161,13 @@ def contract_v1(result: dict, bought: dict, result_id: str) -> dict:
         {"code": "top_plates", "value": str(result["top_plate_count"]), "unit_code": "ea"},
         {"code": "bottom_plates", "value": str(result["bottom_plate_count"]), "unit_code": "ea"},
     ]
-    assumptions = [{"code": "waste_percent", "value": _plain(bought["waste_percent"]), "unit_code": "percent"}]
+    assumptions = [
+        {"code": "waste_percent", "value": _plain(bought["waste_percent"]), "unit_code": "percent"},
+        {"code": "plate_thickness", "value": _plain(result["plate_thickness_in"]), "unit_code": "in"},
+        {"code": "stud_length", "value": _plain(result["stud_length_in"]), "unit_code": "in"},
+    ]
+    if bought["stud_stock_length_in"] is not None:
+        assumptions.append({"code": "stud_stock_length", "value": _plain(bought["stud_stock_length_in"]), "unit_code": "in"})
     if bought["plate_stock_length_ft"] is not None:
         assumptions.append({"code": "plate_stock_length", "value": _plain(bought["plate_stock_length_ft"]), "unit_code": "ft"})
     return {

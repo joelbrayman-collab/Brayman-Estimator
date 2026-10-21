@@ -75,12 +75,34 @@ def lesson(key):
     except svc.TrainingError:
         abort(404)
     step = max(0, min(request.args.get("step", default=0, type=int), len(item.steps) - 1))
-    svc.save_step(trainee, key, step)
+    progress = svc.save_step(trainee, key, step)
     prev_key, next_key = svc.neighbours(trainee, key)
-    progress = {p.lesson_key: p for p in svc.TrainingLessonProgress.query.filter_by(trainee_id=trainee.id)}
+    ticked = set(svc.steps_ticked(trainee, key))
     return render_template("training/lesson.html", trainee=trainee, module=module, lesson=item, step=step,
-                           current=item.steps[step], prev_key=prev_key, next_key=next_key,
-                           progress=progress.get(key), notes=svc.feedback(trainee, key))
+                           current=item.steps[step], prev_key=prev_key, next_key=next_key, ticked=ticked,
+                           progress=progress, notes=svc.feedback(trainee, key))
+
+
+@training_bp.route("/lessons/<key>/check", methods=["POST"])
+def check(key):
+    """Tick or untick one step (the green check). Saved at once; works without JavaScript too."""
+    trainee, back = _trainee_or_register()
+    if back:
+        return back
+    index = request.form.get("step", default=-1, type=int)
+    done = request.form.get("done") == "1"
+    try:
+        p = svc.check_step(trainee, key, index, done)
+        _m, item = svc.lesson_for_trainee(trainee, key)
+    except svc.TrainingError as exc:
+        if request.headers.get("X-Requested-With") == "fetch":
+            return jsonify({"error": str(exc)}), 400
+        abort(404)
+    ticked = sorted(set(p.steps_done or []))
+    if request.headers.get("X-Requested-With") == "fetch":
+        return jsonify({"step": index, "done": index in ticked, "ticked": len(ticked), "total": len(item.steps)})
+    nxt = next((i for i in range(len(item.steps)) if i not in ticked), len(item.steps) - 1)
+    return redirect(url_for("training.lesson", key=key, step=nxt) + f"#step-{nxt + 1}")
 
 
 @training_bp.route("/lessons/<key>/move", methods=["POST"])

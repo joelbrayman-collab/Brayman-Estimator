@@ -79,14 +79,15 @@ M01 = Module(
                      shot="c01-register.png", endpoint="training.home"),
                 Step(title="Find your lessons and tests", app=O, where="Training Centre home",
                      do="Press the first lesson's name",
-                     expect="The lesson opens at Step 1 with Back and Next, Save and exit, and the Tutor at the side. "
-                            "The home page also has Acceptance tests.",
+                     expect="The lesson opens with all its steps listed in order, an 'I did this step' button under each, "
+                            "Save and exit, and the Tutor at the side. The home page also has Acceptance tests.",
                      if_wrong="If a lesson is missing, check your role at the bottom of the page.",
                      shot="c01-training-home.png", endpoint="training.home"),
                 Step(title="Save and come back later", app=O, where="Any lesson",
                      do="Press Save and exit, then on the Training Centre home press Continue where I left off",
-                     expect="You are back on the same step of the same lesson.",
-                     if_wrong="If it starts at Step 1, you closed the page without Save and exit; use Next to return.",
+                     expect="You are back in the same lesson at the first step you have not ticked; ticked steps stay green.",
+                     if_wrong="Every tick is saved at once, so nothing is lost if you close the page; open the lesson again "
+                              "from your training home.",
                      why="Lessons are short; do them between jobs.", endpoint="training.lesson"),
                 Step(title="Ask the Tutor", app=O, where="Any lesson → Tutor panel",
                      do="Type a question such as 'Where is the button?' and press Ask; minimise the Tutor with its button",
@@ -94,9 +95,9 @@ M01 = Module(
                      if_wrong="If the Tutor is hidden, press its button at the side of the lesson to restore it.",
                      endpoint="training.lesson"),
             ),
-            exercise="Register on the training site with your own job, open your first lesson, go to Step 2 with Next, "
-                     "press Save and exit, then come back with Continue where I left off. Tick I did the practice "
-                     "exercise and finish the lesson.",
+            exercise="Register on the training site with your own job, open your first lesson, tick Step 1 (it turns "
+                     "green), press Save and exit, then come back with Continue where I left off. Tick each remaining "
+                     "step, tick I did the practice exercise and finish the lesson.",
         ),
         Lesson(
             key="c01-sign-in", title="Sign in to the office and change your password",

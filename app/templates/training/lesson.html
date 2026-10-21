@@ -5,47 +5,64 @@
 <article class="tc-card tc-lesson-page" data-lesson-page="{{ lesson.key }}" data-step-index="{{ step }}">
   <p class="tc-eyebrow">Module {{ module.number }} · {{ module.title }}</p>
   <h1>{{ lesson.title }}</h1>
-  {% if step == 0 %}
-  <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p></div>
-  {% endif %}
-  <p class="tc-stepcount" data-stepcount>Step {{ step + 1 }} of {{ lesson.steps|length }}</p>
-  <div class="tc-step{% if not current.shot %} tc-step-text-only{% endif %}">
-    <div class="tc-step-text">
-      <h2>{{ current.title }}</h2>
-      <dl>
-        <dt>Open</dt><dd>{{ current.app }}</dd>
-        <dt>Go to</dt><dd>{{ current.where }}</dd>
-        <dt>Do this</dt><dd>{{ current.do }}</dd>
-        {% if current.enter %}<dt>Enter</dt><dd>{{ current.enter }}</dd>{% endif %}
-        <dt>You should see</dt><dd>{{ current.expect }}</dd>
-        {% if current.why %}<dt>Why</dt><dd>{{ current.why }}</dd>{% endif %}
-      </dl>
-      <details class="tc-wrong"><summary>If something goes wrong</summary><p>{{ current.if_wrong }}</p></details>
-    </div>
-    {% if current.shot %}
-    <figure class="tc-shot">
-      <button type="button" class="tc-shot-btn" data-enlarge aria-label="Show the screenshot full size">
-        <img src="{{ url_for('static', filename='training/shots/' ~ current.shot) }}" alt="Screen: {{ current.title }}" loading="lazy">
-      </button>
-      <figcaption>Press the picture to see it full size.</figcaption>
-    </figure>
-    {% endif %}
-  </div>
-  {% if step == lesson.steps|length - 1 %}
-  <form method="post" action="{{ url_for('training.complete', key=lesson.key) }}" class="tc-exercise">
+  <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p>
+    <p class="tc-small">Work down the steps. Do each one on the training site, then tick it: it turns green and your place is saved.</p></div>
+  <div class="tc-bar" aria-hidden="true"><span data-step-bar style="width: {{ (100 * ticked|length / lesson.steps|length)|round|int }}%"></span></div>
+  <p class="tc-stepcount" data-stepcount><span data-ticked>{{ ticked|length }}</span> of {{ lesson.steps|length }} steps done</p>
+
+  <ol class="tc-checklist">
+  {% for s in lesson.steps %}{% set i = loop.index0 %}
+    <li class="tc-step-card{% if i in ticked %} is-done{% endif %}{% if i == step %} is-current{% endif %}" id="step-{{ loop.index }}" data-step-card="{{ i }}">
+      <div class="tc-step-head">
+        <span class="tc-check" aria-hidden="true">{% if i in ticked %}&#10003;{% else %}{{ loop.index }}{% endif %}</span>
+        <h2>{{ s.title }}</h2>
+      </div>
+      <div class="tc-step{% if not s.shot %} tc-step-text-only{% endif %}">
+        <div class="tc-step-text">
+          <dl>
+            <dt>Open</dt><dd>{{ s.app }}</dd>
+            <dt>Go to</dt><dd>{{ s.where }}</dd>
+            <dt>Do this</dt><dd>{{ s.do }}</dd>
+            {% if s.enter %}<dt>Enter</dt><dd>{{ s.enter }}</dd>{% endif %}
+            <dt>You should see</dt><dd>{{ s.expect }}</dd>
+            {% if s.why %}<dt>Why</dt><dd>{{ s.why }}</dd>{% endif %}
+          </dl>
+          <details class="tc-wrong"><summary>If something goes wrong</summary><p>{{ s.if_wrong }}</p></details>
+        </div>
+        {% if s.shot %}
+        <figure class="tc-shot">
+          <button type="button" class="tc-shot-btn" data-enlarge aria-label="Show the screenshot full size">
+            <img src="{{ url_for('static', filename='training/shots/' ~ s.shot) }}" alt="Screen: {{ s.title }}" loading="lazy">
+          </button>
+          <figcaption>Press the picture to see it full size.</figcaption>
+        </figure>
+        {% endif %}
+      </div>
+      <form method="post" action="{{ url_for('training.check', key=lesson.key) }}" class="tc-tick" data-tick-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="step" value="{{ i }}">
+        <input type="hidden" name="done" value="{{ '0' if i in ticked else '1' }}">
+        <button type="submit" class="tc-tick-btn{% if i in ticked %} is-done{% endif %}" data-tick="{{ i }}" aria-pressed="{{ 'true' if i in ticked else 'false' }}">
+          <span class="tc-tick-box" aria-hidden="true">{% if i in ticked %}&#10003;{% endif %}</span>
+          <span class="tc-tick-label">{{ 'Done' if i in ticked else 'I did this step' }}</span>
+        </button>
+      </form>
+    </li>
+  {% endfor %}
+  </ol>
+
+  <form method="post" action="{{ url_for('training.complete', key=lesson.key) }}" class="tc-exercise" id="exercise">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <h2>Practice exercise</h2>
     <p>{{ lesson.exercise }}</p>
     <label><input type="checkbox" name="exercise_done" value="1" {% if progress and progress.exercise_done %}checked{% endif %} data-exercise> I did the practice exercise on the training site</label>
     <button class="tc-btn tc-btn-primary" type="submit" data-complete>Finish this lesson</button>
+    {% if progress and progress.completed_at %}<p class="tc-lesson-done" data-lesson-complete>&#10003; Lesson complete</p>{% endif %}
   </form>
-  {% endif %}
   <form method="post" action="{{ url_for('training.move', key=lesson.key) }}" class="tc-moves">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="{{ step }}">
-    <button class="tc-btn" name="action" value="back" type="submit" {% if step == 0 %}disabled{% endif %} data-back>Back</button>
     <button class="tc-btn" name="action" value="exit" type="submit" data-exit>Save and exit</button>
-    {% if step < lesson.steps|length - 1 %}<button class="tc-btn tc-btn-primary" name="action" value="next" type="submit" data-next>Next</button>{% endif %}
   </form>
   <details class="tc-notes"><summary>My notes and feedback ({{ notes|length }})</summary>
     <form method="post" action="{{ url_for('training.add_feedback', key=lesson.key) }}">
@@ -56,8 +73,8 @@
     </form>
     <ul>{% for n in notes %}<li data-note>{{ n.created_at.strftime('%d %b %H:%M') }} UTC · {{ n.body }}</li>{% endfor %}</ul>
   </details>
-  <p class="tc-small tc-lesson-links">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}">Previous lesson</a>{% endif %}
-    {% if next_key %}<a href="{{ url_for('training.lesson', key=next_key) }}">Next lesson</a>{% endif %}
+  <p class="tc-small tc-lesson-links">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}" data-prev-lesson>Previous lesson</a>{% endif %}
+    {% if next_key %}<a href="{{ url_for('training.lesson', key=next_key) }}" data-next-lesson>Next lesson</a>{% endif %}
     <a href="{{ url_for('training.home') }}">All my lessons</a></p>
 </article>
 {% include "training/_tutor.html" %}

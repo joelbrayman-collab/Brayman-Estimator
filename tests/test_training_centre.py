@@ -104,7 +104,7 @@ def test_lessons_save_resume_back_next_and_complete(app):
     _post(ben, "/training/register", data={"role": "OWNER"})
     module, lesson = C.lessons_for("CONTRACTOR", "OWNER")[0]
     page = _get(ben, f"/training/lessons/{lesson.key}").get_data(as_text=True)
-    assert lesson.steps[0].title in page and "Step 1 of" in page
+    assert all(st.title in page for st in lesson.steps) and f"<span data-ticked>0</span> of {len(lesson.steps)} steps done" in page
     r = _post(ben, f"/training/lessons/{lesson.key}/move", data={"step": 0, "action": "next"})
     assert r.headers["Location"].endswith(f"/training/lessons/{lesson.key}?step=1")
     _post(ben, f"/training/lessons/{lesson.key}/move", data={"step": 1, "action": "back"})
@@ -113,13 +113,27 @@ def test_lessons_save_resume_back_next_and_complete(app):
     home = _get(ben, "/training").get_data(as_text=True)
     assert f"/training/lessons/{lesson.key}?step=1" in home and "Continue where I left off" in home
     last = len(lesson.steps) - 1
+    refused = _post(ben, f"/training/lessons/{lesson.key}/complete", data={"exercise_done": "1"}, follow_redirects=True)
+    assert "Tick each step as you do it first" in refused.get_data(as_text=True)
+    # Tick each step (the green check); unticking and ticking again keeps one tick.
+    for i in range(len(lesson.steps)):
+        r = _post(ben, f"/training/lessons/{lesson.key}/check", data={"step": i, "done": "1"},
+                  headers={"X-Requested-With": "fetch"})
+        assert r.get_json()["done"] is True and r.get_json()["ticked"] == i + 1
+    _post(ben, f"/training/lessons/{lesson.key}/check", data={"step": 0, "done": "0"}, headers={"X-Requested-With": "fetch"})
+    assert TrainingLessonProgress.query.one().steps_done == list(range(1, len(lesson.steps)))
+    page = _get(ben, f"/training/lessons/{lesson.key}").get_data(as_text=True)
+    assert page.count('class="tc-step-card is-done') == len(lesson.steps) - 1
+    _post(ben, f"/training/lessons/{lesson.key}/check", data={"step": 0, "done": "1"})
+    assert _post(ben, f"/training/lessons/{lesson.key}/check", data={"step": 99, "done": "1"}).status_code == 404
     refused = _post(ben, f"/training/lessons/{lesson.key}/complete", data={}, follow_redirects=True)
     assert "I did the practice exercise" in refused.get_data(as_text=True)
     assert TrainingLessonProgress.query.one().completed_at is None
     _post(ben, f"/training/lessons/{lesson.key}/complete", data={"exercise_done": "1"})
     p = TrainingLessonProgress.query.one()
     assert p.completed_at is not None and p.exercise_done and p.step_reached == last
-    assert "1 of" in _get(ben, "/training").get_data(as_text=True)
+    home = _get(ben, "/training").get_data(as_text=True)
+    assert "1 of" in home and "Done" in home
     # A lesson outside the person's pathway is not theirs.
     supplier_lesson = C.lessons_for("SUPPLIER", "PRO_DESK")[0][1]
     assert _get(ben, f"/training/lessons/{supplier_lesson.key}").status_code == 404
@@ -241,3 +255,12 @@ def test_content_points_only_at_real_pages_and_screenshots(app):
     assert len(case_keys) == len(set(case_keys))
     for case in C.uat_cases():
         assert case.module_key in module_keys and case.start and case.action and case.expected and case.roles
+
+
+def test_signing_in_on_the_training_site_lands_in_training(app):
+    g.pop("_login_user", None)
+    r = app.test_client().post("/login", data={"email": _email("ben"), "password": PW["ben"]})
+    assert r.headers["Location"].endswith("/training")
+    g.pop("_login_user", None)
+    r = app.test_client().post("/supplier/login", data={"email": _email("darcy"), "password": PW["darcy"]})
+    assert r.headers["Location"].endswith("/training")

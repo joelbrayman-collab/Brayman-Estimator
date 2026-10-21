@@ -20,7 +20,7 @@
   <ol class="tc-lessons">
     {% for x in row.lessons %}
     <li class="tc-lesson tc-{{ x.state }}"><a href="{{ url_for('training.lesson', key=x.lesson.key, step=x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a>
-      <span class="tc-state">{{ {'done': 'Done', 'started': 'Started', 'new': ''}[x.state] }}</span></li>
+      <span class="tc-state" data-lesson-state>{% if x.state == 'done' %}Done{% elif x.ticked %}{{ x.ticked }} of {{ x.steps }} steps{% elif x.state == 'started' %}Started{% endif %}</span></li>
     {% endfor %}
   </ol>
 </section>

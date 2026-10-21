@@ -117,11 +117,12 @@ MODULES = (
                                   "administrator. Their Supplier Hub access does not change.",
                          endpoint="training.home", shot="s1-training-home-pro-desk.png"),
                     Step(title="Move through a lesson", app=APP_SUPPLIER, where="Any lesson",
-                         do="Use Next and Back; press Save and exit to stop; tick I did the practice exercise on the "
-                            "training site, then press Finish this lesson",
-                         expect="Your place is saved. Finish this lesson marks it Done on your training home.",
-                         if_wrong="Finish this lesson refuses until the practice exercise box is ticked: do the exercise "
-                                  "on the training site first. Use Save note for anything unclear.",
+                         do="Do each step and press I did this step under it (it turns green); press Save and exit to stop; "
+                            "tick I did the practice exercise on the training site, then press Finish this lesson",
+                         expect="Each ticked step shows a green check and is saved at once. Finish this lesson marks it "
+                                "Done on your training home.",
+                         if_wrong="Finish this lesson refuses until every step and the practice exercise are ticked. "
+                                  "Use Save note for anything unclear.",
                          endpoint="training.lesson"),
                 ),
                 exercise="Register with your own job, open the first lesson, press Save and exit, then use Continue "

@@ -23,7 +23,10 @@ GENERIC_RESET_SENT = contractor_copy.FORGOT_PASSWORD_SENT_BODY
 
 def safe_next_url(target):
     """Allow only relative same-host paths. Reject open redirects."""
-    default = url_for("main.dashboard")
+    from app.training.service import enabled as training_site
+
+    # On the training site everyone lands in their training (21 Oct 2026); elsewhere, Home.
+    default = url_for("training.home") if training_site() else url_for("main.dashboard")
     if not target:
         return default
     candidate = target.strip()

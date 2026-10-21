@@ -1,4 +1,4 @@
-{% if training_site %}<div class="training-site-bar" style="background:#efe4c4;color:#3b2e0b;font:600 14px/1.4 'IBM Plex Sans',system-ui,sans-serif;padding:6px 14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;" data-training-site>
-  <span>Training site · synthetic records only</span>
-  <a href="{{ url_for('training.home') }}" style="color:#3b2e0b;" data-training-link>Open the Training Centre</a>
+{% if training_site %}<div class="training-site-bar" style="background:#1c1f24;color:#fff;font:600 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;padding:8px 14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;" data-training-site>
+  <span>Training site · practice here with synthetic records</span>
+  <a href="{{ url_for('training.home') }}" style="background:#c79a2b;color:#141414;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;" data-training-link>← Back to my training</a>
 </div>{% endif %}

@@ -5,7 +5,7 @@ Training and user acceptance testing (UAT) are kept apart, as in the AiRIA Train
 
 - training_trainees          one per signed-in person who registered: pathway (CONTRACTOR / SUPPLIER), role,
                              the organization or supplier they belong to, resume points, Tutor minimized or open
-- training_lesson_progress   one row per trainee and lesson: the step reached, done, the exercise confirmed
+- training_lesson_progress   one row per trainee and lesson: each step ticked as done, the exercise confirmed
 - training_uat_results       append-only: every Pass / Fail / Blocked is a new row (attempt 1, 2, ...), so a
                              retest never overwrites an earlier result; notes and the issue found are kept
 - training_feedback          the trainee's own notes and feedback on a lesson
@@ -85,6 +85,7 @@ class TrainingLessonProgress(db.Model):
                            index=True)
     lesson_key = db.Column(db.String(60), nullable=False)
     step_reached = db.Column(db.Integer, nullable=False, default=0)
+    steps_done = db.Column(db.JSON, nullable=False, default=list)  # step numbers (0-based) the trainee ticked
     exercise_done = db.Column(db.Boolean, nullable=False, default=False)
     completed_at = db.Column(db.DateTime, nullable=True)
     release = db.Column(db.String(60), nullable=True)

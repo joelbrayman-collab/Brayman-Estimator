@@ -122,8 +122,10 @@ def overview(trainee) -> dict:
         lessons = []
         for lesson in module.lessons:
             p = progress.get(lesson.key)
-            state = "done" if p and p.completed_at else ("started" if p else "new")
-            lessons.append({"lesson": lesson, "state": state, "step": p.step_reached if p else 0})
+            ticked = len(set(p.steps_done or [])) if p else 0
+            state = "done" if p and p.completed_at else ("started" if p and (ticked or p.step_reached) else "new")
+            lessons.append({"lesson": lesson, "state": state, "step": p.step_reached if p else 0,
+                            "ticked": min(ticked, len(lesson.steps)), "steps": len(lesson.steps)})
             total += 1
             done += state == "done"
         rows.append({"module": module, "lessons": lessons,
@@ -158,8 +160,8 @@ def save_step(trainee, key: str, step: int) -> TrainingLessonProgress:
     step = max(0, min(int(step), len(lesson.steps) - 1))
     p = TrainingLessonProgress.query.filter_by(trainee_id=trainee.id, lesson_key=key).first()
     if p is None:
-        p = TrainingLessonProgress(trainee_id=trainee.id, lesson_key=key, step_reached=step, exercise_done=False,
-                                   release=release_label())
+        p = TrainingLessonProgress(trainee_id=trainee.id, lesson_key=key, step_reached=step, steps_done=[],
+                                   exercise_done=False, release=release_label())
         db.session.add(p)
     p.step_reached = max(p.step_reached, step)
     trainee.training_resume = f"{key}:{step}"
@@ -167,8 +169,36 @@ def save_step(trainee, key: str, step: int) -> TrainingLessonProgress:
     return p
 
 
+def check_step(trainee, key: str, index: int, done: bool) -> TrainingLessonProgress:
+    """Tick (or untick) one step as done. Saved at once; the trainee resumes at the first step not ticked."""
+    _module, lesson = lesson_for_trainee(trainee, key)
+    index = int(index)
+    if not 0 <= index < len(lesson.steps):
+        raise TrainingError("That step is not in this lesson.")
+    p = save_step(trainee, key, index)
+    ticked = set(p.steps_done or [])
+    if done:
+        ticked.add(index)
+    else:
+        ticked.discard(index)
+    p.steps_done = sorted(ticked)
+    nxt = next((i for i in range(len(lesson.steps)) if i not in ticked), len(lesson.steps) - 1)
+    p.step_reached = max(p.step_reached, nxt)
+    trainee.training_resume = f"{key}:{nxt}"
+    db.session.commit()
+    return p
+
+
+def steps_ticked(trainee, key: str) -> List[int]:
+    p = TrainingLessonProgress.query.filter_by(trainee_id=trainee.id, lesson_key=key).first()
+    return sorted(set(p.steps_done or [])) if p else []
+
+
 def complete_lesson(trainee, key: str, exercise_done: bool) -> TrainingLessonProgress:
     _module, lesson = lesson_for_trainee(trainee, key)
+    missing = [i + 1 for i in range(len(lesson.steps)) if i not in set(steps_ticked(trainee, key))]
+    if missing:
+        raise TrainingError("Tick each step as you do it first. Not ticked yet: step " + ", ".join(map(str, missing)) + ".")
     if not exercise_done:
         raise TrainingError("Tick “I did the practice exercise” first: the lesson is complete when you have done it.")
     p = save_step(trainee, key, len(lesson.steps) - 1)
@@ -307,7 +337,7 @@ _STOP = {"the", "a", "an", "i", "to", "do", "how", "what", "where", "is", "it", 
          "you", "me", "this", "that", "for", "with", "be", "does", "did", "find", "go", "get", "at", "or"}
 
 GENERAL_HELP = (
-    ("save", "Your place is saved every time you press Next, Back or Save and exit. Come back to Training any time "
+    ("save", "Every step you tick (the green check) is saved at once, and so is Save and exit. Come back to Training any time "
              "(computer or phone) and press Continue where I left off."),
     ("resume continue later exit", "Press Save and exit. Next time, open Training and press Continue where I left off."),
     ("phone iphone mobile", "The training pages work on the iPhone too. Field lessons are written for the phone."),

@@ -103,18 +103,21 @@ test("contractor owner registers and sees the contractor modules", async () => {
   await shot(ben.pg, "training-home-owner");
 });
 
-test("Back, Next, screenshot enlargement, Save and exit, Continue where I left off", async () => {
+test("tick each step: it turns green and is saved; screenshot enlargement; Save and exit then Continue", async () => {
   const { pg } = sessions.ben;
   await Promise.all([pg.waitForNavigation(), pg.click("[data-continue]")]);
   const lesson = await pg.getAttribute("[data-lesson-page]", "data-lesson-page");
-  assert.match(await pg.textContent("[data-stepcount]"), /^Step 1 of \d+/);
-  if (await pg.locator("[data-next]").count()) {
-    await Promise.all([pg.waitForNavigation(), pg.click("[data-next]")]);
-    assert.match(await pg.textContent("[data-stepcount]"), /^Step 2 of/);
-    await Promise.all([pg.waitForNavigation(), pg.click("[data-back]")]);
-    assert.match(await pg.textContent("[data-stepcount]"), /^Step 1 of/);
-    await Promise.all([pg.waitForNavigation(), pg.click("[data-next]")]);
-  }
+  const total = await pg.locator("[data-step-card]").count();
+  assert.ok(total >= 1);
+  assert.match(await pg.textContent("[data-stepcount]"), new RegExp(`^0 of ${total} steps done`));
+  await pg.click('[data-tick="0"]');
+  await pg.waitForFunction(() => document.querySelector('[data-step-card="0"]').classList.contains("is-done"));
+  const green = await pg.locator('[data-step-card="0"] .tc-check').evaluate((el) => getComputedStyle(el).backgroundColor);
+  assert.equal(green, "rgb(47, 125, 74)", "the step's circle turns green");
+  assert.equal((await pg.textContent('[data-step-card="0"] .tc-check')).trim(), "\u2713");
+  assert.match(await pg.textContent("[data-stepcount]"), new RegExp(`^1 of ${total} steps done`));
+  await pg.reload();
+  assert.ok(await pg.locator('[data-step-card="0"]').evaluate((c) => c.classList.contains("is-done")), "the tick is saved");
   const enlarge = pg.locator("[data-enlarge]");
   if (await enlarge.count()) {
     await enlarge.first().click();
@@ -123,12 +126,12 @@ test("Back, Next, screenshot enlargement, Save and exit, Continue where I left o
     await pg.locator("[data-lightbox] button").click();
     assert.equal(await pg.locator("[data-lightbox]").evaluate((d) => d.open), false);
   }
-  const at = await pg.getAttribute("[data-lesson-page]", "data-step-index");
   await shot(pg, "training-lesson-desktop");
   await Promise.all([pg.waitForNavigation(), pg.click("[data-exit]")]);
   assert.match(new URL(pg.url()).pathname, /^\/training$/);
   const href = await pg.getAttribute("[data-continue]", "href");
-  assert.ok(href.endsWith(`/training/lessons/${lesson}?step=${at}`), `Continue returns to ${lesson} step ${at}: ${href}`);
+  assert.ok(href.includes(`/training/lessons/${lesson}`), `Continue returns to ${lesson}: ${href}`);
+  assert.match(await pg.locator(`[data-lesson="${lesson}"]`).locator("xpath=..").textContent(), new RegExp(`1 of ${total} steps`));
 });
 
 test("Tutor: minimize and restore are kept after reloading; it answers from the lesson", async () => {
@@ -150,7 +153,14 @@ test("Tutor: minimize and restore are kept after reloading; it answers from the 
 test("a lesson completes only when its exercise is ticked; notes are kept", async () => {
   const { pg } = sessions.ben;
   await pg.goto(`${base}/training/lessons/c01-sign-in`);
-  while (await pg.locator("[data-next]").count()) await Promise.all([pg.waitForNavigation(), pg.click("[data-next]")]);
+  await Promise.all([pg.waitForNavigation(), pg.click("[data-complete]")]);
+  assert.ok((await pg.content()).includes("Tick each step as you do it first"), "refused until every step is ticked");
+  const steps = await pg.locator("[data-step-card]").count();
+  for (let i = 0; i < steps; i += 1) {
+    if (await pg.locator(`[data-tick="${i}"]`).getAttribute("aria-pressed") === "true") continue;
+    await pg.click(`[data-tick="${i}"]`);
+    await pg.waitForFunction((n) => document.querySelector(`[data-step-card="${n}"]`).classList.contains("is-done"), i);
+  }
   await Promise.all([pg.waitForNavigation(), pg.click("[data-complete]")]);
   assert.ok((await pg.content()).includes("I did the practice exercise"), "refused without the exercise");
   await pg.check("[data-exercise]");
@@ -244,6 +254,7 @@ test("the training site says so on every workspace and links to the Centre", asy
   const { pg } = sessions.ben;
   await pg.goto(`${base}/`);
   assert.ok(await pg.locator("[data-training-site]").isVisible());
+  assert.match(await pg.textContent("[data-training-link]"), /Back to my training/);
   await Promise.all([pg.waitForNavigation(), pg.click("[data-training-link]")]);
   assert.match(new URL(pg.url()).pathname, /^\/training$/);
   await sessions.darcy.pg.goto(`${base}/supplier/`);

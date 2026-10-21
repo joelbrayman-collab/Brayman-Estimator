@@ -49,6 +49,7 @@ def upgrade():
         sa.Column("trainee_id", sa.Integer(), sa.ForeignKey("training_trainees.id", ondelete="RESTRICT"), nullable=False),
         sa.Column("lesson_key", sa.String(length=60), nullable=False),
         sa.Column("step_reached", sa.Integer(), nullable=False),
+        sa.Column("steps_done", sa.JSON(), nullable=False),
         sa.Column("exercise_done", sa.Boolean(), nullable=False),
         sa.Column("completed_at", sa.DateTime(), nullable=True),
         sa.Column("release", sa.String(length=60), nullable=True),

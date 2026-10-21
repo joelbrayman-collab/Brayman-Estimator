@@ -65,8 +65,11 @@ def login():
         login_user(user, remember=False)
         target = request.form.get("next") or ""
         # A supplier trainee signs in here and goes back to the Training Centre (training site only).
+        from app.training.service import enabled as training_site
+
+        default = url_for("training.home") if training_site() else url_for("supplier_portal.home")
         return redirect(target if target.startswith(("/supplier", "/training")) and not target.startswith("//")
-                        else url_for("supplier_portal.home"))
+                        else default)
     return render_template("supplier/login.html")
 
 

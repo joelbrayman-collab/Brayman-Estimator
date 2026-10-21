@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Invoices | Brayman Construction Platform{% endblock %}
+{% block page_title %}Invoices{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Invoices</h2>
+  <p class="page-purpose">Every invoice, with its payment status from the last check against QuickBooks.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
+<div class="form-panel"><div class="acct-scroll"><table class="acct-table" data-invoices>
+  <thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Job</th><th class="num">Before HST</th><th class="num">HST</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th></tr></thead>
+  <tbody>{% for inv in invoices %}
+  <tr data-invoice="{{ inv.number }}"><td data-label="Invoice"><a href="{{ url_for('accounting.invoice', invoice_id=inv.id) }}">{{ inv.number }}</a></td>
+    <td data-label="Date">{{ inv.invoice_date.strftime('%d %b %Y') }}</td><td data-label="Customer">{{ inv.client.name }}</td>
+    <td data-label="Job">{{ inv.project.name }}</td><td data-label="Before HST" class="num">${{ '{:,.2f}'.format(inv.subtotal) }}</td>
+    <td data-label="HST" class="num">${{ '{:,.2f}'.format(inv.tax_amount) }}</td><td data-label="Total" class="num">${{ '{:,.2f}'.format(inv.total) }}</td>
+    <td data-label="Paid" class="num">${{ '{:,.2f}'.format(inv.amount_paid) }}</td><td data-label="Status" data-status>{{ inv.status_label }}</td></tr>
+  {% else %}<tr><td colspan="9" class="muted-copy">No invoices yet.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

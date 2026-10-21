@@ -50,6 +50,12 @@ def _pricing(org, _user):
     return _count(OrganizationPricingPolicy, organization_id=org) > 0
 
 
+def _accounting(org, _user):
+    from app.models.accounting import EVENT_EXPORT, AccountingEvent
+
+    return _count(AccountingEvent, organization_id=org, kind=EVENT_EXPORT) > 0
+
+
 def _people(org, _user):
     from app.models.user import UserMembership
 
@@ -120,8 +126,8 @@ STEPS: List[Step] = [
          "Costs & pricing → Pricing policies → New policy: overhead, profit and the 13 % HST for Ontario. Save.",
          "pricing_engine.index", _pricing),
     Step("accounting", "Accounting with QuickBooks", "Keep your books in QuickBooks; CalibraytAI prepares the records.",
-         "Follow the QuickBooks steps in the manual. Mark this done once your first export has gone into QuickBooks.",
-         "settings.settings_index"),
+         "Company → Accounting → Customers → Download, then in QuickBooks: gear icon → Import data → Customers.",
+         "accounting.index", _accounting),
     Step("people", "Invite the boys", "Each person gets their own sign-in; crew see only Field.",
          "Settings → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),

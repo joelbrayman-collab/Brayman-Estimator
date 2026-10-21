@@ -143,7 +143,7 @@ def test_the_revision_follows_pro_desk():
     script = ScriptDirectory.from_config(_config(":memory:"))
     assert script.get_revision(REVISION).down_revision == PRIOR
     assert script.get_revision("pr6b3d8e0f1c").down_revision == REVISION
-    assert script.get_heads() == ["pr6b3d8e0f1c"]
+    assert script.get_heads() == ["qb7c2e9a4d1f"]  # later revisions follow (21 Oct 2026)
 
 
 def test_upgrade_only_widens_the_status_check_and_keeps_every_row(tmp_path):

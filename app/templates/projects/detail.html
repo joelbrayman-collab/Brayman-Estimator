@@ -1180,7 +1180,10 @@
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Change Orders</h2>
-            <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
+            <span>
+                <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
+                · <a href="{{ url_for('accounting.new_invoice', project_id=project.id) }}" data-make-invoice>Make an invoice</a>
+            </span>
         </div>
         {% if hub.change_orders %}
         <table class="data-table">

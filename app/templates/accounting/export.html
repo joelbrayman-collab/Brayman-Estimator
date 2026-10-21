@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ label[0] }} for QuickBooks | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ label[0] }} for QuickBooks{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">{{ label[0] }} for QuickBooks</h2>
+  <p class="page-purpose">In QuickBooks Online: {{ label[1] }}.{% if kind == 'invoices' %} When asked, choose the date format dd/MM/yyyy and amounts that exclude tax.{% endif %}</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
+<div class="form-panel" data-export-preview="{{ kind }}">
+  <p><strong data-fresh-count>{{ preview.fresh|length }}</strong> new · <span data-again-count>{{ preview.again|length }}</span> already in an earlier file.
+    {% if include %}<a href="{{ url_for('accounting.export', kind=kind) }}">Show new only</a>{% elif preview.again %}<a href="{{ url_for('accounting.export', kind=kind, include_exported=1) }}">Include those again</a>{% endif %}</p>
+  <div class="acct-scroll"><table class="acct-table">
+    <thead><tr>{% for h in preview.header[:6] %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for r in preview.rows %}<tr data-row="{{ r._key }}">{% for h in preview.header[:6] %}<td data-label="{{ h }}">{{ r[h] }}</td>{% endfor %}</tr>
+    {% else %}<tr><td class="muted-copy">Nothing new to export.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if preview.rows %}
+  <form method="post" class="acct-actions">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if include %}<input type="hidden" name="include_exported" value="1">
+    <input type="text" name="reason" maxlength="300" placeholder="Why these go into QuickBooks again" aria-label="Reason" required>{% endif %}
+    <button class="button-primary" type="submit" data-download>Download the file ({{ preview.rows|length }})</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

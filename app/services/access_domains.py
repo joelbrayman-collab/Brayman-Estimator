@@ -186,6 +186,25 @@ def require_office_scheduling_authority():
     return None
 
 
+def has_office_financial_access(user, organization_id) -> bool:
+    """Invoices, QuickBooks exports and reconciliation (Joel, 21 Oct 2026): an active office member of
+    this organization. A field-only member never. Same rule as office scheduling authority."""
+    return has_office_scheduling_authority(user, organization_id)
+
+
+def require_office_financial_access():
+    """Abort 403 unless the current request user may see and change invoices and QuickBooks files."""
+    if not getattr(current_user, "is_authenticated", False):
+        return login_manager.unauthorized()
+    try:
+        org_id = get_current_organization_id()
+    except OrganizationAccessError:
+        abort(403)
+    if not has_office_financial_access(current_user, org_id):
+        abort(403)
+    return None
+
+
 def set_field_only(membership, field_only: bool, actor) -> bool:
     """Mark (True) or clear (False) the FIELD_ONLY restriction on one membership. Idempotent.
 

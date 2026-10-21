@@ -104,7 +104,7 @@ def test_the_migration_binds_only_baseline_rows_and_reverses(tmp_path):
         cfg = Config(str(REPO / "migrations" / "alembic.ini"))
         cfg.set_main_option("script_location", str(REPO / "migrations"))
         cfg.set_main_option("sqlalchemy.url", db_uri)
-        assert ScriptDirectory.from_config(cfg).get_heads() == ["pa7c4e9f1d2b"]
+        assert ScriptDirectory.from_config(cfg).get_heads() == ["qb7c2e9a4d1f"]
 
         def rows():
             with db.engine.begin() as conn:

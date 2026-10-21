@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Make an invoice | Brayman Construction Platform{% endblock %}
+{% block page_title %}Make an invoice{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Make an invoice</h2>
+  <p class="page-purpose">{{ project.name }}. HST follows the rate on the proposal or change order.</p></div>
+  <a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a></section>
+
+{% if proposals %}
+<form class="form-panel" method="post" data-invoice-from-proposal>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <h3>From the accepted proposal</h3>
+  <label>Proposal
+    <select name="proposal_id">{% for p in proposals %}<option value="{{ p.id }}">{{ p.proposal_number }} · ${{ '{:,.2f}'.format(p.total - p.tax_amount) }} before HST ({{ p.tax_percent }} %)</option>{% endfor %}</select></label>
+  <label>Kind
+    <select name="kind">{% for key, label in kinds.items() if key != 'CHANGE_ORDER' %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label>
+  <label>Percent of the proposal before HST <input type="text" inputmode="decimal" name="percent" placeholder="e.g. 30"></label>
+  <label>or an amount before HST ($) <input type="text" inputmode="decimal" name="amount" placeholder="e.g. 12500.00"></label>
+  <p class="muted-copy">For the final invoice, leave both empty to invoice what is left.</p>
+  <label>Description (optional) <input type="text" name="description" maxlength="300"></label>
+  <div class="acct-actions"><button class="button-primary" type="submit">Make the invoice</button></div>
+</form>
+{% else %}
+<div class="form-panel"><p class="muted-copy">This project has no accepted proposal yet.</p></div>
+{% endif %}
+
+{% if change_orders %}
+<form class="form-panel" method="post" data-invoice-from-change-order>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <h3>From an approved change order</h3>
+  <label>Change order
+    <select name="change_order_id">{% for c in change_orders %}<option value="{{ c.id }}">{{ c.number }} {{ c.title }} · ${{ '{:,.2f}'.format(c.total - c.tax) }} before HST</option>{% endfor %}</select></label>
+  <div class="acct-actions"><button class="button-primary" type="submit">Invoice the change order</button></div>
+</form>
+{% endif %}
+
+{% if existing %}
+<div class="form-panel"><h3>Invoices on this project</h3><ul class="acct-list">
+  {% for inv in existing %}<li><a href="{{ url_for('accounting.invoice', invoice_id=inv.id) }}">{{ inv.number }}</a> · {{ inv.kind_label }} · ${{ '{:,.2f}'.format(inv.total) }} · {{ inv.status_label }}</li>{% endfor %}
+</ul></div>
+{% endif %}
+{% endblock %}

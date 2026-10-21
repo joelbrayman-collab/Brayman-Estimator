@@ -197,6 +197,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Accounting",
+                "endpoint": "accounting.index",
+                "icon": "bi-journal-text",
+                "enabled": True,
+            },
+            {
                 "title": WORK_CATALOG_NAV_TITLE,
                 "endpoint": "work_structure.catalog_index",
                 "icon": "bi-diagram-3",

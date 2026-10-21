@@ -1,3 +1,7 @@
+> **Superseded 21 Oct 2026** by Company → Getting started in CalibraytAI and the illustrated manual
+> [bens-first-day.pdf](bens-first-day.pdf) (built by render_first_day_manual.py from the release walk's screens).
+> Kept for the record of the 7 October setup.
+
 # First day
 
 Brayman Construction. Calibrayt. 7 October 2026.

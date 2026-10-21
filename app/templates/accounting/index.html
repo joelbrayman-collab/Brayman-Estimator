@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Accounting | Brayman Construction Platform{% endblock %}
+{% block page_title %}Accounting{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header">
+  <div>
+    <h2 class="page-title">Accounting</h2>
+    <p class="page-purpose">Invoices from accepted proposals and approved change orders, the files QuickBooks Online imports, and a check that QuickBooks matches.</p>
+  </div>
+  <a class="button-primary" href="{{ url_for('accounting.reconcile') }}">Check QuickBooks</a>
+</section>
+
+<div class="form-panel" data-qbo-status>
+  <h3>QuickBooks Online</h3>
+  <p><strong>{{ qbo.message }}</strong></p>
+  <p class="muted-copy">CalibraytAI never asks for your QuickBooks password and never posts to QuickBooks on its own. You download a file here and import it in QuickBooks (gear icon → Import data).</p>
+</div>
+
+<div class="form-panel">
+  <h3>Files for QuickBooks</h3>
+  <div class="acct-scroll"><table class="acct-table" data-exports>
+    <thead><tr><th>File</th><th class="num">New</th><th class="num">Already in a file</th><th>In QuickBooks</th></tr></thead>
+    <tbody>
+    {% for kind, (label, where) in exports.items() %}
+      <tr data-export="{{ kind }}">
+        <td data-label="File"><a href="{{ url_for('accounting.export', kind=kind) }}">{{ label }}</a></td>
+        <td data-label="New" class="num" data-new>{{ counts[kind][0] }}</td>
+        <td data-label="Already in a file" class="num" data-again>{{ counts[kind][1] }}</td>
+        <td data-label="In QuickBooks" class="muted-copy">{{ where }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="muted-copy">Job costing: each estimate's QuickBooks entry package (Project → Workflow documents → QuickBooks entry) lists the cost classes to enter against the job.</p>
+  <p class="muted-copy">Import in this order: customers, suppliers, invoices, bills. A record goes into a file once; it is left out of the next file unless you choose to include it again and say why.</p>
+</div>
+
+<div class="form-panel">
+  <h3>Invoices</h3>
+  {% if invoices %}
+  <div class="acct-scroll"><table class="acct-table">
+    <thead><tr><th>Invoice</th><th>Customer</th><th>Job</th><th class="num">Total</th><th>Status</th></tr></thead>
+    <tbody>{% for inv in invoices %}
+      <tr><td data-label="Invoice"><a href="{{ url_for('accounting.invoice', invoice_id=inv.id) }}">{{ inv.number }}</a></td>
+        <td data-label="Customer">{{ inv.client.name }}</td><td data-label="Job">{{ inv.project.name }}</td>
+        <td data-label="Total" class="num">${{ '{:,.2f}'.format(inv.total) }}</td><td data-label="Status">{{ inv.status_label }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  <p><a href="{{ url_for('accounting.invoices') }}">All invoices</a></p>
+  {% else %}
+  <p class="muted-copy">No invoices yet. Open a project with an accepted proposal and choose Make an invoice.</p>
+  {% endif %}
+</div>
+
+<div class="form-panel">
+  <h3>Last check against QuickBooks</h3>
+  {% if last %}
+  <p>{{ last.occurred_at.strftime('%d %b %Y %H:%M') }} UTC by {{ last.actor_name }} ({{ last.filename }}):
+     {{ last.detail_json.matched|length }} matched, {{ last.detail_json.differs|length }} differ,
+     {{ last.detail_json.missing_in_quickbooks|length }} not in QuickBooks.</p>
+  {% else %}<p class="muted-copy">Not checked yet.</p>{% endif %}
+</div>
+
+<div class="form-panel">
+  <h3>History</h3>
+  {% if events %}
+  <div class="acct-scroll"><table class="acct-table" data-history>
+    <thead><tr><th>When (UTC)</th><th>What</th><th>Who</th><th>Detail</th></tr></thead>
+    <tbody>{% for e in events %}
+      <tr><td data-label="When">{{ e.occurred_at.strftime('%d %b %Y %H:%M') }}</td>
+        <td data-label="What">{{ e.kind|title }} · {{ e.subject|replace('_', ' ') }}{% if e.record_key %} {{ e.record_key }}{% endif %}</td>
+        <td data-label="Who">{{ e.actor_name }}</td>
+        <td data-label="Detail">{% if e.filename %}{{ e.filename }} ({{ e.row_count }} rows){% endif %}{% if e.note %} {{ e.note }}{% endif %}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="muted-copy">Nothing yet.</p>{% endif %}
+</div>
+{% endblock %}

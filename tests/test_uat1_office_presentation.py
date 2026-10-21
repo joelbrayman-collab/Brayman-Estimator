@@ -68,7 +68,7 @@ def test_company_group_is_setup_not_a_second_calendar():
     company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
     by_title = {item["title"]: item["endpoint"] for item in company["links"]}
     # People & Access added 21 Oct 2026 (shown only to the owner or a System Administrator).
-    assert list(by_title) == ["Attention", "People & Access", "Crews", "Suppliers", "Work catalog"]
+    assert list(by_title) == ["Attention", "People & Access", "Crews", "Suppliers", "Accounting", "Work catalog"]  # Accounting: Joel 21 Oct 2026
     assert by_title["People & Access"] == "people_access.index"
     assert by_title["Attention"] == "company_attention.index"
     assert by_title["Crews"] == "organization_crew.index"

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Invoice {{ invoice.number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Invoice {{ invoice.number }}{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Invoice {{ invoice.number }}</h2>
+  <p class="page-purpose">{{ invoice.kind_label }} · {{ invoice.client.name }} · Job: {{ job }}</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
+<div class="form-panel" data-invoice-detail>
+  <p>{{ invoice.description }}</p>
+  <table class="acct-table">
+    <tr><td data-label="Invoice date">Invoice date</td><td class="num">{{ invoice.invoice_date.strftime('%d %b %Y') }}</td></tr>
+    <tr><td data-label="Due">Due</td><td class="num">{{ invoice.due_date.strftime('%d %b %Y') }}</td></tr>
+    <tr><td data-label="Before HST">Before HST</td><td class="num" data-subtotal>${{ '{:,.2f}'.format(invoice.subtotal) }}</td></tr>
+    <tr><td data-label="HST">HST {{ invoice.tax_percent }} % ({{ invoice.tax_code }})</td><td class="num" data-tax>${{ '{:,.2f}'.format(invoice.tax_amount) }}</td></tr>
+    <tr><td data-label="Total"><strong>Total</strong></td><td class="num" data-total><strong>${{ '{:,.2f}'.format(invoice.total) }}</strong></td></tr>
+    <tr><td data-label="Paid">Paid (from QuickBooks)</td><td class="num">${{ '{:,.2f}'.format(invoice.amount_paid) }}</td></tr>
+    <tr><td data-label="Status">Status</td><td class="num" data-status>{{ invoice.status_label }}</td></tr>
+  </table>
+  {% if invoice.void_reason %}<p><strong>Void:</strong> {{ invoice.void_reason }}</p>{% endif %}
+</div>
+<form class="form-panel" method="post" action="{{ url_for('accounting.correction', invoice_id=invoice.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <h3>Record a correction</h3>
+  <p class="muted-copy">When QuickBooks and CalibraytAI differ, fix it in QuickBooks and say here what you did. It stays in the history.</p>
+  <div class="acct-actions"><input type="text" name="note" maxlength="1000" aria-label="What was corrected"><button class="button button-secondary" type="submit">Record</button></div>
+</form>
+{% if invoice.status != 'VOID' %}
+<form class="form-panel" method="post" action="{{ url_for('accounting.void', invoice_id=invoice.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <h3>Void this invoice</h3>
+  <div class="acct-actions"><input type="text" name="reason" maxlength="500" aria-label="Why it is void"><button class="button button-destructive" type="submit">Void</button></div>
+</form>
+{% endif %}
+<div class="form-panel"><h3>History</h3><ul class="acct-list">
+  {% for e in events %}<li>{{ e.occurred_at.strftime('%d %b %Y %H:%M') }} UTC · {{ e.kind|title }} {{ e.subject }} · {{ e.actor_name }}{% if e.note %} · {{ e.note }}{% endif %}</li>{% endfor %}
+</ul></div>
+{% endblock %}

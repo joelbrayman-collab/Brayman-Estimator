@@ -1,0 +1,17 @@
+<style>
+  .acct-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .acct-table { width: 100%; border-collapse: collapse; }
+  .acct-table th, .acct-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border, #ddd); vertical-align: top; overflow-wrap: anywhere; }
+  .acct-table td.num, .acct-table th.num { text-align: right; white-space: nowrap; }
+  .acct-scroll { max-width: 100%; overflow-x: auto; }
+  .acct-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .acct-actions input[type=text], .acct-actions textarea { min-width: 0; flex: 1 1 220px; }
+  .acct-list { margin: 6px 0 0 18px; }
+  @media (max-width: 640px) {
+    .acct-table thead { display: none; }
+    .acct-table tr { display: block; border-bottom: 1px solid var(--border, #ddd); padding: 6px 0; }
+    .acct-table td { display: flex; justify-content: space-between; gap: 12px; border: 0; padding: 4px 0; }
+    .acct-table td::before { content: attr(data-label); font-weight: 600; }
+    .acct-table td.num { text-align: right; }
+  }
+</style>

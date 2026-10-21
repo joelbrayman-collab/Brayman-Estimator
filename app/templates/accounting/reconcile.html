@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Check QuickBooks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Check QuickBooks{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Check QuickBooks</h2>
+  <p class="page-purpose">In QuickBooks Online: Reports → Invoice List → Export → Export to CSV. Upload that file here. Payment status comes from the open balance.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
+<form class="form-panel" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="acct-actions"><input type="file" name="report" accept=".csv,text/csv" aria-label="QuickBooks invoice list"><button class="button-primary" type="submit">Check</button></div>
+</form>
+{% if result %}
+<div class="form-panel" data-reconciliation>
+  <h3>Result</h3>
+  <p data-matched>{{ result.matched|length }} match.</p>
+  {% if result.differs %}<p><strong>Amount differs</strong></p><ul class="acct-list" data-differs>{% for d in result.differs %}<li>{{ d.number }}: CalibraytAI ${{ d.ours }}, QuickBooks ${{ d.quickbooks }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.missing_in_quickbooks %}<p><strong>Exported but not in QuickBooks</strong> (import the invoice file, or it was deleted there)</p><ul class="acct-list" data-missing>{% for n in result.missing_in_quickbooks %}<li>{{ n }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.unknown_in_calibraytai %}<p><strong>In QuickBooks but not in CalibraytAI</strong></p><ul class="acct-list" data-unknown>{% for d in result.unknown_in_calibraytai %}<li>{{ d.number }} (${{ d.amount }})</li>{% endfor %}</ul>{% endif %}
+  {% if result.duplicates %}<p><strong>In QuickBooks more than once</strong> (delete the extra one in QuickBooks)</p><ul class="acct-list" data-duplicates>{% for d in result.duplicates %}<li>{{ d.number }} × {{ d.count }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.paid %}<p data-paid>Paid: {{ result.paid|join(', ') }}</p>{% endif %}
+  {% if result.partly_paid %}<p data-partly-paid>Partly paid: {{ result.partly_paid|join(', ') }}</p>{% endif %}
+  <p class="muted-copy">To fix a difference, correct it in QuickBooks, open the invoice here and record what you did.</p>
+</div>
+{% endif %}
+{% endblock %}

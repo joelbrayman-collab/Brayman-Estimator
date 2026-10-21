@@ -461,6 +461,14 @@ def test_seed_route_expected_collision_is_contractor_safe(client, app, monkeypat
 
 
 def test_crew_route_expected_collision_is_contractor_safe(client, app, monkeypatch):
+    # Crews are changed by the Instance Owner or a System Administrator (Crew Access, 21 Oct 2026).
+    from app.models.user import UserMembership
+    from app.services.instance_authority import set_instance_owner
+    from tests.auth_fixtures import ensure_office_user
+
+    office = ensure_office_user()
+    membership = UserMembership.query.filter_by(user_id=office.id, organization_id=DEFAULT_ORGANIZATION_ID).one()
+    set_instance_owner(DEFAULT_ORGANIZATION_ID, membership.id, office.id)
     create_crew(name="Finish crew", organization_id=DEFAULT_ORGANIZATION_ID)
 
     class _Skip:

@@ -20,7 +20,7 @@ from app import create_app, db
 
 PREV_HEAD = "g7b8c9d0e1f2"
 S16_REVISION = "h8c9d0e1f2a3"
-GRAPH_HEAD = "qb7c2e9a4d1f"
+GRAPH_HEAD = "v5c1a7e3d9b2"
 NOW = "2026-09-23 12:00:00"
 
 

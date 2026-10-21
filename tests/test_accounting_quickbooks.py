@@ -222,49 +222,48 @@ def test_other_company_cannot_see_invoice(app, people, job):
     assert svc.invoices("org-other-synthetic") == []
 
 
-# ------------------------------------------------------------------ migration qb7c2e9a4d1f
+# ------------------------------------------------------------------ migration v5c1a7e3d9b2
 
 
-def test_the_v1_onboarding_revisions_each_add_empty_tables_and_keep_every_row(tmp_path):
-    """pr6b3d8e0f1c → pa7c4e9f1d2b (people_access_events) → ob7c2e9a4d1f (organization_onboarding_steps)
-    → qb7c2e9a4d1f (customer_invoices, accounting_export_records, accounting_events)."""
+def test_the_v1_release_5_revision_adds_six_empty_tables_and_keeps_every_row(tmp_path):
+    """v5c1a7e3d9b2 after the live pd1a2b3c4d5e: proposal_declines, people_access_events,
+    organization_onboarding_steps, customer_invoices, accounting_export_records, accounting_events;
+    supplier_purchase_orders only gains DELIVERED in its status check (tests/test_supplier_po_cancel_delivered.py)."""
     import sqlalchemy as sa
     from alembic import command
     from alembic.script import ScriptDirectory
 
     from tests.test_supplier_po_cancel_delivered import _config, _rows as _db_rows, _seed
 
-    steps = [("pa7c4e9f1d2b", {"people_access_events"}), ("ob7c2e9a4d1f", {"organization_onboarding_steps"}),
-             ("qb7c2e9a4d1f", {"customer_invoices", "accounting_export_records", "accounting_events"})]
+    revision, prior = "v5c1a7e3d9b2", "pd1a2b3c4d5e"
+    new = {"proposal_declines", "people_access_events", "organization_onboarding_steps", "customer_invoices",
+           "accounting_export_records", "accounting_events"}
     db_path = tmp_path / "v1rel5.db"
     cfg = _config(db_path)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["qb7c2e9a4d1f"]
-    prior = "pr6b3d8e0f1c"
-    for revision, _ in steps:
-        assert script.get_revision(revision).down_revision == prior
-        prior = revision
+    assert script.get_heads() == [revision] and script.get_revision(revision).down_revision == prior
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
     with application.app_context():
-        command.upgrade(cfg, "pr6b3d8e0f1c")
+        command.upgrade(cfg, prior)
         _seed(db.engine)
-        original_tables, original_rows = set(sa.inspect(db.engine).get_table_names()), _db_rows(db.engine)
-        tables, rows_before = set(original_tables), original_rows
-        for revision, new in steps:
-            command.upgrade(cfg, revision)
-            after = set(sa.inspect(db.engine).get_table_names())
-            assert after - tables == new, revision
-            rows = _db_rows(db.engine)
-            for table in new:
-                assert rows.pop(table) == []
-                assert {c["name"] for c in sa.inspect(db.engine).get_columns(table)} == \
-                    {c.name for c in db.metadata.tables[table].columns}, table
-            for table in tables - original_tables:
-                rows.pop(table)
-            assert rows == original_rows, revision
-            tables = after
+        tables, original = set(sa.inspect(db.engine).get_table_names()), _db_rows(db.engine)
+        command.upgrade(cfg, revision)
+        assert set(sa.inspect(db.engine).get_table_names()) - tables == new
+        rows = _db_rows(db.engine)
+        for table in new:
+            assert rows.pop(table) == []
+            assert {c["name"] for c in sa.inspect(db.engine).get_columns(table)} == \
+                {c.name for c in db.metadata.tables[table].columns}, table
+        assert rows == original
         with db.engine.begin() as conn:
             assert conn.execute(sa.text("PRAGMA integrity_check")).scalar() == "ok"
-        command.downgrade(cfg, "pr6b3d8e0f1c")
-        assert set(sa.inspect(db.engine).get_table_names()) == original_tables
-        assert _db_rows(db.engine) == original_rows
+            conn.execute(sa.text("INSERT INTO organization_onboarding_steps (organization_id, step_key, done_by_user_id, "
+                                 "done_by_name, done_at) VALUES ('ORG-PO', 'phones', 1, 'x', '2026-10-21')"))
+        with pytest.raises(RuntimeError, match="organization_onboarding_steps holds rows"):
+            command.downgrade(cfg, prior)
+        assert set(sa.inspect(db.engine).get_table_names()) >= new  # refused before changing anything
+        with db.engine.begin() as conn:
+            conn.execute(sa.text("DELETE FROM organization_onboarding_steps"))
+        command.downgrade(cfg, prior)
+        assert set(sa.inspect(db.engine).get_table_names()) == tables
+        assert _db_rows(db.engine) == original

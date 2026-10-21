@@ -36,7 +36,7 @@ def _rows(engine, skip=()):
 
 def test_the_pro_desk_revision_follows_the_calendar_and_is_the_head():
     script = ScriptDirectory.from_config(_config(":memory:"))
-    # Later revisions follow it (po4d1e7c9a2f, pr6b3d8e0f1c, 21 Oct 2026); there is still one head.
+    # Later revisions follow it (v5c1a7e3d9b2, 21 Oct 2026); there is still one head.
     assert len(script.get_heads()) == 1
     assert REVISION in {rev.revision for rev in script.walk_revisions()}
     assert script.get_revision(REVISION).down_revision == PRIOR

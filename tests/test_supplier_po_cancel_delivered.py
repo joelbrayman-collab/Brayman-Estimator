@@ -87,10 +87,13 @@ def test_the_office_can_mark_delivered_but_only_a_confirmed_order(app, client):
     assert order.status == "DELIVERED" and H.order_closure(order)["side"] == "CONTRACTOR"
 
 
-# ------------------------------------------------------------------ migration po4d1e7c9a2f
+# ------------------------------------------------------------------ migration v5c1a7e3d9b2 (V1 release 5; the
+# purchase-order DELIVERED status is its first step; tests/test_accounting_quickbooks.py checks the new tables)
 
 ROOT = Path(__file__).resolve().parents[1]
-REVISION, PRIOR = "po4d1e7c9a2f", "pd1a2b3c4d5e"
+REVISION, PRIOR = "v5c1a7e3d9b2", "pd1a2b3c4d5e"
+NEW_TABLES = {"proposal_declines", "people_access_events", "organization_onboarding_steps", "customer_invoices",
+              "accounting_export_records", "accounting_events"}
 
 
 def _config(path) -> Config:
@@ -142,8 +145,7 @@ def _seed(engine):
 def test_the_revision_follows_pro_desk():
     script = ScriptDirectory.from_config(_config(":memory:"))
     assert script.get_revision(REVISION).down_revision == PRIOR
-    assert script.get_revision("pr6b3d8e0f1c").down_revision == REVISION
-    assert script.get_heads() == ["qb7c2e9a4d1f"]  # later revisions follow (21 Oct 2026)
+    assert script.get_heads() == [REVISION]  # one migration for the release (the gate allows exactly one)
 
 
 def test_upgrade_only_widens_the_status_check_and_keeps_every_row(tmp_path):
@@ -160,9 +162,12 @@ def test_upgrade_only_widens_the_status_check_and_keeps_every_row(tmp_path):
             with db.engine.begin() as conn:
                 conn.execute(sa.text("UPDATE supplier_purchase_orders SET status = 'DELIVERED' WHERE id = 1"))
         command.upgrade(cfg, REVISION)
-        assert _rows(db.engine) == before_rows  # every existing row unchanged
+        rows = _rows(db.engine)
+        assert all(rows.pop(t) == [] for t in NEW_TABLES)
+        assert rows == before_rows  # every existing row unchanged
         inspector = sa.inspect(db.engine)
-        assert {t: [c["name"] for c in inspector.get_columns(t)] for t in inspector.get_table_names()} == before_columns
+        assert {t: [c["name"] for c in inspector.get_columns(t)] for t in inspector.get_table_names()
+                if t not in NEW_TABLES} == before_columns
         with db.engine.begin() as conn:
             assert conn.execute(sa.text("PRAGMA integrity_check")).scalar() == "ok"
             conn.execute(sa.text("UPDATE supplier_purchase_orders SET status = 'DELIVERED' WHERE id = 1"))
@@ -175,23 +180,3 @@ def test_upgrade_only_widens_the_status_check_and_keeps_every_row(tmp_path):
             conn.execute(sa.text("UPDATE supplier_purchase_orders SET status = 'CONFIRMED' WHERE id = 1"))
         command.downgrade(cfg, PRIOR)
         assert _rows(db.engine) == before_rows
-
-
-def test_the_proposal_declines_revision_adds_one_empty_table_and_keeps_every_row(tmp_path):
-    db_path = tmp_path / "decline.db"
-    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
-    with application.app_context():
-        cfg = _config(db_path)
-        command.upgrade(cfg, REVISION)
-        _seed(db.engine)
-        before_tables = set(sa.inspect(db.engine).get_table_names())
-        before_rows = _rows(db.engine)
-        command.upgrade(cfg, "pr6b3d8e0f1c")
-        after_tables = set(sa.inspect(db.engine).get_table_names())
-        assert after_tables - before_tables == {"proposal_declines"}
-        rows = _rows(db.engine)
-        assert rows.pop("proposal_declines") == [] and rows == before_rows
-        assert {c["name"] for c in sa.inspect(db.engine).get_columns("proposal_declines")} == \
-            {c.name for c in db.metadata.tables["proposal_declines"].columns}
-        command.downgrade(cfg, REVISION)
-        assert "proposal_declines" not in sa.inspect(db.engine).get_table_names()

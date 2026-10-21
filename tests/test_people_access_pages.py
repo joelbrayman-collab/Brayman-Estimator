@@ -310,8 +310,9 @@ def test_deactivation_is_written_to_the_people_access_log(app, caplog):
     # propagating to the root logger, where caplog normally listens.
     logger = logging.getLogger("people_access")
     logger.addHandler(caplog.handler)
-    level = logger.level
+    level, disabled = logger.level, logger.disabled
     logger.setLevel(logging.INFO)
+    logger.disabled = False  # a logging dictConfig run by an earlier test can disable existing loggers
     try:
         owner.post(f"/settings/people/{ids['staff_m']}/deactivate")
         owner.post(f"/settings/people/{ids['staff_m']}/reactivate")
@@ -319,6 +320,7 @@ def test_deactivation_is_written_to_the_people_access_log(app, caplog):
     finally:
         logger.removeHandler(caplog.handler)
         logger.setLevel(level)
+        logger.disabled = disabled
     lines = [r.getMessage() for r in caplog.records if r.name == "people_access"]
     assert any(f"DEACTIVATE org={ORG} actor_user_id={ids['owner']} target_user_id={ids['staff']}" in l for l in lines)
     assert any("REACTIVATE" in l for l in lines)

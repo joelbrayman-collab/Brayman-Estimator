@@ -60,3 +60,37 @@ def test_the_training_job_has_its_town_and_its_construction_model():
         text = str(revisions[0].__dict__)
         assert "LINDA" not in text.upper() and "BUSHEL" not in text.upper()  # no real customer in training data
         db.drop_all()
+
+
+def _office_app():
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", "SECRET_KEY": "t",
+                              "WTF_CSRF_ENABLED": False, "TRAINING_ENVIRONMENT": True})
+    return application
+
+
+def test_people_access_calls_field_crew_field_only_and_field_has_a_password_button():
+    from flask import g
+
+    application = _office_app()
+    with application.app_context():
+        db.create_all()
+        pw = {k: f"Synthetic-{k}-label-1" for k in ("ben", "olivia", "kevin", "liam", "darcy", "pat")}
+        environment.build(application, pw)
+        ben = application.test_client()
+        ben.post("/login", data={"email": "ben@training.calibraytai.invalid", "password": pw["ben"]})
+        page = ben.get("/settings/people").get_data(as_text=True)
+        assert page.count("Field only") >= 2  # Kevin and Liam
+        g.pop("_login_user", None)
+        kevin = application.test_client()
+        kevin.post("/login", data={"email": "kevin@training.calibraytai.invalid", "password": pw["kevin"]})
+        today = kevin.get("/field/today").get_data(as_text=True)
+        assert 'data-field-password' in today and 'href="/account/password"' in today
+        assert kevin.get("/account/password").status_code == 200
+        db.drop_all()
+
+
+def test_getting_started_all_done_names_the_company_and_proposal_lines_are_phone_cards():
+    page = (ROOT / "app/templates/getting_started/index.html").read_text()
+    assert "set up for Brayman Construction." not in page and "company_name or 'your company'" in page
+    preview = (ROOT / "app/templates/proposals/preview.html").read_text()
+    assert 'data-label="Description"' in preview and 'data-label="Amount"' in preview

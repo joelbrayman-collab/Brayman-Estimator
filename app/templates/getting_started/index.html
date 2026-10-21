@@ -7,7 +7,7 @@
     <h1>Set up CalibraytAI, step by step</h1>
     <p class="muted-copy">{{ c.done }} of {{ c.total }} done. Steps tick themselves when the work is in CalibraytAI; the others you tick when you have done them. Your progress is saved for the whole company.</p>
     <div class="getting-started-bar" role="progressbar" aria-valuemin="0" aria-valuemax="{{ c.total }}" aria-valuenow="{{ c.done }}"><span style="width: {{ (100 * c.done / c.total)|round|int }}%"></span></div>
-    {% if c.next %}<p><a class="button" href="{{ url_for(c.next.step.endpoint) }}" data-next-step="{{ c.next.step.key }}">Next: {{ c.next.step.title }}</a></p>{% else %}<p data-all-done="true"><strong>All done.</strong> CalibraytAI is set up for Brayman Construction.</p>{% endif %}
+    {% if c.next %}<p><a class="button" href="{{ url_for(c.next.step.endpoint) }}" data-next-step="{{ c.next.step.key }}">Next: {{ c.next.step.title }}</a></p>{% else %}<p data-all-done="true"><strong>All done.</strong> CalibraytAI is set up for {{ company_name or 'your company' }}.</p>{% endif %}
 </section>
 <ol class="getting-started-steps">
 {% for r in c.rows %}

@@ -192,6 +192,12 @@ M01 = Module(
                             "<your name>. With nothing booked: 'Nothing is scheduled for you today.'",
                      if_wrong="If you see an office page, you were not set up as Field only; tell the owner.",
                      shot="c01-field-today.png", endpoint="field.today"),
+                Step(title="Change your password", app=F, where="Field → the Password button at the top",
+                     do="Type the old password once and your new password twice, then press Change password",
+                     enter="A password only you know, at least 12 characters",
+                     expect="A message says the password was changed; Back to Field returns to Today.",
+                     if_wrong="If the old password is refused, sign out and use Forgot Password? on the sign-in page.",
+                     endpoint="auth.change_password"),
                 Step(title="Register for training on the phone", app=F, where="Safari → the training site address/training",
                      do="Tick Field worker and press Start my training",
                      expect="Your Field lessons appear.",
@@ -1746,8 +1752,8 @@ def _u(key, module, title, start, action, expected, roles):
 
 UAT_CASES = (
     _u("uat-c01-sign-in", "c01", "Sign in and change the password", "The training site's sign-in page",
-       "Sign in with your training email and password, then change the password (office: key button; Field: Forgot "
-       "Password? on the sign-in page).",
+       "Sign in with your training email and password, then change the password (office: the key button at the top "
+       "right; Field: the Password button at the top).",
        "You are signed in under your own name and the new password works the next time you sign in.", ALL_CONTRACTOR),
     _u("uat-c01-register", "c01", "Register for your job", "Training site → /training",
        "Sign in, choose your job and press Start my training.",

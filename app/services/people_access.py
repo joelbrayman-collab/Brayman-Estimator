@@ -83,6 +83,7 @@ class PersonAccess:
     is_administrator: bool
     is_self: bool
     domains: list = field(default_factory=list)
+    field_only: bool = False
 
     @property
     def can_sign_in(self) -> bool:
@@ -102,7 +103,7 @@ class PersonAccess:
             return "Owner"
         if self.is_administrator:
             return "System Administrator"
-        return "Office"
+        return "Field only" if self.field_only else "Office"
 
 
 _EVENT_FOR_LOG = {"ADD_PERSON": "ADDED", "DEACTIVATE": "DEACTIVATED", "REACTIVATE": "REACTIVATED",
@@ -197,7 +198,14 @@ def _describe(membership: UserMembership, org: Organization, actor: User, admin_
         is_administrator=membership.id in admin_ids,
         is_self=user.id == actor.id,
         domains=domains,
+        field_only=_is_field_only(membership),
     )
+
+
+def _is_field_only(membership) -> bool:
+    from app.services.access_domains import membership_is_field_only
+
+    return bool(membership_is_field_only(membership))
 
 
 def _admin_membership_ids(organization_id: str) -> set:

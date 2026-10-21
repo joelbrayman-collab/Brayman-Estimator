@@ -136,7 +136,7 @@
                         <tbody>
                             {% for item in row.line_items %}
                             <tr>
-                                <td>
+                                <td class="proposal-line-description" data-label="Description">
                                     {{ item.description }}
                                     {% if item.item_type == 'Allowance' %}
                                     <span class="badge text-bg-secondary ms-1">Allowance</span>
@@ -145,10 +145,10 @@
                                     <div class="small text-muted">{{ item.customer_notes }}</div>
                                     {% endif %}
                                 </td>
-                                <td class="text-end">{{ item.quantity }}</td>
-                                <td>{{ item.unit }}</td>
-                                <td class="text-end">${{ "%.2f"|format(item.unit_price) }}</td>
-                                <td class="text-end">${{ "%.2f"|format(item.extended_price) }}</td>
+                                <td class="text-end" data-label="Qty">{{ item.quantity }}</td>
+                                <td data-label="Unit">{{ item.unit }}</td>
+                                <td class="text-end" data-label="Unit Price">${{ "%.2f"|format(item.unit_price) }}</td>
+                                <td class="text-end" data-label="Amount">${{ "%.2f"|format(item.extended_price) }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

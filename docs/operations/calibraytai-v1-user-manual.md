@@ -76,7 +76,7 @@ On the estimate version, choose Create Proposal. Review it. The customer documen
 
 Print on the proposal is the same customer PDF. Read it before it leaves the office.
 
-When the customer has committed, open that proposal. Set Update status to Accepted. Acceptance is recorded there, not on the project hub. An accepted proposal stays as it was. It is not the construction contract.
+Send the proposal to the customer with Send proposal to client. The customer accepts or declines on their own link; the office cannot set a proposal to Accepted. An accepted proposal stays as it was. It is not the construction contract. (Updated 21 Oct 2026.)
 
 ## Supplier Estimate Request
 
@@ -102,7 +102,7 @@ Calibrayt uses the active Brayman V1 Ontario contract package. The package and v
 
 On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate the contract after the estimate is issued and locked and the proposal is issued or accepted.
 
-Open the generated contract. It is the Brayman V1 interim contract. It has the parties, the project, the contract amount, and signature lines. Generating a contract does not sign it and does not send a signing link. A generated contract is not a signed contract.
+Open the generated contract. It is the Brayman V1 interim contract. It has the parties, the project, the contract amount, and signature lines. Generating a contract does not sign it. To have it signed, use Send for Signature on the project's contract; the customer signs on their own link. A generated contract is not a signed contract until it is signed. (Updated 21 Oct 2026.)
 
 If no active package is in force, or the project location cannot be resolved, or required contract data is missing, the contract stays blocked. Do not look for a way around that block.
 
@@ -116,7 +116,7 @@ On the phone or the office browser, open Field. Confirm the project. Capture the
 
 Print on Field Today is the same scheduled work already on that screen.
 
-A change order records what changed. On the project, choose New Change Order. Do not send the customer a Calibrayt signing link.
+A change order records what changed. On the project, choose New Change Order. To have the customer approve it, open the change order and use Send for Signature. (Updated 21 Oct 2026.)
 
 A field note is evidence. It is not an actual cost.
 

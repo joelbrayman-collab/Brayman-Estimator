@@ -124,7 +124,7 @@ def _crew_scheduling(org, _user):
 
 STEPS: List[Step] = [
     Step("sign_in", "Sign in for the first time", "Your own sign-in keeps your work under your name.",
-         "You are signed in. Change your password any time under Account (your name, top right).",
+         "You are signed in. Change your password any time with the key button at the top right (Change password).",
          "auth.change_password", lambda org, user: True),
     Step("company", "Set up your company", "Your logo, colours and contact details go on every proposal.",
          "Your company name (top right) → Brand profile: company name, logo, colours, address and phone. Save Brand Profile.",

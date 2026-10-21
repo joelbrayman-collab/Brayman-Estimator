@@ -20,7 +20,7 @@ Field → Week and Month.
 ## iPhone (Apple Calendar)
 
 Easiest: open Calendar connection **on the iPhone in Safari**, turn the feed on (or make a new address),
-tap **Open in Apple Calendar** → **Subscribe** → **Add**.
+tap **Open in Apple Calendar or Outlook** → **Subscribe** → **Add**.
 
 Or by hand: Settings → Apps → Calendar → Calendar Accounts → Add Account → Other →
 **Add Subscribed Calendar** → paste the address → Next → Save.

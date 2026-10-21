@@ -20,6 +20,7 @@
                 height="48"
             >
         </a>
+        <a class="field-logout-btn field-password-link" href="{{ url_for('auth.change_password') }}" data-field-password>Password</a>
         <form method="post" action="{{ url_for('auth.logout') }}" class="field-logout" id="field-logout-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="field-logout-btn">{{ contractor_copy.SIGN_OUT_LABEL }}</button>

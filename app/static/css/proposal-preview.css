@@ -191,3 +191,14 @@
         content: none !important;
     }
 }
+
+/* Phone (21 Oct 2026): each priced line is a small card, so descriptions read as sentences, not one word per line. */
+@media (max-width: 575.98px) {
+    .proposal-pricing-table thead { display: none; }
+    .proposal-pricing-table, .proposal-pricing-table tbody, .proposal-pricing-table tr, .proposal-pricing-table td { display: block; width: 100%; }
+    .proposal-pricing-table tr { border-bottom: 1px solid #ddd; padding: 6px 0; }
+    .proposal-pricing-table td { display: flex; justify-content: space-between; gap: 12px; border: 0; padding: 2px 0; text-align: right; }
+    .proposal-pricing-table td::before { content: attr(data-label); font-weight: 600; text-align: left; }
+    .proposal-pricing-table td.proposal-line-description { display: block; text-align: left; font-weight: 600; }
+    .proposal-pricing-table td.proposal-line-description::before { content: none; }
+}

@@ -294,8 +294,9 @@ test("People & Access on a 390 px phone: the owner adds a person (set-password e
   await Promise.all([o.pg.waitForLoadState(), o.pg.locator("main form button[type=submit]").click()]);
   assert.match(await flash(o.pg), /already has a sign-in/);
   // The new person chooses a password from the captured email and signs in.
-  const mail = newestMail("PASSWORD_RESET", person[1]);
-  assert.equal(mail.count, 1, "one set-password email captured");
+  const mail = newestMail("ACCOUNT_INVITATION", person[1]);  // a proper invitation since 21 Oct 2026
+  assert.equal(mail.count, 1, "one invitation email captured");
+  assert.match(mail.body, /invited you to CalibraytAI/);
   const p = await context(PHONE);
   await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
   await p.pg.fill("[name=password]", person[2]);
@@ -777,4 +778,83 @@ test("a customer link holder reaches only their own document", async () => {
 
 test("no page in the walk answered with a server error", async () => {
   assert.deepEqual(serverErrors, []);
+});
+
+// ================================================================== Crew Access acceptance (Joel, 21 Oct 2026)
+test("crew access: Ben invites two workers as Field only; each activates on a phone; only the assigned one sees the job; schedule change shows; deactivation is immediate", async () => {
+  const o = await owner();
+  const stamp = Date.now() % 100000;
+  const workers = [[`Crew One ${stamp} (synthetic)`, `crew.one.${stamp}@example.invalid`, "Synthetic-crew-one-1"],
+                   [`Crew Two ${stamp} (synthetic)`, `crew.two.${stamp}@example.invalid`, "Synthetic-crew-two-1"]];
+  const phones = [];
+  for (const [name, email, password] of workers) {
+    // 1. Ben invites the worker (Field only) from People & Access.
+    await go(o.pg, "/settings/people/new");
+    await o.pg.fill("[name=display_name]", name);
+    await o.pg.fill("[name=email]", email);
+    await o.pg.check("[name=field_only]");
+    await Promise.all([o.pg.waitForLoadState(), o.pg.locator("main form button[type=submit]").click()]);
+    assert.match(await flash(o.pg), /was added/);
+    assert.equal(await o.pg.locator("[data-field-only]").getAttribute("data-field-only"), "yes");
+    // 2. The worker activates the account from the invitation, on an iPhone-sized screen.
+    const mail = newestMail("ACCOUNT_INVITATION", email);
+    assert.equal(mail.count, 1);
+    const p = await context(PHONE);
+    await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+    await p.pg.fill("[name=password]", password);
+    await p.pg.fill("[name=confirm_password]", password);
+    await Promise.all([p.pg.waitForLoadState(), p.pg.locator("form button[type=submit]").click()]);
+    // 3. Signs in: lands on Field, no sideways scrolling.
+    await signIn(p, email, password);
+    await go(p.pg, "/field/today");
+    assert.match(p.pg.url(), /\/field\/today$/);
+    await noSideways(p.pg, "crew Field today");
+    phones.push(p);
+  }
+  // Ben assigns worker 1 to the scheduled work.
+  await go(o.pg, `/schedule/items/${facts.schedule_item_id}`);
+  const option = o.pg.locator("select[name=worker_user_id] option", { hasText: workers[0][0] });
+  await o.pg.selectOption("select[name=worker_user_id]", await option.getAttribute("value"));
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator("#schedule-assignments form.form-grid button[type=submit]").first().click()]);
+  const [one, two] = phones;
+  // 4. Worker 1 sees the assigned job and its drawings; worker 2 sees nothing of it.
+  await go(one.pg, "/field/projects");
+  assert.ok(await one.pg.locator(`a[href$="/field/projects/${facts.project_id}"]`).count() >= 1, "worker 1 sees the assigned job");
+  assert.equal((await status(one.ctx, `/field/projects/${facts.project_id}/drawings`)).code, 200);
+  await go(two.pg, "/field/projects");
+  assert.equal(await two.pg.locator(`a[href$="/field/projects/${facts.project_id}"]`).count(), 0, "worker 2 does not see it");
+  assert.notEqual((await status(two.ctx, `/field/projects/${facts.project_id}/drawings`)).code, 200);
+  assert.equal((await status(two.ctx, `/api/v1/projects/${facts.project_id}`)).code, 404);
+  // 5. Neither reaches internal costs or office pages (server-level: direct URLs and POSTs).
+  for (const p of phones) {
+    for (const url of [`/estimates/${facts.estimate_id}/versions/${facts.version_id}`, "/costs-and-pricing/", "/proposals/",
+      "/settings/people", `/projects/${facts.project_id}`]) {
+      const r = await status(p.ctx, url);
+      assert.equal(r.code, 302, url); assert.equal(new URL(r.location, base).pathname, "/field/today", url);
+    }
+    const token = await p.pg.locator("meta[name=csrf-token]").getAttribute("content");
+    const post = await p.ctx.request.post(`${base}/schedule/items/${facts.schedule_item_id}`,
+      { form: { csrf_token: token, scheduled_start: facts.schedule_item_start, scheduled_end: facts.schedule_item_start }, maxRedirects: 0 });
+    assert.equal(post.status(), 403, "crew cannot change the schedule");
+  }
+  // 6. Ben moves the work; 7. worker 1 sees the new date on Field.
+  const moved = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
+  await go(o.pg, `/schedule/items/${facts.schedule_item_id}`);
+  await o.pg.fill("[name=scheduled_start]", moved);
+  await o.pg.fill("[name=scheduled_end]", moved);
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator("form button[type=submit]", { hasText: /save|update/i }).first().click()]);
+  await go(o.pg, `/schedule/items/${facts.schedule_item_id}`);
+  assert.equal(await o.pg.locator("[name=scheduled_start]").inputValue(), moved, "the move was saved");
+  const month = await one.ctx.request.get(`${base}/field/month?year=${moved.slice(0, 4)}&month=${Number(moved.slice(5, 7))}&day=${Number(moved.slice(8, 10))}`);
+  assert.equal(month.status(), 200);
+  assert.ok((await month.text()).includes("Deck framing"), "worker 1 sees the work on its new date");
+  // 8. Ben deactivates worker 1; 9. their next request is refused immediately.
+  await go(o.pg, "/settings/people");
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator(".register-row", { hasText: workers[0][0] }).click()]);
+  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Deactivate sign-in" }).click()]);
+  const after = await status(one.ctx, "/field/today");
+  assert.equal(after.code, 302); assert.match(after.location, /\/login/);
+  assert.match(await o.pg.locator("[data-person-history]").innerText(), /Invitation emailed[\s\S]*Chose a password|Chose a password[\s\S]*Invitation emailed/);
+  await shot(o.pg, "crew-access-history");
+  for (const p of phones) await p.ctx.close();
 });

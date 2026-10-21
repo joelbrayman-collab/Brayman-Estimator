@@ -28,6 +28,7 @@ def test_brand_is_not_in_the_daily_menu():
     company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
     assert [item["title"] for item in company["links"]] == [
         "Attention",
+        "People & Access",  # 21 Oct 2026, owner / System Administrator only
         "Crews",
         "Suppliers",
         "Work catalog",

@@ -46,6 +46,7 @@ BLOCK_TOKEN_INVALID = "PASSWORD_RESET_TOKEN_INVALID"
 BLOCK_TOKEN_EXPIRED = "PASSWORD_RESET_TOKEN_EXPIRED"
 BLOCK_TOKEN_CONSUMED = "PASSWORD_RESET_TOKEN_CONSUMED"
 BLOCK_PASSWORD_MISMATCH = "PASSWORD_RESET_PASSWORD_MISMATCH"
+OWNER_SENT_ATTEMPT_MARKER = "owner-sent"
 
 _CREDENTIAL_RE = re.compile(r"^([A-Za-z0-9_-]{8,80})\.([A-Za-z0-9_-]{16,128})$")
 
@@ -238,6 +239,19 @@ def request_password_reset(
         )
         db.session.commit()
         return PublicResetRequestResult()
+    lookup_key = _issue_token_and_send(user, ip=ip, now=now)
+    _record_attempt(
+        client_ip=ip,
+        email_key_hash=email_key,
+        lookup_key=lookup_key,
+        outcome=OUTCOME_OK,
+    )
+    db.session.commit()
+    return PublicResetRequestResult()
+
+
+def _issue_token_and_send(user: User, *, ip: str, now: datetime) -> str:
+    """Replace the user's unused links with one new link and send the PASSWORD_RESET email."""
     _invalidate_unused_tokens(user.id, now=now)
     lookup_key = _new_lookup_key()
     secret = secrets.token_urlsafe(32)
@@ -264,14 +278,39 @@ def request_password_reset(
         related_type="user",
         related_id=user.id,
     )
+    return lookup_key
+
+
+def send_set_password_link(user: User, *, client_ip: Optional[str] = None) -> None:
+    """People & Access (21 Oct 2026): the owner sends a person the set-password email.
+
+    Same token table, same PASSWORD_RESET email and the same delivery service (allowlist
+    unchanged) as forgot-password. The caller has already checked owner / System Administrator
+    authority, so the public per-address-of-the-office (IP) budget does not apply; the per-person
+    email budget does, so a person cannot be flooded. Raises PasswordResetServiceError.
+    """
+    if user is None or not user.is_active:
+        raise PasswordResetServiceError(BLOCK_TOKEN_INVALID)
+    now = datetime.utcnow()
+    ip = _client_ip(client_ip)
+    email_key = hash_email_key(user.email)
+    email_limit = _int_config("PASSWORD_RESET_REQUEST_EMAIL_LIMIT", DEFAULT_REQUEST_EMAIL_LIMIT)
+    email_window = _int_config(
+        "PASSWORD_RESET_REQUEST_EMAIL_WINDOW_SECONDS",
+        DEFAULT_REQUEST_EMAIL_WINDOW_SECONDS,
+    )
+    if _count_attempts(now=now, window_seconds=email_window, email_key_hash=email_key) >= email_limit:
+        raise PasswordResetServiceError(BLOCK_RATE_LIMITED)
+    lookup_key = _issue_token_and_send(user, ip=ip, now=now)
+    # Recorded under a fixed marker, not the office's address, so links the owner sends never
+    # use up the office's own forgot-password budget; they do count for this person's email.
     _record_attempt(
-        client_ip=ip,
+        client_ip=OWNER_SENT_ATTEMPT_MARKER,
         email_key_hash=email_key,
         lookup_key=lookup_key,
         outcome=OUTCOME_OK,
     )
     db.session.commit()
-    return PublicResetRequestResult()
 
 
 def parse_reset_credential(credential: str) -> tuple:

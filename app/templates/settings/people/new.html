@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Add a person | Brayman Construction Platform{% endblock %}
+{% block page_title %}Add a person{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">People &amp; Access</p>
+        <h1>Add a person</h1>
+        <p>They get an email with a link to choose their own password. Nobody else sees or sets it.</p>
+    </div>
+    <a href="{{ url_for('people_access.index') }}">Back to People &amp; Access</a>
+</div>
+
+<section class="form-panel">
+    <form method="post" action="{{ url_for('people_access.new') }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Name
+            <input type="text" name="display_name" value="{{ values.display_name }}" maxlength="150" required autocomplete="off">
+        </label>
+        <label>
+            Email
+            <input type="email" name="email" value="{{ values.email }}" maxlength="255" required autocomplete="off">
+        </label>
+        {# TODO(field-only marker, branch v1/field-role-permissions-2026-10-21): after that branch merges, add
+           the checkbox here, e.g.
+           <label><input type="checkbox" name="field_only" value="yes"> Field only (crew: Field pages, no office pages)</label>
+           and wire it in app/routes/people_access.py new() (see the matching TODO there). #}
+        <div class="form-actions">
+            <button type="submit" class="button">Add and email the link</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

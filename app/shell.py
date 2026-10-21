@@ -94,6 +94,17 @@ def register_shell_context(app):
 
 
 def _nav_item_visible(item, authenticated) -> bool:
+    if item.get("requires_people_admin"):
+        if not authenticated:
+            return False
+        try:
+            from app.services.instance_authority import is_instance_owner, is_system_administrator
+            from app.services.organizations import get_current_organization_id
+
+            org_id = get_current_organization_id()
+            return is_instance_owner(current_user, org_id) or is_system_administrator(current_user, org_id)
+        except Exception:
+            return False
     domain = item.get("requires_access_domain")
     if not domain:
         return True

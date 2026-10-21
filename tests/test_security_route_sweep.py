@@ -235,3 +235,28 @@ def test_signed_out_supplier_pages_redirect_to_supplier_login(app):
         assert target == "/supplier/login", path
         assert nxt == [path]
     assert client.get("/supplier/login").status_code == 200
+
+
+# Added 21 Oct 2026 (People & Access, owner / System Administrator only): the new office pages are
+# registered, none is public, and signed out each goes to the office sign-in.
+EXPECTED_PEOPLE_ACCESS_ENDPOINTS = {
+    "people_access.index",
+    "people_access.new",
+    "people_access.detail",
+    "people_access.deactivate",
+    "people_access.reactivate",
+    "people_access.send_link",
+    "people_access.access",
+    "people_access.administrator",
+}
+
+
+def test_people_access_pages_are_registered_and_never_public(app):
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules() if rule.endpoint.startswith("people_access.")}
+    assert endpoints == EXPECTED_PEOPLE_ACCESS_ENDPOINTS
+    assert not any(_is_public(e) for e in endpoints)
+    client = app.test_client()
+    for path, method in (("/settings/people", "GET"), ("/settings/people/new", "POST"), ("/settings/people/1/deactivate", "POST")):
+        response = client.open(path, method=method)
+        target, nxt = _next_of(response.headers.get("Location", ""))
+        assert response.status_code == 302 and target == "/login" and nxt == [path], path

@@ -1,0 +1,206 @@
+/* Workflow Map (Joel, 21 Oct 2026): the one presentation for the contractor office, the Supplier Hub, Field
+   and the Training Centre. Follows AiRIA's journey map (ribbon, numbered stage cards with a return loop, stage
+   page, Back / Next) and process orientation (connected numbered stages, current stage highlighted), in
+   CalibraytAI's brand: gold #c79a2b, black #141414, cream #f4f2ee, IBM Plex Sans. Self-contained, so Field
+   (which does not load app.css) shows the same map. */
+
+.wf {
+  --wf-gold: #c79a2b;
+  --wf-gold-deep: #8f6b17;
+  --wf-gold-soft: #e8d7a8;
+  --wf-ink: #141414;
+  --wf-text: #1c1f24;
+  --wf-muted: #5f636a;
+  --wf-cream: #f4f2ee;
+  --wf-paper: #ffffff;
+  --wf-line: #e2ddd4;
+  --wf-card: #faf8f3;
+  --wf-green: #2f7d4a;
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--wf-text);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 4px 0 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.wf *, .wf *::before, .wf *::after { box-sizing: border-box; }
+:where(.wf) a { color: inherit; }
+.wf-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wf [hidden] { display: none !important; }
+
+/* Eyebrow with the short gold rule (AiRIA) */
+.wf-eyebrow { font-size: 11px; letter-spacing: .2em; color: var(--wf-gold-deep); font-weight: 700; text-transform: uppercase; margin: 0 0 12px; }
+.wf-eyebrow::after { content: ""; display: block; width: 44px; height: 2px; background: var(--wf-gold); margin-top: 10px; }
+.wf-head h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.12; letter-spacing: -.02em; font-weight: 600; margin: 0 0 10px; color: var(--wf-ink); }
+.wf-intro { font-size: 16px; line-height: 1.55; color: var(--wf-muted); max-width: 760px; margin: 0 0 16px; }
+
+.wf-project { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 18px; padding: 10px 12px; background: var(--wf-cream); border: 1px solid var(--wf-line); border-radius: 10px; }
+.wf-project label { font-weight: 600; font-size: 14px; }
+.wf-project select { font: inherit; font-size: 15px; min-height: 40px; padding: 6px 8px; border: 1px solid #c9c3b8; border-radius: 8px; background: #fff; max-width: 100%; min-width: 0; flex: 1 1 240px; }
+.wf-project-note { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--wf-muted); }
+
+/* Connected numbered stages (AiRIA process orientation) */
+.wf-process { margin: 0 0 8px; padding: 8px 12px; border: 1px solid var(--wf-line); border-radius: 10px; background: var(--wf-paper); }
+.wf-process.is-current-journey { border-color: var(--wf-gold); box-shadow: 0 0 0 1px rgba(199, 154, 43, .25); }
+.wf-journey-name { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--wf-muted); }
+.wf-journey-letter { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 4px; background: var(--wf-ink); color: var(--wf-gold); font-size: 12px; font-weight: 700; letter-spacing: 0; }
+.wf-process-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+.wf-process-step { display: flex; align-items: center; min-width: 0; }
+.wf-process-step:not(:last-child)::after { content: "→"; color: var(--wf-gold); font-weight: 700; margin: 0 6px; flex-shrink: 0; }
+.wf-process-item { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 4px 8px; border-radius: 8px; text-decoration: none; color: var(--wf-muted); font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.wf-process-item:hover { background: var(--wf-cream); color: var(--wf-ink); }
+.wf-process-marker { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #c8c3b9; background: #fff; color: var(--wf-muted); font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.wf-process-step.is-current .wf-process-item { color: var(--wf-ink); }
+.wf-process-step.is-current .wf-process-marker { background: var(--wf-gold); border-color: var(--wf-gold); color: var(--wf-ink); box-shadow: 0 0 0 3px rgba(199, 154, 43, .25); }
+
+/* The spread: journey map beside the stage page (AiRIA's two pages) */
+.wf-spread { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin: 18px 0 0; background: var(--wf-paper); border: 1px solid var(--wf-line); box-shadow: 0 16px 48px rgba(20, 20, 20, .08); }
+.wf-overview { padding: 26px 24px 28px; border-right: 1px solid var(--wf-line); background: var(--wf-paper); }
+.wf-pages { padding: 0; min-width: 0; outline: none; }
+.wf-journey + .wf-journey { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--wf-line); }
+.wf-journey-title { margin: 0 0 4px; font-size: 18px; font-weight: 600; color: var(--wf-ink); display: flex; align-items: center; }
+.wf-journey-flow { margin: 0 0 14px; font-size: 12px; letter-spacing: .05em; color: var(--wf-muted); }
+.wf-journey-body { position: relative; padding-left: 46px; }
+.wf-loop-art { position: absolute; left: 0; top: 0; width: 42px; height: 100%; }
+.wf-loop-art svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.wf-stage-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.wf-stage-card { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 60px; padding: 11px 12px; border: 1px solid #d9d3c7; background: var(--wf-card); color: var(--wf-ink); text-decoration: none; position: relative; }
+.wf-stage-card::after { content: ""; position: absolute; left: -10px; top: 50%; width: 10px; height: 2px; background: #e7dcc2; }
+.wf-stage-card:hover { background: #f3ead6; border-color: var(--wf-gold); }
+.wf-stage-card.is-current { background: #fff8e6; border-color: var(--wf-gold); box-shadow: inset 4px 0 0 var(--wf-gold); }
+.wf-stage-card.is-not-for-you { opacity: .78; }
+.wf-stage-number { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--wf-ink); color: var(--wf-gold); font-weight: 700; font-size: 15px; }
+.wf-stage-card.is-current .wf-stage-number { background: var(--wf-gold); color: var(--wf-ink); }
+.wf-stage-text { min-width: 0; }
+.wf-stage-text strong { display: block; font-size: 15px; line-height: 1.25; letter-spacing: .02em; }
+.wf-stage-title { font-weight: 500; letter-spacing: 0; }
+.wf-stage-text small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--wf-muted); margin-top: 3px; }
+.wf-stage-text .wf-stage-progress { color: var(--wf-green); font-weight: 600; }
+.wf-loop-label { margin: 12px 0 0 46px; font-size: 14px; font-style: italic; color: var(--wf-gold-deep); }
+
+/* One stage page */
+.wf-page { padding: 72px 30px 30px; position: relative; min-height: 100%; }
+.wf-ribbon { position: absolute; top: 20px; left: 30px; right: 30px; color: var(--wf-muted); }
+.wf-bars { display: grid; grid-template-columns: repeat(var(--wf-count, 6), minmax(0, 1fr)); gap: 4px; }
+.wf-bar { display: block; height: 3px; background: #dfdbd2; }
+.wf-bar.is-other { background: #efece6; }
+.wf-bar.is-current { background: var(--wf-gold); height: 5px; margin-top: -1px; }
+.wf-position { font-size: 11px; letter-spacing: .06em; margin: 8px 0 0; text-transform: uppercase; }
+.wf-page h2 { font-size: clamp(22px, 3vw, 30px); line-height: 1.15; font-weight: 600; margin: 0 0 12px; color: var(--wf-ink); outline: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.wf-page-number { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--wf-gold); color: var(--wf-ink); font-size: 18px; }
+.wf-page-title { font-weight: 400; }
+.wf-description { font-size: 16px; line-height: 1.6; margin: 0 0 10px; max-width: 680px; }
+.wf-audience { font-size: 13px; color: var(--wf-muted); margin: 0 0 14px; }
+
+.wf-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 20px; }
+.wf-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 9px 15px; border-radius: 8px; border: 1px solid var(--wf-ink); background: #fff; color: var(--wf-ink); font: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; text-align: center; }
+.wf-btn:hover { background: var(--wf-cream); }
+.wf-btn-primary { background: var(--wf-ink); color: #fff; }
+.wf-btn-primary:hover { background: #2a2c31; }
+.wf-btn-primary.is-choose { background: #fff; color: var(--wf-ink); }
+.wf-btn-quiet { border-color: #c9c3b8; }
+.wf-btn-next { background: var(--wf-gold); border-color: var(--wf-gold); color: var(--wf-ink); }
+.wf-btn-next:hover { background: #d8ad44; }
+
+.wf-sub { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--wf-gold-deep); margin: 18px 0 8px; font-weight: 700; }
+.wf-steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--wf-line); }
+.wf-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--wf-line); }
+.wf-step-label { font-size: 15px; font-weight: 500; }
+.wf-step-note { grid-column: 1 / -1; font-size: 13px; color: var(--wf-muted); line-height: 1.45; }
+.wf-step-go { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 12px; grid-column: 2; grid-row: 1; }
+.wf-step .wf-chip { justify-self: start; }
+.wf-go { font-size: 14px; font-weight: 600; color: var(--wf-ink); text-decoration: underline; text-decoration-color: var(--wf-gold); text-underline-offset: 4px; padding: 6px 0; display: inline-block; }
+.wf-go.is-choose { text-decoration-style: dashed; }
+.wf-go-quiet { font-weight: 500; color: var(--wf-muted); }
+.wf-chip { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .03em; padding: 3px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+.wf-chip-not_yet { color: #7a5b12; border-color: #e3c97e; background: #fff7df; }
+.wf-chip-outside { color: #4b5563; border-color: #cfd3da; background: #f3f4f6; }
+.wf-chip-other_party { color: #33507a; border-color: #bccbe0; background: #eef3fa; }
+.wf-step.is-not_yet .wf-step-label, .wf-step.is-outside .wf-step-label { color: var(--wf-muted); }
+.wf-reason { font-size: 13px; color: var(--wf-muted); font-style: italic; }
+
+.wf-training { margin-top: 6px; }
+.wf-lessons { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.wf-lesson { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--wf-line); border-radius: 8px; background: var(--wf-card); }
+.wf-lesson a { font-weight: 600; text-decoration: none; }
+.wf-lesson a:hover { text-decoration: underline; }
+.wf-tick { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c8c3b9; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
+.wf-lesson.is-done .wf-tick, .wf-lesson.is-uat-pass .wf-tick { background: var(--wf-green); border-color: var(--wf-green); }
+.wf-lesson.is-started .wf-tick { border-color: var(--wf-gold); }
+.wf-lesson.is-uat-fail .wf-tick, .wf-lesson.is-uat-blocked .wf-tick { border-color: #b4412f; }
+.wf-lesson-state { font-size: 12.5px; color: var(--wf-muted); white-space: nowrap; }
+
+/* Return loop (AiRIA) */
+.wf-return-loop { margin-top: 20px; padding: 14px 0 0; border-top: 2px solid var(--wf-gold); max-width: 560px; }
+.wf-return-loop > strong { display: block; font-size: 12.5px; letter-spacing: .04em; color: var(--wf-gold-deep); }
+.wf-return-loop p { font-size: 15px; line-height: 1.5; margin: 6px 0 8px; }
+.wf-return-loop a { font-size: 13px; font-weight: 600; text-underline-offset: 4px; }
+.wf-handoff-note { margin: 18px 0 0; font-size: 14px; color: var(--wf-muted); }
+
+/* One transaction, two sides */
+.wf-connection, .wf-branches { margin: 28px 0 0; padding: 26px 24px; background: var(--wf-paper); border: 1px solid var(--wf-line); }
+.wf-connection h2, .wf-branches h2 { font-size: 22px; font-weight: 600; margin: 0 0 8px; color: var(--wf-ink); }
+.wf-lanes { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 0; }
+.wf-lane-head, .wf-lane { display: grid; grid-template-columns: 36px minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.wf-lane-head { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--wf-muted); font-weight: 700; padding-bottom: 6px; }
+.wf-lane { padding: 12px 0; border-top: 1px solid var(--wf-line); position: relative; }
+.wf-lane-number { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--wf-ink); color: var(--wf-gold); font-weight: 700; font-size: 13px; }
+.wf-lane-mine strong { display: block; font-size: 15px; }
+.wf-lane p { margin: 3px 0 6px; font-size: 14px; line-height: 1.5; }
+.wf-lane-theirs { padding-left: 12px; border-left: 2px dashed var(--wf-gold-soft); color: #3d4148; }
+.wf-lane-stage { font-size: 12.5px; font-weight: 600; }
+.wf-lane-stage.is-theirs { color: var(--wf-muted); font-weight: 500; }
+
+.wf-branch-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.wf-branch { padding: 14px; border: 1px solid var(--wf-line); background: var(--wf-card); }
+.wf-branch strong { font-size: 15px; }
+.wf-branch p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; }
+.wf-branch-links { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.wf-branch-links a { font-weight: 600; text-underline-offset: 4px; text-decoration-color: var(--wf-gold); padding: 4px 0; }
+
+/* Back / Next (AiRIA controls) */
+.wf-controls { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 22px 0 0; padding: 12px; background: rgba(244, 242, 238, .96); border-top: 1px solid var(--wf-line); }
+.wf-control, .wf-map-control { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 18px; border-radius: 6px; background: var(--wf-ink); color: #fff !important; text-decoration: none; font-weight: 600; font-size: 14px; }
+.wf-control[aria-disabled="true"] { opacity: .35; cursor: default; }
+.wf-map-control { background: transparent; color: var(--wf-ink) !important; border: 1px solid #a8a296; }
+.wf-count { font-size: 13px; color: var(--wf-muted); min-width: 9em; text-align: center; }
+.wf-hint { text-align: center; font-size: 12px; color: var(--wf-muted); margin: 6px 0 12px; }
+
+.wf a:focus-visible, .wf button:focus-visible, .wf select:focus-visible, .wf h2:focus-visible { outline: 3px solid var(--wf-gold); outline-offset: 3px; }
+
+@media (max-width: 959px) {
+  .wf-spread { grid-template-columns: minmax(0, 1fr); }
+  .wf-overview { border-right: 0; border-bottom: 1px solid var(--wf-line); }
+}
+@media (max-width: 640px) {
+  .wf-intro { font-size: 15px; }
+  .wf-process { padding: 8px; }
+  .wf-process-item { padding: 4px 4px; font-size: 12px; gap: 5px; }
+  .wf-process-step:not(:last-child)::after { margin: 0 2px; }
+  .wf-overview { padding: 20px 14px 22px; }
+  .wf-journey-body { padding-left: 34px; }
+  .wf-loop-art { width: 30px; }
+  .wf-loop-label { margin-left: 34px; }
+  .wf-stage-card { padding: 10px; gap: 9px; }
+  .wf-stage-number { width: 27px; height: 27px; font-size: 14px; }
+  .wf-page { padding: 64px 16px 22px; }
+  .wf-ribbon { left: 16px; right: 16px; top: 16px; }
+  .wf-position { font-size: 10px; letter-spacing: .03em; }
+  .wf-step { grid-template-columns: minmax(0, 1fr); }
+  .wf-step-go { grid-column: 1; grid-row: auto; justify-content: flex-start; }
+  .wf-actions .wf-btn { flex: 1 1 100%; }
+  .wf-connection, .wf-branches { padding: 20px 14px; }
+  .wf-lane-head { display: none; }
+  .wf-lane { grid-template-columns: 30px minmax(0, 1fr); }
+  .wf-lane-theirs { grid-column: 2; }
+  .wf-controls { gap: 6px; padding: 10px 8px; }
+  .wf-control, .wf-map-control { padding: 10px 12px; font-size: 13px; }
+  .wf-count { min-width: 0; flex-basis: 100%; order: -1; font-size: 12px; }
+  .wf-hint { display: none; }
+}
+
+/* Desktop: the stage page stays in view beside the long journey map. */
+@media (min-width: 960px) {
+  .wf-page { position: sticky; top: 12px; max-height: calc(100vh - 110px); overflow-y: auto; }
+}

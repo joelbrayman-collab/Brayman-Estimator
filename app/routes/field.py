@@ -357,6 +357,20 @@ def company_today():
     )
 
 
+@field_bp.route("/workflow")
+def workflow():
+    """The simplified Field workflow (Joel, 21 Oct 2026): the crew's day from the governed workflow definition.
+    No office, financial or administrative destinations. Links use the job confirmed on Field, if any."""
+    from app.workflow_map import definition as WD
+    from app.workflow_map.build import build as build_map
+    from app.workflow_map.pages import field_viewer
+
+    organization = _organization()
+    viewer = field_viewer(_confirmed_operating_project(organization))
+    wf = build_map(WD.MAP_FIELD, viewer, current=request.args.get("stage"), stage_endpoint="field.workflow")
+    return render_template("field/workflow.html", wf=wf)
+
+
 @field_bp.route("/projects")
 def projects():
     organization = _organization()

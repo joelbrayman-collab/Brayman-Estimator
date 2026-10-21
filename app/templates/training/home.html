@@ -10,6 +10,7 @@
   <div class="tc-actions">
     {% if ov.resume %}<a class="tc-btn tc-btn-primary" data-continue href="{{ url_for('training.lesson', key=ov.resume[0], step=ov.resume[1]) }}">Continue where I left off</a>
     {% else %}<span class="tc-done">All lessons done.</span>{% endif %}
+    <a class="tc-btn" href="{{ url_for('training.workflow_map') }}" data-home-workflow-map>Workflow map</a>
     <a class="tc-btn" href="{{ url_for('training.uat') }}">Acceptance tests</a>
     {% if admin %}<a class="tc-btn" href="{{ url_for('training.admin') }}" data-admin-link>Administrator</a>{% endif %}
   </div>

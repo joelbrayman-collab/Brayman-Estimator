@@ -10,6 +10,7 @@ cal_bp = Blueprint("cal_assistant", __name__, url_prefix="/cal")
 @cal_bp.route("/find", methods=["GET"])
 def find_it():
     query = str(request.args.get("q") or "")[:MAX_QUERY]
-    response = jsonify(find(query))
+    here = str(request.args.get("here") or "")[:500]
+    response = jsonify(find(query, here=here))
     response.headers["Cache-Control"] = "no-store"
     return response

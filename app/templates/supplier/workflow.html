@@ -1,0 +1,8 @@
+{% extends "supplier/base.html" %}
+{% from "workflow_map/_map.html" import workflow_map %}
+{% block title %}Workflow Guide{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/workflow-map.css', v=wf.version) }}">{% endblock %}
+{% block content %}
+{{ workflow_map(wf) }}
+<script src="{{ url_for('static', filename='js/workflow-map.js', v=wf.version) }}" defer></script>
+{% endblock %}

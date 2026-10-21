@@ -68,8 +68,10 @@ def test_company_group_is_setup_not_a_second_calendar():
     company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
     by_title = {item["title"]: item["endpoint"] for item in company["links"]}
     # People & Access added 21 Oct 2026 (shown only to the owner or a System Administrator).
-    assert list(by_title) == ["Getting started", "Attention", "People & Access", "Crews", "Suppliers", "Accounting", "Work catalog"]  # Getting started, Accounting: Joel 21 Oct 2026
+    # Workflow Guide added 21 Oct 2026 (Joel): the Contractor Workflow Map.
+    assert list(by_title) == ["Getting started", "Workflow Guide", "Attention", "People & Access", "Crews", "Suppliers", "Accounting", "Work catalog"]  # Getting started, Accounting: Joel 21 Oct 2026
     assert by_title["People & Access"] == "people_access.index"
+    assert by_title["Workflow Guide"] == "workflow_map.contractor"
     assert by_title["Attention"] == "company_attention.index"
     assert by_title["Crews"] == "organization_crew.index"
     assert by_title["Work catalog"] == "work_structure.catalog_index"

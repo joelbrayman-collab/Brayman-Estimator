@@ -290,6 +290,7 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "field.drawings",  # job drawings and plans for assigned jobs, read only (Crew Access, 21 Oct 2026)
     "field.drawing_pdf",
     "field.plan_pdf",
+    "field.workflow",  # the simplified Field workflow: Field destinations only (Workflow Maps, 21 Oct 2026)
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",
@@ -355,8 +356,10 @@ def test_every_office_route_refuses_a_signed_in_field_only_user(app):
             if status != 403:
                 problem = f"expected 403 (supplier wall), got {status}"
         elif method == "GET":
-            if status != 302 or urlparse(response.headers.get("Location", "")).path != "/field/today":
-                problem = f"expected 302 /field/today, got {status} {response.headers.get('Location')}"
+            # The office Workflow Guide sends a Field sign-in to the Field workflow instead (21 Oct 2026).
+            expected = "/field/workflow" if endpoint == "workflow_map.contractor" else "/field/today"
+            if status != 302 or urlparse(response.headers.get("Location", "")).path != expected:
+                problem = f"expected 302 {expected}, got {status} {response.headers.get('Location')}"
         elif status != 403:
             problem = f"expected 403, got {status}"
         if problem:

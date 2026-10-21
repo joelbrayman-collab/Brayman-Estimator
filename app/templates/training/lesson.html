@@ -5,6 +5,8 @@
 <article class="tc-card tc-lesson-page" data-lesson-page="{{ lesson.key }}" data-step-index="{{ step }}">
   <p class="tc-eyebrow">Module {{ module.number }} · {{ module.title }}</p>
   <h1>{{ lesson.title }}</h1>
+  {% if workflow_stages %}<p class="tc-small tc-workflow-stage" data-lesson-stages>Workflow map:
+    {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id) }}#workflow-stage" data-lesson-stage="{{ s.id }}">Stage {{ s.number }} · {{ s.label }} — {{ s.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
   <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p>
     <p class="tc-small">Work down the steps. Do each one on the training site, then tick it: it turns green and your place is saved.</p></div>
   <div class="tc-bar" aria-hidden="true"><span data-step-bar style="width: {{ (100 * ticked|length / lesson.steps|length)|round|int }}%"></span></div>

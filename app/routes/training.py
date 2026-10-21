@@ -4,6 +4,7 @@ everywhere else every page answers 404.
 /training                         register (role) or the trainee's home: progress, Continue, modules, tests
 /training/lessons/<key>           one lesson, one step at a time (?step=N), screenshot beside the instructions
 /training/uat                     the trainee's acceptance tests; /training/uat/<key> one test (Pass/Fail/Blocked)
+/training/workflow                the Workflow map: each stage with its lessons and acceptance tests
 /training/admin                   the administrator's dashboard (Instance Owner or System Administrator)
 """
 
@@ -80,7 +81,18 @@ def lesson(key):
     ticked = set(svc.steps_ticked(trainee, key))
     return render_template("training/lesson.html", trainee=trainee, module=module, lesson=item, step=step,
                            current=item.steps[step], prev_key=prev_key, next_key=next_key, ticked=ticked,
-                           progress=progress, notes=svc.feedback(trainee, key))
+                           progress=progress, notes=svc.feedback(trainee, key),
+                           workflow_stages=_workflow_stages(trainee, key))
+
+
+def _workflow_stages(trainee, lesson_key):
+    """The Workflow map stages this lesson belongs to, on the trainee's own map (link back to the map)."""
+    from app.workflow_map import definition as WD
+    from app.workflow_map.pages import training_viewer
+
+    map_key, _viewer = training_viewer(trainee)
+    on_map = {s.id for s in WD.map_stages(map_key)}
+    return [s for s in WD.stages_for_lesson(lesson_key) if s.id in on_map]
 
 
 @training_bp.route("/lessons/<key>/check", methods=["POST"])
@@ -197,6 +209,21 @@ def tutor_ask():
     return redirect(url_for("training.uat_case", key=case.key) if case else url_for("training.home"))
 
 
+@training_bp.route("/workflow")
+def workflow_map():
+    """The Workflow map in the Training Centre (Joel, 21 Oct 2026): the trainee's side of the governed workflow
+    definition, each stage with its lessons and acceptance tests and the trainee's own progress."""
+    trainee, back = _trainee_or_register()
+    if back:
+        return back
+    from app.workflow_map.build import build as build_map
+    from app.workflow_map.pages import training_viewer
+
+    map_key, viewer = training_viewer(trainee)
+    wf = build_map(map_key, viewer, current=request.args.get("stage"), stage_endpoint="training.workflow_map")
+    return render_template("training/workflow.html", trainee=trainee, wf=wf)
+
+
 @training_bp.route("/uat")
 def uat():
     trainee, back = _trainee_or_register()
@@ -227,8 +254,13 @@ def uat_case(key):
     svc.save_uat_position(trainee, key)
     attempts = svc.uat_history(trainee).get(key, [])
     module = next((m for m in C.modules() if m.key == case.module_key), None)
+    from app.workflow_map import definition as WD
+    from app.workflow_map.pages import training_viewer
+
+    on_map = {s.id for s in WD.map_stages(training_viewer(trainee)[0])}
     return render_template("training/uat_case.html", trainee=trainee, case=case, attempts=attempts, module=module,
-                           statuses=UAT_STATUSES, tutor_mode="uat")
+                           statuses=UAT_STATUSES, tutor_mode="uat",
+                           workflow_stages=[s for s in WD.stages_for_uat(key) if s.id in on_map])
 
 
 @training_bp.route("/admin")

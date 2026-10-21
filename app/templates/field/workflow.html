@@ -1,0 +1,11 @@
+{% extends "field/base.html" %}
+{% from "workflow_map/_map.html" import workflow_map %}
+{% block title %}Field workflow — CalibraytAI{% endblock %}
+{% block field_page %}workflow{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/workflow-map.css', v=wf.version) }}">{% endblock %}
+{% block content %}
+{% set nav_current = 'workflow' %}
+{% include "field/_field_nav.html" %}
+<div class="field-workflow">{{ workflow_map(wf) }}</div>
+<script src="{{ url_for('static', filename='js/workflow-map.js', v=wf.version) }}" defer></script>
+{% endblock %}

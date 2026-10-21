@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-6 col-md-12">
                         <div class="proposal-meta-label">Valid until</div>
-                        <div>{% if proposal.valid_until %}{{ proposal.valid_until.strftime("%B %d, %Y") }}{% else %}—{% endif %}</div>
+                        <div>{% set shown_valid_until = valid_until if valid_until is defined and valid_until else proposal.valid_until %}<span data-proposal-valid-until="{{ shown_valid_until.isoformat() if shown_valid_until else '' }}">{% if shown_valid_until %}{{ shown_valid_until.strftime("%B %d, %Y") }}{% else %}—{% endif %}</span></div>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,7 @@ from app.services.proposal_acceptance import (
     ProposalAcceptanceError,
     accept_via_link,
     acceptance_for,
+    client_valid_until,
     decline_on_link,
     decline_via_link,
     resolve_link,
@@ -57,6 +58,7 @@ def _render(link, credential, *, error=None, typed_name=None, decline_error=None
         logo_url=logo_url,
         section_rows=_section_rows(proposal),
         client_view=True,
+        valid_until=client_valid_until(proposal, link),
         client_pdf_url=url_for("proposal_link.pdf", credential=credential),
         accept_url=url_for("proposal_link.accept", credential=credential),
         acceptance=acceptance_for(proposal),
@@ -131,7 +133,7 @@ def pdf(credential):
     from app.services.proposal_pdf import generate_proposal_pdf, sanitize_pdf_filename
 
     proposal = link.proposal
-    buffer = generate_proposal_pdf(proposal)
+    buffer = generate_proposal_pdf(proposal, valid_until=client_valid_until(proposal, link))
     return send_file(buffer, mimetype="application/pdf", as_attachment=True,
                      download_name=sanitize_pdf_filename(proposal))
 

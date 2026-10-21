@@ -39,9 +39,16 @@ def _count(model, **filters) -> int:
 
 
 def _brand(org, _user):
+    """Done once the brand profile has been saved. Opening the page (or making a proposal) creates version 1
+    from the organization record by itself, so only a saved version (2 or later) counts."""
     from app.models.brand_profile import OrganizationBrandProfile
 
-    return _count(OrganizationBrandProfile, organization_id=org) > 0
+    try:
+        return OrganizationBrandProfile.query.filter(OrganizationBrandProfile.organization_id == org,
+                                                     OrganizationBrandProfile.version_number > 1).count() > 0
+    except Exception:
+        db.session.rollback()
+        return False
 
 
 def _pricing(org, _user):
@@ -120,16 +127,16 @@ STEPS: List[Step] = [
          "You are signed in. Change your password any time under Account (your name, top right).",
          "auth.change_password", lambda org, user: True),
     Step("company", "Set up your company", "Your logo, colours and contact details go on every proposal.",
-         "Settings → Brand profile: company name, logo, colours, address and phone. Save.",
+         "Your company name (top right) → Brand profile: company name, logo, colours, address and phone. Save Brand Profile.",
          "settings.brand_profile", _brand),
     Step("finance", "Financial and HST settings", "Your markup and HST are used on every estimate and proposal.",
-         "Costs & pricing → Pricing policies → New policy: overhead, profit and the 13 % HST for Ontario. Save.",
+         "How we price → New pricing draft: your margin or markup and the 13 % HST for Ontario. Create draft, Approve, then Use for this company.",
          "pricing_engine.index", _pricing),
     Step("accounting", "Accounting with QuickBooks", "Keep your books in QuickBooks; CalibraytAI prepares the records.",
          "Company → Accounting → Customers → Download, then in QuickBooks: gear icon → Import data → Customers.",
          "accounting.index", _accounting),
     Step("people", "Invite the boys", "Each person gets their own sign-in; crew see only Field.",
-         "Settings → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
+         "Company → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),
     Step("phones", "Set up their iPhones", "Field works on the phone like an app.",
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen. Mark done.",
@@ -138,7 +145,7 @@ STEPS: List[Step] = [
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",
          "schedule.new_appointment", _appointments),
     Step("subscribe", "See it on your phone's calendar", "Your CalibraytAI calendar shows in Apple, Google or Outlook.",
-         "Calendar → Calendar feed → Create my link, then add it to your phone's calendar (steps on that page).",
+         "Calendar → Outlook · Google · Apple Calendar → Turn on my calendar feed, then add it to your phone's calendar (steps on that page).",
          "schedule.calendar_feed_settings", _feed),
     Step("suppliers", "Suppliers and pricing", "Request quotes and send orders to your suppliers.",
          "Suppliers → Add supplier. Add the store people who will sign in to the Supplier Hub.",
@@ -150,13 +157,13 @@ STEPS: List[Step] = [
          "Open the project → New estimate. Add lines or use a calculator, then review costing and pricing.",
          "projects.create_project", _estimate),
     Step("proposal", "Your first proposal", "Send the customer a link to accept or decline.",
-         "On the signed-off estimate → Create proposal → Send proposal to client.",
+         "Once: Proposals → Templates → New template. Then on the priced estimate → Sign off estimate → Send proposal to client.",
          "clients.list_clients", _proposal),
     Step("purchase_order", "Your first purchase order", "Order material from your supplier, linked to the job.",
          "Project → Supplier requests → approve the supplier's quote → Place order.",
          "supplier_office.deliveries", _purchase_order),
     Step("crew_schedule", "Schedule the crew", "The boys see their work on their phones.",
-         "Calendar → Schedule work, then assign a crew. It shows on Field for that crew.",
+         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew.",
          "schedule.company", _crew_scheduling),
     Step("working_day", "Run a complete working day", "Schedule, field time, deliveries and changes, end to end.",
          "Check Home in the morning, follow the job on Field, approve time, answer deliveries. Mark done after a full day.",

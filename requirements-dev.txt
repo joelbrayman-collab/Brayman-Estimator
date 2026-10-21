@@ -5,3 +5,7 @@
 #   python -m playwright install chromium
 # (the cloud workspace already has Chromium under PLAYWRIGHT_BROWSERS_PATH).
 playwright==1.56.0
+
+# An RFC 5545 parser independent of app/services/calendar_sync.py, for tests/test_calendar_connect.py
+# (reads the private feed the way Outlook, Google Calendar and Apple Calendar do).
+icalendar==6.3.2

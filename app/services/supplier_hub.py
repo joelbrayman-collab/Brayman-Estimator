@@ -217,18 +217,27 @@ def supplier_has_sign_in(supplier_id: int) -> bool:
 def platform_suppliers_to_add(organization_id: str) -> list[tuple[int, str]]:
     """Suppliers already on CalibraytAI that this contractor may pick on Company → Suppliers (defect 4).
 
-    "On the platform" means the supplier company is active and has its own Supplier Hub sign-in (store
-    staff sign in). Only the supplier's id and public name are returned: nothing about which or how many
-    other contractors use it, their accounts, requests, prices, people or locations. Suppliers already
-    on this contractor's list are left out. A supplier typed by another contractor that has no store
-    sign-in is not listed, so a contractor cannot learn another contractor's private supplier names.
+    Offered: an active supplier company with an active Supplier Hub (store) sign-in that was set up
+    in THIS organization (platform set-up, training set-up, or this company's own office), and every
+    active sign-in of it was set up here. A store sign-in given by another contractor is that
+    contractor's private supplier relationship: such a supplier is never offered, so the picker
+    cannot reveal another contractor's suppliers (or that it has any). Only id and public name are
+    returned. Suppliers already on this contractor's list are left out. (A supplier-owned "listed on
+    CalibraytAI" marker, for a directory across companies, would need a schema decision.)
     """
     already = {row.supplier_id for row in ContractorSupplierAccount.query.filter_by(organization_id=organization_id)}
-    rows = (db.session.query(Supplier.id, Supplier.legal_name)
-            .join(SupplierUserMembership, SupplierUserMembership.supplier_id == Supplier.id)
-            .filter(Supplier.status == "ACTIVE", SupplierUserMembership.status == MEMBERSHIP_ACTIVE)
-            .distinct().order_by(Supplier.legal_name.asc(), Supplier.id.asc()).all())
-    return [(sid, name) for sid, name in rows if sid not in already]
+    memberships = (db.session.query(SupplierUserMembership.supplier_id, SupplierUserMembership.created_by_organization_id)
+                   .join(Supplier, Supplier.id == SupplierUserMembership.supplier_id)
+                   .filter(Supplier.status == "ACTIVE", SupplierUserMembership.status == MEMBERSHIP_ACTIVE).all())
+    origins: dict[int, set] = {}
+    for supplier_id, created_by in memberships:
+        origins.setdefault(supplier_id, set()).add(created_by)
+    eligible = [sid for sid, orgs in origins.items() if orgs == {organization_id} and sid not in already]
+    if not eligible:
+        return []
+    rows = (Supplier.query.with_entities(Supplier.id, Supplier.legal_name).filter(Supplier.id.in_(eligible))
+            .order_by(Supplier.legal_name.asc(), Supplier.id.asc()).all())
+    return [(sid, name) for sid, name in rows]
 
 
 def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep_id=None):

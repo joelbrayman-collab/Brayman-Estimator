@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.models.proposal import ProposalTemplate
+from app.services.brand_profile import get_current_brand_profile, office_company_name
 from app.services.organizations import get_current_organization_id
 from app.services.proposals import (
     ProposalServiceError,
@@ -21,6 +22,27 @@ def _bool_field(name, default=False):
     if request.method != "POST":
         return default
     return request.form.get(name) == "on" or request.form.get(name) == "1"
+
+
+def _brand_defaults():
+    """A new template starts from the company's current brand profile (defect 5, 21 Oct 2026):
+    the customer-facing name and contact details the company set under Company → Brand profile,
+    not a fixed name. Without a profile, the organization's display name."""
+    org_id = get_current_organization_id()
+    profile = get_current_brand_profile(org_id)
+
+    def value(attr):
+        return ((getattr(profile, attr, None) or "") if profile is not None else "").strip()
+
+    return {
+        "company_name": value("customer_facing_name") or office_company_name(org_id),
+        "company_address": value("address"),
+        "company_phone": value("phone"),
+        "company_email": value("email"),
+        "company_website": value("website"),
+        "primary_color": value("primary_color") or "#c79a2b",
+        "accent_color": value("accent_color") or "#181818",
+    }
 
 
 def _template_form_values(template=None):
@@ -63,17 +85,12 @@ def _template_form_values(template=None):
         }
 
     if template is None:
+        brand = _brand_defaults()
         return {
             "name": "",
             "description": "",
-            "company_name": "Brayman Construction Co.",
-            "company_address": "",
-            "company_phone": "",
-            "company_email": "",
-            "company_website": "",
+            **brand,
             "logo_path": "",
-            "primary_color": "#c79a2b",
-            "accent_color": "#181818",
             "default_intro_text": "",
             "default_scope_intro": "",
             "default_exclusions": "",

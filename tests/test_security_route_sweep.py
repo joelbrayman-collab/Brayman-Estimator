@@ -282,6 +282,9 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "field.extra_work",
     "field.my_time",
     "field.time_entry",
+    "field.drawings",  # job drawings and plans for assigned jobs, read only (Crew Access, 21 Oct 2026)
+    "field.drawing_pdf",
+    "field.plan_pdf",
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",

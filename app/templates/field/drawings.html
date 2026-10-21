@@ -1,0 +1,29 @@
+{% extends "field/base.html" %}
+{% block title %}Drawings — CalibraytAI{% endblock %}
+{% block field_page %}projects{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-drawings="{{ sets|length + plans|length }}">
+    <h1>Drawings and plans</h1>
+    <p class="field-project-name">{{ project.name }}</p>
+    {% if sets %}
+    <h2>Construction drawings</h2>
+    <ul class="field-recent">
+        {% for d in sets %}
+        <li class="field-recent-item"><a href="{{ url_for('field.drawing_pdf', project_id=project.id, set_id=d.id) }}" target="_blank" rel="noopener">Revision {{ d.drawing_revision }} · {{ d.sheet_count }} sheet{{ 's' if d.sheet_count != 1 }}</a>
+            <p class="field-muted">{{ d.status|lower }} · {{ d.created_at.strftime('%b %d, %Y') }}</p></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if plans %}
+    <h2>Plans</h2>
+    <ul class="field-recent">
+        {% for p in plans %}
+        <li class="field-recent-item"><a href="{{ url_for('field.plan_pdf', project_id=project.id, document_id=p.id) }}" target="_blank" rel="noopener">{{ p.original_filename }}</a>
+            <p class="field-muted">{{ p.created_at.strftime('%b %d, %Y') }}{% if p.page_count %} · {{ p.page_count }} page{{ 's' if p.page_count != 1 }}{% endif %}</p></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if not sets and not plans %}<p class="field-muted">No drawings or plans for this job yet. Ask the office.</p>{% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.project_confirm', project_id=project.id) }}">Back to the job</a>
+</section>
+{% endblock %}

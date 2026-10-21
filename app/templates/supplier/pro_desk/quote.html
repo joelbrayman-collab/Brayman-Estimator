@@ -164,7 +164,7 @@
         {% if p.blockers %}<div class="pd-blockers" data-blockers="{{ p.blockers|length }}"><strong>Before it can be issued</strong><ul>{% for b in p.blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>
         {% else %}<form method="post" action="{{ url_for('supplier_pro_desk.issue', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p><button type="submit" class="button" data-issue="true">Issue the quotation</button> <span class="muted-copy">Freezes the building, quantities, products and prices.</span></p></form>{% endif %}
     {% else %}
-        <p>Issued {{ q.issued_at.strftime("%b %d, %Y %H:%M") }} UTC by {{ q.issued_by_name }} · valid until <strong>{{ q.valid_until.strftime("%b %d, %Y") }}</strong> · record {{ q.issued_sha256[:12] }}</p>
+        <p>Issued {{ q.issued_at|local_time("%b %d, %Y %H:%M") }} by {{ q.issued_by_name }} · valid until <strong>{{ q.valid_until.strftime("%b %d, %Y") }}</strong> · record {{ q.issued_sha256[:12] }}</p>
         <p><a class="button" href="{{ url_for('supplier_pro_desk.quote_pdf', supplier_id=supplier.id, quote_id=q.id) }}" target="_blank" rel="noopener" data-quote-pdf="true">Quotation PDF</a></p>
         {% if q.status == "ISSUED" %}<form method="post" action="{{ url_for('supplier_pro_desk.revise', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="button-quiet">Start a revision</button></form>{% endif %}
     {% endif %}
@@ -185,14 +185,14 @@
             <label>&nbsp;<button type="submit" class="button">Record the answer</button></label>
         </form>
     {% elif q.status in ("ACCEPTED", "DECLINED") %}
-        <p data-answer="{{ q.status }}"><strong>{{ "Accepted" if q.status == "ACCEPTED" else "Declined" }}</strong> by {{ q.accepted_by_name }} on {{ q.accepted_at.strftime("%b %d, %Y %H:%M") }} UTC ({{ {"CUSTOMER_LINK": "approval link", "IN_PERSON": "in person", "PHONE": "phone", "EMAIL": "email"}[q.acceptance_method] }}{% if q.acceptance_recorded_by_name and q.acceptance_method != "CUSTOMER_LINK" %}, recorded by {{ q.acceptance_recorded_by_name }}{% endif %}). The accepted quotation is record {{ (q.accepted_sha256 or "")[:12] }}.</p>
+        <p data-answer="{{ q.status }}"><strong>{{ "Accepted" if q.status == "ACCEPTED" else "Declined" }}</strong> by {{ q.accepted_by_name }} on {{ q.accepted_at|local_time("%b %d, %Y %H:%M") }} ({{ {"CUSTOMER_LINK": "approval link", "IN_PERSON": "in person", "PHONE": "phone", "EMAIL": "email"}[q.acceptance_method] }}{% if q.acceptance_recorded_by_name and q.acceptance_method != "CUSTOMER_LINK" %}, recorded by {{ q.acceptance_recorded_by_name }}{% endif %}). The accepted quotation is record {{ (q.accepted_sha256 or "")[:12] }}.</p>
     {% else %}<p class="muted-copy">Issue the quotation first.</p>{% endif %}
 </section>
 
 <section class="form-panel" id="order" data-step="order">
     <h2>8 · Order-ready package</h2>
     {% if q.status == "ACCEPTED" %}
-        {% if q.order_ready_at %}<p>Prepared {{ q.order_ready_at.strftime("%b %d, %Y %H:%M") }} UTC by {{ q.order_ready_by_name }}.</p>
+        {% if q.order_ready_at %}<p>Prepared {{ q.order_ready_at|local_time("%b %d, %Y %H:%M") }} by {{ q.order_ready_by_name }}.</p>
         <p><a class="button" href="{{ url_for('supplier_pro_desk.order', supplier_id=supplier.id, quote_id=q.id) }}">Open the order sheet</a> <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.order_csv', supplier_id=supplier.id, quote_id=q.id) }}">Order CSV</a></p>
         {% else %}<form method="post" action="{{ url_for('supplier_pro_desk.order_ready', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p><button type="submit" class="button" data-order-ready="true">Prepare the order for entry</button></p></form>{% endif %}
         <p class="muted-copy">For entry into {{ brand_for(supplier).name }}'s own sales system. CalibraytAI does not connect to it, place the order or take payment.</p>
@@ -201,6 +201,6 @@
 
 <section class="form-panel" data-quote-history="true">
     <h2>History</h2>
-    <ul class="supplier-history">{% for e in events %}<li>{{ e.at.strftime("%b %d %H:%M") }} UTC · {{ e.actor_name }}{% if e.actor_side == "CUSTOMER" %} (customer){% endif %} · {{ e.event_type|replace("_", " ")|lower }}{% if e.detail_json and e.detail_json.get("line") %} · {{ e.detail_json.line }}{% endif %}</li>{% endfor %}</ul>
+    <ul class="supplier-history">{% for e in events %}<li>{{ e.at|local_time("%b %d %H:%M") }} · {{ e.actor_name }}{% if e.actor_side == "CUSTOMER" %} (customer){% endif %} · {{ e.event_type|replace("_", " ")|lower }}{% if e.detail_json and e.detail_json.get("line") %} · {{ e.detail_json.line }}{% endif %}</li>{% endfor %}</ul>
 </section>
 {% endblock %}

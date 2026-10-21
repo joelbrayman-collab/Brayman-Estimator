@@ -275,6 +275,22 @@ def resolve_link(credential: str, *, record_view: bool = True) -> ProposalClient
     return link
 
 
+def client_valid_until(proposal: Proposal, link: Optional[ProposalClientLink]):
+    """The date the client reads as "Valid until" on their proposal link (defect 1, 21 Oct 2026).
+
+    The link's expiry is what the code enforces: after it the client can no longer accept
+    (resolve_link refuses an expired link). So the link's expiry date, on the company's calendar,
+    is the governing date. When the proposal itself states an earlier validity date, that earlier
+    date is the offer's own term and is shown instead.
+    """
+    from app.services.local_time import local_date
+
+    dates = [d for d in (proposal.valid_until if proposal is not None else None,
+                         local_date(link.expires_at) if link is not None and link.expires_at else None)
+             if d is not None]
+    return min(dates) if dates else None
+
+
 def acceptance_for(proposal: Proposal) -> Optional[ProposalAcceptance]:
     if proposal is None:
         return None

@@ -43,7 +43,15 @@ from app.services.people_access import (
 
 people_access_bp = Blueprint("people_access", __name__, url_prefix="/settings/people")
 
-LINK_SENT = "A link to choose a password was emailed to {email}. It works once and expires in an hour."
+LINK_SENT = "A link to choose a password was emailed to {email}. It works once and expires in {expires}."
+LINK_NOT_EMAILED = ("The email to {email} was not delivered ({reason}). Give {name} the one-time link shown "
+                    "below yourself, in person or by text. It works once and expires in {expires}.")
+NOT_DELIVERED_REASONS = {
+    "SKIPPED_ALLOWLIST": "this office only emails the test addresses on its allowlist",
+    "FAILED_CONFIG": "email delivery is not set up",
+    "FAILED": "the mail service refused or could not be reached",
+    "LOCAL_CAPTURED": "email delivery is not set up on this server",
+}
 LINK_RATE_LIMITED = "Several links were already sent to {email} in the last hour. Try again later."
 
 
@@ -72,7 +80,17 @@ def _invited_not_activated(membership) -> bool:
     return bool(events.filter_by(action="ADDED").count()) and not events.filter_by(action="ACTIVATED").count()
 
 
-def _send_link(user) -> None:
+def _expires_phrase(outcome) -> str:
+    from datetime import datetime
+
+    seconds = max(0, (outcome.expires_at - datetime.utcnow()).total_seconds())
+    hours = round(seconds / 3600)
+    return f"{hours} hours" if hours >= 2 else "an hour"
+
+
+def _send_link(user):
+    """Send the set-password link. Returns the link to show the owner once when the email was not
+    delivered (defect 9), else None. The link is never flashed, stored in the session or logged."""
     from app.models.organization import Organization
     from app.models.user import UserMembership
     from app.services.people_access import record_people_event
@@ -84,18 +102,30 @@ def _send_link(user) -> None:
         invitation = {"company_name": (getattr(org, "display_name", None) or getattr(org, "legal_name", None) or "Your company"),
                       "invited_by": getattr(current_user, "display_name", "") or ""}
     try:
-        send_set_password_link(user, client_ip=request.remote_addr, invitation=invitation)
+        outcome = send_set_password_link(user, client_ip=request.remote_addr, invitation=invitation)
     except PasswordResetServiceError as exc:
         if exc.code == BLOCK_RATE_LIMITED:
             flash(LINK_RATE_LIMITED.format(email=user.email), "error")
         else:
             flash("This sign-in is deactivated. Reactivate it before sending a link.", "error")
-        return
+        return None
+    action = "INVITATION_SENT" if invitation is not None else "PASSWORD_LINK_SENT"
+    if outcome.delivered:
+        if membership is not None:
+            record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user)
+        flash(LINK_SENT.format(email=user.email, expires=_expires_phrase(outcome)), "success")
+        return None
+    reason = NOT_DELIVERED_REASONS.get(outcome.status, "the email could not be sent")
     if membership is not None:
-        record_people_event(organization_id=_org(), membership=membership,
-                            action="INVITATION_SENT" if invitation is not None else "PASSWORD_LINK_SENT",
-                            actor=current_user)
-    flash(LINK_SENT.format(email=user.email), "success")
+        actor = getattr(current_user, "display_name", "") or "the owner"
+        record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user,
+                            detail=f"Not emailed ({outcome.status}); one-time link shown to {actor} to give in person")
+    flash(LINK_NOT_EMAILED.format(email=user.email, reason=reason, name=user.display_name,
+                                  expires=_expires_phrase(outcome)), "error")
+    from app.services.transactional_email import public_base_url
+
+    base = public_base_url() or request.url_root.rstrip("/")
+    return {"url": f"{base}{outcome.path}", "expires_at": outcome.expires_at, "email": user.email}
 
 
 def db_session_get(model, ident):
@@ -166,15 +196,23 @@ def new():
             except AccessDomainError as exc:
                 flash(f"Added, but not marked Field only: {exc}", "error")
         flash(f"{membership.user.display_name} was added.", "success")
-        _send_link(membership.user)
+        one_time = _send_link(membership.user)
+        if one_time is not None:
+            return _detail_page(membership.id, one_time_link=one_time)
         return redirect(url_for("people_access.detail", membership_id=membership.id))
     return render_template("settings/people/new.html", values=values)
 
 
 @people_access_bp.route("/<int:membership_id>")
 def detail(membership_id):
+    return _detail_page(membership_id)
+
+
+def _detail_page(membership_id, one_time_link=None):
+    """The person's page. ``one_time_link`` is shown only in this one response, to the owner who just
+    sent it, when the email was not delivered; the response is never cached."""
     person = _person_or_404(membership_id)
-    return render_template(
+    page = render_template(
         "settings/people/detail.html",
         person=person,
         domains=sorted(RECOGNIZED_STORED_DOMAINS),
@@ -183,7 +221,11 @@ def detail(membership_id):
         field_only=membership_is_field_only(UserMembership.query.get(membership_id)),
         history=people_history(organization_id=_org(), membership_id=membership_id),
         crews=_crews_of(membership_id),
+        one_time_link=one_time_link,
     )
+    if one_time_link is None:
+        return page
+    return page, 200, {"Cache-Control": "no-store", "Pragma": "no-cache", "Referrer-Policy": "no-referrer"}
 
 
 def _act(membership_id, action):
@@ -219,7 +261,9 @@ def reactivate(membership_id):
 def send_link(membership_id):
     _person_or_404(membership_id)
     user = membership_user(organization_id=_org(), membership_id=membership_id, actor=current_user)
-    _send_link(user)
+    one_time = _send_link(user)
+    if one_time is not None:
+        return _detail_page(membership_id, one_time_link=one_time)
     return redirect(url_for("people_access.detail", membership_id=membership_id))
 
 

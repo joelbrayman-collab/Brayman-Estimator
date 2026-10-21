@@ -220,12 +220,22 @@ def seed_work_plan(project_id):
     return redirect(url_for("work_structure.project_work_plan", project_id=project_id))
 
 
+def _chosen_scope() -> str:
+    """The office's explicit answer: original work or extra work. A missing answer is refused by the
+    service (empty string is not a choice), never defaulted."""
+    return (request.form.get("scope_origin") or "").strip()
+
+
 @work_structure_bp.route("/projects/<int:project_id>/elements", methods=["POST"])
 def add_element(project_id):
+    display, user_id = _scope_actor()
     try:
         add_project_element(
             project_id=project_id,
             display_name=request.form.get("display_name", ""),
+            scope_origin=_chosen_scope(),
+            actor_user_id=user_id,
+            actor_display_name=display,
         )
         flash("Work item added.", "success")
     except WorkStructureError as exc:
@@ -238,11 +248,15 @@ def add_activity(element_id):
     org_id = _org()
     element = ProjectWorkElement.query.filter_by(id=element_id, organization_id=org_id).first_or_404()
     labour_task_id = request.form.get("labour_task_id") or None
+    display, user_id = _scope_actor()
     try:
         add_project_activity(
             project_work_element_id=element.id,
             display_name=request.form.get("display_name", ""),
             labour_task_id=int(labour_task_id) if labour_task_id else None,
+            scope_origin=_chosen_scope(),
+            actor_user_id=user_id,
+            actor_display_name=display,
         )
         flash("Activity added.", "success")
     except (WorkStructureError, ValueError) as exc:

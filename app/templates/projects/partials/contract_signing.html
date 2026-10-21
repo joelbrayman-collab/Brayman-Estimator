@@ -6,7 +6,7 @@
         <div><p class="eyebrow">Signing request</p><p>{{ signing_overlay.request_number }}</p></div>
         <div><p class="eyebrow">Status</p><p>{{ signing_overlay.hub_label }}</p></div>
         <div><p class="eyebrow">Signer</p><p>{{ signing_overlay.signer_name or "—" }}{% if signing_overlay.signer_email %}<br>{{ signing_overlay.signer_email }}{% endif %}</p></div>
-        <div><p class="eyebrow">Invitation expires</p><p>{% if signing_overlay.expires_at %}{{ signing_overlay.expires_at.strftime("%Y-%m-%d %H:%M") }} UTC{% else %}—{% endif %}</p></div>
+        <div><p class="eyebrow">Invitation expires</p><p>{% if signing_overlay.expires_at %}{{ signing_overlay.expires_at|local_time("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}</p></div>
         <div><p class="eyebrow">Countersign required</p><p>{{ "Yes" if signing_overlay.countersign_required else "No" }}</p></div>
         {% if signing_overlay.email_delivery_label %}
         <div><p class="eyebrow">Email</p><p data-signing-email-delivery="true">{{ signing_overlay.email_delivery_label }}</p></div>

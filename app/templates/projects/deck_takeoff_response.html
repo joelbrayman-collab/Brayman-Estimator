@@ -9,7 +9,7 @@
         <p class="eyebrow">PRICE</p>
         <h1>Supplier response {{ record.response_id }}</h1>
         <p class="muted-copy">
-            Request {{ record.request_id }}. {{ record.source|capitalize }} by {{ record.imported_by }} on {{ record.imported_at }}.
+            Request {{ record.request_id }}. {{ record.source|capitalize }} by {{ record.imported_by }} on {{ record.imported_at|local_time }}.
             Response date {{ record.response_date or 'not given' }}. Prices valid until {{ record.valid_until or 'not given' }}.
             Contact {{ record.contact or 'not given' }}.
         </p>
@@ -94,7 +94,7 @@
 <div class="form-panel">
     <p class="eyebrow">RECORDED</p>
     {% for rec in recorded %}
-    <p>Recorded by {{ rec.recorded_by }} on {{ rec.recorded_at }}.{% if rec.notes_reviewed_by %} Supplier notes reviewed by {{ rec.notes_reviewed_by }}.{% endif %}</p>
+    <p>Recorded by {{ rec.recorded_by }} on {{ rec.recorded_at|local_time }}.{% if rec.notes_reviewed_by %} Supplier notes reviewed by {{ rec.notes_reviewed_by }}.{% endif %}</p>
     <div style="overflow-x: auto;"><table class="data-table">
         <thead><tr><th>No.</th><th>Result</th><th>Cost review</th><th>Brayman cost approval</th></tr></thead>
         <tbody>

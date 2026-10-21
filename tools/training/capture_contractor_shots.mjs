@@ -665,22 +665,21 @@ step("c11: a work item with an activity, Set dates on the calendar, the crew ass
   await submit(pg, pg.getByRole("link", { name: "Open project work" }));
   const element = pg.locator("form[action$='/elements']");
   await element.locator("[name=display_name]").fill(WORK_ITEM);
+  // Added after the proposal was accepted: the office says it is the accepted proposal's work (original work).
+  await element.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await shot(pg, "c11-work-item", element.locator("button[type=submit]"));
   await submit(pg, element.locator("button[type=submit]"));
   assert.match(await flash(pg), /Work item added/);
   const activity = pg.locator("form[action*='/activities']").last();
   await activity.locator("[name=display_name]").fill(ACTIVITY);
+  await activity.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await shot(pg, "c11-activity", activity.locator("button[type=submit]"));
   await submit(pg, activity.locator("button[type=submit]"));
   assert.match(await pg.locator("main").innerText(), /Framing and decking \(training\)/);
-  // The framing was added after the proposal was accepted, so it shows as extra work until reviewed:
-  // it is the accepted proposal's work, so it is recorded as original work.
-  const original = pg.locator("form").filter({ has: pg.getByRole("button", { name: "Record as original work" }) }).first();
-  await original.locator("[name=reason]").fill("Part of the accepted proposal (training)");
-  await shot(pg, "c11-record-original", original.getByRole("button", { name: "Record as original work" }));
-  await submit(pg, original.getByRole("button", { name: "Record as original work" }));
-  assert.doesNotMatch(await flash(pg), /can no longer/);
-  console.log("RECORDED original work: " + (await flash(pg)));
+  // Chosen when added, so it is original work straight away: no "Record as original work" needed.
+  const row = pg.locator("tr").filter({ hasText: ACTIVITY }).first();
+  assert.match(await row.innerText(), /Original work/);
+  await shot(pg, "c11-record-original", row);
   await go(pg, "/schedule");
   await submit(pg, pg.getByRole("link", { name: "Set dates" }).first());
   await Promise.all([pg.waitForNavigation(), pg.selectOption("[name=project_id]", { label: JOB })]);

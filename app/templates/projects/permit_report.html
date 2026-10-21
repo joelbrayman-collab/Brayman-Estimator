@@ -43,7 +43,7 @@
     <p>Permit context: {{ analysis.permit_context_class or '—' }}</p>
     <p>Coverage: {{ analysis.coverage_status }}</p>
     <p>Plan / site basis: {{ analysis.plan_revision_label or analysis.plan_document_names or analysis.site_plan_identity or 'not identified' }}</p>
-    <p>Report version {{ analysis.version_number }} · generated {{ analysis.generated_at.strftime("%Y-%m-%d %H:%M") }}</p>
+    <p>Report version {{ analysis.version_number }} · generated {{ analysis.generated_at|local_time("%Y-%m-%d %H:%M") }}</p>
     {% else %}
     <p>Location: —</p>
     <p>Jurisdiction: unresolved</p>

@@ -75,7 +75,7 @@
       <textarea name="body" rows="3" maxlength="4000" aria-label="Note or feedback" placeholder="Something unclear, a problem, a suggestion"></textarea>
       <button class="tc-btn" type="submit" data-save-note>Save note</button>
     </form>
-    <ul>{% for n in notes %}<li data-note>{{ n.created_at.strftime('%d %b %H:%M') }} UTC · {{ n.body }}</li>{% endfor %}</ul>
+    <ul>{% for n in notes %}<li data-note>{{ n.created_at|local_time("%d %b %H:%M") }} · {{ n.body }}</li>{% endfor %}</ul>
   </details>
   <p class="tc-small tc-lesson-links">{% if prev_key %}<a href="{{ url_for('training.lesson', key=prev_key) }}" data-prev-lesson>Previous lesson</a>{% endif %}
     {% if next_key %}<a href="{{ url_for('training.lesson', key=next_key) }}" data-next-lesson>Next lesson</a>{% endif %}

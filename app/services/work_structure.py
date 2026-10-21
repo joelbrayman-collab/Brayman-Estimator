@@ -446,11 +446,54 @@ def _seed_from_entered_labour(project, version, entered, org_id) -> None:
             )
 
 
+ADDED_SCOPE_CHOICES = (SCOPE_ORIGINAL, SCOPE_EXTRA_WORK)
+SCOPE_CHOICE_REQUIRED = (
+    "Choose whether this is original work (part of the accepted proposal) or extra work."
+)
+
+
+def _added_scope_origin(scope_origin: Optional[str]) -> str:
+    """The office says what added work is (defect 7, 21 Oct 2026).
+
+    ``None`` keeps the long-standing programmatic default (extra work, no history row). An office
+    add passes the person's explicit choice; anything else is refused, so nothing is decided
+    silently. Choosing original work here is the same outcome as adding extra work and recording it
+    as original before any time is sent against it (reclassify_extra_work_to_original).
+    """
+    if scope_origin is None:
+        return SCOPE_EXTRA_WORK
+    if scope_origin not in ADDED_SCOPE_CHOICES:
+        raise WorkStructureError(SCOPE_CHOICE_REQUIRED)
+    return scope_origin
+
+
+def _record_added_scope(row, *, work_kind, project_id, org_id, scope_origin, actor_user_id, actor_display_name):
+    from app.services.work_scope import _record_history
+
+    _record_history(
+        organization_id=org_id,
+        project_id=project_id,
+        work_kind=work_kind,
+        work_id=row.id,
+        prior_scope_origin=None,
+        new_scope_origin=scope_origin,
+        prior_change_order_id=None,
+        new_change_order_id=None,
+        actor_user_id=actor_user_id,
+        actor_display_name=actor_display_name,
+        reason=("Added as original work (part of the accepted proposal)."
+                if scope_origin == SCOPE_ORIGINAL else "Added as extra work."),
+    )
+
+
 def add_project_element(
     *,
     project_id: int,
     display_name: str,
     organization_id: Optional[str] = None,
+    scope_origin: Optional[str] = None,
+    actor_user_id: Optional[int] = None,
+    actor_display_name: Optional[str] = None,
 ) -> ProjectWorkElement:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
@@ -458,6 +501,8 @@ def add_project_element(
     name = (display_name or "").strip()
     if not name:
         raise WorkStructureError("Name is required.")
+    chosen = scope_origin is not None
+    origin = _added_scope_origin(scope_origin)
     max_order = (
         db.session.query(db.func.max(ProjectWorkElement.sort_order))
         .filter_by(project_id=project.id, organization_id=org_id)
@@ -471,9 +516,16 @@ def add_project_element(
         status=WORK_STATUS_ACTIVE,
         sort_order=int(max_order) + 10,
         source_kind=SOURCE_PROJECT,
-        scope_origin=SCOPE_EXTRA_WORK,
+        scope_origin=origin,
     )
     db.session.add(row)
+    if chosen:
+        from app.models.work_structure import SCOPE_HISTORY_ELEMENT
+
+        db.session.flush()
+        _record_added_scope(row, work_kind=SCOPE_HISTORY_ELEMENT, project_id=project.id, org_id=org_id,
+                            scope_origin=origin, actor_user_id=actor_user_id,
+                            actor_display_name=actor_display_name)
     db.session.commit()
     return row
 
@@ -484,6 +536,9 @@ def add_project_activity(
     display_name: str,
     labour_task_id: Optional[int] = None,
     organization_id: Optional[str] = None,
+    scope_origin: Optional[str] = None,
+    actor_user_id: Optional[int] = None,
+    actor_display_name: Optional[str] = None,
 ) -> ProjectWorkActivity:
     org_id = _org_id(organization_id)
     element = ProjectWorkElement.query.filter_by(
@@ -495,6 +550,8 @@ def add_project_activity(
     name = (display_name or "").strip()
     if not name:
         raise WorkStructureError("Name is required.")
+    chosen = scope_origin is not None
+    origin = _added_scope_origin(scope_origin)
     task = None
     if labour_task_id:
         task = LabourTask.query.filter_by(id=labour_task_id, organization_id=org_id).first()
@@ -514,9 +571,16 @@ def add_project_activity(
         sort_order=int(max_order) + 10,
         source_kind=SOURCE_PROJECT,
         labour_task_id=task.id if task else None,
-        scope_origin=SCOPE_EXTRA_WORK,
+        scope_origin=origin,
     )
     db.session.add(row)
+    if chosen:
+        from app.models.work_structure import SCOPE_HISTORY_ACTIVITY
+
+        db.session.flush()
+        _record_added_scope(row, work_kind=SCOPE_HISTORY_ACTIVITY, project_id=element.project_id, org_id=org_id,
+                            scope_origin=origin, actor_user_id=actor_user_id,
+                            actor_display_name=actor_display_name)
     db.session.commit()
     return row
 

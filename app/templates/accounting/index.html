@@ -56,7 +56,7 @@
 <div class="form-panel">
   <h3>Last check against QuickBooks</h3>
   {% if last %}
-  <p>{{ last.occurred_at.strftime('%d %b %Y %H:%M') }} UTC by {{ last.actor_name }} ({{ last.filename }}):
+  <p>{{ last.occurred_at|local_time("%d %b %Y %H:%M") }} by {{ last.actor_name }} ({{ last.filename }}):
      {{ last.detail_json.matched|length }} matched, {{ last.detail_json.differs|length }} differ,
      {{ last.detail_json.missing_in_quickbooks|length }} not in QuickBooks.</p>
   {% else %}<p class="muted-copy">Not checked yet.</p>{% endif %}
@@ -66,9 +66,9 @@
   <h3>History</h3>
   {% if events %}
   <div class="acct-scroll"><table class="acct-table" data-history>
-    <thead><tr><th>When (UTC)</th><th>What</th><th>Who</th><th>Detail</th></tr></thead>
+    <thead><tr><th>When</th><th>What</th><th>Who</th><th>Detail</th></tr></thead>
     <tbody>{% for e in events %}
-      <tr><td data-label="When">{{ e.occurred_at.strftime('%d %b %Y %H:%M') }}</td>
+      <tr><td data-label="When">{{ e.occurred_at|local_time("%d %b %Y %H:%M") }}</td>
         <td data-label="What">{{ e.kind|title }} · {{ e.subject|replace('_', ' ') }}{% if e.record_key %} {{ e.record_key }}{% endif %}</td>
         <td data-label="Who">{{ e.actor_name }}</td>
         <td data-label="Detail">{% if e.filename %}{{ e.filename }} ({{ e.row_count }} rows){% endif %}{% if e.note %} {{ e.note }}{% endif %}</td></tr>

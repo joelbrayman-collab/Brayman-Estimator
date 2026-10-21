@@ -9,7 +9,7 @@
         <p class="eyebrow">PLAN</p>
         <h1>Drawing revision {{ record.label }}</h1>
         <p class="muted-copy">
-            PRELIMINARY — NOT FOR CONSTRUCTION. Generated {{ record.created_at.strftime('%Y-%m-%d %H:%M') }} UTC by {{ record.created_by }}
+            PRELIMINARY — NOT FOR CONSTRUCTION. Generated {{ record.created_at|local_time("%Y-%m-%d %H:%M") }} by {{ record.created_by }}
             from construction model revision R{{ record.model_revision_number }} ({{ record.model_content_sha256[:12] }}),
             product facts {{ record.product_facts_version or '—' }}, takeoff {{ record.takeoff_fingerprint[:12] }}, engine {{ record.engine_version }}.
             {% if state.current %}Current.{% else %}<strong>Outdated:</strong> {{ state.reasons|join(' ') }}{% endif %}

@@ -31,7 +31,7 @@
         <p class="muted-copy">Google and Outlook check for changes every few hours; Apple Calendar can be set to check every few minutes.</p>
     </div>
     {% elif feed %}
-    <p data-feed-on="true"><strong>Your calendar feed is on.</strong> Made {{ feed.created_at.strftime("%b %d, %Y").replace(" 0", " ") }}{% if feed.last_fetched_at %} · last fetched {{ feed.last_fetched_at.strftime("%b %d, %Y %I:%M %p").replace(" 0", " ") }} UTC{% endif %}.</p>
+    <p data-feed-on="true"><strong>Your calendar feed is on.</strong> Made {{ feed.created_at.strftime("%b %d, %Y").replace(" 0", " ") }}{% if feed.last_fetched_at %} · last fetched {{ feed.last_fetched_at|local_time("%b %-d, %Y %-I:%M %p") }}{% endif %}.</p>
     {% else %}
     <p data-feed-off="true"><strong>Your calendar feed is off.</strong></p>
     {% endif %}

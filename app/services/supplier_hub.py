@@ -214,6 +214,23 @@ def supplier_has_sign_in(supplier_id: int) -> bool:
     return SupplierUserMembership.query.filter_by(supplier_id=supplier_id, status=MEMBERSHIP_ACTIVE).first() is not None
 
 
+def platform_suppliers_to_add(organization_id: str) -> list[tuple[int, str]]:
+    """Suppliers already on CalibraytAI that this contractor may pick on Company → Suppliers (defect 4).
+
+    "On the platform" means the supplier company is active and has its own Supplier Hub sign-in (store
+    staff sign in). Only the supplier's id and public name are returned: nothing about which or how many
+    other contractors use it, their accounts, requests, prices, people or locations. Suppliers already
+    on this contractor's list are left out. A supplier typed by another contractor that has no store
+    sign-in is not listed, so a contractor cannot learn another contractor's private supplier names.
+    """
+    already = {row.supplier_id for row in ContractorSupplierAccount.query.filter_by(organization_id=organization_id)}
+    rows = (db.session.query(Supplier.id, Supplier.legal_name)
+            .join(SupplierUserMembership, SupplierUserMembership.supplier_id == Supplier.id)
+            .filter(Supplier.status == "ACTIVE", SupplierUserMembership.status == MEMBERSHIP_ACTIVE)
+            .distinct().order_by(Supplier.legal_name.asc(), Supplier.id.asc()).all())
+    return [(sid, name) for sid, name in rows if sid not in already]
+
+
 def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep_id=None):
     for old in SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == organization_id,
@@ -451,19 +468,28 @@ def create_concrete_request(*, project: Project, user, form: dict) -> ConcreteRe
     return row
 
 
-def send_concrete_request(*, concrete: ConcreteRequest, account_id: int, user) -> SupplierRequestShare:
-    project = db.session.get(Project, concrete.project_id)
-    account = _account(concrete.organization_id, account_id)
-    if not supplier_has_sign_in(account.supplier_id):
-        raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
-    existing = SupplierRequestShare.query.filter(
+def concrete_open_share(concrete: ConcreteRequest):
+    """The supplier request this concrete request is currently with (sent, opened or returned), if any.
+
+    One rule for the page and the server: while a concrete request is with a supplier it is not
+    offered for sending again; once that request is withdrawn it may be sent again.
+    """
+    return (SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == concrete.organization_id,
         SupplierRequestShare.source_kind == SOURCE_CONCRETE,
         SupplierRequestShare.source_ref == str(concrete.id),
         SupplierRequestShare.status.in_(OPEN_SHARE_STATUSES),
-    ).first()
+    ).order_by(SupplierRequestShare.id.desc()).first())
+
+
+def send_concrete_request(*, concrete: ConcreteRequest, account_id: int, user) -> SupplierRequestShare:
+    existing = concrete_open_share(concrete)
     if existing is not None:
         raise SupplierHubError(f"This concrete request is already with {existing.supplier.legal_name} ({existing.number}).")
+    project = db.session.get(Project, concrete.project_id)
+    account = _account(concrete.organization_id, account_id)
+    if not supplier_has_sign_in(account.supplier_id):
+        raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
     shared = {
         **_base_shared(project, user, concrete.delivery_date),
         "delivery_town": concrete.delivery_town,

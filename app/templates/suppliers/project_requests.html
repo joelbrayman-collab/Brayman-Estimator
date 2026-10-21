@@ -62,7 +62,7 @@
             </details>
         </div>
         {% elif row.changes %}
-        <details><summary>Delivery changes ({{ row.changes|length }})</summary><ul class="delivery-history">{% for c in row.changes %}<li data-change-status="{{ c.status }}">{{ c.requested_at.strftime("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} — {{ c.status|lower }}</li>{% endfor %}</ul></details>
+        <details><summary>Delivery changes ({{ row.changes|length }})</summary><ul class="delivery-history">{% for c in row.changes %}<li data-change-status="{{ c.status }}">{{ c.requested_at|local_time("%Y-%m-%d %H:%M") }} — {{ c.requested_by_name }} asked for {{ when(c.new_date, c.new_window) }} — {{ c.status|lower }}</li>{% endfor %}</ul></details>
         {% endif %}
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
@@ -89,7 +89,7 @@
             <button type="submit" class="button-secondary">Withdraw this request</button>
         </form>
         {% endif %}
-        <details><summary>History</summary><ul>{% for e in row.events %}<li>{{ e.at.strftime("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} ({{ e.actor_side|lower }}: {{ e.actor_name }}){% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul></details>
+        <details><summary>History</summary><ul>{% for e in row.events %}<li>{{ e.at|local_time("%Y-%m-%d %H:%M") }} — {{ e.event_type|replace("_", " ")|lower|capitalize }} ({{ e.actor_side|lower }}: {{ e.actor_name }}){% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul></details>
     </article>
     {% else %}
     <p class="muted-copy">Nothing sent yet. Issue the deck supplier request on the <a href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">deck takeoff</a> and select Send to the supplier in CalibraytAI.</p>
@@ -101,11 +101,16 @@
     <p class="muted-copy">Concrete is its own request, sent only to the concrete supplier and never combined with material requests.</p>
     {% if concrete %}
     <ul>{% for c in concrete %}{% set cd = concrete_deliveries.get(c.id) %}<li data-concrete-request="{{ c.id }}">{{ c.number }} — {{ c.volume_m3 }} m³, {{ c.strength_mpa }} MPa, {{ c.placement|lower }}, requested delivery {{ c.delivery_date.isoformat() }}{% if c.delivery_window %} {{ c.delivery_window }}{% endif %}{% if cd and cd.schedule and cd.schedule.date %}; <strong data-concrete-current="{{ cd.schedule.date.isoformat() }}">{{ "agreed" if cd.schedule.agreed else "ordered for" }} {{ cd.schedule.date.isoformat() }}{% if cd.schedule.window %} {{ cd.schedule.window }}{% endif %}</strong> ({{ cd.order.number }}){% if cd.pending %}, change waiting → {{ cd.pending.new_date.isoformat() }}{% endif %}{% endif %}, {{ c.delivery_town }}
+        {% set sent_share = concrete_sent.get(c.id) %}
+        {% if sent_share %}
+        — <span data-concrete-sent="{{ sent_share.number }}">sent to {{ sent_share.supplier.legal_name }} ({{ sent_share.number }}); follow it under {{ sent_share.number }} above.</span>
+        {% else %}
         <form method="post" action="{{ url_for('supplier_office.send_concrete', project_id=project.id, concrete_id=c.id) }}" class="inline-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <select name="contractor_supplier_account_id">{% for a in accounts %}<option value="{{ a.id }}">{{ a.supplier.legal_name }}{% if not signed_in[a.supplier_id] %} (no sign-in yet){% endif %}</option>{% endfor %}</select>
             <button type="submit" class="button-secondary">Send</button>
-        </form></li>{% endfor %}</ul>
+        </form>
+        {% endif %}</li>{% endfor %}</ul>
     {% endif %}
     <form method="post" action="{{ url_for('supplier_office.create_concrete', project_id=project.id) }}" class="form-grid" data-new-concrete="true">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

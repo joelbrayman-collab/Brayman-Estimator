@@ -13,6 +13,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE, PermitAnalysis
 from app.presentation.contractor_copy import PERMIT_PDF_BANNER, permit_office_language
+from app.services.local_time import format_local
 
 
 def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
@@ -58,7 +59,7 @@ def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
     meta = [
         ["Project", str(analysis.project.name if analysis.project else analysis.project_id)],
         ["Report version", str(analysis.version_number)],
-        ["Generated", analysis.generated_at.strftime("%Y-%m-%d %H:%M UTC") if analysis.generated_at else ""],
+        ["Generated", format_local(analysis.generated_at, empty="")],
         [
             "Location",
             ", ".join(

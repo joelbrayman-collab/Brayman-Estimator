@@ -21,7 +21,7 @@
     <div class="pd-table-wrap"><table class="data-table">
         <thead><tr><th>When</th><th>File</th><th>Authorized by</th><th>Loaded by</th><th class="num">Loaded</th><th class="num">Not loaded</th></tr></thead>
         <tbody>{% for i in imports %}
-        <tr data-price-import="{{ i.id }}"><td>{{ i.imported_at.strftime("%b %d, %Y %H:%M") }} UTC</td><td>{{ i.filename }}{% if i.source == "DEMO_SYNTHETIC" %} <span class="demand-flag">synthetic</span>{% endif %}<br><span class="muted-copy">{{ i.file_sha256[:12] }}</span></td>
+        <tr data-price-import="{{ i.id }}"><td>{{ i.imported_at|local_time("%b %d, %Y %H:%M") }}</td><td>{{ i.filename }}{% if i.source == "DEMO_SYNTHETIC" %} <span class="demand-flag">synthetic</span>{% endif %}<br><span class="muted-copy">{{ i.file_sha256[:12] }}</span></td>
         <td>{{ i.authorized_by_name }}</td><td>{{ i.imported_by_name }}</td><td class="num">{{ i.rows_loaded }}</td><td class="num">{{ i.rows_rejected }}</td></tr>
         {% if i.rejections_json %}<tr><td colspan="6"><ul class="supplier-history">{% for r in i.rejections_json[:50] %}<li>Row {{ r.row }}{% if r.sku %} ({{ r.sku }}){% endif %}: {{ r.reason }}</li>{% endfor %}</ul></td></tr>{% endif %}
         {% endfor %}</tbody>

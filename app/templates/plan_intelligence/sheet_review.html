@@ -75,7 +75,7 @@
                     {% for ps in past_suggestions %}
                     <li>
                         <span class="activity-title">{{ ps.suggested_number or "—" }} · {{ ps.suggested_discipline_code }} · {{ ps.suggested_title or "—" }}</span>
-                        <span class="activity-meta">Status: {{ ps.status }} · {{ ps.created_at.strftime("%Y-%m-%d %H:%M") }}</span>
+                        <span class="activity-meta">Status: {{ ps.status }} · {{ ps.created_at|local_time("%Y-%m-%d %H:%M") }}</span>
                     </li>
                     {% endfor %}
                 </ul>
@@ -208,7 +208,7 @@
                 {% for ev in audit_events %}
                 <li>
                     <span class="activity-title">{{ ev.event_type }}</span>
-                    <span class="activity-meta">{{ ev.created_at.strftime("%Y-%m-%d %H:%M:%S") }}{% if ev.detail %} · {{ ev.detail }}{% endif %}</span>
+                    <span class="activity-meta">{{ ev.created_at|local_time("%Y-%m-%d %H:%M:%S") }}{% if ev.detail %} · {{ ev.detail }}{% endif %}</span>
                 </li>
                 {% endfor %}
             </ul>

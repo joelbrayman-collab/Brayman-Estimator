@@ -13,6 +13,30 @@
     <a href="{{ url_for('people_access.index') }}">Back to People &amp; Access</a>
 </div>
 
+{% if one_time_link %}
+<section class="form-panel people-one-time-link" aria-labelledby="one-time-link-heading" data-one-time-link>
+    <h2 id="one-time-link-heading">Give {{ person.display_name }} this link yourself</h2>
+    <p>The email to {{ one_time_link.email }} was not delivered. This link lets {{ person.display_name }} choose a password. It works once and expires {{ one_time_link.expires_at|local_time("%b %-d at %-I:%M %p") }}.</p>
+    <p class="muted-copy">It is shown only now, only to you. Give it to {{ person.display_name }} directly (in person or by text); anyone with it can set this password. Sending a new link replaces it.</p>
+    <div class="form-grid">
+        <label>One-time link <input type="text" id="one-time-link" value="{{ one_time_link.url }}" readonly autocomplete="off" spellcheck="false"></label>
+        <div class="form-actions"><button type="button" class="button" data-copy-target="one-time-link">Copy link</button></div>
+    </div>
+</section>
+<script>
+(function () {
+  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var field = document.getElementById(btn.getAttribute('data-copy-target'));
+      field.select();
+      if (navigator.clipboard) { navigator.clipboard.writeText(field.value); } else { document.execCommand('copy'); }
+      btn.textContent = 'Copied';
+    });
+  });
+})();
+</script>
+{% endif %}
+
 <section class="form-panel" aria-labelledby="sign-in-heading">
     <h2 id="sign-in-heading">Sign-in</h2>
     <p><span class="status{% if not person.can_sign_in %} status-locked{% endif %}" data-sign-in-status>{{ person.status_label }}</span>
@@ -98,7 +122,7 @@
 
 <section class="form-panel" aria-labelledby="history-heading" data-person-history="{{ history|length }}">
     <h2 id="history-heading">History</h2>
-    {% if history %}<ul class="people-history">{% for h in history %}<li><strong>{{ h.created_at.strftime('%b %d, %Y %H:%M') }} UTC</strong> · {{ {"ADDED": "Added", "INVITATION_SENT": "Invitation emailed", "PASSWORD_LINK_SENT": "Password link emailed", "ACTIVATED": "Chose a password (account active)", "DEACTIVATED": "Deactivated", "REACTIVATED": "Reactivated", "ACCESS_GIVEN": "Access given", "ACCESS_REMOVED": "Access removed", "FIELD_ONLY_MARKED": "Made Field only", "FIELD_ONLY_CLEARED": "Field only removed", "CREW_ADDED": "Added to a crew", "CREW_ENDED": "Left a crew", "ADMINISTRATOR_APPOINTED": "Appointed System Administrator", "ADMINISTRATOR_REMOVED": "No longer System Administrator"}.get(h.action, h.action) }}{% if h.detail %} ({{ h.detail }}){% endif %} · by {{ h.actor_name }}</li>{% endfor %}</ul>
+    {% if history %}<ul class="people-history">{% for h in history %}<li><strong>{{ h.created_at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ {"ADDED": "Added", "INVITATION_SENT": ("Invitation link given in person" if h.detail and h.detail.startswith("Not emailed") else "Invitation emailed"), "PASSWORD_LINK_SENT": ("Password link given in person" if h.detail and h.detail.startswith("Not emailed") else "Password link emailed"), "ACTIVATED": "Chose a password (account active)", "DEACTIVATED": "Deactivated", "REACTIVATED": "Reactivated", "ACCESS_GIVEN": "Access given", "ACCESS_REMOVED": "Access removed", "FIELD_ONLY_MARKED": "Made Field only", "FIELD_ONLY_CLEARED": "Field only removed", "CREW_ADDED": "Added to a crew", "CREW_ENDED": "Left a crew", "ADMINISTRATOR_APPOINTED": "Appointed System Administrator", "ADMINISTRATOR_REMOVED": "No longer System Administrator"}.get(h.action, h.action) }}{% if h.detail %} ({{ h.detail }}){% endif %} · by {{ h.actor_name }}</li>{% endfor %}</ul>
     {% else %}<p class="muted-copy">No changes recorded yet. Changes made from today are kept here.</p>{% endif %}
 </section>
 {% endblock %}

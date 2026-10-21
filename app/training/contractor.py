@@ -1402,24 +1402,25 @@ M11 = Module(
                      if_wrong="Project Hub takes you back.",
                      shot="c11-hub-project-work.png", endpoint="work_structure.project_work_plan"),
                 Step(title="Add the work item", app=O, where="Project work → Add a project work item",
-                     do="Type Name, press Add work item",
-                     enter="Pool deck framing and decking (training) <initials>",
+                     do="Type Name, choose Original work, press Add work item",
+                     enter="Pool deck framing and decking (training) <initials>; Original work — part of the accepted proposal",
                      expect="Work item added.",
-                     if_wrong="Names must be different on one project.",
+                     why="Work added after the proposal is accepted is either the proposal's own work (original) or "
+                         "extra work the customer asked for. CalibraytAI asks; it never decides for you.",
+                     if_wrong="Names must be different on one project. Not choosing original or extra work is refused.",
                      shot="c11-work-item.png", endpoint="work_structure.project_work_plan"),
                 Step(title="Add an activity", app=O, where="The work item → Activity name",
-                     do="Type it, press Add activity",
-                     enter="Framing and decking (training)",
+                     do="Type it, choose Original work, press Add activity",
+                     enter="Framing and decking (training); Original work — part of the accepted proposal",
                      expect="The activity is listed; the crew send time against it.",
                      if_wrong="Without an activity, time cannot be sent.",
                      shot="c11-activity.png", endpoint="work_structure.project_work_plan"),
-                Step(title="Record it as original work", app=O, where="The activity → Record as original work",
-                     do="Type a Review note, press Record as original work",
-                     enter="Part of the accepted proposal (training)",
-                     expect="Recorded as original work.",
-                     why="Work added after the proposal is accepted shows as extra work until reviewed. Do this before "
-                         "anyone records time: afterwards it can no longer be reclassified.",
-                     if_wrong="Real extra work (the customer asked for more) is turned into a change order instead.",
+                Step(title="Check it is original work", app=O, where="The work item → the activity's row",
+                     do="Read the activity's row",
+                     expect="The activity shows Original work.",
+                     why="Once the crew records time against it, original or extra can no longer be changed.",
+                     if_wrong="Chose Extra work by mistake? Before any time is recorded, Record as original work on "
+                              "the row fixes it. Real extra work (the customer asked for more) becomes a change order.",
                      shot="c11-record-original.png", endpoint="work_structure.project_work_plan"),
                 Step(title="Set dates", app=O, where="Calendar → Set dates",
                      do="Choose the Project and the work item, Start and End, press Set dates",
@@ -1435,7 +1436,7 @@ M11 = Module(
                      shot="c11-assign-crew.png", endpoint="schedule.edit_item"),
             ),
             exercise=f"On {JOB}: add 'Pool deck framing and decking (training) <initials>' with the activity 'Framing and "
-                     "decking (training)', record it as original work, set it for today to two days from now, and assign "
+                     "decking (training)', both as original work, set it for today to two days from now, and assign "
                      "your Pool deck crew. Then place the BMR concrete order (module 8, last lesson).",
         ),
         Lesson(

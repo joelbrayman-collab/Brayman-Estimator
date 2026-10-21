@@ -860,3 +860,92 @@ def test_closing_a_job_lists_its_open_supplier_orders_without_blocking(app, clie
     order.scheduled_date = date.today() - timedelta(days=1)  # delivered in the past: nothing to warn about
     db.session.commit()
     assert "data-open-orders" not in client.get(f"/projects/{project.id}/close").get_data(as_text=True)
+
+
+def test_a_sent_concrete_request_is_not_offered_for_sending_again(app, client):
+    """Defect 2 (21 Oct 2026): once sent, the Supplier requests page shows where it went, not Send;
+    posting it again is refused; after the request is withdrawn it can be sent again."""
+    from app.models.supplier_portal import ConcreteRequest
+
+    project, _other, _bmr = _setup()
+    tomlinson = _tomlinson()
+    _give_sign_in(client, tomlinson)
+    delivery = (date.today() + timedelta(days=7)).isoformat()
+    client.post(f"/projects/{project.id}/concrete-requests", data={
+        "volume_m3": "4.5", "strength_mpa": "32", "delivery_date": delivery, "placement": "Pump",
+        "contractor_supplier_account_id": tomlinson.id})
+    concrete = ConcreteRequest.query.one()
+    share = SupplierRequestShare.query.one()
+    send_url = f"/projects/{project.id}/concrete-requests/{concrete.id}/send"
+    page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    item = page.split(f'data-concrete-request="{concrete.id}"', 1)[1].split("</li>", 1)[0]
+    assert f'data-concrete-sent="{share.number}"' in item
+    assert send_url not in page and ">Send</button>" not in item
+
+    again = client.post(send_url, data={"contractor_supplier_account_id": tomlinson.id}, follow_redirects=True)
+    assert b"already with Tomlinson concrete (synthetic)" in again.data
+    assert SupplierRequestShare.query.count() == 1
+
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/withdraw")
+    page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    assert send_url in page  # withdrawn: it may be sent again
+    client.post(send_url, data={"contractor_supplier_account_id": tomlinson.id})
+    assert SupplierRequestShare.query.count() == 2
+
+
+def test_suppliers_page_offers_platform_suppliers_by_public_name_only(app, client):
+    """Defect 4 (21 Oct 2026): Company → Suppliers offers the suppliers already on CalibraytAI (their own
+    store sign-in) to pick, besides typing a new one. Only the supplier's public name: nothing about other
+    contractors — not their private suppliers, accounts, store people, or that they exist."""
+    import re
+
+    from app.models import Organization
+    from app.models.supplier_catalogue import Supplier, SupplierLocation
+    from app.models.supplier_portal import MEMBERSHIP_ACTIVE, SupplierUserMembership
+    from tests.auth_fixtures import create_user
+
+    other_org = Organization(id="ORG-SYN-3", legal_name="Rival Builders Inc. (synthetic)", display_name="Rival Builders")
+    db.session.add(other_org); db.session.commit()
+    # On the platform: its own store sign-in (given by the other contractor).
+    platform = create_supplier(code="TEST-PLATFORM", legal_name="Platform Lumber (synthetic)", demo_synthetic=True)
+    create_supplier_location(supplier_id=platform.id, code="MAIN", display_name="Platform Lumber Main", demo_synthetic=True)
+    store_user = create_user(email="platform.store@example.invalid", password=PASSWORD, display_name="Pat Platform Store")
+    db.session.add(SupplierUserMembership(user_id=store_user.id, supplier_id=platform.id, status=MEMBERSHIP_ACTIVE,
+                                          created_by_name="Rival office", created_by_organization_id=other_org.id))
+    # The other contractor's private supplier: typed by them, no store sign-in.
+    private = create_supplier(code="TEST-PRIVATE", legal_name="Rival Private Yard (synthetic)", demo_synthetic=True)
+    private_location = create_supplier_location(supplier_id=private.id, code="MAIN", display_name="Yard", demo_synthetic=True)
+    create_contractor_supplier_account(organization_id=other_org.id, supplier_id=private.id,
+                                       supplier_location_id=private_location.id, demo_synthetic=True)
+    rival_platform_location = SupplierLocation.query.filter_by(supplier_id=platform.id).one()
+    create_contractor_supplier_account(organization_id=other_org.id, supplier_id=platform.id,
+                                       supplier_location_id=rival_platform_location.id, demo_synthetic=True)
+    db.session.commit()
+
+    page = client.get("/suppliers").get_data(as_text=True)
+    picker = page.split("data-platform-suppliers", 1)[1].split("</select>", 1)[0]
+    options = re.findall(r'<option value="(\d+)">([^<]*)</option>', picker)
+    assert options == [(str(platform.id), "Platform Lumber (synthetic)")]
+    for leak in ("Rival", "Pat Platform Store", "platform.store@example.invalid", "Platform Lumber Main", "Yard"):
+        assert leak not in page, leak
+    assert H.platform_suppliers_to_add(DEFAULT_ORGANIZATION_ID) == [(platform.id, "Platform Lumber (synthetic)")]
+
+    # Ids not offered are refused with the same answer, whether or not such a supplier exists.
+    accounts_before = ContractorSupplierAccount.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID).count()
+    answers = []
+    for probe in (private.id, 999999, "x"):
+        answers.append(client.post("/suppliers", data={"supplier_id": probe}, follow_redirects=True).get_data(as_text=True))
+        assert "Choose a supplier from the list" in answers[-1]
+    assert "Rival Private Yard" not in "".join(answers)
+    assert ContractorSupplierAccount.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID).count() == accounts_before
+
+    added = client.post("/suppliers", data={"supplier_id": platform.id}, follow_redirects=True).get_data(as_text=True)
+    assert "Platform Lumber (synthetic) added" in added
+    account = ContractorSupplierAccount.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID, supplier_id=platform.id).one()
+    assert account.supplier_location_id == rival_platform_location.id  # the supplier's own store, no duplicate company
+    assert Supplier.query.filter_by(legal_name="Platform Lumber (synthetic)").count() == 1
+    assert "data-platform-suppliers" not in client.get("/suppliers").get_data(as_text=True)  # already on our list
+
+    # Typing a new supplier still works.
+    typed = client.post("/suppliers", data={"legal_name": "Brand New Supply (synthetic)"}, follow_redirects=True)
+    assert b"Brand New Supply (synthetic) added" in typed.data

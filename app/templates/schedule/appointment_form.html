@@ -123,7 +123,7 @@
     <summary>History ({{ appointment.history|length }})</summary>
     <ul>
         {% for h in appointment.history %}
-        <li>{{ h.created_at.strftime("%b %d, %Y %I:%M %p").replace(" 0", " ") }} UTC · {{ h.actor_display_name }} ·
+        <li>{{ h.created_at|local_time("%b %-d, %Y %-I:%M %p") }} · {{ h.actor_display_name }} ·
             {{ {"CREATED": "Added", "CHANGED": "Changed", "RESCHEDULED": "Rescheduled", "CANCELLED": "Cancelled"}[h.event] }}
             {% if h.event == "RESCHEDULED" and h.prior_date %}(was {{ h.prior_date.isoformat() }}{% if h.prior_start_time %} {{ h.prior_start_time.strftime("%H:%M") }}{% endif %}){% endif %}</li>
         {% endfor %}

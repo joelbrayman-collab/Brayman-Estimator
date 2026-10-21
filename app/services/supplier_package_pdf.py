@@ -12,6 +12,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.services.supplier_catalogue import contractor_identity, package_readiness_label
+from app.services.local_time import format_local
 
 
 def generate_supplier_package_pdf(package) -> BytesIO:
@@ -74,7 +75,7 @@ def generate_supplier_package_pdf(package) -> BytesIO:
         ["Readiness", package_readiness_label(package)],
         [
             "Issued",
-            package.issued_at.strftime("%Y-%m-%d %H:%M UTC") if package.issued_at else "—",
+            format_local(package.issued_at),
         ],
         ["Issued by", package.issued_by_display_name or "—"],
     ]

@@ -228,6 +228,10 @@ def _register_office_auth(app: Flask) -> None:
     user_logged_out.connect(_signed_out, app, weak=False)
     app.before_request(enforce_idle_timeout)
 
+    from app.services.local_time import register as register_local_time
+
+    register_local_time(app)
+
     @app.context_processor
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}

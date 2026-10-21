@@ -386,8 +386,11 @@ def _pricing_table(items, styles, *, detailed: bool):
     return table
 
 
-def generate_proposal_pdf(proposal) -> BytesIO:
-    """Build a PDF for ``proposal`` using snapshot values only."""
+def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
+    """Build a PDF for ``proposal`` using snapshot values only.
+
+    ``valid_until``: the date the client's copy shows (the link's governing date); default the proposal's.
+    """
     brand = get_proposal_brand_render_context(proposal)
     primary = _parse_color(brand.primary_color, DEFAULT_PRIMARY_COLOR)
     accent = _parse_color(brand.accent_color, DEFAULT_ACCENT_COLOR)
@@ -434,11 +437,8 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         if proposal.created_at
         else "—"
     )
-    valid_until = (
-        proposal.valid_until.strftime("%B %d, %Y")
-        if proposal.valid_until
-        else "—"
-    )
+    valid_until = valid_until or proposal.valid_until
+    valid_until = valid_until.strftime("%B %d, %Y") if valid_until else "—"
     right_block = [
         Paragraph(_escape(CUSTOMER_DOCUMENT_TITLE), styles["title"]),
         Paragraph(_escape(proposal.proposal_number), styles["right_meta"]),

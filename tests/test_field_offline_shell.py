@@ -122,3 +122,20 @@ def test_help_voice_does_not_succeed_offline():
     ask = HELP_JS.split("function ask")[1].split("function startVoice")[0]
     assert "!navigator.onLine" in ask
     assert "password" not in HELP_JS.lower()
+
+
+def test_a_confirmed_upload_redraws_the_pending_panel():
+    """Defect 8 (21 Oct 2026): saveNew drew "1 pending on this phone · Unsent" before uploading and nothing
+    redrew it after the server confirmed, so the phone kept showing a saved capture as unsent until some
+    later sync. uploadCapture now redraws the panel from the phone's store once the upload settles
+    (saved: hidden; refused: still listed). The browser walk tests/e2e/job_lifecycle.mjs checks the panel
+    is hidden within 2 seconds of Saved."""
+    start = FIELD_JS.index("function uploadCapture(")
+    body = FIELD_JS[start:FIELD_JS.index("function syncAllPending(")]
+    finish = body.index("return finishCapture(capture, originals);")
+    retry = body.index("return markNeedsRetry(capture, originals)")
+    redraw = body.rindex("return updateRetryPanel();")
+    assert finish < redraw and retry < redraw
+    # finishCapture removes the capture from the phone's store before the panel is redrawn.
+    finish_body = FIELD_JS[FIELD_JS.index("function finishCapture("):FIELD_JS.index("function failureStatus(")]
+    assert 'deleteStore("pending_captures", capture.client_capture_uuid)' in finish_body

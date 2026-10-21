@@ -54,7 +54,7 @@
                 <td>{{ row.quantity }}</td>
                 <td>{{ row.unit_label }}</td>
                 <td>{{ row.actor }}</td>
-                <td>{{ row.accepted_at }}</td>
+                <td>{{ row.accepted_at|local_time }}</td>
             </tr>
             {% endfor %}
         </tbody>

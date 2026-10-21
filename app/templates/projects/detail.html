@@ -294,7 +294,7 @@
                 <td>${{ "%.2f"|format(row.actual.amount) }}</td>
                 <td>{{ row.actual.incurred_on.isoformat() }}</td>
                 <td>{{ row.actual.actor_display_name }}</td>
-                <td>{{ row.actual.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ row.actual.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
                 <td>
                     <span class="status">{{ contractor_copy.CORRECTED_ITEM_LABEL }}</span>
                     {% if row.successor %}
@@ -367,7 +367,7 @@
             </div>
             <div>
                 <p class="eyebrow">Last analysis</p>
-                <p>{% if pi.last_analysis_at %}{{ pi.last_analysis_at.strftime("%Y-%m-%d %H:%M") }}{% else %}none{% endif %}</p>
+                <p>{% if pi.last_analysis_at %}{{ pi.last_analysis_at|local_time("%Y-%m-%d %H:%M") }}{% else %}none{% endif %}</p>
             </div>
             <div>
                 <p class="eyebrow">Findings requiring attention</p>
@@ -1016,7 +1016,7 @@
             <summary>Recent schedule changes</summary>
             <ul>
             {% for h in hub.schedule_history %}
-                <li><strong>{{ h.when.strftime('%b %d, %Y %H:%M') }} UTC</strong> · {{ h.who }} · {{ h.what }}</li>
+                <li><strong>{{ h.when|local_time("%b %d, %Y %H:%M") }}</strong> · {{ h.who }} · {{ h.what }}</li>
             {% endfor %}
             </ul>
         </details>
@@ -1242,10 +1242,10 @@
                 <tr>
                     <td>
                         <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=row.event.id) }}">
-                            {{ row.event.occurred_at.strftime("%Y-%m-%d %H:%M") }}
+                            {{ row.event.occurred_at|local_time("%Y-%m-%d %H:%M") }}
                         </a>
                     </td>
-                    <td>{{ row.event.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                    <td>{{ row.event.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
                     <td>{{ row.event.actor_display_name }}</td>
                     <td>{{ row.kind_summary or "—" }}</td>
                     <td>

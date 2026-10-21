@@ -61,7 +61,7 @@
                     {% endif %}
                 </td>
                 <td>{{ document.page_count if document.page_count is not none else "—" }}</td>
-                <td>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ document.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
                 <td>
                     <a class="button-link" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
                 </td>
@@ -197,7 +197,7 @@
     <ul class="build-candidate-list">
         {% for candidate in candidates %}
         <li>
-            <p>Dimensioned plan · {{ candidate.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+            <p>Dimensioned plan · {{ candidate.created_at|local_time("%Y-%m-%d %H:%M") }}</p>
             <p>
                 <a href="{{ url_for('plan_intelligence.review_built_drawing', project_id=project.id, candidate_id=candidate.id) }}">Review candidate</a>
             </p>

@@ -23,7 +23,7 @@
         <tr><th>Unit of measure</th><td>{{ task.unit_of_measure }}</td></tr>
         <tr><th>Description</th><td>{{ task.description or "—" }}</td></tr>
         <tr><th>{{ contractor_copy.SOURCE_NOTES_LABEL }}</th><td>{{ task.provenance or "—" }}</td></tr>
-        <tr><th>Created</th><td>{{ task.created_at }} by {{ task.created_by or "—" }}</td></tr>
+        <tr><th>Created</th><td>{{ task.created_at|local_time }} by {{ task.created_by or "—" }}</td></tr>
     </tbody>
 </table>
 

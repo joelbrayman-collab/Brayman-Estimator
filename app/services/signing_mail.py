@@ -124,7 +124,9 @@ def _expires_display(request: SigningRequest) -> str:
     expires_at = request.expires_at
     if not isinstance(expires_at, datetime):
         return ""
-    return expires_at.strftime("%Y-%m-%d %H:%M UTC")
+    from app.services.local_time import format_local
+
+    return format_local(expires_at)
 
 
 def _context_variables(request: SigningRequest, *, invitation_url: Optional[str] = None) -> dict:

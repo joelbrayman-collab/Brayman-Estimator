@@ -75,6 +75,7 @@ from app.plan_intelligence.sheets import (
     validate_revision_sheet_index,
     void_sheet,
 )
+from app.services.local_time import format_local
 from app.plan_intelligence.takeoff import (
     approve_package,
     create_draft_package,
@@ -889,7 +890,7 @@ def sheet_measurement_data(project_id, sheet_id):
             "calibration_id": m.scale_calibration_id,
             "page_index": m.page_index,
             "status": m.status,
-            "created_at": m.created_at.strftime("%Y-%m-%d %H:%M") if m.created_at else "",
+            "created_at": format_local(m.created_at, empty=""),
         }
         for m in measurements
     ]

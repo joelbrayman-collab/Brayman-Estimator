@@ -355,10 +355,13 @@ step("09 suppliers: Ben adds his supplier, already on the platform with its own 
   const { pg } = await owner();
   await menu(pg, "Company", "/suppliers");
   assert.match(await pg.locator("main").innerText(), /No supplier accounts yet/);
-  await pg.fill("[data-add-supplier] [name=legal_name]", facts.supplier_name);
+  // Picked from the suppliers already on CalibraytAI, by public name only (defect 4, 21 Oct 2026).
+  const picker = pg.locator("[data-add-supplier] select[name=supplier_id]");
+  assert.deepEqual((await picker.locator("option").allInnerTexts()).filter((t) => !t.startsWith("—")), [facts.supplier_name]);
+  await picker.selectOption({ label: facts.supplier_name });
   await shot(pg, "09-suppliers", "add");
   await submit(pg, pg.locator("[data-add-supplier] button"));
-  assert.match(await flash(pg), new RegExp(`${facts.supplier_name} added`));
+  assert.match(await flash(pg), new RegExp(`${facts.supplier_name.replace(/[()]/g, "\\$&")} added`));
   const account = pg.locator(`#supplier-${facts.supplier_id}`);
   assert.equal(await account.count(), 1, "the platform supplier is the one added (no duplicate company)");
   assert.match(await account.innerText(), new RegExp(facts.store_name.replace(/[()]/g, "\\$&") + ".*can sign in"));
@@ -410,6 +413,8 @@ step("11 estimate: lines, scope delivery, costing approved, company pricing appl
   await submit(pg, pg.getByRole("button", { name: "Save Estimate" }));
   assert.match(await flash(pg), /Estimate created/);
   W.estimateId = Number(pg.url().match(/\/estimates\/(\d+)/)[1]);
+  // The estimate summary (versions table) fits the 1280 px desktop: no sideways scroll (defect 3, 21 Oct 2026).
+  await noSideways(pg, "11 estimate summary (desktop)");
   await submit(pg, pg.getByRole("link", { name: "View Version" }).first());
   W.versionUrl = new URL(pg.url()).pathname;
   await pg.fill("form[action$='/sections/new'] [name=name]", "Deck");
@@ -443,6 +448,9 @@ step("11 estimate: lines, scope delivery, costing approved, company pricing appl
   assert.match(text, /TAX \(13\.00%\)/);
   assert.match(text, /CUSTOMER TOTAL\s*\$11130\.50/);       // 7880 / 0.8 = 9850.00, + 13 % HST
   await shot(pg, "11-estimate", "priced");
+  await go(pg, `/estimates/${W.estimateId}`);
+  await noSideways(pg, "11 estimate summary, priced (desktop)");
+  await go(pg, W.versionUrl);
   await expectDone(pg, "estimate", 11);
 });
 
@@ -608,12 +616,16 @@ step("14 crew schedule: a work item, dates on the calendar, a crew with Kevin; K
   await submit(pg, pg.getByRole("link", { name: "Open project work" }));
   const element = pg.locator("form[action$='/elements']");
   await element.locator("[name=display_name]").fill("Deck framing and decking (synthetic)");
+  // Added after the proposal was accepted: the office says whether it is original or extra work (defect 7).
+  await element.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await submit(pg, element.locator("button[type=submit]"));
   assert.match(await flash(pg), /Work item added/);
   const activity = pg.locator("form[action*='/activities']").last();
   await activity.locator("[name=display_name]").fill("Framing and decking (synthetic)");
+  await activity.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await submit(pg, activity.locator("button[type=submit]"));
   assert.match(await pg.locator("main").innerText(), /Framing and decking \(synthetic\)/);
+  assert.match(await pg.locator("tr").filter({ hasText: "Framing and decking (synthetic)" }).first().innerText(), /Original work/);
   // Calendar → Set dates.
   await go(pg, "/schedule");
   await submit(pg, pg.getByRole("link", { name: "Set dates" }).first());

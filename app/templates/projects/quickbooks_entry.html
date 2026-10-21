@@ -319,7 +319,7 @@
                             <tr>
                                 <td>{{ event.kind }}</td>
                                 <td>{{ event.actor_display_name }}</td>
-                                <td>{{ event.occurred_at }}</td>
+                                <td>{{ event.occurred_at|local_time }}</td>
                                 <td>{{ event.note or "—" }}</td>
                             </tr>
                             {% endfor %}

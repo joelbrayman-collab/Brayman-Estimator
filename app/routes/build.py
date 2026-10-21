@@ -18,6 +18,7 @@ from flask import (
 from flask_login import current_user
 
 from app.models.project import Project
+from app.services.local_time import local_input_to_utc
 from app.services.construction_model_entry import current_revision_for_project
 from app.services.project_drawing_requirement import derive_drawing_state
 from app.services.project_work_package import project_plans
@@ -205,7 +206,7 @@ def new_field_event(project_id):
         else "",
     }
     if request.method == "POST":
-        occurred = form["occurred_at"] or None
+        occurred = local_input_to_utc(form["occurred_at"])
         try:
             event = create_event_with_text(
                 project,
@@ -251,7 +252,7 @@ def supersede_field_event(project_id, event_id):
     project = _project(project_id)
     event = _event(project, event_id)
     text = (request.form.get("text") or "").strip()
-    occurred = (request.form.get("occurred_at") or "").strip() or None
+    occurred = local_input_to_utc(request.form.get("occurred_at"))
     try:
         correction = supersede_event(event, text=text, occurred_at=occurred)
     except BuildServiceError as exc:

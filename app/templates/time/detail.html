@@ -87,7 +87,7 @@
         <tbody>
             {% for event in row.entry.history %}
             <tr>
-                <td>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ event.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
                 <td>{{ status_label(event.new_status) if event.event != 'RESUBMITTED' else 'Sent again' }}</td>
                 <td>{{ event.actor_display_name }}</td>
                 <td>{{ "%.2f"|format(event.hours_snapshot) }}</td>

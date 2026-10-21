@@ -62,3 +62,20 @@ def test_every_go_there_link_opens(app, client):
     for href in sorted(set(re.findall(r'href="(/[^"#]*)"[^>]*>Go there', html))):
         expected = (200, 302, 403) if href.startswith("/settings/people") else (200, 302)  # People & Access: owner only
         assert client.get(href).status_code in expected, href
+
+
+def test_company_step_ticks_only_when_the_brand_profile_is_saved(app, client):
+    """Opening Brand profile creates version 1 from the organization record by itself; that is not Ben setting
+    up his company (first-day walk, 21 Oct 2026). Saving the form is."""
+    from app.models.brand_profile import OrganizationBrandProfile
+    from tests.test_core_close_close_reopen_fg035 import _make_owner
+
+    _make_owner()  # saving the brand profile is for the owner or a System Administrator
+    assert client.get("/settings/brand-profile").status_code == 200
+    assert OrganizationBrandProfile.query.filter_by(organization_id=DEFAULT_ORGANIZATION_ID).count() == 1
+    assert 'data-step="company" data-done="no"' in client.get("/getting-started").get_data(as_text=True)
+    saved = client.post("/settings/brand-profile", data={
+        "legal_name": "Synthetic Builder Inc.", "customer_facing_name": "Synthetic Builder",
+        "phone": "613-555-0100", "email": "office@example.invalid", "address": "1 Synthetic Road"})
+    assert saved.status_code == 302
+    assert 'data-step="company" data-done="yes"' in client.get("/getting-started").get_data(as_text=True)

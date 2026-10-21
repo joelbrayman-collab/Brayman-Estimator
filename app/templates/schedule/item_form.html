@@ -58,6 +58,8 @@
                 {% endfor %}
             </select>
         </label>
+        {% elif selected_project_id and not item %}
+        <p class="muted-copy" data-no-work-items="true">This project has no work items yet. <a href="{{ url_for('work_structure.project_work_plan', project_id=selected_project_id) }}">Add a work item</a> on the project's work page, then come back and set its dates.</p>
         {% endif %}
         {% endif %}
         <label>

@@ -352,6 +352,39 @@ class PostmarkTransport:
         )
 
 
+def email_delivery_configured() -> bool:
+    """True when this site hands email to a real mail service (Postmark with a server token).
+
+    Without it, forgot-password and invitation emails are only written to a file on the server, so the
+    sign-in pages say so instead of telling people to wait for an email that will never come
+    (training sign-in fix, 21 Oct 2026). Says nothing about any account."""
+    if current_app.config.get("TRANSACTIONAL_EMAIL_TRANSPORT") is not None:
+        return True
+    provider = _config_str("TRANSACTIONAL_EMAIL_PROVIDER", PROVIDER_LOCAL).lower()
+    if provider == PROVIDER_POSTMARK:
+        # Postmark chosen: a missing token is an operator error, recorded on each message (FAILED_CONFIG);
+        # the public pages stay generic for it.
+        return True
+    # Captured mail is the delivery on a development or test office (the file is read there), never on a
+    # hosted office or the training site: the same rule as password_reset._delivered.
+    from app import _is_hosted
+    from app.training.service import enabled as training_site
+
+    return not _is_hosted(current_app) and not training_site(current_app)
+
+
+def link_base_url() -> str:
+    """The address for a link shown on screen: PUBLIC_BASE_URL when set, else the address the person is
+    using now. (public_base_url() falls back to http://localhost for captured mail, which is wrong for a
+    link someone will open on another device.)"""
+    from flask import has_request_context, request
+
+    configured = _config_str("PUBLIC_BASE_URL")
+    if configured:
+        return configured.rstrip("/")
+    return request.url_root.rstrip("/") if has_request_context() else ""
+
+
 def _resolve_transport() -> Any:
     injected = current_app.config.get("TRANSACTIONAL_EMAIL_TRANSPORT")
     if injected is not None:

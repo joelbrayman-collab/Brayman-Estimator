@@ -1,0 +1,9 @@
+<nav class="tc-card tc-review-bar" aria-label="Owner review" data-review-bar>
+  <p class="tc-eyebrow">Owner review · read-only, nothing is saved</p>
+  <p class="tc-review-links">
+    <a href="{{ url_for('training.review_map', map_key='contractor') }}" data-review-map-link="contractor"{% if map_key == 'contractor' %} aria-current="page"{% endif %}>Contractor Workflow Map</a>
+    <a href="{{ url_for('training.review_map', map_key='supplier') }}" data-review-map-link="supplier"{% if map_key == 'supplier' %} aria-current="page"{% endif %}>Supplier Workflow Map</a>
+    <a href="{{ url_for('training.review_map', map_key='field') }}" data-review-map-link="field"{% if map_key == 'field' %} aria-current="page"{% endif %}>Field (crew) map</a>
+    <a href="{{ url_for('training.admin') }}">Administrator dashboard</a>
+  </p>
+</nav>

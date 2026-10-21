@@ -23,6 +23,7 @@
       <a href="{{ url_for('training.home') }}">My training</a>
       <a href="{{ url_for('training.workflow_map') }}" data-workflow-map-link>Workflow map</a>
       <a href="{{ url_for('training.uat') }}">Acceptance tests</a>
+      {% if training_admin %}<a href="{{ url_for('training.review') }}" data-owner-review-link>Owner review</a>{% endif %}
       <span class="tc-who">{{ current_user.display_name }}</span>
       {% endif %}
     </nav>

@@ -380,6 +380,11 @@ def test_office_map_on_the_training_site_links_to_training(site):
     ben = _client(app, "ben")
     html = _get(ben, "/workflow?stage=c-price").get_data(as_text=True)
     if f["training"]:
+        # the owner, not registered as a trainee: lessons open read-only in owner review (21 Oct 2026)
+        assert "/training/review/lessons/c09-new-estimate?map=contractor&amp;stage=c-price" in html
+        assert "/training/review/contractor?stage=c-price" in html
+        ben.post("/training/register", data={"role": "OWNER"})
+        html = _get(ben, "/workflow?stage=c-price").get_data(as_text=True)
         assert "/training/workflow?stage=c-price" in html and "/training/lessons/c09-new-estimate" in html
     else:
         assert "/training" not in _map_html(html)

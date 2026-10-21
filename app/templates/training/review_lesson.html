@@ -1,0 +1,41 @@
+{% extends "training/base.html" %}
+{% block title %}{{ lesson.title }} · owner review{% endblock %}
+{% block content %}
+{% include "training/_review_bar.html" %}
+<article class="tc-card tc-lesson-page" data-review-lesson="{{ lesson.key }}">
+  <p><a class="tc-btn" href="{{ back }}" data-review-back>&larr; Back to the map</a></p>
+  <p class="tc-eyebrow">{{ 'Supplier' if module.pathway == 'SUPPLIER' else 'Contractor' }} training · Module {{ module.number }} · {{ module.title }}</p>
+  <h1>{{ lesson.title }}</h1>
+  <div class="tc-intro"><p><b>What the trainee will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p></div>
+  <ol class="tc-checklist">
+  {% for s in lesson.steps %}
+    <li class="tc-step-card" id="step-{{ loop.index }}" data-review-step="{{ loop.index0 }}">
+      <div class="tc-step-head"><span class="tc-check" aria-hidden="true">{{ loop.index }}</span><h2>{{ s.title }}</h2></div>
+      <div class="tc-step{% if not s.shot %} tc-step-text-only{% endif %}">
+        <div class="tc-step-text">
+          <dl>
+            <dt>Open</dt><dd>{{ s.app }}</dd>
+            <dt>Go to</dt><dd>{{ s.where }}</dd>
+            <dt>Do this</dt><dd>{{ s.do }}</dd>
+            {% if s.enter %}<dt>Enter</dt><dd>{{ s.enter }}</dd>{% endif %}
+            <dt>You should see</dt><dd>{{ s.expect }}</dd>
+            {% if s.why %}<dt>Why</dt><dd>{{ s.why }}</dd>{% endif %}
+          </dl>
+          <details class="tc-wrong"><summary>If something goes wrong</summary><p>{{ s.if_wrong }}</p></details>
+        </div>
+        {% if s.shot %}
+        <figure class="tc-shot">
+          <button type="button" class="tc-shot-btn" data-enlarge aria-label="Show the screenshot full size">
+            <img src="{{ url_for('static', filename='training/shots/' ~ s.shot) }}" alt="Screen: {{ s.title }}" loading="lazy">
+          </button>
+          <figcaption>Press the picture to see it full size.</figcaption>
+        </figure>
+        {% endif %}
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+  <section class="tc-exercise"><h2>Practice exercise</h2><p>{{ lesson.exercise }}</p></section>
+  <p><a class="tc-btn" href="{{ back }}">&larr; Back to the map</a></p>
+</article>
+{% endblock %}

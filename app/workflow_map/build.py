@@ -39,6 +39,8 @@ class Viewer:
     role: Optional[str] = None      # training role used to choose lessons
     projects: List[dict] = field(default_factory=list)  # the viewer's own projects, to choose from
     default_stage: Optional[str] = None  # where the viewer is when no stage was asked for (the project's stage)
+    review_map: Optional[str] = None  # owner review on the training site (no trainee): lessons and tests open
+                                      # read-only and lead back to this map at the same stage
 
 
 def can_open(dest: D.Destination, viewer: Viewer):
@@ -137,7 +139,20 @@ class _Training:
             self.uat[row["case"].key] = row["latest"].status if row["latest"] else "NOT_TESTED"
 
 
-def _lesson_rows(keys, viewer: Viewer, progress: _Training) -> List[dict]:
+def _training_href(kind: str, key: str, viewer: Viewer, *, step: int = 0, stage: Optional[str] = None) -> str:
+    """A lesson or acceptance-test link. In owner review it opens the read-only page, which leads back
+    to the same map and stage."""
+    if not viewer.training:
+        return ""
+    if viewer.review_map:
+        endpoint = "training.review_lesson" if kind == "lesson" else "training.review_uat"
+        return url_for(endpoint, key=key, map=viewer.review_map, stage=stage or "")
+    if kind == "lesson":
+        return url_for("training.lesson", key=key, step=step)
+    return url_for("training.uat_case", key=key)
+
+
+def _lesson_rows(keys, viewer: Viewer, progress: _Training, stage: Optional[str] = None) -> List[dict]:
     from app.training import content as C
 
     rows = []
@@ -146,13 +161,13 @@ def _lesson_rows(keys, viewer: Viewer, progress: _Training) -> List[dict]:
             continue
         _module, lesson = C.find_lesson(key)
         p = progress.lessons.get(key, {})
-        href = url_for("training.lesson", key=key, step=p.get("step", 0)) if viewer.training else ""
+        href = _training_href("lesson", key, viewer, step=p.get("step", 0), stage=stage)
         rows.append({"key": key, "title": lesson.title, "href": href, "state": p.get("state", ""),
                      "ticked": p.get("ticked", 0), "steps": p.get("steps", len(lesson.steps))})
     return rows
 
 
-def _uat_rows(keys, viewer: Viewer, progress: _Training) -> List[dict]:
+def _uat_rows(keys, viewer: Viewer, progress: _Training, stage: Optional[str] = None) -> List[dict]:
     from app.training import content as C
 
     rows = []
@@ -161,7 +176,7 @@ def _uat_rows(keys, viewer: Viewer, progress: _Training) -> List[dict]:
             continue
         case = C.find_uat(key)
         rows.append({"key": key, "title": case.title,
-                     "href": url_for("training.uat_case", key=key) if viewer.training else "",
+                     "href": _training_href("uat", key, viewer, stage=stage),
                      "status": progress.uat.get(key, "")})
     return rows
 
@@ -201,14 +216,15 @@ def build(map_key: str, viewer: Viewer, *, current: Optional[str], stage_endpoin
                 else:
                     row["reason"] = reason
             if x.lesson and viewer.training and _lesson_allowed(x.lesson, viewer):
-                row["instructions"] = {"href": url_for("training.lesson", key=x.lesson), "label": "Instructions"}
+                row["instructions"] = {"href": _training_href("lesson", x.lesson, viewer, stage=s.id),
+                                       "label": "Instructions"}
             substeps.append(row)
         open_link, open_reason = None, ""
         if s.primary is not None:
             ok, open_reason = can_open(s.primary, viewer)
             open_link = link_for(s.primary, viewer) if ok else None
-        lessons = _lesson_rows(s.lessons, viewer, progress)
-        uat = _uat_rows(s.uat, viewer, progress)
+        lessons = _lesson_rows(s.lessons, viewer, progress, stage=s.id)
+        uat = _uat_rows(s.uat, viewer, progress, stage=s.id)
         instructions = None
         if lessons and viewer.training:
             first = next((r for r in lessons if r["state"] != "done"), lessons[0])
@@ -218,7 +234,9 @@ def build(map_key: str, viewer: Viewer, *, current: Optional[str], stage_endpoin
         training = None
         uat_link = None
         if viewer.training:
-            training = {"href": url_for("training.workflow_map", stage=s.id) + "#workflow-stage",
+            training = {"href": (url_for("training.review_map", map_key=viewer.review_map, stage=s.id)
+                                 if viewer.review_map else url_for("training.workflow_map", stage=s.id))
+                                + "#workflow-stage",
                         "label": "Open training"}
             if uat:
                 todo = next((r for r in uat if r["status"] not in ("PASS",)), uat[0])

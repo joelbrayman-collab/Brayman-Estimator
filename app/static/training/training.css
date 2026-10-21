@@ -87,3 +87,13 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 .tc-chip { border:1px solid #c9c4b8; background:#faf7ef; border-radius:999px; padding:6px 12px; min-height:36px; font:inherit; font-size:.9rem; cursor:pointer; }
 .tc-chip:hover, .tc-chip:focus-visible { border-color:var(--gold); outline:none; }
 .tc-step-card { cursor:pointer; }
+
+/* Owner review (21 Oct 2026) */
+.tc-review-bar { padding: 12px 16px; margin-bottom: 14px; }
+.tc-review-bar .tc-eyebrow { margin: 0 0 6px; }
+.tc-review-links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; }
+.tc-review-links a { font-weight: 600; }
+.tc-review-links a[aria-current="page"] { text-decoration: none; border-bottom: 3px solid #c79a2b; }
+.tc-review-list { list-style: none; padding: 0; display: grid; gap: 14px; }
+.tc-uat-def dt { font-weight: 700; margin-top: 10px; }
+.tc-uat-def dd { margin: 2px 0 0; }

@@ -6,6 +6,7 @@
     <p class="eyebrow">Supplier Hub</p>
     <h1>Supplier sign-in</h1>
     <p class="muted-copy">For store staff who receive material requests from contractors on CalibraytAI. Contractor office staff sign in on the office sign-in page.</p>
+    {% if training_site %}<p class="muted-copy" data-training-signin-method><strong>Training site:</strong> use your training account, the email and password for this training site. Your live password does not work here, and there is no ChatGPT sign-in.</p>{% endif %}
     <form method="post" action="{{ url_for('supplier_portal.login') }}" class="login-form supplier-login-form" novalidate>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">

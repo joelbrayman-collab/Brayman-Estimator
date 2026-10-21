@@ -328,7 +328,11 @@ def _delivered(status: str) -> bool:
         return True
     # Local capture is the delivery on a development or test office (the captured file is read there);
     # on a hosted office it means the email went nowhere.
-    return status == STATUS_LOCAL_CAPTURED and not _is_hosted(current_app)
+    # The training site is always used from other devices, so a captured email is never a delivery there.
+    from app.training.service import enabled as training_site
+
+    training = training_site(current_app)
+    return status == STATUS_LOCAL_CAPTURED and not _is_hosted(current_app) and not training
 
 
 def send_set_password_link(user: User, *, client_ip: Optional[str] = None,

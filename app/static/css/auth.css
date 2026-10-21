@@ -85,3 +85,18 @@ a.login-primary,
 }
 .password-reveal-toggle:hover { color: #17212b; background: rgba(0, 0, 0, 0.05); }
 .password-reveal-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+
+/* A site that cannot send email says so on the forgot-password pages (21 Oct 2026). */
+.login-notice {
+    margin: 14px 0;
+    padding: 12px 14px;
+    border: 1px solid #d8b25a;
+    border-left-width: 4px;
+    border-radius: 8px;
+    background: #fff8e6;
+    color: #3a2c08;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+.login-notice p { margin: 0 0 6px; }
+.login-notice p:last-child { margin-bottom: 0; }

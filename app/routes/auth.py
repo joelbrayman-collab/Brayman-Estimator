@@ -100,12 +100,22 @@ def forgot_password():
         except PasswordResetServiceError:
             pass
         return redirect(url_for("auth.forgot_password_sent", portal=portal or None))
-    return render_template("auth/forgot.html", portal=portal, sign_in_url=_sign_in_url(portal))
+    return render_template("auth/forgot.html", portal=portal, sign_in_url=_sign_in_url(portal),
+                           email_ready=_email_ready())
 
 
 @auth_bp.route("/forgot-password/sent", methods=["GET"])
 def forgot_password_sent():
-    return render_template("auth/forgot_sent.html", sign_in_url=_sign_in_url(_recovery_portal()))
+    portal = _recovery_portal()
+    return render_template("auth/forgot_sent.html", sign_in_url=_sign_in_url(portal), portal=portal,
+                           email_ready=_email_ready())
+
+
+def _email_ready() -> bool:
+    """Whether this site can email a reset link at all (says nothing about any account)."""
+    from app.services.transactional_email import email_delivery_configured
+
+    return email_delivery_configured()
 
 
 @auth_bp.route("/reset-password/complete", methods=["GET"])

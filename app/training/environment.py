@@ -52,7 +52,20 @@ def _password() -> str:
     return "Training-" + secrets.token_urlsafe(9)
 
 
-def build(app, passwords: Dict[str, str] | None = None) -> Dict[str, dict]:
+ADMIN_KEY = "admin"
+
+
+def administrator_from_env() -> tuple | None:
+    """The real person who runs the training site (Joel, 21 Oct 2026), from the site's settings:
+    TRAINING_ADMIN_EMAIL (required) and TRAINING_ADMIN_NAME. Their first password comes from
+    TRAINING_PASSWORD_ADMIN, set by them in the host's settings, so it never passes through anyone else."""
+    email = (os.environ.get("TRAINING_ADMIN_EMAIL") or "").strip().lower()
+    if not email:
+        return None
+    return (os.environ.get("TRAINING_ADMIN_NAME") or "").strip() or "Training administrator", email
+
+
+def build(app, passwords: Dict[str, str] | None = None, administrator: tuple | None = None) -> Dict[str, dict]:
     """Add whatever is missing of the training company. Returns who was created, with their new password
     (people who already existed keep theirs and are listed without one)."""
     _require_training_site(app)
@@ -98,6 +111,29 @@ def build(app, passwords: Dict[str, str] | None = None) -> Dict[str, dict]:
     ben_membership = UserMembership.query.filter_by(user_id=users["ben"].id, organization_id=ORG).one()
     set_instance_owner(ORG, ben_membership.id, users["ben"].id)
     db.session.commit()
+    if administrator is not None:
+        # A real administrator account (not synthetic): System Administrator of the training company, so it
+        # sees the Training administrator dashboard and People & Access. An existing account keeps its password.
+        from app.services.instance_authority import appoint_system_administrator
+
+        admin_name, admin_email = administrator
+        admin = User.query.filter_by(email=admin_email).first()
+        created = admin is None
+        if created:
+            password = passwords.get(ADMIN_KEY) or _password()
+            admin = User(email=admin_email, display_name=admin_name, password_hash=hash_password(password),
+                         is_active=True)
+            db.session.add(admin)
+            db.session.flush()
+        membership = UserMembership.query.filter_by(user_id=admin.id, organization_id=ORG).first()
+        if membership is None:
+            membership = UserMembership(user_id=admin.id, organization_id=ORG, is_active=True)
+            db.session.add(membership)
+            db.session.flush()
+        db.session.commit()
+        appoint_system_administrator(ORG, membership.id, users["ben"])
+        out[ADMIN_KEY] = {"name": admin_name, "email": admin_email, "password": password if created else None,
+                          "role": "ADMIN"}
     for key, _name, _email, role in OFFICE_PEOPLE:
         if role == "FIELD":
             membership = UserMembership.query.filter_by(user_id=users[key].id, organization_id=ORG).one()
@@ -182,11 +218,11 @@ def register_cli(app) -> None:
         """Add the synthetic training company, its people, BMR Winchester (training) and the example job."""
         given = {}
         if passwords_from_env:
-            keys = [k for k, *_ in OFFICE_PEOPLE] + [k for k, *_ in SUPPLIER_PEOPLE]
+            keys = [k for k, *_ in OFFICE_PEOPLE] + [k for k, *_ in SUPPLIER_PEOPLE] + [ADMIN_KEY]
             given = {k: os.environ[f"TRAINING_PASSWORD_{k.upper()}"] for k in keys
                      if os.environ.get(f"TRAINING_PASSWORD_{k.upper()}")}
         try:
-            people = build(app, given)
+            people = build(app, given, administrator=administrator_from_env())
         except TrainingEnvironmentError as exc:
             raise click.ClickException(str(exc))
         for key, row in people.items():

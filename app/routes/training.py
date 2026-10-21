@@ -6,6 +6,8 @@ everywhere else every page answers 404.
 /training/uat                     the trainee's acceptance tests; /training/uat/<key> one test (Pass/Fail/Blocked)
 /training/workflow                the Workflow map: each stage with its lessons and acceptance tests
 /training/admin                   the administrator's dashboard (Instance Owner or System Administrator)
+/training/review                  owner review of the Workflow Maps (administrators; no trainee registration):
+/training/review/<map>            contractor, supplier or field map; lessons and tests open read-only
 """
 
 from __future__ import annotations
@@ -36,11 +38,22 @@ def _trainee_or_register():
     return trainee, None
 
 
+@training_bp.context_processor
+def _review_nav():
+    """Training administrators see Owner review in the Training Centre menu (21 Oct 2026)."""
+    if not current_user.is_authenticated:
+        return {"training_admin": False}
+    return {"training_admin": svc.is_admin(current_user._get_current_object()) is not None}
+
+
 @training_bp.route("/signin")
 def signin():
     if current_user.is_authenticated:
         return redirect(url_for("training.home"))
-    return render_template("training/signin.html", next=request.args.get("next") or url_for("training.home"))
+    from app.services.transactional_email import email_delivery_configured
+
+    return render_template("training/signin.html", next=request.args.get("next") or url_for("training.home"),
+                           email_ready=email_delivery_configured())
 
 
 @training_bp.route("")
@@ -213,9 +226,12 @@ def tutor_ask():
 def workflow_map():
     """The Workflow map in the Training Centre (Joel, 21 Oct 2026): the trainee's side of the governed workflow
     definition, each stage with its lessons and acceptance tests and the trainee's own progress."""
-    trainee, back = _trainee_or_register()
-    if back:
-        return back
+    trainee = svc.trainee_for(current_user)
+    if trainee is None:
+        # An administrator reviews the maps without registering (21 Oct 2026); others register first.
+        if svc.is_admin(current_user) is not None:
+            return redirect(url_for("training.review_map", map_key="contractor", stage=request.args.get("stage")))
+        return redirect(url_for("training.home"))
     from app.workflow_map.build import build as build_map
     from app.workflow_map.pages import training_viewer
 
@@ -269,3 +285,81 @@ def admin():
     if org is None:
         abort(403)
     return render_template("training/admin.html", report=svc.admin_report(org), labels=ROLE_LABELS)
+
+
+# ------------------------------------------------------------------ owner review (21 Oct 2026)
+# The owner reviews the Workflow Maps, lessons and acceptance tests without registering as a trainee.
+# Read-only: nothing here saves progress or results. Training administrators only.
+
+REVIEW_MAPS = ("contractor", "supplier", "field")
+
+
+def _review_guard():
+    if svc.is_admin(current_user) is None:
+        abort(403)
+
+
+def _review_map_key(raw):
+    from app.workflow_map import definition as WD
+
+    key = (raw or "").strip().lower()
+    return key if key in REVIEW_MAPS and key in WD.MAPS else None
+
+
+@training_bp.route("/review")
+def review():
+    _review_guard()
+    from app.workflow_map import definition as WD
+
+    maps = [{"key": k, "title": WD.MAPS[k].title, "intro": WD.MAPS[k].intro,
+             "href": url_for("training.review_map", map_key=k)} for k in REVIEW_MAPS]
+    return render_template("training/review.html", maps=maps)
+
+
+@training_bp.route("/review/<map_key>")
+def review_map(map_key):
+    _review_guard()
+    key = _review_map_key(map_key)
+    if key is None:
+        abort(404)
+    from app.workflow_map.build import KIND_FIELD, KIND_OFFICE, KIND_SUPPLIER, Viewer
+    from app.workflow_map.build import build as build_map
+
+    kind = {"contractor": KIND_OFFICE, "supplier": KIND_SUPPLIER, "field": KIND_FIELD}[key]
+    org = svc.is_admin(current_user)
+    from app.workflow_map.pages import _office_access
+
+    people_admin, company_management = _office_access(org) if kind == KIND_OFFICE else (False, False)
+    viewer = Viewer(kind=kind, people_admin=people_admin, company_management=company_management, training=True,
+                    trainee=None, role=None, projects=None, review_map=key)
+    wf = build_map(key, viewer, current=request.args.get("stage"), stage_endpoint="training.review_map",
+                   stage_args={"map_key": key})
+    return render_template("training/review_map.html", wf=wf, map_key=key, maps=REVIEW_MAPS)
+
+
+def _review_back(key):
+    map_key = _review_map_key(request.args.get("map")) or "contractor"
+    stage = (request.args.get("stage") or "").strip()
+    return url_for("training.review_map", map_key=map_key, stage=stage or None) + "#workflow-stage", map_key
+
+
+@training_bp.route("/review/lessons/<key>")
+def review_lesson(key):
+    _review_guard()
+    found = C.find_lesson(key)
+    if found is None:
+        abort(404)
+    module, item = found
+    back, map_key = _review_back(key)
+    return render_template("training/review_lesson.html", module=module, lesson=item, back=back, map_key=map_key)
+
+
+@training_bp.route("/review/uat/<key>")
+def review_uat(key):
+    _review_guard()
+    case = C.find_uat(key)
+    if case is None:
+        abort(404)
+    module = next((m for m in C.modules() if m.key == case.module_key), None)
+    back, map_key = _review_back(key)
+    return render_template("training/review_uat.html", case=case, module=module, back=back, map_key=map_key)

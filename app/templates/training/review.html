@@ -1,0 +1,14 @@
+{% extends "training/base.html" %}
+{% block title %}Owner review{% endblock %}
+{% block content %}
+{% set map_key = '' %}
+<section class="tc-card tc-hero" data-review-home>
+  <p class="tc-eyebrow">Owner review</p>
+  <h1>Workflow Maps for review</h1>
+  <p>Open each map, expand every stage, follow its links into CalibraytAI and read its lessons and acceptance tests. Nothing here registers you as a trainee or saves results.</p>
+  <ul class="tc-review-list">
+    {% for m in maps %}<li><a class="tc-btn tc-btn-primary" href="{{ m.href }}" data-review-map-link="{{ m.key }}">{{ m.title }}</a>
+      <p class="tc-small">{{ m.intro }}</p></li>{% endfor %}
+  </ul>
+</section>
+{% endblock %}

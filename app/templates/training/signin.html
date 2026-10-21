@@ -4,7 +4,8 @@
 <section class="tc-card tc-hero">
   <h1>Welcome to CalibraytAI training</h1>
   <p>Learn CalibraytAI step by step, practise on a training company with synthetic jobs, then complete the acceptance tests. Your place is saved, so you can stop and come back any time, on your computer or your iPhone.</p>
-  <p>Sign in with the email and password from your training invitation.</p>
+  <p data-training-signin-method><b>How to sign in:</b> with your <b>training account</b>, the email address and password for this training site. It is separate from the live CalibraytAI (your live password does not work here) and there is no ChatGPT sign-in.</p>
+  <p>New here? Your company's owner or administrator gives you your sign-in from People &amp; Access (building suppliers: from Company &rarr; Suppliers). Forgot your password? Use <b>Forgot your password?</b> on the next page{% if not email_ready %}; this site cannot send email yet, so ask your administrator for a new one-time sign-in link instead{% endif %}.</p>
   <div class="tc-choice">
     <a class="tc-btn tc-btn-primary" href="{{ url_for('auth.login', next=url_for('training.home')) }}" data-signin="contractor">I work for a contractor</a>
     <a class="tc-btn tc-btn-primary" href="{{ url_for('supplier_portal.login', next=url_for('training.home')) }}" data-signin="supplier">I work for a building supplier</a>

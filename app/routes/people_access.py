@@ -122,9 +122,9 @@ def _send_link(user):
                             detail=f"Not emailed ({outcome.status}); one-time link shown to {actor} to give in person")
     flash(LINK_NOT_EMAILED.format(email=user.email, reason=reason, name=user.display_name,
                                   expires=_expires_phrase(outcome)), "error")
-    from app.services.transactional_email import public_base_url
+    from app.services.transactional_email import link_base_url
 
-    base = public_base_url() or request.url_root.rstrip("/")
+    base = link_base_url()
     return {"url": f"{base}{outcome.path}", "expires_at": outcome.expires_at, "email": user.email}
 
 

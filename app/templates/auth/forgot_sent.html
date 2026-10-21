@@ -2,7 +2,17 @@
 {% block auth_title %}{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}{% endblock %}
 {% block auth_body %}
         <h1>{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}</h1>
-        <p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>
+        {% if email_ready %}<p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>{% endif %}
+        {% if not email_ready %}
+        <div class="login-notice" role="status" data-no-email>
+            <p><strong>This site cannot send email yet, so no email is on its way.</strong></p>
+            {% if portal == 'supplier' %}
+            <p>Ask the contractor you work with to send you a new sign-in link. They do it in CalibraytAI under Company &rarr; Suppliers, and can give you the one-time link directly.</p>
+            {% else %}
+            <p>Ask your company's owner or administrator for a new sign-in link. They do it under People &amp; Access, and can give you the one-time link directly.</p>
+            {% endif %}
+        </div>
+        {% endif %}
         <p class="login-secondary">
             <a class="login-secondary-link" href="{{ sign_in_url or url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
         </p>

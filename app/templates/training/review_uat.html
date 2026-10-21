@@ -1,0 +1,17 @@
+{% extends "training/base.html" %}
+{% block title %}{{ case.key }} · owner review{% endblock %}
+{% block content %}
+{% include "training/_review_bar.html" %}
+<article class="tc-card" data-review-uat="{{ case.key }}">
+  <p><a class="tc-btn" href="{{ back }}" data-review-back>&larr; Back to the map</a></p>
+  <p class="tc-eyebrow">Acceptance test {{ case.key }}{% if module %} · Module {{ module.number }} · {{ module.title }}{% endif %}</p>
+  <h1>{{ case.title }}</h1>
+  <dl class="tc-uat-def">
+    <dt>Start here</dt><dd>{{ case.start }}</dd>
+    <dt>Do this</dt><dd>{{ case.action }}</dd>
+    <dt>Expected result</dt><dd>{{ case.expected }}</dd>
+  </dl>
+  <p class="tc-small">Trainees record Pass, Fail or Blocked on their own copy of this test. Owner review records nothing.</p>
+  <p><a class="tc-btn" href="{{ back }}">&larr; Back to the map</a></p>
+</article>
+{% endblock %}

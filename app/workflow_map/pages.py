@@ -53,7 +53,10 @@ def office_viewer(project_id: Optional[int]) -> Viewer:
     return Viewer(kind=KIND_OFFICE, people_admin=people_admin, company_management=company_management,
                   project_id=project.id if project else None, project_name=project.name if project else "",
                   training=training, trainee=trainee, role=role if training else None, projects=choices,
-                  default_stage=D.stage_for_project_status(project.status) if project else None)
+                  default_stage=D.stage_for_project_status(project.status) if project else None,
+                  # an administrator on the training site who has not registered reads lessons and tests
+                  # in owner review instead of being sent to register (21 Oct 2026)
+                  review_map=D.MAP_CONTRACTOR if (training and trainee is None and people_admin) else None)
 
 
 def field_viewer(project) -> Viewer:

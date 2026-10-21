@@ -62,7 +62,7 @@ def _actor():
 # ------------------------------------------------------------------ supplier accounts and sign-ins
 
 @supplier_office_bp.route("/suppliers")
-def suppliers():
+def suppliers(one_time_link=None):
     org_id = get_current_organization_id()
     accounts = _accounts(org_id)
     members = {}
@@ -76,7 +76,8 @@ def suppliers():
     from app.services.supplier_hub import platform_suppliers_to_add
 
     return render_template("suppliers/index.html", accounts=accounts, members=members, brands=brands,
-                           brand_text=brand_text, platform_suppliers=platform_suppliers_to_add(org_id))
+                           brand_text=brand_text, platform_suppliers=platform_suppliers_to_add(org_id),
+                           one_time_link=one_time_link)
 
 
 @supplier_office_bp.route("/suppliers", methods=["POST"])
@@ -142,8 +143,6 @@ def _add_platform_supplier(org_id, picked):
 
 @supplier_office_bp.route("/suppliers/<int:supplier_id>/users", methods=["POST"])
 def add_user(supplier_id):
-    from app.services.password_reset import PasswordResetServiceError, request_password_reset
-
     org_id = get_current_organization_id()
     if ContractorSupplierAccount.query.filter_by(organization_id=org_id, supplier_id=supplier_id).first() is None:
         abort(404)
@@ -155,15 +154,54 @@ def add_user(supplier_id):
     except SupplierHubError as exc:
         flash(str(exc), "error")
         return redirect(url_for("supplier_office.suppliers"))
-    if created:
-        try:
-            request_password_reset(user.email, client_ip=request.remote_addr)
-        except PasswordResetServiceError:
-            pass
-        flash(f"{user.display_name} can now sign in to the Supplier Hub. A link to choose a password was emailed to {user.email}.", "success")
-    else:
+    if not created:
         flash(f"{user.display_name} now also has access to {supplier.legal_name}.", "success")
-    return redirect(url_for("supplier_office.suppliers"))
+        return redirect(url_for("supplier_office.suppliers"))
+    flash(f"{user.display_name} can now sign in to the Supplier Hub once they choose a password.", "success")
+    return _after_link(user, supplier_id)
+
+
+@supplier_office_bp.route("/suppliers/memberships/<int:membership_id>/send-link", methods=["POST"])
+def send_user_link(membership_id):
+    """A new sign-in link for supplier staff who cannot sign in (21 Oct 2026): the same one-use,
+    expiring set-password link as forgot-password, sent by the contractor who gave the sign-in."""
+    org_id = get_current_organization_id()
+    membership = db.session.get(SupplierUserMembership, membership_id)
+    if membership is None or ContractorSupplierAccount.query.filter_by(
+            organization_id=org_id, supplier_id=membership.supplier_id).first() is None:
+        abort(404)
+    if membership.status != "ACTIVE":
+        flash("This sign-in was removed. Give the person Supplier Hub sign-in again first.", "error")
+        return redirect(url_for("supplier_office.suppliers"))
+    return _after_link(membership.user, membership.supplier_id)
+
+
+def _after_link(user, supplier_id):
+    """Send the set-password link. When the email is not delivered, show the one-time link on this one
+    response only (never flashed, stored or logged), as People & Access does (defect 9)."""
+    from datetime import datetime
+
+    from app.services.password_reset import BLOCK_RATE_LIMITED, PasswordResetServiceError, send_set_password_link
+    from app.services.transactional_email import link_base_url
+
+    try:
+        outcome = send_set_password_link(user, client_ip=request.remote_addr)
+    except PasswordResetServiceError as exc:
+        flash(f"Several links were already sent to {user.email} in the last hour. Try again later."
+              if exc.code == BLOCK_RATE_LIMITED else "This sign-in is deactivated.", "error")
+        return redirect(url_for("supplier_office.suppliers"))
+    minutes = max(1, round((outcome.expires_at - datetime.utcnow()).total_seconds() / 60))
+    expires = "an hour" if 50 <= minutes <= 70 else (f"{round(minutes / 60)} hours" if minutes > 70 else f"{minutes} minutes")
+    if outcome.delivered:
+        flash(f"A link to choose a password was emailed to {user.email}. It works once and expires in {expires}.",
+              "success")
+        return redirect(url_for("supplier_office.suppliers"))
+    flash(f"The email to {user.email} was not delivered (email delivery is not set up here). Give "
+          f"{user.display_name} the one-time link below yourself. It works once and expires in {expires}.", "error")
+    one_time = {"url": f"{link_base_url()}{outcome.path}", "name": user.display_name, "email": user.email,
+                "supplier_id": supplier_id, "expires_at": outcome.expires_at}
+    page = suppliers(one_time_link=one_time)
+    return page, 200, {"Cache-Control": "no-store", "Pragma": "no-cache", "Referrer-Policy": "no-referrer"}
 
 
 @supplier_office_bp.route("/suppliers/memberships/<int:membership_id>/revoke", methods=["POST"])

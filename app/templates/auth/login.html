@@ -4,8 +4,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/opening-v1.css') }}">
 {% endblock %}
 {% block auth_body %}
+        {% if training_site %}
+        <h1>Training sign in</h1>
+        <p class="login-lede" data-training-signin-method>Use your <strong>training account</strong>: the email and password for this training site. Your live CalibraytAI password does not work here, and there is no ChatGPT sign-in.</p>
+        {% else %}
         <h1>Office sign in</h1>
         <p class="login-lede">{{ contractor_copy.LOGIN_LEDE }}</p>
+        {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

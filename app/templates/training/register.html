@@ -1,9 +1,21 @@
 {% extends "training/base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
+{% if training_admin %}
+<section class="tc-card tc-hero" data-owner-review-start>
+  <p class="tc-eyebrow">Administrator</p>
+  <h1>Review the Workflow Maps</h1>
+  <p>As an administrator you can review both maps, their lessons and acceptance tests without registering as a trainee.</p>
+  <p class="tc-choice">
+    <a class="tc-btn tc-btn-primary" href="{{ url_for('training.review_map', map_key='contractor') }}" data-review-map-link="contractor">Contractor Workflow Map</a>
+    <a class="tc-btn tc-btn-primary" href="{{ url_for('training.review_map', map_key='supplier') }}" data-review-map-link="supplier">Supplier Workflow Map</a>
+    <a class="tc-btn" href="{{ url_for('training.admin') }}">Administrator dashboard</a>
+  </p>
+</section>
+{% endif %}
 <section class="tc-card">
   <p class="tc-eyebrow">{{ 'Contractor training' if pathway == 'CONTRACTOR' else 'Supplier training' }}</p>
-  <h1>Welcome, {{ current_user.display_name }}</h1>
+  <h1>{% if training_admin %}Or take the training yourself{% else %}Welcome, {{ current_user.display_name }}{% endif %}</h1>
   <p>Choose the job you do. Your lessons and acceptance tests follow it; you can change it later without losing your progress.</p>
   <form method="post" action="{{ url_for('training.register') }}" class="tc-roles">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

@@ -425,6 +425,13 @@ MODULES = (
                     "Tomlinson Ready-Mix supplies it to BMR and is not in CalibraytAI, so you get Tomlinson's price your "
                     "usual way and quote BMR's own price here.",
                 steps=(
+                    Step(title="How Ben sends concrete", app=APP_OFFICE, where=REQUESTS_OFFICE + " → Concrete",
+                         do="Ben fills Volume (m³), Strength (MPa), Exposure class, Air, Slump (mm), Delivery date, "
+                            "Delivery time window, Placement and Notes, chooses Send to, and presses Save concrete request",
+                         expect="'Concrete request … sent to BMR Winchester (training) (SRQ-…).' It reaches you as its own "
+                                "request, Type: Concrete.",
+                         if_wrong="This is the contractor's side, shown so you know where the request comes from.",
+                         endpoint="supplier_office.project_requests", shot="s4-office-concrete-request.png"),
                     Step(title="Open the concrete request", app=APP_SUPPLIER, where=STORE + " → Requests (Type: Concrete)",
                          do="Press the request number",
                          enter="SRQ-2026-0002 (your number may differ)",
@@ -806,6 +813,11 @@ MODULES = (
                                   "Retire this standard on the old.",
                          why="Every value is the store's own; CalibraytAI does not supply or check structural values.",
                          endpoint="supplier_pro_desk.standards", shot="s8-standard-building-form.png"),
+                    Step(title="Check the saved standard", app=APP_PRO_DESK, where=PRO_DESK + " → Standard buildings",
+                         do="Read the standard at the top of the page",
+                         expect="Its values, who approved it and when, and the basis. Quick Quote now offers it.",
+                         if_wrong="If Quick Quote says 'No standard buildings yet', the standard was not saved: add it again.",
+                         endpoint="supplier_pro_desk.standards", shot="s8-standard-building.png"),
                     Step(title="Match a product to a line", app=APP_PRO_DESK,
                          where="A quotation → 5 · Pricing → a line marked Choose product → Match a product",
                          do="Choose the product, type the selling units per takeoff unit, press Match",
@@ -839,6 +851,10 @@ MODULES = (
                 why="The PRO Desk serves your own customers. Contractors never see these quotations.",
                 steps=(
                     Step(title="Open the PRO Desk", app=APP_PRO_DESK, where=STORE, do="Press PRO Desk quotations",
+                         expect="The Walk-in quotations page opens.",
+                         if_wrong="The button is at the top right of your store's page (above Needs attention on a phone).",
+                         endpoint="supplier_portal.inbox", shot="s9-pro-desk-button.png"),
+                    Step(title="The Walk-in quotations page", app=APP_PRO_DESK, where=PRO_DESK, do="Read the buttons and the list",
                          expect="Walk-in quotations: Quick Quote, Detailed quotation, Standard buildings, Timing, Price "
                                 "file, Quote settings, Contractor requests, and the Quotations list.",
                          if_wrong="If 'Before the first quotation' shows, finish Quote settings first (module 8).",
@@ -938,6 +954,12 @@ MODULES = (
                          if_wrong="On some phones the sentence beside the tick box shows one letter per line (a reported "
                                   "display problem); it is the 'I accept material quotation …' box. Decline records a no.",
                          endpoint="supplier_quote_link.view", shot="s9-customer-accept-phone.png"),
+                    Step(title="The customer's confirmation", app=APP_CUSTOMER, where="The link, after Accept",
+                         do="Read the page",
+                         expect="'Thank you — accepted', the name and date, and 'BMR Winchester (training) will prepare "
+                                "your order and contact you about payment and delivery.'",
+                         if_wrong="A declined quotation cannot be revised: if the customer declined by mistake, start a new quotation.",
+                         endpoint="supplier_quote_link.view", shot="s9-customer-accepted-phone.png"),
                     Step(title="Accepted on the PRO Desk", app=APP_PRO_DESK, where="The quotation → 7 · Customer approval",
                          do="Reload the quotation",
                          expect="'Accepted by Jordan Tremblay (training walk-in) on … (approval link)' and the record number.",

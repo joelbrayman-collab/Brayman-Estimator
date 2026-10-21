@@ -2564,3 +2564,27 @@ body.login-page {
     text-align: center;
     white-space: nowrap;
 }
+
+/* Original or extra work, asked when the office adds work (defect 7, 21 Oct 2026). */
+.scope-choice {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    display: grid;
+    gap: 6px;
+}
+.scope-choice legend {
+    font-weight: 600;
+    padding: 0 4px;
+}
+.scope-choice label {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-weight: 400;
+}
+.scope-choice input[type="radio"] {
+    width: auto;
+    margin-top: 3px;
+}

@@ -616,12 +616,16 @@ step("14 crew schedule: a work item, dates on the calendar, a crew with Kevin; K
   await submit(pg, pg.getByRole("link", { name: "Open project work" }));
   const element = pg.locator("form[action$='/elements']");
   await element.locator("[name=display_name]").fill("Deck framing and decking (synthetic)");
+  // Added after the proposal was accepted: the office says whether it is original or extra work (defect 7).
+  await element.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await submit(pg, element.locator("button[type=submit]"));
   assert.match(await flash(pg), /Work item added/);
   const activity = pg.locator("form[action*='/activities']").last();
   await activity.locator("[name=display_name]").fill("Framing and decking (synthetic)");
+  await activity.locator("input[name=scope_origin][value=ORIGINAL]").check();
   await submit(pg, activity.locator("button[type=submit]"));
   assert.match(await pg.locator("main").innerText(), /Framing and decking \(synthetic\)/);
+  assert.match(await pg.locator("tr").filter({ hasText: "Framing and decking (synthetic)" }).first().innerText(), /Original work/);
   // Calendar → Set dates.
   await go(pg, "/schedule");
   await submit(pg, pg.getByRole("link", { name: "Set dates" }).first());

@@ -234,6 +234,12 @@
                 </select>
             </label>
         </div>
+        <fieldset class="scope-choice" data-scope-choice>
+            <legend>Is this original work or extra work? *</legend>
+            <label><input type="radio" name="scope_origin" value="ORIGINAL" required> Original work — part of the accepted proposal</label>
+            <label><input type="radio" name="scope_origin" value="EXTRA_WORK" required> Extra work — beyond the proposal (becomes a change order)</label>
+            <p class="muted-copy">Choose before the crew records time: once time is recorded against it, this cannot be changed.</p>
+        </fieldset>
         <div class="form-actions">
             <button type="submit">{{ contractor_copy.ADD_ACTIVITY_BUTTON }}</button>
         </div>
@@ -276,13 +282,19 @@
     <div class="panel-header">
         <h2>Add a project work item</h2>
     </div>
-    <p class="muted-copy">This stays on this project. It is not added to organization work types. New items without a change order are extra work until reviewed.</p>
+    <p class="muted-copy">This stays on this project. It is not added to organization work types. Say whether it is original work or extra work; extra work is turned into a change order.</p>
     <form method="post" action="{{ url_for('work_structure.add_element', project_id=project.id) }}" class="form-panel">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>
             Name
             <input type="text" name="display_name" required>
         </label>
+        <fieldset class="scope-choice" data-scope-choice>
+            <legend>Is this original work or extra work? *</legend>
+            <label><input type="radio" name="scope_origin" value="ORIGINAL" required> Original work — part of the accepted proposal</label>
+            <label><input type="radio" name="scope_origin" value="EXTRA_WORK" required> Extra work — beyond the proposal (becomes a change order)</label>
+            <p class="muted-copy">Choose before the crew records time: once time is recorded against it, this cannot be changed.</p>
+        </fieldset>
         <div class="form-actions">
             <button type="submit">{{ contractor_copy.ADD_WORK_ITEM_BUTTON }}</button>
         </div>

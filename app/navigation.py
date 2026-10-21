@@ -164,6 +164,12 @@ NAV_SECTIONS = (
         "title": "Company",
         "links": (
             {
+                "title": "Getting started",
+                "endpoint": "getting_started.index",
+                "icon": "bi-list-check",
+                "enabled": True,
+            },
+            {
                 "title": ATTENTION_NAV_TITLE,
                 "endpoint": "company_attention.index",
                 "icon": "bi-exclamation-circle",

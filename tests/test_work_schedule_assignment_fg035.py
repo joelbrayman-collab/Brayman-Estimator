@@ -320,6 +320,12 @@ def test_office_surfaces_and_crew_settings(client, app):
     element = _element(project)
     item = _item(project, element, TODAY, TODAY + timedelta(days=5))
     office = ensure_office_user()
+    # Crews are changed by the Instance Owner or a System Administrator (Crew Access, 21 Oct 2026).
+    from app.models.user import UserMembership
+    from app.services.instance_authority import set_instance_owner
+
+    membership = UserMembership.query.filter_by(user_id=office.id, organization_id=DEFAULT_ORGANIZATION_ID).one()
+    set_instance_owner(membership.organization_id, membership.id, office.id)
     login_office_user(client)
     created = client.post(
         "/settings/crews/new",

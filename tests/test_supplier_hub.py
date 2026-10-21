@@ -860,3 +860,34 @@ def test_closing_a_job_lists_its_open_supplier_orders_without_blocking(app, clie
     order.scheduled_date = date.today() - timedelta(days=1)  # delivered in the past: nothing to warn about
     db.session.commit()
     assert "data-open-orders" not in client.get(f"/projects/{project.id}/close").get_data(as_text=True)
+
+
+def test_a_sent_concrete_request_is_not_offered_for_sending_again(app, client):
+    """Defect 2 (21 Oct 2026): once sent, the Supplier requests page shows where it went, not Send;
+    posting it again is refused; after the request is withdrawn it can be sent again."""
+    from app.models.supplier_portal import ConcreteRequest
+
+    project, _other, _bmr = _setup()
+    tomlinson = _tomlinson()
+    _give_sign_in(client, tomlinson)
+    delivery = (date.today() + timedelta(days=7)).isoformat()
+    client.post(f"/projects/{project.id}/concrete-requests", data={
+        "volume_m3": "4.5", "strength_mpa": "32", "delivery_date": delivery, "placement": "Pump",
+        "contractor_supplier_account_id": tomlinson.id})
+    concrete = ConcreteRequest.query.one()
+    share = SupplierRequestShare.query.one()
+    send_url = f"/projects/{project.id}/concrete-requests/{concrete.id}/send"
+    page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    item = page.split(f'data-concrete-request="{concrete.id}"', 1)[1].split("</li>", 1)[0]
+    assert f'data-concrete-sent="{share.number}"' in item
+    assert send_url not in page and ">Send</button>" not in item
+
+    again = client.post(send_url, data={"contractor_supplier_account_id": tomlinson.id}, follow_redirects=True)
+    assert b"already with Tomlinson concrete (synthetic)" in again.data
+    assert SupplierRequestShare.query.count() == 1
+
+    client.post(f"/projects/{project.id}/supplier-requests/{share.id}/withdraw")
+    page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
+    assert send_url in page  # withdrawn: it may be sent again
+    client.post(send_url, data={"contractor_supplier_account_id": tomlinson.id})
+    assert SupplierRequestShare.query.count() == 2

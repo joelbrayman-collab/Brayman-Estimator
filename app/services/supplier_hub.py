@@ -451,19 +451,28 @@ def create_concrete_request(*, project: Project, user, form: dict) -> ConcreteRe
     return row
 
 
-def send_concrete_request(*, concrete: ConcreteRequest, account_id: int, user) -> SupplierRequestShare:
-    project = db.session.get(Project, concrete.project_id)
-    account = _account(concrete.organization_id, account_id)
-    if not supplier_has_sign_in(account.supplier_id):
-        raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
-    existing = SupplierRequestShare.query.filter(
+def concrete_open_share(concrete: ConcreteRequest):
+    """The supplier request this concrete request is currently with (sent, opened or returned), if any.
+
+    One rule for the page and the server: while a concrete request is with a supplier it is not
+    offered for sending again; once that request is withdrawn it may be sent again.
+    """
+    return (SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == concrete.organization_id,
         SupplierRequestShare.source_kind == SOURCE_CONCRETE,
         SupplierRequestShare.source_ref == str(concrete.id),
         SupplierRequestShare.status.in_(OPEN_SHARE_STATUSES),
-    ).first()
+    ).order_by(SupplierRequestShare.id.desc()).first())
+
+
+def send_concrete_request(*, concrete: ConcreteRequest, account_id: int, user) -> SupplierRequestShare:
+    existing = concrete_open_share(concrete)
     if existing is not None:
         raise SupplierHubError(f"This concrete request is already with {existing.supplier.legal_name} ({existing.number}).")
+    project = db.session.get(Project, concrete.project_id)
+    account = _account(concrete.organization_id, account_id)
+    if not supplier_has_sign_in(account.supplier_id):
+        raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
     shared = {
         **_base_shared(project, user, concrete.delivery_date),
         "delivery_town": concrete.delivery_town,

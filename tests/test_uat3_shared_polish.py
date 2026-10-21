@@ -27,6 +27,7 @@ def test_brand_is_not_in_the_daily_menu():
     assert "settings.brand_profile" not in endpoints
     company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
     assert [item["title"] for item in company["links"]] == [
+        "Getting started",  # 21 Oct 2026, Ben's first day checklist
         "Attention",
         "People & Access",  # 21 Oct 2026, owner / System Administrator only
         "Crews",

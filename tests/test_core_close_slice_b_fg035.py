@@ -765,7 +765,7 @@ def test_no_live_schema_change():
     alembic_cfg = Config(cfg_path)
     alembic_cfg.set_main_option("script_location", "migrations")
     script = ScriptDirectory.from_config(alembic_cfg)
-    assert script.get_heads() == ["pr6b3d8e0f1c"]
+    assert script.get_heads() == ["ob7c2e9a4d1f"]
     versions = Path("migrations/versions")
     newest = sorted(versions.glob("*.py"))
     assert any(path.name.startswith("b2c3d4e5f6a7") for path in newest)

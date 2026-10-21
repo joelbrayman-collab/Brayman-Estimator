@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Getting started | CalibraytAI{% endblock %}
+{% block page_title %}Getting started{% endblock %}
+{% block content %}
+<section class="form-panel getting-started" data-getting-started="{{ c.done }}/{{ c.total }}">
+    <p class="eyebrow">Ben's first day</p>
+    <h1>Set up CalibraytAI, step by step</h1>
+    <p class="muted-copy">{{ c.done }} of {{ c.total }} done. Steps tick themselves when the work is in CalibraytAI; the others you tick when you have done them. Your progress is saved for the whole company.</p>
+    <div class="getting-started-bar" role="progressbar" aria-valuemin="0" aria-valuemax="{{ c.total }}" aria-valuenow="{{ c.done }}"><span style="width: {{ (100 * c.done / c.total)|round|int }}%"></span></div>
+    {% if c.next %}<p><a class="button" href="{{ url_for(c.next.step.endpoint) }}" data-next-step="{{ c.next.step.key }}">Next: {{ c.next.step.title }}</a></p>{% else %}<p data-all-done="true"><strong>All done.</strong> CalibraytAI is set up for Brayman Construction.</p>{% endif %}
+</section>
+<ol class="getting-started-steps">
+{% for r in c.rows %}
+    <li class="form-panel getting-started-step{{ ' is-done' if r.done }}" id="step-{{ r.step.key }}" data-step="{{ r.step.key }}" data-done="{{ 'yes' if r.done else 'no' }}">
+        <h2><span class="getting-started-number">{{ r.number }}</span> {{ r.step.title }} {% if r.done %}<span class="getting-started-tick" aria-label="Done">✓</span>{% endif %}</h2>
+        <p class="muted-copy">{{ r.step.why }}</p>
+        <p>{{ r.step.how }}</p>
+        <p class="getting-started-actions">
+            <a class="button button-secondary" href="{{ url_for(r.step.endpoint) }}">Go there</a>
+            {% if r.auto %}<span class="muted-copy">Done: CalibraytAI can see it.</span>
+            {% elif r.mark %}<span class="muted-copy">Marked done by {{ r.mark.done_by_name }} on {{ r.mark.done_at.strftime('%b %d, %Y') }}.</span>
+            <form method="post" action="{{ url_for('getting_started.mark', key=r.step.key) }}" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="done" value="no"><button type="submit" class="button-link">Undo</button></form>
+            {% else %}<form method="post" action="{{ url_for('getting_started.mark', key=r.step.key) }}" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="done" value="yes"><button type="submit" class="button-secondary">Mark done</button></form>{% endif %}
+        </p>
+    </li>
+{% endfor %}
+</ol>
+{% endblock %}

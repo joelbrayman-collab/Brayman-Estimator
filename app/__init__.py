@@ -481,6 +481,7 @@ def create_app(config=None):
     from app.routes.calendar_feed import calendar_feed_bp
     from app.routes.organization_crew import organization_crew_bp
     from app.routes.people_access import people_access_bp
+    from app.routes.getting_started import getting_started_bp
     from app.routes.company_attention import company_attention_bp
     from app.routes.business_owner_assessment import decision_tools_bp
     from app.routes.calculators import calculators_bp
@@ -530,6 +531,7 @@ def create_app(config=None):
     app.register_blueprint(calendar_feed_bp)
     app.register_blueprint(organization_crew_bp)
     app.register_blueprint(people_access_bp)
+    app.register_blueprint(getting_started_bp)
     app.register_blueprint(company_attention_bp)
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)

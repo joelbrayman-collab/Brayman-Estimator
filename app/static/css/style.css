@@ -4,3 +4,14 @@
 .schedule-history > summary { cursor: pointer; font-weight: 600; }
 .schedule-history ul { margin: 8px 0 0; padding-left: 18px; }
 .schedule-history li { margin: 4px 0; overflow-wrap: anywhere; }
+
+/* Getting started (Ben's first day, 21 Oct 2026) */
+.getting-started-bar { height: 10px; border-radius: 6px; background: #e7e9ee; overflow: hidden; margin: 8px 0 12px; }
+.getting-started-bar span { display: block; height: 100%; background: #c9a227; }
+.getting-started-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.getting-started-step h2 { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; margin: 0 0 6px; }
+.getting-started-number { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #0b1220; color: #fff; font-size: 0.9rem; flex: none; }
+.getting-started-step.is-done .getting-started-number { background: #2f7d4a; }
+.getting-started-tick { color: #2f7d4a; }
+.getting-started-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.getting-started-step p { overflow-wrap: anywhere; }

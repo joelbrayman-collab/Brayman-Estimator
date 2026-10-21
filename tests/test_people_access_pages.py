@@ -305,10 +305,19 @@ def test_system_administrator_may_deactivate_an_ordinary_person(app):
 def test_deactivation_is_written_to_the_people_access_log(app, caplog):
     ids = _ids(app)
     owner = _client(app, OWNER)
-    with caplog.at_level(logging.INFO, logger="people_access"):
+    # Listen on the logger itself: the app's logging set-up (run by earlier tests) may stop records
+    # propagating to the root logger, where caplog normally listens.
+    logger = logging.getLogger("people_access")
+    logger.addHandler(caplog.handler)
+    level = logger.level
+    logger.setLevel(logging.INFO)
+    try:
         owner.post(f"/settings/people/{ids['staff_m']}/deactivate")
         owner.post(f"/settings/people/{ids['staff_m']}/reactivate")
         owner.post(f"/settings/people/{ids['staff_m']}/access", data={"domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT, "action": "grant"})
+    finally:
+        logger.removeHandler(caplog.handler)
+        logger.setLevel(level)
     lines = [r.getMessage() for r in caplog.records if r.name == "people_access"]
     assert any(f"DEACTIVATE org={ORG} actor_user_id={ids['owner']} target_user_id={ids['staff']}" in l for l in lines)
     assert any("REACTIVATE" in l for l in lines)

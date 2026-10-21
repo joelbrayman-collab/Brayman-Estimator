@@ -329,6 +329,9 @@ def test_isolation_org_does_not_receive_brayman_logo(app, isolation_org):
 
 
 def test_settings_form_and_logo_upload_replace(client, app):
+    from tests.test_core_close_close_reopen_fg035 import _make_owner
+
+    _make_owner()  # saving the brand profile is for the owner or a System Administrator (21 Oct 2026)
     response = client.get("/settings/brand-profile")
     assert response.status_code == 200
     assert b"Brand profile" in response.data
@@ -650,3 +653,13 @@ def test_alembic_fg017_upgrade_and_downgrade_schema_only(tmp_path):
                 sa.text("SELECT version_num FROM alembic_version")
             ).fetchall()
             assert heads == [("f8a9b0c1d2e3",)]
+
+
+
+def test_only_the_owner_or_an_administrator_changes_the_brand_or_crews(client, app):
+    """Crew Access (Joel, 21 Oct 2026): office members may view the brand profile and crews, but changing
+    them is for the owner or a System Administrator. Checked at the server."""
+    assert client.get("/settings/brand-profile").status_code == 200
+    assert client.post("/settings/brand-profile", data={"legal_name": "Changed by staff"}).status_code == 403
+    assert client.get("/settings/crews").status_code == 200
+    assert client.post("/settings/crews/new", data={"name": "Staff crew"}).status_code == 403

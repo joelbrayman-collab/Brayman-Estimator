@@ -49,6 +49,13 @@
     {% endif %}
 </section>
 
+<section class="form-panel" aria-labelledby="crews-heading" data-person-crews="{{ crews|length }}">
+    <h2 id="crews-heading">Crews</h2>
+    {% if crews %}<ul>{% for c in crews %}<li>{{ c.crew.name }} · from {{ c.member.effective_from.strftime('%b %d, %Y') }}{% if c.member.effective_to %} to {{ c.member.effective_to.strftime('%b %d, %Y') }}{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">Not on a crew. Crew work shows on their phone only when they are on the crew assigned to it.</p>{% endif %}
+    <p><a class="button button-secondary" href="{{ url_for('organization_crew.index') }}">Manage crews</a></p>
+</section>
+
 <section class="form-panel" aria-labelledby="access-heading">
     <h2 id="access-heading">Access</h2>
     {% for domain in domains %}
@@ -88,4 +95,10 @@
     .people-access-actions { margin: 12px 0; }
     .people-access-actions .button { max-width: 100%; white-space: normal; }
 </style>
+
+<section class="form-panel" aria-labelledby="history-heading" data-person-history="{{ history|length }}">
+    <h2 id="history-heading">History</h2>
+    {% if history %}<ul class="people-history">{% for h in history %}<li><strong>{{ h.created_at.strftime('%b %d, %Y %H:%M') }} UTC</strong> · {{ {"ADDED": "Added", "INVITATION_SENT": "Invitation emailed", "PASSWORD_LINK_SENT": "Password link emailed", "ACTIVATED": "Chose a password (account active)", "DEACTIVATED": "Deactivated", "REACTIVATED": "Reactivated", "ACCESS_GIVEN": "Access given", "ACCESS_REMOVED": "Access removed", "FIELD_ONLY_MARKED": "Made Field only", "FIELD_ONLY_CLEARED": "Field only removed", "CREW_ADDED": "Added to a crew", "CREW_ENDED": "Left a crew", "ADMINISTRATOR_APPOINTED": "Appointed System Administrator", "ADMINISTRATOR_REMOVED": "No longer System Administrator"}.get(h.action, h.action) }}{% if h.detail %} ({{ h.detail }}){% endif %} · by {{ h.actor_name }}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">No changes recorded yet. Changes made from today are kept here.</p>{% endif %}
+</section>
 {% endblock %}

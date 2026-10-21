@@ -9,6 +9,7 @@ from io import BytesIO
 
 from flask import (
     Blueprint,
+    abort,
     flash,
     redirect,
     render_template,
@@ -115,6 +116,10 @@ def _confirmed_operating_project(organization):
     if project is None or getattr(project, "operating_state", None) != OPERATING_STATE_ACTIVE:
         _clear_confirmed_project()
         return None
+    ids = _visible_ids(organization)
+    if ids is not None and project.id not in ids:
+        _clear_confirmed_project()
+        return None
     return project
 
 
@@ -127,11 +132,43 @@ def _project_is_active(project) -> bool:
     return getattr(project, "operating_state", None) == OPERATING_STATE_ACTIVE
 
 
+def _visible_ids(organization):
+    """None for office users; for field-only crew, the projects they are assigned to (21 Oct 2026)."""
+    from app.services.access_domains import field_visible_project_ids
+
+    return field_visible_project_ids(current_user, organization.id)
+
+
+def _visible_projects(organization):
+    rows = list_current_operating_projects(organization.id)
+    ids = _visible_ids(organization)
+    return rows if ids is None else [p for p in rows if p.id in ids]
+
+
 def _project_or_redirect(organization, project_id: int):
     project = get_organization_project(organization.id, project_id)
     if project is None:
         return None
+    ids = _visible_ids(organization)
+    if ids is not None and project.id not in ids:
+        return None  # crew see only the jobs they are assigned to
     return project
+
+
+def _restrict_view(view, organization):
+    """Company today for field-only crew: only the jobs they are assigned to."""
+    ids = _visible_ids(organization)
+    if ids is None:
+        return view
+    from app.presentation.field_format import field_group_schedule_cards
+
+    view["cards"] = [c for c in view.get("cards", []) if c.get("project_id") in ids]
+    view["groups"] = field_group_schedule_cards(view["cards"])
+    for day in view.get("days", []):
+        day["cards"] = [c for c in day["cards"] if c.get("project_id") in ids]
+        day["groups"] = field_group_schedule_cards(day["cards"])
+        day["deliveries"] = [d for d in day.get("deliveries", []) if d.get("project_id") in ids]
+    return view
 
 
 def _recent_cards(organization_id: str, project_id: int, *, limit: int = 8):
@@ -169,7 +206,7 @@ def field_root():
 @field_bp.route("/today")
 def today():
     organization = _organization()
-    projects = list_current_operating_projects(organization.id)
+    projects = _visible_projects(organization)
     project = _confirmed_operating_project(organization)
     recent = []
     if project is not None:
@@ -309,13 +346,13 @@ def company_today():
     today = date.today()
     return render_template(
         "field/company_today.html",
-        view=assemble_field_schedule(
+        view=_restrict_view(assemble_field_schedule(
             organization.id,
             window_start=today,
             window_end=today,
             scope=FIELD_SCOPE_COMPANY,
             today=today,
-        ),
+        ), organization),
         actor_name=current_user.display_name,
     )
 
@@ -323,7 +360,7 @@ def company_today():
 @field_bp.route("/projects")
 def projects():
     organization = _organization()
-    rows = list_current_operating_projects(organization.id)
+    rows = _visible_projects(organization)
     operating = _confirmed_operating_project(organization)
     return render_template(
         "field/projects.html",
@@ -531,3 +568,53 @@ def time_entry(project_id):
         today=date.today().isoformat(),
         actor_name=current_user.display_name,
     )
+
+
+# ------------------------------------------------------------------ job documents for crew (21 Oct 2026)
+
+
+@field_bp.route("/projects/<int:project_id>/drawings")
+def drawings(project_id):
+    """Read-only drawings and plans for a job the person may see (crew: only assigned jobs). No costs."""
+    from app.models.construction_drawing import ConstructionDrawingSet
+    from app.plan_intelligence.services import list_plan_documents
+
+    organization = _organization()
+    project = _project_or_redirect(organization, project_id)
+    if project is None:
+        return redirect(url_for("field.projects"), code=302)
+    sets = (ConstructionDrawingSet.query.filter_by(organization_id=organization.id, project_id=project.id)
+            .order_by(ConstructionDrawingSet.drawing_revision.desc()).all())
+    plans = [d for d in list_plan_documents(project.id) if (d.content_type or "").endswith("pdf")]
+    return render_template("field/drawings.html", project=project, sets=sets, plans=plans)
+
+
+@field_bp.route("/projects/<int:project_id>/drawings/<int:set_id>.pdf")
+def drawing_pdf(project_id, set_id):
+    from app.models.construction_drawing import ConstructionDrawingSet
+
+    organization = _organization()
+    project = _project_or_redirect(organization, project_id)
+    if project is None:
+        abort(404)
+    record = ConstructionDrawingSet.query.filter_by(id=set_id, organization_id=organization.id, project_id=project.id).first()
+    if record is None:
+        abort(404)
+    return send_file(BytesIO(record.pdf_bytes), mimetype="application/pdf", as_attachment=False,
+                     download_name=f"{project.name}-drawings-rev{record.drawing_revision}.pdf")
+
+
+@field_bp.route("/projects/<int:project_id>/plans/<int:document_id>.pdf")
+def plan_pdf(project_id, document_id):
+    from app.plan_intelligence.services import PlanIntelligenceServiceError, get_plan_document, open_plan_document_file
+
+    organization = _organization()
+    project = _project_or_redirect(organization, project_id)
+    document = get_plan_document(project.id, document_id) if project is not None else None
+    if document is None or not (document.content_type or "").endswith("pdf"):
+        abort(404)
+    try:
+        path = open_plan_document_file(document)
+    except PlanIntelligenceServiceError:
+        abort(404)
+    return send_file(path, mimetype="application/pdf", as_attachment=False, download_name=document.original_filename)

@@ -27,6 +27,7 @@ from app.services.instance_authority import (
 from app.services.organizations import get_current_organization_id
 from app.services.password_reset import BLOCK_RATE_LIMITED, PasswordResetServiceError, send_set_password_link
 from app.services.people_access import (
+    people_history,
     ACCESS_DOMAIN_LABELS,
     PERSON_NOT_FOUND,
     PeopleAccessError,
@@ -64,16 +65,69 @@ def _person_or_404(membership_id):
         abort(403)
 
 
+def _invited_not_activated(membership) -> bool:
+    from app.models.people_access_event import PeopleAccessEvent
+
+    events = PeopleAccessEvent.query.filter_by(membership_id=membership.id)
+    return bool(events.filter_by(action="ADDED").count()) and not events.filter_by(action="ACTIVATED").count()
+
+
 def _send_link(user) -> None:
+    from app.models.organization import Organization
+    from app.models.user import UserMembership
+    from app.services.people_access import record_people_event
+
+    membership = UserMembership.query.filter_by(user_id=user.id, organization_id=_org()).first()
+    invitation = None
+    if membership is not None and _invited_not_activated(membership):
+        org = db_session_get(Organization, _org())
+        invitation = {"company_name": (getattr(org, "display_name", None) or getattr(org, "legal_name", None) or "Your company"),
+                      "invited_by": getattr(current_user, "display_name", "") or ""}
     try:
-        send_set_password_link(user, client_ip=request.remote_addr)
+        send_set_password_link(user, client_ip=request.remote_addr, invitation=invitation)
     except PasswordResetServiceError as exc:
         if exc.code == BLOCK_RATE_LIMITED:
             flash(LINK_RATE_LIMITED.format(email=user.email), "error")
         else:
             flash("This sign-in is deactivated. Reactivate it before sending a link.", "error")
         return
+    if membership is not None:
+        record_people_event(organization_id=_org(), membership=membership,
+                            action="INVITATION_SENT" if invitation is not None else "PASSWORD_LINK_SENT",
+                            actor=current_user)
     flash(LINK_SENT.format(email=user.email), "success")
+
+
+def db_session_get(model, ident):
+    from app import db
+
+    return db.session.get(model, ident)
+
+
+def _record(membership, action, detail=""):
+    from app.services.people_access import record_people_event
+
+    record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user, detail=detail)
+
+
+def _crews_of(membership_id):
+    """The person's current crew memberships (read-only here; crews are managed under Crews)."""
+    from datetime import date
+
+    from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
+    from app.models.user import UserMembership
+
+    membership = UserMembership.query.get(membership_id)
+    if membership is None:
+        return []
+    rows = (OrganizationCrewMember.query.filter_by(organization_id=_org(), user_id=membership.user_id).all())
+    out = []
+    for m in rows:
+        crew = OrganizationCrew.query.get(m.crew_id)
+        ends = m.effective_to
+        if crew is not None and (ends is None or ends >= date.today()):
+            out.append({"crew": crew, "member": m})
+    return out
 
 
 @people_access_bp.route("")
@@ -108,6 +162,7 @@ def new():
         if request.form.get("field_only") == "yes":
             try:
                 set_field_only(membership, True, current_user)
+                _record(membership, "FIELD_ONLY_MARKED")
             except AccessDomainError as exc:
                 flash(f"Added, but not marked Field only: {exc}", "error")
         flash(f"{membership.user.display_name} was added.", "success")
@@ -126,6 +181,8 @@ def detail(membership_id):
         domain_labels=ACCESS_DOMAIN_LABELS,
         viewer_is_owner=is_instance_owner(current_user, _org()),
         field_only=membership_is_field_only(UserMembership.query.get(membership_id)),
+        history=people_history(organization_id=_org(), membership_id=membership_id),
+        crews=_crews_of(membership_id),
     )
 
 
@@ -203,9 +260,12 @@ def field_only(membership_id):
 
     def run():
         try:
+            before = membership_is_field_only(UserMembership.query.get(membership_id))
             set_field_only(membership_id, marked, current_user)
         except AccessDomainError as exc:
             raise PeopleAccessError(str(exc))
+        if before != marked:
+            _record(membership_id, "FIELD_ONLY_MARKED" if marked else "FIELD_ONLY_CLEARED")
         return ("Marked Field only: Field pages and their own account, no office pages or costs."
                 if marked else "Field only removed: office access as before.")
 

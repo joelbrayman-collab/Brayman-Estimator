@@ -77,6 +77,11 @@ def brand_profile():
         profile = get_current_brand_profile(org_id)
 
     if request.method == "POST":
+        from app.services.instance_authority import require_instance_owner_or_system_administrator
+
+        denied = require_instance_owner_or_system_administrator()  # Crew Access, 21 Oct 2026: owner/admin only
+        if denied is not None:
+            return denied
         form = _form_values()
         upload = request.files.get("logo")
         logo_bytes = None

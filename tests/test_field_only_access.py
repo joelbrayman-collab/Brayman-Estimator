@@ -23,7 +23,7 @@ from app.services.access_domains import (
 )
 from app.services.instance_authority import appoint_system_administrator, set_instance_owner
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
-from app.services.schedule import create_schedule_item
+from app.services.schedule import assign_user, create_schedule_item
 from app.services.work_structure import add_project_element, ensure_baseline_work_catalog
 from tests.auth_fixtures import ensure_office_user, login_office_user
 
@@ -82,6 +82,8 @@ def work(app, people):
     item = create_schedule_item(project_id=project.id, project_work_element_id=element.id,
                                 scheduled_start=TODAY, scheduled_end=TODAY,
                                 organization_id=DEFAULT_ORGANIZATION_ID)
+    # Crew see only jobs they are assigned to (Crew Access, 21 Oct 2026): Kevin is on this work.
+    assign_user(item.id, worker_user_id=people["kevin"].id, organization_id=DEFAULT_ORGANIZATION_ID)
     return {"project": project, "element": element, "item": item}
 
 

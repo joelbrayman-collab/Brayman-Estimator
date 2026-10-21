@@ -23,6 +23,7 @@
         <button type="submit" class="field-btn field-btn-secondary" name="next" value="time">Confirm and Time</button>
         <button type="submit" class="field-btn field-btn-secondary">Confirm for Today</button>
     </form>
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.drawings', project_id=confirm_project.id) }}" data-field-drawings-link="true">Drawings and plans</a>
     <a class="field-btn field-btn-ghost" href="{{ url_for('field.projects') }}">Choose a different Project</a>
     {% endif %}
 </section>

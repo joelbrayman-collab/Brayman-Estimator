@@ -329,3 +329,36 @@ def describe_access_domains(*, membership_id: int) -> dict:
         "stored_domains": stored,
         "effective_COMPANY_MANAGEMENT": effective,
     }
+
+
+FIELD_ASSIGNMENT_LOOKBACK_DAYS = 14
+
+
+def field_visible_project_ids(user, organization_id):
+    """Projects a field-only crew member may see (Crew Access, 21 Oct 2026): those with active scheduled
+    work they are on, directly or through a crew they belong to during that work, ending no more than
+    two weeks ago or later. Returns None for anyone not marked field-only (no restriction)."""
+    from datetime import date, timedelta
+
+    from app.models.organization_crew import OrganizationCrewMember
+    from app.models.schedule import SCHEDULE_STATUS_ACTIVE, WorkScheduleAssignment, WorkScheduleItem
+
+    if not user_is_field_only(user, organization_id):
+        return None
+    user_id = int(getattr(user, "id", user))
+    since = date.today() - timedelta(days=FIELD_ASSIGNMENT_LOOKBACK_DAYS)
+    items = (WorkScheduleItem.query.filter(WorkScheduleItem.organization_id == organization_id,
+                                           WorkScheduleItem.status == SCHEDULE_STATUS_ACTIVE,
+                                           WorkScheduleItem.scheduled_end >= since).all())
+    memberships = OrganizationCrewMember.query.filter_by(organization_id=organization_id, user_id=user_id).all()
+    visible = set()
+    for item in items:
+        for a in WorkScheduleAssignment.query.filter_by(work_schedule_item_id=item.id).all():
+            if a.worker_user_id == user_id:
+                visible.add(item.project_id)
+            elif a.crew_id is not None:
+                for m in memberships:
+                    if m.crew_id == a.crew_id and m.effective_from <= item.scheduled_end and (
+                            m.effective_to is None or m.effective_to >= item.scheduled_start):
+                        visible.add(item.project_id)
+    return visible

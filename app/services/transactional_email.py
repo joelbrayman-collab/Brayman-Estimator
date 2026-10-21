@@ -30,6 +30,7 @@ from app.models.transactional_message import (
     STATUS_SKIPPED_ALLOWLIST,
     TEMPLATE_DELIVERY_SCHEDULE,
     TEMPLATE_PASSWORD_RESET,
+    TEMPLATE_ACCOUNT_INVITATION,
     TEMPLATE_PROPOSAL_INVITATION,
     TEMPLATE_SIGNING_COMPLETE,
     TEMPLATE_SIGNING_INVITATION,
@@ -131,6 +132,21 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
             f"{url}\n\n"
             "If you did not request this, ignore this message. "
             "Your password will not change."
+        )
+        return subject, body
+    if template_id == TEMPLATE_ACCOUNT_INVITATION:
+        url = str(variables.get("reset_url") or "")
+        company = str(variables.get("company_name") or "Your company")
+        inviter = str(variables.get("invited_by") or "")
+        hours = str(variables.get("expires_hours") or "72")
+        subject = f"{company} invited you to CalibraytAI"
+        body = (
+            f"{company} has set up a CalibraytAI sign-in for you"
+            + (f" ({inviter} invited you)" if inviter else "") + ".\n\n"
+            f"Use this link to choose your password and sign in. It works for {hours} hours.\n"
+            f"{url}\n\n"
+            "On an iPhone: open the link in Safari, choose your password, then tap Share and Add to Home Screen.\n\n"
+            "If you were not expecting this, ignore this message."
         )
         return subject, body
     if template_id == TEMPLATE_DELIVERY_SCHEDULE:

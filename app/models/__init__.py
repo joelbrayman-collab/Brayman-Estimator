@@ -86,6 +86,7 @@ from app.models.organization import (
     OrganizationSystemAdministratorMembership,
 )
 from app.models.person import OrganizationPerson, OrganizationPersonWageEvent
+from app.models.people_access_event import PeopleAccessEvent
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
 from app.models.transactional_message import TransactionalMessage
@@ -333,6 +334,7 @@ __all__ = [
     "OrganizationCrewMember",
     "OrganizationPerson",
     "OrganizationPersonWageEvent",
+    "PeopleAccessEvent",
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",

@@ -62,9 +62,18 @@ def _build_error(exc: BuildServiceError):
     return api_error(str(exc), 400)
 
 
+def _field_visible(organization):
+    from app.services.access_domains import field_visible_project_ids
+
+    return field_visible_project_ids(current_user, organization.id)
+
+
 def _current_project(project_id: int):
     organization = get_current_organization()
     project = get_organization_project(organization.id, project_id)
+    visible = _field_visible(organization) if project is not None else None
+    if project is not None and visible is not None and project.id not in visible:
+        project = None  # field-only crew: only assigned jobs (21 Oct 2026)
     if project is None:
         return None, api_error(ERROR_NOT_FOUND, 404)
     return project, None
@@ -87,6 +96,9 @@ def me():
 def list_projects():
     organization = get_current_organization()
     projects = list_current_operating_projects(organization.id)
+    visible = _field_visible(organization)
+    if visible is not None:
+        projects = [p for p in projects if p.id in visible]
     return jsonify(
         [serialize_project(project, organization.id) for project in projects]
     )
@@ -96,7 +108,8 @@ def list_projects():
 def get_project(project_id):
     organization = get_current_organization()
     project = get_organization_project(organization.id, project_id)
-    if project is None:
+    visible = _field_visible(organization) if project is not None else None
+    if project is None or (visible is not None and project.id not in visible):
         return api_error(ERROR_NOT_FOUND, 404)
     return jsonify(serialize_project(project, organization.id))
 

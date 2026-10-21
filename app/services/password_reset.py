@@ -250,8 +250,12 @@ def request_password_reset(
     return PublicResetRequestResult()
 
 
-def _issue_token_and_send(user: User, *, ip: str, now: datetime) -> str:
-    """Replace the user's unused links with one new link and send the PASSWORD_RESET email."""
+INVITATION_TTL_SECONDS = 72 * 3600  # an invitation waits for the person longer than a reset link
+
+
+def _issue_token_and_send(user: User, *, ip: str, now: datetime, invitation: Optional[dict] = None) -> str:
+    """Replace the user's unused links with one new link and send the PASSWORD_RESET email
+    (or, for People & Access invitations, the ACCOUNT_INVITATION email with a 72-hour link)."""
     _invalidate_unused_tokens(user.id, now=now)
     lookup_key = _new_lookup_key()
     secret = secrets.token_urlsafe(32)
@@ -260,7 +264,7 @@ def _issue_token_and_send(user: User, *, ip: str, now: datetime) -> str:
         lookup_key=lookup_key,
         token_hash=hash_reset_secret(secret),
         created_at=now,
-        expires_at=now + timedelta(seconds=_ttl_seconds()),
+        expires_at=now + timedelta(seconds=INVITATION_TTL_SECONDS if invitation is not None else _ttl_seconds()),
         requested_from_ip=ip,
     )
     db.session.add(token)
@@ -268,6 +272,17 @@ def _issue_token_and_send(user: User, *, ip: str, now: datetime) -> str:
     base = public_base_url()
     path = password_reset_path(lookup_key, secret)
     reset_url = f"{base}{path}" if base else path
+    if invitation is not None:
+        from app.models.transactional_message import TEMPLATE_ACCOUNT_INVITATION
+
+        send_transactional_message(
+            TEMPLATE_ACCOUNT_INVITATION,
+            user.email,
+            variables={"reset_url": reset_url, "expires_hours": str(INVITATION_TTL_SECONDS // 3600), **invitation},
+            related_type="user",
+            related_id=user.id,
+        )
+        return lookup_key
     send_transactional_message(
         TEMPLATE_PASSWORD_RESET,
         user.email,
@@ -281,7 +296,7 @@ def _issue_token_and_send(user: User, *, ip: str, now: datetime) -> str:
     return lookup_key
 
 
-def send_set_password_link(user: User, *, client_ip: Optional[str] = None) -> None:
+def send_set_password_link(user: User, *, client_ip: Optional[str] = None, invitation: Optional[dict] = None) -> None:
     """People & Access (21 Oct 2026): the owner sends a person the set-password email.
 
     Same token table, same PASSWORD_RESET email and the same delivery service (allowlist
@@ -301,7 +316,7 @@ def send_set_password_link(user: User, *, client_ip: Optional[str] = None) -> No
     )
     if _count_attempts(now=now, window_seconds=email_window, email_key_hash=email_key) >= email_limit:
         raise PasswordResetServiceError(BLOCK_RATE_LIMITED)
-    lookup_key = _issue_token_and_send(user, ip=ip, now=now)
+    lookup_key = _issue_token_and_send(user, ip=ip, now=now, invitation=invitation)
     # Recorded under a fixed marker, not the office's address, so links the owner sends never
     # use up the office's own forgot-password budget; they do count for this person's email.
     _record_attempt(
@@ -384,7 +399,24 @@ def complete_password_reset(
     token.consumed_from_ip = _client_ip(client_ip)
     _invalidate_unused_tokens(user.id, now=now)
     db.session.commit()
+    _record_activation(user)
     return user
+
+
+def _record_activation(user: User) -> None:
+    """First password chosen by a person the office added: People & Access history shows them activated."""
+    try:
+        from app.models.people_access_event import PeopleAccessEvent
+        from app.models.user import UserMembership
+        from app.services.people_access import record_people_event
+
+        for membership in UserMembership.query.filter_by(user_id=user.id).all():
+            events = PeopleAccessEvent.query.filter_by(membership_id=membership.id)
+            if events.filter_by(action="ADDED").count() and not events.filter_by(action="ACTIVATED").count():
+                record_people_event(organization_id=membership.organization_id, membership=membership,
+                                    action="ACTIVATED", actor=user)
+    except Exception:
+        db.session.rollback()
 
 
 def issue_reset_for_tests(user: User, *, client_ip: str = "127.0.0.1") -> IssuedReset:

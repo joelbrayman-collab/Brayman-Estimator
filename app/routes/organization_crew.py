@@ -29,6 +29,17 @@ def _org():
     return get_current_organization()
 
 
+@organization_crew_bp.before_request
+def _changes_need_owner_or_administrator():
+    """Crew Access (21 Oct 2026): every office member may view crews; only the owner or a System
+    Administrator may create, retire or change them."""
+    if request.method != "GET":
+        from app.services.instance_authority import require_instance_owner_or_system_administrator
+
+        return require_instance_owner_or_system_administrator()
+    return None
+
+
 @organization_crew_bp.route("")
 def index():
     organization = _org()

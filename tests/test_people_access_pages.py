@@ -24,6 +24,7 @@ from app.models.password_reset import PasswordResetToken
 from app.models.transactional_message import (
     STATUS_LOCAL_CAPTURED,
     TEMPLATE_PASSWORD_RESET,
+    TEMPLATE_ACCOUNT_INVITATION,
     TransactionalMessage,
 )
 from app.models.user import User, UserMembership
@@ -193,7 +194,7 @@ def test_owner_adds_a_person_who_gets_the_set_password_email_and_signs_in(app):
         assert membership.organization_id == ORG and membership.is_active
         assert response.headers["Location"].endswith(f"/settings/people/{membership.id}")
         message = TransactionalMessage.query.filter_by(to_email=NEW_PERSON[1]).one()
-        assert message.template_id == TEMPLATE_PASSWORD_RESET
+        assert message.template_id == TEMPLATE_ACCOUNT_INVITATION  # a proper invitation, 72 h (21 Oct 2026)
         assert message.status == STATUS_LOCAL_CAPTURED
         assert PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).count() == 1
     mails = _captured(app, NEW_PERSON[1])
@@ -409,3 +410,32 @@ def test_owner_marks_and_clears_field_only_from_people_and_access(app):
     staff = _client(app, STAFF)
     assert staff.post(f"/settings/people/{membership_id}/field-only", data={"action": "clear"}).status_code == 403
     assert marked()
+
+
+def test_invitation_activation_and_history_are_recorded(app):
+    """Crew Access (21 Oct 2026): a new person gets an invitation (not a reset notice) valid 72 hours;
+    choosing a password records them as activated; every change shows in the person's History."""
+    from app.models.people_access_event import PeopleAccessEvent
+    from app.services.password_reset import complete_password_reset
+
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": "Kev Synthetic", "email": "kev.crew@example.invalid",
+                                                        "field_only": "yes"})
+    membership_id = int(response.headers["Location"].rstrip("/").rsplit("/", 1)[1])
+    with app.app_context():
+        message = TransactionalMessage.query.filter_by(to_email="kev.crew@example.invalid").one()
+        assert message.template_id == TEMPLATE_ACCOUNT_INVITATION
+        token = PasswordResetToken.query.join(User, User.id == PasswordResetToken.user_id).filter(
+            User.email == "kev.crew@example.invalid").one()
+        assert (token.expires_at - token.created_at).total_seconds() == 72 * 3600
+    mail = _captured(app, "kev.crew@example.invalid")[-1]
+    assert "invited you to CalibraytAI" in mail and "72 hours" in mail
+    credential = re.search(r"/reset-password/([A-Za-z0-9_.\-]+)", mail).group(1)
+    with app.app_context():
+        complete_password_reset(credential, "Synthetic-kev-pass-1", confirm_password="Synthetic-kev-pass-1")
+    owner.post(f"/settings/people/{membership_id}/deactivate")
+    with app.app_context():
+        actions = [e.action for e in PeopleAccessEvent.query.filter_by(membership_id=membership_id).order_by(PeopleAccessEvent.id)]
+    assert actions[:4] == ["ADDED", "FIELD_ONLY_MARKED", "INVITATION_SENT", "ACTIVATED"] and actions[-1] == "DEACTIVATED"
+    page = owner.get(f"/settings/people/{membership_id}").get_data(as_text=True)
+    assert "Invitation emailed" in page and "Chose a password (account active)" in page and "Deactivated" in page

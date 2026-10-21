@@ -80,10 +80,13 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     await page.getByRole("button", { name: "Calculate" }).click();
     await page.locator("[data-stud-count]").waitFor();
     assert.equal(await page.locator("[data-stud-count]").innerText(), "9 studs");
-    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "72 lineal feet of studs");
+    // Updated deliberately (Joel, 21 Oct 2026 authorized): a stud is the wall height less the plates,
+    // 96 − 3 × 1.5 = 91.5 in = 7.625 ft. Studs 9 × 7.625 = 68.625 lf (was 72); total 98.625 (was 102).
+    assert.equal(await page.locator("[data-stud-length]").innerText(), "Stud length 91.5 in (8 ft wall less 3 plates at 1.5 in)");
+    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "68.625 lineal feet of studs");
     assert.equal(await page.locator("[data-top-plate-lineal]").innerText(), "20 lineal feet of top plates");
     assert.equal(await page.locator("[data-bottom-plate-lineal]").innerText(), "10 lineal feet of bottom plates");
-    assert.equal(await page.locator("[data-total-lineal]").innerText(), "102 total lineal feet");
+    assert.equal(await page.locator("[data-total-lineal]").innerText(), "98.625 total lineal feet");
     assert.equal(await page.locator("[data-gross-area]").innerText(), "80 square feet gross wall area");
     assert.match(await page.locator("[data-short-spacing]").innerText(), /8 in/);
     assert.equal(await page.locator(".stud").count(), 9);
@@ -141,11 +144,13 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     await page.locator("[data-remaining-count]").waitFor();
     assert.equal(await page.locator("[data-stud-count]").innerText(), "9 original layout studs");
     assert.equal(await page.locator("[data-remaining-count]").innerText(), "7 full-height studs");
-    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "56 lineal feet of full-height studs");
+    // Updated deliberately (Joel, 21 Oct 2026 authorized): 7 × 7.625 ft = 53.375 (was 56).
+    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "53.375 lineal feet of full-height studs");
     assert.equal(await page.locator("p[data-opening-positions]").innerText(), "Opening positions 48 in, 64 in");
     assert.equal(await page.locator("[data-top-plate-lineal]").innerText(), "20 lineal feet of top plates");
     assert.equal(await page.locator("[data-gross-area]").innerText(), "80 square feet gross wall area");
-    assert.equal(await page.locator("[data-total-lineal]").innerText(), "86 total lineal feet");
+    // 53.375 + 30 plates = 83.375 (was 86).
+    assert.equal(await page.locator("[data-total-lineal]").innerText(), "83.375 total lineal feet");
     const doorSvg = page.locator("[data-wall-elevation] svg");
     assert.equal(await doorSvg.getAttribute("data-stud-positions"), "0,16,32,48,64,80,96,112,120");
     assert.equal(await doorSvg.getAttribute("data-opening-positions"), "48,64");
@@ -221,8 +226,10 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     await page.getByRole("button", { name: "Calculate" }).click();
     await page.locator("[data-stud-count]").waitFor();
     assert.equal(await page.locator("[data-stud-count]").innerText(), "9 studs");
-    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "72 lineal feet of studs");
-    assert.equal(await page.locator("[data-total-lineal]").innerText(), "137 total lineal feet");
+    // Updated deliberately (Joel, 21 Oct 2026 authorized): 68.625 studs + 30 plates + 16 corners
+    // + 16 kings + 3 header = 133.625 (was 72 + 65 = 137).
+    assert.equal(await page.locator("[data-stud-lineal]").innerText(), "68.625 lineal feet of studs");
+    assert.equal(await page.locator("[data-total-lineal]").innerText(), "133.625 total lineal feet");
     assert.match(await page.locator("[data-corner]").innerText(), /Left corner/);
     assert.match(await page.locator("[data-corner]").innerText(), /16 ft/);
     assert.match(await page.locator("[data-extra-member]").first().innerText(), /King studs/);

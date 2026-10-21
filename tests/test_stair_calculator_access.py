@@ -17,8 +17,10 @@ from tests.browser_process import run_node_browser_test
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "calculation-engines" / "stair-ontario-residential-v1" / "website-source"
 PRESERVED = {
+    # Updated deliberately: Joel, 21 Oct 2026, authorized correcting the reported stair angle to
+    # atan(riser ÷ tread); the recovered archive digest was b14e5c71…3828d6 (see PROVENANCE.md).
     SOURCE / "lib/useful-tools/stairs.mjs":
-        "b14e5c718ca2608f941e93f5829a56f3915cf0f61377d382f81cdb0dc23828d6",
+        "ce97f4ada8f7b6eb6a3a6a06dbee968ed869731c8d74b3c026ea533df46a919c",
     SOURCE / "lib/useful-tools/units.mjs":
         "f24960c6c5202be6d9334593cfca791bc48eccf79e2399c476fbeca01fee2686",
     SOURCE / "lib/useful-tools/profiles/ontario-residential-v1.json":

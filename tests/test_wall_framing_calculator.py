@@ -72,10 +72,14 @@ def test_accepted_ten_foot_fixture():
         Decimal(value) for value in (0, 16, 32, 48, 64, 80, 96, 112, 120)
     )
     assert result["stud_count"] == 9
-    assert result["stud_lineal_ft"] == Decimal("72")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs run between the plates.
+    # Stud = 96 in wall − 3 plates × 1.5 in = 91.5 in = 7.625 ft; 9 × 7.625 = 68.625 lf (was 9 × 8 = 72).
+    assert result["stud_length_in"] == Decimal("91.5")
+    assert result["stud_lineal_ft"] == Decimal("68.625")
     assert result["top_plate_lineal_ft"] == Decimal("20")
     assert result["bottom_plate_lineal_ft"] == Decimal("10")
-    assert result["total_lineal_ft"] == Decimal("102")
+    # 68.625 + 20 + 10 = 98.625 (was 102).
+    assert result["total_lineal_ft"] == Decimal("98.625")
     assert result["gross_wall_area_sqft"] == Decimal("80")
     assert result["short_final_spacing_in"] == Decimal("8")
 
@@ -91,7 +95,9 @@ def test_stud_size_does_not_change_the_count():
 def test_a_different_spacing_changes_the_count():
     result = calculate_straight_wall(**{**FIXTURE, "spacing_in": "24"})
     assert result["stud_count"] == 6
-    assert result["stud_lineal_ft"] == Decimal("48")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs run between the plates.
+    # 6 × 7.625 ft = 45.75 lf (was 6 × 8 = 48).
+    assert result["stud_lineal_ft"] == Decimal("45.75")
     assert result["short_final_spacing_in"] is None
     assert result["gross_wall_area_sqft"] == Decimal("80")
 
@@ -102,14 +108,18 @@ def test_short_final_spacing_is_identified():
     assert result["short_final_spacing_in"] == Decimal("8")
 
 
-def test_plate_counts_change_only_the_plate_lengths():
+def test_plate_counts_change_the_plate_lengths_and_the_stud_length():
     result = calculate_straight_wall(
         **{**FIXTURE, "top_plate_count": "3", "bottom_plate_count": "2"}
     )
     assert result["stud_count"] == 9
     assert result["top_plate_lineal_ft"] == Decimal("30")
     assert result["bottom_plate_lineal_ft"] == Decimal("20")
-    assert result["total_lineal_ft"] == Decimal("122")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs run between the plates.
+    # 5 plates: stud = 96 − 5 × 1.5 = 88.5 in = 7.375 ft; studs 9 × 7.375 = 66.375;
+    # total 66.375 + 30 + 20 = 116.375 (was 9 × 8 + 50 = 122, which ignored the plates).
+    assert result["stud_length_in"] == Decimal("88.5")
+    assert result["total_lineal_ft"] == Decimal("116.375")
 
 
 def test_missing_invalid_zero_and_negative_entries_are_refused():
@@ -180,10 +190,13 @@ def test_standalone_page_calculates_without_creating_an_estimate(app, client):
     recovered = _post(client)
     body = recovered.get_data(as_text=True)
     assert "9 studs" in body
-    assert "72 lineal feet of studs" in body
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs run between the plates.
+    # 9 × 91.5 in studs = 68.625 lf (was 72); total 98.625 (was 102).
+    assert "Stud length 91.5 in (8 ft wall less 3 plates at 1.5 in)" in body
+    assert "68.625 lineal feet of studs" in body
     assert "20 lineal feet of top plates" in body
     assert "10 lineal feet of bottom plates" in body
-    assert "102 total lineal feet" in body
+    assert "98.625 total lineal feet" in body
     assert "80 square feet gross wall area" in body
     assert "Short final spacing 8 in" in body
     assert "These quantities are not on an estimate." in body
@@ -197,7 +210,8 @@ def test_standalone_page_calculates_without_creating_an_estimate(app, client):
     door_body = door.get_data(as_text=True)
     assert "7 full-height studs" in door_body
     assert "Opening positions 48 in, 64 in" in door_body
-    assert "86 total lineal feet" in door_body
+    # 7 × 7.625 + 30 = 83.375 (was 7 × 8 + 30 = 86; Joel, 21 Oct 2026 authorized).
+    assert "83.375 total lineal feet" in door_body
     assert "20 lineal feet of top plates" in door_body
     assert "These stations meet an opening." in door_body
     assert "data-wall-framing-result" in door_body
@@ -246,11 +260,13 @@ def test_a_door_at_the_base_reclassifies_only_interior_studs():
     assert result["remaining_positions_in"] == _positions(0, 16, 32, 80, 96, 112, 120)
     assert result["stud_count"] == 9
     assert result["remaining_stud_count"] == 7
-    assert result["remaining_stud_lineal_ft"] == Decimal("56")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): 7 × 7.625 ft studs = 53.375 (was 56).
+    assert result["remaining_stud_lineal_ft"] == Decimal("53.375")
     assert result["top_plate_lineal_ft"] == Decimal("20")
     assert result["bottom_plate_lineal_ft"] == Decimal("10")
     assert result["gross_wall_area_sqft"] == Decimal("80")
-    assert result["total_lineal_ft"] == Decimal("86")
+    # 53.375 + 20 + 10 = 83.375 (was 86).
+    assert result["total_lineal_ft"] == Decimal("83.375")
     assert result["openings"][0]["sill_ft"] == Decimal("0")
     assert result["short_final_spacing_in"] == Decimal("8")
 
@@ -283,7 +299,8 @@ def test_boundary_studs_stay_and_an_elevated_window_keeps_its_sill():
     )
     assert window["intersecting_positions_in"] == _positions(32)
     assert window["remaining_stud_count"] == 8
-    assert window["remaining_stud_lineal_ft"] == Decimal("64")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): 8 × 7.625 ft = 61 (was 8 × 8 = 64).
+    assert window["remaining_stud_lineal_ft"] == Decimal("61")
     assert window["openings"][0]["sill_ft"] == Decimal("3")
     at_top = _wall(
         openings=[
@@ -424,12 +441,15 @@ def test_corners_and_extra_members_are_explicit_lengths():
         ],
     )
     assert result["stud_count"] == 9
-    assert result["stud_lineal_ft"] == Decimal("72")
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs run between the plates.
+    # 9 × 7.625 = 68.625 (was 72). Corner and member lengths are entered and unchanged.
+    assert result["stud_lineal_ft"] == Decimal("68.625")
     assert result["corners"][0]["lineal_ft"] == Decimal("16")
     assert result["extra_members"][0]["lineal_ft"] == Decimal("16")
     assert result["extra_members"][1]["lineal_ft"] == Decimal("3")
     assert result["extra_members"][2]["label"] == "Sill"
-    assert result["total_lineal_ft"] == Decimal("140")
+    # 68.625 + plates 30 + corners 16 + kings 16 + header 3 + sill 3 = 136.625 (was 140).
+    assert result["total_lineal_ft"] == Decimal("136.625")
     assert result["intersecting_positions_in"] == ()
     with pytest.raises(WallFramingInputError, match="other member name"):
         _wall(extra_members=[{"kind": "other", "name": "", "count": "1", "length_ft": "3"}])

@@ -25,7 +25,10 @@ PROFILES = ROOT / "app" / "data" / "icf_manufacturer_profiles_v1.json"
 WALL_ROUTE = ROOT / "app" / "routes" / "calculation_mapping.py"
 WALL_TEMPLATE = ROOT / "app" / "templates" / "estimates" / "wall_form_quantities.html"
 PRESERVED = {
-    ENGINE: "2a22a2f4860273bb0f43735c732d6c18e60f6e81fc78e9eefb9d7f5876e6782c",
+    # Updated deliberately: Joel, 21 Oct 2026, authorized correcting the false "Neither a
+    # per-form volume nor a cavity-width factor" message when concrete is withheld only
+    # because a requested corner's coverage is missing (previous digest 2a22a2f4…6782c).
+    ENGINE: "7b4cc0433485da884b6302a1d69af9f7871b04aa19559268cfe814ff8cfca8f1",
     PROFILES: "901136d4676518164439fad4f860c0231fd5c72120e32e41b6b651c7e8cfcc9a",
     WALL_ROUTE: "924d5768e96503ef3053f48b025f60778cc43f6c25f02a1070cfc8d4d631daf8",
     WALL_TEMPLATE: "182994daa102efdd81ee040ed87dcfd355ad1ffa26c405e07b513d6ae81ad7c7",

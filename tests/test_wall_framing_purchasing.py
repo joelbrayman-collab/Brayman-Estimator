@@ -76,7 +76,9 @@ def test_framing_goes_to_the_estimate_review_without_adding_a_line(app, client):
     form = {**FIXTURE, "waste_percent": "10", "plate_stock_length_ft": "16", "action": "calculate"}
     calc = client.post(url, data=form)
     text = calc.get_data(as_text=True)
-    assert "10 studs (2x4, 8 ft)" in text and "3 plates at 16 ft" in text
+    # Updated deliberately (Joel, 21 Oct 2026 authorized): studs are cut to the wall height less the
+    # plates, 96 − 3 × 1.5 = 91.5 in, not bought at the 8 ft wall height. 9 × 1.10 = 9.9 → 10 studs.
+    assert "10 studs (2x4, cut to 91.5 in)" in text and "3 plates at 16 ft" in text
     lines_before = EstimateLineItem.query.count()
     review = client.post(url, data={**form, "action": "review"})
     assert review.status_code == 302 and "/calculations/" in review.headers["Location"]
@@ -85,3 +87,41 @@ def test_framing_goes_to_the_estimate_review_without_adding_a_line(app, client):
     # The standalone page is unchanged: no purchasing, no estimate.
     standalone = client.post("/calculators/wall-framing", data=FIXTURE).get_data(as_text=True)
     assert "These quantities are not on an estimate." in standalone and "To buy" not in standalone
+
+
+def test_studs_are_cut_to_the_wall_height_less_the_plates():
+    """Joel, 21 Oct 2026: a stud runs between the plates.
+
+    8 ft wall = 96 in; 1 bottom + 2 top plates at the dressed 1-1/2 in = 4.5 in; stud 91.5 in.
+    """
+    result = _wall()
+    assert result["stud_length_in"] == Decimal("91.5")
+    bought = buy.purchase(result, waste_percent="10")
+    assert bought["stud_length_in"] == Decimal("91.5")
+    assert (bought["stud_pieces_net"], bought["stud_pieces"]) == (9, 10)  # 9 × 1.10 = 9.9 → 10
+    assert "cut to 91.5 in" in bought["displays"]["studs"] and "8 ft" not in bought["displays"]["studs"]
+    payload = buy.contract_v1(result, bought, "framing-len")
+    assert validate_contract_v1(payload) == []
+    assert {"code": "stud_length", "value": "91.5", "unit_code": "in"} in payload["assumptions"]
+    assert {"code": "plate_thickness", "value": "1.5", "unit_code": "in"} in payload["assumptions"]
+
+
+@pytest.mark.parametrize("stock, per_piece, pieces", [
+    ("92.625", 1, 10),  # 92-5/8 in precut covers 91.5 in: one stud each, 10 pieces
+    ("96", 1, 10),      # 8 ft: 96 ÷ 91.5 = 1.05 → one stud each
+    ("192", 2, 5),      # 16 ft: 192 ÷ 91.5 = 2.10 → two studs each; 10 ÷ 2 = 5 pieces
+])
+def test_an_entered_stud_stock_length_must_cover_the_stud(stock, per_piece, pieces):
+    bought = buy.purchase(_wall(), waste_percent="10", stud_stock_length_in=stock)
+    assert (bought["studs_per_piece"], bought["stud_pieces"]) == (per_piece, pieces)
+    payload = buy.contract_v1(_wall(), bought, "framing-stock")
+    assert validate_contract_v1(payload) == []
+    assert {q["code"]: q["quantity"] for q in payload["quantities"]}["studs"] == str(pieces)
+
+
+def test_a_stud_stock_shorter_than_the_stud_is_refused():
+    # A 92-5/8 in precut is too short for a 9 ft wall: 108 − 4.5 = 103.5 in.
+    with pytest.raises(buy.FramingPurchaseError, match="shorter than the 103.5 in stud"):
+        buy.purchase(_wall(height_ft="9"), waste_percent="0", stud_stock_length_in="92.625")
+    with pytest.raises(buy.FramingPurchaseError, match="number of inches"):
+        buy.purchase(_wall(), waste_percent="0", stud_stock_length_in="x")

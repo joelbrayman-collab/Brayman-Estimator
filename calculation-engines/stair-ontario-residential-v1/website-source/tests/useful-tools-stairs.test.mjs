@@ -19,7 +19,11 @@ test("stair geometry is internally consistent",()=>{
   assert.equal(result.riserHeightM,result.totalRiseM/result.riserCount);
   assert.equal(result.treadRunM,result.totalRunM/result.treadCount);
   assert.ok(Math.abs(result.stringerLengthM-Math.hypot(result.totalRiseM,result.totalRunM))<1e-12);
-  assert.ok(Math.abs(result.angleDegrees-Math.atan2(result.totalRiseM,result.totalRunM)*180/Math.PI)<1e-12);
+  // Updated deliberately (Joel, 21 Oct 2026 authorized): the angle is the pitch atan(riser ÷ tread),
+  // not atan(total rise ÷ total run). 15 risers: 2800 / 15 = 186.67 mm rise, 4000 / 14 = 285.71 mm run:
+  // atan(186.67 / 285.71) = 33.16°, where the old total-based figure was atan(2800 / 4000) = 34.99°.
+  assert.ok(Math.abs(result.angleDegrees-Math.atan2(result.riserHeightM,result.treadRunM)*180/Math.PI)<1e-12);
+  assert.ok(Math.abs(result.angleDegrees-Math.atan2(2800/result.riserCount,4000/result.treadCount)*180/Math.PI)<1e-12);
 });
 
 test("equivalent imperial and metric inputs produce the same canonical result",()=>{

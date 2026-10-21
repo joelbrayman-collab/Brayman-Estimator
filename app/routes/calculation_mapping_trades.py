@@ -71,6 +71,7 @@ def framing_quantities(id, version_id):
     purchase_values = {
         "waste_percent": (request.form.get("waste_percent") or "").strip() if request.method == "POST" else "",
         "plate_stock_length_ft": (request.form.get("plate_stock_length_ft") or "").strip() if request.method == "POST" else "",
+        "stud_stock_length_in": (request.form.get("stud_stock_length_in") or "").strip() if request.method == "POST" else "",
     }
     error = result = drawing = bought = None
     if request.method == "POST":

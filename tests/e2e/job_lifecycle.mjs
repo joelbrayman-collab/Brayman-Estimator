@@ -473,6 +473,9 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await kevin.page.fill("#field-text", "Footing forms checked before the pour (synthetic observation)");
     await kevin.page.click("#field-save");
     await kevin.page.locator("#field-feedback", { hasText: "Saved" }).waitFor();
+    // Once the office has it, the phone no longer shows it as pending or unsent (defect 8, 21 Oct 2026).
+    await kevin.page.locator("#field-retry-panel").waitFor({ state: "hidden", timeout: 2000 });
+    assert.doesNotMatch(await kevin.page.locator("main").innerText(), /pending on this phone|Unsent/);
     await kevin.go("/field/today");
     assert.match(await kevin.main(), /Recent observations[\s\S]*Footing forms checked before the pour/);
     // The customer asks Kevin for a step in the footing: extra work, recorded on site.

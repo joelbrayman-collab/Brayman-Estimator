@@ -754,6 +754,12 @@
           setFeedback(text, navigator.onLine ? "needs_retry" : "saved_local");
           setStatus(text);
         });
+      })
+      .then(function () {
+        // The pending panel was drawn before the upload ("1 pending on this phone · Unsent"). Redraw it
+        // from the phone's store now that the server has confirmed (or refused) the capture, so a saved
+        // capture is no longer shown as unsent (defect 8, 21 Oct 2026).
+        return updateRetryPanel();
       });
   }
 

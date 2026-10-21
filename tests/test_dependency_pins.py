@@ -50,8 +50,10 @@ def test_the_lock_is_complete_and_exact():
 
 def test_dev_requirements_are_test_only_and_exact():
     dev = _pins("requirements-dev.txt")
-    assert dev == {"playwright": "1.56.0"}
+    # icalendar 6.3.2 (21 Oct 2026): an independent RFC 5545 parser for tests/test_calendar_connect.py.
+    assert dev == {"playwright": "1.56.0", "icalendar": "6.3.2"}
     assert "playwright" not in _pins("requirements.txt")
+    assert "icalendar" not in _pins("requirements.txt")
 
 
 def test_python_and_node_packages_are_pinned():

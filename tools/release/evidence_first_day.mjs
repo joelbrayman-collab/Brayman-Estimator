@@ -410,6 +410,8 @@ step("11 estimate: lines, scope delivery, costing approved, company pricing appl
   await submit(pg, pg.getByRole("button", { name: "Save Estimate" }));
   assert.match(await flash(pg), /Estimate created/);
   W.estimateId = Number(pg.url().match(/\/estimates\/(\d+)/)[1]);
+  // The estimate summary (versions table) fits the 1280 px desktop: no sideways scroll (defect 3, 21 Oct 2026).
+  await noSideways(pg, "11 estimate summary (desktop)");
   await submit(pg, pg.getByRole("link", { name: "View Version" }).first());
   W.versionUrl = new URL(pg.url()).pathname;
   await pg.fill("form[action$='/sections/new'] [name=name]", "Deck");
@@ -443,6 +445,9 @@ step("11 estimate: lines, scope delivery, costing approved, company pricing appl
   assert.match(text, /TAX \(13\.00%\)/);
   assert.match(text, /CUSTOMER TOTAL\s*\$11130\.50/);       // 7880 / 0.8 = 9850.00, + 13 % HST
   await shot(pg, "11-estimate", "priced");
+  await go(pg, `/estimates/${W.estimateId}`);
+  await noSideways(pg, "11 estimate summary, priced (desktop)");
+  await go(pg, W.versionUrl);
   await expectDone(pg, "estimate", 11);
 });
 

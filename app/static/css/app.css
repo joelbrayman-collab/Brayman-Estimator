@@ -2534,3 +2534,33 @@ body.login-page {
     }
 }
 
+
+/* Estimate versions table (defect 3, 21 Oct 2026): eleven columns must fit the 1280 px desktop
+   content area without the page scrolling sideways. Tighter cells, the lock shown under the status,
+   and the action buttons stacked in their column; the wrapper scrolls only on narrower screens. */
+.estimate-versions-wrap {
+    margin-bottom: 24px;
+}
+.estimate-versions-table th,
+.estimate-versions-table td {
+    padding: 10px 8px;
+}
+.estimate-versions-table .status {
+    margin-top: 4px;
+}
+.estimate-version-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+.estimate-version-actions form {
+    display: block !important;
+}
+.estimate-version-actions .button-link,
+.estimate-version-actions button {
+    width: 100%;
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+}

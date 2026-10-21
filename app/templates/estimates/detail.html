@@ -144,12 +144,12 @@
 </section>
 
 {% if estimate.versions %}
-<table class="data-table" style="margin-bottom: 24px;">
+<div class="table-wrap estimate-versions-wrap">
+<table class="data-table estimate-versions-table" data-estimate-versions>
     <thead>
         <tr>
             <th>Version</th>
             <th>Status</th>
-            <th>Lock</th>
             <th>Method</th>
             <th>Subtotal / Pre-tax</th>
             <th>Overhead</th>
@@ -170,8 +170,8 @@
                 <span class="status status-current">Current</span>
                 {% endif %}
             </td>
-            <td>{{ version.status }}</td>
             <td>
+                {{ version.status }}<br>
                 {% if version.is_locked %}
                 <span class="status status-locked">Locked</span>
                 {% else %}
@@ -196,6 +196,7 @@
             <td>{{ version.revision_reason or "—" }}</td>
             <td>{{ version.created_at.strftime("%Y-%m-%d") }}</td>
             <td>
+                <div class="estimate-version-actions">
                 <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">View</a>
                 {% if estimate.current_version_id != version.id %}
                 <form method="post" action="{{ url_for('estimates.set_current', id=estimate.id, version_id=version.id) }}" style="display: inline;">
@@ -211,11 +212,13 @@
                     <button type="submit">Lock</button>
                 </form>
                 {% endif %}
+                </div>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endif %}
 
 <section class="form-panel">

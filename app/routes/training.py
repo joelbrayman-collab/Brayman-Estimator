@@ -4,6 +4,7 @@ everywhere else every page answers 404.
 /training                         register (role) or the trainee's home: progress, Continue, modules, tests
 /training/lessons/<key>           one lesson, one step at a time (?step=N), screenshot beside the instructions
 /training/uat                     the trainee's acceptance tests; /training/uat/<key> one test (Pass/Fail/Blocked)
+/training/workflow                the Workflow map: each stage with its lessons and acceptance tests
 /training/admin                   the administrator's dashboard (Instance Owner or System Administrator)
 """
 
@@ -184,6 +185,21 @@ def tutor_ask():
     flash(answer, "tutor")
     return redirect(url_for("training.lesson", key=data.get("lesson"), step=data.get("step") or 0)
                     if item else url_for("training.home"))
+
+
+@training_bp.route("/workflow")
+def workflow_map():
+    """The Workflow map in the Training Centre (Joel, 21 Oct 2026): the trainee's side of the governed workflow
+    definition, each stage with its lessons and acceptance tests and the trainee's own progress."""
+    trainee, back = _trainee_or_register()
+    if back:
+        return back
+    from app.workflow_map.build import build as build_map
+    from app.workflow_map.pages import training_viewer
+
+    map_key, viewer = training_viewer(trainee)
+    wf = build_map(map_key, viewer, current=request.args.get("stage"), stage_endpoint="training.workflow_map")
+    return render_template("training/workflow.html", trainee=trainee, wf=wf)
 
 
 @training_bp.route("/uat")

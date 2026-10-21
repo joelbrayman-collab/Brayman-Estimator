@@ -148,6 +148,9 @@ def _field_only_wall(endpoint, organization_id):
 
         return api_error("Not available to field users.", 403)
     if request.method in ("GET", "HEAD"):
+        # The office Workflow Guide sends a Field sign-in to the Field workflow (21 Oct 2026).
+        if endpoint == "workflow_map.contractor":
+            return redirect(url_for("field.workflow"))
         return redirect(url_for("field.today"))
     abort(403)
 
@@ -495,6 +498,7 @@ def create_app(config=None):
     from app.routes.organization_crew import organization_crew_bp
     from app.routes.people_access import people_access_bp
     from app.routes.getting_started import getting_started_bp
+    from app.routes.workflow_map import workflow_map_bp
     from app.routes.accounting import accounting_bp
     from app.routes.training import training_bp
     from app.routes.company_attention import company_attention_bp
@@ -547,6 +551,7 @@ def create_app(config=None):
     app.register_blueprint(organization_crew_bp)
     app.register_blueprint(people_access_bp)
     app.register_blueprint(getting_started_bp)
+    app.register_blueprint(workflow_map_bp)
     app.register_blueprint(accounting_bp)
     app.register_blueprint(training_bp)
     app.register_blueprint(company_attention_bp)

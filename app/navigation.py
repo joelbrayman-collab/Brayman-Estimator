@@ -170,6 +170,13 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                # Joel, 21 Oct 2026: the Contractor Workflow Map (app/workflow_map).
+                "title": "Workflow Guide",
+                "endpoint": "workflow_map.contractor",
+                "icon": "bi-signpost-split",
+                "enabled": True,
+            },
+            {
                 "title": ATTENTION_NAV_TITLE,
                 "endpoint": "company_attention.index",
                 "icon": "bi-exclamation-circle",

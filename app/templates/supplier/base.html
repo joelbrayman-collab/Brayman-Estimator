@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/v1-refinement.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/supplier-hub.css') }}">
+    {% block head_extra %}{% endblock %}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="supplier-hub" data-workspace="supplier">
@@ -38,6 +39,11 @@
                 {% for a in areas %}
                 <a href="{{ url_for('supplier_portal.inbox', supplier_id=a.id) }}" {% if area and area.id == a.id %}aria-current="page"{% endif %}>{{ brand_for(a).name }}</a>
                 {% endfor %}
+            </nav>
+            {% endif %}
+            {% if area %}
+            <nav class="supplier-nav supplier-guide-nav" aria-label="Supplier Hub">
+                <a href="{{ url_for('supplier_portal.workflow', supplier_id=area.id) }}" data-supplier-workflow {% if request.endpoint == 'supplier_portal.workflow' %}aria-current="page"{% endif %}>Workflow Guide</a>
             </nav>
             {% endif %}
             <form method="post" action="{{ url_for('supplier_portal.logout') }}">

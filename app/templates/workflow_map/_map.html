@@ -1,0 +1,216 @@
+{#- The one Workflow Map presentation (Joel, 21 Oct 2026), shared by the contractor office Workflow Guide, the
+    Supplier Hub, Field and the Training & Acceptance Centre. Expects `wf` from app/workflow_map/build.py.
+    Layout and behaviour follow AiRIA's journey map: a ribbon showing where you are, connected numbered
+    stages with directional flow and return loops, a stage page beside the map, Back and Next.
+    Every link is a real address (?stage=…), so the page works without JavaScript; workflow-map.js only
+    makes the moves instant and adds the arrow keys. Style: static/css/workflow-map.css. -#}
+{% macro ribbon(wf, s) -%}
+<div class="wf-ribbon" aria-hidden="true">
+  <div class="wf-bars" style="--wf-count: {{ wf.stages|length }}">
+    {% for x in wf.stages %}<span class="wf-bar{% if x.id == s.id %} is-current{% endif %}{% if x.journey != s.journey %} is-other{% endif %}" title="{{ x.label }}"></span>{% endfor %}
+  </div>
+  <p class="wf-position">{% if s.journey_letter %}Journey {{ s.journey_letter }} · {% endif %}Stage {{ s.number }} of {{ s.journey_size }} · {{ s.label }} — {{ s.title }}</p>
+</div>
+{%- endmacro %}
+
+{% macro action(link, kind, extra='') -%}
+{% if link %}<a class="wf-btn wf-btn-{{ kind }}{% if link.choose %} is-choose{% endif %}" href="{{ link.href }}" {{ extra|safe }}>{{ link.label }}</a>{% endif %}
+{%- endmacro %}
+
+{% macro workflow_map(wf) -%}
+{% set cur = wf.current %}
+<section class="wf" id="workflow-map" data-wf-map="{{ wf.key }}" data-wf-current="{{ cur.id }}" data-wf-version="{{ wf.version }}" aria-labelledby="wf-title">
+  <header class="wf-head">
+    <p class="wf-eyebrow">{{ wf.eyebrow }}</p>
+    <h1 id="wf-title">{{ wf.title }}</h1>
+    <p class="wf-intro">{{ wf.intro }}</p>
+    {% if wf.projects is not none and wf.key == 'contractor' %}
+    <form class="wf-project" method="get" action="" data-wf-project>
+      <input type="hidden" name="stage" value="{{ cur.id }}" data-wf-stage-input>
+      <label for="wf-project-select">Working on</label>
+      <select id="wf-project-select" name="project_id">
+        <option value="">No project chosen (links open the list to choose one)</option>
+        {% for p in wf.projects %}<option value="{{ p.id }}"{% if wf.project and wf.project.id == p.id %} selected{% endif %}>{{ p.name }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="wf-btn wf-btn-quiet">Show</button>
+      {% if wf.project %}<p class="wf-project-note" data-wf-project-name>Links open {{ wf.project.name }}. The highlighted stage is where this project is now.</p>{% endif %}
+    </form>
+    {% endif %}
+  </header>
+
+  {# The connected stages, journey by journey: AiRIA's process orientation. #}
+  {% for j in wf.journeys %}
+  <nav class="wf-process{% if j.current %} is-current-journey{% endif %}" aria-label="{{ (j.letter ~ ' · ') if j.letter }}{{ j.title }}: stages" data-wf-journey="{{ j.key }}">
+    <p class="wf-journey-name">{% if j.letter %}<span class="wf-journey-letter">{{ j.letter }}</span>{% endif %}{{ j.title }}</p>
+    <ol class="wf-process-list">
+      {% for s in j.stages %}
+      <li class="wf-process-step{% if s.current %} is-current{% endif %}" data-wf-step="{{ s.id }}">
+        <a class="wf-process-item" href="{{ s.href }}" data-wf-goto="{{ s.id }}"{% if s.current %} aria-current="step"{% endif %}>
+          <span class="wf-process-marker" aria-hidden="true">{{ s.number }}</span>
+          <span class="wf-process-label">{{ s.label }}</span>
+          <span class="wf-visually-hidden">. {{ s.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ol>
+  </nav>
+  {% endfor %}
+
+  <div class="wf-spread">
+    {# The journey map: every stage as a card, with the return loop drawn beside them. #}
+    <div class="wf-overview" id="wf-overview">
+      {% for j in wf.journeys %}
+      <div class="wf-journey" data-wf-journey-map="{{ j.key }}">
+        <h2 class="wf-journey-title">{% if j.letter %}<span class="wf-journey-letter">{{ j.letter }}</span>{% endif %}{{ j.title }}</h2>
+        <p class="wf-journey-flow">{{ j.flow }}</p>
+        <div class="wf-journey-body">
+          <div class="wf-loop-art" aria-hidden="true">
+            <svg viewBox="0 0 58 352" preserveAspectRatio="none" focusable="false"><defs><marker id="wf-arrow-{{ j.key }}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10" fill="#c79a2b"/></marker></defs><path d="M53 330 C2 330 2 330 2 176 C2 22 2 22 49 22" fill="none" stroke="#c79a2b" stroke-width="2.5" vector-effect="non-scaling-stroke" marker-end="url(#wf-arrow-{{ j.key }})"/></svg>
+          </div>
+          <ol class="wf-stage-list">
+            {% for s in j.stages %}
+            <li class="wf-stage-item">
+              <a class="wf-stage-card{% if s.current %} is-current{% endif %}{% if not s.for_you %} is-not-for-you{% endif %}" href="{{ s.href }}" data-wf-goto="{{ s.id }}" data-wf-card="{{ s.id }}"
+                 aria-controls="wf-page-{{ s.id }}" aria-expanded="{{ 'true' if s.current else 'false' }}"{% if s.current %} aria-current="step"{% endif %}
+                 aria-label="Stage {{ s.number }}: {{ s.label }}, {{ s.title }}">
+                <span class="wf-stage-number" aria-hidden="true">{{ s.number }}</span>
+                <span class="wf-stage-text"><strong>{{ s.label }} <span class="wf-stage-title">— {{ s.title }}</span></strong><small>{{ s.summary }}</small>
+                  {% if s.lessons and wf.training %}<small class="wf-stage-progress" data-wf-progress>{{ s.lessons|selectattr('state', 'equalto', 'done')|list|length }} of {{ s.lessons|length }} lessons done</small>{% endif %}
+                </span>
+              </a>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+        {% if j.loop_note %}<p class="wf-loop-label">↶ {{ j.loop_note }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {# One page per stage; only the current one is shown. #}
+    <div class="wf-pages" id="workflow-stage" tabindex="-1">
+      {% for s in wf.stages %}
+      <article class="wf-page" id="wf-page-{{ s.id }}" data-wf-page="{{ s.id }}" data-wf-prev="{{ s.prev.id if s.prev }}" data-wf-next="{{ s.next.id if s.next }}" data-wf-position="{{ s.position }}" data-wf-label="{{ s.label }}" data-wf-href="{{ s.href }}" aria-labelledby="wf-h-{{ s.id }}"{% if not s.current %} hidden{% endif %}>
+        {{ ribbon(wf, s) }}
+        <p class="wf-eyebrow">{% if s.journey_letter %}Journey {{ s.journey_letter }} · {{ s.journey_title }}{% else %}{{ s.journey_title }}{% endif %}</p>
+        <h2 id="wf-h-{{ s.id }}" tabindex="-1"><span class="wf-page-number" aria-hidden="true">{{ s.number }}</span> {{ s.label }} <span class="wf-page-title">— {{ s.title }}</span></h2>
+        <p class="wf-description">{{ s.description }}</p>
+        {% if s.audience %}<p class="wf-audience">{{ s.audience }}{% if not s.for_you %} · not part of your training role{% endif %}</p>{% endif %}
+
+        <div class="wf-actions" role="group" aria-label="{{ s.label }}: actions">
+          {% if s.open %}{{ action(s.open, 'primary', 'data-wf-open') }}{% elif s.open_reason %}<span class="wf-reason" data-wf-reason>{{ s.open_reason }}</span>{% endif %}
+          {{ action(s.instructions, 'quiet', 'data-wf-instructions') }}
+          {{ action(s.training, 'quiet', 'data-wf-training') }}
+          {{ action(s.uat_link, 'quiet', 'data-wf-uat') }}
+          {% if s.next %}<a class="wf-btn wf-btn-next" href="{{ s.next.href }}" data-wf-goto="{{ s.next.id }}" data-wf-next-step>Next step: {{ s.next.label }} →</a>{% endif %}
+        </div>
+
+        <h3 class="wf-sub">In this stage</h3>
+        <ol class="wf-steps">
+          {% for x in s.substeps %}
+          <li class="wf-step is-{{ x.availability }}" data-wf-substep="{{ s.id }}:{{ x.key }}">
+            <span class="wf-step-label">{{ x.label }}</span>
+            {% if x.availability != 'available' %}<span class="wf-chip wf-chip-{{ x.availability }}">{{ x.availability_label }}</span>{% endif %}
+            {% if x.note %}<span class="wf-step-note">{{ x.note }}</span>{% endif %}
+            <span class="wf-step-go">
+              {% if x.link %}<a href="{{ x.link.href }}" class="wf-go{% if x.link.choose %} is-choose{% endif %}" data-wf-link>{{ x.link.label }}</a>{% elif x.reason %}<span class="wf-reason" data-wf-reason>{{ x.reason }}</span>{% endif %}
+              {% if x.instructions %}<a href="{{ x.instructions.href }}" class="wf-go wf-go-quiet" data-wf-lesson-link>{{ x.instructions.label }}</a>{% endif %}
+            </span>
+          </li>
+          {% endfor %}
+        </ol>
+
+        {% if wf.training and (s.lessons or s.uat) %}
+        <div class="wf-training" data-wf-training-panel>
+          {% if s.lessons %}
+          <h3 class="wf-sub">Lessons for this stage</h3>
+          <ul class="wf-lessons">
+            {% for l in s.lessons %}
+            <li class="wf-lesson is-{{ l.state or 'new' }}" data-wf-lesson="{{ l.key }}">
+              <span class="wf-tick" aria-hidden="true">{% if l.state == 'done' %}&#10003;{% endif %}</span>
+              <a href="{{ l.href }}">{{ l.title }}</a>
+              <span class="wf-lesson-state" data-wf-lesson-state>{% if l.state == 'done' %}Done{% elif l.ticked %}{{ l.ticked }} of {{ l.steps }} steps{% elif l.state == 'started' %}Started{% else %}{{ l.steps }} steps{% endif %}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if s.uat %}
+          <h3 class="wf-sub">Acceptance tests (UAT)</h3>
+          <ul class="wf-lessons">
+            {% for u in s.uat %}
+            <li class="wf-lesson is-uat-{{ (u.status or 'NOT_TESTED')|lower }}" data-wf-uat-case="{{ u.key }}">
+              <span class="wf-tick" aria-hidden="true">{% if u.status == 'PASS' %}&#10003;{% endif %}</span>
+              <a href="{{ u.href }}">{{ u.title }}</a>
+              <span class="wf-lesson-state">{{ {'PASS': 'Passed', 'FAIL': 'Failed', 'BLOCKED': 'Blocked'}.get(u.status, 'Not tested') }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% for lp in s.loops %}
+        <aside class="wf-return-loop">
+          <strong>↶ {{ lp.label }}</strong>
+          <p>{{ lp.text }}</p>
+          <a href="{{ lp.href }}" data-wf-goto="{{ lp.target }}">{{ lp.action }} ↶</a>
+        </aside>
+        {% endfor %}
+
+        {% if s.handoffs and wf.handoffs %}
+        <p class="wf-handoff-note">Connected to the {{ wf.other_side }}: steps {{ s.handoffs|join(', ') }} of <a href="#wf-connection">one transaction, two sides</a>.</p>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if wf.handoffs %}
+  <section class="wf-connection" id="wf-connection" aria-labelledby="wf-connection-title">
+    <p class="wf-eyebrow">Contractor and supplier</p>
+    <h2 id="wf-connection-title">One transaction, two sides</h2>
+    <p class="wf-intro">The same request and order, as each side sees it. {{ wf.privacy_note }}</p>
+    <ol class="wf-lanes">
+      <li class="wf-lane-head" aria-hidden="true"><span></span><span>You</span><span>The {{ wf.other_side }}</span></li>
+      {% for h in wf.handoffs %}
+      <li class="wf-lane" data-wf-handoff="{{ h.number }}">
+        <span class="wf-lane-number" aria-hidden="true">{{ h.number }}</span>
+        <div class="wf-lane-mine"><strong>{{ h.title }}</strong><p>{{ h.mine }}</p>
+          <a href="{{ h.my_stage.href }}" data-wf-goto="{{ h.my_stage.id }}" class="wf-lane-stage">Your stage: {{ h.my_stage.label }}</a></div>
+        <div class="wf-lane-theirs"><span class="wf-visually-hidden">The {{ wf.other_side }}: </span><p>{{ h.theirs }}</p>
+          <span class="wf-lane-stage is-theirs">Their stage: {{ h.their_stage }}</span></div>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
+
+  {% if wf.branches %}
+  <section class="wf-branches" aria-labelledby="wf-branches-title">
+    <p class="wf-eyebrow">Alongside every stage</p>
+    <h2 id="wf-branches-title">Use these at any time</h2>
+    <ul class="wf-branch-list">
+      {% for b in wf.branches %}
+      <li class="wf-branch" data-wf-branch="{{ b.key }}">
+        <strong>{{ b.label }}</strong>
+        <p>{{ b.description }}</p>
+        <p class="wf-branch-links">
+          {% for l in b.links %}{% if l.href %}<a href="{{ l.href }}" data-wf-link>{{ l.label }}</a>{% else %}<span class="wf-reason" data-wf-reason>{{ l.label }}: {{ l.reason }}</span>{% endif %}{% endfor %}
+          {% if b.opens_cal %}<button type="button" class="wf-btn wf-btn-quiet" data-wf-open-cal>Ask Cal</button>{% endif %}
+          {% for l in b.lessons %}<a href="{{ l.href }}" class="wf-go-quiet">Lesson: {{ l.title }}</a>{% endfor %}
+        </p>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <nav class="wf-controls" aria-label="Move between stages">
+    <a class="wf-map-control" href="#wf-overview" data-wf-show-map>Journey map</a>
+    <a class="wf-control" href="{{ cur.prev.href if cur.prev else '#workflow-stage' }}" data-wf-back{% if cur.prev %} data-wf-goto="{{ cur.prev.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Back to the previous stage">← Back</a>
+    <span class="wf-count" data-wf-count aria-live="polite">{{ cur.position }} of {{ wf.total }} · {{ cur.label }}</span>
+    <a class="wf-control" href="{{ cur.next.href if cur.next else '#workflow-stage' }}" data-wf-next{% if cur.next %} data-wf-goto="{{ cur.next.id }}"{% else %} aria-disabled="true"{% endif %} aria-label="Next stage">Next →</a>
+  </nav>
+  <p class="wf-hint">Use the ← and → keys to move between stages.</p>
+</section>
+{%- endmacro %}

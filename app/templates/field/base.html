@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
   {% include "partials/home_screen.html" %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/field.css', v='d5-voice') }}">
+    {% block head_extra %}{% endblock %}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="field-body" data-field-page="{% block field_page %}today{% endblock %}" data-field-copy="live" data-rendered-at="{{ field_rendered_at }}">
@@ -20,6 +21,7 @@
                 height="48"
             >
         </a>
+        <a class="field-logout-btn field-password-link field-guide-link" href="{{ url_for('field.workflow') }}" data-field-workflow aria-label="Workflow guide: your day on Field">Guide</a>
         <a class="field-logout-btn field-password-link" href="{{ url_for('auth.change_password') }}" data-field-password>Password</a>
         <form method="post" action="{{ url_for('auth.logout') }}" class="field-logout" id="field-logout-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

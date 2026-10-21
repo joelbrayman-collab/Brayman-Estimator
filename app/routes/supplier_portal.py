@@ -200,6 +200,20 @@ def mark_delivered(supplier_id, order_id):
     return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=order.share_id))
 
 
+@supplier_portal_bp.route("/<int:supplier_id>/workflow")
+def workflow(supplier_id):
+    """The Supplier Workflow Map (Joel, 21 Oct 2026): three journeys from the governed workflow definition, with
+    links only to this store's own Supplier Hub pages. No contractor record is read."""
+    from app.workflow_map import definition as WD
+    from app.workflow_map.build import build as build_map
+    from app.workflow_map.pages import supplier_viewer
+
+    supplier = _supplier(supplier_id)
+    wf = build_map(WD.MAP_SUPPLIER, supplier_viewer(supplier), current=request.args.get("stage"),
+                   stage_endpoint="supplier_portal.workflow", stage_args={"supplier_id": supplier.id})
+    return render_template("supplier/workflow.html", supplier=supplier, areas=_areas(), wf=wf)
+
+
 @supplier_portal_bp.route("/<int:supplier_id>/dashboard")
 def supplier_dashboard(supplier_id):
     from app.services.supplier_insights import PERIODS, attention, period_figures, resolve_period

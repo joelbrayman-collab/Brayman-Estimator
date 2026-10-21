@@ -105,7 +105,48 @@ class PersonAccess:
         return "Office"
 
 
-def _audit(action: str, *, actor: User, organization_id: str, target: Optional[User], detail: str = "") -> None:
+_EVENT_FOR_LOG = {"ADD_PERSON": "ADDED", "DEACTIVATE": "DEACTIVATED", "REACTIVATE": "REACTIVATED",
+                  "GRANT_ACCESS_DOMAIN": "ACCESS_GIVEN", "REVOKE_ACCESS_DOMAIN": "ACCESS_REMOVED",
+                  "APPOINT_ADMINISTRATOR": "ADMINISTRATOR_APPOINTED", "REMOVE_ADMINISTRATOR": "ADMINISTRATOR_REMOVED"}
+
+
+def record_people_event(*, organization_id: str, membership, action: str, actor=None, detail: str = "") -> None:
+    """Durable People & Access history (people_access_events). Append-only; never blocks the action."""
+    from app.models.people_access_event import PeopleAccessEvent
+
+    membership = membership if isinstance(membership, UserMembership) else db.session.get(UserMembership, int(membership))
+    if membership is None:
+        return
+    actor_user = None
+    if actor is not None:
+        actor_user = actor if isinstance(actor, User) else db.session.get(User, int(getattr(actor, "id", actor)))
+    name = (getattr(actor_user, "display_name", None) or getattr(actor_user, "email", None)
+            or (membership.user.display_name if action == "ACTIVATED" else "CalibraytAI"))
+    try:
+        db.session.add(PeopleAccessEvent(organization_id=organization_id, membership_id=membership.id,
+                                         target_user_id=membership.user_id,
+                                         actor_user_id=getattr(actor_user, "id", None), actor_name=name[:150],
+                                         action=action, detail=(detail or None) and detail[:255]))
+        db.session.commit()
+    except Exception:  # history must never undo the change it records
+        db.session.rollback()
+        audit_log.exception("people_access history row not written: %s membership=%s", action, getattr(membership, "id", None))
+
+
+def people_history(*, organization_id: str, membership_id, limit: int = 50) -> list:
+    from app.models.people_access_event import PeopleAccessEvent
+
+    return (PeopleAccessEvent.query.filter_by(organization_id=organization_id, membership_id=int(membership_id))
+            .order_by(PeopleAccessEvent.created_at.desc(), PeopleAccessEvent.id.desc()).limit(limit).all())
+
+
+def _audit(action: str, *, actor: User, organization_id: str, target: Optional[User], detail: str = "",
+           membership=None) -> None:
+    if membership is None and target is not None:
+        membership = UserMembership.query.filter_by(user_id=target.id, organization_id=organization_id).first()
+    if membership is not None and action in _EVENT_FOR_LOG:
+        record_people_event(organization_id=organization_id, membership=membership, action=_EVENT_FOR_LOG[action],
+                            actor=actor, detail=detail.replace("domain=", "") if detail else "")
     audit_log.info(
         "people_access %s org=%s actor_user_id=%s target_user_id=%s %s",
         action,
@@ -299,6 +340,8 @@ def set_system_administrator(*, organization_id: str, membership_id, actor, appo
             remove_system_administrator(organization_id, membership.id, actor_user)
     except InstanceAuthorityError as exc:
         raise PeopleAccessError(str(exc)) from exc
+    _audit("APPOINT_ADMINISTRATOR" if appointed else "REMOVE_ADMINISTRATOR", actor=actor_user,
+           organization_id=organization_id, target=membership.user, membership=membership)
 
 
 def membership_user(*, organization_id: str, membership_id, actor) -> User:

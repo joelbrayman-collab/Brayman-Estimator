@@ -561,9 +561,11 @@ def test_owner_records_a_workers_consent_with_who_when_and_how(app, client):
     membership = UserMembership.query.filter_by(user_id=kevin.id).one()
     page = client.get(f"/settings/people/{membership.id}").get_data(as_text=True)
     assert 'data-person-texts="off"' in page
-    refused = client.post(f"/settings/people/{membership.id}/texts",
-                          data={"mobile_phone": "613-555-0101", "how": "In person"}, follow_redirects=True)
-    assert b"agreed to get schedule texts" in refused.data and contact_missing(kevin)
+    number_only = client.post(f"/settings/people/{membership.id}/texts",
+                              data={"mobile_phone": "613-555-0101", "how": "In person"}, follow_redirects=True)
+    assert b"Number saved. No texts until" in number_only.data and contact_missing(kevin)
+    assert NotificationContact.query.filter_by(user_id=kevin.id).one().mobile_phone == "+16135550101"
+    assert SmsConsentEvent.query.filter_by(user_id=kevin.id).count() == 0  # a number is not an answer
     client.post(f"/settings/people/{membership.id}/texts",
                 data={"mobile_phone": "613-555-0101", "how": "In person at the shop", "consent": "yes"})
     event = SmsConsentEvent.query.filter_by(user_id=kevin.id).one()
@@ -660,3 +662,72 @@ def test_cli_sends_due_notices_and_reports_settings_without_secrets(app, sent):
     app.config.update({"TWILIO_AUTH_TOKEN": TOKEN})
     status = runner.invoke(args=["sms", "status"]).output
     assert "live=False" in status and TOKEN not in status
+
+
+# ------------------------------------------------------------------ the one-time question at Field setup
+
+def _field_phone(app, email="kevin.sms@example.invalid"):
+    from app.models.user import UserMembership
+    from app.services.access_domains import set_field_only
+
+    owner = _owner(app)
+    worker = _worker("Kevin Synthetic", email)
+    set_field_only(UserMembership.query.filter_by(user_id=worker.id).one(), True, owner)
+    phone = app.test_client()
+    login_office_user(phone, email, "Synthetic-pw-1")
+    return worker, phone
+
+
+@pytest.mark.no_office_auth
+def test_field_setup_asks_once_and_yes_records_consent_with_the_office_number(app):
+    kevin, phone = _field_phone(app)
+    db.session.add(NotificationContact(user_id=kevin.id, mobile_phone="+16135550101", sms_opt_in=False))
+    db.session.commit()  # the office saved his number, without consent
+    today = phone.get("/field/today").get_data(as_text=True)
+    assert "data-field-texts-setup" in today and "Get a text when your schedule changes?" in today
+    assert 'value="+16135550101"' in today
+    response = phone.post("/field/text-messages/setup", data={"answer": "yes", "mobile_phone": "+16135550101"},
+                          follow_redirects=True)
+    assert b"Schedule texts are on" in response.data and b"data-field-texts-setup" not in response.data
+    contact = NotificationContact.query.filter_by(user_id=kevin.id).one()
+    assert contact.sms_opt_in and contact.mobile_phone == "+16135550101"
+    event = SmsConsentEvent.query.filter_by(user_id=kevin.id).one()
+    assert (event.action, event.method, event.note, event.recorded_by_user_id) == (
+        "OPTED_IN", "SELF_FIELD_SETUP", "self, at Field setup", kevin.id)
+    assert b"data-field-texts-setup" not in phone.get("/field/today").data  # asked once only
+
+
+@pytest.mark.no_office_auth
+def test_field_setup_not_now_never_blocks_field_and_texts_can_be_turned_on_later(app):
+    kevin, phone = _field_phone(app)
+    assert b"data-field-texts-setup" in phone.get("/field/today").data
+    response = phone.post("/field/text-messages/setup", data={"answer": "no"}, follow_redirects=True)
+    assert response.status_code == 200 and b"You can turn them on any time under Texts" in response.data
+    assert b"data-field-texts-setup" not in response.data
+    assert NotificationContact.query.filter_by(user_id=kevin.id).first() is None
+    event = SmsConsentEvent.query.filter_by(user_id=kevin.id).one()
+    assert (event.action, event.method) == ("NOT_NOW", "SELF_FIELD_SETUP")
+    for page in ("/field/today", "/field/week", "/field/month"):
+        assert phone.get(page).status_code == 200
+    assert b"data-field-texts-setup" not in phone.get("/field/today").data
+    phone.post("/field/text-messages", data={"mobile_phone": "613-555-0101", "consent": "yes"})
+    assert NotificationContact.query.filter_by(user_id=kevin.id).one().sms_opt_in is True
+
+
+@pytest.mark.no_office_auth
+def test_field_setup_yes_without_a_number_asks_again(app):
+    kevin, phone = _field_phone(app)
+    response = phone.post("/field/text-messages/setup", data={"answer": "yes", "mobile_phone": ""},
+                          follow_redirects=True)
+    assert b"Enter your mobile number" in response.data and b"data-field-texts-setup" in response.data
+    assert SmsConsentEvent.query.filter_by(user_id=kevin.id).count() == 0
+
+
+def test_field_setup_question_is_not_shown_once_the_office_recorded_consent(app, client):
+    from app.services.text_messages import field_setup_question_due
+
+    kevin = _worker("Kevin Synthetic", "kevin.sms@example.invalid")
+    assert field_setup_question_due(kevin)
+    save_contact(kevin, mobile_phone="613-555-0101", opt_in=True, method="OFFICE_ON_BEHALF",
+                 recorded_by=ensure_office_user(), note="In person")
+    assert not field_setup_question_due(kevin)

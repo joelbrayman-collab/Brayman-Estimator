@@ -14,8 +14,9 @@ promises more than Field does, the lesson says so plainly and says what the offi
   change a drawing, and it does not show the customer's contract, the quote or the material list.
 - Schedule changes: only the office changes dates. The new dates show the next time a Field page opens (it checks
   itself when the app comes back on screen). A worker who turns on schedule texts (Field → Texts) also gets one
-  text when the office moves their work, puts them on it or takes them off it (22 Oct 2026). The training site
-  never sends a real text.
+  text when the office moves their work, puts them on it or takes them off it (22 Oct 2026). Field asks once,
+  the first time the worker opens it (Yes / Not now); Field → Texts changes it later. The training site never
+  sends a real text.
 - Progress updates: there is no percent-complete or status button. A progress update is a note and photos on
   Capture; the office reads them under Field Observations.
 - Refresh: there is no refresh button. Tap Today (or This week) again, or close and reopen the app.
@@ -144,6 +145,16 @@ M01 = Module(
                             "Help; Print; the date; My Work — your first name.",
                      if_wrong="If an office page opens, stop and tell Ben: you should be Field only.",
                      shot="f01-field-today.png", endpoint="field.today"),
+                Step(title="Answer the schedule texts question", app=F,
+                     where="Field Today → Get a text when your schedule changes? (only the first time)",
+                     do="Check your mobile number. Tap Yes, text me, or Not now",
+                     expect="Yes: Schedule texts are on. Not now: No schedule texts. Either way Field opens and the "
+                            "question does not come back.",
+                     why="Yes is your agreement to get a text when the office moves your work. It is saved with "
+                         "the date. You can change your mind any time under Texts.",
+                     if_wrong="'Enter your mobile number' means the number box was empty or too short. Type it, or "
+                              "tap Not now and turn texts on later (lesson 'Schedule texts').",
+                     shot="f01-texts-setup.png", endpoint="field.today"),
                 Step(title="The buttons at the very top", app=F, where="Field → the black bar at the top",
                      do="Find Guide, Texts, Password and Sign out",
                      expect="Guide opens your day on Field step by step. Texts turns schedule texts on or off. "
@@ -390,13 +401,15 @@ M03 = Module(
         ),
         Lesson(
             key="f03-texts", title="Schedule texts: a text when your work moves",
-            what="Turn on schedule texts, know what a text says, and turn them off again.",
+            what="Turn on schedule texts (if you said Not now at first), know what a text says, and turn them off "
+                 "again.",
             why="When the office moves your work, puts you on a job or takes you off one, you get one text with the "
                 "old and new dates, so you do not drive to the wrong site. Texts are only sent if you agree.",
             steps=(
                 Step(title="Open Texts", app=F, where="Field → Texts (at the very top, next to Password)",
                      do="Tap Texts",
-                     expect="Schedule texts. It says Texts are off, with a box for your mobile number and a box to "
+                     expect="Schedule texts. If you said Yes when Field first asked, it says Texts are on. If you "
+                            "tapped Not now, it says Texts are off, with a box for your mobile number and a box to "
                             "tick.",
                      if_wrong="No Texts button? Tap Today first; Texts is in the black bar at the top of every "
                               "Field page.",
@@ -427,8 +440,9 @@ M03 = Module(
                      if_wrong="Still getting texts? Reply STOP to the text, then call the office.",
                      shot="f03-texts-on.png", endpoint="field.text_messages"),
             ),
-            exercise="On the training site: open Texts, turn on schedule texts with your mobile number, then tap "
-                     "Stop schedule texts. (The training site never sends a real text.)",
+            exercise="On the training site: open Texts, turn on schedule texts with your mobile number (if you "
+                     "said Not now when Field first asked), then tap Stop schedule texts. (The training site never "
+                     "sends a real text.)",
         ),
     ),
 )

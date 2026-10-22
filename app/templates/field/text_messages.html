@@ -34,7 +34,7 @@
     <h2 class="field-texts-subhead">Your changes</h2>
     <ul class="field-texts-history">
         {% for h in history %}
-        <li>{{ h.created_at|local_time("%b %d, %Y") }} · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed"}.get(h.action, h.action) }}{% if h.method == "OFFICE_ON_BEHALF" %} by {{ h.recorded_by_display_name }}{% elif h.method in ("REPLY_STOP", "REPLY_START") %} (text reply){% endif %}</li>
+        <li>{{ h.created_at|local_time("%b %d, %Y") }} · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed", "NOT_NOW": "Not now (asked at Field setup)"}.get(h.action, h.action) }}{% if h.method == "OFFICE_ON_BEHALF" %} by {{ h.recorded_by_display_name }}{% elif h.method in ("REPLY_STOP", "REPLY_START") %} (text reply){% endif %}</li>
         {% endfor %}
     </ul>
     {% endif %}

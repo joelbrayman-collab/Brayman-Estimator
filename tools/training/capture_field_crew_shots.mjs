@@ -322,6 +322,12 @@ step("Kevin on Field: Today, Help, Guide, Password, the job, Company today, the 
   assert.match(pg.url(), /\/field\/today/);
   const today = await pg.locator("main").innerText();
   assert.match(today, /Harbour Lane Pool Deck/);
+  // The one-time schedule-texts question on the first Field visit (22 Oct 2026). Kevin answers Not now here;
+  // module 3 turns texts on from Field → Texts.
+  assert.match(await pg.locator("[data-field-texts-setup]").innerText(), /Get a text when your schedule changes\?/);
+  await shot(pg, "f01-texts-setup", pg.locator("[data-field-texts-setup]"));
+  await submit(pg, pg.locator("[data-texts-setup-no]"));
+  assert.equal(await pg.locator("[data-field-texts-setup]").count(), 0);
   await shot(pg, "f01-field-today");
   await shot(pg, "f02-today", pg.locator(".field-schedule-group").first());
   await pg.locator("details.contextual-help summary").first().click();

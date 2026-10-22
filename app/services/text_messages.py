@@ -35,6 +35,7 @@ from flask import current_app
 
 from app import db
 from app.models.sms_notification import (
+    CONSENT_NOT_NOW,
     CONSENT_NUMBER_CHANGED,
     CONSENT_OPTED_IN,
     CONSENT_OPTED_OUT,
@@ -42,6 +43,7 @@ from app.models.sms_notification import (
     METHOD_REPLY_START,
     METHOD_REPLY_STOP,
     METHOD_SELF_ACCOUNT,
+    METHOD_SELF_FIELD_SETUP,
     SmsConsentEvent,
     SmsDeliveryEvent,
     SmsTextMessageDetail,
@@ -172,6 +174,31 @@ def save_contact(user, *, mobile_phone: str, opt_in: bool, method: str = METHOD_
     db.session.add(contact)
     db.session.commit()
     return contact
+
+
+SETUP_NOTE = "self, at Field setup"
+
+
+def field_setup_question_due(user) -> bool:
+    """Joel, 22 Oct 2026: ask once, when the worker first opens Field (after setting their password, or from the
+    Home Screen icon). Due while the person has no recorded answer at all: no consent and no consent history
+    (a number the office saved without consent does not count as an answer; it pre-fills the question)."""
+    if user is None or not getattr(user, "id", None):
+        return False
+    contact = contact_for(user)
+    if contact is not None and contact.sms_opt_in:
+        return False
+    return SmsConsentEvent.query.filter_by(user_id=user.id).first() is None
+
+
+def answer_field_setup_question(user, *, yes: bool, mobile_phone: str = "", organization_id: Optional[str] = None):
+    """Yes: record consent (self, at Field setup) for the number. Not now: record the answer; texts stay off."""
+    if yes:
+        return save_contact(user, mobile_phone=mobile_phone, opt_in=True, method=METHOD_SELF_FIELD_SETUP,
+                            organization_id=organization_id, note=SETUP_NOTE)
+    _record_consent(user.id, organization_id, CONSENT_NOT_NOW, METHOD_SELF_FIELD_SETUP, None, user, SETUP_NOTE)
+    db.session.commit()
+    return contact_for(user)
 
 
 def consent_history(user_id: int, *, limit: int = 20):

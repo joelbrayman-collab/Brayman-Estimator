@@ -142,9 +142,9 @@ STEPS: List[Step] = [
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
          "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
          "Share → Add to Home Screen, keep the name Useful Calculators, open the new icon, sign in, try a calculator "
-         "and tap ‹ All calculators to return. Ask each one if they want schedule texts: they tap Texts on Field, "
-         "type their mobile number and tick the box (or, with their agreement, enter it on their People & Access "
-         "page). Mark done.",
+         "and tap ‹ All calculators to return. The first time each one opens Field it asks: Get a text when your "
+         "schedule changes? They check their mobile number and tap Yes or Not now (save their number first on "
+         "their People & Access page and it is filled in). They can change it later under Texts. Mark done.",
          "people_access.index"),
     Step("calendars", "Company and personal calendars", "Appointments and the job schedule in one place.",
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",

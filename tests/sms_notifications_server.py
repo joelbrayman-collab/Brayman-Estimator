@@ -3,7 +3,9 @@
 A temporary SQLite database built by the real migrations. On top of that, only:
 
 * Ben Brayman (synthetic), the Instance Owner, who reschedules on a desktop;
-* Kevin Fieldhand (synthetic), a Field-only crew member on an iPhone-sized screen, with no text consent yet;
+* Kevin Fieldhand (synthetic), a Field-only crew member on an iPhone-sized screen. The office saved his mobile
+  number (without consent), so Field's one-time question shows it filled in;
+* Liam Crewhand (synthetic), Field-only, no number, who answers Not now;
 * one customer job in Merrickville with one work item scheduled next week and Kevin assigned to it.
 
 Texts go to a fake transport that appends each one to a file (never Twilio, never a phone). CSRF is on, as in
@@ -30,6 +32,7 @@ from app import create_app, db  # noqa: E402
 
 BEN = ("ben.sms@example.invalid", "Synthetic-ben-sms-1", "Ben Brayman (synthetic)")
 KEVIN = ("kevin.sms@example.invalid", "Synthetic-kevin-sms-1", "Kevin Fieldhand (synthetic)")
+LIAM = ("liam.sms@example.invalid", "Synthetic-liam-sms-1", "Liam Crewhand (synthetic)")
 PROJECT = "Pat Synthetic-Homeowner deck"
 CLIENT = "Pat Synthetic-Homeowner"
 WORK = "Footings (synthetic)"
@@ -59,6 +62,12 @@ def _seed():
     set_instance_owner(ORG, UserMembership.query.filter_by(user_id=ben.id, organization_id=ORG).one().id, ben.id)
     kevin = ensure_office_user(email=KEVIN[0], password=KEVIN[1], display_name=KEVIN[2])
     set_field_only(UserMembership.query.filter_by(user_id=kevin.id, organization_id=ORG).one(), True, ben)
+    liam = ensure_office_user(email=LIAM[0], password=LIAM[1], display_name=LIAM[2])
+    set_field_only(UserMembership.query.filter_by(user_id=liam.id, organization_id=ORG).one(), True, ben)
+    from app.models.supplier_portal import NotificationContact
+
+    db.session.add(NotificationContact(user_id=kevin.id, mobile_phone="+16135550142", sms_opt_in=False))
+    db.session.commit()
     client = Client(name=CLIENT, organization_id=ORG, email="pat.homeowner@example.invalid")
     db.session.add(client)
     db.session.flush()
@@ -76,7 +85,8 @@ def _seed():
     assign_user(item.id, worker_user_id=kevin.id, organization_id=ORG)
     send_due_notices(force=True)  # the set-up assignment: Kevin had not agreed to texts, so nothing is sent
     membership = UserMembership.query.filter_by(user_id=kevin.id, organization_id=ORG).one()
-    return {"ben": [BEN[0], BEN[1]], "kevin": [KEVIN[0], KEVIN[1]], "kevin_name": KEVIN[2], "client": CLIENT,
+    return {"ben": [BEN[0], BEN[1]], "kevin": [KEVIN[0], KEVIN[1]], "kevin_name": KEVIN[2],
+            "liam": [LIAM[0], LIAM[1]], "client": CLIENT,
             "project": PROJECT, "work": WORK, "item_id": item.id, "start": start.isoformat(),
             "kevin_membership_id": membership.id}
 

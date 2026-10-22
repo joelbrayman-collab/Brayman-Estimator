@@ -67,10 +67,17 @@ Reply STOP to stop texts.
 - A text goes only to a person with a mobile number and a recorded agreement (`notification_contacts`, the
   same record the supplier delivery texts use). **No consent, no text.**
 - Ways to agree, each recorded in `sms_consent_events` with who, when, how and which number:
+  - **primary (Joel, 22 Oct 2026): the worker, at Field setup.** The first time a worker opens Field (after setting
+    their password, or from the Home Screen icon, which opens Field Today) Field Today shows one question: "Get a
+    text when your schedule changes?" with their mobile number (filled in if the office saved one), the agreement
+    sentence, and **Yes, text me** / **Not now**. Yes records consent (`SELF_FIELD_SETUP`, note "self, at Field
+    setup"); Not now records `NOT_NOW` and texts stay off. It is asked once (any consent answer or change counts);
+    Not now never blocks Field;
   - the worker, on **Field → Texts** (`/field/text-messages`): number, tick the agreement sentence
     (`CONSENT_WORDING` in `text_messages.py`), Turn on schedule texts (`SELF_FIELD`);
-  - the owner or a System Administrator, on the worker's **People & Access** page, Schedule texts: number, how
-    they agreed (required), and a box confirming the worker agreed (`OFFICE_ON_BEHALF`);
+  - secondary: the owner or a System Administrator, on the worker's **People & Access** page, Schedule texts:
+    number, how they agreed (required), and a box confirming the worker agreed (`OFFICE_ON_BEHALF`). Without the
+    box the office saves the number only (no texts); Field's setup question then shows it filled in;
   - a supplier or office person on their own Text settings page (`SELF_ACCOUNT`, supplier delivery texts).
 - Ways to stop, each recorded: Stop schedule texts on Field; Turn off schedule texts on People & Access (with a
   reason); replying STOP (and STOPALL, UNSUBSCRIBE, CANCEL, END, QUIT, ARRET) when the inbound webhook is set up
@@ -200,8 +207,9 @@ These are questions for Joel (and counsel if he wants); the code makes no legal 
 1. Wording the worker agrees to (Field and the office checkbox): "I agree to receive work schedule text
    messages from my employer through CalibraytAI at this number. Message and data rates may apply. Reply STOP to
    stop." Approve or change.
-2. May the owner / a System Administrator turn texts on for a worker who agreed verbally (recorded with how and
-   when), or must every worker turn it on themselves on Field?
+2. Field setup is now the primary consent moment. Should the owner / a System Administrator still be able to turn
+   texts on for a worker who agreed verbally (recorded with how and when), or only save the number for Field's
+   question?
 3. Subcontractors and suppliers' staff: same policy?
 4. Should the person who made the change also get a copy? (Now: no text about your own edit.)
 5. Quiet hours (section 5.4) and the 5-minute coalescing window: keep?

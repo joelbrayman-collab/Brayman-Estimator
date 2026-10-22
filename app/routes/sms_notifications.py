@@ -81,7 +81,19 @@ def _sms_helpers():
         except Exception:
             return 0
 
-    return {"sms_schedule_attention": sms_schedule_attention}
+    def field_texts_setup():
+        """The one-time "Get a text when your schedule changes?" question on Field (None when not due)."""
+        try:
+            from app.services.text_messages import CONSENT_WORDING, contact_for, field_setup_question_due
+
+            if not getattr(current_user, "is_authenticated", False) or not field_setup_question_due(current_user):
+                return None
+            contact = contact_for(current_user)
+            return {"phone": (contact.mobile_phone if contact else "") or "", "wording": CONSENT_WORDING}
+        except Exception:
+            return None
+
+    return {"sms_schedule_attention": sms_schedule_attention, "field_texts_setup": field_texts_setup}
 
 
 def _require_scheduling_authority():
@@ -216,7 +228,18 @@ def person_texts(membership_id):
             flash(f"Schedule texts turned off for {user.display_name}.", "success")
             return redirect(back)
         if request.form.get("consent") != "yes":
-            raise TextSettingsError(f"Confirm that {user.display_name} agreed to get schedule texts at this number.")
+            from app.services.text_messages import contact_for
+
+            current = contact_for(user)
+            if current is not None and current.sms_opt_in:
+                raise TextSettingsError(f"Confirm that {user.display_name} agreed to get schedule texts at this number.")
+            # Number only (Joel, 22 Oct 2026): no texts until the worker says yes; Field asks them the first time
+            # they open it, with this number filled in.
+            save_contact(user, mobile_phone=request.form.get("mobile_phone", ""), opt_in=False,
+                         method=METHOD_OFFICE_ON_BEHALF, recorded_by=current_user, organization_id=org_id)
+            flash(f"Number saved. No texts until {user.display_name} says yes: Field asks them the first time they "
+                  "open it (or tick the box when they have agreed).", "success")
+            return redirect(back)
         how = (request.form.get("how") or "").strip()
         if not how:
             raise TextSettingsError("Say how they agreed (for example: in person, 22 Oct, at the shop).")
@@ -261,6 +284,23 @@ def field_settings_view():
     contact = contact_for(current_user)
     return render_template("field/text_messages.html", contact=contact, wording=CONSENT_WORDING,
                            history=consent_history(current_user.id, limit=5), nav_current="texts")
+
+
+def field_setup_answer_view():
+    """Served by the Field blueprint at POST /field/text-messages/setup (field.text_messages_setup): the answer to
+    the one-time question. Not now never blocks Field; either way the worker lands back on Field Today."""
+    from app.services.text_messages import TextSettingsError, answer_field_setup_question
+
+    yes = request.form.get("answer") == "yes"
+    try:
+        answer_field_setup_question(current_user, yes=yes, mobile_phone=request.form.get("mobile_phone", ""),
+                                    organization_id=get_current_organization_id())
+    except TextSettingsError as exc:
+        flash(f"{exc} Or tap Not now; you can turn texts on later under Texts.", "error")
+    else:
+        flash("Schedule texts are on. Change this any time under Texts." if yes else
+              "No schedule texts. You can turn them on any time under Texts.", "success")
+    return redirect(url_for("field.today"))
 
 
 # ------------------------------------------------------------------ Twilio (public, signature-checked)

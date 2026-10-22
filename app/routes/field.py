@@ -677,3 +677,11 @@ def text_messages():
     from app.routes.sms_notifications import field_settings_view
 
     return field_settings_view()
+
+
+@field_bp.route("/text-messages/setup", methods=["POST"])
+def text_messages_setup():
+    """The answer to the one-time schedule-texts question shown when a worker first opens Field (22 Oct 2026)."""
+    from app.routes.sms_notifications import field_setup_answer_view
+
+    return field_setup_answer_view()

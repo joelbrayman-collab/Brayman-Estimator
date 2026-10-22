@@ -82,7 +82,7 @@
 
 <section class="form-panel" aria-labelledby="texts-heading" data-person-texts="{{ 'on' if texts.contact and texts.contact.sms_opt_in else 'off' }}">
     <h2 id="texts-heading">Schedule texts</h2>
-    <p class="muted-copy">A text when their scheduled work moves, or they are put on or taken off work. Only with their agreement: enter their number here when they have said yes (or they turn texts on themselves from Field, under Texts).</p>
+    <p class="muted-copy">A text when their scheduled work moves, or they are put on or taken off work. Only with their agreement. The first time they open Field it asks them (Yes / Not now), with the number you save here filled in; they can change it any time under Texts. Tick the box only if they have already told you yes.</p>
     {% if texts.contact and texts.contact.sms_opt_in %}
     <p><strong>On</strong> for {{ texts.contact.mobile_phone }}{% if texts.contact.opted_in_at %} since {{ texts.contact.opted_in_at|local_time("%b %d, %Y") }}{% endif %}.</p>
     <form method="post" action="{{ url_for('sms_notifications.person_texts', membership_id=person.membership_id) }}" class="people-access-actions">
@@ -104,7 +104,7 @@
     </form>
     {% endif %}
     {% if texts.history %}
-    <ul class="people-history" data-person-texts-history="{{ texts.history|length }}">{% for h in texts.history %}<li><strong>{{ h.created_at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed"}.get(h.action, h.action) }} · {{ {"SELF_FIELD": "by them on Field", "SELF_ACCOUNT": "by them", "OFFICE_ON_BEHALF": "by " ~ h.recorded_by_display_name, "REPLY_STOP": "they replied STOP", "REPLY_START": "they replied START", "PROVIDER": "Twilio: number opted out"}.get(h.method, h.method) }}{% if h.note %} ({{ h.note }}){% endif %}</li>{% endfor %}</ul>
+    <ul class="people-history" data-person-texts-history="{{ texts.history|length }}">{% for h in texts.history %}<li><strong>{{ h.created_at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed", "NOT_NOW": "Not now (asked at Field setup)"}.get(h.action, h.action) }} · {{ {"SELF_FIELD_SETUP": "by them at Field setup", "SELF_FIELD": "by them on Field", "SELF_ACCOUNT": "by them", "OFFICE_ON_BEHALF": "by " ~ h.recorded_by_display_name, "REPLY_STOP": "they replied STOP", "REPLY_START": "they replied START", "PROVIDER": "Twilio: number opted out"}.get(h.method, h.method) }}{% if h.note %} ({{ h.note }}){% endif %}</li>{% endfor %}</ul>
     {% endif %}
 </section>
 

@@ -328,6 +328,7 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "useful_calculators.flooring",
     "useful_calculators.sign_out",
     "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
+    "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",

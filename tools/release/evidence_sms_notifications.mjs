@@ -1,5 +1,6 @@
 // Release evidence for automatic schedule-change texts (Joel, 22 Oct 2026, mandatory V1). Kevin, a Field-only
-// crew member on an iPhone-sized screen (390 x 844), turns on schedule texts on Field. Ben, the owner, on a
+// crew member on an iPhone-sized screen (390 x 844), answers Yes to the one-time question when he first opens
+// Field (his number, saved by the office, filled in); Liam answers Not now and Field carries on. Ben, the owner, on a
 // desktop, moves Kevin's work on the calendar, opens Text notices, sends the waiting notice and sees it with its
 // status; Kevin's consent and its history show on Kevin's People & Access page. Kevin then stops texts. Real
 // pages only, against a local office on a temporary database (tests/sms_notifications_server.py); texts go to a
@@ -111,29 +112,49 @@ const day = (iso, plus) => new Date(Date.parse(iso + "T12:00:00Z") + plus * 864e
 
 // ------------------------------------------------------------------ the walk
 
-step("1 Kevin, on his iPhone, finds Texts on Field and sees only his own setting, off", async () => {
+step("1 Kevin opens Field on his iPhone for the first time: one question, his number filled in; he says Yes", async () => {
   await signIn(kevin, facts.kevin);
   const pg = kevin.pg;
   assert.match(pg.url(), /\/field\/today$/);
-  await noSideways(pg, "Field Today with the Texts button");
-  await submit(pg, pg.locator("[data-field-texts-link]"));
-  assert.match(pg.url(), /\/field\/text-messages$/);
-  assert.match(await pg.locator("[data-field-texts-status]").innerText(), /Texts are off/);
+  const ask = pg.locator("[data-field-texts-setup]");
+  assert.match(await ask.innerText(), /Get a text when your schedule changes\?/);
+  assert.equal(await ask.locator("input[name=mobile_phone]").inputValue(), "+16135550142", "the office's number");
   assert.doesNotMatch(await text(pg), /Ben Brayman|Pat Synthetic|\$\s?\d/);
-  await shot(pg, "01-field-texts-off");
+  await shot(pg, "01-field-setup-question");
+  await submit(pg, pg.locator("[data-texts-setup-yes]"));
+  assert.match(pg.url(), /\/field\/today$/);
+  assert.match(await flash(pg), /Schedule texts are on/);
+  assert.equal(await pg.locator("[data-field-texts-setup]").count(), 0, "asked once only");
+  await noSideways(pg, "Field Today after Yes");
 });
 
-step("2 Kevin agrees and turns on schedule texts", async () => {
+step("2 Kevin's Texts page shows his own setting: on, agreed at Field setup", async () => {
   const pg = kevin.pg;
-  // The agreement box must be ticked (the page will not send without it; the server checks again).
-  assert.equal(await pg.locator("input[name=consent]").getAttribute("required"), "");
-  await pg.fill("input[name=mobile_phone]", "613-555-0142");
-  await pg.check("input[name=consent]");
-  await submit(pg, pg.locator("[data-field-texts-save]"));
-  assert.match(await flash(pg), /Schedule texts are on/);
+  await submit(pg, pg.locator("[data-field-texts-link]"));
+  assert.match(pg.url(), /\/field\/text-messages$/);
   assert.match(await pg.locator("[data-field-texts-status]").innerText(), /Texts are on for \+16135550142/);
   assert.match(await text(pg), /Texts turned on/);
   await shot(pg, "02-field-texts-on");
+});
+
+step("2b Liam answers Not now: Field opens normally and the question does not come back", async () => {
+  const liam = await context(PHONE, { isMobile: true, hasTouch: true });
+  try {
+    await signIn(liam, facts.liam);
+    const pg = liam.pg;
+    await noSideways(pg, "Field Today with the question");
+    await submit(pg, pg.locator("[data-texts-setup-no]"));
+    assert.match(pg.url(), /\/field\/today$/);
+    assert.match(await flash(pg), /turn them on any time under Texts/);
+    await go(pg, "/field/week");
+    await go(pg, "/field/today");
+    assert.equal(await pg.locator("[data-field-texts-setup]").count(), 0);
+    await go(pg, "/field/text-messages");
+    assert.match(await pg.locator("[data-field-texts-status]").innerText(), /Texts are off/);
+    await shot(pg, "02b-field-texts-not-now");
+  } finally {
+    await liam.ctx.close();
+  }
 });
 
 step("3 Ben moves Kevin's work two days later on the desktop", async () => {
@@ -176,7 +197,7 @@ step("5 Kevin's consent and its history show on his People & Access page", async
   await go(pg, `/settings/people/${facts.kevin_membership_id}`);
   const section = pg.locator("[data-person-texts]");
   assert.equal(await section.getAttribute("data-person-texts"), "on");
-  assert.match(await section.innerText(), /Texts turned on · by them on Field/);
+  assert.match(await section.innerText(), /Texts turned on · by them at Field setup \(self, at Field setup\)/);
   await section.scrollIntoViewIfNeeded();
   await shot(pg, "06-people-access-texts");
 });

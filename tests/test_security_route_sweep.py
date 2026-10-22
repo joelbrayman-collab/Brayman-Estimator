@@ -58,6 +58,11 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # inside the Home Screen app's scope and returns only to a /useful-calculators/ path.
     "useful_calculators.index",
     "useful_calculators.sign_in",
+    # Added 22 Oct 2026 (SMS schedule notices): Twilio's delivery reports and replies (STOP). No sign-in and
+    # no CSRF token; every request must carry a valid X-Twilio-Signature for TWILIO_AUTH_TOKEN, else 403
+    # (tests/test_sms_schedule_notices.py). They only update a text's status or record an opt-out.
+    "sms_notifications.twilio_status",
+    "sms_notifications.twilio_inbound",
 }
 # supplier_quote_link. added 20 Oct 2026 (Supplier PRO Desk): a supplier's walk-in customer opens and answers
 # an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
@@ -107,6 +112,8 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "calendar_feed.feed",
     "useful_calculators.index",  # Useful Calculators dashboard and sign-in (22 Oct 2026), see above
     "useful_calculators.sign_in",
+    "sms_notifications.twilio_status",  # Twilio delivery reports, signature-checked (22 Oct 2026), see above
+    "sms_notifications.twilio_inbound",  # Twilio replies (STOP / START), signature-checked (22 Oct 2026)
 }
 
 
@@ -323,6 +330,8 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "useful_calculators.drywall",
     "useful_calculators.flooring",
     "useful_calculators.sign_out",
+    "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
+    "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",

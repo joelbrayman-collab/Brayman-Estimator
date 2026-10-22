@@ -1,0 +1,26 @@
+{# One-time question when a worker first opens Field (Joel, 22 Oct 2026). Not now never blocks Field. #}
+{% set texts_setup = field_texts_setup() %}
+{% if texts_setup is not none %}
+<section class="field-panel field-texts-setup" data-field-texts-setup aria-labelledby="texts-setup-heading">
+    <h2 id="texts-setup-heading">Get a text when your schedule changes?</h2>
+    <p>When the office moves your work, puts you on a job or takes you off one, you get one text with the old and new dates. Nothing about money or the customer. You can change this any time under Texts.</p>
+    <form method="post" action="{{ url_for('field.text_messages_setup') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field-label">
+            Your mobile number
+            <input type="tel" name="mobile_phone" class="field-input" autocomplete="tel" inputmode="tel" placeholder="613-555-0100" value="{{ texts_setup.phone }}">
+        </label>
+        <p class="field-muted">Yes means: {{ texts_setup.wording }}</p>
+        <div class="field-texts-setup-actions">
+            <button type="submit" name="answer" value="yes" class="field-btn field-btn-primary" data-texts-setup-yes>Yes, text me</button>
+            <button type="submit" name="answer" value="no" class="field-btn field-btn-secondary" formnovalidate data-texts-setup-no>Not now</button>
+        </div>
+    </form>
+</section>
+<style>
+    .field-texts-setup { border-width: 3px; }
+    .field-texts-setup h2 { margin-top: 0; }
+    .field-texts-setup-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .field-texts-setup-actions .field-btn { flex: 1 1 140px; }
+</style>
+{% endif %}

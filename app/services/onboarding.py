@@ -152,7 +152,9 @@ STEPS: List[Step] = [
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
          "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
          "Share → Add to Home Screen, keep the name Useful Calculators, open the new icon, sign in, try a calculator "
-         "and tap ‹ All calculators to return. Mark done.",
+         "and tap ‹ All calculators to return. The first time each one opens Field it asks: Get a text when your "
+         "schedule changes? They check their mobile number and tap Yes or Not now (save their number first on "
+         "their People & Access page and it is filled in). They can change it later under Texts. Mark done.",
          "people_access.index"),
     Step("calendars", "Company and personal calendars", "Appointments and the job schedule in one place.",
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",
@@ -176,7 +178,7 @@ STEPS: List[Step] = [
          "Project → Supplier requests → approve the supplier's quote → Place order.",
          "supplier_office.deliveries", _purchase_order),
     Step("crew_schedule", "Schedule the crew", "The boys see their work on their phones.",
-         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew.",
+         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew; when you move it later, each worker who agreed to texts gets one text (Calendar → Text notices shows sent, delivered or failed).",
          "schedule.company", _crew_scheduling),
     Step("hours_policy", "Hours and banked time", "Your own work-week rules decide regular hours and banked time.",
          "Company → Hours policy: enter your normal work week (hours), the weekly hours after which extra hours are "

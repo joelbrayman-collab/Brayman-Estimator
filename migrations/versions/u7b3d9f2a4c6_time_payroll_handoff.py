@@ -1,4 +1,4 @@
-"""Approved time to QuickBooks Time, and banked hours (V1 release 7, 22 Oct 2026)
+"""Approved time to QuickBooks Time, banked hours, and SMS schedule-change notices (V1 release 7, 22 Oct 2026)
 
 Revision ID: u7b3d9f2a4c6
 Revises: t6a2c8e4f1b3
@@ -7,7 +7,13 @@ Create Date: 2026-10-22
 Six new tables (app/models/payroll_time.py): qbtime_employee_links, qbtime_jobcode_links, qbtime_transfers,
 qbtime_events (append-only), banked_hours_policies (append-only versions with an effective date) and
 banked_hours_ledger (append-only). No credential is stored in any of them. Additive only: no existing table
-or row changes. Downgrade refuses while any of the six tables holds a row; recovery is the pre-migration backup.
+or row changes.
+
+Four more tables for SMS schedule-change notices, extending notification_contacts and text_messages without
+changing them: sms_schedule_notices (outbox), sms_text_message_details (status and retry chain), sms_consent_events
+(append-only consent history) and sms_delivery_events (append-only verified Twilio callbacks).
+
+Downgrade refuses while any of the ten tables holds a row; recovery is the pre-migration backup.
 """
 
 from alembic import op
@@ -19,7 +25,8 @@ branch_labels = None
 depends_on = None
 
 # drop order (children first)
-NEW_TABLES = ("banked_hours_ledger", "banked_hours_policies", "qbtime_events", "qbtime_transfers",
+NEW_TABLES = ("sms_delivery_events", "sms_consent_events", "sms_schedule_notices", "sms_text_message_details",
+              "banked_hours_ledger", "banked_hours_policies", "qbtime_events", "qbtime_transfers",
               "qbtime_jobcode_links", "qbtime_employee_links")
 
 
@@ -174,6 +181,90 @@ def upgrade():
     op.create_index("ix_banked_hours_ledger_org_user_week", "banked_hours_ledger",
                     ["organization_id", "user_id", "week_start"])
 
+    # SMS schedule-change notices (merged from the SMS branch's m8s4n2c6t1q7 so v1rel7 has one migration)
+    op.create_table(
+        "sms_text_message_details",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("text_message_id", sa.Integer(), sa.ForeignKey("text_messages.id", ondelete="RESTRICT"),
+                  nullable=False, unique=True),
+        sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("purpose", sa.String(length=40), nullable=True),
+        sa.Column("provider_status", sa.String(length=30), nullable=True),
+        sa.Column("status_updated_at", sa.DateTime(), nullable=True),
+        sa.Column("delivered_at", sa.DateTime(), nullable=True),
+        sa.Column("retry_of_text_message_id", sa.Integer(), sa.ForeignKey("text_messages.id", ondelete="RESTRICT"),
+                  nullable=True, unique=True),
+        sa.Column("retried_by_user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
+        sa.Column("retried_by_display_name", sa.String(length=150), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_sms_text_message_details_organization_id", "sms_text_message_details", ["organization_id"])
+    op.create_table(
+        "sms_schedule_notices",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"),
+                  nullable=False),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("work_schedule_item_id", sa.Integer(), sa.ForeignKey("work_schedule_items.id", ondelete="RESTRICT"),
+                  nullable=False),
+        sa.Column("project_id", sa.Integer(), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("status", sa.String(length=20), nullable=False),
+        sa.Column("before_assigned", sa.Boolean(), nullable=False),
+        sa.Column("before_start", sa.Date(), nullable=True),
+        sa.Column("before_end", sa.Date(), nullable=True),
+        sa.Column("change_kind", sa.String(length=20), nullable=True),
+        sa.Column("after_start", sa.Date(), nullable=True),
+        sa.Column("after_end", sa.Date(), nullable=True),
+        sa.Column("first_history_id", sa.Integer(), sa.ForeignKey("work_schedule_history.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("last_history_id", sa.Integer(), sa.ForeignKey("work_schedule_history.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("changed_by_other", sa.Boolean(), nullable=False),
+        sa.Column("last_actor_display_name", sa.String(length=150), nullable=True),
+        sa.Column("change_count", sa.Integer(), nullable=False),
+        sa.Column("due_at", sa.DateTime(), nullable=False),
+        sa.Column("claim_token", sa.String(length=32), nullable=True),
+        sa.Column("text_message_id", sa.Integer(), sa.ForeignKey("text_messages.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("detail", sa.String(length=240), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_sms_schedule_notices_status_due", "sms_schedule_notices", ["status", "due_at"])
+    op.create_index("ix_sms_schedule_notices_org_created", "sms_schedule_notices", ["organization_id", "created_at"])
+    op.create_index("ix_sms_schedule_notices_user_status", "sms_schedule_notices", ["user_id", "status"])
+    op.create_index("ix_sms_schedule_notices_work_schedule_item_id", "sms_schedule_notices", ["work_schedule_item_id"])
+    op.create_index("ix_sms_schedule_notices_text_message_id", "sms_schedule_notices", ["text_message_id"])
+    op.create_table(
+        "sms_consent_events",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
+        sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("action", sa.String(length=20), nullable=False),
+        sa.Column("method", sa.String(length=30), nullable=False),
+        sa.Column("mobile_phone", sa.String(length=20), nullable=True),
+        sa.Column("recorded_by_user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
+        sa.Column("recorded_by_display_name", sa.String(length=150), nullable=False),
+        sa.Column("note", sa.String(length=240), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_sms_consent_events_user_id", "sms_consent_events", ["user_id"])
+    op.create_index("ix_sms_consent_events_organization_id", "sms_consent_events", ["organization_id"])
+    op.create_table(
+        "sms_delivery_events",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("text_message_id", sa.Integer(), sa.ForeignKey("text_messages.id", ondelete="RESTRICT"),
+                  nullable=True),
+        sa.Column("provider_message_id", sa.String(length=80), nullable=True),
+        sa.Column("provider_status", sa.String(length=30), nullable=False),
+        sa.Column("error_code", sa.String(length=20), nullable=True),
+        sa.Column("applied", sa.Boolean(), nullable=False),
+        sa.Column("received_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_sms_delivery_events_text_message_id", "sms_delivery_events", ["text_message_id"])
+    op.create_index("ix_sms_delivery_events_provider_message_id", "sms_delivery_events", ["provider_message_id"])
 
 def downgrade():
     bind = op.get_bind()

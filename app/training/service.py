@@ -389,6 +389,12 @@ GENERAL_HELP = GENERAL_HELP + (
                                  "(your progress is kept). Field crew get the Field Crew training: Field lessons only."),
     ("field open app today", "On your training home press Open Field: CalibraytAI Field opens at Today. On Field, the "
                              "Training site bar at the top has Back to my training."),
+    ("text texts sms message messages notification notifications stop", "Schedule texts: the first time you open Field it "
+     "asks Get a text when your schedule changes? Tap Yes, text me or Not now. Later: on Field tap Texts (top of "
+     "the page), type your mobile number, tick the box and tap Turn on schedule texts. When the office moves your "
+     "work, puts you on a job or takes you off one, you get one text with the old and new dates and a link to Field. "
+     "Stop them with Stop schedule texts or by replying STOP. The office sees each text on Calendar → Text notices "
+     "(sent, delivered or failed, with Retry). The training site never sends a real text."),
 )
 
 _WHERE = {"where", "find", "menu", "button", "press", "click", "open", "locate"}

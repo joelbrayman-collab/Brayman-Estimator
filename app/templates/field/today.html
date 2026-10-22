@@ -3,6 +3,7 @@
 {% block field_page %}today{% endblock %}
 {% block content %}
 {% set nav_current = 'today' %}
+{% include "field/_texts_setup.html" %}
 {% include "field/_field_nav.html" %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.field_topic("today")) }}

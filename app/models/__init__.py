@@ -121,6 +121,12 @@ from app.models.supplier_portal import (
     SupplierRequestShare,
     SupplierUserMembership,
 )
+from app.models.sms_notification import (  # SMS schedule-change notices (22 Oct 2026)
+    SmsConsentEvent,
+    SmsDeliveryEvent,
+    SmsScheduleNotice,
+    SmsTextMessageDetail,
+)
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
     OrganizationPricingPolicy,
@@ -214,6 +220,10 @@ __all__ = [
     "ConcreteRequest",
     "NotificationContact",
     "TextMessage",
+    "SmsConsentEvent",
+    "SmsDeliveryEvent",
+    "SmsScheduleNotice",
+    "SmsTextMessageDetail",
     "SupplierBrandProfile",
     "SupplierDeliveryChange",
     "SupplierNotificationNumber",

@@ -820,3 +820,11 @@ input:focus-visible {
     .field-header .field-logout-btn { padding: 8px 9px; }
     .field-brand img { max-width: 92px; height: auto; }
 }
+
+/* Texts button in the Field header (SMS schedule notices, 22 Oct 2026): four header buttons on a 390-pixel
+   iPhone. If a phone is narrower still, the buttons wrap to a second line instead of overlapping. */
+@media (max-width: 420px) {
+    .field-header { gap: 5px; flex-wrap: wrap; }
+    .field-header .field-logout-btn { padding: 8px 6px; font-size: 13px; }
+    .field-brand img { max-width: 80px; }
+}

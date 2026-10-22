@@ -33,7 +33,7 @@ from app.models.training import (
     ROLE_SUPPLIER_OWNER,
 )
 
-DEFINITION_VERSION = "2026-10-22.1"
+DEFINITION_VERSION = "2026-10-22.2"  # .2: schedule texts (SMS notices, 22 Oct 2026)
 
 # ------------------------------------------------------------------ vocabulary
 
@@ -397,7 +397,8 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
     Stage(
         id="c-build", journey="contractor", number=5, label="BUILD", title="Run the work",
         summary="Calendars, crews, Field, purchase orders, deliveries, field activity and change orders.",
-        description="The work is scheduled on the calendars and assigned to crews, who see it on Field. "
+        description="The work is scheduled on the calendars and assigned to crews, who see it on Field; when "
+                    "their work moves, workers who agreed to texts get one text about it. "
                     "Purchase orders go to the suppliers, who confirm them; deliveries are scheduled and "
                     "changed together. Field notes, time and extra work come back to the office, and extra work "
                     "becomes an approved change order.",
@@ -408,6 +409,8 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("schedule", "Schedule project activities",
               _project("work_structure.project_work_plan", "Open Project work"), lesson="c11-schedule-crew"),
             S("crews", "Assign crews", D_SCHEDULE_NEW, lesson="c11-schedule-crew"),
+            S("text-notices", "Schedule texts to the crew (sent, delivered, failed, Retry)",
+              _d("sms_notifications.office_notices", "Open Text notices")),
             S("field", "Field Today, Week and Month", D_FIELD_TODAY, lesson="c05-field-schedule"),
             S("orders", "Purchase orders", D_SUPPLIER_REQUESTS, lesson="c08-place-order"),
             S("confirmations", "Supplier confirmations", D_DELIVERIES, lesson="c08-place-order"),
@@ -485,7 +488,8 @@ FIELD_STAGES: Tuple[Stage, ...] = (
         id="f-today", journey="field", number=2, label="TODAY", title="See your day",
         summary="Today, This week, This month and Company today, with the day's deliveries.",
         description="Today shows the work you are on and the deliveries for your jobs. This week and This month "
-                    "show what is coming; Company today shows what the whole company has on.",
+                    "show what is coming; Company today shows what the whole company has on. Turn on schedule "
+                    "texts (Texts, at the top of Field) to get a text when the office moves your work.",
         primary=D_FIELD_TODAY,
         substeps=(
             S("today", "Today", D_FIELD_TODAY, lesson="f02-my-work"),
@@ -495,9 +499,12 @@ FIELD_STAGES: Tuple[Stage, ...] = (
               lesson="f02-company-today"),
             S("changes", "Schedule changes (the office moves dates)", _field("field.week", "Open This week"),
               lesson="f03-changes"),
+            S("texts", "Schedule texts (a text when your work moves)",
+              _field("field.text_messages", "Open Schedule texts"), lesson="f03-texts"),
         ),
-        lessons=("f02-my-work", "f02-company-today", "f03-week", "f03-month", "f03-changes", "f07-refresh"),
-        uat=("uat-f02-today", "uat-f03-week-month", "uat-f03-change"),
+        lessons=("f02-my-work", "f02-company-today", "f03-week", "f03-month", "f03-changes", "f03-texts",
+                 "f07-refresh"),
+        uat=("uat-f02-today", "uat-f03-week-month", "uat-f03-change", "uat-f03-texts"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(

@@ -142,7 +142,9 @@ STEPS: List[Step] = [
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
          "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
          "Share → Add to Home Screen, keep the name Useful Calculators, open the new icon, sign in, try a calculator "
-         "and tap ‹ All calculators to return. Mark done.",
+         "and tap ‹ All calculators to return. Ask each one if they want schedule texts: they tap Texts on Field, "
+         "type their mobile number and tick the box (or, with their agreement, enter it on their People & Access "
+         "page). Mark done.",
          "people_access.index"),
     Step("calendars", "Company and personal calendars", "Appointments and the job schedule in one place.",
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",
@@ -166,7 +168,7 @@ STEPS: List[Step] = [
          "Project → Supplier requests → approve the supplier's quote → Place order.",
          "supplier_office.deliveries", _purchase_order),
     Step("crew_schedule", "Schedule the crew", "The boys see their work on their phones.",
-         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew.",
+         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew; when you move it later, each worker who agreed to texts gets one text (Calendar → Text notices shows sent, delivered or failed).",
          "schedule.company", _crew_scheduling),
     Step("working_day", "Run a complete working day", "Schedule, field time, deliveries and changes, end to end.",
          "Check Home in the morning, follow the job on Field, approve time, answer deliveries. Mark done after a full day.",

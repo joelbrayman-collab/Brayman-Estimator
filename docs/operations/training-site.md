@@ -1,6 +1,8 @@
 # CalibraytAI training site
 
-The Training & Acceptance Centre runs on its own Render service with its own database. It is never
+The Training & Acceptance Centre runs at https://training.calibraytai.com on the HostPapa VPS (service
+`calibrayt-training`, code in `/opt/calibrayt/app`, database on the server's disk; installed by
+`tools/hosting/install_training_centre.sh`, 22 Oct 2026), with its own database. It is never
 switched on in the production office: there, every `/training` page answers 404 and the training
 company cannot be built (the command refuses).
 

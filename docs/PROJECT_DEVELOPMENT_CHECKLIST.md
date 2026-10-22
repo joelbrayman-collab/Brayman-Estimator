@@ -149,7 +149,7 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 | Private Platform office through the recorded V1 build | ✅ COMPLETE / STABLE as far as the register goes. Official V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. |
 | Contract V1 | ✅ COMPLETE / STABLE. **ACCEPTED / PINNED**. Engine owns the mathematics and the structured result. Pricing, margin, and the private estimate stay outside it. |
 | Field Web v1 | ✅ COMPLETE / STABLE as its own closed programme. |
-| Public Website Version 31 | ✅ CLOSED stabilization. Live `https://calibai.joel-brayman.chatgpt.site/`. Project `appgprj_6a9095543b74819186183f9a522890e5`. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Version id `appgprj_6a9095543b74819186183f9a522890e5~appgver_ed1a760941b48191badc6ac0c2d5f347`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b`, SUCCEEDED. Source/live parity PASS. |
+| Public Website Version 31 | ✅ CLOSED stabilization. Live at `https://calibraytai.com` (HostPapa, 22 Oct 2026; see [operations/url-register.md](operations/url-register.md)); formerly `https://calibai.joel-brayman.chatgpt.site/`. Project `appgprj_6a9095543b74819186183f9a522890e5`. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Version id `appgprj_6a9095543b74819186183f9a522890e5~appgver_ed1a760941b48191badc6ac0c2d5f347`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b`, SUCCEEDED. Source/live parity PASS. |
 
 ## One sequence
 

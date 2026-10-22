@@ -21,7 +21,7 @@ fi
 OWNER=$(stat -c %U "$DOC"); echo "website folder: $DOC (owner $OWNER)"
 
 echo "== 2. get the storybooks"
-sudo -u calibrayt git -C /opt/calibrayt/app fetch -q --depth 1 origin storybooks/site || { echo "STOP: fetch failed"; exit 1; }
+sudo -u calibrayt git -C /opt/calibrayt/app fetch -q origin storybooks/site || { echo "STOP: fetch failed"; exit 1; }
 TMP=$(mktemp -d)
 sudo -u calibrayt git -C /opt/calibrayt/app archive FETCH_HEAD storybook | tar -x -C "$TMP" || { echo "STOP: unpack failed"; exit 1; }
 

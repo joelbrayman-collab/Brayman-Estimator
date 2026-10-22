@@ -365,7 +365,7 @@ def test_time_entry_my_time_correction_and_approval_are_taught_in_module_5_only(
     kept in module 5 so they are re-captured in one place after the time/labour branch merges."""
     f05 = next(m for m in C.modules_for(C.PATHWAY_FIELD_CREW, "FIELD") if m.key == "f05")
     keys = [lesson.key for lesson in f05.lessons]
-    for key in ("f05-send-time", "f05-my-time-review", "f05-returned-time", "f05-approved"):
+    for key in ("f05-send-time", "f05-my-time-review", "f05-returned-time", "f05-approved", "f05-company-time"):
         assert key in keys
     time_endpoints = {"field.time_entry", "field.my_time"}
     for module, lesson in _field_lessons():
@@ -373,11 +373,18 @@ def test_time_entry_my_time_correction_and_approval_are_taught_in_module_5_only(
             continue
         assert not any(s.endpoint in time_endpoints for s in lesson.steps), lesson.key
     cases = {c.key: c for c in C.uat_for(C.PATHWAY_FIELD_CREW, "FIELD")}
-    for key in ("uat-f05-time", "uat-f05-my-time", "uat-f05-returned", "uat-f05-approved"):
+    for key in ("uat-f05-time", "uat-f05-my-time", "uat-f05-returned", "uat-f05-approved", "uat-f05-company-time"):
         assert cases[key].module_key == "f05"
     assert "Approve" in cases["uat-f05-approved"].start and "Approved" in cases["uat-f05-approved"].expected
     approved = next(lesson for lesson in f05.lessons if lesson.key == "f05-approved")
     assert any(s.shot == "f05-time-approved.png" for s in approved.steps)
+    # The final screens (docs/operations/field-time.md, merged 22 Oct 2026): Scheduled today works, so no
+    # workaround text; the returned line on Today; "Time sent again for approval."; shop / company time.
+    text = " ".join(" ".join((s.do, s.expect, s.if_wrong, s.why)) for lesson in f05.lessons for s in lesson.steps)
+    for phrase in ("Time sent again for approval.", "returned to you. Fix and send again on My time.",
+                   "This week (from Mon", "Set up shop and company time", "Waiting for approval"):
+        assert phrase in text, phrase
+    assert "Work not found" not in text
 
 
 def test_after_a_result_the_next_untested_test_opens_and_continue_never_reopens_a_tested_one(app):

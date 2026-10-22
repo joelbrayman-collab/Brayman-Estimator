@@ -449,118 +449,130 @@ M04 = Module(
 )
 
 # ====================================================================================== 5
-# TIME ENTRY LESSONS (Joel, 22 Oct 2026): everything about Time, My time, returned time and Ben's approval is in
-# this module only (f05-send-time, f05-my-time-review, f05-returned-time, f05-approved; shots f05-time*.png and
-# f05-my-time*.png from the "time" steps of tools/training/capture_field_crew_shots.mjs; UAT uat-f05-time*).
-# Written against the Field Time screens as they are on this branch. The time/labour workflow is being finished
-# on v1/field-time-labour-2026-10-22 (final buttons and statuses: docs/operations/field-time.md): after it merges,
-# re-check these labels and re-capture these pictures here, and nowhere else.
+# TIME ENTRY LESSONS (Joel, 22 Oct 2026): everything about Time, My time, returned time, Ben's approval and
+# shop / company time is in this module only (f05-send-time, f05-my-time-review, f05-returned-time,
+# f05-approved, f05-company-time; shots f05-time*.png, f05-my-time*.png, f05-today-returned.png and
+# f05-company-time.png from the TIME ENTRY steps of tools/training/capture_field_crew_shots.mjs; UAT
+# uat-f05-time*, uat-f05-my-time, uat-f05-returned, uat-f05-approved, uat-f05-company-time). Written against
+# the final Field time screens recorded in docs/operations/field-time.md (merged 22 Oct 2026). When those
+# screens change, re-check these labels and re-capture these pictures here, and nowhere else.
 M05 = Module(
     key="f05", pathway=P, number=5, title="Recording field work",
-    summary="Send your daily hours on the iPhone against the job and the work, check them on My time, fix time "
-            "Ben returns, see when Ben approves them, and record extra "
+    summary="Send your daily hours on the iPhone against the job and the work, check your week on My time, fix "
+            "time Ben returns, see when Ben approves it, record shop and company time, and record extra "
             "work the customer asks for.",
     roles=CREW,
     lessons=(
         Lesson(
             key="f05-send-time", title="Send your hours",
-            what="Send the hours you worked today on the job.",
+            what="Send the hours you worked today on the job, against the work you did.",
             why="The office checks your hours against the job's work before they count. Send them every day.",
             steps=(
-                Step(title="Open Time", app=F, where="Today → Enter time (or Time)",
-                     do="Tap Enter time under the job",
-                     expect="Time, the job name, Date (today), Scheduled today with your booked work, Choose different "
-                            "work, Hours, Note and Send time.",
-                     if_wrong="Asked to confirm the job? Do lesson 'Confirm the job you are on' first.",
+                Step(title="Open Time", app=F, where="Today → Enter time (on the job's card), or Time",
+                     do="Tap Enter time on the job's card",
+                     expect="Time, the job name, Date (today), Scheduled today with a button for your booked work, "
+                            "Choose different work, Hours, Note and Send time.",
+                     if_wrong="Asked to choose the job? Do lesson 'Confirm the job you are on' first. A date in "
+                              "the future is refused: 'Time cannot be recorded for a future date.'",
                      shot="f05-time-scheduled.png", endpoint="field.time_entry"),
-                Step(title="Pick the work", app=F, where="Time → Choose different work",
-                     do="Tap Choose different work. In Work item pick the job's work. In Work pick what you did",
-                     enter=f"Work item: {WORK}. Work: {ACTIVITY}",
-                     expect="Both boxes show your choice.",
-                     why="The Scheduled today button only fills in the work item. When the office booked a work item "
-                         "and not the exact work, you still choose the Work yourself.",
-                     if_wrong="'Work not found.' after Send time means Work was empty: tap Choose different work and "
-                              "pick the Work. Your work is not in the list? Call the office.",
+                Step(title="Pick the work", app=F, where="Time → Scheduled today",
+                     do="Tap the button with your booked work. If a Work box opens, pick the work you did in it",
+                     enter=f"{WORK}, then Work: {ACTIVITY}",
+                     expect="The work is chosen. When the booked work item has only one work, it is filled in for "
+                            "you.",
+                     why="Did something else today? Tap Choose different work and pick the Work item and the "
+                         "Work. Recent work shows what you used last on this job.",
+                     if_wrong="'Choose the work you did.' (or '... on <work item>') means the Work box is empty: "
+                              "pick one. Your work is not there? Call the office.",
                      shot="f05-time.png", endpoint="field.time_entry"),
                 Step(title="Type your hours and a note", app=F, where="Time → Hours and Note",
-                     do="Type the hours. Add a short note",
+                     do="Type the hours. Add a short note if it helps",
                      enter="Hours: 8. Note: Ledger and joists, north side (training)",
-                     expect="Hours in quarter hours: 7.5 is seven and a half hours. Up to 16 hours in one entry.",
-                     if_wrong="'Check the hours and work.' means the hours or the work are missing."),
+                     expect="Hours go in quarter hours: 7.5 is seven and a half hours. Up to 16 hours in one entry "
+                            "and 24 in a day.",
+                     if_wrong="'Enter the hours worked.' means Hours is empty. 'Hours for one day cannot be more "
+                              "than 24.00.' means your day adds up to too much."),
                 Step(title="Send it", app=F, where="Time → Send time",
                      do="Tap Send time",
                      expect="Time sent for approval. My time opens and lists it as Submitted.",
-                     if_wrong="No signal? Time needs a connection. Write your hours down and send them when you have "
-                              "a signal.",
+                     if_wrong="No signal? Time needs a connection. Write your hours down and send them when you "
+                              "have a signal.",
                      shot="f05-time-sent.png", endpoint="field.my_time"),
             ),
-            exercise=f"Send 8 hours on {JOB} for today with a short note, and find it on My time.",
+            exercise=f"Send 8 hours on {JOB} for today against {ACTIVITY}, with a short note, and find it on My "
+                     "time.",
         ),
         Lesson(
-            key="f05-my-time-review", title="Check your hours on My time",
-            what="Look over the hours you sent, every day, on My time.",
+            key="f05-my-time-review", title="Check your week on My time",
+            what="Look over the hours you sent this week, every day, on My time.",
             why="My time is your own record: what you sent, for which job and work, and where it is with Ben.",
             steps=(
-                Step(title="Open My time", app=F, where="Today → My time (or Time → My time)",
+                Step(title="Open My time", app=F, where="Today → My time",
                      do="Tap My time",
-                     expect="My time, then your hours newest first. Each shows the date and its status, the job, "
-                            "the work item — the work, and the hours (for example 8.00 hours).",
+                     expect="My time. At the top: This week (from Mon …): your hours · Approved · Waiting · "
+                            "Returned. Then your entries, newest first.",
                      if_wrong="'No time recorded yet.' means you have not sent any time.",
+                     shot="f05-my-time-week.png", endpoint="field.my_time"),
+                Step(title="Read each entry", app=F, where="My time → an entry",
+                     do="Read the date and status, the job, the work item — work, and the hours",
+                     expect="Submitted: 'Waiting for approval. Ask the office if something is wrong; they can "
+                            "return it to you.' Returned: Ben sent it back. Approved: it counts. Replaced: the "
+                            "office corrected it after approval. The kind of work shows too (Original work, "
+                            "Extra work, Company time).",
+                     if_wrong="An entry is missing? Send it now from Time. Two for the same work and day? Tell "
+                              "Ben; do not send it again.",
                      shot="f05-time-sent.png", endpoint="field.my_time"),
-                Step(title="Read the status", app=F, where="My time → the line above each entry",
-                     do="Read the word after the date",
-                     expect="Submitted: Ben has not looked yet. Returned: Ben sent it back to fix. Approved: Ben "
-                            "accepted it. Replaced: the office corrected it after approval.",
-                     if_wrong="An entry is missing? Send it now from Time. Two for the same work and day? Tell Ben, "
-                              "do not send it again."),
                 Step(title="Check it is right", app=F, where="My time → each entry",
                      do="Check the date, the job, the work and the hours",
                      expect="Every day you worked is there once, on the right job and work.",
                      if_wrong="Wrong but still Submitted? Call Ben; he can return it to you to fix."),
             ),
-            exercise="After sending your Harbour Lane hours, open My time and read the date, the work, the hours and "
-                     "the status.",
+            exercise="After sending your Harbour Lane hours, open My time and read the week's hours at the top and "
+                     "your entry's status.",
         ),
         Lesson(
-            key="f05-returned-time", title="Time the office sent back",
-            what="See what happened to your hours and fix any the office returned.",
-            why="Returned time is not lost. Fix it and send it again.",
+            key="f05-returned-time", title="Time Ben sent back",
+            what="See time Ben returned, and fix it and send it again.",
+            why="Returned time is not lost. Fix what the reason says and send it again.",
             steps=(
-                Step(title="Open My time", app=F, where="Today → My time",
-                     do="Tap My time",
-                     expect="Your hours, newest first. Each shows the date and Submitted, Approved or Returned.",
-                     if_wrong="'No time recorded yet.' means you have not sent any time.",
-                     shot="f05-my-time.png", endpoint="field.my_time"),
-                Step(title="Fix returned time", app=F, where="My time → Returned → Fix and send again",
-                     do="Tap Fix and send again",
-                     expect="Time opens with Returned: and the office's reason at the top, and your hours filled in.",
-                     if_wrong="No Fix and send again button? Only Returned time can be fixed. Approved time is done.",
+                Step(title="See it on Today", app=F, where="Field → Today (red line at the top)",
+                     do="Tap the red line: '1 time entry was returned to you. Fix and send again on My time.'",
+                     expect="My time opens.",
+                     if_wrong="No red line? Nothing was returned. My time also says how many entries were returned.",
+                     shot="f05-today-returned.png", endpoint="field.today"),
+                Step(title="Read the reason", app=F, where="My time → the Returned entry",
+                     do="Read 'Returned: …' under the entry",
+                     expect="Ben's reason, for example 'Returned: You left at 3:30. Please send 7.5 hours.', and "
+                            "Fix and send again.",
+                     if_wrong="Do not understand the reason? Call Ben before you send it again.",
                      shot="f05-time-returned.png", endpoint="field.my_time"),
-                Step(title="Change it and send", app=F, where="Time (returned)",
-                     do="Change what the reason says. Tap Send time",
+                Step(title="Fix it and send it again", app=F, where="My time → Fix and send again",
+                     do="Tap Fix and send again. Change what the reason says. Tap Send time",
                      enter="For example: Hours 7.5",
-                     expect="Time sent for approval. My time shows it as Submitted again.",
-                     if_wrong="Do not understand the reason? Call the office before you send it again.",
+                     expect="Time opens with Returned: and the reason at the top and your entry filled in. After "
+                            "Send time: 'Time sent again for approval.' My time shows it as Submitted again.",
+                     if_wrong="No Fix and send again button? Only Returned time can be fixed. Approved time is done.",
                      shot="f05-time-fix.png", endpoint="field.time_entry"),
             ),
-            exercise="When the trainer returns your Harbour Lane time on the training site, fix it from My time and "
-                     "send it again.",
+            exercise="When the trainer returns your Harbour Lane time on the training site, open it from the red line "
+                     "on Today, fix it and send it again.",
         ),
         Lesson(
             key="f05-approved", title="When Ben approves your hours",
             what="See your hours approved, and know what happens if something is still wrong after that.",
-            why="Approved hours are final. Only the office can correct them, and the first entry is kept.",
+            why="Approved hours are final and count for the job. Only the office can correct them, and the first "
+                "entry is kept.",
             steps=(
                 Step(title="Ben approves (the office's step)", app=F, where="Nothing to do on Field",
-                     do="Wait for Ben. He checks your hours in the office and presses Approve, or Return with a "
+                     do="Wait for Ben. In the office he opens your entry and presses Approve, or Return with a "
                         "reason",
                      expect="You do nothing on Field for this step.",
                      if_wrong="Waiting a long time? Ask Ben. Field does not send a message when he approves."),
                 Step(title="See it approved", app=F, where="Today → My time",
                      do="Tap My time",
-                     expect="The entry says Approved. There is no Fix and send again button on it.",
-                     if_wrong="Still Submitted? Ben has not looked yet. Returned? Do lesson 'Time the office sent "
-                              "back'.",
+                     expect="The entry says Approved, with no Fix and send again and no 'Waiting for approval'. The "
+                            "week line counts it under Approved.",
+                     if_wrong="Still Submitted? Ben has not looked yet. Returned? Do lesson 'Time Ben sent back'.",
                      shot="f05-time-approved.png", endpoint="field.my_time"),
                 Step(title="Wrong after it was approved", app=F, where="My time",
                      do="Do not send the same hours again. Call Ben",
@@ -570,6 +582,32 @@ M05 = Module(
             ),
             exercise="When Ben approves your fixed Harbour Lane hours on the training site, open My time and find "
                      "Approved.",
+        ),
+        Lesson(
+            key="f05-company-time", title="Shop and company time",
+            what="Send hours that are not for a customer's job: the shop and yard, equipment upkeep, picking up "
+                 "material, safety meetings.",
+            why="Company time is never billed to a customer. Keep it off the customer's job.",
+            steps=(
+                Step(title="Open Shop / company time", app=F, where="Today → My time → Shop / company time",
+                     do="Tap My time, then Shop / company time",
+                     expect="Time for 'Shop and company time', with 'Company time: not a customer's job, never "
+                            "billed to a customer.'",
+                     why="The office sets it up once (Set up shop and company time). Until then the button is not "
+                         "on My time.",
+                     if_wrong="No Shop / company time button? Ask Ben to set it up.",
+                     shot="f05-company-time.png", endpoint="field.my_time"),
+                Step(title="Pick the work and send", app=F, where="Shop and company time → Work",
+                     do="Pick the Work, type the hours, tap Send time",
+                     enter="Work: Equipment and vehicle upkeep. Hours: 1.5",
+                     expect="Time sent for approval. My time lists it with Company time.",
+                     why="The Works are: Shop and yard, Equipment and vehicle upkeep, Material pickup and "
+                         "deliveries, Safety meetings and training, Office and estimating. There is no Extra work "
+                         "here, and it does not change the job you are on today.",
+                     if_wrong="'Choose the work you did.' means Work is empty."),
+            ),
+            exercise="Once Ben has set it up on the training site, send 1.5 hours of Equipment and vehicle upkeep as "
+                     "shop / company time and find it on My time.",
         ),
         Lesson(
             key="f05-extra-work", title="Extra work the customer asks for",
@@ -896,21 +934,29 @@ UAT_CASES = (
        "The plan PDF opens on the iPhone. Back to the job returns to the job."),
     _u("uat-f05-time", "f05", "Send time",
        "Field → Today → Enter time",
-       "Tap Choose different work, pick the Work item and the Work, type 8 hours and a note, tap Send time.",
-       "Time sent for approval; My time lists the day as Submitted."),
+       "Tap the Scheduled today button for your work (pick the Work if the box opens), type 8 hours and a note, "
+       "tap Send time.",
+       "Time sent for approval; My time lists the day as Submitted and the week line counts it under Waiting."),
     _u("uat-f05-my-time", "f05", "Review hours on My time",
        "Field → Today → My time, after sending today's hours",
        "Read the newest entry.",
-       "It shows today's date, Submitted, the job, the work item and the work, and the hours you sent."),
+       "The week line shows this week's hours by Approved, Waiting and Returned; the entry shows today's date, "
+       "Submitted, the job, the work item and the work, the hours and 'Waiting for approval'."),
     _u("uat-f05-returned", "f05", "Fix returned time",
-       "Field → My time, after the office returns your time with a reason",
-       "Tap Fix and send again, change the hours, tap Send time.",
-       "Time opens with Returned: and the reason; after sending, My time shows it as Submitted."),
+       "Field → Today, after the office returns your time with a reason",
+       "Tap the red returned-time line, then Fix and send again, change the hours, tap Send time.",
+       "Today's line opens My time with 'Returned: <reason>'; Time opens with the entry filled in; after sending: "
+       "'Time sent again for approval.' and My time shows it as Submitted."),
     _u("uat-f05-approved", "f05", "Ben approves the hours (Ben's step, then the crew's check)",
        "Office: Ben opens the time waiting for review and presses Approve. Then Field → My time on the iPhone",
        "After Ben approves your fixed entry, open My time.",
        "The entry says Approved and has no Fix and send again button. A failing result here goes on Ben's "
        "administrator dashboard."),
+    _u("uat-f05-company-time", "f05", "Shop / company time",
+       "Office first: Ben presses Set up shop and company time (Time review, once). Then Field → My time",
+       "Tap Shop / company time, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
+       "Time sent for approval; My time lists it as Company time; it is not on the customer's job and Today's "
+       "job is unchanged."),
     _u("uat-f05-extra-work", "f05", "Record extra work",
        "Field → Today → Extra work",
        "Describe the customer's request, name a new work item, tap Record extra work.",

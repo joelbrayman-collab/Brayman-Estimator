@@ -374,20 +374,22 @@ step("Kevin: Capture a note and a photo, Recent observations, extra work, time",
   assert.match(await flash(pg), /Extra work recorded/);
   await shot(pg, "f05-extra-recorded");
   await submit(pg, pg.getByRole("link", { name: "Enter time" }).first());
-  // The Scheduled today button names the work item only (the office booked the work item, not an activity), so
-  // the lesson teaches Choose different work → Work item and Work, which always works.
-  await shot(pg, "f05-time-scheduled", pg.locator("#field-time-other-toggle"));
-  const other = pg.locator("#field-time-other-toggle");
-  if (await other.count()) await other.click();
-  await pg.selectOption("[name=project_work_element_id]", { label: WORK_ITEM });
-  const v = await pg.locator("[name=project_work_activity_id] option", { hasText: ACTIVITY }).first().getAttribute("value");
-  await pg.selectOption("[name=project_work_activity_id]", v);
+  // TIME ENTRY (module 5): the Scheduled today button chooses the booked work (docs/operations/field-time.md).
+  const scheduled = pg.locator(".field-time-recent-btn", { hasText: WORK_ITEM }).first();
+  await shot(pg, "f05-time-scheduled", scheduled);
+  await scheduled.click();
+  const work = pg.locator("[name=project_work_activity_id]");
+  if (await work.isVisible() && !(await work.inputValue())) {
+    const v = await work.locator("option", { hasText: ACTIVITY }).first().getAttribute("value");
+    await work.selectOption(v);
+  }
   await pg.fill("[name=hours]", "8");
   await pg.fill("[name=worker_note]", "Ledger and joists, north side (training)");
-  await shot(pg, "f05-time", pg.locator("[name=project_work_activity_id]"));
+  await shot(pg, "f05-time", (await work.isVisible()) ? work : scheduled);
   await submit(pg, pg.getByRole("button", { name: "Send time" }));
   assert.match(await flash(pg), /Time sent for approval/);
-  await shot(pg, "f05-time-sent");
+  await shot(pg, "f05-time-sent", pg.locator(".field-time-item").first());
+  await shot(pg, "f05-my-time-week", pg.locator("[data-week-hours]"));
 });
 
 step("No signal: the Offline bar, a capture kept on the phone, then sent when the signal is back", async () => {
@@ -420,16 +422,18 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   await pg.fill("form[action$='/return'] [name=reason]", "You left at 3:30. Please send 7.5 hours. (training)");
   await submit(pg, pg.locator("form[action$='/return'] button[type=submit]"));
   const k = sessions.kevin.pg;
-  await go(k, "/field/time");
-  assert.match(await k.locator("main").innerText(), /Returned/);
-  await shot(k, "f05-my-time");
+  await go(k, "/field/today");
+  await shot(k, "f05-today-returned", k.locator("[data-returned-time]"));
+  await submit(k, k.locator("[data-returned-time] a"));
+  assert.match(new URL(k.url()).pathname, /^\/field\/time$/);
+  assert.match(await k.locator("main").innerText(), /Returned: You left at 3:30/);
   await shot(k, "f05-time-returned", k.getByRole("link", { name: "Fix and send again" }));
   await submit(k, k.getByRole("link", { name: "Fix and send again" }));
   assert.match(await k.locator("main").innerText(), /Returned: You left at 3:30/);
   await k.fill("[name=hours]", "7.5");
   await shot(k, "f05-time-fix", k.locator(".field-time-returned"));
   await submit(k, k.getByRole("button", { name: "Send time" }));
-  assert.match(await flash(k), /Time sent for approval/);
+  assert.match(await flash(k), /Time sent again for approval/);
   // Ben approves the fixed entry; Kevin sees Approved on My time.
   await go(pg, `/time?project_id=${W.projectId}`);
   await submit(pg, pg.locator('main a[href^="/time/"]').filter({ hasText: day(0) }).first());
@@ -439,6 +443,24 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   assert.match(await k.locator("main").innerText(), /Approved/);
   assert.equal(await k.getByRole("link", { name: "Fix and send again" }).count(), 0);
   await shot(k, "f05-time-approved", k.locator(".field-time-item").first());
+  // Shop / company time: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
+  await go(pg, "/time");
+  await submit(pg, pg.getByRole("button", { name: "Set up shop and company time" }));
+  assert.match(await flash(pg), /Shop and company time is ready/);
+  await go(k, "/field/time");
+  await submit(k, k.locator("[data-company-time]"));
+  assert.match(await k.locator("main").innerText(), /Company time: not a customer's job/);
+  const cw = k.locator("[name=project_work_activity_id]");
+  if (await k.locator("#field-time-other-toggle").count() && !(await cw.isVisible())) await k.click("#field-time-other-toggle");
+  const shopEl = k.locator("[name=project_work_element_id]");
+  if (await shopEl.isVisible() && !(await shopEl.inputValue())) await shopEl.selectOption({ index: 1 });
+  const cv = await cw.locator("option", { hasText: "Equipment and vehicle upkeep" }).first().getAttribute("value");
+  await cw.selectOption(cv);
+  await k.fill("[name=hours]", "1.5");
+  await shot(k, "f05-company-time", cw);
+  await submit(k, k.getByRole("button", { name: "Send time" }));
+  assert.match(await flash(k), /Time sent for approval/);
+  assert.match(await k.locator("main").innerText(), /Company time/);
 });
 
 step("the office moves the dates; Kevin sees them on This week", async () => {
@@ -458,7 +480,7 @@ step("the office moves the dates; Kevin sees them on This week", async () => {
 step("Kevin's Field acceptance tests on the iPhone", async () => {
   const k = sessions.kevin.pg;
   await go(k, "/training/uat");
-  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 16/);
+  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 17/);
   await shot(k, "f08-uat-list", k.locator("[data-uat-continue]"));
   await submit(k, k.locator("[data-uat-continue]"));
   await k.check('input[name=status][value="FAIL"]');

@@ -9,11 +9,16 @@ DIR=docs/brand/public-website/working/capability-update-2026-10-19
 docroot=$(whmapi1 domainuserdata domain=ai-ria.com 2>/dev/null | awk '/documentroot:/{print $2; exit}')
 [ "$docroot" = "/home/solarlight/public_html/ai-ria.com" ] || { echo "STOP: unexpected document root '$docroot'"; exit 1; }
 work=$(mktemp -d)
-git init -q "$work/r" && cd "$work/r" && git remote add origin https://github.com/joelbrayman-collab/Discovery-Search.git
-git fetch -q --depth 1 origin "$COMMIT" || { echo "STOP: could not fetch the approved commit"; exit 1; }
-git -c advice.detachedHead=false checkout -q FETCH_HEAD -- "$DIR" || { echo "STOP: folder missing"; exit 1; }
+# Discovery-Search is private, so the server reads an unchanged copy of the approved site/ folder and
+# VERIFICATION.json from a pinned commit of branch publish/airia-website-595754a; every file is then
+# hash-checked against VERIFICATION.json from the approved commit before anything is touched.
+COPY=e5456c0855e0d12e291dcb135e0b63758cba3ad1
+git init -q "$work/r" && cd "$work/r" && git remote add origin https://github.com/joelbrayman-collab/Brayman-Estimator.git
+GIT_TERMINAL_PROMPT=0 git fetch -q --depth 1 origin "$COPY" || { echo "STOP: could not fetch the copy"; exit 1; }
+git -c advice.detachedHead=false checkout -q FETCH_HEAD || { echo "STOP: checkout failed"; exit 1; }
+DIR=capability-update-2026-10-19
 src="$work/r/$DIR/site"
-echo "approved commit: $(git rev-parse FETCH_HEAD)  files to upload: $(find "$src" -type f | wc -l)"
+echo "approved source: Discovery-Search $COMMIT (copy $COPY)  files to upload: $(find "$src" -type f | wc -l)"
 # verify every file against VERIFICATION.json before touching the live site
 python3 - "$work/r/$DIR/VERIFICATION.json" "$src" <<'PY' || { echo "STOP: hash check failed"; exit 1; }
 import hashlib, json, os, sys

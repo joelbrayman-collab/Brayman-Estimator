@@ -9,6 +9,9 @@
 <section class="field-panel field-panel-time">
     <h1>{{ contractor_copy.FIELD_TIME_BUTTON }}</h1>
     <p class="field-project-name">{{ project.name }}</p>
+    {% if company_time %}
+    <p class="field-muted" data-company-time>Company time: not a customer's job, never billed to a customer.</p>
+    {% endif %}
     {% if project.operating_state != 'ACTIVE' %}
     <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>
     {% endif %}
@@ -102,7 +105,7 @@
             Note
             <textarea name="worker_note" class="field-textarea" rows="2">{{ returned.worker_note if returned else '' }}</textarea>
         </label>
-        {% if not returned %}
+        {% if not returned and not company_time %}
         <button type="button" class="field-btn field-btn-danger" id="field-time-extra-toggle" aria-expanded="false">+ {{ contractor_copy.FIELD_EXTRA_WORK_BUTTON }}</button>
         <div class="field-panel-extra-work field-time-extra" id="field-time-extra" hidden>
             <p>{{ contractor_copy.SCOPE_EXTRA_WORK_RULE }}</p>

@@ -2,24 +2,43 @@
 {% block title %}{{ contractor_copy.FIELD_MY_TIME_HEADING }} — CalibraytAI{% endblock %}
 {% block field_page %}my-time{% endblock %}
 {% block content %}
+{% set nav_current = '' %}
+{% include "field/_field_nav.html" %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.field_topic("my_time")) }}
 <section class="field-panel">
     <h1>{{ contractor_copy.FIELD_MY_TIME_HEADING }}</h1>
+    <p class="field-muted" data-week-hours>This week (from {{ week.week_start.strftime('%a %b %d') }}):
+        {{ "%.2f"|format(week.total) }} hours ·
+        Approved {{ "%.2f"|format(week.approved) }} ·
+        Waiting {{ "%.2f"|format(week.waiting) }}{% if week.returned > 0 %} ·
+        Returned {{ "%.2f"|format(week.returned) }}{% endif %}</p>
+    {% if returned_count %}
+    <p class="field-time-returned" data-returned-count="{{ returned_count }}">{{ returned_count }} {{ 'entry was' if returned_count == 1 else 'entries were' }} returned. Fix and send again.</p>
+    {% endif %}
     {% if project %}
     <p class="field-project-name">{{ project.name }}</p>
     <a class="field-btn field-btn-primary" href="{{ url_for('field.time_entry', project_id=project.id) }}">{{ contractor_copy.FIELD_TIME_BUTTON }}</a>
+    {% else %}
+    <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose a job for time</a>
+    {% endif %}
+    {% if company_project %}
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=company_project.id) }}" data-company-time>Shop / company time</a>
     {% endif %}
     {% if rows %}
     <ul class="field-time-list">
         {% for row in rows %}
-        <li class="field-time-item{% if row.is_extra_work %} field-time-item-extra{% endif %}">
-            <p class="field-recent-meta">{{ row.entry.work_date.isoformat() }} · {{ row.status_label }}</p>
+        <li class="field-time-item{% if row.is_extra_work %} field-time-item-extra{% endif %}" data-time-entry="{{ row.entry.id }}" data-status="{{ row.entry.status }}">
+            <p class="field-recent-meta">{{ row.entry.work_date.strftime('%a %b %d') }} · {{ row.status_label }}</p>
             <p>{{ row.entry.project_name }}</p>
             <p>{{ row.entry.element_display_name }} — {{ row.entry.activity_display_name }}</p>
-            <p>{{ "%.2f"|format(row.entry.hours) }} hours</p>
+            <p>{{ "%.2f"|format(row.entry.hours) }} hours · {{ row.scope_label }}{% if row.change_order_label %} · {{ row.change_order_label }}{% endif %}</p>
+            {% if row.entry.worker_note %}<p class="field-muted">Note: {{ row.entry.worker_note }}</p>{% endif %}
             {% if row.entry.status == 'RETURNED' %}
+            <p class="field-time-returned">Returned: {{ row.entry.return_reason }}</p>
             <a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=row.entry.project_id, returned_id=row.entry.id) }}">Fix and send again</a>
+            {% elif row.entry.status == 'SUBMITTED' %}
+            <p class="field-muted">Waiting for approval. Ask the office if something is wrong; they can return it to you.</p>
             {% endif %}
         </li>
         {% endfor %}

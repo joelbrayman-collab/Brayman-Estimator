@@ -1177,6 +1177,48 @@
             · {{ "%.2f"|format(labour.extra_work.waiting_hours) }} {{ contractor_copy.LABOUR_HOURS_WAITING }}
         </p>
         {% endif %}
+        {% set cost = hub.labour_cost %}
+        <h3 id="hub-labour-cost">Estimated and actual labour</h3>
+        <p class="muted-copy">
+            Actual is approved time only, at the company costing rate
+            {% if cost.rate %}(${{ "%.2f"|format(cost.rate.rate) }} an hour, {{ cost.rate.currency }}, version {{ cost.rate.version }} on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% else %}(none authorized yet: set one on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% endif %}.
+            Wages and payroll are not used. Time waiting for approval is not in the actual.
+        </p>
+        {% if cost.rows %}
+        <div class="table-wrap">
+        <table class="data-table" data-labour-cost>
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>Estimated hours</th>
+                    <th>Actual hours</th>
+                    <th>Difference</th>
+                    <th>Estimated cost</th>
+                    <th>Actual cost</th>
+                    <th>Difference</th>
+                    <th>Waiting for approval</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in cost.rows + [cost.total] %}
+                <tr data-labour-kind="{{ row.kind or 'TOTAL' }}">
+                    <td>{% if loop.last %}<strong>{{ row.label }}</strong>{% else %}{{ row.label }}{% endif %}</td>
+                    <td>{% if row.estimated_hours is not none %}{{ "%.2f"|format(row.estimated_hours) }}{% else %}not estimated{% endif %}</td>
+                    <td>{{ "%.2f"|format(row.actual_hours) }}</td>
+                    <td>{% if row.hours_difference is not none %}{{ "%+.2f"|format(row.hours_difference) }}{% else %}—{% endif %}</td>
+                    <td>{% if row.estimated_cost is not none %}${{ "{:,.2f}".format(row.estimated_cost) }}{% else %}—{% endif %}</td>
+                    <td>${{ "{:,.2f}".format(row.actual_cost) }}{% if row.unrated_hours > 0 %} <span class="muted-copy">({{ "%.2f"|format(row.unrated_hours) }} h with no costing rate)</span>{% endif %}</td>
+                    <td>{% if row.cost_difference is not none %}{% if row.cost_difference < 0 %}-{% else %}+{% endif %}${{ "{:,.2f}".format(row.cost_difference|abs) }}{% else %}—{% endif %}</td>
+                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <p class="muted-copy">A plus difference is over the estimate. Extra work and company time have no estimate until they are priced.</p>
+        {% else %}
+        <p class="muted-copy">No estimated hours and no approved time yet.</p>
+        {% endif %}
     </article>
     <article class="panel panel-wide">
         <div class="panel-header">

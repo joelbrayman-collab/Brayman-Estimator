@@ -52,7 +52,7 @@ from app.services.work_structure import (
 )
 from app.services.time_entry import project_time_summary
 from app.services.schedule import assemble_schedule
-from app.services.project_performance import assemble_project_performance
+from app.services.project_performance import assemble_project_labour_cost, assemble_project_performance
 
 
 def assemble_project_hub(project, organization_id: str) -> dict:
@@ -206,6 +206,7 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "change_order_label": contractor_change_order_label,
         "time_summary": project_time_summary(project.id, organization_id=organization_id),
         "labour": assemble_project_performance(organization_id, project.id),
+        "labour_cost": assemble_project_labour_cost(organization_id, project.id),
         "schedule": assemble_schedule(
             organization_id,
             project_id=project.id,

@@ -14,6 +14,16 @@
     <tbody>{% for r in preview.rows %}<tr data-row="{{ r._key }}">{% for h in preview.header[:6] %}<td data-label="{{ h }}">{{ r[h] }}</td>{% endfor %}</tr>
     {% else %}<tr><td class="muted-copy">Nothing new to export.</td></tr>{% endfor %}</tbody>
   </table></div>
+  {% if kind == 'time' %}
+  <p class="muted-copy" data-time-hours>{{ "%.2f"|format(preview.hours) }} approved hours in this file. Hours only: no rates, costs or wages.
+    Customer is blank for shop and company time. Billable is Yes only for extra work not yet on a change order.
+    Each row's description ends with its CalibraytAI reference [CT-T…]; keep it in the timesheet's description.
+    Then check with <a href="{{ url_for('accounting.reconcile_time') }}">Check time in QuickBooks</a>.</p>
+  {% if preview.replaced %}
+  <p><strong>Changed after it went to QuickBooks</strong> (change these in QuickBooks too)</p>
+  <ul class="acct-list" data-time-replaced>{% for r in preview.replaced %}<li>{{ r.ref }} {{ r.employee }} {{ r.date }} {{ r.hours }} hours{% if r.now %} → now {{ r.now }}{% endif %}</li>{% endfor %}</ul>
+  {% endif %}
+  {% endif %}
   {% if preview.rows %}
   <form method="post" class="acct-actions">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

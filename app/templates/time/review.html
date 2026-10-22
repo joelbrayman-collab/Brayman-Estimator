@@ -14,6 +14,20 @@
     <a class="button" href="{{ url_for('time_entry.new_entry', project_id=filters.project_id) }}">Record time</a>
 </div>
 
+<section class="panel panel-wide" data-company-time>
+    {% if company_time_project %}
+    <p class="muted-copy">Shop, yard, equipment and safety-meeting time goes on
+        <a href="{{ url_for('projects.view_project', id=company_time_project.id) }}#hub-time">{{ company_time_project.name }}</a>,
+        never on a customer's job. It is approved here like any other time.</p>
+    {% else %}
+    <form method="post" action="{{ url_for('time_entry.setup_company_time') }}" class="form-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p class="muted-copy">Crew need somewhere to put shop, yard, equipment and safety-meeting time that is not a customer's job.</p>
+        <button type="submit">Set up shop and company time</button>
+    </form>
+    {% endif %}
+</section>
+
 {{ contextual_help(help_content.office_topic("time_review")) }}
 
 <section class="form-panel" style="margin-bottom: 20px;">
@@ -60,6 +74,12 @@
 </section>
 
 {% if rows %}
+<p class="muted-copy" data-time-totals>
+    Hours in this view:
+    {% for label, hours in totals.by_status %}{{ label }} {{ "%.2f"|format(hours) }}{% if not loop.last %} · {% endif %}{% endfor %}
+    <br>By kind of work:
+    {% for label, hours in totals.by_kind %}{{ label }} {{ "%.2f"|format(hours) }}{% if not loop.last %} · {% endif %}{% endfor %}
+</p>
 <form method="post" action="{{ url_for('time_entry.approve_selected', status=filters.status, project_id=filters.project_id or '', worker_user_id=filters.worker_user_id or '', **{'from': filters.from, 'to': filters.to}) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <p class="muted-copy">Extra work is highlighted. Check the work and notes before approving a group.</p>
@@ -84,7 +104,7 @@
                     <input type="checkbox" name="time_entry_id" value="{{ row.entry.id }}" aria-label="Select {{ row.entry.worker_display_name }} {{ row.entry.work_date }}">
                     {% endif %}
                 </td>
-                <td><a href="{{ url_for('time_entry.detail', time_entry_id=row.entry.id) }}">{{ row.entry.work_date.isoformat() }}</a></td>
+                <td><a href="{{ url_for('time_entry.detail', time_entry_id=row.entry.id) }}" data-time-entry="{{ row.entry.id }}">{{ row.entry.work_date.isoformat() }}</a></td>
                 <td>{{ row.entry.worker_display_name }}</td>
                 <td>{{ row.entry.project_name }}</td>
                 <td>

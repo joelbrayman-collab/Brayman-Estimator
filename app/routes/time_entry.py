@@ -31,6 +31,8 @@ from app.services.time_entry import (
     correct_approved_time,
     get_time_entry,
     list_time_entries,
+    ensure_company_time_project,
+    get_company_time_project,
     list_time_work_choices,
     org_time_workers,
     return_time,
@@ -94,6 +96,8 @@ def review():
     return render_template(
         "time/review.html",
         rows=rows,
+        totals=_view_totals(rows),
+        company_time_project=get_company_time_project(organization.id),
         projects=list_organization_projects(organization.id),
         workers=org_time_workers(organization.id),
         statuses=REVIEW_STATUSES,
@@ -106,6 +110,41 @@ def review():
             "to": date_to.isoformat() if date_to else "",
         },
     )
+
+
+def _view_totals(rows):
+    """Hours in this view by status and by kind of work (original, each change order, extra, company)."""
+    from decimal import Decimal
+
+    by_status = {}
+    by_kind = {}
+    for row in rows:
+        entry = row["entry"]
+        hours = Decimal(str(entry.hours))
+        by_status[row["status_label"]] = by_status.get(row["status_label"], Decimal("0")) + hours
+        label = row["scope_label"] + (f" · {row['change_order_label']}" if row["change_order_label"] else "")
+        by_kind[label] = by_kind.get(label, Decimal("0")) + hours
+    return {"by_status": sorted(by_status.items()), "by_kind": sorted(by_kind.items())}
+
+
+@time_entry_bp.route("/company-time", methods=["POST"])
+def setup_company_time():
+    """Office: make the one company-time project (shop, yard, equipment, safety meetings). Idempotent."""
+    organization = _org()
+    existing = get_company_time_project(organization.id)
+    project = ensure_company_time_project(
+        organization.id,
+        actor_user_id=current_user.id,
+        actor_display_name=current_user.display_name,
+    )
+    if existing is None:
+        flash(
+            "Shop and company time is ready. Crew choose Shop / company time on My Time; it is never billed to a customer.",
+            "success",
+        )
+    else:
+        flash("Shop and company time is already set up.", "success")
+    return redirect(url_for("projects.view_project", id=project.id) + "#hub-time")
 
 
 @time_entry_bp.route("/new", methods=["GET", "POST"])

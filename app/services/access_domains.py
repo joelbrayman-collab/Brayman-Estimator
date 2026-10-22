@@ -382,4 +382,10 @@ def field_visible_project_ids(user, organization_id):
                     if m.crew_id == a.crew_id and m.effective_from <= item.scheduled_end and (
                             m.effective_to is None or m.effective_to >= item.scheduled_start):
                         visible.add(item.project_id)
+    # Shop and company time (22 Oct 2026) is everyone's: any crew member may record time there.
+    from app.services.time_entry import get_company_time_project
+
+    company = get_company_time_project(organization_id)
+    if company is not None:
+        visible.add(company.id)
     return visible

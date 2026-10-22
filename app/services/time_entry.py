@@ -379,6 +379,10 @@ def submit_time(
             f"Hours for one day cannot be more than {MAX_HOURS_PER_WORKER_DAY}."
         )
     description = (extra_work_description or "").strip()
+    if description and is_company_time_project(project):
+        raise TimeEntryError(
+            "Company time is not for a customer, so it has no extra work. Record extra work on the customer's job."
+        )
     try:
         if description:
             try:
@@ -896,12 +900,14 @@ def project_time_summary(project_id: int, *, organization_id: Optional[str] = No
 
 
 def time_entry_presentation(entry: LabourTimeEntry) -> dict:
+    company = is_company_time_project(entry.project)
     return {
         "entry": entry,
         "status_label": contractor_time_status_label(entry.status),
-        "scope_label": contractor_scope_label(entry.scope_origin),
-        "change_order_label": contractor_change_order_label(entry.change_order),
-        "is_extra_work": entry.scope_origin == SCOPE_EXTRA_WORK,
+        "scope_label": COMPANY_TIME_LABEL if company else contractor_scope_label(entry.scope_origin),
+        "change_order_label": None if company else contractor_change_order_label(entry.change_order),
+        "is_extra_work": entry.scope_origin == SCOPE_EXTRA_WORK and not company,
+        "is_company_time": company,
         "needs_approval": entry.status == TIME_STATUS_SUBMITTED,
     }
 
@@ -928,3 +934,163 @@ def actor_display(user=None) -> str:
     if user is not None:
         return actor_name(user)
     return current_actor_display_name(fallback="Office")
+
+
+# ------------------------------------------------------------------ shop and company time (Joel, 22 Oct 2026)
+#
+# Time that belongs to no customer (shop and yard, equipment upkeep, safety meetings, material runs) is
+# recorded through the same Time Entry, approval and history as job time, against ONE company-time
+# project per organization. That project is identified by its project number, is never a customer
+# job: it is left out of the QuickBooks customer file, is never invoiced, and its hours go to
+# QuickBooks with no customer. No schema change: an ordinary Project, Client and work items.
+
+COMPANY_TIME_PROJECT_NAME = "Shop and company time"
+COMPANY_TIME_ELEMENT_NAME = "Shop and company time"
+COMPANY_TIME_ACTIVITIES = (
+    "Shop and yard",
+    "Equipment and vehicle upkeep",
+    "Material pickup and deliveries",
+    "Safety meetings and training",
+    "Office and estimating",
+)
+COMPANY_TIME_KIND = "COMPANY"
+COMPANY_TIME_LABEL = "Company time"
+
+
+def company_time_project_number(organization_id: str) -> str:
+    return f"COMPANY-TIME-{organization_id}"
+
+
+def is_company_time_project(project) -> bool:
+    return bool(
+        project is not None
+        and getattr(project, "project_number", None)
+        == company_time_project_number(getattr(project, "organization_id", "") or "")
+    )
+
+
+def get_company_time_project(organization_id: Optional[str] = None) -> Optional[Project]:
+    org_id = _org_id(organization_id)
+    return Project.query.filter_by(
+        organization_id=org_id,
+        project_number=company_time_project_number(org_id),
+    ).first()
+
+
+def company_time_client_id(organization_id: Optional[str] = None) -> Optional[int]:
+    project = get_company_time_project(organization_id)
+    return project.client_id if project is not None else None
+
+
+def ensure_company_time_project(
+    organization_id: Optional[str] = None,
+    *,
+    actor_user_id: Optional[int] = None,
+    actor_display_name: Optional[str] = None,
+) -> Project:
+    """Create (once) the organization's company-time project with its standard work. Idempotent."""
+    from app.models import Client
+    from app.models.organization import Organization
+    from app.services.work_structure import add_project_activity, add_project_element
+
+    org_id = _org_id(organization_id)
+    existing = get_company_time_project(org_id)
+    if existing is not None:
+        return existing
+    organization = db.session.get(Organization, org_id)
+    company = (getattr(organization, "display_name", None) or "Our company").strip()
+    client = Client(
+        organization_id=org_id,
+        name=f"{company} (own company, not a customer)"[:150],
+        company=company[:150],
+        notes="Holds shop and company time. Not a customer: never invoiced or sent to QuickBooks as a customer.",
+    )
+    db.session.add(client)
+    db.session.flush()
+    project = Project(
+        organization_id=org_id,
+        name=COMPANY_TIME_PROJECT_NAME,
+        project_number=company_time_project_number(org_id),
+        status="Active",
+        description="Shop, yard, equipment, safety meetings and other company time. Not a customer job.",
+        client_id=client.id,
+    )
+    db.session.add(project)
+    db.session.commit()
+    actor = actor_display_name or actor_display()
+    element = add_project_element(
+        project_id=project.id,
+        display_name=COMPANY_TIME_ELEMENT_NAME,
+        organization_id=org_id,
+        scope_origin=SCOPE_ORIGINAL,
+        actor_user_id=actor_user_id,
+        actor_display_name=actor,
+    )
+    for name in COMPANY_TIME_ACTIVITIES:
+        add_project_activity(
+            project_work_element_id=element.id,
+            display_name=name,
+            organization_id=org_id,
+            scope_origin=SCOPE_ORIGINAL,
+            actor_user_id=actor_user_id,
+            actor_display_name=actor,
+        )
+    return project
+
+
+def time_kind(entry: LabourTimeEntry) -> str:
+    """ORIGINAL / CHANGE_ORDER / EXTRA_WORK as recorded, or COMPANY for shop and company time."""
+    if is_company_time_project(entry.project):
+        return COMPANY_TIME_KIND
+    return entry.scope_origin
+
+
+def time_kind_label(entry: LabourTimeEntry) -> str:
+    if time_kind(entry) == COMPANY_TIME_KIND:
+        return COMPANY_TIME_LABEL
+    label = contractor_scope_label(entry.scope_origin)
+    co = contractor_change_order_label(entry.change_order)
+    return f"{label} · {co}" if co else label
+
+
+def worker_time_totals(
+    *,
+    worker_user_id: int,
+    organization_id: Optional[str] = None,
+    today: Optional[date] = None,
+) -> dict:
+    """This week's (Monday to today) hours for one worker by status. Hours only: no money."""
+    from datetime import timedelta
+
+    org_id = _org_id(organization_id)
+    today = today or date.today()
+    week_start = today - timedelta(days=today.weekday())
+    totals = {}
+    for status in (TIME_STATUS_SUBMITTED, TIME_STATUS_RETURNED, TIME_STATUS_APPROVED):
+        totals[status] = _sum_labour_hours(
+            status=status,
+            organization_id=org_id,
+            worker_user_id=worker_user_id,
+            work_date_from=week_start,
+            work_date_to=today,
+        )
+    return {
+        "week_start": week_start,
+        "approved": totals[TIME_STATUS_APPROVED],
+        "waiting": totals[TIME_STATUS_SUBMITTED],
+        "returned": totals[TIME_STATUS_RETURNED],
+        "total": totals[TIME_STATUS_APPROVED] + totals[TIME_STATUS_SUBMITTED] + totals[TIME_STATUS_RETURNED],
+    }
+
+
+def returned_time_for_worker(*, worker_user_id: int, organization_id: Optional[str] = None):
+    org_id = _org_id(organization_id)
+    return (
+        LabourTimeEntry.query.filter_by(
+            organization_id=org_id,
+            worker_user_id=worker_user_id,
+            status=TIME_STATUS_RETURNED,
+        )
+        .order_by(LabourTimeEntry.work_date.desc(), LabourTimeEntry.id.desc())
+        .all()
+    )

@@ -8,7 +8,7 @@ company cannot be built (the command refuses).
 
 - The same CalibraytAI code as production (branch `main`, so the lessons match the released version),
   with `TRAINING_ENVIRONMENT=1`.
-- Its own disk and SQLite database: synthetic training records only. Nothing on it touches real
+- Its own disk and SQLite database: fictional training records only. Nothing on it touches real
   customers, suppliers or money, and production never reads it.
 - Every page shows a "Training site · synthetic records only" bar with a link to the Training Centre.
 - Ben and Darcy each get a training sign-in. Contractor people sign in on the office sign-in page,

@@ -67,7 +67,8 @@ def test_every_lesson_and_acceptance_test_exists_on_the_right_side_and_is_on_a_s
     lessons = {lesson.key: m for m in C.modules() for lesson in m.lessons}
     cases = {c.key: c for c in C.uat_cases()}
     for s in D.STAGES:
-        side = C.PATHWAY_SUPPLIER if s.journey.startswith("supplier") else C.PATHWAY_CONTRACTOR
+        side = (C.PATHWAY_SUPPLIER if s.journey.startswith("supplier") else
+                C.PATHWAY_FIELD_CREW if s.journey == "field" else C.PATHWAY_CONTRACTOR)  # Field Crew, 22 Oct 2026
         keys = list(s.lessons) + [x.lesson for x in s.substeps if x.lesson]
         for key in keys:
             assert key in lessons, f"{s.id}: lesson {key}"

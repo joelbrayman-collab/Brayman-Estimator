@@ -104,6 +104,16 @@ def _help_anchor(dest: D.Destination, viewer: Viewer) -> Optional[dict]:
 # ------------------------------------------------------------------ training: lessons and acceptance tests
 
 
+def _side_pathway(viewer: Viewer) -> str:
+    """The training pathway of a map's side when no trainee role chooses: the Field map teaches the Field Crew
+    pathway (Joel, 22 Oct 2026)."""
+    from app.training import content as C
+
+    if viewer.kind == KIND_SUPPLIER:
+        return C.PATHWAY_SUPPLIER
+    return C.PATHWAY_FIELD_CREW if viewer.kind == KIND_FIELD else C.PATHWAY_CONTRACTOR
+
+
 def _lesson_allowed(key: str, viewer: Viewer) -> bool:
     from app.training import content as C
 
@@ -113,8 +123,7 @@ def _lesson_allowed(key: str, viewer: Viewer) -> bool:
     module, lesson = found
     if viewer.role:
         return viewer.role in C.lesson_roles(module, lesson)
-    pathway = C.PATHWAY_SUPPLIER if viewer.kind == KIND_SUPPLIER else C.PATHWAY_CONTRACTOR
-    return module.pathway == pathway
+    return module.pathway == _side_pathway(viewer)
 
 
 def _uat_allowed(key: str, viewer: Viewer) -> bool:
@@ -125,7 +134,7 @@ def _uat_allowed(key: str, viewer: Viewer) -> bool:
         return False
     if viewer.role:
         return viewer.role in case.roles
-    return case.pathway == (C.PATHWAY_SUPPLIER if viewer.kind == KIND_SUPPLIER else C.PATHWAY_CONTRACTOR)
+    return case.pathway == _side_pathway(viewer)
 
 
 class _Training:

@@ -8,6 +8,11 @@ everywhere else every page answers 404.
 /training/admin                   the administrator's dashboard (Instance Owner or System Administrator)
 /training/review                  owner review of the Workflow Maps (administrators; no trainee registration):
 /training/review/<map>            contractor, supplier or field map; lessons and tests open read-only
+/training/review/field-crew       the Field Crew pathway's modules, lessons and tests, read-only (22 Oct 2026)
+
+Three groups (22 Oct 2026): contractor owners and office staff, the Field crew (role Field worker: the Field Crew
+pathway, app/training/field_crew.py) and supplier owners and PRO Desk staff. A Field-only person is offered
+only the Field Crew training.
 """
 
 from __future__ import annotations
@@ -15,7 +20,7 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from app.models.training import ROLE_LABELS, UAT_STATUSES
+from app.models.training import ROLE_FIELD, ROLE_LABELS, UAT_STATUSES
 from app.training import content as C
 from app.training import service as svc
 
@@ -64,7 +69,8 @@ def home():
         if not roles:
             abort(403)
         pathway = svc.principal(current_user)[0]
-        return render_template("training/register.html", roles=roles, labels=ROLE_LABELS, pathway=pathway)
+        return render_template("training/register.html", roles=roles, labels=ROLE_LABELS, pathway=pathway,
+                               field_crew_only=roles == (ROLE_FIELD,))
     return render_template("training/home.html", trainee=trainee, ov=svc.overview(trainee),
                            uat=svc.uat_overview(trainee), roles=roles, labels=ROLE_LABELS,
                            admin=svc.is_admin(current_user) is not None)
@@ -314,6 +320,17 @@ def review():
     maps = [{"key": k, "title": WD.MAPS[k].title, "intro": WD.MAPS[k].intro,
              "href": url_for("training.review_map", map_key=k)} for k in REVIEW_MAPS]
     return render_template("training/review.html", maps=maps)
+
+
+@training_bp.route("/review/field-crew")
+def review_field_crew():
+    """The owner previews the whole Field Crew pathway (Joel, 22 Oct 2026): its eight modules, lessons and
+    acceptance tests, read-only. Nothing is saved; the owner is not registered as crew."""
+    _review_guard()
+    modules = C.modules_for(C.PATHWAY_FIELD_CREW, ROLE_FIELD)
+    return render_template("training/review_pathway.html", map_key="field-crew", modules=modules,
+                           lesson_count=sum(len(m.lessons) for m in modules),
+                           cases=C.uat_for(C.PATHWAY_FIELD_CREW, ROLE_FIELD))
 
 
 @training_bp.route("/review/<map_key>")

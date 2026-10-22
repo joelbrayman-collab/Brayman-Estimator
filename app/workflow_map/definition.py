@@ -33,7 +33,7 @@ from app.models.training import (
     ROLE_SUPPLIER_OWNER,
 )
 
-DEFINITION_VERSION = "2026-10-21.2"
+DEFINITION_VERSION = "2026-10-22.1"
 
 # ------------------------------------------------------------------ vocabulary
 
@@ -304,7 +304,8 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
         ),
         lessons=("c01-welcome", "c01-sign-in", "c01-find-your-way", "c01-forgot-password", "c02-getting-started",
                  "c02-company-brand", "c02-pricing-hst", "c02-people", "c02-access", "c02-crews",
-                 "c03-invite-worker", "c04-accounting-page", "c04-quickbooks-setup", "c05-calendars",
+                 "c03-invite-worker", "c03-activate-phone", "c03-home-screen", "c03-field-first-look",
+                 "c04-accounting-page", "c04-quickbooks-setup", "c05-calendars",
                  "c05-phone-calendar", "c08-suppliers", "c09-cost-library"),
         uat=("uat-c01-sign-in", "uat-c01-register", "uat-c02-people", "uat-c02-pricing", "uat-c02-office-no-people",
              "uat-c03-activate", "uat-c03-phones-step", "uat-c05-feed"),
@@ -419,7 +420,7 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
         ),
         lessons=("c05-appointments", "c05-field-schedule", "c11-schedule-crew", "c08-place-order", "c11-field-today",
                  "c11-capture", "c11-extra-work", "c11-field-time", "c11-office-review", "c11-change-order",
-                 "c12-morning", "c12-field-day", "c04-invoices"),
+                 "c12-morning", "c12-field-day", "c04-invoices", "c07-field-drawings"),
         uat=("uat-c05-appointments", "uat-c05-field-week", "uat-c08-order", "uat-c11-schedule", "uat-c11-field",
              "uat-c11-delivery-field", "uat-c11-change-order", "uat-c12-day", "uat-c12-field-day"),
         handoffs=(5, 6, 7, 8), roles=OFFICE_ROLES, project_statuses=("Contracted", "Active"),
@@ -470,13 +471,13 @@ FIELD_STAGES: Tuple[Stage, ...] = (
         substeps=(
             S("activate", "Activate your account from the email link", availability=OTHER_PARTY,
               note="The office sends the link from People & Access; you open it on your phone.",
-              lesson="c03-activate-phone"),
-            S("password", "Change your password", D_PASSWORD, lesson="c01-field-sign-in"),
-            S("home-screen", "Put Field on the Home Screen", D_FIELD_TODAY, lesson="c03-home-screen"),
+              lesson="f01-activate"),
+            S("password", "Change your password", D_PASSWORD, lesson="f01-password"),
+            S("home-screen", "Put Field on the Home Screen", D_FIELD_TODAY, lesson="f01-home-screen"),
         ),
-        lessons=("c01-field-sign-in", "c01-forgot-password", "c03-activate-phone", "c03-home-screen",
-                 "c03-field-first-look"),
-        uat=("uat-c01-field-only", "uat-c03-activate"),
+        lessons=("f01-start-training", "f01-activate", "f01-open-field", "f01-home-screen", "f01-password",
+                 "f07-troubleshooting", "f08-field-uat"),
+        uat=("uat-f01-sign-in", "uat-f01-field-only", "uat-f01-home-screen"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(
@@ -486,14 +487,16 @@ FIELD_STAGES: Tuple[Stage, ...] = (
                     "show what is coming; Company today shows what the whole company has on.",
         primary=D_FIELD_TODAY,
         substeps=(
-            S("today", "Today", D_FIELD_TODAY, lesson="c11-field-today"),
-            S("week", "This week", _field("field.week", "Open This week"), lesson="c05-field-schedule"),
-            S("month", "This month", _field("field.month", "Open This month"), lesson="c05-field-schedule"),
+            S("today", "Today", D_FIELD_TODAY, lesson="f02-my-work"),
+            S("week", "This week", _field("field.week", "Open This week"), lesson="f03-week"),
+            S("month", "This month", _field("field.month", "Open This month"), lesson="f03-month"),
             S("company", "Company today", _field("field.company_today", "Open Company today"),
-              lesson="c05-field-schedule"),
+              lesson="f02-company-today"),
+            S("changes", "Schedule changes (the office moves dates)", _field("field.week", "Open This week"),
+              lesson="f03-changes"),
         ),
-        lessons=("c05-field-schedule", "c11-field-today"),
-        uat=("uat-c05-field-week", "uat-c11-delivery-field"),
+        lessons=("f02-my-work", "f02-company-today", "f03-week", "f03-month", "f03-changes", "f07-refresh"),
+        uat=("uat-f02-today", "uat-f03-week-month", "uat-f03-change"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(
@@ -503,12 +506,12 @@ FIELD_STAGES: Tuple[Stage, ...] = (
                     "on the phone.",
         primary=_field("field.projects", "Open Projects"),
         substeps=(
-            S("projects", "Choose the job", _field("field.projects", "Open Projects"), lesson="c11-field-today"),
+            S("projects", "Choose the job", _field("field.projects", "Open Projects"), lesson="f02-confirm-job"),
             S("drawings", "Drawings and plans", _field("field.drawings", "Open Drawings and plans", project=True),
-              lesson="c07-field-drawings"),
+              lesson="f04-drawings"),
         ),
-        lessons=("c07-field-drawings",),
-        uat=("uat-c07-plan",),
+        lessons=("f02-confirm-job", "f04-drawings", "f04-job-info"),
+        uat=("uat-f02-confirm", "uat-f04-drawings"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(
@@ -519,12 +522,12 @@ FIELD_STAGES: Tuple[Stage, ...] = (
         primary=_field("field.capture", "Open Capture", project=True),
         substeps=(
             S("capture", "Photos and notes", _field("field.capture", "Open Capture", project=True),
-              lesson="c11-capture"),
+              lesson="f06-capture"),
             S("extra-work", "Extra work", _field("field.extra_work", "Open Extra work", project=True),
-              lesson="c11-extra-work"),
+              lesson="f05-extra-work"),
         ),
-        lessons=("c11-capture", "c11-extra-work"),
-        uat=("uat-c11-field",),
+        lessons=("f06-capture", "f06-voice-note", "f06-progress", "f05-extra-work", "f07-offline"),
+        uat=("uat-f06-capture", "uat-f05-extra-work", "uat-f07-offline"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(
@@ -535,11 +538,11 @@ FIELD_STAGES: Tuple[Stage, ...] = (
         primary=_field("field.my_time", "Open My time"),
         substeps=(
             S("time", "Send time for the job", _field("field.time_entry", "Open Time", project=True),
-              lesson="c11-field-time"),
-            S("my-time", "My time", _field("field.my_time", "Open My time"), lesson="c11-field-time"),
+              lesson="f05-send-time"),
+            S("my-time", "My time", _field("field.my_time", "Open My time"), lesson="f05-returned-time"),
         ),
-        lessons=("c11-field-time", "c12-field-day"),
-        uat=("uat-c12-field-day",),
+        lessons=("f05-send-time", "f05-returned-time", "f08-working-day"),
+        uat=("uat-f05-time", "uat-f05-returned", "uat-f08-day"),
         roles=CONTRACTOR_ROLES,
         loops=(Loop("f-today", "Tomorrow → Today", "The next working day starts on Today again.", "Back to Today"),),
     ),
@@ -944,7 +947,7 @@ SUPPLIER_BRANCHES: Tuple[Branch, ...] = (
 FIELD_BRANCHES: Tuple[Branch, ...] = (
     Branch("week", "Your schedule", "This week and This month, any time.",
            (_field("field.week", "Open This week"), _field("field.month", "Open This month")),
-           lessons=("c05-field-schedule",)),
+           lessons=("f03-week", "f03-month")),
 )
 
 MAP_CONTRACTOR = "contractor"

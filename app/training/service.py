@@ -23,6 +23,7 @@ from app import db
 from app.models.training import (
     CONTRACTOR_ROLES,
     PATHWAY_CONTRACTOR,
+    PATHWAY_FIELD_CREW,
     PATHWAY_SUPPLIER,
     ROLE_FIELD,
     ROLE_LABELS,
@@ -118,7 +119,7 @@ def overview(trainee) -> dict:
     """The trainee's modules and lessons with their state, and where to resume."""
     progress = _progress(trainee)
     rows, done, total = [], 0, 0
-    for module in C.modules_for(trainee.pathway, trainee.role):
+    for module in C.modules_for(trainee.track, trainee.role):
         lessons = []
         for lesson in module.lessons:
             p = progress.get(lesson.key)
@@ -143,14 +144,14 @@ def overview(trainee) -> dict:
 
 
 def lesson_for_trainee(trainee, key: str):
-    allowed = {lesson.key: (m, lesson) for m, lesson in C.lessons_for(trainee.pathway, trainee.role)}
+    allowed = {lesson.key: (m, lesson) for m, lesson in C.lessons_for(trainee.track, trainee.role)}
     if key not in allowed:
         raise TrainingError("That lesson is not in your training.")
     return allowed[key]
 
 
 def neighbours(trainee, key: str) -> Tuple[Optional[str], Optional[str]]:
-    keys = [lesson.key for _m, lesson in C.lessons_for(trainee.pathway, trainee.role)]
+    keys = [lesson.key for _m, lesson in C.lessons_for(trainee.track, trainee.role)]
     i = keys.index(key)
     return (keys[i - 1] if i > 0 else None), (keys[i + 1] if i + 1 < len(keys) else None)
 
@@ -247,7 +248,7 @@ def uat_history(trainee) -> Dict[str, List[TrainingUatResult]]:
 def uat_overview(trainee) -> dict:
     history = uat_history(trainee)
     rows = []
-    for case in C.uat_for(trainee.pathway, trainee.role):
+    for case in C.uat_for(trainee.track, trainee.role):
         attempts = history.get(case.key, [])
         latest = attempts[-1] if attempts else None
         rows.append({"case": case, "latest": latest, "attempts": attempts,
@@ -262,7 +263,7 @@ def uat_overview(trainee) -> dict:
 
 def uat_case_for_trainee(trainee, key: str) -> C.UatCase:
     case = C.find_uat(key)
-    if case is None or case.pathway != trainee.pathway or trainee.role not in case.roles:
+    if case is None or case.pathway != trainee.track or trainee.role not in case.roles:
         raise TrainingError("That acceptance test is not in your list.")
     return case
 
@@ -322,11 +323,17 @@ def admin_report(org: str) -> dict:
         failing = [r for r in uat["rows"] if r["latest"] and r["latest"].status in (UAT_FAIL, UAT_BLOCKED)]
         retested = [r for r in uat["rows"] if len(r["attempts"]) > 1]
         ready = ov["done"] == ov["total"] and uat["counts"][UAT_PASS] == uat["total"] and uat["total"] > 0
-        rows.append({"trainee": t, "role": ROLE_LABELS.get(t.role, t.role), "overview": ov, "uat": uat,
+        rows.append({"trainee": t, "role": ROLE_LABELS.get(t.role, t.role), "track": t.track,
+                     "track_label": t.track_label, "overview": ov, "uat": uat,
                      "failing": failing, "retested": retested, "feedback": len(feedback(t)),
                      "readiness": "Ready" if ready else ("Issues to fix" if failing else "In training")})
     issues = [(r["trainee"], x) for r in rows for x in r["failing"]]
-    return {"rows": rows, "issues": issues}
+    # The crew (Field Crew training) are shown in their own section of the dashboard, with each acceptance
+    # test's latest result so a failing or blocked Field test stands out (Joel, 22 Oct 2026).
+    crew = [r for r in rows if r["track"] == PATHWAY_FIELD_CREW]
+    crew_cases = C.uat_for(PATHWAY_FIELD_CREW, ROLE_FIELD)
+    return {"rows": rows, "issues": issues, "crew": crew, "crew_cases": crew_cases,
+            "others": [r for r in rows if r["track"] != PATHWAY_FIELD_CREW]}
 
 
 # ------------------------------------------------------------------ Training Tutor
@@ -360,7 +367,9 @@ GENERAL_HELP = GENERAL_HELP + (
                                   "Blocked: you could not get as far as the test; say what stopped you. After a fix, open "
                                   "the same test and record the new result; your earlier results stay."),
     ("role job lessons missing", "Your lessons follow the job you chose. Change it at the bottom of your training home "
-                                 "(your progress is kept). Field crew only get the Field lessons."),
+                                 "(your progress is kept). Field crew get the Field Crew training: Field lessons only."),
+    ("field open app today", "On your training home press Open Field: CalibraytAI Field opens at Today. On Field, the "
+                             "Training site bar at the top has Back to my training."),
 )
 
 _WHERE = {"where", "find", "menu", "button", "press", "click", "open", "locate"}

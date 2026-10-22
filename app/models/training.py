@@ -20,7 +20,11 @@ from app import db
 
 PATHWAY_CONTRACTOR = "CONTRACTOR"
 PATHWAY_SUPPLIER = "SUPPLIER"
-PATHWAYS = (PATHWAY_CONTRACTOR, PATHWAY_SUPPLIER)
+PATHWAYS = (PATHWAY_CONTRACTOR, PATHWAY_SUPPLIER)  # what training_trainees.pathway stores
+# Field Crew training (Joel, 22 Oct 2026): the third group, the crew on the iPhone. It is a pathway of lessons
+# and acceptance tests, not a stored value: a crew member is a contractor trainee (pathway CONTRACTOR) with
+# role FIELD, and app/training/content.track() sends role FIELD to the Field Crew lessons. No schema change.
+PATHWAY_FIELD_CREW = "FIELD_CREW"
 
 ROLE_OWNER = "OWNER"
 ROLE_OFFICE = "OFFICE"
@@ -34,7 +38,7 @@ ROLES = CONTRACTOR_ROLES + SUPPLIER_ROLES
 ROLE_LABELS = {
     ROLE_OWNER: "Contractor owner",
     ROLE_OFFICE: "Office staff",
-    ROLE_FIELD: "Field worker",
+    ROLE_FIELD: "Field worker",  # the Field Crew pathway
     ROLE_SUPPLIER_OWNER: "Supplier owner",
     ROLE_SUPPLIER_ADMIN: "Supplier administrator",
     ROLE_PRO_DESK: "PRO Desk staff",
@@ -74,6 +78,16 @@ class TrainingTrainee(db.Model):
     @property
     def role_label(self):
         return ROLE_LABELS.get(self.role, self.role)
+
+    @property
+    def track(self):
+        """The lessons this trainee follows: CONTRACTOR, SUPPLIER or FIELD_CREW (role FIELD)."""
+        return PATHWAY_FIELD_CREW if (self.pathway == PATHWAY_CONTRACTOR and self.role == ROLE_FIELD) else self.pathway
+
+    @property
+    def track_label(self):
+        return {PATHWAY_CONTRACTOR: "Contractor training", PATHWAY_SUPPLIER: "Supplier training",
+                PATHWAY_FIELD_CREW: "Field Crew training"}.get(self.track, self.track)
 
 
 class TrainingLessonProgress(db.Model):

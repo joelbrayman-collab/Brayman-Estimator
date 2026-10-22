@@ -1,10 +1,10 @@
-"""Contractor training: 12 modules for the contractor owner, office staff and field workers (Joel, 21 Oct 2026).
+"""Contractor training: 12 modules for the contractor owner and authorized office staff (Joel, 21 Oct 2026).
 
 Ben's First Day (app/services/onboarding.py, Company → Getting started) is the backbone of the owner's
-pathway: its fifteen steps are taught across the modules in the order the owner meets them. A field worker
-gets only the Field lessons (sign in, the phone, Field Today / This week / This month, their job and its
-drawings, capture, extra work, time, deliveries as Field shows them, a working day on Field); office staff get
+pathway: its fifteen steps are taught across the modules in the order the owner meets them. Office staff get
 the office workflows; People & Access, crews, Getting started and closing/reopening a project are the owner's.
+The owner also keeps the Field lessons, to know what the crew see. The crew themselves (role Field worker)
+follow their own Field Crew pathway, app/training/field_crew.py (22 Oct 2026).
 
 Every label below was checked against the real pages and pictured by tools/training/capture_contractor_shots.mjs
 (the screenshots in app/static/training/shots, c<module>-<name>.png). The practice exercises follow ONE
@@ -14,9 +14,8 @@ and order, scheduling, Field, change order, invoice and closeout. Connected exam
 """
 
 from app.models.training import PATHWAY_CONTRACTOR as P
-from app.models.training import ROLE_FIELD, ROLE_OFFICE, ROLE_OWNER
+from app.models.training import ROLE_OFFICE, ROLE_OWNER
 from app.training.content import (
-    ALL_CONTRACTOR,
     APP_CUSTOMER,
     APP_EMAIL,
     APP_FIELD,
@@ -32,8 +31,10 @@ from app.training.content import (
 )
 
 OWNER = (ROLE_OWNER,)
-FIELD = (ROLE_FIELD,)
-OWNER_FIELD = (ROLE_OWNER, ROLE_FIELD)  # Field lessons: the crew, and the owner who should know what they see
+# Contractor owners and authorized office staff (Joel, 22 Oct 2026). The crew have their own Field Crew pathway
+# (field_crew.py); the Field lessons kept here are the owner's view of what the crew see on their phones.
+TEAM = OFFICE_ROLES
+OWNER_FIELD = OWNER  # Field lessons kept for the owner, who should know what the crew see
 OFFICE = OFFICE_ROLES
 O = APP_OFFICE
 F = APP_FIELD
@@ -47,7 +48,7 @@ M01 = Module(
     key="c01", pathway=P, number=1, title="Welcome, registration and first sign-in",
     summary="Register in the Training Centre, sign in to CalibraytAI (the office on a computer, Field on the phone), "
             "find your way around and look after your password.",
-    roles=ALL_CONTRACTOR,
+    roles=TEAM,
     lessons=(
         Lesson(
             key="c01-welcome", title="Welcome: register and use the Training Centre",
@@ -58,8 +59,8 @@ M01 = Module(
             steps=(
                 Step(title="Open the Training Centre", app=O, where="The training site address from your invitation, then /training",
                      do="Press I work for a contractor",
-                     expect="The page says Welcome to CalibraytAI training, with two buttons: I work for a contractor and "
-                            "I work for a building supplier.",
+                     expect="The page says Welcome to CalibraytAI training, with three buttons: I work for a contractor, "
+                            "I work on a crew (Field) and I work for a building supplier.",
                      if_wrong="If the page is not found, check the address with the person who invited you: the Training "
                               "Centre is only on the training site, never on the real office.",
                      shot="c01-training-signin.png", endpoint="training.signin"),
@@ -71,11 +72,13 @@ M01 = Module(
                               "(lesson 'Forgot your password').",
                      shot="c01-sign-in.png", endpoint="auth.login"),
                 Step(title="Choose the job you do", app=O, where="Training Centre → Welcome, <your name>",
-                     do="Tick your job (Contractor owner, Office staff or Field worker), then press Start my training",
+                     do="Tick your job (Contractor owner or Office staff), then press Start my training",
                      expect="Your modules appear, numbered, each with the lessons for your job and a count such as 0/3.",
                      if_wrong="Picked the wrong job? Press Change role (keeps my progress) at the bottom of the Training "
-                              "Centre. Field-only crew are only offered Field worker.",
-                     why="A field worker never sees office or money lessons; the owner gets the set-up lessons.",
+                              "Centre. Field worker opens the separate Field Crew training; Field-only crew are only "
+                              "offered that.",
+                     why="Office staff do not get the owner's set-up lessons; the crew have their own Field Crew "
+                         "training with no office or money lessons.",
                      shot="c01-register.png", endpoint="training.home"),
                 Step(title="Find your lessons and tests", app=O, where="Training Centre home",
                      do="Press the first lesson's name",
@@ -172,46 +175,6 @@ M01 = Module(
             ),
             exercise=f"Sign in, open each group of the menu once, open Help on Home, then open {JOB} from Home → "
                      "Current projects and press each tab (PROJECT … PROJECT WORK).",
-        ),
-        Lesson(
-            key="c01-field-sign-in", title="Sign in to Field on your iPhone",
-            what="Sign in on your iPhone and see My Work on Field.",
-            why="Field is where the crew see their work, take photos and notes, and send their hours. It shows no "
-                "prices or costs.",
-            roles=FIELD,
-            steps=(
-                Step(title="Open the sign-in page in Safari", app=F, where="Safari on your iPhone → the training site address",
-                     do="Type your email and password, then press Sign in",
-                     enter="Your training email (for example kevin@training.calibraytai.invalid) and your password",
-                     expect="Field opens at Today: My Work — <your name>.",
-                     if_wrong="Check the email. If the password is refused, press Forgot Password? and use the emailed "
-                              "link. Do not make a new account.",
-                     shot="c01-field-sign-in.png", endpoint="auth.login"),
-                Step(title="See My Work", app=F, where="Field → Today",
-                     do="Read the page",
-                     expect="Today, This week, This month and Company today at the top; Help; Print; the date; My Work — "
-                            "<your name>. With nothing booked: 'Nothing is scheduled for you today.'",
-                     if_wrong="If you see an office page, you were not set up as Field only; tell the owner.",
-                     shot="c01-field-today.png", endpoint="field.today"),
-                Step(title="Change your password", app=F, where="Field → the Password button at the top",
-                     do="Type the old password once and your new password twice, then press Change password",
-                     enter="A password only you know, at least 12 characters",
-                     expect="A message says the password was changed; Back to Field returns to Today.",
-                     if_wrong="If the old password is refused, sign out and use Forgot Password? on the sign-in page.",
-                     endpoint="auth.change_password"),
-                Step(title="Register for training on the phone", app=F, where="Safari → the training site address/training",
-                     do="Tick Field worker and press Start my training",
-                     expect="Your Field lessons appear.",
-                     if_wrong="Only Field worker is offered to crew: that is correct.",
-                     shot="c01-field-register.png", endpoint="training.home"),
-                Step(title="Sign out", app=F, where="Field → the Sign out button at the top right",
-                     do="Press Sign out",
-                     expect="The sign-in page opens.",
-                     if_wrong="If Field warns that work on this phone has not reached the office, stay signed in until "
-                              "you have a connection so it can send."),
-            ),
-            exercise="On your iPhone, sign in to the training site, read My Work on Today, register for training as "
-                     "Field worker, then sign out and sign in again.",
         ),
         Lesson(
             key="c01-forgot-password", title="Forgot your password",
@@ -702,7 +665,7 @@ M05 = Module(
     key="c05", pathway=P, number=5, title="My Calendar, Company Calendar and scheduling",
     summary="Ben's First Day steps 7 and 8: company and personal appointments, the calendar on your phone, and how "
             "the crew read their schedule on Field.",
-    roles=ALL_CONTRACTOR,
+    roles=TEAM,
     lessons=(
         Lesson(
             key="c05-calendars", title="My Calendar and Company Calendar",
@@ -941,7 +904,7 @@ M07 = Module(
     key="c07", pathway=P, number=7, title="Drawings, calculators and material takeoffs",
     summary="Upload the customer's plan, work out quantities with the calculators, read the Deck Takeoff, and see the "
             "drawings on Field.",
-    roles=ALL_CONTRACTOR,
+    roles=TEAM,
     lessons=(
         Lesson(
             key="c07-plans", title="Upload the plan PDF",
@@ -1388,7 +1351,7 @@ M11 = Module(
     key="c11", pathway=P, number=11, title="Field work, deliveries and change orders",
     summary="Ben's First Day step 14: schedule the crew; Kevin's day on Field (the job, the delivery, photos and notes, "
             "extra work, time); the office turns the extra work into a change order and approves the time.",
-    roles=ALL_CONTRACTOR,
+    roles=TEAM,
     lessons=(
         Lesson(
             key="c11-schedule-crew", title="Schedule the crew on the job",
@@ -1605,7 +1568,7 @@ M12 = Module(
     key="c12", pathway=P, number=12, title="Running a complete working day and final acceptance",
     summary="Ben's First Day step 15: the morning in the office, the crew's day on Field, the final invoice, Getting "
             "started 15 of 15, closing the job, and your acceptance tests.",
-    roles=ALL_CONTRACTOR,
+    roles=TEAM,
     lessons=(
         Lesson(
             key="c12-morning", title="The morning in the office",
@@ -1756,16 +1719,11 @@ UAT_CASES = (
     _u("uat-c01-sign-in", "c01", "Sign in and change the password", "The training site's sign-in page",
        "Sign in with your training email and password, then change the password (office: the key button at the top "
        "right; Field: the Password button at the top).",
-       "You are signed in under your own name and the new password works the next time you sign in.", ALL_CONTRACTOR),
+       "You are signed in under your own name and the new password works the next time you sign in.", TEAM),
     _u("uat-c01-register", "c01", "Register for your job", "Training site → /training",
        "Sign in, choose your job and press Start my training.",
-       "Only your job's lessons are listed; a field worker is offered only Field worker and sees no office lessons.",
-       ALL_CONTRACTOR),
-    _u("uat-c01-field-only", "c01", "Field opens on the phone and office pages stay closed",
-       "Your iPhone, Safari, the training site sign-in page",
-       "Sign in as a field worker, then type the office address /projects/ and /accounting.",
-       "Field Today opens after sign-in; each office address returns you to Field Today with no office page shown.",
-       (ROLE_FIELD,)),
+       "Only your job's lessons are listed; office staff do not get the owner's lessons.",
+       TEAM),
     _u("uat-c02-people", "c02", "Add a Field-only person", "Company → People & Access",
        "Add a person with Field only ticked; press Add and email the link.",
        "The person is added, a set-password email is sent, and their page says Field only; Getting started step 5 is ticked.",
@@ -1813,7 +1771,7 @@ UAT_CASES = (
        "orders and Field Observations under PROJECT WORK.", OFFICE),
     _u("uat-c07-plan", "c07", "Plan uploaded and on Field", "Harbour Lane → Drawings → Upload PDF",
        "Upload a PDF plan; then a scheduled crew member opens Field → Choose Project → Harbour Lane → Drawings and plans.",
-       "The plan is listed in Current drawings and opens on the crew member's phone.", ALL_CONTRACTOR),
+       "The plan is listed in Current drawings and opens on the crew member's phone.", TEAM),
     _u("uat-c07-calculator", "c07", "Concrete calculator", "CALCULATORS → Concrete calculator",
        "Standard slab, Imperial, 12 × 10 ft, 6 in, 5 % waste, Calculate.",
        "Total concrete 2.333 yd3 (base 2.222, waste 0.111); nothing is added to an estimate.", OFFICE),

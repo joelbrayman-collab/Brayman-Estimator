@@ -9,6 +9,8 @@
   <ul class="tc-review-list">
     {% for m in maps %}<li><a class="tc-btn tc-btn-primary" href="{{ m.href }}" data-review-map-link="{{ m.key }}">{{ m.title }}</a>
       <p class="tc-small">{{ m.intro }}</p></li>{% endfor %}
+    <li><a class="tc-btn tc-btn-primary" href="{{ url_for('training.review_field_crew') }}" data-review-field-crew>Field Crew training</a>
+      <p class="tc-small">The crew's own eight modules on the iPhone, with their Field acceptance tests.</p></li>
   </ul>
 </section>
 {% endblock %}

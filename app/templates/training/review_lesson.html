@@ -4,7 +4,7 @@
 {% include "training/_review_bar.html" %}
 <article class="tc-card tc-lesson-page" data-review-lesson="{{ lesson.key }}">
   <p><a class="tc-btn" href="{{ back }}" data-review-back>&larr; Back to the map</a></p>
-  <p class="tc-eyebrow">{{ 'Supplier' if module.pathway == 'SUPPLIER' else 'Contractor' }} training · Module {{ module.number }} · {{ module.title }}</p>
+  <p class="tc-eyebrow">{{ {'SUPPLIER': 'Supplier', 'FIELD_CREW': 'Field Crew'}.get(module.pathway, 'Contractor') }} training · Module {{ module.number }} · {{ module.title }}</p>
   <h1>{{ lesson.title }}</h1>
   <div class="tc-intro"><p><b>What the trainee will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p></div>
   <ol class="tc-checklist">

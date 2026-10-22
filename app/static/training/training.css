@@ -97,3 +97,22 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 .tc-review-list { list-style: none; padding: 0; display: grid; gap: 14px; }
 .tc-uat-def dt { font-weight: 700; margin-top: 10px; }
 .tc-uat-def dd { margin: 2px 0 0; }
+
+/* Field Crew (22 Oct 2026): the owner's view of the crew, and phone-first pages for the crew */
+.tc-crew { border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:10px 0; }
+.tc-crew.has-issues { border-color:var(--red); }
+.tc-crew h3 { margin:0 0 4px; display:flex; flex-wrap:wrap; gap:8px; align-items:baseline; }
+.tc-crew h3 small { color:var(--muted); font-weight:600; }
+.tc-crew-tests { list-style:none; padding:0; margin:8px 0 0; display:grid; gap:4px; }
+.tc-crew-tests li { display:flex; flex-wrap:wrap; gap:6px; padding:4px 6px; border-radius:6px; overflow-wrap:anywhere; }
+.tc-crew-tests li > span:first-child { flex:1 1 180px; }
+.tc-flag { background:#f8e3df; }
+.tc-flag::before { content:"\26A0"; color:var(--red); font-weight:700; }
+.tc-main, .tc-card, .tc-step-card { overflow-wrap:anywhere; }
+@media (max-width: 640px) {
+  .tc-top { padding:10px 16px; }
+  .tc-brand img { height:30px; }
+  .tc-nav { gap:10px; font-size:.95rem; }
+  .tc-card { padding:16px; }
+  .tc-tick-btn { width:100%; justify-content:center; }
+}

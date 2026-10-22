@@ -647,7 +647,7 @@ def test_job_cost_counts_approved_labour_once_and_keeps_the_estimate(app):
 # ------------------------------------------------------------------ 13: the one additive migration
 
 
-def test_the_migration_adds_exactly_the_six_tables_matching_the_models(tmp_path):
+def test_the_migration_adds_exactly_the_ten_tables_matching_the_models(tmp_path):
     import sqlalchemy as sa
     from alembic import command
     from alembic.config import Config
@@ -676,7 +676,9 @@ def test_the_migration_adds_exactly_the_six_tables_matching_the_models(tmp_path)
     inspector = sa.inspect(engine)
     added = set(inspector.get_table_names()) - before
     tables = {"qbtime_employee_links", "qbtime_jobcode_links", "qbtime_transfers", "qbtime_events",
-              "banked_hours_policies", "banked_hours_ledger"}
+              "banked_hours_policies", "banked_hours_ledger",
+              # v1rel7 carries one migration: the SMS schedule-notice tables are in it too
+              "sms_schedule_notices", "sms_text_message_details", "sms_consent_events", "sms_delivery_events"}
     assert added == tables
     for model in (models.QuickBooksTimeEmployeeLink, models.QuickBooksTimeJobcodeLink, models.QuickBooksTimeTransfer,
                   models.QuickBooksTimeEvent, models.BankedHoursPolicy, models.BankedHoursLedgerEntry):

@@ -11,6 +11,9 @@
     <span class="field-today-weekday">{{ today_weekday }}</span>
     <span class="field-today-date">{{ today_natural_date }}</span>
 </p>
+{% if returned_time_count %}
+<p class="field-time-returned" data-returned-time><a href="{{ url_for('field.my_time') }}">{{ returned_time_count }} time {{ 'entry was' if returned_time_count == 1 else 'entries were' }} returned to you. Fix and send again on My time.</a></p>
+{% endif %}
 <section class="field-panel">
     <h1>{{ my_work_heading }}</h1>
     {% if not schedule.cards %}
@@ -38,6 +41,7 @@
     {% else %}
     <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>
     <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose Project</a>
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">{{ contractor_copy.FIELD_MY_TIME_HEADING }}</a>
     {% endif %}
 </section>
 

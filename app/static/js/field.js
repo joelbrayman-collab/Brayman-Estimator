@@ -956,6 +956,20 @@
             element.value = button.getAttribute("data-element-id") || "";
             filterActivities();
             activity.value = button.getAttribute("data-activity-id") || "";
+            if (!activity.value) {
+              // Scheduled as a whole work item (no single work): pick its only work, or show the
+              // Work box so the person chooses one (22 Oct 2026, "Work not found").
+              var choices = Array.prototype.filter.call(activity.options, function (o) { return !!o.value; });
+              if (choices.length === 1) activity.value = choices[0].value;
+              var box = document.getElementById("field-time-other-work");
+              var toggle = document.getElementById("field-time-other-toggle");
+              if (box) box.removeAttribute("hidden");
+              if (toggle) {
+                toggle.setAttribute("aria-expanded", "true");
+                toggle.setAttribute("hidden", "hidden");
+              }
+              if (!activity.value) activity.focus();
+            }
           });
         }
       );

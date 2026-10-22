@@ -225,6 +225,8 @@ def _active_activity_for_project(
     organization_id: str,
     allow_inactive: bool = False,
 ) -> ProjectWorkActivity:
+    if not project_work_activity_id:
+        raise TimeEntryError("Choose the work you did.")
     activity = ProjectWorkActivity.query.filter_by(
         id=project_work_activity_id,
         organization_id=organization_id,

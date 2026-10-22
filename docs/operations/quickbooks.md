@@ -44,6 +44,43 @@ QuickBooks entry) lists the cost classes to enter.
 - Accounting → **Purchase orders**: QuickBooks has no purchase-order import. The file is a list to enter
   by hand (+ New → Purchase order) if you track POs in QuickBooks.
 
+## Crew hours (approved time) — entered by hand
+
+QuickBooks Online's Import data has **no time import**, so CalibraytAI does not and cannot put hours into
+QuickBooks by itself. What is supported and tested is a file plus a check:
+
+1. Approve the week's time first (Company → Time review). Only Approved time goes in the file.
+2. Accounting → **Approved time (hours to enter by hand)** → check the list → **Download the file**.
+   One row per approved entry: Activity Date (dd/MM/yyyy), Employee, Customer, Job, Service Item
+   (**Labour**), Hours, Duration (h:mm), Billable, Kind of work (Original work / Change order work /
+   Extra work / Company time), Change order, Work, Description, CalibraytAI ref (CT-T…).
+   Hours only: no rates, costs or wages leave CalibraytAI in this file.
+3. Once, in QuickBooks: make a Service item **Labour**; make sure each crew member is an Employee whose
+   display name matches the Employee column (e.g. "Kevin Fieldhand").
+4. QuickBooks: **+ New → Weekly timesheet** → choose the employee and week → for each row of the file:
+   Customer (blank for shop and company time), Service = Labour, Billable as in the file, the hours on the
+   day, and paste the row's Description (it ends with **[CT-T…]**, which lets the check find doubles).
+   If payroll pulls hours from timesheets, payroll uses these; otherwise give the file to whoever runs
+   payroll. Shop and company time has no customer and is never billable.
+   Billable is Yes only for **extra work** not yet on an approved change order (it still needs pricing);
+   original work and change-order work are No (they are invoiced from the proposal and the change order).
+5. Check (weekly): QuickBooks → **Reports → Time Activities by Employee Detail** → the same dates →
+   **Export → Export to CSV**. Accounting → **Check time in QuickBooks** → choose the file → Check.
+   Hours are compared per worker per day with what CalibraytAI put in its files:
+   - **match**;
+   - **hours differ**: fix the timesheet in QuickBooks, or correct the approved time here;
+   - **in a CalibraytAI file but not in QuickBooks**: enter the timesheet (or the report dates are wrong);
+   - **in QuickBooks but not approved here**: entered directly in QuickBooks, or not exported yet;
+   - **entered more than once**: the same [CT-T…] appears twice; delete the extra one in QuickBooks;
+   - **corrected here after it went to QuickBooks**: change that timesheet line in QuickBooks too.
+   The check reads only; it changes nothing in either system.
+
+Each approved entry goes into a file once. A correction made after export is a new entry (new CT-T number)
+and the replaced one is listed on the file page and in the check. Tested against a CSV laid out like
+QuickBooks' Time Activities by Employee Detail export (title rows, an employee name row, detail rows,
+a Total row; Duration as h:mm or decimal). Check the column names on the first real export; the check
+looks for Activity Date (or Date) and Duration (or Hours) and says so if they are missing.
+
 ## No duplicates
 
 A record goes into a file once. The next file leaves it out. If an import failed and you need a record

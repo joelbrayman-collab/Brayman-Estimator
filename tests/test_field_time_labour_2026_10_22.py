@@ -411,3 +411,33 @@ def test_other_organization_sees_and_touches_none_of_it(app):
     assert other_company.id != get_company_time_project(ORG).id
     assert other_company.project_number == f"COMPANY-TIME-{other.id}"
     assert Client.query.filter_by(id=other_company.client_id).one().organization_id == other.id
+
+
+# ------------------------------------------------------------------ Scheduled today, whole work item (defect, 22 Oct 2026)
+
+
+def test_scheduled_today_work_item_without_a_single_work_still_makes_valid_time(app):
+    """The office scheduled the work item, not one work: "Scheduled today" posts only the work item.
+    With one work under it, that work is used; with several, Kevin is asked to choose (never "Work not
+    found"), and the page's script opens the Work box for him."""
+    ben, kevin, project, activity = _setup()
+    k = _client(app, KEVIN)
+    form = k.get(f"/field/projects/{project.id}/time").get_data(as_text=True)
+    assert f'data-element-id="{activity.project_work_element_id}" data-activity-id=""' in form  # Scheduled today
+    r = k.post(f"/field/projects/{project.id}/time", data={
+        "project_work_element_id": activity.project_work_element_id, "project_work_activity_id": "",
+        "hours": "6", "work_date": TODAY.isoformat()})
+    assert r.status_code == 302
+    entry = LabourTimeEntry.query.filter_by(worker_user_id=kevin.id).one()
+    assert entry.project_work_activity_id == activity.id and entry.status == TIME_STATUS_SUBMITTED
+
+    _change_order_activity(project, activity)  # now two works under the item
+    r = k.post(f"/field/projects/{project.id}/time", data={
+        "project_work_element_id": activity.project_work_element_id, "project_work_activity_id": "",
+        "hours": "2", "work_date": TODAY.isoformat()}, follow_redirects=True)
+    page = r.get_data(as_text=True)
+    assert "Choose the work you did on" in page and "Work not found" not in page
+    assert LabourTimeEntry.query.filter_by(worker_user_id=kevin.id).count() == 1
+
+    js = open("app/static/js/field.js", encoding="utf-8").read()
+    assert 'box.removeAttribute("hidden")' in js and "choices.length === 1" in js

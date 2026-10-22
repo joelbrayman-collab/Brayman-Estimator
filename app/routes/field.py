@@ -232,6 +232,9 @@ def today():
         today_weekday=field_today_weekday(),
         today_natural_date=field_today_natural_date(),
         my_work_heading=field_my_work_heading(current_user.display_name),
+        returned_time_count=len(
+            returned_time_for_worker(worker_user_id=current_user.id, organization_id=organization.id)
+        ),
         actor_name=current_user.display_name,
     )
 
@@ -483,6 +486,23 @@ def _optional_int(value):
     return int(raw)
 
 
+def _posted_activity_id(organization_id: str, project_id: int):
+    """The work for this time. A work item scheduled as a whole (Scheduled today) posts only the work
+    item: its single work is used; with several, the person is asked to choose (22 Oct 2026)."""
+    activity_id = _optional_int(request.form.get("project_work_activity_id"))
+    if activity_id is not None:
+        return activity_id
+    element_id = _optional_int(request.form.get("project_work_element_id"))
+    if element_id is None or (request.form.get("extra_work_description") or "").strip():
+        return 0
+    for group in list_time_work_choices(project_id, organization_id=organization_id):
+        if group["element"].id == element_id:
+            if len(group["activities"]) == 1:
+                return group["activities"][0].id
+            raise TimeEntryError(f"Choose the work you did on {group['element'].display_name}.")
+    return 0
+
+
 @field_bp.route("/time")
 def my_time():
     organization = _organization()
@@ -539,20 +559,14 @@ def time_entry(project_id):
                     time_entry_id=returned.id,
                     hours=request.form.get("hours"),
                     work_date=request.form.get("work_date"),
-                    project_work_activity_id=_optional_int(
-                        request.form.get("project_work_activity_id")
-                    )
-                    or 0,
+                    project_work_activity_id=_posted_activity_id(organization.id, project.id),
                     worker_note=request.form.get("worker_note"),
                     organization_id=organization.id,
                 )
             else:
                 entry = submit_time(
                     project_id=project.id,
-                    project_work_activity_id=_optional_int(
-                        request.form.get("project_work_activity_id")
-                    )
-                    or 0,
+                    project_work_activity_id=_posted_activity_id(organization.id, project.id),
                     hours=request.form.get("hours"),
                     work_date=request.form.get("work_date"),
                     worker_note=request.form.get("worker_note"),

@@ -236,18 +236,8 @@ step("c01: the training centre, signing in, Home and the password page", async (
   const o = await olivia();
   await go(o.pg, "/");
   await shot(o.pg, "c01-office-home");
-  const k = await kevinPhone();
-  assert.match(k.pg.url(), /\/field\/today/);
-  await shot(k.pg, "c01-field-today");
-  await go(k.pg, "/training");
-  await shot(k.pg, "c01-field-register", k.pg.locator("[data-register]"));
-  await k.pg.check("input[name=role][value=FIELD]");
-  await submit(k.pg, k.pg.locator("[data-register]"));
-  const ph = await context(PHONE, { isMobile: true, hasTouch: true });
-  sessions.anonPhone = ph;
-  await go(ph.pg, "/login");
-  await ph.pg.fill("input[name=email]", facts.people.kevin.email);
-  await shot(ph.pg, "c01-field-sign-in", ph.pg.locator("form button[type=submit]"));
+  // The crew's own sign-in and registration are pictured by capture_field_crew_shots.mjs (Field Crew training,
+  // 22 Oct 2026).
 });
 
 // ================================================================== Module 2: company, users, permissions

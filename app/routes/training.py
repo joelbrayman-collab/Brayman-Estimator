@@ -149,6 +149,12 @@ def move(key):
     action = request.form.get("action", "next")
     target = step + 1 if action == "next" else step - 1 if action == "back" else step
     target = max(0, min(target, len(item.steps) - 1))
+    if action == "exit":
+        # Resume where the trainee really is (22 Oct 2026): the first step not ticked once any step is ticked,
+        # so Continue where I left off never sends them back to a step already done.
+        ticked = set(svc.steps_ticked(trainee, key))
+        if ticked:
+            step = next((i for i in range(len(item.steps)) if i not in ticked), len(item.steps) - 1)
     svc.save_step(trainee, key, target if action != "exit" else step)
     if action == "exit":
         flash("Saved. Press Continue where I left off when you come back.", "success")

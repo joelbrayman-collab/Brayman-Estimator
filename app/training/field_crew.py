@@ -781,7 +781,8 @@ M08 = Module(
                 Step(title="Record the result", app=TC_APP, where="The test → Result",
                      do="Tap Pass, Fail or Blocked. For Fail or Blocked, write what went wrong. Tap Save result",
                      enter="What went wrong: what you tapped and the words on the screen",
-                     expect="Result saved. The next test opens.",
+                     expect="Result saved. Acceptance tests opens with your result beside the test. Tap the next "
+                            "test's name.",
                      if_wrong="'Say what went wrong' means Fail or Blocked needs the box filled in.",
                      shot="f08-uat-case.png", endpoint="training.uat_case"),
                 Step(title="Retest after a fix", app=TC_APP, where="Acceptance tests → the test marked retest",

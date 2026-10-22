@@ -231,7 +231,8 @@ def test_progress_is_saved_and_resumed_with_back_next_save_and_exit(app):
     assert r.headers["Location"].endswith(f"/training/lessons/{first.key}?step=3")
     r = _post(kevin, f"/training/lessons/{first.key}/move", data={"step": 3, "action": "back"})
     assert r.headers["Location"].endswith(f"/training/lessons/{first.key}?step=2")
-    r = _post(kevin, f"/training/lessons/{first.key}/move", data={"step": 2, "action": "exit"})
+    # Save and exit from a page opened at step 1: the place saved is still the first step not ticked (step 3).
+    r = _post(kevin, f"/training/lessons/{first.key}/move", data={"step": 0, "action": "exit"})
     assert r.headers["Location"].endswith("/training")
     # A new sign-in (another device) resumes at the first step not ticked, with the ticks kept.
     kevin = _client(app, "kevin")

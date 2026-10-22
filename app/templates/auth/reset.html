@@ -5,8 +5,9 @@
         {% if form_error %}
         <div class="alert alert-error" role="alert">{{ form_error }}</div>
         {% endif %}
-        <form method="post" action="{{ url_for('auth.reset_password', credential=credential) }}" class="login-form" novalidate>
+        <form method="post" action="{{ url_for('auth.reset_password_form') }}" class="login-form" novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="credential" value="{{ credential }}">
             <label for="password">{{ contractor_copy.RESET_PASSWORD_NEW_LABEL }}</label>
             <input id="password" type="password" name="password" autocomplete="new-password" required minlength="8" data-password-reveal>
             <label for="confirm_password">{{ contractor_copy.RESET_PASSWORD_CONFIRM_LABEL }}</label>

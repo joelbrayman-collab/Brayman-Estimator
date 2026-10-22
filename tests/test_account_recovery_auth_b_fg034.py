@@ -59,9 +59,9 @@ def _capture_reset_path(app):
     files = sorted(Path(root).glob("*PASSWORD_RESET.txt"))
     assert files
     body = files[-1].read_text(encoding="utf-8")
-    match = re.search(r"(/reset-password/[A-Za-z0-9_.-]+)", body)
+    match = re.search(r"/reset-password#([A-Za-z0-9_.-]+)", body)
     assert match, body
-    return match.group(1)
+    return "/reset-password/" + match.group(1)  # email link /reset-password#<credential>; the same check via the older address form (22 Oct 2026)
 
 
 @pytest.fixture
@@ -356,7 +356,7 @@ def test_captured_reset_link_uses_public_base_url(app, client):
     assert path.startswith("/reset-password/")
     capture = sorted(Path(app.config["MAIL_CAPTURE_ROOT"]).glob("*PASSWORD_RESET.txt"))[-1]
     body = capture.read_text(encoding="utf-8")
-    assert "http://localhost/reset-password/" in body
+    assert "http://localhost/reset-password#" in body
     form = client.get(path)
     assert RESET_PASSWORD_HEADING in _html(form)
 

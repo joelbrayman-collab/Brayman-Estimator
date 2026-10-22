@@ -78,7 +78,11 @@ def hash_email_key(email: str) -> str:
 
 
 def password_reset_path(lookup_key: str, secret: str) -> str:
-    return f"/reset-password/{lookup_key}.{secret}"
+    """The set-password link (22 Oct 2026): the one-use credential travels after "#", which browsers never
+    send to a server, so it cannot appear in any request log (the app's, Apache's or a host's proxy).
+    The page reads it in the browser and posts it in the form body. Links in the old form,
+    /reset-password/<credential>, keep working until they expire."""
+    return f"/reset-password#{lookup_key}.{secret}"
 
 
 def _int_config(name: str, default: int) -> int:

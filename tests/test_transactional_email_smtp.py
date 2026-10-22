@@ -15,7 +15,7 @@ from app.models.user import User
 from app.services.auth import hash_password
 
 pytestmark = pytest.mark.no_office_auth
-LINK = re.compile(r"https://training\.example\.test(/reset-password/[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)")
+LINK = re.compile(r"https://training\.example\.test/reset-password#([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)")
 
 
 class FakeSMTP:
@@ -68,13 +68,15 @@ def test_forgot_password_goes_out_by_smtp_and_the_link_works_once(app):
     assert len(FakeSMTP.sent) == 1
     msg = FakeSMTP.sent[0]
     assert msg["To"] == "person@example.test" and "noreply@training.example.test" in msg["From"]
-    path = LINK.search(msg.get_content()).group(1)
+    credential = LINK.search(msg.get_content()).group(1)
     assert TransactionalMessage.query.one().status == "ACCEPTED"
     g.pop("_login_user", None)
-    ok = client.post(path, data={"password": "Synthetic-new-password-2", "confirm_password": "Synthetic-new-password-2"})
+    ok = client.post("/reset-password", data={"credential": credential, "password": "Synthetic-new-password-2",
+                                              "confirm_password": "Synthetic-new-password-2"})
     assert ok.status_code == 302
     g.pop("_login_user", None)
-    again = client.post(path, data={"password": "Synthetic-new-password-3", "confirm_password": "Synthetic-new-password-3"})
+    again = client.post("/reset-password", data={"credential": credential, "password": "Synthetic-new-password-3",
+                                                 "confirm_password": "Synthetic-new-password-3"})
     assert again.status_code == 200
 
 

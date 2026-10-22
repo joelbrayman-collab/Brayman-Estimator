@@ -69,9 +69,9 @@ def _capture_body(app):
 
 def _capture_path(app):
     body = _capture_body(app)
-    match = re.search(r"(/reset-password/[A-Za-z0-9_.-]+)", body)
+    match = re.search(r"/reset-password#([A-Za-z0-9_.-]+)", body)
     assert match, body
-    return match.group(1)
+    return "/reset-password/" + match.group(1)  # email link /reset-password#<credential>; the same check via the older address form (22 Oct 2026)
 
 
 def _ensure_authc_user(*, password=AUTH_C_OLD, email=AUTH_C_EMAIL):
@@ -160,7 +160,7 @@ def test_complete_known_user_e2e_login_through_office_home(app):
     assert AUTH_C_EMAIL in body
     assert "CalibraytAI" in body
     assert "60 minutes" in body
-    assert "http://localhost/reset-password/" in body
+    assert "http://localhost/reset-password#" in body
     assert "DELIVERED" not in body
     message = TransactionalMessage.query.filter_by(template_id=TEMPLATE_PASSWORD_RESET).one()
     assert message.to_email == AUTH_C_EMAIL

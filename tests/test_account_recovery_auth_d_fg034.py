@@ -137,9 +137,10 @@ def _capture_path(app, template_id=TEMPLATE_PASSWORD_RESET):
     files = sorted(Path(app.config["MAIL_CAPTURE_ROOT"]).glob(f"*{template_id}.txt"))
     assert files
     body = files[-1].read_text(encoding="utf-8")
-    match = re.search(r"(/(?:reset-password|sign)/[A-Za-z0-9_.-]+)", body)
+    match = re.search(r"(/(?:reset-password#|sign/)[A-Za-z0-9_.-]+)", body)
     assert match, body
-    return body, match.group(1)
+    # email link /reset-password#<credential>; the same check via the older address form (22 Oct 2026)
+    return body, match.group(1).replace("/reset-password#", "/reset-password/")
 
 
 def _row_blob(row):
@@ -248,7 +249,7 @@ def test_known_account_complete_e2e(app, client):
     assert GENERIC_SENT in sent
     assert AUTH_D_EMAIL not in sent
     body, path = _capture_path(app)
-    assert "https://uat.calibraytai.example/reset-password/" in body
+    assert "https://uat.calibraytai.example/reset-password#" in body
     assert "60 minutes" in body
     row = TransactionalMessage.query.filter_by(template_id=TEMPLATE_PASSWORD_RESET).one()
     assert row.status == STATUS_LOCAL_CAPTURED
@@ -360,7 +361,7 @@ def test_all_templates_use_public_base_url_and_redact_secrets(app):
     client = app.test_client()
     client.post("/forgot-password", data={"email": AUTH_D_EMAIL})
     reset_body, reset_path = _capture_path(app, TEMPLATE_PASSWORD_RESET)
-    assert "https://uat.calibraytai.example/reset-password/" in reset_body
+    assert "https://uat.calibraytai.example/reset-password#" in reset_body
     reset_row = TransactionalMessage.query.filter_by(template_id=TEMPLATE_PASSWORD_RESET).one()
     assert reset_path.rsplit(".", 1)[1] not in _row_blob(reset_row)
     user = _office_user(email="authd-mail@example.com")

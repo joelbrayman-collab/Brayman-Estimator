@@ -91,6 +91,9 @@ async function context(viewport, opts = {}) {
 async function go(pg, url) {
   const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`);
   await pg.waitForLoadState();
+  // A set-password link carries its credential after "#": the landing page's script posts it and moves on
+  // (22 Oct 2026). Wait for that second page.
+  if (url.includes("/reset-password#")) await pg.waitForFunction(() => !document.querySelector("[data-reset-open]"));
   return r;
 }
 async function submit(pg, locator) {
@@ -276,7 +279,7 @@ step("06 phones: Kevin opens the email link on his phone, sets his password and 
   assert.match(mail.body, /invited you to CalibraytAI/);
   const p = await context(PHONE, { isMobile: true, hasTouch: true });
   sessions.kevin = p;
-  await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+  await go(p.pg, mail.body.match(/\/reset-password#[A-Za-z0-9_\-.]+/)[0]);
   await shot(p.pg, "06-phones", "set-password");
   await p.pg.fill("[name=password]", password);
   await p.pg.fill("[name=confirm_password]", password);

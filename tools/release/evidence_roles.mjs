@@ -84,7 +84,14 @@ const kevin = () => session("kevin", PHONE, facts.kevin);
 const bea = () => session("bea", DESK, facts.bea);
 const store = () => session("store", DESK, facts.store, "/supplier/login");
 const rival = () => session("rival", DESK, facts.rival, "/supplier/login");
-async function go(pg, url) { const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`); await pg.waitForLoadState(); return r; }
+async function go(pg, url) {
+  const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`);
+  await pg.waitForLoadState();
+  // A set-password link carries its credential after "#": the landing page's script posts it and moves on
+  // (22 Oct 2026). Wait for that second page.
+  if (url.includes("/reset-password#")) await pg.waitForFunction(() => !document.querySelector("[data-reset-open]"));
+  return r;
+}
 // Status of a GET, without following a redirect (so a sign-in redirect is seen as one).
 async function status(ctx, url) {
   let r = await ctx.request.get(`${base}${url}`, { maxRedirects: 0 });
@@ -298,7 +305,7 @@ test("People & Access on a 390 px phone: the owner adds a person (set-password e
   assert.equal(mail.count, 1, "one invitation email captured");
   assert.match(mail.body, /invited you to CalibraytAI/);
   const p = await context(PHONE);
-  await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+  await go(p.pg, mail.body.match(/\/reset-password#[A-Za-z0-9_\-.]+/)[0]);
   await p.pg.fill("[name=password]", person[2]);
   await p.pg.fill("[name=confirm_password]", person[2]);
   await Promise.all([p.pg.waitForLoadState(), p.pg.locator("form button[type=submit]").click()]);
@@ -379,7 +386,7 @@ test("password recovery end to end with the captured email; the link works once;
   const sentText = await s.pg.locator("body").innerText();
   const mail = newestMail("PASSWORD_RESET", facts.bea[0]);
   assert.equal(mail.count, 1, "one reset email captured");
-  const link = mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0];
+  const link = mail.body.match(/\/reset-password#[A-Za-z0-9_\-.]+/)[0];
   await go(s.pg, link);
   await noSideways(s.pg, "reset password");
   await s.pg.fill("[name=password]", "Synthetic-orgb-pass-2");
@@ -800,7 +807,7 @@ test("crew access: Ben invites two workers as Field only; each activates on a ph
     const mail = newestMail("ACCOUNT_INVITATION", email);
     assert.equal(mail.count, 1);
     const p = await context(PHONE);
-    await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+    await go(p.pg, mail.body.match(/\/reset-password#[A-Za-z0-9_\-.]+/)[0]);
     await p.pg.fill("[name=password]", password);
     await p.pg.fill("[name=confirm_password]", password);
     await Promise.all([p.pg.waitForLoadState(), p.pg.locator("form button[type=submit]").click()]);

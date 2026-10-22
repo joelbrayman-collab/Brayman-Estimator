@@ -199,7 +199,7 @@ def test_owner_adds_a_person_who_gets_the_set_password_email_and_signs_in(app):
         assert PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).count() == 1
     mails = _captured(app, NEW_PERSON[1])
     assert len(mails) == 1
-    link = re.search(r"/reset-password/[A-Za-z0-9_\-.]+", mails[0]).group(0)
+    link = "/reset-password/" + re.search(r"/reset-password#([A-Za-z0-9_\-.]+)", mails[0]).group(1)
     person = app.test_client()
     done = person.post(link, data={"password": "Synthetic-nora-pass-1", "confirm_password": "Synthetic-nora-pass-1"})
     assert done.status_code == 302
@@ -432,7 +432,7 @@ def test_invitation_activation_and_history_are_recorded(app):
         assert (token.expires_at - token.created_at).total_seconds() == 72 * 3600
     mail = _captured(app, "kev.crew@example.invalid")[-1]
     assert "invited you to CalibraytAI" in mail and "72 hours" in mail
-    credential = re.search(r"/reset-password/([A-Za-z0-9_.\-]+)", mail).group(1)
+    credential = re.search(r"/reset-password#([A-Za-z0-9_.\-]+)", mail).group(1)
     with app.app_context():
         complete_password_reset(credential, "Synthetic-kev-pass-1", confirm_password="Synthetic-kev-pass-1")
     owner.post(f"/settings/people/{membership_id}/deactivate")
@@ -480,14 +480,14 @@ def test_owner_gets_a_one_time_link_when_the_invitation_email_is_not_delivered(a
     assert response.status_code == 200 and response.headers["Cache-Control"] == "no-store"
     assert "was not delivered" in html and "data-one-time-link" in html
     link = _one_time_link(html)
-    assert link and "/reset-password/" in link
-    path = link[link.index("/reset-password/"):]
+    assert link and "/reset-password#" in link
+    path = link[link.index("/reset-password#"):]
     with app.app_context():
         user = User.query.filter_by(email=NEW_PERSON[1]).one()
         membership = UserMembership.query.filter_by(user_id=user.id).one()
         token = PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).one()
         assert timedelta(hours=71) < token.expires_at - datetime.utcnow() <= timedelta(hours=72)  # 72 h invitation
-        assert path.split("/reset-password/")[1].split(".")[0] == token.lookup_key
+        assert path.split("/reset-password#")[1].split(".")[0] == token.lookup_key
         event = PeopleAccessEvent.query.filter_by(membership_id=membership.id, action="INVITATION_SENT").one()
         assert event.detail.startswith("Not emailed") and "shown to" in event.detail
         assert path.split(".")[-1] not in (event.detail or "")
@@ -500,11 +500,16 @@ def test_owner_gets_a_one_time_link_when_the_invitation_email_is_not_delivered(a
     assert "Invitation link given in person" in again
 
     # The person uses it once; a second use is refused.
+    # the link carries the credential after "#"; the page posts it in the form body (22 Oct 2026)
     person = app.test_client()
-    assert person.post(path, data={"password": "Synthetic-nora-pass-1",
-                                   "confirm_password": "Synthetic-nora-pass-1"}).status_code == 302
+    credential = path.split("#", 1)[1]
+    assert person.get("/reset-password").status_code == 200
+    assert person.post("/reset-password", data={"step": "open", "credential": credential}).status_code == 200
+    assert person.post("/reset-password", data={"credential": credential, "password": "Synthetic-nora-pass-1",
+                                                "confirm_password": "Synthetic-nora-pass-1"}).status_code == 302
     assert login_office_user(person, email=NEW_PERSON[1], password="Synthetic-nora-pass-1").status_code == 302
-    reuse = app.test_client().post(path, data={"password": "Synthetic-other-pass-1", "confirm_password": "Synthetic-other-pass-1"})
+    reuse = app.test_client().post("/reset-password", data={"credential": credential, "password": "Synthetic-other-pass-1",
+                                                            "confirm_password": "Synthetic-other-pass-1"})
     assert reuse.status_code != 302 or "/login" not in reuse.headers.get("Location", "")
     with app.app_context():
         assert PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).count() == 0
@@ -516,7 +521,7 @@ def test_a_delivered_email_shows_no_link_to_the_owner(app):
                           follow_redirects=True)
     html = response.get_data(as_text=True)
     assert "was emailed to" in html and "expires in 72 hours" in html
-    assert "data-one-time-link" not in html and "/reset-password/" not in html
+    assert "data-one-time-link" not in html and "/reset-password" not in html
 
 
 def test_only_the_owner_side_ever_sees_the_link(app):

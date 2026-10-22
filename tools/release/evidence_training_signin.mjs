@@ -158,12 +158,15 @@ test("administrator gives a supplier person a one-time link; it works once on th
   const form = pg.locator("[data-supplier-send-link]").first();
   await Promise.all([pg.waitForNavigation(), form.locator("button").click()]);
   const url = await pg.inputValue("#one-time-link");
-  assert.ok(url.startsWith(base + "/reset-password/"), `the link opens on this site, not localhost (${url.slice(0, 40)}...)`);
+  assert.ok(url.startsWith(base + "/reset-password#"), `the link opens on this site, not localhost (${url.slice(0, 40)}...)`);
   const who = await pg.textContent("#one-time-link-heading");
   const supplierKey = Object.keys(facts.people).find((k) => who.includes(facts.people[k].name.split(" (")[0]));
   assert.ok(supplierKey, "the link names the person");
   const fresh = await page(PHONE, "supplier-phone");
   await fresh.pg.goto(url);
+  // the credential is after "#": the page's script posts it, then the password form opens (22 Oct 2026)
+  await fresh.pg.waitForSelector("input[name=password]");
+  assert.ok(!fresh.pg.url().includes("#"), "the credential is taken out of the address bar");
   await fresh.pg.fill("input[name=password]", NEW_PW);
   await fresh.pg.fill("input[name=confirm_password]", NEW_PW);
   await Promise.all([fresh.pg.waitForNavigation(), fresh.pg.click("form button[type=submit]")]);
@@ -175,6 +178,7 @@ test("administrator gives a supplier person a one-time link; it works once on th
   assert.ok(!/\/login/.test(new URL(fresh.pg.url()).pathname), "the supplier person signs in with the new password");
   const again = await page(DESK, "reuse");
   await again.pg.goto(url);
+  await again.pg.waitForFunction(() => !document.querySelector("[data-reset-open]"));
   const body = await again.pg.textContent("body");
   const reused = (await again.pg.locator("input[name=password]").count()) === 0 || /no longer|expired|used|not valid|invalid/i.test(body);
   assert.ok(reused, "the same link does not work twice");

@@ -124,6 +124,28 @@ def reset_password_complete():
     return render_template("auth/reset_complete.html", supplier=request.args.get("side") == "supplier")
 
 
+@auth_bp.route("/reset-password", methods=["GET", "POST"])
+def reset_password_form():
+    """The set-password link lands here with the credential after "#" (never sent to the server, so never
+    logged). GET: a page whose script moves the credential into a form and posts it. POST "open": check
+    the credential and show the password form. POST with a password: set it (the credential stays in the
+    form body, never in the address)."""
+    if request.method == "GET":
+        return render_template("auth/reset_open.html")
+    credential = (request.form.get("credential") or "").strip()
+    if request.form.get("step") == "open":
+        try:
+            validate_password_reset_credential(credential, client_ip=_client_ip())
+        except PasswordResetServiceError:
+            return render_template("auth/reset_invalid.html")
+        return _no_store(render_template("auth/reset.html", credential=credential, form_error=None))
+    return reset_password(credential)
+
+
+def _no_store(body):
+    return body, 200, {"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"}
+
+
 @auth_bp.route("/reset-password/<credential>", methods=["GET", "POST"])
 def reset_password(credential):
     if request.method == "POST":
@@ -138,11 +160,11 @@ def reset_password(credential):
             form_error = _password_form_error(exc)
             if form_error is None:
                 return render_template("auth/reset_invalid.html")
-            return render_template(
+            return _no_store(render_template(
                 "auth/reset.html",
                 credential=credential,
                 form_error=form_error,
-            )
+            ))
         from app.services.supplier_hub import principal_class
 
         if principal_class(reset_user) == "SUPPLIER":

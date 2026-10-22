@@ -40,6 +40,9 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     "auth.forgot_password",
     "auth.forgot_password_sent",
     "auth.reset_password",
+    # Added 22 Oct 2026: the set-password link's landing page. Its one-use credential travels after "#"
+    # (never sent to a server, so never logged) and is posted in the form body; same checks as above.
+    "auth.reset_password_form",
     "auth.reset_password_complete",
     "favicon",
     # Added 18 Oct 2026 for the inactivity warning; both check the sign-in themselves
@@ -69,6 +72,9 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "auth.forgot_password",
     "auth.forgot_password_sent",
     "auth.reset_password",
+    # Added 22 Oct 2026: the set-password link's landing page. Its one-use credential travels after "#"
+    # (never sent to a server, so never logged) and is posted in the form body; same checks as above.
+    "auth.reset_password_form",
     "auth.reset_password_complete",
     "sign.ceremony",
     "sign.document",

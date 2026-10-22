@@ -30,7 +30,8 @@ PW = {k: f"Synthetic-{k}-training-1" for k in ("ben", "olivia", "kevin", "liam",
 ADMIN = ("Joel Brayman", "joel.admin@training-test.invalid")
 NEW_PW = "Synthetic-new-password-42"
 HOST = "https://training.example.test"
-LINK = re.compile(r"(https?://[^\s\"'<]+)?(/reset-password/[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)")
+# The link carries its one-use credential after "#" (never sent to a server, never logged; 22 Oct 2026).
+LINK = re.compile(r"(https?://[^\s\"'<]+)?(/reset-password#[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)")
 
 
 def _app(**extra):
@@ -57,11 +58,18 @@ def _email(key):
 
 def _get(client, path, **kw):
     g.pop("_login_user", None)
+    if "/reset-password#" in path:  # what the page's script does: open the link with the credential in the body
+        assert client.get("/reset-password", **kw).status_code == 200
+        g.pop("_login_user", None)
+        return client.post("/reset-password", data={"step": "open", "credential": path.split("#", 1)[1]}, **kw)
     return client.get(path, **kw)
 
 
 def _post(client, path, **kw):
     g.pop("_login_user", None)
+    if "/reset-password#" in path:
+        data = dict(kw.pop("data", {}), credential=path.split("#", 1)[1])
+        return client.post("/reset-password", data=data, **kw)
     return client.post(path, **kw)
 
 
@@ -331,3 +339,11 @@ def test_supplier_map_review_explains_supplier_screens(app):
     page = _get(admin, "/training/review/supplier").get_data(as_text=True)
     assert "Opens in the Supplier Hub for the supplier" in page
     assert 'href="/supplier/' not in page, "no Supplier Hub link the administrator cannot open"
+
+
+def test_the_training_site_says_fictional_training_records(app):
+    """Joel, 22 Oct 2026: "Fictional Training Records", not "synthetic records", on the training site."""
+    admin, _r = _sign_in(app, ADMIN[1], PW["admin"])
+    for page in (_get(admin, "/training").get_data(as_text=True), _get(admin, "/workflow").get_data(as_text=True),
+                 _get(app.test_client(), "/training/signin").get_data(as_text=True)):
+        assert "fictional training" in page and "synthetic records" not in page and "synthetic training" not in page

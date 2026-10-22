@@ -263,6 +263,7 @@ def _register_office_auth(app: Flask) -> None:
             "auth.forgot_password",
             "auth.forgot_password_sent",
             "auth.reset_password",
+            "auth.reset_password_form",  # the set-password link; its credential is in the form body
             "auth.reset_password_complete",
             "favicon",
             "session_status.status",

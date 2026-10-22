@@ -1,0 +1,22 @@
+{% extends "auth/layout.html" %}
+{% block auth_title %}{{ contractor_copy.RESET_PASSWORD_HEADING }}{% endblock %}
+{% block auth_body %}
+        <h1>{{ contractor_copy.RESET_PASSWORD_HEADING }}</h1>
+        {# The credential is after "#" in the link: browsers never send that part to a server, so it is never
+           logged. This form carries it in the request body instead (22 Oct 2026). #}
+        <form method="post" action="{{ url_for('auth.reset_password_form') }}" class="login-form" data-reset-open novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="step" value="open">
+            <input type="hidden" name="credential" value="" data-reset-credential>
+            <p class="login-lede" data-reset-opening>Opening your link…</p>
+            <p class="login-lede" data-reset-missing hidden>This page needs the full link from your email. Open the link again from the email, or ask for a new one.</p>
+            <button type="submit" class="button login-primary" data-reset-continue hidden>Continue</button>
+        </form>
+        <noscript><p class="login-lede">Turn on JavaScript in this browser to choose your password, or ask for a new link.</p></noscript>
+        <p class="login-secondary">
+            <a class="login-secondary-link" href="{{ url_for('auth.forgot_password') }}">{{ contractor_copy.FORGOT_PASSWORD_LINK }}</a>
+        </p>
+{% endblock %}
+{% block auth_scripts %}
+    <script src="{{ url_for('static', filename='js/reset-open.js') }}"></script>
+{% endblock %}

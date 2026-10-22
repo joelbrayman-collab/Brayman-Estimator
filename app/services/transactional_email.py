@@ -23,6 +23,7 @@ from app.models.transactional_message import (
     PROVIDER_FAKE,
     PROVIDER_LOCAL,
     PROVIDER_POSTMARK,
+    PROVIDER_SMTP,
     STATUS_ACCEPTED,
     STATUS_FAILED,
     STATUS_FAILED_CONFIG,
@@ -352,6 +353,48 @@ class PostmarkTransport:
         )
 
 
+class SmtpTransport:
+    """Hands the message to an SMTP server (22 Oct 2026): on the HostPapa server, its own mail system on
+    localhost:25. SMTP_HOST, SMTP_PORT, SMTP_STARTTLS, SMTP_USERNAME and SMTP_PASSWORD configure it; the
+    password is read from the environment only and never logged. Tests inject SMTP_FACTORY."""
+
+    def send(self, payload: TransportPayload) -> TransportResult:
+        import smtplib
+        from email.message import EmailMessage
+        from email.utils import formataddr, make_msgid
+
+        host = _config_str("SMTP_HOST", "localhost")
+        try:
+            port = int(_config_str("SMTP_PORT", "25") or 25)
+        except ValueError:
+            port = 25
+        if not host or not payload.from_email or payload.from_email.endswith("@localhost"):
+            return TransportResult(status=STATUS_FAILED_CONFIG, provider=PROVIDER_SMTP, error_code="SMTP_CONFIG")
+        message = EmailMessage()
+        message["From"] = formataddr((payload.from_name or "", payload.from_email))
+        message["To"] = payload.to_email
+        if payload.reply_to:
+            message["Reply-To"] = payload.reply_to
+        message["Subject"] = payload.subject
+        message_id = make_msgid(domain=payload.from_email.rsplit("@", 1)[-1])
+        message["Message-ID"] = message_id
+        message.set_content(payload.text_body)
+        factory = current_app.config.get("SMTP_FACTORY") or smtplib.SMTP
+        try:
+            with factory(host, port, timeout=20) as client:
+                if _config_str("SMTP_STARTTLS").lower() in ("1", "true", "yes"):
+                    client.starttls()
+                user = _config_str("SMTP_USERNAME")
+                if user:
+                    client.login(user, _config_str("SMTP_PASSWORD"))
+                refused = client.send_message(message)
+        except (OSError, smtplib.SMTPException):
+            return TransportResult(status=STATUS_FAILED, provider=PROVIDER_SMTP, error_code="SMTP_TRANSPORT")
+        if refused:
+            return TransportResult(status=STATUS_FAILED, provider=PROVIDER_SMTP, error_code="SMTP_REFUSED")
+        return TransportResult(status=STATUS_ACCEPTED, provider=PROVIDER_SMTP, provider_message_id=message_id[:120])
+
+
 def email_delivery_configured() -> bool:
     """True when this site hands email to a real mail service (Postmark with a server token).
 
@@ -361,6 +404,8 @@ def email_delivery_configured() -> bool:
     if current_app.config.get("TRANSACTIONAL_EMAIL_TRANSPORT") is not None:
         return True
     provider = _config_str("TRANSACTIONAL_EMAIL_PROVIDER", PROVIDER_LOCAL).lower()
+    if provider == PROVIDER_SMTP:
+        return True
     if provider == PROVIDER_POSTMARK:
         # Postmark chosen: a missing token is an operator error, recorded on each message (FAILED_CONFIG);
         # the public pages stay generic for it.
@@ -392,6 +437,8 @@ def _resolve_transport() -> Any:
     provider = _config_str("TRANSACTIONAL_EMAIL_PROVIDER", PROVIDER_LOCAL).lower()
     if provider == PROVIDER_POSTMARK:
         return PostmarkTransport()
+    if provider == PROVIDER_SMTP:
+        return SmtpTransport()
     return LocalCaptureTransport()
 
 

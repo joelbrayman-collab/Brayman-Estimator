@@ -42,6 +42,7 @@ TRANSACTIONAL_MESSAGE_STATUSES = (
 PROVIDER_LOCAL = "local"
 PROVIDER_POSTMARK = "postmark"
 PROVIDER_FAKE = "fake"
+PROVIDER_SMTP = "smtp"  # a mail server reached over SMTP, e.g. the host's own (22 Oct 2026)
 
 
 class TransactionalMessage(db.Model):

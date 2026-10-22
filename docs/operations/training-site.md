@@ -13,6 +13,13 @@ company cannot be built (the command refuses).
 - Every page shows a "Training site · synthetic records only" bar with a link to the Training Centre.
 - Ben and Darcy each get a training sign-in. Contractor people sign in on the office sign-in page,
   supplier people on the supplier sign-in page; both return to `/training`.
+- Three trainings (22 Oct 2026), chosen on `/training/signin`: contractor owners and office staff
+  (`app/training/contractor.py`), the Field crew on the iPhone ("I work on a crew (Field)",
+  `app/training/field_crew.py`, eight modules) and supplier owners and PRO Desk staff
+  (`app/training/supplier.py`). A Field-only person (Kevin, Liam) registers straight into the Field Crew
+  training and sees nothing else; it is stored as the contractor pathway with role Field worker, so no
+  schema change. The owner previews it at `/training/review/field-crew` and follows the crew's lessons
+  and Field acceptance results (failing or blocked tests flagged) on `/training/admin`.
 
 ## Setting it up (needs Joel's authorization: a new paid service)
 
@@ -30,15 +37,16 @@ company cannot be built (the command refuses).
    `flask db upgrade` and `flask training build-environment`.
    The command prints each training person's email and a one-time password. Give Ben and Darcy theirs
    privately; they change it in the first lesson.
-4. Check: `/training/signin` opens; signing in as Ben shows the contractor modules; as Darcy the supplier
-   modules; the production office still answers 404 at `/training`.
+4. Check: `/training/signin` opens; signing in as Ben shows the contractor modules; as Kevin the eight
+   Field Crew modules; as Darcy the supplier modules; the production office still answers 404 at `/training`.
 
 ## Keeping it in step with releases
 
 Deploy the training site after each production release, from the same commit. The lessons' screenshots
-are retaken by `tools/training/capture_contractor_shots.mjs` and `capture_supplier_shots.mjs` on the
-release candidate, and the release gate's browser checks include the Training Centre walk
-(`tools/release/evidence_training.mjs`).
+are retaken by `tools/training/capture_contractor_shots.mjs`, `capture_field_crew_shots.mjs` (Field at
+iPhone size, 390 x 844) and `capture_supplier_shots.mjs` on the release candidate, and the release gate's
+browser checks include the Training Centre walks (`tools/release/evidence_training.mjs`,
+`evidence_field_crew.mjs`).
 
 ## Resetting the training company
 

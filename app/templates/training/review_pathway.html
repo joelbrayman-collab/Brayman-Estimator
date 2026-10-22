@@ -1,0 +1,21 @@
+{% extends "training/base.html" %}
+{% block title %}Field Crew training · owner review{% endblock %}
+{% block content %}
+{% include "training/_review_bar.html" %}
+<section class="tc-card tc-hero" data-review-pathway="FIELD_CREW">
+  <p class="tc-eyebrow">Owner review · Field Crew training</p>
+  <h1>Field Crew training</h1>
+  <p>What your crew learn on their iPhones: {{ modules|length }} modules, {{ lesson_count }} lessons and {{ cases|length }} Field acceptance tests. Read-only: nothing here is saved. Your crew's progress is on the <a href="{{ url_for('training.admin') }}#field-crew">Administrator dashboard</a>.</p>
+  <p><a class="tc-btn" href="{{ url_for('training.review_map', map_key='field') }}">Field (crew) map</a></p>
+</section>
+{% for m in modules %}
+<section class="tc-card tc-module" data-module="{{ m.key }}">
+  <h2><span class="tc-num">{{ m.number }}</span> {{ m.title }} <small>{{ m.lessons|length }} lesson{{ 's' if m.lessons|length != 1 }}</small></h2>
+  <p>{{ m.summary }}</p>
+  <ol class="tc-lessons">{% for l in m.lessons %}<li class="tc-lesson"><a href="{{ url_for('training.review_lesson', key=l.key, map='field') }}" data-review-lesson-link="{{ l.key }}">{{ l.title }}</a> <span class="tc-state">{{ l.steps|length }} steps</span></li>{% endfor %}</ol>
+</section>
+{% endfor %}
+<section class="tc-card"><h2>Field acceptance tests</h2>
+  <ol>{% for c in cases %}<li><a href="{{ url_for('training.review_uat', key=c.key, map='field') }}" data-review-uat-link="{{ c.key }}">{{ c.title }}</a></li>{% endfor %}</ol>
+</section>
+{% endblock %}

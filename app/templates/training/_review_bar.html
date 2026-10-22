@@ -4,6 +4,7 @@
     <a href="{{ url_for('training.review_map', map_key='contractor') }}" data-review-map-link="contractor"{% if map_key == 'contractor' %} aria-current="page"{% endif %}>Contractor Workflow Map</a>
     <a href="{{ url_for('training.review_map', map_key='supplier') }}" data-review-map-link="supplier"{% if map_key == 'supplier' %} aria-current="page"{% endif %}>Supplier Workflow Map</a>
     <a href="{{ url_for('training.review_map', map_key='field') }}" data-review-map-link="field"{% if map_key == 'field' %} aria-current="page"{% endif %}>Field (crew) map</a>
+    <a href="{{ url_for('training.review_field_crew') }}" data-review-field-crew{% if map_key == 'field-crew' %} aria-current="page"{% endif %}>Field Crew training</a>
     <a href="{{ url_for('training.admin') }}">Administrator dashboard</a>
   </p>
 </nav>

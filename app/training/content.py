@@ -1,6 +1,8 @@
 """Lesson and acceptance-test content for the Training & Acceptance Centre (Joel, 21 Oct 2026).
 
-The lessons live in two modules beside this one: contractor.py (12 modules) and supplier.py (10 modules).
+The lessons live in three modules beside this one, one per group the Centre serves: contractor.py (12 modules,
+contractor owners and office staff), field_crew.py (8 modules, the Field crew on the iPhone; Joel, 22 Oct 2026)
+and supplier.py (10 modules, supplier owners and PRO Desk staff).
 Every step says, for someone who has never used CalibraytAI: what they are doing and why, which application
 to open, where to go, which button to press, what to enter, what they should see, what to do if something
 goes wrong. A step may name the office page it is about (``endpoint``); tests check that page exists, and
@@ -21,6 +23,7 @@ from typing import Dict, List, Optional, Tuple
 
 from app.models.training import (
     PATHWAY_CONTRACTOR,
+    PATHWAY_FIELD_CREW,
     PATHWAY_SUPPLIER,
     ROLE_FIELD,
     ROLE_OFFICE,
@@ -38,8 +41,9 @@ APP_CUSTOMER = "The customer's link (email or text) on their phone or computer"
 APP_QUICKBOOKS = "QuickBooks Online in your web browser"
 APP_PHONE_CALENDAR = "Your phone's or computer's own calendar (Apple, Google or Outlook)"
 APP_EMAIL = "Your email"
+APP_TRAINING_PHONE = "The Training Centre in Safari on your iPhone"
 APPS = (APP_OFFICE, APP_FIELD, APP_SUPPLIER, APP_PRO_DESK, APP_CUSTOMER, APP_QUICKBOOKS, APP_PHONE_CALENDAR,
-        APP_EMAIL)
+        APP_EMAIL, APP_TRAINING_PHONE)
 
 ALL_CONTRACTOR = (ROLE_OWNER, ROLE_OFFICE, ROLE_FIELD)
 OFFICE_ROLES = (ROLE_OWNER, ROLE_OFFICE)
@@ -96,9 +100,10 @@ class UatCase:
 
 
 def _load() -> Tuple[Tuple[Module, ...], Tuple[UatCase, ...]]:
-    from app.training import contractor, supplier
+    from app.training import contractor, field_crew, supplier
 
-    return contractor.MODULES + supplier.MODULES, contractor.UAT_CASES + supplier.UAT_CASES
+    return (contractor.MODULES + field_crew.MODULES + supplier.MODULES,
+            contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES)
 
 
 _CACHE: Dict[str, object] = {}
@@ -113,6 +118,18 @@ def modules() -> Tuple[Module, ...]:
 def uat_cases() -> Tuple[UatCase, ...]:
     modules()
     return _CACHE["uat"]  # type: ignore[return-value]
+
+
+def track(pathway: str, role: str) -> str:
+    """The lessons a trainee follows. A contractor trainee with role FIELD (the crew) follows the Field Crew
+    pathway; everyone else follows their stored pathway (Joel, 22 Oct 2026)."""
+    if pathway == PATHWAY_CONTRACTOR and role == ROLE_FIELD:
+        return PATHWAY_FIELD_CREW
+    return pathway
+
+
+PATHWAY_TITLES = {PATHWAY_CONTRACTOR: "Contractor training", PATHWAY_FIELD_CREW: "Field Crew training",
+                  PATHWAY_SUPPLIER: "Supplier training"}
 
 
 def lesson_roles(module: Module, lesson: Lesson) -> Tuple[str, ...]:
@@ -155,8 +172,9 @@ def find_uat(key: str) -> Optional[UatCase]:
 
 __all__ = [
     "APPS", "APP_OFFICE", "APP_FIELD", "APP_SUPPLIER", "APP_PRO_DESK", "APP_CUSTOMER", "APP_QUICKBOOKS",
-    "APP_PHONE_CALENDAR", "APP_EMAIL", "ALL_CONTRACTOR", "OFFICE_ROLES", "ALL_SUPPLIER", "SUPPLIER_DESK",
+    "APP_PHONE_CALENDAR", "APP_EMAIL", "APP_TRAINING_PHONE", "ALL_CONTRACTOR", "OFFICE_ROLES", "ALL_SUPPLIER", "SUPPLIER_DESK",
     "Step", "Lesson", "Module", "UatCase", "modules", "uat_cases", "modules_for", "lessons_for", "find_lesson",
-    "uat_for", "find_uat", "lesson_roles", "PATHWAY_CONTRACTOR", "PATHWAY_SUPPLIER",
+    "uat_for", "find_uat", "lesson_roles", "PATHWAY_CONTRACTOR", "PATHWAY_SUPPLIER", "PATHWAY_FIELD_CREW", "track",
+    "PATHWAY_TITLES",
 ]
 _ = field  # dataclasses.field kept for content modules that need defaults

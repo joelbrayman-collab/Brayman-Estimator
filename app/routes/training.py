@@ -8,6 +8,11 @@ everywhere else every page answers 404.
 /training/admin                   the administrator's dashboard (Instance Owner or System Administrator)
 /training/review                  owner review of the Workflow Maps (administrators; no trainee registration):
 /training/review/<map>            contractor, supplier or field map; lessons and tests open read-only
+/training/review/field-crew       the Field Crew pathway's modules, lessons and tests, read-only (22 Oct 2026)
+
+Three groups (22 Oct 2026): contractor owners and office staff, the Field crew (role Field worker: the Field Crew
+pathway, app/training/field_crew.py) and supplier owners and PRO Desk staff. A Field-only person is offered
+only the Field Crew training.
 """
 
 from __future__ import annotations
@@ -15,7 +20,7 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from app.models.training import ROLE_LABELS, UAT_STATUSES
+from app.models.training import ROLE_FIELD, ROLE_LABELS, UAT_STATUSES
 from app.training import content as C
 from app.training import service as svc
 
@@ -64,7 +69,8 @@ def home():
         if not roles:
             abort(403)
         pathway = svc.principal(current_user)[0]
-        return render_template("training/register.html", roles=roles, labels=ROLE_LABELS, pathway=pathway)
+        return render_template("training/register.html", roles=roles, labels=ROLE_LABELS, pathway=pathway,
+                               field_crew_only=roles == (ROLE_FIELD,))
     return render_template("training/home.html", trainee=trainee, ov=svc.overview(trainee),
                            uat=svc.uat_overview(trainee), roles=roles, labels=ROLE_LABELS,
                            admin=svc.is_admin(current_user) is not None)
@@ -143,6 +149,12 @@ def move(key):
     action = request.form.get("action", "next")
     target = step + 1 if action == "next" else step - 1 if action == "back" else step
     target = max(0, min(target, len(item.steps) - 1))
+    if action == "exit":
+        # Resume where the trainee really is (22 Oct 2026): the first step not ticked once any step is ticked,
+        # so Continue where I left off never sends them back to a step already done.
+        ticked = set(svc.steps_ticked(trainee, key))
+        if ticked:
+            step = next((i for i in range(len(item.steps)) if i not in ticked), len(item.steps) - 1)
     svc.save_step(trainee, key, target if action != "exit" else step)
     if action == "exit":
         flash("Saved. Press Continue where I left off when you come back.", "success")
@@ -265,8 +277,8 @@ def uat_case(key):
             flash(str(exc), "error")
             return redirect(url_for("training.uat_case", key=key))
         flash("Result saved.", "success")
-        nxt = svc.uat_overview(trainee)["resume"]
-        return redirect(url_for("training.uat_case", key=nxt) if nxt and nxt != key else url_for("training.uat"))
+        nxt = svc.next_uat_after(trainee, key)  # the next test with no result yet, or the list after the last
+        return redirect(url_for("training.uat_case", key=nxt) if nxt else url_for("training.uat"))
     svc.save_uat_position(trainee, key)
     attempts = svc.uat_history(trainee).get(key, [])
     module = next((m for m in C.modules() if m.key == case.module_key), None)
@@ -314,6 +326,17 @@ def review():
     maps = [{"key": k, "title": WD.MAPS[k].title, "intro": WD.MAPS[k].intro,
              "href": url_for("training.review_map", map_key=k)} for k in REVIEW_MAPS]
     return render_template("training/review.html", maps=maps)
+
+
+@training_bp.route("/review/field-crew")
+def review_field_crew():
+    """The owner previews the whole Field Crew pathway (Joel, 22 Oct 2026): its eight modules, lessons and
+    acceptance tests, read-only. Nothing is saved; the owner is not registered as crew."""
+    _review_guard()
+    modules = C.modules_for(C.PATHWAY_FIELD_CREW, ROLE_FIELD)
+    return render_template("training/review_pathway.html", map_key="field-crew", modules=modules,
+                           lesson_count=sum(len(m.lessons) for m in modules),
+                           cases=C.uat_for(C.PATHWAY_FIELD_CREW, ROLE_FIELD))
 
 
 @training_bp.route("/review/<map_key>")

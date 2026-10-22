@@ -9,10 +9,25 @@
   <p class="tc-choice">
     <a class="tc-btn tc-btn-primary" href="{{ url_for('training.review_map', map_key='contractor') }}" data-review-map-link="contractor">Contractor Workflow Map</a>
     <a class="tc-btn tc-btn-primary" href="{{ url_for('training.review_map', map_key='supplier') }}" data-review-map-link="supplier">Supplier Workflow Map</a>
+    <a class="tc-btn" href="{{ url_for('training.review_field_crew') }}" data-review-field-crew>Field Crew training</a>
     <a class="tc-btn" href="{{ url_for('training.admin') }}">Administrator dashboard</a>
   </p>
 </section>
 {% endif %}
+{% if field_crew_only %}
+{# Field-only crew (Kevin and the boys, 22 Oct 2026): straight into the Field Crew training, nothing else offered. #}
+<section class="tc-card tc-hero" data-register-pathway="FIELD_CREW">
+  <p class="tc-eyebrow">Field Crew training</p>
+  <h1>Welcome, {{ current_user.display_name }}</h1>
+  <p>Your training is about <b>CalibraytAI Field</b>, the app on your iPhone: your work for today and the week, the job's drawings, photos and notes, extra work and your hours.</p>
+  <p>8 short modules. Do each step, then tap <b>I did this step</b>: it turns green and is saved. Stop any time and carry on later.</p>
+  <form method="post" action="{{ url_for('training.register') }}" class="tc-roles">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="role" value="FIELD">
+    <button class="tc-btn tc-btn-primary" type="submit" data-register>Start my Field Crew training</button>
+  </form>
+</section>
+{% else %}
 <section class="tc-card">
   <p class="tc-eyebrow">{{ 'Contractor training' if pathway == 'CONTRACTOR' else 'Supplier training' }}</p>
   <h1>{% if training_admin %}Or take the training yourself{% else %}Welcome, {{ current_user.display_name }}{% endif %}</h1>
@@ -20,9 +35,11 @@
   <form method="post" action="{{ url_for('training.register') }}" class="tc-roles">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% for role in roles %}
+    {% if role == 'FIELD' %}<p class="tc-small" data-field-crew-choice>Field Crew training (the crew's own lessons, Field on the iPhone only):</p>{% endif %}
     <label class="tc-role"><input type="radio" name="role" value="{{ role }}" {% if loop.first %}checked{% endif %}> <span>{{ labels[role] }}</span></label>
     {% endfor %}
     <button class="tc-btn tc-btn-primary" type="submit" data-register>Start my training</button>
   </form>
 </section>
+{% endif %}
 {% endblock %}

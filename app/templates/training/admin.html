@@ -2,13 +2,40 @@
 {% block title %}Administrator{% endblock %}
 {% block content %}
 <section class="tc-card tc-hero"><h1>Training administrator</h1>
-  <p>Trainees in your company and in the suppliers you work with.</p></section>
-<section class="tc-card">
+  <p>Trainees in your company and in the suppliers you work with. Training (lessons) and acceptance tests are counted separately.</p>
+  <p class="tc-small"><a href="#field-crew">Field Crew</a> · <a href="#others">Everyone in training</a> · <a href="#issues">Outstanding issues</a></p></section>
+{# Field Crew (Joel, 22 Oct 2026): the owner follows his crew's training and their Field acceptance results;
+   a failing or blocked Field test is flagged until a retest passes. #}
+<section class="tc-card" id="field-crew" data-admin-crew>
+  <p class="tc-eyebrow">Field Crew training</p>
+  <h2>Your crew</h2>
+  {% for r in report.crew %}
+  {% set latest = {} %}{% for row in r.uat.rows %}{% set _ = latest.update({row.case.key: row}) %}{% endfor %}
+  <article class="tc-crew{% if r.failing %} has-issues{% endif %}" data-admin-crew-member="{{ r.trainee.display_name }}">
+    <h3>{{ r.trainee.display_name }} <small data-readiness>{{ r.readiness }}</small></h3>
+    <div class="tc-bar" aria-hidden="true"><span style="width: {{ r.overview.percent }}%"></span></div>
+    <p data-crew-lessons>Lessons: {{ r.overview.done }} of {{ r.overview.total }} done ({{ r.overview.percent }} %){% if r.feedback %} · {{ r.feedback }} note{{ 's' if r.feedback != 1 }}{% endif %}</p>
+    <p data-crew-uat>Field acceptance tests: {{ r.uat.counts.PASS }} pass · {{ r.uat.counts.FAIL }} fail · {{ r.uat.counts.BLOCKED }} blocked · {{ r.uat.counts.NOT_TESTED }} to do{% if r.retested %} · {{ r.retested|length }} retested{% endif %}</p>
+    <ul class="tc-crew-tests">
+      {% for case in report.crew_cases %}{% set row = latest.get(case.key) %}
+      <li data-crew-case="{{ case.key }}"{% if row and row.latest and row.latest.status in ('FAIL', 'BLOCKED') %} class="tc-flag" data-flag{% endif %}>
+        <span>{{ case.title }}</span>
+        {% if row and row.latest %}<span class="tc-status tc-{{ row.latest.status|lower }}">{{ row.latest.status|title }}</span>{% if row.attempts|length > 1 %} <span class="tc-small">attempt {{ row.latest.attempt }}</span>{% endif %}
+          {% if row.latest.status in ('FAIL', 'BLOCKED') %}<span class="tc-small"> · needs a fix and a retest: {{ row.latest.issue }}</span>{% endif %}
+        {% else %}<span class="tc-small">Not tested</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </article>
+  {% else %}<p>No one from your crew has started the Field Crew training yet. Crew members sign in on their iPhone and choose “I work on a crew (Field)”.</p>{% endfor %}
+</section>
+<section class="tc-card" id="others">
+  <h2>Everyone in training</h2>
   <div class="tc-scroll"><table class="tc-table" data-admin-table>
     <thead><tr><th>Trainee</th><th>Pathway · role</th><th>Lessons</th><th>Progress</th><th>Acceptance tests</th><th>Failed / blocked</th><th>Retested</th><th>Notes</th><th>Readiness</th></tr></thead>
     <tbody>{% for r in report.rows %}
-      <tr data-admin-trainee="{{ r.trainee.display_name }}"><td>{{ r.trainee.display_name }}</td>
-        <td>{{ r.trainee.pathway|title }} · {{ r.role }}</td>
+      <tr data-admin-trainee="{{ r.trainee.display_name }}" data-admin-track="{{ r.track }}"><td>{{ r.trainee.display_name }}</td>
+        <td>{{ r.track_label }} · {{ r.role }}</td>
         <td>{{ r.overview.done }}/{{ r.overview.total }}</td><td>{{ r.overview.percent }} %</td>
         <td>{{ r.uat.counts.PASS }} pass · {{ r.uat.counts.FAIL }} fail · {{ r.uat.counts.BLOCKED }} blocked · {{ r.uat.counts.NOT_TESTED }} to do</td>
         <td>{{ r.failing|length }}</td><td>{{ r.retested|length }}</td><td>{{ r.feedback }}</td>
@@ -16,8 +43,8 @@
     {% else %}<tr><td colspan="9">No one has registered yet.</td></tr>{% endfor %}</tbody>
   </table></div>
 </section>
-<section class="tc-card"><h2>Outstanding issues</h2>
-  {% if report.issues %}<ul data-issues>{% for t, r in report.issues %}<li>{{ t.display_name }} · {{ r.case.title }} · {{ r.latest.status|title }} (attempt {{ r.latest.attempt }}): {{ r.latest.issue }}</li>{% endfor %}</ul>
+<section class="tc-card" id="issues"><h2>Outstanding issues</h2>
+  {% if report.issues %}<ul data-issues>{% for t, r in report.issues %}<li>{{ t.display_name }} · {{ t.track_label }} · {{ r.case.title }} · {{ r.latest.status|title }} (attempt {{ r.latest.attempt }}): {{ r.latest.issue }}</li>{% endfor %}</ul>
   {% else %}<p>None.</p>{% endif %}
 </section>
 {% endblock %}

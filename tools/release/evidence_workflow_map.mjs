@@ -260,9 +260,11 @@ test("Training Centre: the map lists each stage's lessons; map -> lesson -> tick
 test("Training Centre on an iPhone: a field trainee gets the Field workflow with Field lessons", async () => {
   const s = sessions.kevin;
   await s.pg.goto(`${base}/training`);
-  await s.pg.getByLabel("Field worker").check();
+  // Field-only crew register straight into the Field Crew training: no role to choose (22 Oct 2026).
+  assert.equal(await s.pg.locator("input[name=role][type=radio]").count(), 0);
   await Promise.all([s.pg.waitForNavigation(), s.pg.click("[data-register]")]);
   await s.pg.goto(`${base}/training/workflow`);
+  assert.ok(await s.pg.locator('a[href^="/training/lessons/f0"]').count() > 0, "the Field Crew lessons are on the map");
   assert.ok(await s.pg.locator('[data-wf-card="f-today"]').isVisible());
   assert.equal(await s.pg.locator('[data-wf-card="c-price"]').count(), 0);
   await noSideways(s.pg, "training map (phone)");

@@ -226,9 +226,12 @@ test("acceptance tests: separate from lessons; Fail, then a retest Pass keeps th
 test("field worker on an iPhone: Field lessons only, no sideways scrolling", async () => {
   const kevin = await signIn("kevin", PHONE);
   const page = await kevin.pg.content();
-  assert.ok(page.includes("Field worker") && !page.includes("Contractor owner"));
+  // Field-only crew go straight into the Field Crew training (22 Oct 2026; the full walk is evidence_field_crew.mjs).
+  assert.ok(page.includes("Start my Field Crew training") && !page.includes("Contractor owner"));
   await noSideways(kevin.pg, "register (phone)");
-  await register(kevin, "Field worker");
+  await Promise.all([kevin.pg.waitForNavigation(), kevin.pg.click("[data-register]")]);
+  await kevin.pg.waitForSelector("[data-progress]");
+  assert.equal(await kevin.pg.locator('[data-module^="c"]').count(), 0, "no contractor modules for the crew");
   await noSideways(kevin.pg, "home (phone)");
   await shot(kevin.pg, "training-home-field-phone");
   for (const href of await kevin.pg.locator("a[data-lesson]").evaluateAll((as) => as.map((a) => a.getAttribute("href")))) {

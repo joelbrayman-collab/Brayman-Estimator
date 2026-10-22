@@ -73,6 +73,7 @@ def test_signed_out_goes_to_the_training_sign_in(app):
     assert r.status_code == 302 and r.headers["Location"].endswith("/training/signin")
     page = app.test_client().get("/training/signin").get_data(as_text=True)
     assert "I work for a contractor" in page and "I work for a building supplier" in page
+    assert "I work on a crew (Field)" in page  # the third group: the Field crew (22 Oct 2026)
 
 
 def test_registration_offers_the_roles_each_person_may_take(app):
@@ -80,7 +81,8 @@ def test_registration_offers_the_roles_each_person_may_take(app):
     page = _get(ben, "/training").get_data(as_text=True)
     assert "Contractor owner" in page and "Office staff" in page and "Field worker" in page
     kev = _get(kevin, "/training").get_data(as_text=True)
-    assert "Field worker" in kev and "Contractor owner" not in kev  # Field-only crew register as field workers
+    # Field-only crew register straight into the Field Crew training (22 Oct 2026), offered nothing else
+    assert "Start my Field Crew training" in kev and "Contractor owner" not in kev and "Office staff" not in kev
     assert _post(kevin, "/training/register", data={"role": "OWNER"}).status_code == 302
     assert TrainingTrainee.query.count() == 0
     dar = _get(darcy, "/training").get_data(as_text=True)
@@ -91,11 +93,14 @@ def test_registration_offers_the_roles_each_person_may_take(app):
 
 
 def test_field_workers_get_only_field_lessons():
-    for module, lesson in C.lessons_for("CONTRACTOR", "FIELD"):
-        assert "FIELD" in C.lesson_roles(module, lesson)
-    office_only = [lesson.key for m in C.modules() for lesson in m.lessons
-                   if m.pathway == "CONTRACTOR" and "FIELD" not in C.lesson_roles(m, lesson)]
-    field_keys = {lesson.key for _m, lesson in C.lessons_for("CONTRACTOR", "FIELD")}
+    # Field workers follow their own Field Crew pathway (22 Oct 2026); the contractor pathway has no crew lessons.
+    assert C.track("CONTRACTOR", "FIELD") == "FIELD_CREW"
+    assert C.lessons_for("FIELD_CREW", "FIELD")
+    for module, lesson in C.lessons_for("FIELD_CREW", "FIELD"):
+        assert "FIELD" in C.lesson_roles(module, lesson) and module.pathway == "FIELD_CREW"
+    assert C.lessons_for("CONTRACTOR", "FIELD") == []
+    office_only = [lesson.key for m in C.modules() for lesson in m.lessons if m.pathway == "CONTRACTOR"]
+    field_keys = {lesson.key for _m, lesson in C.lessons_for("FIELD_CREW", "FIELD")}
     assert not field_keys & set(office_only)
 
 
@@ -195,7 +200,7 @@ def test_admin_dashboard_access_and_isolation(app):
     _post(olivia, "/training/register", data={"role": "OFFICE"})
     _post(kevin, "/training/register", data={"role": "FIELD"})
     _post(darcy, "/training/register", data={"role": "SUPPLIER_OWNER"})
-    case = C.uat_for("CONTRACTOR", "FIELD")[0]
+    case = C.uat_for("FIELD_CREW", "FIELD")[0]
     _post(kevin, f"/training/uat/{case.key}", data={"status": "BLOCKED", "issue": "No signal on site (synthetic)"})
     # Another company and an unrelated supplier, each with a trainee.
     db.session.add(Organization(id="ORG-OTHER", legal_name="Other Co (synthetic)", display_name="Other Co", is_active=True))
@@ -313,7 +318,7 @@ def test_field_and_supplier_tutors_answer_from_their_own_lessons(app):
     kevin, pat = _client(app, "kevin"), _client(app, "pat")
     _post(kevin, "/training/register", data={"role": "FIELD"})
     _post(pat, "/training/register", data={"role": "PRO_DESK"})
-    _fm, field_lesson = C.lessons_for("CONTRACTOR", "FIELD")[0]
+    _fm, field_lesson = C.lessons_for("FIELD_CREW", "FIELD")[0]
     assert field_lesson.steps[0].where in _ask(kevin, lesson=field_lesson.key, step=0, question="Where is it?")
     office_only = next(l for m, l in C.lessons_for("CONTRACTOR", "OWNER")
                        if "FIELD" not in C.lesson_roles(m, l))

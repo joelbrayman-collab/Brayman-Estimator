@@ -3,7 +3,16 @@
 # Copies the four storybooks from the GitHub branch storybooks/site into the website folder, under /storybook/.
 # Reads the repository through the existing /opt/calibrayt/app clone; does not change the Training Centre's code.
 echo "== 1. find the calibraytai.com website folder"
+# calibraytai.com may be its own cPanel domain, or an alias of another one (for example calibraytai.solarlightasaservice.com).
 DOC=$(awk -F': ' '/^documentroot:/{print $2}' /var/cpanel/userdata/*/calibraytai.com 2>/dev/null | head -1)
+if [ -z "$DOC" ]; then
+  for f in /var/cpanel/userdata/*/*; do
+    case "$f" in *.cache|*.json|*_SSL|*/main|*/cache) continue;; esac
+    if grep -qE '^(servername|serveralias):.*(^|[ :])(www\.)?calibraytai\.com( |$)' "$f" && ! grep -qE '^servername: *training\.' "$f"; then
+      DOC=$(awk -F': ' '/^documentroot:/{print $2}' "$f"); echo "found in $f"; break
+    fi
+  done
+fi
 if [ -z "$DOC" ] || [ ! -d "$DOC" ]; then
   echo "STOP: could not find the website folder from cPanel. These files mention calibraytai.com:"
   grep -rl "calibraytai.com" /etc/apache2/conf.d /etc/nginx /var/cpanel/userdata 2>/dev/null | head -10

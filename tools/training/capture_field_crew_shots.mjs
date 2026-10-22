@@ -410,7 +410,10 @@ step("No signal: the Offline bar, a capture kept on the phone, then sent when th
   await shot(pg, "f07-synced", pg.locator("#field-feedback"));
 });
 
-step("the office returns Kevin's time; Kevin fixes it from My time", async () => {
+// ------------------------------------------------------------------ TIME ENTRY (module 5 only)
+// Time, My time, returned time and Ben's approval. Re-capture these after v1/field-time-labour-2026-10-22 merges
+// (final buttons and statuses: docs/operations/field-time.md); the lessons using them are all in module 5.
+step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves it", async () => {
   const { pg } = await ben();
   await go(pg, `/time?project_id=${W.projectId}`);
   await submit(pg, pg.locator('main a[href^="/time/"]').filter({ hasText: day(0) }).first());
@@ -427,6 +430,15 @@ step("the office returns Kevin's time; Kevin fixes it from My time", async () =>
   await shot(k, "f05-time-fix", k.locator(".field-time-returned"));
   await submit(k, k.getByRole("button", { name: "Send time" }));
   assert.match(await flash(k), /Time sent for approval/);
+  // Ben approves the fixed entry; Kevin sees Approved on My time.
+  await go(pg, `/time?project_id=${W.projectId}`);
+  await submit(pg, pg.locator('main a[href^="/time/"]').filter({ hasText: day(0) }).first());
+  await submit(pg, pg.getByRole("button", { name: "Approve", exact: true }));
+  assert.match(await pg.locator("main").innerText(), /Approved/);
+  await go(k, "/field/time");
+  assert.match(await k.locator("main").innerText(), /Approved/);
+  assert.equal(await k.getByRole("link", { name: "Fix and send again" }).count(), 0);
+  await shot(k, "f05-time-approved", k.locator(".field-time-item").first());
 });
 
 step("the office moves the dates; Kevin sees them on This week", async () => {
@@ -446,7 +458,7 @@ step("the office moves the dates; Kevin sees them on This week", async () => {
 step("Kevin's Field acceptance tests on the iPhone", async () => {
   const k = sessions.kevin.pg;
   await go(k, "/training/uat");
-  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 14/);
+  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 16/);
   await shot(k, "f08-uat-list", k.locator("[data-uat-continue]"));
   await submit(k, k.locator("[data-uat-continue]"));
   await k.check('input[name=status][value="FAIL"]');

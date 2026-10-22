@@ -449,9 +449,16 @@ M04 = Module(
 )
 
 # ====================================================================================== 5
+# TIME ENTRY LESSONS (Joel, 22 Oct 2026): everything about Time, My time, returned time and Ben's approval is in
+# this module only (f05-send-time, f05-my-time-review, f05-returned-time, f05-approved; shots f05-time*.png and
+# f05-my-time*.png from the "time" steps of tools/training/capture_field_crew_shots.mjs; UAT uat-f05-time*).
+# Written against the Field Time screens as they are on this branch. The time/labour workflow is being finished
+# on v1/field-time-labour-2026-10-22 (final buttons and statuses: docs/operations/field-time.md): after it merges,
+# re-check these labels and re-capture these pictures here, and nowhere else.
 M05 = Module(
     key="f05", pathway=P, number=5, title="Recording field work",
-    summary="Send your hours for the job, check them on My time, fix time the office sends back, and record extra "
+    summary="Send your daily hours on the iPhone against the job and the work, check them on My time, fix time "
+            "Ben returns, see when Ben approves them, and record extra "
             "work the customer asks for.",
     roles=CREW,
     lessons=(
@@ -490,6 +497,31 @@ M05 = Module(
             exercise=f"Send 8 hours on {JOB} for today with a short note, and find it on My time.",
         ),
         Lesson(
+            key="f05-my-time-review", title="Check your hours on My time",
+            what="Look over the hours you sent, every day, on My time.",
+            why="My time is your own record: what you sent, for which job and work, and where it is with Ben.",
+            steps=(
+                Step(title="Open My time", app=F, where="Today → My time (or Time → My time)",
+                     do="Tap My time",
+                     expect="My time, then your hours newest first. Each shows the date and its status, the job, "
+                            "the work item — the work, and the hours (for example 8.00 hours).",
+                     if_wrong="'No time recorded yet.' means you have not sent any time.",
+                     shot="f05-time-sent.png", endpoint="field.my_time"),
+                Step(title="Read the status", app=F, where="My time → the line above each entry",
+                     do="Read the word after the date",
+                     expect="Submitted: Ben has not looked yet. Returned: Ben sent it back to fix. Approved: Ben "
+                            "accepted it. Replaced: the office corrected it after approval.",
+                     if_wrong="An entry is missing? Send it now from Time. Two for the same work and day? Tell Ben, "
+                              "do not send it again."),
+                Step(title="Check it is right", app=F, where="My time → each entry",
+                     do="Check the date, the job, the work and the hours",
+                     expect="Every day you worked is there once, on the right job and work.",
+                     if_wrong="Wrong but still Submitted? Call Ben; he can return it to you to fix."),
+            ),
+            exercise="After sending your Harbour Lane hours, open My time and read the date, the work, the hours and "
+                     "the status.",
+        ),
+        Lesson(
             key="f05-returned-time", title="Time the office sent back",
             what="See what happened to your hours and fix any the office returned.",
             why="Returned time is not lost. Fix it and send it again.",
@@ -513,6 +545,31 @@ M05 = Module(
             ),
             exercise="When the trainer returns your Harbour Lane time on the training site, fix it from My time and "
                      "send it again.",
+        ),
+        Lesson(
+            key="f05-approved", title="When Ben approves your hours",
+            what="See your hours approved, and know what happens if something is still wrong after that.",
+            why="Approved hours are final. Only the office can correct them, and the first entry is kept.",
+            steps=(
+                Step(title="Ben approves (the office's step)", app=F, where="Nothing to do on Field",
+                     do="Wait for Ben. He checks your hours in the office and presses Approve, or Return with a "
+                        "reason",
+                     expect="You do nothing on Field for this step.",
+                     if_wrong="Waiting a long time? Ask Ben. Field does not send a message when he approves."),
+                Step(title="See it approved", app=F, where="Today → My time",
+                     do="Tap My time",
+                     expect="The entry says Approved. There is no Fix and send again button on it.",
+                     if_wrong="Still Submitted? Ben has not looked yet. Returned? Do lesson 'Time the office sent "
+                              "back'.",
+                     shot="f05-time-approved.png", endpoint="field.my_time"),
+                Step(title="Wrong after it was approved", app=F, where="My time",
+                     do="Do not send the same hours again. Call Ben",
+                     expect="Ben corrects it in the office. The old entry is kept and shows Replaced; the corrected "
+                            "one is listed too.",
+                     if_wrong="Sent it twice by mistake? Tell Ben which one is right."),
+            ),
+            exercise="When Ben approves your fixed Harbour Lane hours on the training site, open My time and find "
+                     "Approved.",
         ),
         Lesson(
             key="f05-extra-work", title="Extra work the customer asks for",
@@ -840,10 +897,19 @@ UAT_CASES = (
        "Field → Today → Enter time",
        "Tap Choose different work, pick the Work item and the Work, type 8 hours and a note, tap Send time.",
        "Time sent for approval; My time lists the day as Submitted."),
+    _u("uat-f05-my-time", "f05", "Review hours on My time",
+       "Field → Today → My time, after sending today's hours",
+       "Read the newest entry.",
+       "It shows today's date, Submitted, the job, the work item and the work, and the hours you sent."),
     _u("uat-f05-returned", "f05", "Fix returned time",
        "Field → My time, after the office returns your time with a reason",
        "Tap Fix and send again, change the hours, tap Send time.",
        "Time opens with Returned: and the reason; after sending, My time shows it as Submitted."),
+    _u("uat-f05-approved", "f05", "Ben approves the hours (Ben's step, then the crew's check)",
+       "Office: Ben opens the time waiting for review and presses Approve. Then Field → My time on the iPhone",
+       "After Ben approves your fixed entry, open My time.",
+       "The entry says Approved and has no Fix and send again button. A failing result here goes on Ben's "
+       "administrator dashboard."),
     _u("uat-f05-extra-work", "f05", "Record extra work",
        "Field → Today → Extra work",
        "Describe the customer's request, name a new work item, tap Record extra work.",

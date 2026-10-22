@@ -358,3 +358,23 @@ def test_field_crew_lessons_are_on_the_workflow_maps_field_section(app):
     ben = _client(app, "ben")
     review = _get(ben, "/training/review/field").get_data(as_text=True)
     assert "/training/review/lessons/f06-capture?map=field" in review
+
+
+def test_time_entry_my_time_correction_and_approval_are_taught_in_module_5_only():
+    """Joel, 22 Oct 2026: daily hours against the job and work, My time, fixing time Ben returned, Ben's approval;
+    kept in module 5 so they are re-captured in one place after the time/labour branch merges."""
+    f05 = next(m for m in C.modules_for(C.PATHWAY_FIELD_CREW, "FIELD") if m.key == "f05")
+    keys = [lesson.key for lesson in f05.lessons]
+    for key in ("f05-send-time", "f05-my-time-review", "f05-returned-time", "f05-approved"):
+        assert key in keys
+    time_endpoints = {"field.time_entry", "field.my_time"}
+    for module, lesson in _field_lessons():
+        if module.key in ("f05", "f08"):  # f08 is the whole-day exercise that repeats the day's last step
+            continue
+        assert not any(s.endpoint in time_endpoints for s in lesson.steps), lesson.key
+    cases = {c.key: c for c in C.uat_for(C.PATHWAY_FIELD_CREW, "FIELD")}
+    for key in ("uat-f05-time", "uat-f05-my-time", "uat-f05-returned", "uat-f05-approved"):
+        assert cases[key].module_key == "f05"
+    assert "Approve" in cases["uat-f05-approved"].start and "Approved" in cases["uat-f05-approved"].expected
+    approved = next(lesson for lesson in f05.lessons if lesson.key == "f05-approved")
+    assert any(s.shot == "f05-time-approved.png" for s in approved.steps)

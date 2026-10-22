@@ -69,9 +69,7 @@ def test_company_group_is_setup_not_a_second_calendar():
     by_title = {item["title"]: item["endpoint"] for item in company["links"]}
     # People & Access added 21 Oct 2026 (shown only to the owner or a System Administrator).
     # Workflow Guide added 21 Oct 2026 (Joel): the Contractor Workflow Map.
-    # Time review added 22 Oct 2026 (Joel): crew time to approve or return.
-    assert list(by_title) == ["Getting started", "Workflow Guide", "Attention", "People & Access", "Crews", "Time review", "Suppliers", "Accounting", "Work catalog"]  # Getting started, Accounting: Joel 21 Oct 2026
-    assert by_title["Time review"] == "time_entry.review"
+    assert list(by_title) == ["Getting started", "Workflow Guide", "Attention", "People & Access", "Crews", "Suppliers", "Accounting", "Work catalog"]  # Getting started, Accounting: Joel 21 Oct 2026
     assert by_title["People & Access"] == "people_access.index"
     assert by_title["Workflow Guide"] == "workflow_map.contractor"
     assert by_title["Attention"] == "company_attention.index"

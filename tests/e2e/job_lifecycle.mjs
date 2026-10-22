@@ -343,10 +343,12 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(await ben.flash(), /can now sign in to the Supplier Hub/);
     // Dana chooses her password from the captured email, then signs in to the Supplier Hub.
     const resetMail = fs.readdirSync(mailDir).filter((n) => n.includes("PASSWORD_RESET")).sort().pop();
-    const resetUrl = fs.readFileSync(path.join(mailDir, resetMail), "utf8").match(/https?:\/\/\S+\/reset-password\/\S+/)[0]
+    const resetUrl = fs.readFileSync(path.join(mailDir, resetMail), "utf8").match(/https?:\/\/\S+\/reset-password[#/]\S+/)[0]
       .replace(/^https?:\/\/[^/]+/, base);
     const dana = await person(browser, base, { width: 1280, height: 900 }, pageErrors, "supplier");
     await dana.go(resetUrl);
+    // Since e9d368b the link is /reset-password#<credential>: the landing page's script posts it and moves on.
+    if (resetUrl.includes("/reset-password#")) await dana.page.waitForFunction(() => !document.querySelector("[data-reset-open]"));
     await dana.page.fill("[name=password]", DANA[2]);
     await dana.page.fill("[name=confirm_password]", DANA[2]);
     await dana.submit(dana.page.locator("form button[type=submit]"));

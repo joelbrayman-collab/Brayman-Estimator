@@ -55,7 +55,7 @@ the job the person is on today.
 
 ## Office (desktop)
 
-**Company → Time review** (`/time`)
+**Time review** (`/time`; from a job's Project page → Time → **Review time**, or ask Cal for time review)
 - Filters: From, To, Worker, Project, Status. Default: the last seven days.
 - "Hours in this view": by status, and by kind of work (Original work, Change order work · CO, Extra work,
   Company time).
@@ -85,7 +85,7 @@ estimate.
 
 1. Kevin (phone): Today → Enter time → Scheduled today → choose Forms → 8 → Send time; then Stair landing
    framing 3 hours. My time shows both Submitted, 11.00 this week.
-2. Ben (desktop): Company → Time review → open the 8-hour entry → Return with a reason; open the 3-hour
+2. Ben (desktop): Project page → Review time → open the 8-hour entry → Return with a reason; open the 3-hour
    entry → Approve.
 3. Kevin: Today shows the returned line → My time → Fix and send again → 7.5 → Send time.
 4. Ben approves; History shows Submitted 8.00, Returned 8.00 (reason), Sent again 7.50, Approved 7.50.

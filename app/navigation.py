@@ -198,13 +198,6 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                # Joel, 22 Oct 2026: crew time waiting for approval, returned and approved.
-                "title": "Time review",
-                "endpoint": "time_entry.review",
-                "icon": "bi-clock-history",
-                "enabled": True,
-            },
-            {
                 "title": "Suppliers",
                 "endpoint": "supplier_office.suppliers",
                 "icon": "bi-shop",

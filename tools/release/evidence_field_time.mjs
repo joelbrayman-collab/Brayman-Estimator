@@ -123,8 +123,14 @@ async function sendTime(pg, { element, work, hours, note }) {
   await submit(pg, pg.getByRole("button", { name: "Send time" }));
 }
 // Ben's Time review row for one of Kevin's entries (by its work), opened.
+// Time review is reached from the job's Project page ("Review time"); it is not in the menu (FG-035).
+async function timeReview(pg) {
+  await go(pg, `/projects/${facts.project_id}`);
+  await submit(pg, pg.locator("#hub-time").getByRole("link", { name: "Review time" }));
+  await go(pg, "/time"); // all jobs, the last seven days (the company-time project too)
+}
 async function openEntry(pg, work, hours) {
-  await menu(pg, "Company", "/time");
+  await timeReview(pg);
   const row = pg.locator("tbody tr").filter({ hasText: facts.kevin_name }).filter({ hasText: work }).filter({ hasText: hours }).first();
   await submit(pg, row.locator("a[data-time-entry]"));
 }
@@ -169,7 +175,7 @@ step("1 Kevin, on his iPhone, records hours against the job and its work", async
 step("2 Ben, on the desktop, returns one entry with a reason and approves the change-order hours", async () => {
   await signIn(ben, facts.ben);
   const pg = ben.pg;
-  await menu(pg, "Company", "/time");
+  await timeReview(pg);
   const review = await text(pg);
   assert.match(review, /Time review/);
   assert.match(review, /Submitted 11\.00/);
@@ -226,7 +232,7 @@ step("4 Ben approves the corrected entry; its whole history is kept", async () =
 
 step("5 Shop time goes on shop and company time, never a customer's job", async () => {
   const pg = ben.pg;
-  await menu(pg, "Company", "/time");
+  await timeReview(pg);
   await submit(pg, pg.getByRole("button", { name: "Set up shop and company time" }));
   assert.match(await flash(pg), /Shop and company time is ready\./);
   const k = kevin.pg;
@@ -238,7 +244,7 @@ step("5 Shop time goes on shop and company time, never a customer's job", async 
   await sendTime(k, { work: "Equipment and vehicle upkeep", hours: "1.5", note: "Truck oil change (synthetic)" });
   assert.match(await text(k), /1\.50 hours · Company time/);
   await phone(k, "05-my-time-shop");
-  await menu(pg, "Company", "/time");
+  await timeReview(pg);
   const row = pg.locator("tbody tr").filter({ hasText: "Equipment and vehicle upkeep" });
   assert.match(await row.innerText(), /Shop and company time[\s\S]*Company time/);
   await row.locator("input[type=checkbox]").check();

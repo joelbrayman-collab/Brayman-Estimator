@@ -209,7 +209,7 @@ def policy_summary(policy: Optional[BankedHoursPolicy]) -> str:
         text += f"banked: {_display('bank_rate', policy.bank_rate)} banked hour for each extra hour. "
     else:
         text += "paid as overtime, not banked. "
-    text += "Shop / company work counts." if policy.counts_company_time else "Shop / company work does not count."
+    text += "Shop / Company Work counts." if policy.counts_company_time else "Shop / Company Work does not count."
     return text
 
 

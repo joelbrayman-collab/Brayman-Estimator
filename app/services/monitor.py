@@ -231,6 +231,9 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
     if estimated_gm is not None and actual_to_date_gm is not None:
         gm_variance = actual_to_date_gm - estimated_gm
 
+    with_time = job_cost_with_approved_time(organization_id, project.id, class_totals,
+                                            current_authorized_pre_tax_revenue)
+
     return {
         "original_estimated_direct_cost": original_dc,
         "original_estimated_pre_tax_selling_price": original_selling,
@@ -244,6 +247,7 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
         "actual_cost_by_class": class_totals,
         "actual_to_date_gm": actual_to_date_gm,
         "gm_variance": gm_variance,
+        "with_approved_time": with_time,
         "actuals_state": actuals_state,
         "baseline_state": baseline_state,
         "unlocked_source": unlocked_source,
@@ -266,3 +270,34 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
         "extra_work_internal_cost_state": extra_work_internal_cost_state,
         "extra_work_approved_internal_direct_cost": extra_work_approved_internal_direct_cost,
     }
+
+
+def job_cost_with_approved_time(organization_id, project_id, class_totals, revenue):
+    """Job cost to date counting crew labour once (Joel, 22 Oct 2026): labour comes from APPROVED time x the
+    company costing rate (the Project page's Labour table); material, subcontract and other direct costs come
+    from the recorded actuals. Labour typed in as a direct cost is shown but left out, so it is never counted
+    twice. The original estimate is not touched. Read only."""
+    from app.services.project_performance import assemble_project_labour_cost
+
+    try:
+        labour = assemble_project_labour_cost(organization_id, project_id)
+    except Exception:  # noqa: BLE001 - a read-only figure never breaks the page
+        return None
+    if labour.get("rate") is None and labour["total"]["actual_hours"] > 0:
+        return {"state": "NO_RATE", "labour_hours": labour["total"]["actual_hours"]}
+    others = Decimal("0")
+    entered_labour = Decimal("0")
+    for cost_class, amount in (class_totals or {}).items():
+        if amount is None:
+            continue
+        if cost_class == "labour":
+            entered_labour = Decimal(amount)
+        else:
+            others += Decimal(amount)
+    labour_cost = labour["total"]["actual_cost"] or Decimal("0")
+    total = as_money(others + labour_cost)
+    return {"state": "OK", "labour_hours": labour["total"]["actual_hours"], "labour_cost": as_money(labour_cost),
+            "other_costs": as_money(others), "entered_labour_left_out": as_money(entered_labour),
+            "total": total, "gm": _gross_margin(total, revenue) if total else None,
+            "waiting_hours": labour["total"]["waiting_hours"]}
+

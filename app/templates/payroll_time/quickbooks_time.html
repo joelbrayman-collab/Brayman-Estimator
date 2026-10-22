@@ -34,9 +34,9 @@
     <tbody>
     {% for row in rows %}{% set t = row.transfer %}{% set e = row.entry %}
       <tr data-qbt-transfer="{{ t.id }}" data-qbt-status="{{ t.status }}">
-        <td data-label="Ref"><a href="{{ url_for('time_entry.detail', time_entry_id=e.id) }}">CT-T{{ e.id }}</a>{% if t.operation == 'UPDATE' %} <span class="muted-copy">(correction)</span>{% endif %}</td>
+        <td data-label="Ref" style="white-space:nowrap"><a href="{{ url_for('time_entry.detail', time_entry_id=e.id) }}">CT-T{{ e.id }}</a>{% if t.operation == 'UPDATE' %} <span class="muted-copy">(correction)</span>{% endif %}</td>
         <td data-label="Worker">{{ e.worker_display_name }}</td>
-        <td data-label="Date">{{ e.work_date.isoformat() }}</td>
+        <td data-label="Date" style="white-space:nowrap">{{ e.work_date.isoformat() }}</td>
         <td data-label="Hours" class="num">{{ "%.2f"|format(e.hours) }}</td>
         <td data-label="Job">{{ e.project_name }} — {{ e.activity_display_name }}</td>
         <td data-label="Status"><span class="status">{{ row.label }}</span>{% if t.qbt_timesheet_id %}<div class="muted-copy">Timesheet {{ t.qbt_timesheet_id }}</div>{% endif %}{% if t.attempts %}<div class="muted-copy">Tries: {{ t.attempts }}</div>{% endif %}</td>

@@ -1,7 +1,7 @@
 """Contractor training: 12 modules for the contractor owner and authorized office staff (Joel, 21 Oct 2026).
 
 Ben's First Day (app/services/onboarding.py, Company → Getting started) is the backbone of the owner's
-pathway: its fifteen steps are taught across the modules in the order the owner meets them. Office staff get
+pathway: its sixteen steps are taught across the modules in the order the owner meets them. Office staff get
 the office workflows; People & Access, crews, Getting started and closing/reopening a project are the owner's.
 The owner also keeps the Field lessons, to know what the crew see. The crew themselves (role Field worker)
 follow their own Field Crew pathway, app/training/field_crew.py (22 Oct 2026).
@@ -215,19 +215,19 @@ M02 = Module(
     lessons=(
         Lesson(
             key="c02-getting-started", title="Getting started: Ben's First Day checklist",
-            what="Open Company → Getting started and learn the fifteen set-up steps you will follow through this course.",
+            what="Open Company → Getting started and learn the sixteen set-up steps you will follow through this course.",
             why="Getting started ticks each step by itself when the records show it is done, so you always know what "
-                "is left. This course follows the same fifteen steps.",
+                "is left. This course follows the same sixteen steps.",
             steps=(
                 Step(title="Open Getting started", app=O, where="Company → Getting started",
                      do="Press Getting started in the menu",
-                     expect="Set up CalibraytAI, step by step: a bar with how many of 15 are done, the next step to do, "
-                            "and 15 numbered steps.",
+                     expect="Set up CalibraytAI, step by step: a bar with how many of 16 are done, the next step to do, "
+                            "and 16 numbered steps.",
                      if_wrong="If COMPANY is not in the menu, scroll the menu down.",
                      shot="c02-getting-started.png", endpoint="getting_started.index"),
                 Step(title="Read a step", app=O, where="Getting started → any step",
                      do="Read its why and how; press Go there to open the page that does it",
-                     expect="Done steps show a tick. Steps the platform cannot see (6 Set up their iPhones, 15 Run a "
+                     expect="Done steps show a tick. Steps the platform cannot see (6 Set up their iPhones, 16 Run a "
                             "complete working day) have Mark done.",
                      if_wrong="A step ticks itself only from the records (a client and project exist, a proposal was "
                               "made). Do the work, then come back.",
@@ -237,7 +237,7 @@ M02 = Module(
                      expect="The page for the next unfinished step opens (for example the brand profile).",
                      if_wrong="When all are done the page says All done.", shot="c02-getting-started.png", endpoint="getting_started.index"),
             ),
-            exercise="Open Company → Getting started on the training site, count how many of the 15 steps are already "
+            exercise="Open Company → Getting started on the training site, count how many of the 16 steps are already "
                      "ticked, and write down the next step it suggests.",
         ),
         Lesson(
@@ -656,6 +656,168 @@ M04 = Module(
             ),
             exercise="After the BMR concrete order is confirmed (module 8), download Bills from purchase orders and check "
                      "the BMR bill is $612.50 plus HST. Open Check QuickBooks and read what each result means.",
+        ),
+        Lesson(
+            key="c04-hours-policy", title="Hours and banked time (Getting started step 15)",
+            what="Enter your company's own hours policy: the normal work week, when extra hours start, whether they are "
+                 "banked or paid as overtime, the bank rate, whether Shop / Company Work counts, and the week's first day.",
+            why="Nothing is preset: CalibraytAI banks hours only under the rules you enter, and shows them to the crew "
+                "on Field. Agree the numbers with your payroll person first (docs: Payroll with CalibraytAI).",
+            roles=OWNER,
+            steps=(
+                Step(title="Open the hours policy", app=O, where="Company → Getting started → 15 Hours and banked time → "
+                                                                 "Go there (or Accounting → Hours policy)",
+                     do="Press Go there",
+                     expect="Hours policy: 'No hours policy has been entered yet, so no hours are banked.' and an empty form.",
+                     if_wrong="Only the owner or a System Administrator can open it.",
+                     shot="c04-hours-policy-empty.png", endpoint="payroll_time.hours_policy"),
+                Step(title="Fill in every value", app=O, where="Hours policy → Enter the policy",
+                     do="Type the normal work week and when extra hours start; choose Banked or Paid as overtime; type the "
+                        "banked hours for each extra hour; choose whether Shop / Company Work counts; choose the day the "
+                        "week starts; choose the date it takes effect",
+                     enter="For practice: 40, 40, Banked, 1, Yes, Monday, this Monday",
+                     expect="Every box must be filled; a missing value is named in red.",
+                     if_wrong="'cannot be before … the start of this week': earlier weeks keep the rules they were "
+                              "worked under; choose this week or later."),
+                Step(title="Save it", app=O, where="Hours policy",
+                     do="Press Save hours policy",
+                     expect="'Hours policy saved (version 1, in effect from …)'; In use now states the policy in one "
+                            "line; Changes lists version 1 with your name. Getting started step 15 is ticked.",
+                     if_wrong="To change it later, save again with a new effective date; the old version stays in "
+                              "Changes with old → new.",
+                     shot="c04-hours-policy-saved.png", endpoint="payroll_time.hours_policy"),
+            ),
+            exercise="On the training site enter 40, 40, Banked, 1, Yes, Monday, this Monday, and read the policy "
+                     "line on Banked hours.",
+        ),
+        Lesson(
+            key="c04-approve-to-quickbooks-time", title="Approve hours: they go to QuickBooks Time by themselves",
+            what="Approve the crew's hours and see each approved entry go to QuickBooks Time for payroll.",
+            why="The crew enter hours once. Approval sends them to QuickBooks Time; nobody types them again.",
+            steps=(
+                Step(title="Review and approve", app=O, where=f"{HUB} → Time → Review time (or Accounting → QuickBooks "
+                                                              "Time transfers → Time review)",
+                     do="Tick the Submitted rows and press Approve selected",
+                     expect="'Approved N time entries.' and, when QuickBooks Time is switched on, 'Sent to QuickBooks "
+                            "Time: N.' The QuickBooks Time column says In QuickBooks Time.",
+                     if_wrong="'Not everything reached QuickBooks Time' — do the next lesson. Not switched on: the "
+                              "column says Waiting to send and nothing is sent.",
+                     shot="c04-time-review-qbt.png", endpoint="time_entry.review"),
+                Step(title="Open QuickBooks Time transfers", app=O, where="Company → Accounting → Crew hours and payroll "
+                                                                          "→ QuickBooks Time transfers",
+                     do="Read the Connection box and the Transfers table",
+                     expect="Each approved entry once: CT-T number, worker, date, hours, job, status (In QuickBooks "
+                            "Time, Waiting to send, Needs a link, Failed — retry, Replaced by a correction).",
+                     if_wrong="Crew never see this page.",
+                     shot="c04-quickbooks-time.png", endpoint="payroll_time.quickbooks_time"),
+                Step(title="Link people and jobs (owner, once)", app=O, where="QuickBooks Time transfers → People and "
+                                                                               "job links",
+                     do="Choose each person's QuickBooks Time person, each job's and each Shop / Company Work "
+                        "category's job code; press Save on each row",
+                     expect="'Link saved.' and 'Linked to … by <you>'.",
+                     if_wrong="A QuickBooks Time person can be linked to one worker only.",
+                     endpoint="payroll_time.quickbooks_time_links"),
+                Step(title="Correct after approval", app=O, where="The time entry → Correct approved time",
+                     do="Type the right hours and the reason; press Correct approved time",
+                     expect="'Approved time corrected. The original entry is kept.' The same QuickBooks Time timesheet "
+                            "is changed (the transfer shows (correction)) and banked hours get a difference row.",
+                     if_wrong="If the week is approved and locked in QuickBooks Time, unapprove it there, then Retry.",
+                     endpoint="time_entry.detail"),
+            ),
+            exercise="Approve Kevin's Harbour Lane hours on the training site and find the entry on QuickBooks Time "
+                     "transfers.",
+        ),
+        Lesson(
+            key="c04-failed-transfers", title="When hours did not reach QuickBooks Time",
+            what="Fix a transfer that needs a link or failed, and retry it safely.",
+            why="Every failure stays on the page with the reason. Retry checks QuickBooks Time first, so nothing is "
+                "ever entered twice.",
+            steps=(
+                Step(title="Find it", app=O, where="Accounting → QuickBooks Time transfers",
+                     do="Press the Failed — retry (or Needs a link) count at the top",
+                     expect="Only those rows, each with What to do.",
+                     if_wrong="No such count: everything went.", endpoint="payroll_time.quickbooks_time"),
+                Step(title="Fix the cause", app=O, where="The row's What to do",
+                     do="Needs a link: Add the link. Token refused: ask Joel for a new QuickBooks Time token. Slow down: "
+                        "wait five minutes. Locked: unapprove the week in QuickBooks Time",
+                     expect="The cause is fixed.",
+                     if_wrong="Read the full reason on the time entry's QuickBooks Time panel."),
+                Step(title="Retry", app=O, where="The row",
+                     do="Press Retry (or Send waiting and retry failed for all)",
+                     expect="'QuickBooks Time: 1 sent …' and the row says In QuickBooks Time.",
+                     if_wrong="Held back as 'In a hand-entry file': it was already typed into QuickBooks; only if that "
+                              "entry was deleted there, write why and press Send anyway."),
+            ),
+            exercise="Open QuickBooks Time transfers on the training site and say what you would do for Needs a link.",
+        ),
+        Lesson(
+            key="c04-check-quickbooks-time", title="Reconcile payroll: Check QuickBooks Time",
+            what="Once a week, compare QuickBooks Time with what CalibraytAI sent.",
+            why="Someone may change or delete hours in QuickBooks Time; the check finds it before payroll.",
+            steps=(
+                Step(title="Run the check", app=O, where="QuickBooks Time transfers → Check QuickBooks Time",
+                     do="Choose the pay week's From and To; press Check",
+                     expect="Match; Different in QuickBooks Time; Sent but no longer there; In QuickBooks Time more than "
+                            "once; Entered directly in QuickBooks Time; Approved here, not in QuickBooks Time yet.",
+                     if_wrong="It only reads; nothing changes in either place.",
+                     endpoint="payroll_time.quickbooks_time_check"),
+                Step(title="Act on each line", app=O, where="The result",
+                     do="Different: change it back there or correct it here. No longer there: Retry the transfer. More "
+                        "than once: delete the extra in QuickBooks Time",
+                     expect="The next check shows only matches.",
+                     if_wrong="Entered directly in QuickBooks Time: make sure it is not the same hours twice."),
+            ),
+            exercise="Run Check QuickBooks Time for this week on the training site and read each heading.",
+        ),
+        Lesson(
+            key="c04-banked-hours", title="Banked hours: balances, time off and adjustments",
+            what="See everyone's banked hours, record time off taken, and make an agreed adjustment.",
+            why="The ledger keeps every week earned, every day off and every adjustment, with who and why.",
+            steps=(
+                Step(title="Open Banked hours", app=O, where="Accounting → Crew hours and payroll → Banked hours",
+                     do="Read the policy line and the balances",
+                     expect="The hours policy in one line, each person and their banked hours.",
+                     if_wrong="'Nothing is banked until the owner enters the company's hours policy': lesson Hours and "
+                              "banked time.",
+                     shot="c04-banked-hours.png", endpoint="payroll_time.banked_hours_index"),
+                Step(title="Record time off", app=O, where="A person → Record time off taken",
+                     do="Day off, Hours, What for; press Record time off",
+                     expect="'Time off recorded.' The ledger shows Time off taken and the balance goes down.",
+                     if_wrong="It cannot be more than the balance. You cannot change your own banked hours.",
+                     endpoint="payroll_time.banked_hours_worker"),
+                Step(title="Adjust", app=O, where="A person → Adjust",
+                     do="Hours (2 adds, -2 removes) and Why; press Adjust",
+                     expect="'Banked hours adjusted.' with the reason in the ledger.",
+                     if_wrong="Use only for agreed corrections; wrong approved hours are fixed with Correct approved time."),
+            ),
+            exercise="On the training site record 2 hours of time off for Kevin and find it in his ledger.",
+        ),
+        Lesson(
+            key="c04-shop-company-work", title="Shop / Company Work",
+            what="Set up Shop / Company Work once, add a category, and approve shop hours.",
+            why="Shop, yard, equipment and safety-meeting hours are paid and count for payroll, but are never charged "
+                "to a customer's job or shown as one.",
+            steps=(
+                Step(title="Set it up (once)", app=O, where=f"{HUB} → Time → Review time",
+                     do="Press Set up Shop / Company Work",
+                     expect="'Shop / Company Work is ready. Crew choose Shop / Company Work on My time; it is never "
+                            "billed to a customer.' The Shop / Company Work page opens.",
+                     if_wrong="Already set up: the Time review panel links to Shop / Company Work instead.",
+                     endpoint="time_entry.review"),
+                Step(title="Add a category", app=O, where="Accounting → Shop / Company Work",
+                     do="Type a new category (for example Snow clearing at the yard) and press Add",
+                     expect="'Category added.' Crew see it under Shop / Company Work on Field.",
+                     if_wrong="Categories are kinds of company work, not customers.",
+                     endpoint="payroll_time.company_work"),
+                Step(title="Approve shop hours", app=O, where="Time review",
+                     do="Tick the shop rows (Kind: Company time) and press Approve selected",
+                     expect="Approved like other time; they go to QuickBooks Time under the category's job code and are "
+                            "not on any customer's job.",
+                     if_wrong="Shop / Company Work never appears in Projects, Clients, estimates, change orders or "
+                              "invoices; its page is Accounting → Shop / Company Work."),
+            ),
+            exercise="Add the category 'Snow clearing at the yard (training)' and find it on Kevin's Shop / Company "
+                     "Work list.",
         ),
     ),
 )
@@ -1566,8 +1728,8 @@ M11 = Module(
 # ====================================================================================== 12
 M12 = Module(
     key="c12", pathway=P, number=12, title="Running a complete working day and final acceptance",
-    summary="Ben's First Day step 15: the morning in the office, the crew's day on Field, the final invoice, Getting "
-            "started 15 of 15, closing the job, and your acceptance tests.",
+    summary="Ben's First Day step 16: the morning in the office, the crew's day on Field, the final invoice, Getting "
+            "started 16 of 16, closing the job, and your acceptance tests.",
     roles=TEAM,
     lessons=(
         Lesson(
@@ -1645,18 +1807,18 @@ M12 = Module(
             exercise="Make the Harbour Lane final invoice ($12,312.41 with HST) and download the Invoices file with it.",
         ),
         Lesson(
-            key="c12-getting-started-done", title="Getting started: 15 of 15",
+            key="c12-getting-started-done", title="Getting started: 16 of 16",
             what="Mark the working day done and see the whole checklist complete.",
-            why="Getting started step 15: after one full day run through CalibraytAI, the set-up is complete.",
+            why="Getting started step 16: after one full day run through CalibraytAI, the set-up is complete.",
             roles=OWNER,
             steps=(
-                Step(title="Mark the working day done", app=O, where="Company → Getting started → 15 Run a complete working day",
+                Step(title="Mark the working day done", app=O, where="Company → Getting started → 16 Run a complete working day",
                      do="Press Mark done",
-                     expect="15 of 15 steps done; All done. CalibraytAI is set up for Brayman Construction.",
+                     expect="16 of 16 steps done; All done. CalibraytAI is set up for Brayman Construction.",
                      if_wrong="An unticked step shows what is still missing; Go there opens it.",
                      shot="c12-getting-started-done.png", endpoint="getting_started.index"),
             ),
-            exercise="After your Harbour Lane day, mark step 15 done and check how many of the 15 steps the training "
+            exercise="After your Harbour Lane day, mark step 16 done and check how many of the 16 steps the training "
                      "company shows done.",
         ),
         Lesson(
@@ -1749,6 +1911,27 @@ UAT_CASES = (
     _u("uat-c04-export", "c04", "Invoices file has no duplicates", "Company → Accounting → Invoices",
        "Download the file, then open Invoices again.",
        "The file lists the new invoice with HST ON; the second time the page says Nothing new.", OFFICE),
+    _u("uat-c04-hours-policy", "c04", "Enter the company's hours policy", "Company → Getting started → 15 Hours and "
+       "banked time → Go there",
+       "Check every box is empty; fill in 40, 40, Banked, 1, Yes, Monday, this Monday; press Save hours policy.",
+       "'Hours policy saved (version 1 …)'; the policy line reads 'Normal work week: 40.00 hours (Monday to Sunday). "
+       "Hours after 40.00 in a week are banked …'; step 15 is ticked; Changes lists version 1 with your name.", OWNER),
+    _u("uat-c04-qbt-approve", "c04", "Approved hours reach QuickBooks Time once", "Time review, with Kevin's hours "
+       "Submitted (QuickBooks Time test connection)",
+       "Tick Kevin's rows, press Approve selected; open QuickBooks Time transfers; press Send waiting and retry failed.",
+       "'Sent to QuickBooks Time: N.'; each entry is In QuickBooks Time once; pressing Send again sends nothing more.",
+       TEAM),
+    _u("uat-c04-qbt-failed", "c04", "A failed transfer is shown and retried", "Accounting → QuickBooks Time transfers "
+       "with a row Needs a link",
+       "Add the missing link (owner), then press Retry on the row.",
+       "The row showed what to do; after Retry it is In QuickBooks Time, and Check QuickBooks Time shows it once.", TEAM),
+    _u("uat-c04-banked", "c04", "Banked hours, time off and correction", "Accounting → Banked hours → Kevin",
+       "Record 2 hours of time off with a reason; then correct one of his approved entries down by 1 hour.",
+       "The ledger shows Time off taken -2.00 and a difference row from the correction; Kevin sees the same balance on "
+       "Field. You cannot adjust your own hours.", TEAM),
+    _u("uat-c04-shop", "c04", "Shop / Company Work is never a customer job", "Time review → Set up Shop / Company Work",
+       "Approve a shop entry; look for Shop / Company Work in Projects, Clients, Cal (search 'shop') and New estimate.",
+       "It is in none of them; its page is Accounting → Shop / Company Work with the hours by category.", TEAM),
     _u("uat-c04-check", "c04", "Check QuickBooks", "Company → Accounting → Check QuickBooks",
        "Upload a QuickBooks Invoice List CSV (sandbox) and press Check.",
        "Each invoice is shown as match, amount differs, exported but not in QuickBooks, in QuickBooks but not in "
@@ -1822,5 +2005,5 @@ UAT_CASES = (
        "Close the project, find it under Projects → Closed, reopen it; then sign in as office staff and look for Close Project.",
        "This Project is closed, then This Project is current; office staff are not offered Close Project.", OWNER),
     _u("uat-c12-getting-started", "c12", "Getting started complete", "Company → Getting started",
-       "Mark 15 Run a complete working day done.", "15 of 15 and All done.", OWNER),
+       "Mark 16 Run a complete working day done.", "16 of 16 and All done.", OWNER),
 )

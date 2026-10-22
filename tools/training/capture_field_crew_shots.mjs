@@ -443,13 +443,13 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   assert.match(await k.locator("main").innerText(), /Approved/);
   assert.equal(await k.getByRole("link", { name: "Fix and send again" }).count(), 0);
   await shot(k, "f05-time-approved", k.locator(".field-time-item").first());
-  // Shop / company time: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
+  // Shop / Company Work: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
   await go(pg, "/time");
-  await submit(pg, pg.getByRole("button", { name: "Set up shop and company time" }));
-  assert.match(await flash(pg), /Shop and company time is ready/);
+  await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
+  assert.match(await flash(pg), /Shop \/ Company Work is ready/);
   await go(k, "/field/time");
   await submit(k, k.locator("[data-company-time]"));
-  assert.match(await k.locator("main").innerText(), /Company time: not a customer's job/);
+  assert.match(await k.locator("main").innerText(), /Shop \/ Company Work: paid company time, not a customer's job/);
   const cw = k.locator("[name=project_work_activity_id]");
   if (await k.locator("#field-time-other-toggle").count() && !(await cw.isVisible())) await k.click("#field-time-other-toggle");
   const shopEl = k.locator("[name=project_work_element_id]");

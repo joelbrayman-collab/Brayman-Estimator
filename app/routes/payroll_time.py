@@ -117,17 +117,20 @@ def quickbooks_time_links():
     if request.method == "POST":
         try:
             kind = request.form.get("kind")
+            listed = qbt.directory()  # the QuickBooks Time names for the chosen numbers, when connected
+            people = {u["id"]: u["name"] for u in listed["users"]}
+            codes = {j["id"]: j["name"] for j in listed["jobcodes"]}
+            chosen_person = (request.form.get("qbt_user_id") or "").strip()
+            chosen_code = (request.form.get("qbt_jobcode_id") or "").strip()
             if kind == "person":
-                qbt.link_employee(org, int(request.form.get("user_id") or 0), request.form.get("qbt_user_id"),
-                                  actor=current_user, qbt_name=request.form.get("qbt_name"))
+                qbt.link_employee(org, int(request.form.get("user_id") or 0), chosen_person,
+                                  actor=current_user, qbt_name=people.get(chosen_person))
             elif kind == "project":
                 qbt.link_jobcode(org, project_id=int(request.form.get("project_id") or 0),
-                                 jobcode_id=request.form.get("qbt_jobcode_id"), actor=current_user,
-                                 jobcode_name=request.form.get("qbt_name"))
+                                 jobcode_id=chosen_code, actor=current_user, jobcode_name=codes.get(chosen_code))
             elif kind == "activity":
                 qbt.link_jobcode(org, activity_id=int(request.form.get("activity_id") or 0),
-                                 jobcode_id=request.form.get("qbt_jobcode_id"), actor=current_user,
-                                 jobcode_name=request.form.get("qbt_name"))
+                                 jobcode_id=chosen_code, actor=current_user, jobcode_name=codes.get(chosen_code))
             else:
                 raise qbt.QuickBooksTimeError("Choose what to link.")
             flash("Link saved.", "success")

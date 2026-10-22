@@ -382,7 +382,7 @@ def test_time_entry_my_time_correction_and_approval_are_taught_in_module_5_only(
     # workaround text; the returned line on Today; "Time sent again for approval."; shop / company time.
     text = " ".join(" ".join((s.do, s.expect, s.if_wrong, s.why)) for lesson in f05.lessons for s in lesson.steps)
     for phrase in ("Time sent again for approval.", "returned to you. Fix and send again on My time.",
-                   "This week (from Mon", "Set up shop and company time", "Waiting for approval"):
+                   "This week (from Mon", "Set up Shop / Company Work", "Waiting for approval"):
         assert phrase in text, phrase
     assert "Work not found" not in text
 

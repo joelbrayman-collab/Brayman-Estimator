@@ -451,7 +451,8 @@ M04 = Module(
 # ====================================================================================== 5
 # TIME ENTRY LESSONS (Joel, 22 Oct 2026): everything about Time, My time, returned time, Ben's approval and
 # shop / company time is in this module only (f05-send-time, f05-my-time-review, f05-returned-time,
-# f05-approved, f05-company-time; shots f05-time*.png, f05-my-time*.png, f05-today-returned.png and
+# f05-approved, f05-company-time, f05-banked-hours (22 Oct 2026, shots f05-banked-*.png from
+# tools/release/evidence_time_payroll.mjs TRAINING_SHOTS); shots f05-time*.png, f05-my-time*.png, f05-today-returned.png and
 # f05-company-time.png from the TIME ENTRY steps of tools/training/capture_field_crew_shots.mjs; UAT
 # uat-f05-time*, uat-f05-my-time, uat-f05-returned, uat-f05-approved, uat-f05-company-time). Written against
 # the final Field time screens recorded in docs/operations/field-time.md (merged 22 Oct 2026). When those
@@ -584,30 +585,58 @@ M05 = Module(
                      "Approved.",
         ),
         Lesson(
-            key="f05-company-time", title="Shop and company time",
-            what="Send hours that are not for a customer's job: the shop and yard, equipment upkeep, picking up "
-                 "material, safety meetings.",
-            why="Company time is never billed to a customer. Keep it off the customer's job.",
+            key="f05-company-time", title="Shop / Company Work",
+            what="Send paid hours that are not for a customer's job: the shop and yard, equipment upkeep, picking up "
+                 "material, safety meetings, office work.",
+            why="Shop / Company Work is paid like any other time but is never billed to a customer. Keep it off the "
+                "customer's job.",
             steps=(
-                Step(title="Open Shop / company time", app=F, where="Today → My time → Shop / company time",
-                     do="Tap My time, then Shop / company time",
-                     expect="Time for 'Shop and company time', with 'Company time: not a customer's job, never "
-                            "billed to a customer.'",
-                     why="The office sets it up once (Set up shop and company time). Until then the button is not "
-                         "on My time.",
-                     if_wrong="No Shop / company time button? Ask Ben to set it up.",
+                Step(title="Open Shop / Company Work", app=F, where="Today → Shop / Company Work (or My time → Shop / "
+                                                                    "Company Work)",
+                     do="Tap Shop / Company Work",
+                     expect="Time for 'Shop / Company Work', with 'Shop / Company Work: paid company time, not a "
+                            "customer's job, never billed to a customer. Choose the kind of work below.'",
+                     why="The office sets it up once (Set up Shop / Company Work). Until then the button is not there.",
+                     if_wrong="No Shop / Company Work button? Ask Ben to set it up.",
                      shot="f05-company-time.png", endpoint="field.my_time"),
-                Step(title="Pick the work and send", app=F, where="Shop and company time → Work",
+                Step(title="Pick the kind of work and send", app=F, where="Shop / Company Work → Work",
                      do="Pick the Work, type the hours, tap Send time",
                      enter="Work: Equipment and vehicle upkeep. Hours: 1.5",
                      expect="Time sent for approval. My time lists it with Company time.",
-                     why="The Works are: Shop and yard, Equipment and vehicle upkeep, Material pickup and "
-                         "deliveries, Safety meetings and training, Office and estimating. There is no Extra work "
-                         "here, and it does not change the job you are on today.",
+                     why="The kinds of work are: Shop and yard, Equipment and vehicle upkeep, Material pickup and "
+                         "deliveries, Safety meetings and training, Office and estimating (and any the office adds). "
+                         "There is no Extra work here, and it does not change the job you are on today.",
                      if_wrong="'Choose the work you did.' means Work is empty."),
             ),
             exercise="Once Ben has set it up on the training site, send 1.5 hours of Equipment and vehicle upkeep as "
-                     "shop / company time and find it on My time.",
+                     "Shop / Company Work and find it on My time.",
+        ),
+        Lesson(
+            key="f05-banked-hours", title="Your banked hours",
+            what="See how many hours you have banked, this week's hours, and what was earned or taken.",
+            why="Hours over the company's work week are banked under the company's own hours policy. You see your "
+                "own balance on the phone; the office records time off.",
+            steps=(
+                Step(title="See your balance", app=F, where="Field → Today (or My time)",
+                     do="Look at the Banked hours card at the top",
+                     expect="Banked hours in large figures, this week (worked approved · regular · extra · banked) and "
+                            "the company's hours policy in one line.",
+                     why="Only approved hours count. Hours waiting for approval are not in it yet.",
+                     if_wrong="No card? The office has not entered the hours policy yet.",
+                     shot="f05-banked-hours.png", endpoint="field.today"),
+                Step(title="See the history", app=F, where="Banked hours card → See banked hours",
+                     do="Tap See banked hours",
+                     expect="Each week earned (with that week's worked, regular and extra hours), time off taken and "
+                            "adjustments, with the reason.",
+                     if_wrong="Something looks wrong? Ask the office; they can correct approved time or adjust it.",
+                     shot="f05-banked-history.png", endpoint="field.banked_hours"),
+                Step(title="Time off", app=F, where="Ask the office",
+                     do="Tell the office the day and the hours you want off",
+                     expect="After the office records it, the history shows Time off taken and the balance goes down.",
+                     if_wrong="You cannot record time off on the phone; the office does it."),
+            ),
+            exercise="After Ben approves your Harbour Lane hours on the training site, open Today and read your Banked "
+                     "hours card and the policy line under it.",
         ),
         Lesson(
             key="f05-extra-work", title="Extra work the customer asks for",
@@ -952,11 +981,16 @@ UAT_CASES = (
        "After Ben approves your fixed entry, open My time.",
        "The entry says Approved and has no Fix and send again button. A failing result here goes on Ben's "
        "administrator dashboard."),
-    _u("uat-f05-company-time", "f05", "Shop / company time",
-       "Office first: Ben presses Set up shop and company time (Time review, once). Then Field → My time",
-       "Tap Shop / company time, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
+    _u("uat-f05-company-time", "f05", "Shop / Company Work",
+       "Office first: Ben presses Set up Shop / Company Work (Time review, once). Then Field → Today",
+       "Tap Shop / Company Work, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
        "Time sent for approval; My time lists it as Company time; it is not on the customer's job and Today's "
        "job is unchanged."),
+    _u("uat-f05-banked-hours", "f05", "See your banked hours",
+       "Office first: the owner has entered the hours policy and Ben has approved your hours. Then Field → Today",
+       "Read the Banked hours card, then tap See banked hours.",
+       "The card shows your balance, this week's worked, regular, extra and banked hours, and the company's policy; "
+       "the history lists each week earned. No pay, rate or money anywhere; no sideways scrolling."),
     _u("uat-f05-extra-work", "f05", "Record extra work",
        "Field → Today → Extra work",
        "Describe the customer's request, name a new work item, tap Record extra work.",

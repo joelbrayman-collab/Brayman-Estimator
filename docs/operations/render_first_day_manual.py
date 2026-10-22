@@ -44,8 +44,10 @@ PICTURES = {
                        "13-purchase-order-approve-and-order-desktop", "13-purchase-order-confirmed-desktop"],
     "crew_schedule": ["14-crew-schedule-set-dates-desktop", "14-crew-schedule-assigned-desktop",
                       "14-crew-schedule-field-today-phone", "14-crew-schedule-field-job-phone"],
-    "working_day": ["15-working-day-home-desktop", "15-working-day-time-review-desktop",
-                    "15-working-day-field-week-phone", "15-working-day-time-sent-phone"],
+    "hours_policy": ["15-hours-policy-filled-desktop", "15-hours-policy-saved-desktop",
+                     "15-hours-policy-field-today-phone"],
+    "working_day": ["16-working-day-home-desktop", "16-working-day-time-review-desktop",
+                    "16-working-day-field-week-phone", "16-working-day-time-sent-phone"],
 }
 DESKTOP_CROP = 1500  # pixels of a long desktop page kept from the top
 PHONE_CROP = 1500
@@ -81,7 +83,7 @@ def build(shots: Path, label: str, commit: str, out: Path) -> None:
         Paragraph("Ben's First Day", h1),
         Paragraph("Setting up CalibraytAI and running a real working day, step by step", styles["Heading3"]),
         Spacer(1, 10),
-        Paragraph("In CalibraytAI: <b>Company → Getting started</b>. The same fifteen steps are there, each with a "
+        Paragraph("In CalibraytAI: <b>Company → Getting started</b>. The same sixteen steps are there, each with a "
                   "<b>Go there</b> button. Steps tick themselves when the work is in CalibraytAI; the others you "
                   "tick with <b>Mark done</b>. Your progress is saved for the whole company.", body),
         Spacer(1, 8),

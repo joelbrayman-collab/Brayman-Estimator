@@ -148,11 +148,6 @@ STEPS: List[Step] = [
     Step("people", "Invite the boys", "Each person gets their own sign-in; crew see only Field.",
          "Company → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),
-    Step("hours_policy", "Hours and banked time", "Your own work-week rules decide regular hours and banked time.",
-         "Company → Hours policy: enter your normal work week (hours), the weekly hours after which extra hours are "
-         "banked or paid as overtime, the banked hours for each extra hour, whether Shop / Company Work counts, the "
-         "day the week starts and the date it takes effect. Save hours policy. Nothing is banked until you do.",
-         "payroll_time.hours_policy", _hours_policy),
     Step("phones", "Set up their iPhones", "Field works on the phone like an app.",
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
          "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
@@ -183,6 +178,11 @@ STEPS: List[Step] = [
     Step("crew_schedule", "Schedule the crew", "The boys see their work on their phones.",
          "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew.",
          "schedule.company", _crew_scheduling),
+    Step("hours_policy", "Hours and banked time", "Your own work-week rules decide regular hours and banked time.",
+         "Company → Hours policy: enter your normal work week (hours), the weekly hours after which extra hours are "
+         "banked or paid as overtime, the banked hours for each extra hour, whether Shop / Company Work counts, the "
+         "day the week starts and the date it takes effect. Save hours policy. Nothing is banked until you do.",
+         "payroll_time.hours_policy", _hours_policy),
     Step("working_day", "Run a complete working day", "Schedule, field time, deliveries and changes, end to end.",
          "Check Home in the morning, follow the job on Field, approve time, answer deliveries. Mark done after a full day.",
          "main.dashboard"),

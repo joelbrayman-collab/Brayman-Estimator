@@ -71,9 +71,10 @@ def test_gate_stops_at_ready_for_push_after_every_gate():
         "evidence_pro_desk.mjs",  # the 4 Supplier PRO Desk browser checks (gate total 61)
         "evidence_supplier_hub.mjs",  # the 14 Supplier Hub (Darcy) browser checks (gate total 75 before the roles walk)
         "evidence_roles.mjs",  # the 26 administrator, customer and isolation browser checks (gate total 101)
-        "evidence_first_day.mjs",  # Ben's First Day: the 15 Getting started steps on a fresh synthetic company
+        "evidence_first_day.mjs",  # Ben's First Day: the 16 Getting started steps on a fresh synthetic company
         "evidence_training.mjs",  # the Training & Acceptance Centre on a local training site
         "evidence_workflow_map.mjs",  # the 9 Workflow Map checks (contractor, supplier, Field, Training Centre)
+        "evidence_time_payroll.mjs",  # the 8 payroll-handoff checks: hours policy, QuickBooks Time (fake), banked hours
         "< tools/release/hosted_preflight.py",  # fresh backup
         "BACKUP_SHA256",
         "PRAGMA integrity_check",

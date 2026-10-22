@@ -613,6 +613,37 @@ def test_another_organization_sees_and_touches_none_of_it(app, fake):
     assert Project.query.filter_by(id=project.id, organization_id=other.id).count() == 0
 
 
+# ------------------------------------------------------------------ 12b: job cost counts labour once
+
+
+def test_job_cost_counts_approved_labour_once_and_keeps_the_estimate(app):
+    from app.services.direct_cost_actuals import create_direct_cost_actual
+    from app.services.monitor import job_cost_with_approved_time
+
+    ben, kevin, project, activity = _setup()
+    before = assemble_project_labour_cost(ORG, project.id)["total"]["estimated_hours"]
+    e = submit_time(project_id=project.id, project_work_activity_id=activity.id, hours="10", work_date=TODAY,
+                    worker_user_id=kevin.id)
+    waiting = submit_time(project_id=project.id, project_work_activity_id=activity.id, hours="2", work_date=TODAY,
+                          worker_user_id=kevin.id)
+    approve_time(time_entry_id=e.id, reviewer_user_id=ben.id)
+    create_direct_cost_actual(project, cost_class="material", amount="400", incurred_on=TODAY, organization_id=ORG,
+                              actor_display_name="Ben")
+    create_direct_cost_actual(project, cost_class="labour", amount="650", incurred_on=TODAY, organization_id=ORG,
+                              actor_display_name="Ben")  # the same crew labour, typed in by hand
+    from app.services.direct_cost_actuals import actual_cost_by_class
+
+    result = job_cost_with_approved_time(ORG, project.id, actual_cost_by_class(ORG, project.id), Decimal("2000"))
+    assert result["labour_cost"] == Decimal("650.00")  # 10 approved h x $65; the 2 waiting hours are not counted
+    assert result["waiting_hours"] == Decimal("2.00") and waiting.status == "SUBMITTED"
+    assert result["entered_labour_left_out"] == Decimal("650.00")
+    assert result["total"] == Decimal("1050.00")  # 400 material + 650 labour, not 1700
+    assert assemble_project_labour_cost(ORG, project.id)["total"]["estimated_hours"] == before  # estimate unchanged
+    page = _client(app, BEN).get(f"/projects/{project.id}").get_data(as_text=True)
+    assert "Job cost to date with approved crew time" in page and "$1,050.00" in page
+    assert "left out here so labour is not counted twice" in page
+
+
 # ------------------------------------------------------------------ 13: the one additive migration
 
 

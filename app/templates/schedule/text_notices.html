@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Text notices | Brayman Construction Platform{% endblock %}
+{% block page_title %}Text notices{% endblock %}
+
+{% block content %}
+{# Schedule-change text notices (Joel, 22 Oct 2026, mandatory V1). Phone numbers show only the last four digits. #}
+<section class="page-header" data-text-notices-page="true">
+    <div>
+        <p class="eyebrow">Calendar</p>
+        <h2 class="page-title">Text notices</h2>
+        <p class="page-purpose">When scheduled work moves, or someone is put on or taken off it, each worker it affects gets one text about five minutes after the last edit. Several quick edits make one text. Only workers who agreed to texts get them; everyone still sees every change on Field.</p>
+    </div>
+    <a class="button secondary" href="{{ url_for('schedule.company') }}">Back to the calendar</a>
+</section>
+
+<section class="form-panel sms-settings" data-sms-live="{{ 'yes' if settings.live else 'no' }}" aria-labelledby="sms-settings-heading">
+    <h3 id="sms-settings-heading">Sending</h3>
+    {% if settings.live %}
+    <p><strong>Texting is on</strong> (Twilio, from a {{ settings.sender }}).{% if settings.allowlist_count %} Only the {{ settings.allowlist_count }} test number{{ '' if settings.allowlist_count == 1 else 's' }} on the test list get texts.{% endif %}{% if not settings.callback %} Delivery reports are not set up (PUBLIC_BASE_URL), so texts stay at “Sent”.{% endif %}</p>
+    {% elif settings.training_site %}
+    <p><strong>The training site never sends texts.</strong> Notices are listed here as they would be.</p>
+    {% else %}
+    <p data-sms-not-live="true"><strong>Texting is not switched on yet.</strong> Notices are worked out and listed here, and each text is recorded as “Not sent”. Once Twilio is set up, use Retry on any you still want to go.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" aria-labelledby="sms-waiting-heading">
+    <h3 id="sms-waiting-heading">Waiting <span class="home-briefing-count{% if not waiting %} is-zero{% endif %}" data-sms-waiting="{{ waiting }}">{{ waiting }}</span></h3>
+    {% if waiting %}
+    <p class="muted-copy">These go out about five minutes after the last change to that worker's schedule. Finished editing? Send them now.</p>
+    <form method="post" action="{{ url_for('sms_notifications.office_send_now') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button" data-sms-send-now="true">Send waiting notices now</button>
+    </form>
+    {% else %}
+    <p class="muted-copy">Nothing waiting.</p>
+    {% endif %}
+</section>
+
+{% if failed or errors %}
+<p class="sms-attention" role="alert" data-sms-attention="{{ failed + errors }}"><strong>{{ failed + errors }} schedule text{{ '' if failed + errors == 1 else 's' }} not delivered.</strong> Check the reason below. Retry sends the same text once more to the worker's current number, if they still agree to texts.</p>
+{% endif %}
+
+<section class="form-panel" aria-labelledby="sms-texts-heading">
+    <h3 id="sms-texts-heading">Texts</h3>
+    {% if texts %}
+    <ul class="sms-list" data-sms-texts="{{ texts|length }}">
+        {% for row in texts %}
+        {% set t = row.newest %}
+        {% set failed_row = t.status in ("FAILED", "UNDELIVERED", "NOT_CONFIGURED", "SKIPPED_ALLOWLIST") %}
+        <li class="sms-item{% if failed_row %} is-failed{% endif %}" data-sms-text="{{ row.text.id }}" data-sms-status="{{ t.status }}">
+            <p class="sms-item-head"><strong>{{ row.name }}</strong> <span class="muted-copy">{{ row.phone }}</span>
+                · <span class="status{% if failed_row %} status-locked{% endif %}" data-sms-status-label>{{ text_labels.get(t.status, t.status) }}</span>
+                {% if row.newest_detail and row.newest_detail.delivered_at %}<span class="muted-copy">{{ row.newest_detail.delivered_at|local_time("%b %d, %I:%M %p") }}</span>{% endif %}</p>
+            <p class="muted-copy">{{ row.text.created_at|local_time("%b %d, %I:%M %p") }}{% if row.retries %} · sent again {{ row.retries|length }} time{{ '' if row.retries|length == 1 else 's' }}{% if row.newest_detail and row.newest_detail.retried_by_display_name %} (last by {{ row.newest_detail.retried_by_display_name }}){% endif %}{% endif %}</p>
+            {% if t.error_code %}<p class="sms-reason" data-sms-reason>Reason: {{ error_labels.get(t.error_code, t.error_code) }}</p>{% endif %}
+            <pre class="sms-body">{{ t.body }}</pre>
+            {% if row.can_retry %}
+            <form method="post" action="{{ url_for('sms_notifications.office_retry', text_id=t.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="button secondary" data-sms-retry="{{ t.id }}">Retry</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted-copy">No schedule texts yet.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" aria-labelledby="sms-notices-heading">
+    <h3 id="sms-notices-heading">Every notice</h3>
+    <p class="muted-copy">One line per worker per piece of work. The schedule's own history keeps who changed what.</p>
+    {% if notices %}
+    <ul class="sms-list" data-sms-notices="{{ notices|length }}">
+        {% for n in notices %}
+        <li class="sms-item" data-sms-notice="{{ n.id }}" data-sms-notice-status="{{ n.status }}">
+            <p class="sms-item-head"><strong>{{ n.user.display_name if n.user else "Worker" }}</strong> · {{ work_label(n.schedule_item) }} · <span class="muted-copy">{{ n.project.name if n.project else "" }}</span></p>
+            <p>{% if n.change_kind %}{{ change_labels.get(n.change_kind, n.change_kind) }}{% if n.before_start %}: was {{ window_phrase(n.before_start, n.before_end) }}{% endif %}{% if n.after_start %}, now {{ window_phrase(n.after_start, n.after_end) }}{% endif %} · {% endif %}<span data-sms-notice-label>{{ notice_labels.get(n.status, n.status) }}</span>{% if n.change_count and n.change_count > 1 %} · {{ n.change_count }} edits made one notice{% endif %}</p>
+            <p class="muted-copy">{{ n.created_at|local_time("%b %d, %I:%M %p") }}{% if n.last_actor_display_name %} · changed by {{ n.last_actor_display_name }}{% endif %}{% if n.detail %} · {{ n.detail }}{% endif %}</p>
+            {% if n.status == "ERROR" %}
+            <form method="post" action="{{ url_for('sms_notifications.office_resend_notice', notice_id=n.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="button secondary">Send again</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted-copy">No schedule changes have affected an assigned worker yet.</p>
+    {% endif %}
+</section>
+<style>
+    .sms-list { list-style: none; margin: 0; padding: 0; }
+    .sms-item { border-top: 1px solid var(--border, #ddd); padding: 10px 0; overflow-wrap: anywhere; }
+    .sms-item.is-failed { border-left: 4px solid var(--danger, #b42318); padding-left: 10px; }
+    .sms-item p { margin: 4px 0; }
+    .sms-body { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; background: var(--surface-muted, #f6f6f4); padding: 8px; border-radius: 6px; margin: 6px 0; max-width: 100%; }
+    .sms-reason { color: var(--danger, #b42318); }
+    .sms-attention { border-left: 4px solid var(--danger, #b42318); padding: 8px 12px; background: var(--surface-muted, #fff4f2); }
+</style>
+{% endblock %}

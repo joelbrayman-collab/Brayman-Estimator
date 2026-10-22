@@ -1,0 +1,50 @@
+{% extends "field/base.html" %}
+{% block title %}Schedule texts — CalibraytAI{% endblock %}
+{% block field_page %}text-messages{% endblock %}
+{% block content %}
+{# The signed-in person's own number and consent only (Joel, 22 Oct 2026). Nothing about anyone else. #}
+<section class="field-panel field-panel-texts" data-field-texts="{{ 'on' if contact and contact.sms_opt_in else 'off' }}">
+    <h1>Schedule texts</h1>
+    <p class="field-muted">Get a text when the office moves your work, puts you on a job, or takes you off one. One text after they finish editing, with the old and new dates and a link back here. Nothing about money or the customer. Field always shows the latest schedule, texts or not.</p>
+    {% if contact and contact.sms_opt_in %}
+    <p class="field-texts-status" data-field-texts-status><strong>Texts are on</strong> for {{ contact.mobile_phone }}{% if contact.opted_in_at %} since {{ contact.opted_in_at|local_time("%b %d, %Y") }}{% endif %}.</p>
+    <form method="post" action="{{ url_for('field.text_messages') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="stop">
+        <button type="submit" class="field-btn field-btn-secondary" data-field-texts-stop>Stop schedule texts</button>
+    </form>
+    <p class="field-muted">You can also reply STOP to any text.</p>
+    <h2 class="field-texts-subhead">Change your number</h2>
+    {% else %}
+    <p class="field-texts-status" data-field-texts-status><strong>Texts are off.</strong></p>
+    {% endif %}
+    <form method="post" action="{{ url_for('field.text_messages') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field-label">
+            Mobile number
+            <input type="tel" name="mobile_phone" class="field-input" autocomplete="tel" inputmode="tel" placeholder="613-555-0100" value="{{ contact.mobile_phone if contact and contact.mobile_phone else '' }}" required>
+        </label>
+        <label class="field-label field-texts-consent">
+            <input type="checkbox" name="consent" value="yes" required>
+            <span>{{ wording }}</span>
+        </label>
+        <button type="submit" class="field-btn field-btn-primary" data-field-texts-save>{{ "Save number" if contact and contact.sms_opt_in else "Turn on schedule texts" }}</button>
+    </form>
+    {% if history %}
+    <h2 class="field-texts-subhead">Your changes</h2>
+    <ul class="field-texts-history">
+        {% for h in history %}
+        <li>{{ h.created_at|local_time("%b %d, %Y") }} · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed"}.get(h.action, h.action) }}{% if h.method == "OFFICE_ON_BEHALF" %} by {{ h.recorded_by_display_name }}{% elif h.method in ("REPLY_STOP", "REPLY_START") %} (text reply){% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+<style>
+    .field-texts-consent { display: flex; gap: 10px; align-items: flex-start; font-weight: normal; }
+    .field-texts-consent input { width: 22px; height: 22px; flex: 0 0 22px; margin-top: 2px; }
+    .field-texts-status, .field-texts-history { overflow-wrap: anywhere; }
+    .field-texts-subhead { font-size: 1.05rem; margin: 18px 0 6px; }
+    .field-texts-history { padding-left: 18px; }
+</style>
+{% endblock %}

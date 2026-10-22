@@ -669,3 +669,11 @@ def plan_pdf(project_id, document_id):
     except PlanIntelligenceServiceError:
         abort(404)
     return send_file(path, mimetype="application/pdf", as_attachment=False, download_name=document.original_filename)
+
+
+@field_bp.route("/text-messages", methods=["GET", "POST"])
+def text_messages():
+    """Schedule texts (SMS notices, 22 Oct 2026): the signed-in person's own mobile number and consent only."""
+    from app.routes.sms_notifications import field_settings_view
+
+    return field_settings_view()

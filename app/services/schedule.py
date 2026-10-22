@@ -293,6 +293,13 @@ def _record_history(
         reason=reason,
     )
     db.session.add(row)
+    if event in (SCHEDULE_EVENT_DATES_CHANGED, SCHEDULE_EVENT_ASSIGNED, SCHEDULE_EVENT_UNASSIGNED):
+        # Joel, 22 Oct 2026 (G1, mandatory V1): the affected workers get one text about the change, after a
+        # short quiet period. Written in this transaction; never raises (app/services/crew_notices.py).
+        from app.services.crew_notices import note_schedule_change
+
+        note_schedule_change(item, event, row, prior_start=prior_start, prior_end=prior_end,
+                             assignment_id=assignment_id)
     if event == SCHEDULE_EVENT_DATES_CHANGED and prior_start is not None and prior_start != item.scheduled_start:
         # Joel, 17 Oct 2026: linked supplier deliveries follow a schedule move (proposed, not imposed).
         db.session.info.setdefault("schedule_moves", []).append((item.id, prior_start))

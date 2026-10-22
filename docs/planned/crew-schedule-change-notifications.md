@@ -1,6 +1,14 @@
-# G1 — Crew notification when work dates change: bounded recommendation (NOT implemented)
+# G1 — Crew notification when work dates change: bounded recommendation
 
-Status: review only. Nothing here is built or switched on. Turning on any email or text to crews needs Joel's separate approval.
+Status (22 Oct 2026): **the text (SMS) part is implemented** after Joel made SMS notifications mandatory for V1,
+following this design (option (a) delay and replace; one text per person per batch; no text about your own edit;
+office visibility and retry). It is **not switched on**: real texts need the Twilio items and Joel's activation
+authorization. Operation, decisions and differences from this note: [operations/sms-notifications.md](../operations/sms-notifications.md).
+Differences: the text names the work and the site town (or job number), not the project name, which often holds
+the customer's name; added and removed assignments and cancelled work are notified as well as moved dates; the
+crew email and the Field banner below remain not built.
+
+Original status: review only.
 
 ## 1. What exists today (facts, with file:line)
 

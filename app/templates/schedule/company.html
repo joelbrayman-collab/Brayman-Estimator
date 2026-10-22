@@ -131,6 +131,14 @@
         </form>
     </details>
 
+    {% set sms_failed = sms_schedule_attention() %}
+    <a class="cal-text-notices{% if sms_failed %} has-failed{% endif %}" data-text-notices-link="{{ sms_failed }}" href="{{ url_for('sms_notifications.office_notices') }}">Text notices{% if sms_failed %} · {{ sms_failed }} not delivered{% endif %}</a>
+    <style>
+        .cal-text-notices { font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: auto; }
+        .cal-text-notices + .cal-connect { margin-left: 0; }
+        .cal-text-notices.has-failed { color: var(--danger, #b42318); border-bottom-color: currentColor; font-weight: 600; }
+        @media (max-width: 700px) { .cal-text-notices { margin-left: 0; } }
+    </style>
     <a class="cal-connect" data-calendar-connect="true" href="{{ url_for('schedule.calendar_feed_settings') }}">Outlook · Google · Apple Calendar</a>
     <a class="button secondary cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
     <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>

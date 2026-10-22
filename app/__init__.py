@@ -276,6 +276,10 @@ def _register_office_auth(app: Flask) -> None:
             # visitor, and its sign-in is the office check kept inside the Home Screen app's scope.
             "useful_calculators.index",
             "useful_calculators.sign_in",
+            # SMS schedule notices, 22 Oct 2026: Twilio's delivery reports and replies. No sign-in; each
+            # request must carry a valid X-Twilio-Signature (app/services/text_messages.py), else 403.
+            "sms_notifications.twilio_status",
+            "sms_notifications.twilio_inbound",
         ):
             return None
         if endpoint is not None and (
@@ -575,6 +579,15 @@ def create_app(config=None):
     from app.routes.session_status import session_status_bp
 
     app.register_blueprint(session_status_bp)
+    # Schedule-change text notices (Joel, 22 Oct 2026, mandatory V1): office, Field and Twilio pages, the
+    # "flask sms" commands and the background sender (app/services/crew_notices.py).
+    from app.routes.sms_notifications import sms_notifications_bp
+    from app.cli.sms import sms_cli
+    from app.services.crew_notices import start_sweeper
+
+    app.register_blueprint(sms_notifications_bp)
+    app.cli.add_command(sms_cli)
+    start_sweeper(app)
 
     @app.route("/field-sw.js")
     def field_service_worker():

@@ -160,6 +160,16 @@ def _crews_of(membership_id):
     return out
 
 
+def _texts_of(membership_id):
+    """The person's schedule-text number, consent and consent history (SMS notices, 22 Oct 2026)."""
+    from app.services.text_messages import consent_history, contact_for
+
+    membership = UserMembership.query.get(membership_id)
+    if membership is None or membership.user is None:
+        return {"contact": None, "history": []}
+    return {"contact": contact_for(membership.user), "history": consent_history(membership.user_id, limit=10)}
+
+
 @people_access_bp.route("")
 def index():
     people = list_people_access(organization_id=_org(), actor=current_user)
@@ -212,6 +222,7 @@ def _detail_page(membership_id, one_time_link=None):
     """The person's page. ``one_time_link`` is shown only in this one response, to the owner who just
     sent it, when the email was not delivered; the response is never cached."""
     person = _person_or_404(membership_id)
+    texts = _texts_of(membership_id)
     page = render_template(
         "settings/people/detail.html",
         person=person,
@@ -222,6 +233,7 @@ def _detail_page(membership_id, one_time_link=None):
         history=people_history(organization_id=_org(), membership_id=membership_id),
         crews=_crews_of(membership_id),
         one_time_link=one_time_link,
+        texts=texts,
     )
     if one_time_link is None:
         return page

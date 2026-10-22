@@ -277,8 +277,8 @@ def uat_case(key):
             flash(str(exc), "error")
             return redirect(url_for("training.uat_case", key=key))
         flash("Result saved.", "success")
-        nxt = svc.uat_overview(trainee)["resume"]
-        return redirect(url_for("training.uat_case", key=nxt) if nxt and nxt != key else url_for("training.uat"))
+        nxt = svc.next_uat_after(trainee, key)  # the next test with no result yet, or the list after the last
+        return redirect(url_for("training.uat_case", key=nxt) if nxt else url_for("training.uat"))
     svc.save_uat_position(trainee, key)
     attempts = svc.uat_history(trainee).get(key, [])
     module = next((m for m in C.modules() if m.key == case.module_key), None)

@@ -1074,7 +1074,8 @@ MODULES = (
                     Step(title="Run one test and record it", app=APP_SUPPLIER, where="Acceptance tests → a test",
                          do="Follow Start and Action on the training site, then choose Pass, Fail or Blocked and press "
                             "Save result",
-                         expect="The result is saved as Attempt 1. A retest after a fix adds Attempt 2; earlier results are kept.",
+                         expect="The result is saved as Attempt 1 and the next test you have not done opens. A retest "
+                                "after a fix (Retest beside the result) adds Attempt 2; earlier results are kept.",
                          if_wrong="Fail and Blocked need What went wrong (needed for Fail or Blocked).",
                          endpoint="training.uat_case", shot="s10-uat-case.png"),
                 ),

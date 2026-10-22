@@ -1698,7 +1698,8 @@ M12 = Module(
                      endpoint="training.uat"),
                 Step(title="Run it and record the result", app=O, where="The test",
                      do="Do it on the training site, then choose Pass, Fail (say what went wrong) or Blocked, and save",
-                     expect="Your attempt is listed. A retest after a fix is a new attempt; the earlier ones stay.",
+                     expect="Result saved; the next test you have not done opens (the list, after the last). A retest "
+                            "after a fix (Retest beside the result) is a new attempt; the earlier ones stay.",
                      if_wrong="Fail needs a description: what you pressed and the words on the screen.",
                      endpoint="training.uat_case"),
             ),

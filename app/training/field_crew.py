@@ -838,14 +838,15 @@ M08 = Module(
                 Step(title="Record the result", app=TC_APP, where="The test → Result",
                      do="Tap Pass, Fail or Blocked. For Fail or Blocked, write what went wrong. Tap Save result",
                      enter="What went wrong: what you tapped and the words on the screen",
-                     expect="Result saved. Acceptance tests opens with your result beside the test. Tap the next "
-                            "test's name.",
+                     expect="Result saved. The next test you have not done opens. After the last one, Acceptance "
+                            "tests opens with every result.",
                      if_wrong="'Say what went wrong' means Fail or Blocked needs the box filled in.",
                      shot="f08-uat-case.png", endpoint="training.uat_case"),
-                Step(title="Retest after a fix", app=TC_APP, where="Acceptance tests → the test marked retest",
-                     do="When Ben says it is fixed, do the test again and record the new result",
+                Step(title="Retest after a fix", app=TC_APP, where="Acceptance tests → Retest (beside a Fail or Blocked)",
+                     do="When Ben says it is fixed, tap Retest, do the test again and record the new result",
                      expect="A new attempt is added. Your earlier results stay under Earlier results.",
-                     if_wrong="Still failing? Record Fail again with what you saw."),
+                     if_wrong="Still failing? Record Fail again with what you saw. Continue testing never reopens a "
+                              "test you already did; use Retest."),
             ),
             exercise="Run every Field acceptance test on the training site and record each result.",
         ),

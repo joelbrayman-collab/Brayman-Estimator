@@ -378,3 +378,38 @@ def test_time_entry_my_time_correction_and_approval_are_taught_in_module_5_only(
     assert "Approve" in cases["uat-f05-approved"].start and "Approved" in cases["uat-f05-approved"].expected
     approved = next(lesson for lesson in f05.lessons if lesson.key == "f05-approved")
     assert any(s.shot == "f05-time-approved.png" for s in approved.steps)
+
+
+def test_after_a_result_the_next_untested_test_opens_and_continue_never_reopens_a_tested_one(app):
+    kevin = _kevin(app)
+    keys = [c.key for c in C.uat_for(C.PATHWAY_FIELD_CREW, "FIELD")]
+
+    def continue_href():
+        m = re.search(r'href="([^"]+)" data-uat-continue', _get(kevin, "/training/uat").get_data(as_text=True))
+        return m.group(1) if m else None
+
+    assert continue_href() == f"/training/uat/{keys[0]}"
+    r = _post(kevin, f"/training/uat/{keys[0]}", data={"status": "FAIL", "issue": "Wrong page (synthetic)"})
+    assert r.headers["Location"].endswith(f"/training/uat/{keys[1]}"), "the next test opens after saving"
+    assert continue_href() == f"/training/uat/{keys[1]}"
+    # Opened and left without a result: Continue reopens it.
+    _get(kevin, f"/training/uat/{keys[1]}")
+    assert continue_href() == f"/training/uat/{keys[1]}"
+    r = _post(kevin, f"/training/uat/{keys[1]}", data={"status": "PASS"})
+    assert r.headers["Location"].endswith(f"/training/uat/{keys[2]}")
+    # Opening a tested one (a retest) does not make Continue reopen it, nor the other tested one.
+    _get(kevin, f"/training/uat/{keys[0]}")
+    assert continue_href() == f"/training/uat/{keys[2]}"
+    page = _get(kevin, "/training/uat").get_data(as_text=True)
+    assert f'data-uat-retest="{keys[0]}"' in page and f'data-uat-retest="{keys[1]}"' not in page
+    # The retest is explicit and adds an attempt; it then moves on to the next untested test.
+    r = _post(kevin, f"/training/uat/{keys[0]}", data={"status": "PASS", "notes": "Retest (synthetic)"})
+    assert r.headers["Location"].endswith(f"/training/uat/{keys[2]}")
+    assert TrainingUatResult.query.filter_by(case_key=keys[0]).count() == 2
+    # Saving out of order wraps round to the first untested test; after the last one, the list.
+    r = _post(kevin, f"/training/uat/{keys[-1]}", data={"status": "PASS"})
+    assert r.headers["Location"].endswith(f"/training/uat/{keys[2]}")
+    for key in keys[2:-1]:
+        r = _post(kevin, f"/training/uat/{key}", data={"status": "PASS"})
+    assert r.headers["Location"].endswith("/training/uat")
+    assert continue_href() is None, "nothing left to continue: every test has a result"

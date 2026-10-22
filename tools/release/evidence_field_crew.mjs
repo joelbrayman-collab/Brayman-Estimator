@@ -210,17 +210,18 @@ test("a Field acceptance test fails, then a retest passes; both attempts are kep
   await pg.fill("textarea[name=issue]", "The sign-in sent me to my training, not Field (synthetic)");
   await pg.fill("textarea[name=notes]", "iPhone, Safari (synthetic)");
   await nav(pg, pg.locator("[data-record]"));
-  // Saved: the list opens with the result beside the test. The next test: Blocked (Ben will see it flagged).
-  assert.match(new URL(pg.url()).pathname, /^\/training\/uat$/);
-  assert.match(await pg.locator(`[data-uat-row="${key}"]`).innerText(), /Fail · retest/);
-  await nav(pg, pg.locator("[data-uat-row] a").nth(1));
+  // Saved: the next test with no result opens at once. Record it Blocked (Ben will see it flagged).
   const second = await pg.getAttribute("[data-uat-case]", "data-uat-case");
-  assert.notEqual(second, key);
+  assert.notEqual(second, key, "the next test opens after saving");
   await pg.check('input[name=status][value="BLOCKED"]');
   await pg.fill("textarea[name=issue]", "No signal on site (synthetic)");
   await nav(pg, pg.locator("[data-record]"));
-  // Retest the failed one after the fix.
-  await go(pg, `/training/uat/${key}`);
+  // Continue testing never reopens a test with a result; the retest is the explicit Retest link.
+  await go(pg, "/training/uat");
+  const cont = await pg.getAttribute("[data-uat-continue]", "href");
+  assert.ok(!cont.endsWith(key) && !cont.endsWith(second), `Continue goes to an untested test: ${cont}`);
+  assert.match(await pg.locator(`[data-uat-row="${key}"]`).innerText(), /Fail · Retest/);
+  await nav(pg, pg.locator(`[data-uat-retest="${key}"]`));
   await pg.check('input[name=status][value="PASS"]');
   await pg.fill("textarea[name=notes]", "Retested after the fix (synthetic)");
   await nav(pg, pg.locator("[data-record]"));

@@ -255,10 +255,28 @@ def uat_overview(trainee) -> dict:
                      "retest": bool(latest and latest.status != UAT_PASS)})
     counts = {s: sum(1 for r in rows if r["latest"] and r["latest"].status == s) for s in UAT_STATUSES}
     counts["NOT_TESTED"] = sum(1 for r in rows if r["latest"] is None)
-    resume = trainee.uat_resume if any(r["case"].key == trainee.uat_resume for r in rows) else None
-    if resume is None:
-        resume = next((r["case"].key for r in rows if r["latest"] is None or r["retest"]), None)
+    # Continue testing opens only a test with no result yet (22 Oct 2026): the one the trainee had open, else
+    # the next untested one after it in the list. A retest of a failed or blocked test is an explicit action
+    # (its Retest link), never Continue.
+    resume = _next_untested(rows, trainee.uat_resume, include_self=True)
     return {"rows": rows, "counts": counts, "total": len(rows), "resume": resume}
+
+
+def _next_untested(rows, key: Optional[str], include_self: bool = False) -> Optional[str]:
+    """The next test in list order with no result, starting after ``key`` (or at it, with include_self) and
+    wrapping round to the top; None when every test has a result."""
+    keys = [r["case"].key for r in rows]
+    untested = {r["case"].key for r in rows if r["latest"] is None}
+    start = keys.index(key) if key in keys else -1
+    if start >= 0 and include_self and key in untested:
+        return key
+    order = keys[start + 1:] + keys[:start + 1] if start >= 0 else keys
+    return next((k for k in order if k in untested), None)
+
+
+def next_uat_after(trainee, key: str) -> Optional[str]:
+    """Where the trainee goes after saving a result for ``key``: the next untested test, or None (the list)."""
+    return _next_untested(uat_overview(trainee)["rows"], key)
 
 
 def uat_case_for_trainee(trainee, key: str) -> C.UatCase:
@@ -364,8 +382,9 @@ GENERAL_HELP = GENERAL_HELP + (
     ("next comes after then", "Do the step, press I did this step (it turns green), and the lesson moves you to the next "
                               "step. After the last step, do the practice exercise and press Finish this lesson."),
     ("fail blocked retest again", "Fail: it did something different from the expected result; say what you saw. "
-                                  "Blocked: you could not get as far as the test; say what stopped you. After a fix, open "
-                                  "the same test and record the new result; your earlier results stay."),
+                                  "Blocked: you could not get as far as the test; say what stopped you. After a fix, press "
+                                  "Retest beside it in Acceptance tests and record the new result; your earlier results "
+                                  "stay."),
     ("role job lessons missing", "Your lessons follow the job you chose. Change it at the bottom of your training home "
                                  "(your progress is kept). Field crew get the Field Crew training: Field lessons only."),
     ("field open app today", "On your training home press Open Field: CalibraytAI Field opens at Today. On Field, the "

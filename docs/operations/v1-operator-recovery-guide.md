@@ -219,7 +219,7 @@ Joel writes the note in `docs/operations/v1-issue-log.md`. That is the record. B
 
 ## Signed out after 30 minutes (from the security release)
 
-Office and supplier accounts are signed out after 30 minutes without activity. Two minutes before, a box asks "Still there?"; press **Stay signed in**. Typing or tapping also keeps you signed in. If the time runs out, sign in again: you return to the same page and what you had typed in a form is put back; check it, then save. Customers signing a document or reading a proposal are not affected.
+Office and supplier accounts are signed out after 30 minutes without activity. Two minutes before, a box asks "Still there?"; press **Stay signed in**. Typing or tapping also keeps you signed in. If the time runs out, sign in again: you return to the same page and what you had typed in a form is put back; check it, then save. Customers signing a document or reading a proposal are not affected. Crew on Field (Field-only people) are signed out only after 8 hours without activity, and closing the Field app on the phone does not sign them out (22 Oct 2026).
 
 ## Owner sign-in recovery
 

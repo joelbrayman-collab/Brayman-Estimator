@@ -377,6 +377,10 @@ def create_app(config=None):
 
     app.config["SQLALCHEMY_DATABASE_URI"] = LOCAL_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    # Field crew sessions are lasting cookies (app/services/session_timeout.py); 8 hours, refreshed on use.
+    from datetime import timedelta as _timedelta
+
+    app.config["PERMANENT_SESSION_LIFETIME"] = _timedelta(hours=8)
     app.config["PLAN_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
     app.config["HISTORICAL_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
     app.config["HISTORICAL_UPLOAD_ZIP_MAX_UNCOMPRESSED"] = 80 * 1024 * 1024

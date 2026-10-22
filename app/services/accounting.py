@@ -247,6 +247,8 @@ def _register(org, record_type, key, ref, row, amount, user) -> str:
 
 
 def _already(org, record_type) -> set:
+    if record_type == RECORD_TIME:
+        return _time_keys_exported(org)
     return {r.record_key for r in AccountingExportRecord.query.filter_by(organization_id=org, record_type=record_type).all()}
 
 
@@ -280,7 +282,7 @@ DATE_FORMAT = "%d/%m/%Y"  # choose dd/MM/yyyy when QuickBooks asks for the date 
 def preview(org, kind, *, include_exported=False) -> Dict:
     """Rows that would go into the next file of this kind, and which were exported before."""
     builders = {"customers": _customer_rows, "suppliers": _vendor_rows, "invoices": _invoice_rows,
-                "bills": _bill_rows, "purchase_orders": _po_rows}
+                "bills": _bill_rows, "purchase_orders": _po_rows, "time": _time_rows}
     if kind not in builders:
         raise AccountingError("Unknown export.")
     record_type, header, rows = builders[kind](org)
@@ -290,7 +292,11 @@ def preview(org, kind, *, include_exported=False) -> Dict:
     chosen = rows if include_exported else fresh
     if kind == "invoices" and len({r["InvoiceNo"] for r in chosen}) > MAX_INVOICES_PER_FILE:
         chosen = [r for r in chosen if r["InvoiceNo"] in sorted({x["InvoiceNo"] for x in chosen})[:MAX_INVOICES_PER_FILE]]
-    return {"kind": kind, "record_type": record_type, "header": header, "rows": chosen, "fresh": fresh, "again": again}
+    result = {"kind": kind, "record_type": record_type, "header": header, "rows": chosen, "fresh": fresh, "again": again}
+    if kind == "time":
+        result["replaced"] = _time_replaced_after_export(org, done)
+        result["hours"] = sum((Decimal(r["Hours"]) for r in chosen), Decimal("0"))
+    return result
 
 
 def export(org, kind, *, user, include_exported=False, reason="") -> tuple:
@@ -302,6 +308,10 @@ def export(org, kind, *, user, include_exported=False, reason="") -> tuple:
         raise AccountingError("Nothing new to export. Everything here is already in a QuickBooks file.")
     outcome = {"new": 0, "again": 0}
     for r in p["rows"]:
+        if p["record_type"] == RECORD_TIME:
+            # Time has no export-record row (no schema change): the export event's keys are the record.
+            outcome["again" if r in p["again"] else "new"] += 1
+            continue
         outcome[_register(org, p["record_type"], r["_key"], r["_ref"], {h: r.get(h) for h in p["header"]}, r.get("_amount"), user)] += 1
         if p["record_type"] == RECORD_INVOICE:
             inv = CustomerInvoice.query.filter_by(organization_id=org, number=r["InvoiceNo"]).first()
@@ -318,9 +328,13 @@ def export(org, kind, *, user, include_exported=False, reason="") -> tuple:
 
 def _customer_rows(org):
     from app.models import Client
+    from app.services.time_entry import company_time_client_id
 
+    own_company = company_time_client_id(org)  # holds shop time; never a QuickBooks customer
     rows = []
     for c in Client.query.filter_by(organization_id=org).order_by(Client.name).all():
+        if own_company is not None and c.id == own_company:
+            continue
         row = _client_row(c)
         row.update(_key=f"C{c.id}", _ref=c.name)
         rows.append(row)
@@ -517,5 +531,192 @@ def record_correction(org, invoice, *, user, note):
 
 
 def last_reconciliation(org):
-    return (AccountingEvent.query.filter_by(organization_id=org, kind=EVENT_IMPORT)
+    return (AccountingEvent.query.filter_by(organization_id=org, kind=EVENT_IMPORT, subject="invoice_list")
+            .order_by(AccountingEvent.id.desc()).first())
+
+
+# ------------------------------------------------------------------ approved time (Joel, 22 Oct 2026)
+#
+# Approved Time Entry hours for QuickBooks Online time / payroll, one row per approved entry. QuickBooks
+# Online's Import data has no time-activity import, so this file is entered by hand (Weekly timesheet)
+# or given to whoever runs payroll; CalibraytAI never posts it. No money in the file: hours only, so
+# no costing rate or wage leaves CalibraytAI this way. Each row goes into a file once (its key is
+# T<entry id>, kept in the export event); a correction after export is a new key and the replaced
+# entry is listed so it can be changed in QuickBooks too. Checked against QuickBooks' time report
+# (reconcile_time) by worker and day.
+
+RECORD_TIME = "TIME"  # not an AccountingExportRecord type: kept in accounting_events (no schema change)
+TIME_EXPORT_SUBJECT = "time"
+TIME_RECONCILE_SUBJECT = "time_activities"
+TIME_SERVICE_ITEM = "Labour"
+TIME_HEADER = ["Activity Date", "Employee", "Customer", "Job", "Service Item", "Hours", "Duration (h:mm)",
+               "Billable", "Kind of work", "Change order", "Work", "Description", "CalibraytAI ref"]
+
+
+def _hours_hhmm(hours: Decimal) -> str:
+    minutes = int((Decimal(hours) * 60).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    return f"{minutes // 60}:{minutes % 60:02d}"
+
+
+def _time_keys_exported(org) -> set:
+    keys = set()
+    for event in AccountingEvent.query.filter_by(organization_id=org, kind=EVENT_EXPORT, subject=TIME_EXPORT_SUBJECT).all():
+        keys.update((event.detail_json or {}).get("keys") or [])
+    return keys
+
+
+def _time_kind_text(entry, company: bool):
+    from app.services.work_scope import contractor_scope_label
+
+    if company:
+        return "Company time"
+    return contractor_scope_label(entry.scope_origin)
+
+
+def _time_rows(org):
+    from app.models.time_entry import TIME_STATUS_APPROVED, LabourTimeEntry
+    from app.services.time_entry import is_company_time_project
+
+    rows = []
+    entries = (LabourTimeEntry.query.filter_by(organization_id=org, status=TIME_STATUS_APPROVED)
+               .order_by(LabourTimeEntry.worker_display_name, LabourTimeEntry.work_date, LabourTimeEntry.id).all())
+    for e in entries:
+        project = e.project
+        company = is_company_time_project(project)
+        job = project.name if company else job_reference(project)
+        kind = _time_kind_text(e, company)
+        co = e.change_order.number if (e.change_order is not None and not company) else ""
+        hours = Decimal(str(e.hours)).quantize(CENT)
+        rows.append({
+            "Activity Date": e.work_date.strftime(DATE_FORMAT), "Employee": e.worker_display_name,
+            "Customer": "" if company else (project.client.name if project.client else ""), "Job": job,
+            "Service Item": TIME_SERVICE_ITEM, "Hours": str(hours), "Duration (h:mm)": _hours_hhmm(hours),
+            "Billable": "Yes" if (e.scope_origin == "EXTRA_WORK" and not company) else "No",
+            "Kind of work": kind, "Change order": co,
+            "Work": f"{e.element_display_name} — {e.activity_display_name}",
+            "Description": f"{kind}{' ' + co if co else ''}: {e.element_display_name} — {e.activity_display_name} (Job: {job}) [CT-T{e.id}]",
+            "CalibraytAI ref": f"CT-T{e.id}",
+            "_key": f"T{e.id}", "_ref": f"CT-T{e.id}", "_amount": None,
+            "_worker": e.worker_display_name, "_date": e.work_date, "_hours": hours,
+        })
+    return RECORD_TIME, TIME_HEADER, rows
+
+
+def _time_replaced_after_export(org, done) -> list:
+    """Entries already in a QuickBooks file that were later corrected (replaced): change them there too."""
+    from app.models.time_entry import TIME_STATUS_SUPERSEDED, LabourTimeEntry
+
+    out = []
+    for e in LabourTimeEntry.query.filter_by(organization_id=org, status=TIME_STATUS_SUPERSEDED).order_by(LabourTimeEntry.id).all():
+        if f"T{e.id}" not in done:
+            continue
+        successor = LabourTimeEntry.query.filter_by(organization_id=org, supersedes_id=e.id).first()
+        out.append({"ref": f"CT-T{e.id}", "employee": e.worker_display_name, "date": e.work_date.strftime(DATE_FORMAT),
+                    "hours": str(Decimal(str(e.hours)).quantize(CENT)),
+                    "now": (f"CT-T{successor.id}: {Decimal(str(successor.hours)).quantize(CENT)} hours"
+                            if successor is not None else "")})
+    return out
+
+
+_T_DATE_HEADERS = ("activity date", "date", "txn date", "transaction date")
+_T_EMPLOYEE_HEADERS = ("employee", "employee name", "name", "employee/vendor")
+_T_HOURS_HEADERS = ("duration", "hours", "time", "qty", "quantity")
+_T_MEMO_HEADERS = ("memo/description", "description", "memo", "notes")
+
+
+def _parse_hours(text) -> Optional[Decimal]:
+    t = (text or "").strip()
+    if not t:
+        return None
+    if ":" in t:
+        parts = t.split(":")
+        try:
+            h, m = int(parts[0] or 0), int(parts[1] or 0)
+        except ValueError:
+            return None
+        return (Decimal(h) + Decimal(m) / 60).quantize(CENT, rounding=ROUND_HALF_UP)
+    return _decimal(t)
+
+
+def _parse_day(text) -> Optional[date]:
+    t = (text or "").strip()
+    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%m/%d/%Y", "%d-%m-%Y", "%b %d, %Y"):
+        try:
+            return datetime.strptime(t, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def reconcile_time(org, *, filename, content: bytes, user) -> Dict:
+    """Compare QuickBooks' time report CSV (Reports → Time Activities by Employee Detail → Export to CSV)
+    with the approved hours CalibraytAI exported, by worker and day. Reads only; changes nothing."""
+    if not content:
+        raise AccountingError("Choose the CSV you exported from QuickBooks.")
+    if len(content) > MAX_REPORT_BYTES:
+        raise AccountingError("The file is larger than 5 MB.")
+    text = content.decode("utf-8-sig", errors="replace")
+    reader = list(csv.reader(io.StringIO(text)))
+    header_at = next((i for i, row in enumerate(reader[:15]) if _find(row, _T_DATE_HEADERS) is not None
+                      and _find(row, _T_HOURS_HEADERS) is not None), None)
+    if header_at is None:
+        raise AccountingError("This does not look like a QuickBooks time report: it needs Activity Date and Duration columns.")
+    header = reader[header_at]
+    i_date, i_hours = _find(header, _T_DATE_HEADERS), _find(header, _T_HOURS_HEADERS)
+    i_emp, i_memo = _find(header, _T_EMPLOYEE_HEADERS), _find(header, _T_MEMO_HEADERS)
+    theirs: Dict[tuple, Decimal] = {}
+    refs_seen: Dict[str, int] = {}
+    group_name = ""
+    for row in reader[header_at + 1:]:
+        cells = [c.strip() for c in row]
+        if not any(cells):
+            continue
+        # QuickBooks groups the detail report: a row with only the employee's name, later "Total for ...".
+        if cells[0] and not any(cells[1:]) and not cells[0].lower().startswith("total"):
+            group_name = cells[0]
+            continue
+        if len(cells) <= max(i_date, i_hours):
+            continue
+        day = _parse_day(cells[i_date])
+        hours = _parse_hours(cells[i_hours])
+        if day is None or hours is None:
+            continue
+        name = cells[i_emp] if i_emp is not None and len(cells) > i_emp and cells[i_emp] else group_name
+        key = (" ".join(name.split()).lower(), day)
+        theirs[key] = theirs.get(key, Decimal("0")) + hours
+        if i_memo is not None and len(cells) > i_memo:
+            for ref in re.findall(r"CT-T\d+", cells[i_memo]):
+                refs_seen[ref] = refs_seen.get(ref, 0) + 1
+    exported = _time_keys_exported(org)
+    _, _, rows = _time_rows(org)
+    ours: Dict[tuple, Decimal] = {}
+    names: Dict[tuple, str] = {}
+    for r in rows:
+        if r["_key"] not in exported:
+            continue
+        key = (" ".join(r["_worker"].split()).lower(), r["_date"])
+        ours[key] = ours.get(key, Decimal("0")) + r["_hours"]
+        names[key] = r["_worker"]
+    result = {"matched": [], "differs": [], "missing_in_quickbooks": [], "unknown_in_calibraytai": [],
+              "duplicates": [], "replaced": _time_replaced_after_export(org, exported)}
+    for key, hours in sorted(ours.items(), key=lambda kv: (kv[0][1], kv[0][0])):
+        label = f"{names[key]}, {key[1].strftime(DATE_FORMAT)}"
+        if key not in theirs:
+            result["missing_in_quickbooks"].append({"who": label, "ours": str(hours)})
+        elif abs(theirs[key] - hours) > CENT / 2:
+            result["differs"].append({"who": label, "ours": str(hours), "quickbooks": str(theirs[key])})
+        else:
+            result["matched"].append(label)
+    for key, hours in sorted(theirs.items(), key=lambda kv: (kv[0][1], kv[0][0])):
+        if key not in ours:
+            result["unknown_in_calibraytai"].append({"who": f"{key[0]}, {key[1].strftime(DATE_FORMAT)}", "quickbooks": str(hours)})
+    result["duplicates"] = [{"ref": ref, "count": n} for ref, n in sorted(refs_seen.items()) if n > 1]
+    _event(org, EVENT_IMPORT, TIME_RECONCILE_SUBJECT, user, filename=(filename or "quickbooks-time.csv")[:255],
+           content=content, rows=len(theirs), detail={k: v for k, v in result.items()})
+    db.session.commit()
+    return result
+
+
+def last_time_reconciliation(org):
+    return (AccountingEvent.query.filter_by(organization_id=org, kind=EVENT_IMPORT, subject=TIME_RECONCILE_SUBJECT)
             .order_by(AccountingEvent.id.desc()).first())

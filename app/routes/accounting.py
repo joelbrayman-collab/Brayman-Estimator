@@ -5,6 +5,7 @@
 /accounting/invoices/<id>           one invoice (void, record a correction)
 /accounting/export/<kind>           preview (GET) and download (POST) a QuickBooks file
 /accounting/reconcile               upload QuickBooks' Invoice List CSV
+/accounting/reconcile/time          upload QuickBooks' time report CSV (approved hours by worker and day)
 
 Office members only: a field-only member is refused (403) here as well as by the Field wall.
 """
@@ -30,6 +31,8 @@ EXPORTS = {
     "invoices": ("Invoices", "Settings → Import data → Invoices"),
     "bills": ("Bills from purchase orders", "Settings → Import data → Bills (check each against the supplier's invoice first)"),
     "purchase_orders": ("Purchase orders (list to enter by hand)", "QuickBooks has no purchase-order import: + New → Purchase order"),
+    "time": ("Approved time (hours to enter by hand)",
+             "QuickBooks has no time import: + New → Weekly timesheet for each employee, or give the file to whoever runs payroll"),
 }
 
 
@@ -153,3 +156,21 @@ def reconcile():
         except svc.AccountingError as exc:
             flash(str(exc), "error")
     return render_template("accounting/reconcile.html", result=result)
+
+
+@accounting_bp.route("/reconcile/time", methods=["GET", "POST"])
+def reconcile_time():
+    result = None
+    if request.method == "POST":
+        upload = request.files.get("report")
+        try:
+            if upload is None or not upload.filename:
+                raise svc.AccountingError("Choose the CSV you exported from QuickBooks.")
+            if not upload.filename.lower().endswith(".csv"):
+                raise svc.AccountingError("Choose a .csv file (QuickBooks: Export to CSV).")
+            result = svc.reconcile_time(_org(), filename=upload.filename,
+                                        content=upload.read(svc.MAX_REPORT_BYTES + 1), user=current_user)
+        except svc.AccountingError as exc:
+            flash(str(exc), "error")
+    return render_template("accounting/reconcile_time.html", result=result,
+                           last=svc.last_time_reconciliation(_org()))

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Check time in QuickBooks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Check time in QuickBooks{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Check time in QuickBooks</h2>
+  <p class="page-purpose">In QuickBooks Online: Reports → Time Activities by Employee Detail → choose the dates → Export → Export to CSV.
+    Upload that file here. Hours are compared by worker and day with the approved time CalibraytAI put in a QuickBooks file. Nothing is changed.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
+<form class="form-panel" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="acct-actions"><input type="file" name="report" accept=".csv,text/csv" aria-label="QuickBooks time report"><button class="button-primary" type="submit">Check</button></div>
+  {% if last %}<p class="muted-copy">Last checked {{ last.occurred_at|local_time("%Y-%m-%d %H:%M") }} by {{ last.actor_name }}.</p>{% endif %}
+</form>
+{% if result %}
+<div class="form-panel" data-time-reconciliation>
+  <h3>Result</h3>
+  <p data-matched>{{ result.matched|length }} worker-days match.</p>
+  {% if result.differs %}<p><strong>Hours differ</strong> (fix the timesheet in QuickBooks, or correct the approved time here)</p><ul class="acct-list" data-differs>{% for d in result.differs %}<li>{{ d.who }}: CalibraytAI {{ d.ours }} h, QuickBooks {{ d.quickbooks }} h</li>{% endfor %}</ul>{% endif %}
+  {% if result.missing_in_quickbooks %}<p><strong>In a CalibraytAI file but not in QuickBooks</strong> (enter the timesheet, or check the report dates)</p><ul class="acct-list" data-missing>{% for d in result.missing_in_quickbooks %}<li>{{ d.who }}: {{ d.ours }} h</li>{% endfor %}</ul>{% endif %}
+  {% if result.unknown_in_calibraytai %}<p><strong>In QuickBooks but not approved here</strong> (entered directly in QuickBooks, or not yet exported)</p><ul class="acct-list" data-unknown>{% for d in result.unknown_in_calibraytai %}<li>{{ d.who }}: {{ d.quickbooks }} h</li>{% endfor %}</ul>{% endif %}
+  {% if result.duplicates %}<p><strong>Entered in QuickBooks more than once</strong> (delete the extra one there)</p><ul class="acct-list" data-duplicates>{% for d in result.duplicates %}<li>{{ d.ref }} × {{ d.count }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.replaced %}<p><strong>Corrected here after it went to QuickBooks</strong> (change it in QuickBooks too)</p><ul class="acct-list" data-replaced>{% for r in result.replaced %}<li>{{ r.ref }} {{ r.employee }} {{ r.date }} {{ r.hours }} h{% if r.now %} → now {{ r.now }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

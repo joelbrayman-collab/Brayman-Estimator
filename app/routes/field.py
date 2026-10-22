@@ -51,13 +51,17 @@ from app.services.time_entry import (
     TimeEntryError,
     TimeEntryForbiddenError,
     TimeEntryNotFoundError,
+    get_company_time_project,
     get_time_entry,
+    is_company_time_project,
     list_time_work_choices,
     recent_worker_activities,
     recent_worker_time,
     resubmit_time,
+    returned_time_for_worker,
     submit_time,
     time_entry_presentation,
+    worker_time_totals,
 )
 from app.services.work_scope import WorkScopeError, actor_name, create_extra_work
 from app.services.work_structure import list_project_work_elements
@@ -228,6 +232,9 @@ def today():
         today_weekday=field_today_weekday(),
         today_natural_date=field_today_natural_date(),
         my_work_heading=field_my_work_heading(current_user.display_name),
+        returned_time_count=len(
+            returned_time_for_worker(worker_user_id=current_user.id, organization_id=organization.id)
+        ),
         actor_name=current_user.display_name,
     )
 
@@ -479,6 +486,23 @@ def _optional_int(value):
     return int(raw)
 
 
+def _posted_activity_id(organization_id: str, project_id: int):
+    """The work for this time. A work item scheduled as a whole (Scheduled today) posts only the work
+    item: its single work is used; with several, the person is asked to choose (22 Oct 2026)."""
+    activity_id = _optional_int(request.form.get("project_work_activity_id"))
+    if activity_id is not None:
+        return activity_id
+    element_id = _optional_int(request.form.get("project_work_element_id"))
+    if element_id is None or (request.form.get("extra_work_description") or "").strip():
+        return 0
+    for group in list_time_work_choices(project_id, organization_id=organization_id):
+        if group["element"].id == element_id:
+            if len(group["activities"]) == 1:
+                return group["activities"][0].id
+            raise TimeEntryError(f"Choose the work you did on {group['element'].display_name}.")
+    return 0
+
+
 @field_bp.route("/time")
 def my_time():
     organization = _organization()
@@ -487,10 +511,22 @@ def my_time():
         organization_id=organization.id,
     )
     project = _confirmed_operating_project(organization)
+    if is_company_time_project(project):
+        project = None
+    company_project = get_company_time_project(organization.id)
+    if company_project is not None and company_project.operating_state != OPERATING_STATE_ACTIVE:
+        company_project = None
+    returned = returned_time_for_worker(worker_user_id=current_user.id, organization_id=organization.id)
+    shown = {entry.id for entry in entries}
+    # A returned entry always shows, however old, so it can be fixed (22 Oct 2026).
+    entries = [entry for entry in returned if entry.id not in shown] + list(entries)
     return render_template(
         "field/my_time.html",
         rows=[time_entry_presentation(entry) for entry in entries],
         project=project,
+        company_project=company_project,
+        returned_count=len(returned),
+        week=worker_time_totals(worker_user_id=current_user.id, organization_id=organization.id),
         actor_name=current_user.display_name,
     )
 
@@ -501,7 +537,10 @@ def time_entry(project_id):
     project = _project_or_redirect(organization, project_id)
     if project is None:
         return redirect(url_for("field.projects"), code=302)
-    _set_confirmed_project(organization.id, project.id)
+    company_time = is_company_time_project(project)
+    if not company_time:
+        # Shop time does not change which job the person is on today.
+        _set_confirmed_project(organization.id, project.id)
     returned_id = _optional_int(request.values.get("returned_id"))
     returned = None
     if returned_id is not None:
@@ -520,20 +559,14 @@ def time_entry(project_id):
                     time_entry_id=returned.id,
                     hours=request.form.get("hours"),
                     work_date=request.form.get("work_date"),
-                    project_work_activity_id=_optional_int(
-                        request.form.get("project_work_activity_id")
-                    )
-                    or 0,
+                    project_work_activity_id=_posted_activity_id(organization.id, project.id),
                     worker_note=request.form.get("worker_note"),
                     organization_id=organization.id,
                 )
             else:
                 entry = submit_time(
                     project_id=project.id,
-                    project_work_activity_id=_optional_int(
-                        request.form.get("project_work_activity_id")
-                    )
-                    or 0,
+                    project_work_activity_id=_posted_activity_id(organization.id, project.id),
                     hours=request.form.get("hours"),
                     work_date=request.form.get("work_date"),
                     worker_note=request.form.get("worker_note"),
@@ -544,8 +577,9 @@ def time_entry(project_id):
                     extra_work_element_name=request.form.get("extra_work_element_name"),
                     organization_id=organization.id,
                 )
-            session[LAST_TIME_ELEMENT_SESSION_KEY] = entry.project_work_element_id
-            flash("Time sent for approval.", "success")
+            if not company_time:
+                session[LAST_TIME_ELEMENT_SESSION_KEY] = entry.project_work_element_id
+            flash("Time sent again for approval." if returned is not None else "Time sent for approval.", "success")
             return redirect(url_for("field.my_time"), code=302)
         except (TimeEntryError, TimeEntryForbiddenError, TypeError, ValueError) as exc:
             flash(
@@ -558,7 +592,9 @@ def time_entry(project_id):
         project_id=project.id,
         organization_id=organization.id,
     )
-    last_element_id = session.get(LAST_TIME_ELEMENT_SESSION_KEY)
+    last_element_id = None if company_time else session.get(LAST_TIME_ELEMENT_SESSION_KEY)
+    if company_time and len(choices) == 1:
+        last_element_id = choices[0]["element"].id
     if returned is not None:
         last_element_id = returned.project_work_element_id
     work_date = returned.work_date if returned is not None else date.today()
@@ -578,7 +614,8 @@ def time_entry(project_id):
         recent_activity_ids=recent_ids,
         last_element_id=last_element_id,
         returned=returned,
-        suggestions=suggestions,
+        suggestions=[] if company_time else suggestions,
+        company_time=company_time,
         today=date.today().isoformat(),
         actor_name=current_user.display_name,
     )

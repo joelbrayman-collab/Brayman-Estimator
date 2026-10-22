@@ -463,3 +463,280 @@ def _remaining_and_over(
     if used > allowed:
         return None, (used - allowed).quantize(HOURS_QUANTUM)
     return (allowed - used).quantize(HOURS_QUANTUM), None
+
+
+# ------------------------------------------------------------------ labour cost (Joel, 22 Oct 2026)
+#
+# Estimated versus actual labour hours AND cost, by kind of work: original work, each change order,
+# extra work not yet on an approved change order, and shop / company time. Actual cost is approved
+# Time Entry hours x the company's authorized costing rate (the ORG-APPROVED Direct Labour Cost Rate
+# Standard in force on the work date, Labour rates page). Payroll wages (Person hourly wage) are never
+# read. Office only: the Project page is behind the office wall; Field pages never call this.
+
+MONEY_QUANTUM = Decimal("0.01")
+COST_KIND_ORIGINAL = "ORIGINAL"
+COST_KIND_CHANGE_ORDER = "CHANGE_ORDER"
+COST_KIND_EXTRA_WORK = "EXTRA_WORK"
+COST_KIND_COMPANY = "COMPANY"
+
+
+class _RateBook:
+    """The authorized company costing rate on a date, looked up once per date."""
+
+    def __init__(self, organization_id: str):
+        self.organization_id = organization_id
+        self._by_date = {}
+
+    def on(self, day: date):
+        from datetime import datetime, time
+
+        from app.services.labour_engine import _active_org_approved_dlcrs
+
+        if day not in self._by_date:
+            row = _active_org_approved_dlcrs(self.organization_id, datetime.combine(day, time.max))
+            if row is None:
+                row = self._first_rate_after(day)
+            self._by_date[day] = row
+        return self._by_date[day]
+
+    def _first_rate_after(self, day: date):
+        """Work done before the company's first authorized rate took effect is costed at that first rate."""
+        from datetime import datetime, time
+
+        from app.models.labour_engine import DirectLabourCostRateStandard
+
+        start = datetime.combine(day, time.max)
+        rows = (
+            DirectLabourCostRateStandard.query.filter_by(
+                organization_id=self.organization_id,
+                approval_status="APPROVED",
+                evidence_class="ORG-APPROVED",
+            )
+            .order_by(DirectLabourCostRateStandard.effective_from.asc(), DirectLabourCostRateStandard.version_number.asc())
+            .all()
+        )
+        for row in rows:
+            if row.effective_from is not None and row.effective_from > start:
+                return row
+        return None
+
+
+def company_costing_rate(organization_id, *, on: Optional[date] = None) -> Optional[dict]:
+    """The authorized company costing rate in force on a date (default today), or None."""
+    row = _RateBook(_org_id(organization_id)).on(on or date.today())
+    if row is None:
+        return None
+    return {
+        "rate": Decimal(str(row.rate_per_man_hour)).quantize(MONEY_QUANTUM),
+        "currency": row.currency,
+        "version": row.version_number,
+        "standard_id": row.id,
+    }
+
+
+def _money(value: Decimal) -> Decimal:
+    return value.quantize(MONEY_QUANTUM)
+
+
+def _cost_kind(activity: ProjectWorkActivity, company: bool) -> tuple:
+    if company:
+        return (COST_KIND_COMPANY, None)
+    lineage = inherit_scope_lineage(activity)
+    origin = lineage["effective_origin"]
+    if origin == COST_KIND_CHANGE_ORDER:
+        return (COST_KIND_CHANGE_ORDER, lineage.get("change_order_id"))
+    if origin == COST_KIND_ORIGINAL:
+        return (COST_KIND_ORIGINAL, None)
+    return (COST_KIND_EXTRA_WORK, None)
+
+
+def assemble_project_labour_cost(organization_id, project_id, *, today: Optional[date] = None) -> dict:
+    """Estimated vs actual labour hours and cost for one Project, by kind of work. Read only."""
+    from app.models.time_entry import (
+        TIME_STATUS_APPROVED,
+        TIME_STATUS_SUBMITTED,
+        LabourTimeEntry,
+    )
+    from app.services.time_entry import COMPANY_TIME_LABEL, is_company_time_project
+    from app.services.work_scope import contractor_change_order_label
+
+    org_id = _org_id(organization_id)
+    try:
+        project = _project_or_404(project_id, org_id)
+    except WorkStructureError as exc:
+        raise TimeEntryNotFoundError("Project not found.") from exc
+    company = is_company_time_project(project)
+    rates = _RateBook(org_id)
+    as_of = today or date.today()
+    current_rate = rates.on(as_of)
+
+    activities = (
+        ProjectWorkActivity.query.join(ProjectWorkElement)
+        .options(
+            joinedload(ProjectWorkActivity.scope_deltas),
+            joinedload(ProjectWorkActivity.change_order),
+            joinedload(ProjectWorkActivity.source_labour_snapshot),
+        )
+        .filter(
+            ProjectWorkElement.project_id == project.id,
+            ProjectWorkActivity.organization_id == org_id,
+        )
+        .all()
+    )
+    groups = {}
+    kind_of_activity = {}
+    change_orders = {}
+
+    def bucket(key):
+        if key not in groups:
+            groups[key] = {
+                "estimate_known": False,
+                "estimated_hours": Decimal("0"),
+                "estimated_cost": Decimal("0"),
+                "estimated_cost_known": True,
+                "actual_hours": Decimal("0"),
+                "actual_cost": Decimal("0"),
+                "unrated_hours": Decimal("0"),
+                "waiting_hours": Decimal("0"),
+            }
+        return groups[key]
+
+    for activity in activities:
+        key = _cost_kind(activity, company)
+        kind_of_activity[activity.id] = key
+        if key[0] == COST_KIND_CHANGE_ORDER and activity.change_order is not None:
+            change_orders[key[1]] = activity.change_order
+        if key[0] in (COST_KIND_EXTRA_WORK, COST_KIND_COMPANY):
+            continue
+        if not _activity_has_hour_evidence(activity):
+            continue
+        row = bucket(key)
+        hours = current_authorized_hours(activity)
+        row["estimate_known"] = True
+        row["estimated_hours"] += hours
+        snapshot = activity.source_labour_snapshot
+        if snapshot is not None and snapshot.resolved_direct_labour_cost_rate is not None:
+            rate = Decimal(str(snapshot.resolved_direct_labour_cost_rate))
+        elif current_rate is not None:
+            rate = Decimal(str(current_rate.rate_per_man_hour))
+        else:
+            rate = None
+        if rate is None:
+            row["estimated_cost_known"] = False
+        else:
+            row["estimated_cost"] += hours * rate
+
+    entries = (
+        LabourTimeEntry.query.filter(
+            LabourTimeEntry.organization_id == org_id,
+            LabourTimeEntry.project_id == project.id,
+            LabourTimeEntry.status.in_((TIME_STATUS_APPROVED, TIME_STATUS_SUBMITTED)),
+        )
+        .all()
+    )
+    for entry in entries:
+        key = kind_of_activity.get(entry.project_work_activity_id)
+        if key is None:
+            key = (COST_KIND_COMPANY, None) if company else (entry.scope_origin, entry.change_order_id)
+        row = bucket(key)
+        hours = Decimal(str(entry.hours))
+        if entry.status == TIME_STATUS_SUBMITTED:
+            row["waiting_hours"] += hours
+            continue
+        row["actual_hours"] += hours
+        standard = rates.on(entry.work_date)
+        if standard is None:
+            row["unrated_hours"] += hours
+        else:
+            row["actual_cost"] += hours * Decimal(str(standard.rate_per_man_hour))
+
+    def label(key):
+        kind, co_id = key
+        if kind == COST_KIND_ORIGINAL:
+            return "Original work"
+        if kind == COST_KIND_CHANGE_ORDER:
+            co = change_orders.get(co_id)
+            return f"Change order {contractor_change_order_label(co)}" if co is not None else "Change order work"
+        if kind == COST_KIND_COMPANY:
+            return COMPANY_TIME_LABEL
+        return "Extra work (not on an approved change order)"
+
+    def order(key):
+        kind, co_id = key
+        rank = {COST_KIND_ORIGINAL: 0, COST_KIND_CHANGE_ORDER: 1, COST_KIND_EXTRA_WORK: 2, COST_KIND_COMPANY: 3}
+        co = change_orders.get(co_id)
+        return (rank.get(kind, 4), getattr(co, "number", "") or "", co_id or 0)
+
+    rows = []
+    totals = {
+        "estimated_hours": Decimal("0"),
+        "estimated_cost": Decimal("0"),
+        "actual_hours": Decimal("0"),
+        "actual_cost": Decimal("0"),
+        "waiting_hours": Decimal("0"),
+        "unrated_hours": Decimal("0"),
+    }
+    any_estimate = False
+    estimate_cost_known = True
+    for key in sorted(groups, key=order):
+        g = groups[key]
+        if not g["estimate_known"] and g["actual_hours"] == 0 and g["waiting_hours"] == 0:
+            continue
+        est_hours = g["estimated_hours"].quantize(HOURS_QUANTUM) if g["estimate_known"] else None
+        est_cost = (
+            _money(g["estimated_cost"]) if g["estimate_known"] and g["estimated_cost_known"] else None
+        )
+        actual_hours = g["actual_hours"].quantize(HOURS_QUANTUM)
+        actual_cost = _money(g["actual_cost"])
+        rows.append(
+            {
+                "kind": key[0],
+                "change_order_id": key[1],
+                "label": label(key),
+                "estimated_hours": est_hours,
+                "estimated_cost": est_cost,
+                "actual_hours": actual_hours,
+                "actual_cost": actual_cost,
+                "waiting_hours": g["waiting_hours"].quantize(HOURS_QUANTUM),
+                "unrated_hours": g["unrated_hours"].quantize(HOURS_QUANTUM),
+                "hours_difference": (actual_hours - est_hours) if est_hours is not None else None,
+                "cost_difference": (actual_cost - est_cost) if est_cost is not None else None,
+            }
+        )
+        if g["estimate_known"]:
+            any_estimate = True
+            totals["estimated_hours"] += g["estimated_hours"]
+            if g["estimated_cost_known"]:
+                totals["estimated_cost"] += g["estimated_cost"]
+            else:
+                estimate_cost_known = False
+        for name in ("actual_hours", "actual_cost", "waiting_hours", "unrated_hours"):
+            totals[name] += g[name]
+    total_est_hours = totals["estimated_hours"].quantize(HOURS_QUANTUM) if any_estimate else None
+    total_est_cost = _money(totals["estimated_cost"]) if any_estimate and estimate_cost_known else None
+    total_actual_hours = totals["actual_hours"].quantize(HOURS_QUANTUM)
+    total_actual_cost = _money(totals["actual_cost"])
+    return {
+        "is_company_time": company,
+        "rate": (
+            {
+                "rate": _money(Decimal(str(current_rate.rate_per_man_hour))),
+                "currency": current_rate.currency,
+                "version": current_rate.version_number,
+            }
+            if current_rate is not None
+            else None
+        ),
+        "rows": rows,
+        "total": {
+            "label": "All labour",
+            "estimated_hours": total_est_hours,
+            "estimated_cost": total_est_cost,
+            "actual_hours": total_actual_hours,
+            "actual_cost": total_actual_cost,
+            "waiting_hours": totals["waiting_hours"].quantize(HOURS_QUANTUM),
+            "unrated_hours": totals["unrated_hours"].quantize(HOURS_QUANTUM),
+            "hours_difference": (total_actual_hours - total_est_hours) if total_est_hours is not None else None,
+            "cost_difference": (total_actual_cost - total_est_cost) if total_est_cost is not None else None,
+        },
+    }

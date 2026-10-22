@@ -931,18 +931,21 @@
     var extraToggle = document.getElementById("field-time-extra-toggle");
     var extra = document.getElementById("field-time-extra");
     if (element && activity) {
+      // iPhone Safari ignores `hidden` on <option>, so every job's work showed under every work item
+      // (22 Oct 2026). Keep the full list and put back only the work of the chosen item.
+      var allOptions = Array.prototype.slice.call(activity.options);
       function filterActivities() {
         var selected = element.value;
-        Array.prototype.forEach.call(activity.options, function (option) {
-          if (!option.value) {
+        var keep = activity.value;
+        while (activity.options.length) activity.remove(0);
+        allOptions.forEach(function (option) {
+          if (!option.value || option.getAttribute("data-element-id") === selected) {
             option.hidden = false;
-            return;
+            activity.add(option);
           }
-          option.hidden = option.getAttribute("data-element-id") !== selected;
         });
-        if (activity.selectedOptions.length && activity.selectedOptions[0].hidden) {
-          activity.value = "";
-        }
+        activity.value = keep;
+        if (activity.value !== keep) activity.value = "";
       }
       element.addEventListener("change", filterActivities);
       filterActivities();
@@ -953,6 +956,20 @@
             element.value = button.getAttribute("data-element-id") || "";
             filterActivities();
             activity.value = button.getAttribute("data-activity-id") || "";
+            if (!activity.value) {
+              // Scheduled as a whole work item (no single work): pick its only work, or show the
+              // Work box so the person chooses one (22 Oct 2026, "Work not found").
+              var choices = Array.prototype.filter.call(activity.options, function (o) { return !!o.value; });
+              if (choices.length === 1) activity.value = choices[0].value;
+              var box = document.getElementById("field-time-other-work");
+              var toggle = document.getElementById("field-time-other-toggle");
+              if (box) box.removeAttribute("hidden");
+              if (toggle) {
+                toggle.setAttribute("aria-expanded", "true");
+                toggle.setAttribute("hidden", "hidden");
+              }
+              if (!activity.value) activity.focus();
+            }
           });
         }
       );

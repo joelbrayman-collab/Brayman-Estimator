@@ -475,9 +475,10 @@ FIELD_STAGES: Tuple[Stage, ...] = (
             S("password", "Change your password", D_PASSWORD, lesson="f01-password"),
             S("home-screen", "Put Field on the Home Screen", D_FIELD_TODAY, lesson="f01-home-screen"),
         ),
-        lessons=("f01-start-training", "f01-activate", "f01-open-field", "f01-home-screen", "f01-password",
+        lessons=("f01-start-training", "f01-activate", "f01-open-field", "f01-home-screen", "f01-useful-calculators",
+                 "f01-password",
                  "f07-troubleshooting", "f08-field-uat"),
-        uat=("uat-f01-sign-in", "uat-f01-field-only", "uat-f01-home-screen"),
+        uat=("uat-f01-sign-in", "uat-f01-field-only", "uat-f01-home-screen", "uat-f01-useful-calculators"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(

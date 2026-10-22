@@ -1,0 +1,222 @@
+{
+  "release": "public-website-20261019",
+  "pages": [
+    {
+      "page": "airiadocs.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "how-it-works.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "for-law-firms.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "index.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "defensibility.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "attorneys-say.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "airiapilot.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    },
+    {
+      "page": "platform.html",
+      "headings": true,
+      "linksAndAssets": true,
+      "mobileMenu": true,
+      "metadata": true,
+      "placeholdersRemoved": true
+    }
+  ],
+  "preservedAssetFiles": [
+    "assets/site.css",
+    "assets/airia-approved-light.png",
+    "assets/airia-approved-dark.png",
+    "assets/airia-evidence-scales-hero.png",
+    "assets/airia-evidence-to-litigation-preparation.png",
+    "assets/airiapilot-emblem.png",
+    "assets/airiadocs-emblem-dark-bg.png"
+  ],
+  "browserVerification": "Not yet performed on the changed site. Current source is not published.",
+  "publication": "NOT PUBLISHED — HostPapa sign-in required",
+  "files": {
+    "airiadocs.html": {
+      "bytes": 8377,
+      "sha256": "625ee4300a9c7b84455c9efa6b2833afee4d2d87d09f675e94bab06b0de7d047",
+      "gitBlob": "bfe7f25c8db365e8464c612407987453861305d0"
+    },
+    "how-it-works.html": {
+      "bytes": 6804,
+      "sha256": "be7d256011fb79e7da95c58260abfca97be07d904a0ee564a9e9f0d537ee587c",
+      "gitBlob": "db344b5b1f74e640dade2808459ab9ab4cfe69f8"
+    },
+    "for-law-firms.html": {
+      "bytes": 6120,
+      "sha256": "2afd5835df089d338534eba7f2203d5f3e87308b52c48ef9e5c2f8a6aac51876",
+      "gitBlob": "80aa1e4d99154766c8308cb2b7b7da0396882744"
+    },
+    "index.html": {
+      "bytes": 9967,
+      "sha256": "bb38e5e979f951dbd41bb072172ac2d42327bf7103a3df89a3f0666223e301c8",
+      "gitBlob": "1ca6fdf3258865cbe85fbdd4dfd8a269128b316a"
+    },
+    "defensibility.html": {
+      "bytes": 5804,
+      "sha256": "3dc1f6274e32376f96c1e53ca69af6d97cd4252e312fea104245715d9a919383",
+      "gitBlob": "c174ace82940368ff0cece36aeff01cb4ce55d0d"
+    },
+    "attorneys-say.html": {
+      "bytes": 5308,
+      "sha256": "0780caebda80b58ab7ae86b66ec3614e993abb884d1a347a37dde56ba48ba209",
+      "gitBlob": "d2034c29c7e35ea28a9491025c8de7a0f2936bab"
+    },
+    "airiapilot.html": {
+      "bytes": 6841,
+      "sha256": "0ee3c890289d5779fddf969bd70c31e816dc046e9d0b1a1ecaeed0c8c6734a0e",
+      "gitBlob": "129eed97f5c46ae8172946e8487d4fe06da9620e"
+    },
+    "platform.html": {
+      "bytes": 12401,
+      "sha256": "f4ac685382f3f79247c7a147bb2d94bf1a5d0a3885672d94618eef0385b6a067",
+      "gitBlob": "0d78d50f8ae86f7acbdd60546a080bfb4629f013"
+    },
+    "assets/report_approved_page2.png": {
+      "bytes": 185531,
+      "sha256": "32e9d59f4abaf451cb87af02cde40587c596025ec3b1b4d003b940bdc33d7379",
+      "gitBlob": "4bfc880d9e0ee8d829019ec2b6dcb6e72669ce8b"
+    },
+    "assets/airiapilot-emblem.png": {
+      "bytes": 448737,
+      "sha256": "48de0ba3e9211f0317f220301c457e88f138fb6e90f0e9e904c15ef3cded0b24",
+      "gitBlob": "3db897b32d48e9707080738821fc415f8a230db4"
+    },
+    "assets/report_approved_page2.png.b64": {
+      "bytes": 247377,
+      "sha256": "2d6ebc3b2ce203fb6ffc8e4c1a583bf590d527c91c04fd2bb5100aa456c3b225",
+      "gitBlob": "baa47a67db5e82e7538642d94ecc59e74c0509c6"
+    },
+    "assets/05_result_cards.png": {
+      "bytes": 65896,
+      "sha256": "4ec67b7306eca6216a249fe8813d7ec6784438b216a4652e6a6445563c75ef2d",
+      "gitBlob": "ee147f8d6e463a5b0815e2e9bcf66476e67ca2fe"
+    },
+    "assets/website-update-20261019.css": {
+      "bytes": 3623,
+      "sha256": "ba6c76bc24647c69a47e863b85b654ecf45192b6c2bff311ed06b188517abdd9",
+      "gitBlob": "93a7b773cea489df8def1a3ddb70abb474b24dd5"
+    },
+    "assets/site.css": {
+      "bytes": 27372,
+      "sha256": "a73a8e85e676c8d9cdaae48948c054ff0cd45b9e850c9ac1a4d5a6d8c64ee8e5",
+      "gitBlob": "7b6e0bad97edbbdeaf2198ecb99a7594ca98ee75"
+    },
+    "assets/airia-evidence-to-litigation-preparation.png": {
+      "bytes": 1786050,
+      "sha256": "1e4c4c49c11964fae2d33ec6e58732574422f326399a1ce7528df0a2d14e0cc6",
+      "gitBlob": "30301951dce3bf9a5988d7d40679fed2fe199117"
+    },
+    "assets/website-update-20261019.js": {
+      "bytes": 1736,
+      "sha256": "85e6ee2c33592438324b28da1eab66afc00f23524be3c5fdf84d6cddaa687dd6",
+      "gitBlob": "d0c40920cbca2bbb5564be840db56d3ea2defadd"
+    },
+    "assets/airia-approved-light.png": {
+      "bytes": 507745,
+      "sha256": "fdc71b6c4e1e4ec5edf2089880fa64bb753034323223b0889ed6e402e17d92e7",
+      "gitBlob": "be870e3fb7dc0ab4bac6b6a7b1d79c165a16cb7b"
+    },
+    "assets/airiadocs-emblem-dark-bg.png": {
+      "bytes": 572984,
+      "sha256": "30a756a3e5ae0c65f90fd8da36498acbc0db5f6f8185d35775576ab7c48510f0",
+      "gitBlob": "4da7bfc1f65f4a172392ec908c619eba128f6143"
+    },
+    "assets/airia-approved-dark.png": {
+      "bytes": 254414,
+      "sha256": "81a35bba2e3be0ab06af5f62feab0830ce84023669e9ecd9c54d9cc16c3af2dc",
+      "gitBlob": "875ec4c86da2d1768949472c42abd024349032b6"
+    },
+    "assets/airia-evidence-scales-hero.png": {
+      "bytes": 1719307,
+      "sha256": "3dc1ef588be5789363e346af7cb8094c3682e20193a2535d1eaf5b2845a2dd35",
+      "gitBlob": "4aa3cfde588bdc39cddc7611d348a40c8a3852c5"
+    },
+    "assets/screens/V2-13_Legal_Holds.png": {
+      "bytes": 176857,
+      "sha256": "69b02b0fcb34a5f29c8c878e5924f28610ee4d8777d1dbab4ab1f20d00e533e8",
+      "gitBlob": "78239d5f61db20a86b4e89262e9ceea754a2a666"
+    },
+    "assets/screens/pleadings.png": {
+      "bytes": 180573,
+      "sha256": "0c69fa6e6826f76c823676b10176f6d7f559f2ca59a53823bbb868150977886a",
+      "gitBlob": "ce350c776998d01cb8084c7da2a209449bf7e630"
+    },
+    "assets/screens/V2-03_Case_Home_North_Pier.png": {
+      "bytes": 207750,
+      "sha256": "cfb99d587f8632a29dd15b8edae56934549dfd3bf53f3ef245b8c541b5dac550",
+      "gitBlob": "88382ae44e3ed4de9ee809d10491ff536e81bf11"
+    },
+    "assets/screens/4-07_Word_Response_Document.png": {
+      "bytes": 94737,
+      "sha256": "42a07681c2c7d018ab67d17fdc838ac8794d31cb4ddea79e4aa4cfa8b5b98644",
+      "gitBlob": "b01a78a9892c8829cdf6950717e2c7333932fb9e"
+    },
+    "assets/screens/V2-04_AiRIApilot_Help_Drawer.png": {
+      "bytes": 254867,
+      "sha256": "92855516e7d545f3eb1c6554a218b5960c53e1267b1610c26964b6e1d56a7db3",
+      "gitBlob": "45b08f14a6814731a35b42de7c9438c4f994f6d9"
+    },
+    "assets/screens/V2-11_Record_Retention_and_Jurisdiction.png": {
+      "bytes": 263922,
+      "sha256": "2bd934519cca9cbf1f7dcd735cbc5f4faab56f9b6c978e805aa266391e5658e4",
+      "gitBlob": "27b23dd228a48c7977a6f507509c98f7d0f6cdc3"
+    },
+    "assets/screens/depositions.png": {
+      "bytes": 153573,
+      "sha256": "daa76f406ef31593c5852d5f52f6b15cc95f2c682eba09cbe7d6a1aca69d552a",
+      "gitBlob": "252b2c239b250829b9f7ef96956a73762183c438"
+    },
+    "assets/screens/build-evidence.png": {
+      "bytes": 171928,
+      "sha256": "15d6af57e4481a47fadecf5546b46bffc3adc2c436e7dfbcce37533b1b0a95fb",
+      "gitBlob": "093ab1f5eacae0e6ac6479876df698e9064b0749"
+    }
+  }
+}

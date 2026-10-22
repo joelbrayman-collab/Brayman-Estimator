@@ -47,6 +47,20 @@ FIELD_ONLY_ALLOWED_ENDPOINTS = frozenset(
         "api_v1.field_event_original_detail",
         "api_v1.field_event_original_content",
         "api_v1.field_event_original_display",
+        # Useful Calculators (Joel, 22 Oct 2026): the quantity-only calculators, served by the same views as
+        # /calculators/* (app/routes/useful_calculators.py). They take measurements and give quantities; no
+        # project, estimate, cost, price, rate or company record is read or written. The office business and
+        # project calculators stay off this list. The dashboard and its sign-in are public pages.
+        "useful_calculators.concrete",
+        "useful_calculators.stairs",
+        "useful_calculators.wall_form",
+        "useful_calculators.wall_framing",
+        "useful_calculators.footing",
+        "useful_calculators.roofing",
+        "useful_calculators.siding",
+        "useful_calculators.drywall",
+        "useful_calculators.flooring",
+        "useful_calculators.sign_out",
     }
 )
 

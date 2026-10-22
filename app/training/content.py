@@ -101,9 +101,10 @@ class UatCase:
 
 def _load() -> Tuple[Tuple[Module, ...], Tuple[UatCase, ...]]:
     from app.training import contractor, field_crew, supplier
+    from app.training.useful_calculators_lesson import attach  # Useful Calculators lesson in Field module 1
 
-    return (contractor.MODULES + field_crew.MODULES + supplier.MODULES,
-            contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES)
+    return attach(contractor.MODULES + field_crew.MODULES + supplier.MODULES,
+                  contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES)
 
 
 _CACHE: Dict[str, object] = {}

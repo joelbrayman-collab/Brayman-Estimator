@@ -139,7 +139,10 @@ STEPS: List[Step] = [
          "Company → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),
     Step("phones", "Set up their iPhones", "Field works on the phone like an app.",
-         "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen. Mark done.",
+         "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
+         "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
+         "Share → Add to Home Screen, keep the name Useful Calculators, open the new icon, sign in, try a calculator "
+         "and tap ‹ All calculators to return. Mark done.",
          "people_access.index"),
     Step("calendars", "Company and personal calendars", "Appointments and the job schedule in one place.",
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",

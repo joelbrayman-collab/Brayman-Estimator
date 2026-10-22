@@ -172,6 +172,9 @@ def _register_office_auth(app: Flask) -> None:
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Please log in to access the office application."
+    # Useful Calculators pages send a signed-out phone to that app's own sign-in, not the office one, so the
+    # Home Screen app never leaves its scope (22 Oct 2026). Same check, same "next" back to the page.
+    login_manager.blueprint_login_views = {"useful_calculators": "useful_calculators.sign_in"}
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -269,6 +272,10 @@ def _register_office_auth(app: Flask) -> None:
             "session_status.status",
             "session_status.keepalive",
             "calendar_feed.feed",  # secret-key calendar feed for Outlook / Google / Apple Calendar
+            # Useful Calculators, 22 Oct 2026. The dashboard shows only the public calculators to a signed-out
+            # visitor, and its sign-in is the office check kept inside the Home Screen app's scope.
+            "useful_calculators.index",
+            "useful_calculators.sign_in",
         ):
             return None
         if endpoint is not None and (
@@ -508,6 +515,7 @@ def create_app(config=None):
     from app.routes.training import training_bp
     from app.routes.company_attention import company_attention_bp
     from app.routes.business_owner_assessment import decision_tools_bp
+    from app.routes.useful_calculators import useful_calculators_bp
     from app.routes.calculators import calculators_bp
     from app.routes.supplier_economic_model import supplier_program_bp
 
@@ -562,6 +570,7 @@ def create_app(config=None):
     app.register_blueprint(company_attention_bp)
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)
+    app.register_blueprint(useful_calculators_bp)
     app.register_blueprint(supplier_program_bp)
     from app.routes.session_status import session_status_bp
 

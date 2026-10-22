@@ -1,0 +1,25 @@
+{% extends "useful_calculators/base.html" %}
+{% block title %}Sign in | Useful Calculators{% endblock %}
+{% block uc_back %}
+        <a class="uc-back" href="{{ url_for('useful_calculators.index') }}" data-uc-back><span aria-hidden="true">&lsaquo;</span> All calculators</a>
+{% endblock %}
+{% block uc_content %}
+<section class="uc-intro">
+    <h1>Sign in</h1>
+    {% if next_path != url_for('useful_calculators.index') %}
+    <p data-uc-sign-in-needed>Sign in to use this calculator.</p>
+    {% endif %}
+    <p>Use your CalibraytAI email and password. You come straight back to the calculators.</p>
+</section>
+<form method="post" action="{{ url_for('useful_calculators.sign_in') }}" class="uc-form" novalidate data-uc-sign-in-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next_path }}">
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" autocomplete="username" inputmode="email" required autofocus>
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" autocomplete="current-password" required>
+    <button type="submit" class="uc-button">Sign in</button>
+    <p><a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a></p>
+</form>
+<script src="{{ url_for('static', filename='js/sign-in-clears-field-cache.js') }}"></script>
+{% endblock %}

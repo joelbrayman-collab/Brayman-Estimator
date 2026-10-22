@@ -32,6 +32,7 @@ _SIGN_IN_ENDPOINTS = frozenset(
         "auth.logout",
         "supplier_portal.login",
         "supplier_portal.logout",
+        "useful_calculators.sign_in",  # the Useful Calculators Home Screen app's own sign-in (22 Oct 2026)
     }
 )
 
@@ -71,6 +72,9 @@ def _is_supplier() -> bool:
 
 def _sign_in_url(supplier: bool, next_path: str | None):
     endpoint = "supplier_portal.login" if supplier else "auth.login"
+    # Useful Calculators (22 Oct 2026): its pages sign in again inside the Home Screen app's own scope.
+    if not supplier and request.blueprint == "useful_calculators":
+        endpoint = "useful_calculators.sign_in"
     if next_path:
         return url_for(endpoint, next=next_path)
     return url_for(endpoint)

@@ -1,0 +1,38 @@
+{% extends "useful_calculators/base.html" %}
+{% block title %}Choose a job | Useful Calculators{% endblock %}
+{% block uc_back %}
+        <a class="uc-back" href="{{ url_for('useful_calculators.index') }}" data-uc-back><span aria-hidden="true">&lsaquo;</span> All calculators</a>
+{% endblock %}
+{% block uc_content %}
+<section class="uc-intro">
+    <h1>Job calculators</h1>
+    <p>Choose the job, then the calculator. Each one opens in the office with that job's estimate, where you review
+       it before anything is added.</p>
+</section>
+{% if not rows %}
+<p class="uc-empty" data-uc-no-jobs>There are no current jobs. Start a project in the office first.</p>
+{% endif %}
+{% for row in rows %}
+<details class="uc-job" data-uc-job="{{ row.project.id }}">
+    <summary>{{ row.project.name }}</summary>
+    {% for est in row.estimates %}
+    <h3>{{ est.estimate.estimate_number }} · {{ est.version.display_label }}</h3>
+    <ul class="uc-job-links">
+        {% for link in est.links %}
+        <li><a href="{{ link.url }}" target="_blank" rel="noopener" data-uc-tool="{{ link.tool.key }}">{{ link.tool.title }}</a>
+            <span>{{ link.tool.description }}</span></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="uc-empty">No estimate yet. Make one in the office to use the estimate calculators.</p>
+    {% endfor %}
+    <h3>For the whole job</h3>
+    <ul class="uc-job-links">
+        {% for link in row.links %}
+        <li><a href="{{ link.url }}" target="_blank" rel="noopener" data-uc-tool="{{ link.tool.key }}">{{ link.tool.title }}</a>
+            <span>{{ link.tool.description }}</span></li>
+        {% endfor %}
+    </ul>
+</details>
+{% endfor %}
+{% endblock %}

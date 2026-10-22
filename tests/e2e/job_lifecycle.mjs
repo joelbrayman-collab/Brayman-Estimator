@@ -343,10 +343,12 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(await ben.flash(), /can now sign in to the Supplier Hub/);
     // Dana chooses her password from the captured email, then signs in to the Supplier Hub.
     const resetMail = fs.readdirSync(mailDir).filter((n) => n.includes("PASSWORD_RESET")).sort().pop();
-    const resetUrl = fs.readFileSync(path.join(mailDir, resetMail), "utf8").match(/https?:\/\/\S+\/reset-password\/\S+/)[0]
+    const resetUrl = fs.readFileSync(path.join(mailDir, resetMail), "utf8").match(/https?:\/\/\S+\/reset-password#\S+/)[0]
       .replace(/^https?:\/\/[^/]+/, base);
     const dana = await person(browser, base, { width: 1280, height: 900 }, pageErrors, "supplier");
     await dana.go(resetUrl);
+    // the link's credential is after "#": the page posts it, then the password form opens (22 Oct 2026)
+    await dana.page.waitForSelector("[name=password]");
     await dana.page.fill("[name=password]", DANA[2]);
     await dana.page.fill("[name=confirm_password]", DANA[2]);
     await dana.submit(dana.page.locator("form button[type=submit]"));

@@ -1,0 +1,72 @@
+{
+  "id": "ontario-residential-v1",
+  "label": "Ontario Residential — V1",
+  "codeEdition": "2024 Ontario Building Code",
+  "effectiveDate": "2025-01-01",
+  "verifiedAt": "2026-09-26",
+  "scope": "Straight-flight private stairs with rectangular treads serving a house or an individual dwelling unit in Ontario.",
+  "sources": [
+    {
+      "id": "ontario-2024-code",
+      "title": "The 2024 Ontario Building Code",
+      "publisher": "Government of Ontario",
+      "url": "https://www.ontario.ca/page/2024-ontario-building-code",
+      "accessedAt": "2026-09-26"
+    },
+    {
+      "id": "ontario-2024-compendium",
+      "title": "2024 Building Code Compendium (2024 update containing O. Reg. 447/24)",
+      "publisher": "Publications Ontario",
+      "url": "https://www.publications.gov.on.ca/store/20170501121/Free_Download_Files/301719.pdf",
+      "accessedAt": "2026-09-26"
+    },
+    {
+      "id": "nbc-2020",
+      "title": "National Building Code of Canada 2020, Volume 2",
+      "publisher": "National Research Council Canada",
+      "url": "https://publications.gc.ca/collections/collection_2022/cnrc-nrc/NR24-28-2020-eng.pdf",
+      "accessedAt": "2026-09-26"
+    },
+    {
+      "id": "markham-tip-106",
+      "title": "Builder Tip No. 106 — Dimensions for Runs and Rectangular Treads — Housing",
+      "publisher": "City of Markham Building Standards",
+      "url": "https://www.markham.ca/sites/default/files/2024-12/Builder%20Tip%20No.%20106%20-%20Dimensions%20For%20Runs%20And%20Rectangular%20Treads%20-%20Housing.pdf",
+      "accessedAt": "2026-09-26"
+    }
+  ],
+  "limits": [
+    {
+      "field": "minRiserHeightMm",
+      "value": 125,
+      "unit": "mm",
+      "applicability": "Minimum rise for a private stair in the selected residential scope.",
+      "article": "Division B, Sentence 9.8.4.1.(1), Table 9.8.4.1",
+      "sourceId": "nbc-2020"
+    },
+    {
+      "field": "maxRiserHeightMm",
+      "value": 200,
+      "unit": "mm",
+      "applicability": "Maximum rise for a private stair in the selected residential scope.",
+      "article": "Division B, Sentence 9.8.4.1.(1), Table 9.8.4.1",
+      "sourceId": "nbc-2020"
+    },
+    {
+      "field": "minTreadRunMm",
+      "value": 255,
+      "unit": "mm",
+      "applicability": "Minimum run for a private stair with rectangular treads in the selected residential scope.",
+      "article": "Division B, Sentence 9.8.4.2.(1), Table 9.8.4.2",
+      "sourceId": "markham-tip-106"
+    },
+    {
+      "field": "maxTreadRunMm",
+      "value": 355,
+      "unit": "mm",
+      "applicability": "Maximum run for a private stair with rectangular treads in the selected residential scope.",
+      "article": "Division B, Sentence 9.8.4.2.(1), Table 9.8.4.2",
+      "sourceId": "markham-tip-106"
+    }
+  ]
+}

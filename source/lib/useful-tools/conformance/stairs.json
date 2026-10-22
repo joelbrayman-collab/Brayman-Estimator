@@ -1,0 +1,10 @@
+{
+  "profileId": "ontario-residential-v1",
+  "cases": [
+    {"id":"valid-metric","input":{"totalRise":{"value":2800,"unit":"mm"},"availableRun":{"value":4480,"unit":"mm"}},"expect":{"riserCount":16,"treadCount":15,"riserHeightM":0.175,"treadRunM":0.2986666666666667,"overallStatus":"pass"}},
+    {"id":"valid-imperial-equivalent","input":{"totalRise":{"value":110.23622047244095,"unit":"in"},"availableRun":{"value":176.3779527559055,"unit":"in"}},"expect":{"riserCount":16,"treadCount":15,"riserHeightM":0.175,"treadRunM":0.2986666666666667,"overallStatus":"pass"}},
+    {"id":"exact-min-boundaries","layout":{"riserCount":16,"treadCount":15,"riserHeightM":0.125,"treadRunM":0.255,"totalRiseM":2,"totalRunM":3.825,"stringerLengthM":4.315162221747865,"angleDegrees":27.59729586864371},"expect":{"overallStatus":"pass","checks":{"riser-height-min":{"measured":125,"limit":125,"status":"pass"},"tread-run-min":{"measured":255,"limit":255,"status":"pass"}}}},
+    {"id":"insufficient-run","input":{"totalRise":{"value":3000,"unit":"mm"},"availableRun":{"value":1000,"unit":"mm"}},"expect":{"overallStatus":"fail"}},
+    {"id":"large-input","input":{"totalRise":{"value":12,"unit":"m"},"availableRun":{"value":20,"unit":"m"}},"expect":{"overallStatus":"pass"}}
+  ]
+}

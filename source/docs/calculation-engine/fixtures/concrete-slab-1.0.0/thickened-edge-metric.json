@@ -1,0 +1,67 @@
+{
+  "contract_version": "1",
+  "result_id": "example-concrete-slab-1.0.0-thickened-edge-metric",
+  "engine_id": "concrete_slab",
+  "engine_version": "1.0.0",
+  "variant": "thickened_edge",
+  "measurement_system": "metric",
+  "inputs": [
+    {
+      "code": "length",
+      "value": "12.192",
+      "unit_code": "m"
+    },
+    {
+      "code": "width",
+      "value": "6.096",
+      "unit_code": "m"
+    },
+    {
+      "code": "slab_thickness",
+      "value": "0.1524",
+      "unit_code": "m"
+    },
+    {
+      "code": "edge_width",
+      "value": "0.6096",
+      "unit_code": "m"
+    },
+    {
+      "code": "edge_depth_below_slab",
+      "value": "0.3048",
+      "unit_code": "m"
+    }
+  ],
+  "assumptions": [
+    {
+      "code": "waste_percent",
+      "value": "5",
+      "unit_code": "percent"
+    }
+  ],
+  "product_specification": null,
+  "components": [
+    {
+      "code": "base_slab_concrete",
+      "quantity": "11.327",
+      "unit_code": "m3"
+    },
+    {
+      "code": "thickened_edge_concrete",
+      "quantity": "6.343",
+      "unit_code": "m3"
+    },
+    {
+      "code": "waste",
+      "quantity": "0.883",
+      "unit_code": "m3"
+    }
+  ],
+  "quantities": [
+    {
+      "code": "total_concrete",
+      "quantity": "18.553",
+      "unit_code": "m3"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "canonicalUnit": "m3",
+  "cases": [
+    {"id":"slab-imperial","section":{"type":"slab","length":{"value":20,"unit":"ft"},"width":{"value":24,"unit":"ft"},"thickness":{"value":4,"unit":"in"},"quantity":1},"expectedBaseM3":4.53069545472},
+    {"id":"slab-metric","section":{"type":"slab","length":{"value":6.096,"unit":"m"},"width":{"value":7.3152,"unit":"m"},"thickness":{"value":101.6,"unit":"mm"},"quantity":1},"expectedBaseM3":4.53069545472},
+    {"id":"footing","section":{"type":"footing","length":{"value":4,"unit":"m"},"width":{"value":0.5,"unit":"m"},"thickness":{"value":0.25,"unit":"m"},"quantity":1},"expectedBaseM3":0.5},
+    {"id":"wall","section":{"type":"wall","length":{"value":8,"unit":"m"},"height":{"value":2.4,"unit":"m"},"thickness":{"value":0.2,"unit":"m"},"quantity":1},"expectedBaseM3":3.84},
+    {"id":"round-column","section":{"type":"round-column","diameter":{"value":0.5,"unit":"m"},"height":{"value":3,"unit":"m"},"quantity":1},"expectedBaseM3":0.5890486225480862},
+    {"id":"post-hole","section":{"type":"post-hole","diameter":{"value":0.3,"unit":"m"},"height":{"value":1.2,"unit":"m"},"quantity":1},"expectedBaseM3":0.08482300164692441},
+    {"id":"curb","section":{"type":"curb","length":{"value":10,"unit":"m"},"width":{"value":0.2,"unit":"m"},"height":{"value":0.3,"unit":"m"},"quantity":1},"expectedBaseM3":0.6},
+    {"id":"concrete-stairs","section":{"type":"concrete-stairs","width":{"value":1.2,"unit":"m"},"treadRun":{"value":0.28,"unit":"m"},"riserHeight":{"value":0.18,"unit":"m"},"riserCount":5,"quantity":1},"expectedBaseM3":0.9072}
+  ],
+  "pourCase": {"sections":[{"type":"slab","length":{"value":2,"unit":"m"},"width":{"value":2,"unit":"m"},"thickness":{"value":0.1,"unit":"m"},"quantity":2}],"wastePercent":10,"orderIncrementM3":0.25,"bagYieldM3":0.02,"truckCapacityM3":0.3,"expected":{"baseM3":0.8,"wasteM3":0.08,"adjustedM3":0.88,"recommendedOrderM3":1,"bagCount":44,"truckCount":3}}
+}

@@ -21,10 +21,10 @@ Update this file whenever an address moves; older addresses stay listed under "R
 | KBC edition (Kemptville Home Hardware Building Centre) | https://claude.ai/artifact/8pw6R3Q4bwZ1oEYtV1Disk | Claude artifact | Private until Joel shares it |
 | Contractor Storybook (website copy) | https://calibraytai.com/storybook/contractor/ | HostPapa VPS, `/home/solarlight/public_html/calibraytai.com/storybook/` | Anyone with the link (not linked from the site; search engines told not to list it) |
 | Supplier Connection Storybook (website copy) | https://calibraytai.com/storybook/supplier-connection/ | HostPapa VPS (same folder) | Anyone with the link (same) |
-| BMR Winchester edition (website copy) | https://calibraytai.com/storybook/bmr-winchester/ | HostPapa VPS (same folder) | Anyone with the link (same); BMR has not approved the proposal or logo use |
-| KBC edition (website copy) | https://calibraytai.com/storybook/kbc/ | HostPapa VPS (same folder) | Anyone with the link (same); Home Hardware / KBC have not approved the proposal or logo use |
+| BMR Winchester edition (website copy) | Private: https://calibraytai.com/storybook/bmr-winchester-<private>/ — the full link is kept only on the server in `/root/calibrayt-storybook-links.txt` and printed by the install script | HostPapa VPS (same folder) | BMR only (Joel gives the link); BMR has not approved the proposal or logo use |
+| KBC edition (website copy) | Private: https://calibraytai.com/storybook/kbc-<private>/ — kept and printed the same way | HostPapa VPS (same folder) | KBC / Home Hardware only (Joel gives the link); not yet approved by them |
 
-The website copies come from the GitHub branch `storybooks/site` and are installed or refreshed by its `install_storybooks.sh` (run as root in WHM Terminal; calibraytai.com is an alias of the cPanel domain calibraytai.solarlightasaservice.com, account `solarlight`). Installed 22 Oct 2026; files byte-identical to branch commit 6a637547 (SHA-256 checked on the server and in a browser).
+The website copies come from the GitHub branch `storybooks/site` and are installed or refreshed by its `install_storybooks.sh` (run as root in WHM Terminal; calibraytai.com is an alias of the cPanel domain calibraytai.solarlightasaservice.com, account `solarlight`). Installed 22 Oct 2026 (SHA-256 checked on the server and in a browser). The earlier open addresses /storybook/bmr-winchester/ and /storybook/kbc/ are removed by the install script; `/storybook/` does not list its folders.
 
 The contractor platform, Field and Supplier Hub were not moved: production stays on Render.
 

@@ -1,4 +1,4 @@
-:HL["/_next/static/chunks/0dksfxt0hg5s8.css","style"]
+:HL["/_next/static/chunks/125~1zfpj2bi2.css","style"]
 :HL["/calibraytai-logo-v1.png","image"]
 :HL["/02-project-lifecycle-house-approved.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"price","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"4Qm12OppDiekaSXVGCTzT"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"price","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"fD2e66h2S27bXfHv4jlS8"}

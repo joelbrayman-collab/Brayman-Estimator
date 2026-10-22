@@ -93,6 +93,10 @@ def review():
         work_date_to=date_to,
     )
     rows = [time_entry_presentation(entry) for entry in entries]
+    from app.services.quickbooks_time import status_label_for_entry
+
+    for row in rows:
+        row["qbt_label"] = status_label_for_entry(row["entry"].id)
     return render_template(
         "time/review.html",
         rows=rows,
@@ -139,12 +143,12 @@ def setup_company_time():
     )
     if existing is None:
         flash(
-            "Shop and company time is ready. Crew choose Shop / company time on My Time; it is never billed to a customer.",
+            "Shop / Company Work is ready. Crew choose Shop / Company Work on My time; it is never billed to a customer.",
             "success",
         )
     else:
-        flash("Shop and company time is already set up.", "success")
-    return redirect(url_for("projects.view_project", id=project.id) + "#hub-time")
+        flash("Shop / Company Work is already set up.", "success")
+    return redirect(url_for("payroll_time.company_work"))
 
 
 @time_entry_bp.route("/new", methods=["GET", "POST"])
@@ -228,9 +232,14 @@ def detail(time_entry_id):
         back_url = url_for("projects.view_project", id=entry.project_id) + "#hub-time"
     elif entry.project_id:
         back_url = url_for("time_entry.review", project_id=entry.project_id)
+    from app.services import quickbooks_time as qbt
+
+    transfer = qbt.transfer_for_entry(entry.id)
     return render_template(
         "time/detail.html",
         row=time_entry_presentation(entry),
+        transfer=transfer,
+        transfer_label=qbt.STATUS_LABELS.get(transfer.status) if transfer is not None else None,
         can_review=current_user.id != entry.worker_user_id,
         status_label=contractor_time_status_label,
         next_view=next_view,
@@ -238,11 +247,25 @@ def detail(time_entry_id):
     )
 
 
+def _send_to_quickbooks_time():
+    """Approved hours flow to QuickBooks Time right after approval (only when switched on). A failure never
+    undoes the approval; it shows on Company → Time → QuickBooks Time with a Retry."""
+    from app.services.quickbooks_time import send_after_approval
+
+    result = send_after_approval(get_current_organization().id, actor=current_user)
+    if result and result.get("connected"):
+        if result["failed"] or result["needs_setup"]:
+            flash("Not everything reached QuickBooks Time. Open QuickBooks Time transfers to fix and retry.", "error")
+        elif result["sent"] or result["updated"]:
+            flash(f"Sent to QuickBooks Time: {result['sent'] + result['updated']}.", "success")
+
+
 @time_entry_bp.route("/<int:time_entry_id>/approve", methods=["POST"])
 def approve(time_entry_id):
     try:
         approve_time(time_entry_id=time_entry_id)
         flash("Time approved.", "success")
+        _send_to_quickbooks_time()
     except (TimeEntryError, TimeEntryForbiddenError, TimeEntryNotFoundError) as exc:
         flash(str(exc), "error")
     return redirect(url_for("time_entry.detail", time_entry_id=time_entry_id))
@@ -271,6 +294,7 @@ def approve_selected():
             errors.append(str(exc))
     if approved:
         flash(f"Approved {approved} time {'entry' if approved == 1 else 'entries'}.", "success")
+        _send_to_quickbooks_time()
     if errors:
         flash(errors[0], "error")
     return redirect(url_for("time_entry.review", **{k: v for k, v in request.args.items() if v}))
@@ -286,6 +310,7 @@ def correct(time_entry_id):
             work_date=request.form.get("work_date") or None,
         )
         flash("Approved time corrected. The original entry is kept.", "success")
+        _send_to_quickbooks_time()
         return redirect(url_for("time_entry.detail", time_entry_id=correction.id))
     except (TimeEntryError, TimeEntryForbiddenError, TimeEntryNotFoundError) as exc:
         flash(str(exc), "error")

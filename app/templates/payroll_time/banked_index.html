@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Banked hours | Brayman Construction Platform{% endblock %}
+{% block page_title %}Banked hours{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Banked hours</h2>
+  <p class="page-purpose" data-banked-policy>{{ policy_text }}</p></div>
+  {% if can_administer %}<a class="button button-secondary" href="{{ url_for('payroll_time.hours_policy') }}">Hours policy</a>{% endif %}
+  <a class="button button-secondary" href="{{ url_for('time_entry.review') }}">Time review</a></section>
+{% if policy is none %}
+<div class="form-panel"><p><strong>Nothing is banked until the owner enters the company's hours policy.</strong>
+  {% if can_administer %}<a href="{{ url_for('payroll_time.hours_policy') }}">Enter the hours policy</a>{% else %}Ask the owner to enter it (Getting Started → Hours and banked time).{% endif %}</p></div>
+{% endif %}
+<div class="form-panel">
+  {% if rows %}<div class="acct-scroll"><table class="acct-table" data-banked-balances>
+    <thead><tr><th>Person</th><th class="num">Banked hours</th><th></th></tr></thead><tbody>
+    {% for r in rows %}<tr data-banked-worker="{{ r.worker.id }}"><td data-label="Person">{{ r.worker.display_name }}</td>
+      <td data-label="Banked hours" class="num">{{ "%.2f"|format(r.balance) }}</td>
+      <td data-label=""><a href="{{ url_for('payroll_time.banked_hours_worker', user_id=r.worker.id) }}">Ledger, time off, adjust</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="muted-copy">People appear here once they have recorded time.</p>{% endif %}
+</div>
+{% endblock %}

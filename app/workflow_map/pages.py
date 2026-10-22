@@ -47,8 +47,11 @@ def office_viewer(project_id: Optional[int]) -> Viewer:
     project = None
     if project_id:
         project = Project.query.filter_by(id=project_id, organization_id=org_id).first()
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work is not a job
+
     choices = [{"id": p.id, "name": p.name} for p in
-               Project.query.filter_by(organization_id=org_id).order_by(Project.name.asc()).limit(MAX_PROJECT_CHOICES)]
+               customer_projects_only(Project.query.filter_by(organization_id=org_id)).order_by(Project.name.asc())
+               .limit(MAX_PROJECT_CHOICES)]
     role = trainee.role if trainee is not None else (ROLE_OWNER if people_admin else ROLE_OFFICE)
     return Viewer(kind=KIND_OFFICE, people_admin=people_admin, company_management=company_management,
                   project_id=project.id if project else None, project_name=project.name if project else "",

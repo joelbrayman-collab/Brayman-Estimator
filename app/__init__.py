@@ -505,6 +505,7 @@ def create_app(config=None):
     from app.routes.signing import signing_office_bp
     from app.routes.work_structure import work_structure_bp
     from app.routes.time_entry import time_entry_bp
+    from app.routes.payroll_time import payroll_time_bp
     from app.routes.schedule import schedule_bp
     from app.routes.calendar_feed import calendar_feed_bp
     from app.routes.organization_crew import organization_crew_bp
@@ -559,6 +560,7 @@ def create_app(config=None):
     app.register_blueprint(signing_office_bp)
     app.register_blueprint(work_structure_bp)
     app.register_blueprint(time_entry_bp)
+    app.register_blueprint(payroll_time_bp)  # QuickBooks Time, banked hours, hours policy, Shop / Company Work
     app.register_blueprint(schedule_bp)
     app.register_blueprint(calendar_feed_bp)
     app.register_blueprint(organization_crew_bp)

@@ -70,6 +70,15 @@
     {% endif %}
 </article>
 
+{% if transfer %}
+<article class="panel panel-wide" data-qbt-entry-status="{{ transfer.status }}">
+    <div class="panel-header"><h2>QuickBooks Time</h2></div>
+    <p><span class="status">{{ transfer_label }}</span>{% if transfer.qbt_timesheet_id %} · timesheet {{ transfer.qbt_timesheet_id }}{% endif %}</p>
+    {% if transfer.last_error and transfer.status in ('FAILED', 'NEEDS_SETUP') %}<p>{{ transfer.last_error }}</p>{% endif %}
+    <p><a href="{{ url_for('payroll_time.quickbooks_time') }}">QuickBooks Time transfers</a></p>
+</article>
+{% endif %}
+
 <article class="panel panel-wide">
     <div class="panel-header">
         <h2>History</h2>

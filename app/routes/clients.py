@@ -31,7 +31,9 @@ def _apply_client_fields(client, fields):
 @clients_bp.route("/")
 def list_clients():
     org_id = get_current_organization_id()
-    clients = Client.query.filter_by(organization_id=org_id).order_by(Client.name.asc()).all()
+    from app.services.time_entry import customer_clients_only  # the own-company record is not a customer
+
+    clients = customer_clients_only(Client.query.filter_by(organization_id=org_id), org_id).order_by(Client.name.asc()).all()
     return render_template("clients/list.html", clients=clients)
 
 

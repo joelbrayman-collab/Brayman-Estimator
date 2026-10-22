@@ -152,6 +152,14 @@ from app.models.work_structure import (
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
 from app.models.onboarding import OrganizationOnboardingStep
+from app.models.payroll_time import (  # noqa: F401  approved time to QuickBooks Time, banked hours (22 Oct 2026)
+    BankedHoursLedgerEntry,
+    BankedHoursPolicy,
+    QuickBooksTimeEmployeeLink,
+    QuickBooksTimeEvent,
+    QuickBooksTimeJobcodeLink,
+    QuickBooksTimeTransfer,
+)
 from app.models.training import TrainingFeedback, TrainingLessonProgress, TrainingTrainee, TrainingUatResult
 from app.models.appointment import (
     CalendarFeedKey,

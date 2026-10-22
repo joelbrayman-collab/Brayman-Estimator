@@ -308,6 +308,9 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "field.drawing_pdf",
     "field.plan_pdf",
     "field.workflow",  # the simplified Field workflow: Field destinations only (Workflow Maps, 21 Oct 2026)
+    # Added 22 Oct 2026 (banked hours): the person's OWN banked-hours balance and ledger, hours only, under the
+    # company's hours policy. No other person's record, no rate, wage or money (tests/test_time_payroll_handoff.py).
+    "field.banked_hours",
     # Useful Calculators (22 Oct 2026): the quantity-only calculators (the same views as /calculators/*) and
     # signing out of that app. No project, estimate, cost, price, rate or company record.
     "useful_calculators.concrete",

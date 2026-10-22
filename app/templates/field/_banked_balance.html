@@ -1,0 +1,26 @@
+{# The person's own banked hours, under the company's own hours policy (Joel, 22 Oct 2026). Hours only. #}
+{% if banked %}
+<style>
+.field-banked{border-color:var(--gold);}
+.field-banked-figure{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:4px 0 8px;}
+.field-banked-number{font-size:2.6rem;font-weight:700;line-height:1;}
+.field-banked-week{margin:6px 0;}
+</style>
+<section class="field-panel field-banked" data-banked-balance="{{ '%.2f'|format(banked.balance) }}">
+    <h2>Banked hours</h2>
+    <p class="field-banked-figure"><span class="field-banked-number" data-banked-number>{{ "%.2f"|format(banked.balance) }}</span><span>hours banked</span></p>
+    {% if banked.week %}
+    <p class="field-banked-week" data-banked-week>This week ({{ banked.week.week_start.strftime('%a %b %d') }} – {{ banked.week.week_end.strftime('%a %b %d') }}):
+        worked {{ "%.2f"|format(banked.week.worked) }} approved ·
+        regular {{ "%.2f"|format(banked.week.regular) }} ·
+        extra {{ "%.2f"|format(banked.week.extra) }} ·
+        banked {{ "%.2f"|format(banked.week.earned) }}</p>
+    {% elif banked.pending_policy %}
+    <p class="field-muted">The hours policy starts {{ banked.policy.effective_from.strftime('%a %b %d') }}.</p>
+    {% endif %}
+    <p class="field-muted" data-banked-policy>{{ banked.policy_text }}</p>
+    {% if show_banked_link|default(true) %}
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.banked_hours') }}">See banked hours</a>
+    {% endif %}
+</section>
+{% endif %}

@@ -546,6 +546,17 @@ def _require_reviewer(entry: LabourTimeEntry, reviewer_user_id: Optional[int]) -
     return reviewer
 
 
+def _after_approval(entry: LabourTimeEntry, reviewer: User, previous: Optional[LabourTimeEntry] = None) -> None:
+    """Same transaction as the approval (Joel, 22 Oct 2026): the QuickBooks Time transfer record and the
+    banked-hours ledger follow every approval and correction, or neither does. Nothing is sent here: the
+    approval pages send after the commit (app/services/quickbooks_time.py send_after_approval)."""
+    from app.services import banked_hours, quickbooks_time
+
+    db.session.flush()
+    quickbooks_time.queue_transfer(entry, actor=reviewer, previous_entry=previous)
+    banked_hours.after_time_approved(entry, actor=reviewer, previous_entry=previous)
+
+
 def approve_time(
     *,
     time_entry_id: int,
@@ -580,6 +591,7 @@ def approve_time(
             prior_status=TIME_STATUS_SUBMITTED,
             new_status=TIME_STATUS_APPROVED,
         )
+        _after_approval(entry, reviewer)
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -730,6 +742,7 @@ def correct_approved_time(
             new_status=TIME_STATUS_APPROVED,
             reason=note,
         )
+        _after_approval(correction, reviewer, previous=original)
         db.session.commit()
     except Exception:
         db.session.rollback()
@@ -946,8 +959,8 @@ def actor_display(user=None) -> str:
 # job: it is left out of the QuickBooks customer file, is never invoiced, and its hours go to
 # QuickBooks with no customer. No schema change: an ordinary Project, Client and work items.
 
-COMPANY_TIME_PROJECT_NAME = "Shop and company time"
-COMPANY_TIME_ELEMENT_NAME = "Shop and company time"
+COMPANY_TIME_PROJECT_NAME = "Shop / Company Work"
+COMPANY_TIME_ELEMENT_NAME = "Shop / Company Work"
 COMPANY_TIME_ACTIVITIES = (
     "Shop and yard",
     "Equipment and vehicle upkeep",
@@ -1038,6 +1051,65 @@ def ensure_company_time_project(
             actor_display_name=actor,
         )
     return project
+
+
+def add_company_time_category(organization_id: Optional[str], name, *, actor=None):
+    """Office: one more Shop / Company Work category (a work under the company-time project)."""
+    from app.services.work_structure import WorkStructureError, add_project_activity
+
+    org_id = _org_id(organization_id)
+    project = get_company_time_project(org_id)
+    if project is None or not project.work_elements:
+        raise TimeEntryError("Set up Shop / Company Work first.")
+    clean = " ".join((name or "").split())[:120]
+    if not clean:
+        raise TimeEntryError("Name the category.")
+    element = project.work_elements[0]
+    if any(a.display_name.lower() == clean.lower() for a in element.activities):
+        raise TimeEntryError("That category is already there.")
+    try:
+        return add_project_activity(project_work_element_id=element.id, display_name=clean, organization_id=org_id,
+                                    scope_origin=SCOPE_ORIGINAL, actor_user_id=getattr(actor, "id", None),
+                                    actor_display_name=actor_display(actor) if actor is not None else None)
+    except WorkStructureError as exc:
+        raise TimeEntryError(str(exc)) from exc
+
+
+# Shop / Company Work is never a customer job (Joel, 22 Oct 2026). The internal record stays an ordinary
+# Project row (so Time Entry, approval, history, labour cost and QuickBooks Time reuse one path), and every
+# list, picker, count and report of customer jobs goes through these filters. The company-time project's
+# own pages are /time/company (office) and Shop / Company Work on Field.
+
+COMPANY_TIME_NUMBER_PATTERN = "COMPANY-TIME-%"
+
+
+def customer_projects_only(query):
+    """Filter a Project query to customer jobs (drops the internal Shop / Company Work record)."""
+    return query.filter(db.or_(Project.project_number.is_(None),
+                               ~Project.project_number.like(COMPANY_TIME_NUMBER_PATTERN)))
+
+
+def internal_client_ids(organization_id: Optional[str] = None) -> set:
+    """The own-company client record that holds Shop / Company Work. Never a customer."""
+    org_id = _org_id(organization_id)
+    rows = (db.session.query(Project.client_id)
+            .filter(Project.organization_id == org_id, Project.project_number == company_time_project_number(org_id))
+            .all())
+    return {row[0] for row in rows if row[0] is not None}
+
+
+def customer_clients_only(query, organization_id: Optional[str] = None):
+    from app.models import Client
+
+    hidden = internal_client_ids(organization_id)
+    return query.filter(~Client.id.in_(hidden)) if hidden else query
+
+
+def raise_if_company_time(project, error_cls=None, message=None):
+    """Customer-only actions (estimates, proposals, change orders, invoices, contracts) refuse it."""
+    if is_company_time_project(project):
+        raise (error_cls or TimeEntryError)(
+            message or "Shop / Company Work is not a customer job: it has no estimate, proposal, change order or invoice.")
 
 
 def time_kind(entry: LabourTimeEntry) -> str:

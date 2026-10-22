@@ -18,6 +18,15 @@
   <p class="muted-copy">CalibraytAI never asks for your QuickBooks password and never posts to QuickBooks on its own. You download a file here and import it in QuickBooks (gear icon → Import data).</p>
 </div>
 
+<div class="form-panel" data-payroll-panel>
+  <h3>Crew hours and payroll</h3>
+  <p class="muted-copy">Approved crew hours go to QuickBooks Time for payroll (no double entry); banked hours follow your hours policy.</p>
+  <p class="acct-actions"><a href="{{ url_for('payroll_time.quickbooks_time') }}">QuickBooks Time transfers</a> ·
+    <a href="{{ url_for('payroll_time.banked_hours_index') }}">Banked hours</a> ·
+    <a href="{{ url_for('payroll_time.hours_policy') }}">Hours policy</a> ·
+    <a href="{{ url_for('payroll_time.company_work') }}">Shop / Company Work</a></p>
+</div>
+
 <div class="form-panel">
   <h3>Files for QuickBooks</h3>
   <div class="acct-scroll"><table class="acct-table" data-exports>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Shop / Company Work | Brayman Construction Platform{% endblock %}
+{% block page_title %}Shop / Company Work{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Shop / Company Work</h2>
+  <p class="page-purpose">Paid time that belongs to no customer: shop and yard, equipment upkeep, material runs, safety meetings, office work. It counts for payroll (and toward banked hours if the hours policy says so) and is never charged to a customer's job, invoiced, or shown as a job.</p></div>
+  <a class="button button-secondary" href="{{ url_for('time_entry.review') }}">Time review</a></section>
+{% if company is none %}
+<form class="form-panel" method="post" action="{{ url_for('time_entry.setup_company_time') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>Crew need somewhere to put paid time that is not a customer's job.</p>
+  <button type="submit">Set up Shop / Company Work</button></form>
+{% else %}
+<div class="acct-grid">
+  <div class="form-panel" data-company-categories>
+    <h3>Categories crew choose from</h3>
+    <ul class="acct-list">{% for a in categories %}<li>{{ a.display_name }}</li>{% endfor %}</ul>
+    <form method="post" action="{{ url_for('payroll_time.company_work_category') }}" class="acct-actions">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="name" placeholder="New category" aria-label="New category" required><button type="submit">Add</button></form>
+  </div>
+  <div class="form-panel" data-company-hours>
+    <h3>Approved hours, {{ start.isoformat() }} to {{ end.isoformat() }}</h3>
+    {% if by_category %}<ul class="acct-list">{% for name, hours in by_category %}<li>{{ name }}: {{ "%.2f"|format(hours) }} h</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None in these dates.</p>{% endif %}
+    <p class="muted-copy">All Shop / Company Work so far: {{ "%.2f"|format(cost.total.actual_hours) }} approved hours, {{ "${:,.2f}".format(cost.total.actual_cost) }} at the company costing rate (company cost, not a job's).</p>
+    <form method="get" class="acct-actions"><label>From <input type="date" name="from" value="{{ start.isoformat() }}"></label><label>To <input type="date" name="to" value="{{ end.isoformat() }}"></label><button type="submit">Show</button></form>
+  </div>
+</div>
+<div class="form-panel">
+  <h3>Entries</h3>
+  {% if rows %}<div class="acct-scroll"><table class="acct-table" data-company-entries>
+    <thead><tr><th>Date</th><th>Worker</th><th>Category</th><th class="num">Hours</th><th>Status</th></tr></thead><tbody>
+    {% for row in rows %}<tr><td data-label="Date"><a href="{{ url_for('time_entry.detail', time_entry_id=row.entry.id) }}">{{ row.entry.work_date.isoformat() }}</a></td>
+      <td data-label="Worker">{{ row.entry.worker_display_name }}</td><td data-label="Category">{{ row.entry.activity_display_name }}</td>
+      <td data-label="Hours" class="num">{{ "%.2f"|format(row.entry.hours) }}</td><td data-label="Status">{{ row.status_label }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<p class="muted-copy">No Shop / Company Work in these dates.</p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

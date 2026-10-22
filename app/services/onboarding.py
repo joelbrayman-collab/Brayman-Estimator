@@ -1,6 +1,6 @@
 """Ben's First Day: the guided setup checklist (Joel, 21 Oct 2026).
 
-Fifteen steps in the order a contractor sets up and starts using CalibraytAI. Each step links to the real
+Sixteen steps in the order a contractor sets up and starts using CalibraytAI. Each step links to the real
 page that does it. A step is done when the records show it (a client exists, a proposal was made, a crew
 member was invited) or when the office marked it done by hand (steps the platform cannot see, such as
 setting up the crew's phones). Read-only apart from those marks; never changes business records.
@@ -67,6 +67,16 @@ def _people(org, _user):
     from app.models.user import UserMembership
 
     return _count(UserMembership, organization_id=org) > 1
+
+
+def _hours_policy(org, _user):
+    from app.services.banked_hours import onboarding_done
+
+    try:
+        return onboarding_done(org)
+    except Exception:
+        db.session.rollback()
+        return False
 
 
 def _appointments(org, _user):
@@ -138,6 +148,11 @@ STEPS: List[Step] = [
     Step("people", "Invite the boys", "Each person gets their own sign-in; crew see only Field.",
          "Company → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),
+    Step("hours_policy", "Hours and banked time", "Your own work-week rules decide regular hours and banked time.",
+         "Company → Hours policy: enter your normal work week (hours), the weekly hours after which extra hours are "
+         "banked or paid as overtime, the banked hours for each extra hour, whether Shop / Company Work counts, the "
+         "day the week starts and the date it takes effect. Save hours policy. Nothing is banked until you do.",
+         "payroll_time.hours_policy", _hours_policy),
     Step("phones", "Set up their iPhones", "Field works on the phone like an app.",
          "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
          "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "

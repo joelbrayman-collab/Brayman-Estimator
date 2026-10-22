@@ -178,14 +178,6 @@ d.add("choose", "Supplier choice and rewards", f'''<div class="pad"><span class=
 <figure style="margin-top:calc(var(--u)*.8)"><img src="{ELEV}" alt="BMR PRO Elevation 360, from bmr.ca" style="width:100%;border-radius:4px"><figcaption class="small">BMR’s own Elevation 360 graphic, from bmr.ca/en/elevation-360-pro, shown unchanged.</figcaption></figure>
 </div></div>
 {folio("Supplier choice and rewards", nxt())}</div>''', menu="Supplier choice and rewards")
-d.add("ladder", "Today, next and future", f'''<div class="pad"><div class="kicker">Today, next and future</div>
-<h2>What works today, and what comes next.</h2>
-<p style="margin-bottom:calc(var(--u)*1)">Everything in Parts 1 to 3 is shown on actual CalibraytAI screens and works in CalibraytAI V1 today, except Chapter 04 and anything marked Future integration. The sponsorship pages are proposals.</p>
-<table class="t" style="margin-top:calc(var(--u)*.4)"><tr><td style="width:20%"><span class="tag">Available today</span></td><td>Supplier Hub requests, quotes, purchase orders, deliveries, dashboard and Material demand. Signing is built and tested, releasing next.</td></tr>
-<tr><td><span class="tag next">Proposed / next</span></td><td>Sponsored PRO access, supplier selection in the estimate, the counter sketch-to-quote and rewards shown with prices.</td></tr>
-<tr><td><span class="tag future">Future integration</span></td><td>Authorized live BMR pricing, Elevation 360 balances, stock and a connection to BMR’s systems.</td></tr></table>
-
-{folio("Today, next and future", nxt())}</div>''', menu="Today, next and future")
 sees = ["Items, quantities and units", "The date needed and the delivery town", "The contractor’s company and contact", "A project reference", "On a purchase order: the delivery address, date, window and site contact"]
 never = ["The customer’s name", "The contractor’s margins, labour rates or internal costs", "Other suppliers’ prices", "Estimates, or projects not sent to the store", "The site address before an order"]
 d.add("trust", "Trust, both ways", f'''<div class="pad"><div class="kicker">Trust, both ways</div>
@@ -216,7 +208,7 @@ d.add("notes", "Notes and credits", f'''<div class="pad"><div class="kicker">Abo
 <div class="split even" style="font-size:calc(var(--u)*1.25);line-height:1.42"><div>
 <p><b>The story.</b> The Harbour Lane, Rideau Street and Merrickville jobs are fictional. Every application image is an actual CalibraytAI V1 screen, captured on 20 October 2026 with synthetic data only; the store appears as “BMR Winchester (synthetic)”. Concrete is ordered from BMR Winchester; Tomlinson is not connected to CalibraytAI. The Chapter 04 sketch is a real customer’s, shown without their name.</p>
 <p><b>Signing and the calculator.</b> Signing on supplier orders, confirmations and delivery changes is built and tested and goes live with its next release. The online Supplier Economics Calculator is being prepared for stores.</p>
-<p><b>Today, next and future.</b> Everything in Parts 1 to 3 works in CalibraytAI V1 today, except Chapter 04 and anything marked Future integration. Future integration, only with BMR’s authorization: live BMR pricing, Elevation 360 balances, stock and BMR systems.</p>
+<p><b>What is live.</b> Everything in Parts 1 to 3 works in CalibraytAI V1 today, except Chapter 04 and anything marked Future integration. Future integration, only with BMR’s authorization: live BMR pricing, Elevation 360 balances, stock and BMR systems.</p>
 <p><b>Branding.</b> CalibraytAI artwork and the approved logo. The BMR logo and the Elevation 360 graphic are BMR’s own files from bmr.ca, shown unchanged; no BMR PRO or Elevation 360 logo file was available, so those names appear in plain text. All are BMR Group’s marks, shown for illustration and discussion only, subject to BMR’s authorization.</p>
 <p><b>Sources.</b> Buildxact and The Farnsworth Group, 2022. BMR PRO Elevation 360: bmr.ca/en/elevation-360-pro.</p></div>
 <table class="t" style="font-size:calc(var(--u)*1.25)">{crs}</table></div>

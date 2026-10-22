@@ -87,7 +87,7 @@ TOC = [("The opportunity", [("·", "KBC and its Pro Accounts", "kbc"), ("·", "T
        ("The connection", [("·", "One journey, three roles", "roles"), ("·", "Trust by design", "trust")]),
        ("The journey", [(f'{c["n"]:02d}', c["title"], f'ch{c["n"]}') for c in CH]),
        ("Next", [("·", "What you just read", "recap"), ("·", "KBC-sponsored access", "spons"), ("·", "Sponsorship in the app (concept)", "sponsview"), ("·", "More than one store", "stores"),
-                 ("·", "Today, next and future", "ladder"), ("·", "A demonstration at KBC", "demo"),
+                 ("·", "A demonstration at KBC", "demo"),
                  ])]
 col1 = "".join(f'<div class="tocgrp"><div class="stg">{E(st)}</div>' + "".join(f'<button data-go="{pid}"><i>{E(k)}</i><b>{E(t)}</b><span>›</span></button>' for k, t, pid in items) + "</div>" for st, items in (TOC[0], TOC[1], TOC[3]))
 col2 = "".join(f'<div class="tocgrp"><div class="stg">{E(st)}</div>' + "".join(f'<button data-go="{pid}"><i>{E(k)}</i><b>{E(t)}</b><span>›</span></button>' for k, t, pid in items) + "</div>" for st, items in (TOC[2],))
@@ -246,16 +246,6 @@ d.add("choose", "Supplier choice and loyalty", f'''<div class="pad"><span class=
 <p>The contractor chooses the supplier and what is shared. Prices and rewards would come only from each supplier, through a connection it authorizes.</p>
 <p class="small">The $3,573.22 is the synthetic quote used in this book. Nothing on this page is live today.</p></div></div>
 {folio("Supplier choice and loyalty", nxt())}</div>''', menu="Supplier choice and loyalty")
-ladder = [("tag", "Available today", "Projects, estimates and takeoffs; supplier requests, quotes, purchase orders and confirmations; delivery changes, and new delivery dates proposed when the schedule moves; the supplier dashboard and material demand; email notices, and text messages where set up."),
-          ("tag built", "Built and tested, releasing next", "Signing of purchase orders, order confirmations and delivery changes by both sides."),
-          ("tag next", "Proposed next", "Drawings or specifications added to a request by the contractor; supplier selection with prices in the estimate; optional supplier loyalty programs; a counter sketch-to-quote service; reporting for owners of several locations."),
-          ("tag future", "Future integration", "Only with each supplier’s authorization: live contractor-specific pricing, loyalty balances, stock, and connections to supplier and fulfillment-partner systems.")]
-lad = "".join(f'<tr><td style="width:24%"><span class="{k}">{E(t)}</span></td><td>{E(x)}</td></tr>' for k, t, x in ladder)
-d.add("ladder", "Today, next and future", f'''<div class="pad"><div class="kicker">Today, next and future</div>
-<h2>What works today, and what comes next.</h2>
-<p style="margin-bottom:calc(var(--u)*1)">Everything in Chapters 01 to 10 is shown on actual CalibraytAI screens. Where a chapter describes something not yet live, it says so.</p>
-<table class="t">{lad}</table>
-{folio("Today, next and future", nxt())}</div>''', menu="Today, next and future")
 d.add("demo", "A demonstration at KBC", f'''<img class="bg" src="{img(f"{A}/photo-nclose.jpg", 1900, 80)}" alt="">
 <div class="credit" style="top:12px;bottom:auto">{E(credit("A supplier network demonstration"))}</div>
 <div class="ov"><div class="kicker" style="color:var(--gold2)">Next steps</div><h2>A demonstration at KBC.</h2>
@@ -270,7 +260,7 @@ d.add("notes", "Notes and credits", f'''<div class="pad"><div class="kicker">Abo
 <div class="split even" style="font-size:calc(var(--u)*1.42);line-height:1.45"><div>
 <p><b>The story.</b> The Harbour Lane project, the contractor, the suppliers and the people in this book are synthetic. Every application image is an actual CalibraytAI screen, captured on 22 October 2026 from a synthetic company, where the store appears as “KBC (synthetic)”. No KBC records were used. The Fulfillment Partner is described, not shown: it is not connected to CalibraytAI.</p>
 <p><b>Supplier Connection</b> is labelled “Supplier Hub” on screen.</p>
-<p><b>Today, next and future.</b> Capabilities not yet live are labelled where they appear and summarized on the Today, next and future page. Signing is built and tested and goes live with its next release.</p>
+<p><b>Not yet live.</b> Capabilities not yet live are labelled where they appear. Signing is built and tested and goes live with its next release.</p>
 <p><b>Branding.</b> CalibraytAI artwork and the approved CalibraytAI logo. The Home Hardware Building Centre lock-up is Home Hardware’s own artwork, taken unchanged from the Home Hardware Stores Limited Supplier Guide (v3.1, July 2025); it is shown for illustration and discussion only, subject to authorization. No KBC-specific logo file was available.</p></div>
 <table class="t tight" style="font-size:calc(var(--u)*1.12)">{crs}</table></div>
 {folio("CalibraytAI · Supplier Connection", nxt())}</div>''', menu="Notes and credits")

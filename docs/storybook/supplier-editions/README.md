@@ -39,7 +39,7 @@ Both editions use the existing CalibraytAI Supplier Economics Calculator — the
 
 **Permissions still required:** BMR Group (BMR, BMR PRO, Elevation 360); Home Hardware Stores Limited (Home Hardware Building Centre — the guide routes questions to an HHSL Merchandise Manager); KBC (use of its name in a proposal). Each book's inside front cover carries Joel's small-print notice that the logos are for illustration and discussion only and imply no endorsement.
 
-## BMR Winchester edition — page-by-page changes (vs. the 21 Oct screen edition, 50 → 52 pages)
+## BMR Winchester edition — page-by-page changes (vs. the 21 Oct screen edition, 50 → 52 pages; 51 after the 22 Oct removal below)
 
 | Page | Change |
 |---|---|
@@ -52,7 +52,7 @@ Both editions use the existing CalibraytAI Supplier Economics Calculator — the
 | 43 BMR PRO-sponsored experience | Authorization sentence moved into the lead line; layout fits. |
 | 44 **New:** Sponsorship in the app (concept) | Selected panels from the seven-panel concept — contractor dashboard recognition, supplier choice in the estimate, account settings ("your data always under your control", portability) and phone — as a labelled illustration, not a V1 screen. Projects, materials and calendar panels left out. |
 | 46 Supplier choice and rewards | BMR's own Elevation 360 graphic added, unchanged and captioned; projected-points note moved under the illustration. |
-| 47 **New:** Today, next and future | The capability ladder, moved off page 46 so both pages read cleanly. |
+| 47 ~~Today, next and future~~ | Removed 22 Oct 2026 at Joel's request (also removed from the master and KBC books). The notes page keeps a one-line "What is live" / "Not yet live" statement, and each page still labels anything not yet live. |
 | 51 Notes and credits | Branding note states which BMR files were used and which were unavailable. |
 | 52 Back cover | Official BMR logo and "Prepared for BMR Winchester · a proposal for discussion". |
 
@@ -69,7 +69,7 @@ Retained and checked in the text: BMR PRO sponsorship concept (proposed); contra
 
 ## Verification (22 Oct 2026)
 
-- `qa.py` at 1440 × 820 and 390 × 760: BMR 52 pages, KBC 52, master 48 — no page errors, no overflow, no text over a page footer, no sideways scrolling on the phone.
+- `qa.py` at 1440 × 820 and 390 × 760: BMR 52 pages, KBC 52, master 48 (after removing the Today, next and future page on 22 Oct: 51, 51, 47 — re-checked, no problems) — no page errors, no overflow, no text over a page footer, no sideways scrolling on the phone.
 - `verify_model.py`: parity OK on all three.
 - Text scans: KBC has no BMR, Elevation, Tomlinson, Winchester, Darcy, Brayman, Linda, Bushel, concrete, RONA or Lennar; master has no supplier names; BMR has no Home Hardware, KBC, RONA, Linda, Bushel or Lennar.
 - `tests/test_supplier_economic_model.py`: 21 passed (6 new).

@@ -40,6 +40,16 @@
             </div>
 
             <div class="header-actions" aria-label="Quick actions">
+                {% set _ctx_project = project if (project is defined and project) else (estimate.project if (estimate is defined and estimate and estimate.project is defined) else None) %}
+                {% if current_user.is_authenticated and _ctx_project %}
+                {% set plan_link = office_plan_link(_ctx_project) %}
+                {% if plan_link %}
+                <a class="header-plan-btn{% if not plan_link.count %} header-plan-btn-empty{% endif %}" href="{{ plan_link.url }}" data-view-project-plan title="{{ plan_link.label }}: {{ plan_link.project_name }}">
+                    <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
+                    <span class="header-plan-label">{{ plan_link.label }}</span>{% if plan_link.count > 1 %}<span class="header-plan-count">{{ plan_link.count }}</span>{% endif %}
+                </a>
+                {% endif %}
+                {% endif %}
                 {% if current_user.is_authenticated %}{% include "partials/cal_assistant.html" %}{% endif %}
                 <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)" title="Notifications (coming soon)">
                     <i class="bi bi-bell" aria-hidden="true"></i>

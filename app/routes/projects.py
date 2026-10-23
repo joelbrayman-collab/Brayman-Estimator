@@ -423,6 +423,9 @@ def create_project():
 
             db.session.commit()
             flash("Project created successfully with commercial decision context.", "success")
+            follow_on = _plan_start_after_create(project, org_id)
+            if follow_on:
+                return follow_on
             return redirect(url_for("projects.project_setup", id=project.id))
 
         except (CommercialContextValidationError, PermitFoundationError) as e:
@@ -435,6 +438,34 @@ def create_project():
             return render_template("projects/form.html", clients=clients, **options)
 
     return render_template("projects/form.html", clients=clients, **options)
+
+
+def _plan_start_after_create(project, org_id):
+    """New project, step two (23 Oct 2026): upload the plan PDF now, or go straight to the drawing tools.
+
+    Either choice records that drawings are required. A failed upload never undoes the project."""
+    choice = (request.form.get("plan_start") or "later").strip()
+    if choice not in ("upload", "generate"):
+        return None
+    try:
+        set_project_drawing_requirement(organization_id=org_id, project_id=project.id, requirement="REQUIRED")
+    except ProjectDrawingRequirementError:
+        pass
+    if choice == "generate":
+        return redirect(url_for("construction_drawings.index", project_id=project.id))
+    file_storage = request.files.get("plan_file")
+    if file_storage is None or not (file_storage.filename or "").strip():
+        flash("Choose the plan PDF to upload.", "error")
+        return redirect(url_for("plan_intelligence.upload_plan", project_id=project.id))
+    from app.plan_intelligence.services import PlanIntelligenceServiceError, upload_plan_pdf
+
+    try:
+        document = upload_plan_pdf(project, file_storage, notes="Added when the project was created.")
+    except PlanIntelligenceServiceError as exc:
+        flash(f"The project was saved, but the plan was not uploaded: {exc}", "error")
+        return redirect(url_for("plan_intelligence.upload_plan", project_id=project.id))
+    flash("Plan PDF uploaded.", "success")
+    return redirect(url_for("plan_intelligence.view_plan", project_id=project.id, document_id=document.id))
 
 
 @projects_bp.route("/<int:id>/commercial-context/edit", methods=["GET", "POST"])

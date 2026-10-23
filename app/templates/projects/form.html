@@ -13,7 +13,7 @@
 </div>
 
 {% if clients %}
-<form method="post" class="form-panel">
+<form method="post" class="form-panel" enctype="multipart/form-data">
     <h3>Project Details</h3>
     <div class="form-grid">
         <label>
@@ -49,6 +49,23 @@
             </select>
         </label>
     </div>
+
+    <fieldset class="plan-start" data-plan-start>
+        <legend>Plans and drawings</legend>
+        <p class="muted-copy">The plan is what everyone works from. Add it now, or generate the drawings right after saving.</p>
+        <div class="plan-start-options">
+            <input type="radio" id="plan-start-upload" name="plan_start" value="upload">
+            <label for="plan-start-upload"><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i><strong>Upload plan</strong><span>Add the plan PDF now.</span></label>
+            <input type="radio" id="plan-start-generate" name="plan_start" value="generate">
+            <label for="plan-start-generate"><i class="bi bi-pencil-square" aria-hidden="true"></i><strong>Generate drawings</strong><span>Go straight to the drawing tools after saving.</span></label>
+            <input type="radio" id="plan-start-later" name="plan_start" value="later" checked>
+            <label for="plan-start-later"><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
+        </div>
+        <label class="plan-start-file" data-plan-start-file>
+            Plan PDF
+            <input type="file" name="plan_file" accept="application/pdf,.pdf">
+        </label>
+    </fieldset>
 
     <label>
         Project address

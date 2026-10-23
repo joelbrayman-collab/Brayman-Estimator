@@ -9,8 +9,12 @@ from app.services.organizations import get_current_organization_id
 # approved-cost hand-off ("Approved contractor cost #7; quantity confirmed by ...") and the calculator
 # hand-offs ("...; rule ...; quantity ...; canonical ..."). They are office provenance, not proposal
 # wording: a customer never sees them (roles and isolation walk, 20 Oct 2026). Notes a person typed are kept.
+# Guided Estimating (23 Oct 2026): the labour-hours note (it names the company labour rate) and the guided manual
+# cost-line note are office provenance too, so no rate reaches a customer document.
 _PROVENANCE_NOTE = re.compile(
-    r"^Approved contractor cost #\d+; quantity confirmed by |; rule [^;]*; quantity [^;]*; canonical ",
+    r"^Approved contractor cost #\d+; quantity confirmed by |; rule [^;]*; quantity [^;]*; canonical "
+    r"|^(?:Company labour rate|Project rate) [-0-9.]+ per hour"
+    r"|^Manual entry by .+: no CalibraytAI calculator covers this cost\.$",
 )
 
 

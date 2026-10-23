@@ -47,7 +47,10 @@
     <ul>
       {% for calc in check.calculations %}
       <li data-calculation="{{ calc.id }}">{{ calc.calculator_label }} — {{ calc.summary }}
-        {% if calc.review_status == 'IN_REVIEW' %}<a href="{{ url_for('estimates.calculation_review', id=version.estimate_id, version_id=calc.estimate_version_id, intake_id=calc.calculation_result_intake_id, section_id=(check.lines[0].line.estimate_section_id if check.lines else None), return_to=return_to) }}" data-review-calculation>Review the quantities</a>
+        {% if calc.review_status == 'IN_REVIEW' %}<a href="{{ url_for('estimates.calculation_review', id=version.estimate_id, version_id=calc.estimate_version_id, intake_id=calc.calculation_result_intake_id, section_id=stage_section_id, return_to=return_to) }}" data-review-calculation>Review the quantities</a>
+          {% for c2, intake, count in check.open_intakes if c2.id == calc.id and editable %}
+          <form method="post" action="{{ base }}set_aside" style="display:inline;"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="intake_id" value="{{ intake.id }}"><button class="ge-secondary" type="submit" data-set-aside>Leave the other {{ count }} off the estimate</button></form>
+          {% endfor %}
         {% elif calc.payload %}<a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-send-calculation>Send to the estimate review</a>
         {% else %}<span class="ge-muted">(kept as a record)</span>{% endif %}
       </li>
@@ -170,11 +173,12 @@
       </table></div>
       <p class="ge-muted">A selected quote only suggests the cost. Press <em>Use this cost on the line</em> above to apply it (you can undo it).</p>
       {% endif %}
-      {% if editable %}
-      <details id="quote" {% if not row.quotes %}open{% endif %}>
+    {% endfor %}
+    {% if editable %}
+      <details id="quote" {% if not sub or not sub[0].quotes %}open{% endif %}>
         <summary><strong>Record a quote</strong> (typed in from the subcontractor's quote)</summary>
-        <form method="post" action="{{ url_for('scope_delivery.receive_quote_row', project_id=project.id, line_id=row.line.id) }}" class="ge-form-row" data-record-quote>
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+        <form method="post" action="{{ base }}record_quote" class="ge-form-row" data-record-quote>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label>Subcontractor
             <select name="subcontractor_id"><option value="">New subcontractor (below)</option>{% for s in subcontractors %}<option value="{{ s.id }}">{{ s.legal_name }}</option>{% endfor %}</select></label>
           <label>New subcontractor name<input type="text" name="subcontractor_legal_name" maxlength="180"></label>
@@ -189,7 +193,6 @@
         </form>
       </details>
       {% endif %}
-    {% endfor %}
   </section>
   {% endif %}
 

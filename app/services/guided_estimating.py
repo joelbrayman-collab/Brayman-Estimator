@@ -598,13 +598,19 @@ def _stage_calculations(stage):
             .order_by(ProjectCalculation.id.asc()).all())
 
 
-def _open_intake_rows(calculations):
+def _set_aside_intakes(stage):
+    return {int(e.to_value) for e in GuidedEstimateEvent.query.filter_by(stage_id=stage.id, event="INTAKE_SET_ASIDE")
+            if (e.to_value or "").isdigit()}
+
+
+def _open_intake_rows(calculations, stage=None):
     """Calculation quantities sent to the estimate review but not yet confirmed or set aside there."""
     from app.models.calculation_estimate_mapping import STATUS_OPEN, CalculationResultIntake
 
+    aside = _set_aside_intakes(stage) if stage is not None else set()
     out = []
     for calc in calculations:
-        if not calc.calculation_result_intake_id:
+        if not calc.calculation_result_intake_id or calc.calculation_result_intake_id in aside:
             continue
         intake = db.session.get(CalculationResultIntake, calc.calculation_result_intake_id)
         if intake is None:
@@ -615,9 +621,15 @@ def _open_intake_rows(calculations):
     return out
 
 
+def _facts_complete(line) -> bool:
+    """The line has what costing needs (quantity, unit, unit cost, waste). Read only: unlike the costing check it
+    does not recalculate the line, so a priced line's selling price is never touched by looking at a stage."""
+    return (line.quantity is not None and bool((line.unit or "").strip()) and line.unit_cost is not None
+            and line.waste_percent is not None)
+
+
 def stage_check(stage, version=None) -> dict:
     """What a leaf stage (or part) has, what it is missing and whether it may be completed. Read only."""
-    from app.services.estimate_costing import _line_extended_facts_complete
     from app.services.estimate_scope_delivery import get_scope_delivery_for_line
     from app.services.subcontract_quote import quotes_for_line, selected_quote_for_line
     from app.services.suggested_cost import labour_suggestion, material_suggestion
@@ -627,7 +639,7 @@ def stage_check(stage, version=None) -> dict:
     version = version or current_version(guided)
     lines = stage_lines(stage, version)
     calcs = _stage_calculations(stage)
-    open_intakes = _open_intake_rows(calcs)
+    open_intakes = _open_intake_rows(calcs, stage)
     issues: List[str] = []
     line_rows = []
     allowance_line = None
@@ -643,7 +655,7 @@ def stage_check(stage, version=None) -> dict:
         if stage.allowance_line_id and line.id == stage.allowance_line_id:
             allowance_line = line
             row["kind"], row["kind_label"] = "allowance", "Approved allowance"
-        if not _line_extended_facts_complete(line) or cost <= 0:
+        if not _facts_complete(line) or cost <= 0:
             if not (row["kind"] == "allowance" and stage.allowance_approved_at):
                 row["missing"].append("no cost yet")
         if kind == "subcontract":
@@ -873,6 +885,29 @@ def setup_subcontract(guided, stage, *, actor, description="", user_id=None) -> 
     return line
 
 
+def record_quote(guided, stage, *, actor, form, user_id=None):
+    """Record a received subcontract quote: the existing quote evidence on the stage's subcontract line."""
+    name = _actor(actor)
+    line = setup_subcontract(guided, stage, actor=name, user_id=user_id)
+    from app.services.subcontract_quote import SubcontractQuoteError, receive_quote
+
+    try:
+        quote = receive_quote(
+            line, actor=name, organization_id=guided.organization_id, project_id=guided.project_id,
+            subcontractor_id=int(form.get("subcontractor_id")) if (form.get("subcontractor_id") or "").isdigit() else None,
+            subcontractor_code=form.get("subcontractor_code"), subcontractor_legal_name=form.get("subcontractor_legal_name"),
+            quote_reference=form.get("quote_reference") or "", amount=form.get("amount") or "",
+            currency=form.get("currency") or "CAD", quote_date=form.get("quote_date") or "",
+            expires_on=form.get("expires_on") or None, included_scope=form.get("included_scope"),
+            exclusions=form.get("exclusions"), provenance_note=form.get("provenance_note"), user_id=user_id)
+    except SubcontractQuoteError as exc:
+        raise GuidedEstimatingError(str(exc)) from exc
+    _event(guided, "QUOTE_RECEIVED", actor=name, stage=stage, detail=quote.quote_reference, user_id=user_id)
+    _sync_status(stage)
+    db.session.commit()
+    return quote
+
+
 def request_quote(guided, stage, *, actor, user_id=None):
     """The person sent the quote request (the printable sheet, email or call): the stage waits for the quote."""
     name = _actor(actor)
@@ -1031,6 +1066,20 @@ def complete_stage(guided, stage, *, actor, user_id=None) -> Tuple[bool, List[st
     _sync_status(stage, version)
     db.session.commit()
     return True, []
+
+
+def set_aside_quantities(guided, stage, *, intake_id, actor, user_id=None):
+    """The person reviewed a calculation and leaves its remaining quantities off the estimate (recorded)."""
+    name = _actor(actor)
+    _require_editable(guided)
+    calcs = {c.calculation_result_intake_id for c in _stage_calculations(stage)}
+    if int(intake_id) not in calcs:
+        raise GuidedEstimatingError("That calculation is not on this stage.")
+    _event(guided, "INTAKE_SET_ASIDE", actor=name, stage=stage, to_value=str(int(intake_id)),
+           detail="Remaining calculated quantities left off the estimate after review.", user_id=user_id)
+    db.session.flush()
+    _sync_status(stage)
+    db.session.commit()
 
 
 def reopen_stage(guided, stage, *, actor, reason="", user_id=None):

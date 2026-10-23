@@ -234,7 +234,8 @@ def stage(project_id, stage_id):
         manual_kinds=G.MANUAL_KINDS, subcontractors=list_subcontractors(_org()),
         plans=project_plans(_org(), project.id), labour_rows=labour_rows, spec=G.spec_for(row),
         accepted=G.accepted_proposal(guided), basis_labels=G.BASIS_LABELS,
-        return_to=_stage_url(project, row))
+        return_to=_stage_url(project, row),
+        stage_section_id=(G.section_for(row, version).id if G.section_for(row, version) is not None else None))
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/stages/<int:stage_id>/<action>", methods=["POST"])
@@ -292,6 +293,10 @@ def stage_action(project_id, stage_id, action):
                                 user_id=_uid())
             flash("Subcontract set up. Record the quote when it arrives.", "success")
             return redirect(here)
+        if action == "record_quote":
+            G.record_quote(guided, row, actor=_actor(), form=form, user_id=_uid())
+            flash("Quote recorded. It is evidence only: select it, then use its cost on the line.", "success")
+            return redirect(here)
         if action == "request_quote":
             G.request_quote(guided, row, actor=_actor(), user_id=_uid())
             flash("Marked as waiting for the quote. Keep estimating the other stages; come back when it arrives.",
@@ -310,6 +315,11 @@ def stage_action(project_id, stage_id, action):
             G.authorize_zero_cost(guided, row, reason=form.get("reason", ""), approver=signed_in_approver(),
                                   user_id=_uid())
             flash("No-cost decision recorded.", "success")
+            return redirect(here)
+        if action == "set_aside":
+            G.set_aside_quantities(guided, row, intake_id=form.get("intake_id", type=int) or 0, actor=_actor(),
+                                   user_id=_uid())
+            flash("The remaining calculated quantities are left off the estimate.", "success")
             return redirect(here)
         if action == "responsibility":
             G.change_responsibility(guided, row, form.get("responsibility", ""), actor=_actor(),
@@ -355,6 +365,10 @@ def pricing(project_id):
 
     version = G.current_version(guided)
     costing = evaluate_costing(version) if version is not None else None
+    issue = proposal_issue_blockers(version) if version is not None else []
+    # The costing check recalculates lines in memory; this page writes nothing, so nothing of that is kept.
+    db.session.rollback()
+    version = G.current_version(G.get_guided(_org(), project.id))
     proposals = []
     if guided.estimate is not None:
         from app.models import Proposal
@@ -362,7 +376,7 @@ def pricing(project_id):
         proposals = Proposal.query.filter_by(estimate_id=guided.estimate_id).order_by(Proposal.id.desc()).all()
     return render_template("guided/pricing.html", project=project, guided=guided, version=version,
                            blockers=G.guided_blockers(guided), costing=costing,
-                           issue_blockers=proposal_issue_blockers(version) if version is not None else [],
+                           issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,
                            proposals=proposals, return_to=url_for("guided.pricing", project_id=project.id),
                            handoff=G.handoff(guided))

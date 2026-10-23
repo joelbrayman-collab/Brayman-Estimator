@@ -1108,3 +1108,56 @@ button.button-secondary {
 }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Calendar header clean-up and Print (Joel, 23 Oct 2026). The My Calendar | Company Calendar switch sits in
+   the top bar in place of the title; the toolbar and the controls row are tighter so the month shows more
+   of itself on a laptop screen. The month grid and its cells are not resized. */
+.shell-workspace:has(> .cal-workspace) { padding-top: 4px; }
+.cal-scope-header { flex: none; }
+.cal-workspace .cal-toolbar { gap: 8px 14px; margin: 0 0 4px; }
+.cal-workspace .cal-nav-step { min-width: 36px; min-height: 36px; }
+.cal-workspace .cal-period-title { font-size: 1.45rem; margin-left: 6px; }
+.cal-workspace .cal-today, .cal-workspace .cal-views a { min-height: 36px; padding: 0 14px; }
+.cal-workspace .cal-new-appt { min-height: 36px; }
+.cal-subbar { gap: 6px 10px; margin: 0 0 4px; }
+.cal-subbar .cal-selected-day > summary, .cal-subbar .cal-period > summary { min-height: 34px; padding: 0 10px; align-items: center; }
+.cal-subbar .cal-project-filter { display: flex; align-items: center; margin: 0; }
+.cal-subbar .cal-project-filter select { min-height: 34px; height: 34px; margin: 0; padding-top: 2px; padding-bottom: 2px; }
+.cal-workspace .cal-toolbar .cal-set-dates.button { margin-left: 0; min-height: 36px; padding: 0 14px; display: inline-flex; align-items: center; background: var(--white); color: var(--text); border: 1px solid var(--border); box-shadow: none; font-weight: 500; }
+.cal-workspace .cal-toolbar .cal-set-dates.button:hover { background: #f6f5f2; }
+.cal-workspace .cal-toolbar .cal-new-appt { margin-left: 0; }
+.cal-toolbar-end, .cal-subbar-end { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 12px; }
+.cal-toolbar-end .cal-text-notices { margin-left: 0; }
+.cal-workspace .cal-toolbar .cal-help .contextual-help > summary { width: 36px; height: 36px; }
+.cal-print-open { position: relative; }
+.cal-print-open > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--white); font-size: 14px; font-weight: 500; }
+.cal-print-open > summary::before { content: ""; width: 14px; height: 12px; border: 1.6px solid currentColor; border-radius: 2px; border-top-width: 4px; box-sizing: border-box; }
+.cal-print-open > summary:hover { background: #f6f5f2; }
+.cal-print-pop { position: absolute; z-index: 20; top: calc(100% + 6px); right: 0; width: min(300px, 92vw); display: grid; gap: 10px; padding: 14px; background: var(--white); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 28px rgba(26, 31, 40, 0.14); }
+.cal-print-pop label { display: grid; gap: 4px; font-size: 13px; }
+.cal-print-pop p { margin: 0; font-size: 12px; }
+@media (min-width: 701px) and (max-width: 1365px) {
+    /* Smaller laptops: the same two rows, a little tighter, so New Appointment and Print stay top right. */
+    .cal-workspace .cal-toolbar { column-gap: 10px; }
+    .cal-workspace .cal-viewbar { gap: 6px; }
+    .cal-workspace .cal-period-title { font-size: 1.3rem; }
+    .cal-workspace .cal-today, .cal-workspace .cal-views a, .cal-workspace .cal-toolbar .cal-set-dates.button { padding: 0 11px; }
+    .cal-workspace .cal-toolbar .cal-new-appt { padding: 0 14px; }
+    .cal-subbar { column-gap: 8px; }
+    .cal-subbar .cal-project-filter select { max-width: 170px; }
+    .cal-subbar .cal-chip-label { letter-spacing: 0.06em; }
+    .cal-subbar .cal-selected-day > summary, .cal-subbar .cal-period > summary { padding: 0 8px; }
+    .cal-toolbar-end { column-gap: 10px; }
+    .cal-print-open > summary { padding: 0 11px; }
+}
+@media (max-width: 700px) {
+    /* Phone: the switch takes its own line under the menu button and the account buttons. */
+    .shell-header:has(.cal-scope-header) { height: auto; min-height: var(--header-height); flex-wrap: wrap; row-gap: 6px; padding-top: 8px; padding-bottom: 8px; }
+    .shell-header:has(.cal-scope-header) .header-left { display: contents; }
+    .cal-scope-header { order: 3; flex-basis: 100%; display: flex; }
+    .cal-scope-header a { flex: 1; justify-content: center; }
+    .cal-toolbar-end, .cal-subbar-end { margin-left: 0; justify-content: flex-start; }
+    .cal-print-open { flex-basis: 100%; }
+    .cal-print-open[open] > summary { width: 100%; }
+    .cal-print-pop { position: static; width: auto; margin-top: 6px; box-shadow: none; }
+}

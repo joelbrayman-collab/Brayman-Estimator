@@ -226,6 +226,15 @@ def company():
     period_title = _period_title(calendar, calendar_view)
     from app.presentation.schedule_categories import legend
 
+    # Print (Joel, 23 Oct 2026): the form opens on the period on screen.
+    if calendar_view == "day":
+        print_from = print_to = calendar["selected"]
+    elif calendar_view == "week":
+        print_from, print_to = calendar["week_dates"][0], calendar["week_dates"][-1]
+    else:
+        print_from = date(calendar["year"], calendar["month"], 1)
+        print_to = date(calendar["year"] + (calendar["month"] == 12), calendar["month"] % 12 + 1, 1) - timedelta(days=1)
+
     return render_template(
         "schedule/company.html",
         view=view,
@@ -241,7 +250,94 @@ def company():
         scope_keep={k: v for k, v in calendar_keep.items() if k != "scope"},
         day_columns=_day_columns(calendar, grid_days) if hour_grid else [],
         month_edges=_month_edges(calendar) if month_scroll else None,
+        print_from=print_from,
+        print_to=print_to,
     )
+
+
+PRINT_MAX_DAYS = 92  # about three months on one printout
+
+
+def _print_range(raw_from, raw_to):
+    """(start, end, message). Plain-language message when the dates cannot be printed."""
+    raw_from, raw_to = (raw_from or "").strip(), (raw_to or "").strip()
+    if not raw_from or not raw_to:
+        return None, None, "Choose both a From date and a To date."
+    try:
+        start, end = date.fromisoformat(raw_from), date.fromisoformat(raw_to)
+    except ValueError:
+        return None, None, "Enter the dates as year-month-day, for example 2026-10-23."
+    if start > end:
+        return start, end, "The From date must be on or before the To date."
+    if (end - start).days + 1 > PRINT_MAX_DAYS:
+        return start, end, f"You can print up to {PRINT_MAX_DAYS} days (about three months) at a time. Choose a shorter range."
+    return start, end, None
+
+
+@schedule_bp.route("/print")
+def print_calendar():
+    """Print the calendar from one date to another (Joel, 23 Oct 2026). The same entries, scope (My
+    Calendar or Company Calendar) and project filter as the calendar page, for the signed-in person's
+    own company only."""
+    from app.services.home_planning import calendar_print_days
+
+    organization = _org()
+    today = date.today()
+    try:
+        project_id = _optional_int(request.args.get("project_id"))
+    except (TypeError, ValueError):
+        project_id = None
+    requested_scope = request.args.get("scope")
+    if requested_scope in ("company", "mine"):
+        scope = requested_scope
+    else:
+        scope = "company" if project_id is not None else "mine"
+    mine = scope == "mine"
+    project_name = ""
+    if project_id is not None:
+        from app.models import Project
+
+        project = Project.query.filter_by(id=project_id, organization_id=organization.id).first()
+        if project is None:  # another company's project, or none: never widen, never reveal
+            project_id = None
+        else:
+            project_name = project.name
+
+    asked = "from" in request.args or "to" in request.args
+    week_start = today - timedelta(days=today.weekday())
+    start, end, message = _print_range(request.args.get("from"), request.args.get("to"))
+    days = []
+    if asked and message is None:
+        appointment_rows = calendar_rows(organization.id, start, end, current_user, project_id=project_id, mine=mine)
+        days = calendar_print_days(
+            organization.id, start, end,
+            appointments=appointment_rows,
+            project_id=project_id,
+            mine_user_id=int(current_user.id) if mine else None,
+        )
+    form_from = request.args.get("from") or week_start.isoformat()
+    form_to = request.args.get("to") or (week_start + timedelta(days=6)).isoformat()
+    back = {"scope": "company" if not mine else ("mine" if project_id is not None else None)}
+    if project_id is not None:
+        back["project_id"] = project_id
+    if start is not None and message is None:
+        back.update(year=start.year, month=start.month, day=start.day)
+    return render_template(
+        "schedule/print.html",
+        scope=scope,
+        scope_label="My Calendar" if mine else "Company Calendar",
+        project_id=project_id,
+        project_name=project_name,
+        message=message if asked else None,
+        start=start if asked and message is None else None,
+        end=end if asked and message is None else None,
+        days=days,
+        form_from=form_from,
+        form_to=form_to,
+        printed_on=today,
+        max_days=PRINT_MAX_DAYS,
+        back_url=url_for("schedule.company", **{k: v for k, v in back.items() if v is not None}),
+    ), (200 if not (asked and message) else 400)
 
 
 def _month_edges(calendar):

@@ -296,47 +296,17 @@ def _assigned_in_window(item, user_id: int, start: date, end: date, organization
     return False
 
 
-def assemble_home_planning(
-    organization_id: str,
-    *,
-    year: Optional[int] = None,
-    month: Optional[int] = None,
-    selected_day: Optional[int] = None,
-    today: Optional[date] = None,
-    viewer=None,
-    project_id: Optional[int] = None,
-    appointments: Optional[list] = None,
-    mine_user_id: Optional[int] = None,
-    months_before: int = 0,
-    months_after: int = 0,
-) -> dict:
-    """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
-    day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
-    Calendar only, from ``app.services.appointments.calendar_rows``) adds business appointments to
-    the month, the selected day and the week/day lists; Home never passes them. ``mine_user_id``
-    (My Calendar) keeps only work assigned to that person, directly or through a crew they are on
-    at the time, and deliveries for those projects. ``months_before`` / ``months_after`` (Calendar
-    month view) extend the weeks so the month view scrolls through several months."""
+def _calendar_sources(organization_id: str, start: date, end: date, *, project_id: Optional[int] = None,
+                      mine_user_id: Optional[int] = None):
+    """Scheduled work and supplier deliveries between ``start`` and ``end`` for the calendar, with the
+    calendar's own filters (project; My Calendar = work assigned to that person and those projects'
+    deliveries). Shared by the calendar page and its printout so both always show the same entries."""
     from app.presentation.schedule_categories import activity_category
 
-    today = today or date.today()
-    year = int(year or today.year)
-    month = int(month or today.month)
-    if month < 1 or month > 12:
-        year, month = today.year, today.month
-    month_start, month_end = calendar_month_bounds(year, month)
-    if selected_day is None:
-        selected = today if month_start <= today <= month_end else month_start
-    else:
-        last = month_end.day
-        day_number = max(1, min(int(selected_day), last))
-        selected = date(year, month, day_number)
-
-    grid_start, grid_end = scroll_month_bounds(year, month, months_before, months_after)
     schedule = assemble_schedule(
         organization_id,
-        window_start=grid_start,
-        window_end=grid_end,
+        window_start=start,
+        window_end=end,
         include_activities=False,
         include_conflicts=True,
     )
@@ -348,7 +318,7 @@ def assemble_home_planning(
             continue
         for bar in project_row["bars"]:
             item = bar["item"]
-            if mine_user_id is not None and not _assigned_in_window(item, mine_user_id, grid_start, grid_end, organization_id):
+            if mine_user_id is not None and not _assigned_in_window(item, mine_user_id, start, end, organization_id):
                 continue
             assignments = bar.get("assignments") or []
             crew = _crew_from_assignments(assignments)
@@ -377,12 +347,107 @@ def assemble_home_planning(
     for row in item_rows:
         row["conflict"] = row["item_id"] in conflict_ids
 
-    delivery_rows = _delivery_rows(organization_id, grid_start, grid_end)
+    delivery_rows = _delivery_rows(organization_id, start, end)
     if project_id is not None:
         delivery_rows = [row for row in delivery_rows if row["project_id"] == project_id]
     if mine_user_id is not None:
         my_projects = {row["project_id"] for row in item_rows}
         delivery_rows = [row for row in delivery_rows if row["project_id"] in my_projects]
+    return schedule, item_rows, delivery_rows
+
+
+def _entries_for(day: date, item_rows: list[dict], delivery_rows: list[dict], appointments) -> list[dict]:
+    """One day's calendar entries in calendar order: all-day appointments, work, deliveries, timed appointments."""
+    work = [
+        {
+            "kind": "work",
+            "project_id": row["project_id"],
+            "label": row["element_name"],
+            "project_name": row["project_name"],
+            "category": row["category"],
+            "crew_letter": row["crew"]["letter"],
+            "crew_name": row["crew"]["name"],
+            "people": row["people"],
+            "conflict": row["conflict"],
+            "href": f"/projects/{row['project_id']}#hub-schedule",
+            "edit_href": f"/schedule/items/{row['item_id']}",
+        }
+        for row in item_rows
+        if row["scheduled_start"] <= day <= row["scheduled_end"]
+    ]
+    deliveries = [
+        {
+            "kind": "delivery",
+            "label": row["label"],
+            "project_name": "",
+            "category": "delivery-pending" if row["pending"] else "delivery",
+            "status": row["status"],
+            "href": row["href"],
+        }
+        for row in delivery_rows
+        if row["date"] == day
+    ]
+    booked = sorted(
+        (dict(row, kind="appointment") for row in appointments or () if row["date"] == day),
+        key=lambda r: (not r["all_day"], r["start_min"], r["id"]),
+    )
+    return [r for r in booked if r["all_day"]] + work + deliveries + [r for r in booked if not r["all_day"]]
+
+
+def calendar_print_days(organization_id: str, start: date, end: date, *, appointments=None,
+                        project_id: Optional[int] = None, mine_user_id: Optional[int] = None) -> list[dict]:
+    """Calendar printout (Joel, 23 Oct 2026): every day from ``start`` to ``end`` (both included) with the
+    same entries the calendar shows for the same filters. ``appointments`` come from
+    ``app.services.appointments.calendar_rows`` for the same range and viewer."""
+    _schedule, item_rows, delivery_rows = _calendar_sources(
+        organization_id, start, end, project_id=project_id, mine_user_id=mine_user_id
+    )
+    days = []
+    day = start
+    while day <= end:
+        days.append({"date": day, "entries": _entries_for(day, item_rows, delivery_rows, appointments)})
+        day += timedelta(days=1)
+    return days
+
+
+def assemble_home_planning(
+    organization_id: str,
+    *,
+    year: Optional[int] = None,
+    month: Optional[int] = None,
+    selected_day: Optional[int] = None,
+    today: Optional[date] = None,
+    viewer=None,
+    project_id: Optional[int] = None,
+    appointments: Optional[list] = None,
+    mine_user_id: Optional[int] = None,
+    months_before: int = 0,
+    months_after: int = 0,
+) -> dict:
+    """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
+    day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
+    Calendar only, from ``app.services.appointments.calendar_rows``) adds business appointments to
+    the month, the selected day and the week/day lists; Home never passes them. ``mine_user_id``
+    (My Calendar) keeps only work assigned to that person, directly or through a crew they are on
+    at the time, and deliveries for those projects. ``months_before`` / ``months_after`` (Calendar
+    month view) extend the weeks so the month view scrolls through several months."""
+    today = today or date.today()
+    year = int(year or today.year)
+    month = int(month or today.month)
+    if month < 1 or month > 12:
+        year, month = today.year, today.month
+    month_start, month_end = calendar_month_bounds(year, month)
+    if selected_day is None:
+        selected = today if month_start <= today <= month_end else month_start
+    else:
+        last = month_end.day
+        day_number = max(1, min(int(selected_day), last))
+        selected = date(year, month, day_number)
+
+    grid_start, grid_end = scroll_month_bounds(year, month, months_before, months_after)
+    schedule, item_rows, delivery_rows = _calendar_sources(
+        organization_id, grid_start, grid_end, project_id=project_id, mine_user_id=mine_user_id
+    )
 
     segments = []
     cursor = grid_start
@@ -568,40 +633,7 @@ def assemble_home_planning(
     )
 
     def entries_for(day: date) -> list[dict]:
-        work = [
-            {
-                "kind": "work",
-                "project_id": row["project_id"],
-                "label": row["element_name"],
-                "project_name": row["project_name"],
-                "category": row["category"],
-                "crew_letter": row["crew"]["letter"],
-                "crew_name": row["crew"]["name"],
-                "people": row["people"],
-                "conflict": row["conflict"],
-                "href": f"/projects/{row['project_id']}#hub-schedule",
-                "edit_href": f"/schedule/items/{row['item_id']}",
-            }
-            for row in item_rows
-            if row["scheduled_start"] <= day <= row["scheduled_end"]
-        ]
-        deliveries = [
-            {
-                "kind": "delivery",
-                "label": row["label"],
-                "project_name": "",
-                "category": "delivery-pending" if row["pending"] else "delivery",
-                "status": row["status"],
-                "href": row["href"],
-            }
-            for row in delivery_rows
-            if row["date"] == day
-        ]
-        booked = sorted(
-            (dict(row, kind="appointment") for row in appointments or () if row["date"] == day),
-            key=lambda r: (not r["all_day"], r["start_min"], r["id"]),
-        )
-        return [r for r in booked if r["all_day"]] + work + deliveries + [r for r in booked if not r["all_day"]]
+        return _entries_for(day, item_rows, delivery_rows, appointments)
 
     week_start = selected - timedelta(days=selected.weekday())
     week_days = []

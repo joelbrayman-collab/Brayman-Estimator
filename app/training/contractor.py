@@ -838,11 +838,12 @@ M05 = Module(
             steps=(
                 Step(title="Open the calendar", app=O, where="Calendar (menu), or Home → Company Calendar",
                      do="Press Calendar",
-                     expect="The month, SELECTED DAY, This period, and the buttons Today, Month, Week, Day, + New Appointment, "
-                            "Outlook · Google · Apple Calendar and Set dates.",
+                     expect="My Calendar | Company Calendar in the top bar; the month; the buttons Today, Month, Week, Day, "
+                            "Text notices, Set dates, ? and + New Appointment; under them SELECTED DAY, All projects, This "
+                            "period, Outlook · Google · Apple Calendar and Print.",
                      if_wrong="Use ‹ and › to move months, or Go to a date.",
                      shot="c05-calendar.png", endpoint="schedule.company"),
-                Step(title="My or Company", app=O, where="Calendar → My Calendar | Company Calendar",
+                Step(title="My or Company", app=O, where="Calendar → My Calendar | Company Calendar (top bar)",
                      do="Press Company Calendar, then My Calendar",
                      expect="Company Calendar adds everyone's company appointments; nobody else's personal appointments ever show.",
                      if_wrong="Project filters the calendar to one job; choose All projects to clear it.",
@@ -851,6 +852,13 @@ M05 = Module(
                      do="Press Week, then Day",
                      expect="Week shows seven days with + to add; Day shows the hours.",
                      if_wrong="Today brings you back to today.", shot="c05-week.png", endpoint="schedule.company"),
+                Step(title="Print", app=O, where="Calendar → Print (top right, under + New Appointment)",
+                     do="Press Print, check From and To (they start on the dates on screen), press Print, then Print "
+                        "on the printout",
+                     expect="A printable list of every appointment, work item and delivery from the From date to the To "
+                            "date, day by day, with your company name and the date printed. Up to 92 days at a time.",
+                     if_wrong="The From date must be on or before the To date. Back to calendar returns to the calendar.",
+                     endpoint="schedule.print_calendar"),
             ),
             exercise="Open the training company's Calendar, switch to Company Calendar and Week, and find tomorrow.",
         ),

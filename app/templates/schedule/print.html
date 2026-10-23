@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Print calendar | Brayman Construction Platform{% endblock %}
+{% block page_title %}Print calendar{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Calendar printout (Joel, 23 Oct 2026): Letter paper, portrait, plain and readable. */
+    .cal-print { max-width: 780px; }
+    .cal-print-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 14px; }
+    .cal-print-actions .cal-print-now { margin-left: auto; }
+    .cal-print-form { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; margin: 0 0 18px; padding: 12px 14px; background: var(--white); border: 1px solid var(--border); border-radius: 10px; }
+    .cal-print-form label { display: grid; gap: 4px; font-size: 13px; }
+    .cal-print-form p { flex-basis: 100%; margin: 0; font-size: 12px; }
+    .cal-print-head { margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--text); }
+    .cal-print-company { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .cal-print-head h2 { margin: 2px 0; font-size: 1.35rem; }
+    .cal-print-head p { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
+    .cal-print-day { padding: 8px 0; border-bottom: 1px solid var(--border); break-inside: avoid; page-break-inside: avoid; }
+    .cal-print-day h3 { margin: 0 0 4px; font-size: 15px; }
+    .cal-print-day.is-empty { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; padding: 4px 0; }
+    .cal-print-day.is-empty h3 { margin: 0; font-weight: 500; font-size: 14px; }
+    .cal-print-none { margin: 0; font-size: 13px; color: var(--muted); }
+    .cal-print-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+    .cal-print-list li { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 2px 10px; font-size: 14px; overflow-wrap: anywhere; }
+    .cal-print-when { color: var(--muted); font-size: 13px; }
+    .cal-print-what strong { font-weight: 600; }
+    .cal-print-meta { display: block; font-size: 12.5px; color: var(--muted); }
+    .cal-print-empty-all { margin: 12px 0; }
+    @media (max-width: 520px) {
+        .cal-print-list li { grid-template-columns: 1fr; }
+        .cal-print-actions .cal-print-now { margin-left: 0; }
+    }
+    @media print {
+        @page { size: letter portrait; margin: 0.6in 0.55in; }
+        .shell-sidebar, .shell-header, .shell-overlay, .training-site-bar, .breadcrumbs, .flash-stack,
+        .cal-print-actions, .cal-print-form, #cal-panel, .cal-launch, .session-timeout, [data-session-timeout] { display: none !important; }
+        body, .app-shell, .shell-main { background: #fff !important; margin: 0 !important; }
+        .shell-workspace { width: auto !important; padding: 0 !important; margin: 0 !important; }
+        .cal-print { max-width: none; color: #000; }
+        .cal-print-company, .cal-print-when, .cal-print-meta, .cal-print-none { color: #333; }
+        .cal-print-list li { font-size: 11pt; }
+        a { color: inherit; text-decoration: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cal-print" data-calendar-print="true">
+    <div class="cal-print-actions">
+        <a href="{{ back_url }}" data-print-back="true">‹ Back to calendar</a>
+        {% if start %}<button type="button" class="button cal-print-now" data-print-now="true" onclick="window.print()">Print</button>{% endif %}
+    </div>
+
+    <form method="get" class="cal-print-form" data-print-form="true" action="{{ url_for('schedule.print_calendar') }}">
+        <input type="hidden" name="scope" value="{{ scope }}">
+        {% if project_id %}<input type="hidden" name="project_id" value="{{ project_id }}">{% endif %}
+        <label>From <input type="date" name="from" value="{{ form_from }}" required></label>
+        <label>To <input type="date" name="to" value="{{ form_to }}" required></label>
+        <button type="submit" class="button secondary">{% if start %}Change dates{% else %}Show printout{% endif %}</button>
+        {% if message %}<p class="alert alert-error" role="alert" data-print-message="true">{{ message }}</p>
+        {% else %}<p class="muted-copy">{{ scope_label }}{% if project_name %} · {{ project_name }}{% endif %}. Up to {{ max_days }} days at a time.</p>{% endif %}
+    </form>
+
+    {% if start %}
+    {% set nonempty = days | selectattr("entries") | list %}
+    <header class="cal-print-head">
+        <p class="cal-print-company" data-print-company="true">{{ company_name or "" }}</p>
+        <h2 data-print-range="true">{{ scope_label }}: {{ start.strftime("%B") }} {{ start.day }}, {{ start.year }}{% if end != start %} – {{ end.strftime("%B") }} {{ end.day }}, {{ end.year }}{% endif %}</h2>
+        {% if project_name %}<p>Project: {{ project_name }}</p>{% endif %}
+        <p data-printed-on="true">Printed on {{ printed_on.strftime("%A, %B") }} {{ printed_on.day }}, {{ printed_on.year }}{% if current_user.display_name %} by {{ current_user.display_name }}{% endif %}</p>
+    </header>
+
+    {% if not nonempty %}
+    <p class="cal-print-empty-all" data-print-nothing="true">No scheduled work or appointments in these dates.</p>
+    {% endif %}
+
+    {% for day in days %}
+    {% set label = day.date.strftime("%A, %B") ~ " " ~ day.date.day %}
+    {% if day.entries %}
+    <section class="cal-print-day" data-print-day="{{ day.date.isoformat() }}">
+        <h3>{{ label }}</h3>
+        <ul class="cal-print-list">
+            {% for e in day.entries %}
+            {% if e.kind == "appointment" %}
+            <li data-print-entry="appointment">
+                <span class="cal-print-when">{{ e.time_label }}</span>
+                <span class="cal-print-what"><strong>{{ e.title }}</strong>{% if e.personal %} (Personal){% endif %}
+                    {% if e.type_label or e.location or e.person %}<span class="cal-print-meta">{{ e.type_label }}{% if e.location %} · {{ e.location }}{% endif %}{% if e.person %} · {{ e.person }}{% endif %}</span>{% endif %}</span>
+            </li>
+            {% elif e.kind == "work" %}
+            <li data-print-entry="work">
+                <span class="cal-print-when">Scheduled work</span>
+                <span class="cal-print-what"><strong>{{ e.label }}</strong>
+                    <span class="cal-print-meta">{{ e.project_name }}{% if e.people %} · {{ e.people|join(", ") }}{% endif %}{% if e.conflict %} · {{ contractor_copy.SCHEDULE_CONFLICT }}{% endif %}</span></span>
+            </li>
+            {% else %}
+            <li data-print-entry="delivery">
+                <span class="cal-print-when">Delivery</span>
+                <span class="cal-print-what"><strong>{{ e.label }}</strong> <span class="cal-print-meta">{{ e.status }}</span></span>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+    {% else %}
+    <section class="cal-print-day is-empty" data-print-day="{{ day.date.isoformat() }}">
+        <h3>{{ label }}</h3><p class="cal-print-none">No scheduled work</p>
+    </section>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

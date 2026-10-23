@@ -3,6 +3,15 @@
 {% set calendar_heading = "My Calendar" if scope == "mine" else contractor_copy.COMPANY_CALENDAR_HEADING %}
 {% block title %}{{ calendar_heading }} | Brayman Construction Platform{% endblock %}
 {% block page_title %}{{ calendar_heading }}{% endblock %}
+{# Header clean-up (Joel, 23 Oct 2026): the My Calendar | Company Calendar switch takes the title's place in the
+   top bar; the page keeps its heading for screen readers and its browser tab title. #}
+{% block header_title %}
+<h1 class="header-page-title visually-hidden">{{ calendar_heading }}</h1>
+<nav class="cal-scope cal-scope-header" aria-label="Whose calendar" data-scope-switch="true">
+    <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view or None, scope='mine' if selected_project_id else None, **scope_keep) }}"{% if scope == "mine" %} aria-current="page"{% endif %} data-scope="mine">My Calendar</a>
+    <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view or None, scope='company', **scope_keep) }}"{% if scope == "company" %} aria-current="page"{% endif %} data-scope="company">Company Calendar</a>
+</nav>
+{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
@@ -55,14 +64,22 @@
         </nav>
     </div>
 
+    <div class="cal-toolbar-end">
+    {% set sms_failed = sms_schedule_attention() %}
+    <a class="cal-text-notices{% if sms_failed %} has-failed{% endif %}" data-text-notices-link="{{ sms_failed }}" href="{{ url_for('sms_notifications.office_notices') }}">Text notices{% if sms_failed %} · {{ sms_failed }} not delivered{% endif %}</a>
+    <style>
+        .cal-text-notices { font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: auto; }
+        .cal-text-notices + .cal-connect { margin-left: 0; }
+        .cal-text-notices.has-failed { color: var(--danger, #b42318); border-bottom-color: currentColor; font-weight: 600; }
+        @media (max-width: 700px) { .cal-text-notices { margin-left: 0; } }
+    </style>
+    <a class="button secondary cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+    <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>
     <a class="cal-new-appt" data-new-appointment="true" href="{{ url_for('schedule.new_appointment', date=calendar.selected.isoformat(), back=calendar_view or 'day', scope=appt_scope) }}"><span aria-hidden="true">+</span> New Appointment</a>
+    </div>
 </div>
 
 <div class="cal-subbar">
-    <nav class="cal-scope" aria-label="Whose calendar" data-scope-switch="true">
-        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='mine' if selected_project_id else None, **scope_keep) }}"{% if scope == "mine" %} aria-current="page"{% endif %} data-scope="mine">My Calendar</a>
-        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='company', **scope_keep) }}"{% if scope == "company" %} aria-current="page"{% endif %} data-scope="company">Company Calendar</a>
-    </nav>
     <details class="cal-selected-day" data-selected-day="{{ calendar.selected.isoformat() }}">
         <summary>
             <span class="cal-chip-label">{{ contractor_copy.COMPANY_CALENDAR_DAY }}</span>
@@ -131,17 +148,21 @@
         </form>
     </details>
 
-    {% set sms_failed = sms_schedule_attention() %}
-    <a class="cal-text-notices{% if sms_failed %} has-failed{% endif %}" data-text-notices-link="{{ sms_failed }}" href="{{ url_for('sms_notifications.office_notices') }}">Text notices{% if sms_failed %} · {{ sms_failed }} not delivered{% endif %}</a>
-    <style>
-        .cal-text-notices { font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: auto; }
-        .cal-text-notices + .cal-connect { margin-left: 0; }
-        .cal-text-notices.has-failed { color: var(--danger, #b42318); border-bottom-color: currentColor; font-weight: 600; }
-        @media (max-width: 700px) { .cal-text-notices { margin-left: 0; } }
-    </style>
+    <div class="cal-subbar-end">
     <a class="cal-connect" data-calendar-connect="true" href="{{ url_for('schedule.calendar_feed_settings') }}">Outlook · Google · Apple Calendar</a>
-    <a class="button secondary cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
-    <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>
+    {# Print (Joel, 23 Oct 2026): top right, under New Appointment; opens on the period on screen. #}
+    <details class="cal-print-open" data-print-control="true">
+        <summary>Print</summary>
+        <form method="get" class="cal-print-pop" action="{{ url_for('schedule.print_calendar') }}" data-print-open-form="true">
+            <input type="hidden" name="scope" value="{{ scope }}">
+            {% if selected_project_id %}<input type="hidden" name="project_id" value="{{ selected_project_id }}">{% endif %}
+            <label>From <input type="date" name="from" value="{{ print_from.isoformat() }}" required></label>
+            <label>To <input type="date" name="to" value="{{ print_to.isoformat() }}" required></label>
+            <button type="submit" class="button">Print</button>
+            <p class="muted-copy">Shows a printable list of {{ "your" if scope == "mine" else "the company" }} calendar for these dates, up to 92 days.</p>
+        </form>
+    </details>
+    </div>
 </div>
 
 {% if calendar_view != "week" and calendar_view != "day" %}

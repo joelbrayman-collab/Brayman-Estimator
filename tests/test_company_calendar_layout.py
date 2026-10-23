@@ -65,7 +65,7 @@ def test_header_title_only_help_icon_and_toolbar_keep_every_control(client, app)
         project = _project("Calendar Toolbar Job")
         _schedule(project, _element(project, "Framing"), TODAY, TODAY)
     html = client.get(_url()).get_data(as_text=True)
-    assert '<h1 class="header-page-title">Company Calendar</h1>' in html
+    assert '<h1 class="header-page-title visually-hidden">Company Calendar</h1>' in html
     assert "<h1>Company Calendar</h1>" not in html
     assert contractor_copy.COMPANY_CALENDAR_LEDE not in html  # no introductory sentence
     assert 'class="cal-help"' in html and 'data-help-topic="schedule"' in html  # same Help, as an icon

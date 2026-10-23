@@ -1,4 +1,5 @@
 // Release evidence for the Calendar (Joel, 19 Oct 2026): My Calendar | Company Calendar, hourly Day and Week,
+// Print from one date to another and the tighter header (23 Oct 2026),
 // appointments, personal privacy, calendar feed. Google Chrome; a local office on a temporary database
 // (tests/calendar_page_server.py), synthetic data only, dates relative to this week.
 import assert from "node:assert/strict";
@@ -52,13 +53,17 @@ for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844
   test(`${label}: the sidebar says Calendar and it opens on My Calendar with the switch`, async () => {
     const { ctx, pg, errors } = await signedIn(width, height);
     await pg.goto(`${base}/schedule?${at(facts.monday)}&view=week`);
-    assert.equal((await pg.locator(".header-page-title").innerText()).trim(), "My Calendar");
+    // Header clean-up (Joel, 23 Oct 2026): the switch is in the top bar in place of the title; the heading
+    // stays for screen readers.
+    assert.equal((await pg.locator(".header-page-title").textContent()).trim(), "My Calendar");
+    assert.equal(await pg.locator(".shell-header [data-scope-switch] a").count(), 2);
+    assert.ok(await pg.locator(".shell-header [data-scope-switch]").isVisible());
     const navLabels = (await pg.locator('a.sidebar-link[href="/schedule"] .sidebar-link-label').allTextContents()).map((s) => s.trim());
     assert.deepEqual(navLabels, ["Calendar"]);
     assert.equal((await pg.locator(".cal-scope a[aria-current=page]").innerText()).trim(), "My Calendar");
     await pg.click(".cal-scope a[data-scope=company]");
     await pg.waitForLoadState();
-    assert.equal((await pg.locator(".header-page-title").innerText()).trim(), "Company Calendar");
+    assert.equal((await pg.locator(".header-page-title").textContent()).trim(), "Company Calendar");
     assert.ok(pg.url().includes("view=week") && pg.url().includes("scope=company"), pg.url());
     await noSideways(pg, label);
     assert.deepEqual(errors, []);
@@ -145,6 +150,65 @@ for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844
     await box.evaluate((el) => { el.scrollTop = 0; });
     assert.equal(await pg.locator("[data-month-earlier]").isVisible(), true);
     await noSideways(pg, `${label} month`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+// Print from one date to another (Joel, 23 Oct 2026).
+const addDays = (iso, n) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844]]) {
+  test(`${label}: Print opens From / To on the week shown and prints that range, day by day`, async () => {
+    const { ctx, pg, errors } = await signedIn(width, height);
+    const failed = [];
+    pg.on("response", (r) => { if (r.status() >= 500) failed.push(`${r.status()} ${r.url()}`); });
+    await pg.goto(`${base}/schedule?${at(facts.monday)}&view=week&scope=company`);
+    await pg.locator("[data-print-control] > summary").click();
+    const form = pg.locator("[data-print-open-form]");
+    assert.equal(await form.locator("[name=from]").inputValue(), facts.monday);
+    assert.equal(await form.locator("[name=to]").inputValue(), addDays(facts.monday, 6));
+    await noSideways(pg, `${label} print form open`);
+    await form.locator("[name=to]").fill(addDays(facts.monday, 13));
+    await Promise.all([pg.waitForURL(/\/schedule\/print\?/), form.getByRole("button", { name: "Print" }).click()]);
+    const text = await pg.locator("[data-calendar-print]").innerText();
+    for (const t of ["Slab pour", "Wall framing", "Site visit — new client", "Weekly office meeting", "Printed on", "Company Calendar"]) assert.ok(text.includes(t), t);
+    for (const t of ["Kevin dentist", "Lunch with accountant"]) assert.ok(!text.includes(t), t);
+    assert.equal(await pg.locator("[data-print-day]").count(), 14);
+    assert.equal(await pg.locator(`[data-print-day="${facts.empty_day}"]`).innerText().then((t) => t.includes("No scheduled work")), true);
+    assert.ok(await pg.locator("[data-print-now]").isVisible());
+    await noSideways(pg, `${label} printout`);
+    // On paper: no menu, top bar, Cal or buttons.
+    await pg.emulateMedia({ media: "print" });
+    for (const sel of [".shell-sidebar", ".shell-header", "[data-print-now]", "[data-print-form]", "[data-print-back]"]) {
+      assert.equal(await pg.locator(sel).first().isVisible(), false, `${sel} prints`);
+    }
+    await pg.emulateMedia({ media: "screen" });
+    // A To before the From: the form again with a plain message, never a server error.
+    await pg.goto(`${base}/schedule/print?scope=company&from=${addDays(facts.monday, 5)}&to=${facts.monday}`);
+    assert.match(await pg.locator("[data-print-message]").innerText(), /From date must be on or before the To date/);
+    await noSideways(pg, `${label} print message`);
+    await Promise.all([pg.waitForURL(/\/schedule(\?|$)/), pg.locator("[data-print-back]").click()]);
+    assert.deepEqual(failed, []);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+// Laptop screens (Joel, 23 Oct 2026): the tighter header keeps the month grid on screen, with New Appointment
+// and Print at the top right. Page viewports of 1440 x 900 and 1366 x 768 screens less the browser's own bars.
+for (const [width, height] of [[1440, 800], [1366, 670]]) {
+  test(`desktop ${width}x${height}: the month grid's bottom edge is on screen; New Appointment and Print top right`, async () => {
+    const { ctx, pg, errors } = await signedIn(width, height);
+    await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);
+    const grid = await pg.locator("[data-month-scroll]").boundingBox();
+    assert.ok(grid && grid.y + grid.height <= height, `month grid bottom ${grid && grid.y + grid.height} > ${height}`);
+    const appt = await pg.locator(".cal-new-appt").boundingBox();
+    const print = await pg.locator("[data-print-control] > summary").boundingBox();
+    assert.ok(print.y >= appt.y + appt.height && print.y - (appt.y + appt.height) < 16, JSON.stringify({ appt, print }));
+    assert.ok(Math.abs(print.x + print.width - (appt.x + appt.width)) <= 2, JSON.stringify({ appt, print }));
+    const sw = await pg.locator(".shell-header [data-scope-switch]").boundingBox();
+    assert.ok(sw && sw.y + sw.height <= 64, JSON.stringify(sw));
+    await noSideways(pg, `${width} month`);
     assert.deepEqual(errors, []);
     await ctx.close();
   });

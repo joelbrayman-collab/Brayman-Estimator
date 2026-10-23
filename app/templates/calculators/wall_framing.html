@@ -99,8 +99,23 @@
             <label for="stud_stock_length_in">Stud stock length (inches, optional — for example a precut)</label>
             <input id="stud_stock_length_in" name="stud_stock_length_in" inputmode="decimal" value="{{ purchase_values.stud_stock_length_in }}">
         </fieldset>
+        <fieldset data-framing-request>
+            <legend>Framing quote (materials)</legend>
+            {% if accounts %}
+            <label for="contractor_supplier_account_id">Supplier</label>
+            <select id="contractor_supplier_account_id" name="contractor_supplier_account_id">
+                {% if accounts|length > 1 %}<option value="">Choose a supplier</option>{% endif %}
+                {% for account in accounts %}<option value="{{ account.id }}"{% if request_values and request_values.contractor_supplier_account_id == account.id %} selected{% endif %}>{{ account.supplier.legal_name }}</option>{% endfor %}
+            </select>
+            <label for="needed_by">Needed by (optional)</label>
+            <input id="needed_by" name="needed_by" type="date" value="{{ request_values.needed_by if request_values else '' }}">
+            {% else %}
+            <p>No supplier account is set up yet. Add one under Company → Suppliers to request a framing quote.</p>
+            {% endif %}
+        </fieldset>
         <button type="submit" name="action" value="calculate">Calculate</button>
         <button type="submit" name="action" value="review">Calculate and send to the estimate review</button>
+        {% if accounts %}<button type="submit" name="action" value="request" data-request-framing-quote>Calculate and request framing quote</button>{% endif %}
         {% else %}
         <button type="submit">Calculate</button>
         {% endif %}
@@ -152,6 +167,9 @@
     <p data-buy-plates><strong>{{ bought.displays.plates }}</strong></p>
     {% for m in bought.members %}<p data-buy-member>{{ m.count }} × {{ m.label }} at {{ m.length_ft }} ft</p>{% endfor %}
     <p>Not on the estimate until you send it to the review and confirm it.</p>
+    {% if sent %}
+    <p data-framing-request-sent><strong>Request {{ sent.share.number }} sent to {{ sent.supplier }}.</strong> It is in their Supplier Hub inbox now. <a href="{{ url_for('supplier_office.project_requests', project_id=estimate.project_id) }}">See the request</a> · <a href="{{ url_for('deck_takeoff.download_request', project_id=estimate.project_id, request_id=sent.request_id) }}">Download the PDF</a></p>
+    {% endif %}
     {% else %}
     <p>This is a quantity layout, not a purchasing takeoff.</p>
     <p>These quantities are not on an estimate.</p>

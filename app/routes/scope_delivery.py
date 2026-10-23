@@ -1,5 +1,6 @@
 """Project Hub PRICE — Scope Delivery Review (FG-031 Slice A)."""
 
+from app import db
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -82,11 +83,46 @@ def review(project_id):
         organization_id=org_id,
         actor=form_actor("actor_display_name", fallback="office-reviewer"),
     )
+    from app.services.suggested_cost import labour_suggestion, material_suggestion
+
+    for row in review_model["rows"]:
+        row["labour_suggestion"] = labour_suggestion(row["line_item"])
+        row["material_suggestion"] = material_suggestion(row["line_item"])
     return render_template(
         "projects/scope_delivery.html",
         project=project,
         review=review_model,
     )
+
+
+def _suggestion_action(project_id, line_id, which, done):
+    from app.services import suggested_cost as sc
+
+    project, org_id = _project(project_id)
+    line = EstimateLineItem.query.get_or_404(line_id)
+    version = _selected_version(project, org_id)
+    if version is None:
+        flash("Open the estimate version first.", "error")
+        return _review_redirect(project)
+    action = getattr(sc, which)
+    try:
+        action(line_id, actor=form_actor("actor_display_name"), version=version)
+        flash(done, "success")
+    except (sc.SuggestedCostError, SubcontractQuoteError) as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return _review_redirect(project, version)
+
+
+@scope_delivery_bp.route("/<int:project_id>/scope-delivery/lines/<int:line_id>/suggested-cost/apply", methods=["POST"])
+def apply_suggested_cost(project_id, line_id):
+    which = "apply_material_suggestion" if request.form.get("kind") == "material" else "apply_labour_suggestion"
+    return _suggestion_action(project_id, line_id, which, "Suggested cost confirmed on the line. Costing needs re-approval before pricing.")
+
+
+@scope_delivery_bp.route("/<int:project_id>/scope-delivery/lines/<int:line_id>/suggested-cost/revert", methods=["POST"])
+def revert_suggested_cost(project_id, line_id):
+    return _suggestion_action(project_id, line_id, "revert_labour_suggestion", "Quote cost removed. The line is back to its earlier cost.")
 
 
 @scope_delivery_bp.route(
@@ -175,6 +211,38 @@ def approve_all(project_id):
     except EstimateScopeDeliveryError as exc:
         flash(str(exc), "error")
     return _review_redirect(project, version)
+
+
+@scope_delivery_bp.route("/<int:project_id>/scope-delivery/labour-quote-request")
+def labour_quote_request(project_id):
+    """Printable sheet of the lines a subcontractor does, to send out for a labour quote.
+
+    Quantities are the estimate's own. Quote and allowance stay blank; nothing is priced
+    here and the returned quote is recorded as evidence on the Scope Delivery Review.
+    """
+    from datetime import date
+
+    project, org_id = _project(project_id)
+    version = _selected_version(project, org_id)
+    review_model = assemble_scope_delivery_review(
+        project=project, version=version, organization_id=org_id,
+        actor=form_actor("actor_display_name", fallback="office-reviewer"),
+    )
+    rows = [
+        {
+            "section": row["section"].name if getattr(row["section"], "name", None) else "",
+            "description": row["line_item"].description,
+            "qty": row["line_item"].quantity,
+            "unit": row["line_item"].unit,
+            "labour": row["labour_delivery"],
+        }
+        for row in review_model["rows"]
+        if row["quote_review"] and row["quote_review"]["eligible"]
+    ]
+    return render_template(
+        "projects/labour_quote_request.html",
+        project=project, review=review_model, rows=rows, issued_on=date.today().isoformat(),
+    )
 
 
 @scope_delivery_bp.route(

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Labour quote request | {{ project.name }}{% endblock %}
+{% block page_title %}Labour quote request{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1 data-labour-quote-request>Labour quote request</h1>
+        <p class="muted-copy">{{ project.name }}{% if project.address %} · {{ project.address }}{% endif %} · {{ issued_on }}</p>
+        <p class="muted-copy">Please quote your price for the labour on each line below. Quantities are Brayman Construction's. Quote and allowance are yours to enter.</p>
+    </div>
+    <div>
+        <button type="button" onclick="window.print()">Print or save as PDF</button>
+        <a class="button-link" href="{{ url_for('scope_delivery.review', project_id=project.id, version_id=review.version.id, estimate_id=review.estimate.id) }}">Record a returned quote</a>
+    </div>
+</div>
+{% if rows %}
+<table class="data-table">
+    <thead><tr><th>Scope</th><th>Quantity</th><th>Unit</th><th>Quote (CAD, before HST)</th><th>Allowance</th><th>Included / excluded</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+        <tr><td>{{ row.description }}<div class="muted-copy">{{ row.section }}</div></td><td>{{ row.qty }}</td><td>{{ row.unit }}</td><td></td><td></td><td></td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted-copy">No lines are routed to a subcontractor yet. Decide who performs the labour on each line on the Scope Delivery Review first.</p>
+{% endif %}
+{% endblock %}

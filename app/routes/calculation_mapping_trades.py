@@ -15,6 +15,8 @@ from flask_login import current_user
 from app.routes.calculation_mapping import _version_or_404
 from app.routes.estimates import estimates_bp
 from app.services.calculation_estimate_mapping import CalculationEstimateMappingError, ingest_contract_result
+from app.services.framing_request import FramingRequestError, issue_and_send_framing_request
+from app.services.supplier_hub import SupplierHubError
 from app.services.organizations import get_current_organization_id
 
 
@@ -60,20 +62,33 @@ def footing_quantities(id, version_id):
     methods=["GET", "POST"],
 )
 def framing_quantities(id, version_id):
-    """Straight-wall framing for this estimate: count, purchase, then offer the existing review."""
+    """Straight-wall framing for this estimate: count, purchase, then offer the existing review or a supplier request."""
+    from app.models import Project
+    from app.models.supplier_catalogue import ContractorSupplierAccount
     from app.routes.calculators import _wall_framing_values
     from app.services import wall_framing_purchasing as buy
     from app.services.auth import current_actor_display_name
     from app.services.wall_framing import WallFramingInputError, calculate_straight_wall, elevation_drawing
 
     estimate, version = _version_or_404(id, version_id)
+    org_id = get_current_organization_id()
+    accounts = (
+        ContractorSupplierAccount.query.filter_by(organization_id=org_id, status="ACTIVE")
+        .order_by(ContractorSupplierAccount.id)
+        .all()
+    )
     values = _wall_framing_values()
     purchase_values = {
         "waste_percent": (request.form.get("waste_percent") or "").strip() if request.method == "POST" else "",
         "plate_stock_length_ft": (request.form.get("plate_stock_length_ft") or "").strip() if request.method == "POST" else "",
         "stud_stock_length_in": (request.form.get("stud_stock_length_in") or "").strip() if request.method == "POST" else "",
     }
+    request_values = {
+        "contractor_supplier_account_id": request.form.get("contractor_supplier_account_id", type=int) if request.method == "POST" else None,
+        "needed_by": (request.form.get("needed_by") or "").strip() if request.method == "POST" else "",
+    }
     error = result = drawing = bought = None
+    sent = None
     if request.method == "POST":
         try:
             result = calculate_straight_wall(
@@ -94,8 +109,29 @@ def framing_quantities(id, version_id):
                     user_id=current_user.id,
                 )
                 return redirect(url_for("estimates.calculation_review", id=estimate.id, version_id=version.id, intake_id=intake.id))
+            if request.form.get("action") == "request":
+                project = Project.query.filter_by(id=estimate.project_id, organization_id=org_id).first()
+                account = next((a for a in accounts if a.id == request_values["contractor_supplier_account_id"]), None)
+                if project is None:
+                    raise FramingRequestError("This estimate is not on a project, so a supplier request cannot be issued.")
+                if account is None:
+                    raise FramingRequestError("Choose a supplier account before requesting the framing quote.")
+                sent = issue_and_send_framing_request(
+                    project=project,
+                    account=account,
+                    result=result,
+                    bought=bought,
+                    user=current_user,
+                    issued_by=current_actor_display_name(fallback="Office"),
+                    estimate_reference="{0} {1}".format(estimate.estimate_number, version.display_label),
+                    needed_by=request_values["needed_by"],
+                )
+        except (FramingRequestError, SupplierHubError) as exc:
+            # The count is good; only the request failed. Keep the result on the page.
+            error = str(exc)
         except (WallFramingInputError, buy.FramingPurchaseError, CalculationEstimateMappingError) as exc:
             error = str(exc)
             result = drawing = bought = None
     return render_template("calculators/wall_framing.html", values=values, error=error, result=result, drawing=drawing,
-                           estimate=estimate, version=version, purchase_values=purchase_values, bought=bought)
+                           estimate=estimate, version=version, purchase_values=purchase_values, bought=bought,
+                           accounts=accounts, request_values=request_values, sent=sent)

@@ -15,7 +15,7 @@
     <p class="ge-muted">{{ stage.explanation or (stage.parent.explanation if stage.parent else '') }}</p>
     {% if spec and stage.responsibility == 'SUBCONTRACTED' %}<p class="ge-muted">{{ spec.subcontract_note }}</p>{% endif %}
     {% if next_action %}<p data-next-action><strong>Next:</strong> {{ next_action }}</p>{% endif %}
-    {% if stage.completion_basis and status == 'COMPLETE' %}<p class="ge-ok" data-completed>Complete — {{ basis_labels[stage.completion_basis] }}, by {{ stage.completed_by }} {{ stage.completed_at.strftime('%Y-%m-%d %H:%M') }}.</p>{% endif %}
+    {% if stage.completion_basis and status == 'COMPLETE' %}<p class="ge-ok" data-completed>Complete — {{ basis_labels[stage.completion_basis] }}, by {{ stage.completed_by }} {{ stage.completed_at|local_time("%Y-%m-%d %H:%M") }}.</p>{% endif %}
     {% if stage.completion_basis and status != 'COMPLETE' %}<p class="ge-warn" data-needs-review>This stage was completed, then its costs changed. Review it and complete it again.</p>{% endif %}
     {% if accepted %}<p class="ge-warn">The customer accepted the proposal. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>
     {% elif not editable %}<p class="ge-warn" data-not-editable>The estimate version is issued or locked. <a href="{{ url_for('guided.workflow', project_id=project.id) }}">Start a revision</a> to change it; the issued version is kept.</p>{% endif %}
@@ -149,7 +149,7 @@
     {% if editable %}
     <form method="post" action="{{ base }}request_quote">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="ge-secondary" type="submit" data-quote-requested>{% if stage.quote_requested_at %}Quote requested {{ stage.quote_requested_at.strftime('%Y-%m-%d') }} — mark again{% else %}I have sent the quote request{% endif %}</button>
+      <button class="ge-secondary" type="submit" data-quote-requested>{% if stage.quote_requested_at %}Quote requested {{ stage.quote_requested_at|local_time("%Y-%m-%d") }} — mark again{% else %}I have sent the quote request{% endif %}</button>
     </form>
     {% endif %}
     {% for row in sub %}

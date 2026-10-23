@@ -80,7 +80,7 @@
 
   {% if history %}
   <details class="ge-card"><summary>Recent decisions</summary>
-    <ul>{% for e in history %}<li>{{ e.created_at.strftime('%Y-%m-%d %H:%M') }} — {{ e.actor_display_name }}: {{ e.event|replace('_',' ')|lower }}{% if e.stage %} · {{ e.stage.section_name }}{% endif %}{% if e.to_value %} → {{ responsibility_labels.get(e.to_value, e.to_value) }}{% endif %}</li>{% endfor %}</ul>
+    <ul>{% for e in history %}<li>{{ e.created_at|local_time("%Y-%m-%d %H:%M") }} — {{ e.actor_display_name }}: {{ e.event|replace('_',' ')|lower }}{% if e.stage %} · {{ e.stage.section_name }}{% endif %}{% if e.to_value %} → {{ responsibility_labels.get(e.to_value, e.to_value) }}{% endif %}</li>{% endfor %}</ul>
   </details>
   {% endif %}
 </div>

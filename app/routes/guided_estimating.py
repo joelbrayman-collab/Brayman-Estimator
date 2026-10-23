@@ -33,6 +33,41 @@ def _org():
     return get_current_organization_id()
 
 
+# The estimate review (app/routes/calculation_mapping.py, pinned unchanged) opened from a guided stage: keep the
+# stage's section and the way back across its own redirects. Navigation only; the review itself is untouched.
+_REVIEW_ENDPOINTS = ("estimates.calculation_confirm", "estimates.calculation_defer_labour")
+
+
+@guided_bp.app_context_processor
+def _guided_review_context():
+    from flask import request as rq
+
+    if rq and rq.endpoint == "estimates.calculation_review":
+        from app.services.return_path import from_request
+
+        return {"return_to": from_request(), "section_hint": rq.args.get("section_id", type=int)}
+    return {}
+
+
+@guided_bp.after_app_request
+def _keep_guided_context_on_review_redirects(response):
+    from urllib.parse import urlencode
+
+    from app.services.return_path import from_request
+
+    if request.endpoint in _REVIEW_ENDPOINTS and response.status_code in (301, 302, 303) and "/calculations/" in (
+            response.headers.get("Location") or ""):
+        back = from_request()
+        if back:
+            extra = {"return_to": back}
+            section = request.form.get("section_hint", type=int)
+            if section:
+                extra["section_id"] = section
+            location = response.headers["Location"]
+            response.headers["Location"] = location + ("&" if "?" in location else "?") + urlencode(extra)
+    return response
+
+
 def _uid():
     return getattr(current_user, "id", None)
 

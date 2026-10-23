@@ -61,7 +61,9 @@ def render_internal_cost_pdf(doc: dict) -> bytes:
     meta = f"{guided.project_type_label} · {guided.contractor_role_label}"
     if version is not None:
         meta += f" · Estimate {guided.estimate.estimate_number} {version.display_label} ({version.status})"
-    meta += f" · prepared {doc['generated_at']:%Y-%m-%d %H:%M} UTC"
+    from app.services.local_time import format_local
+
+    meta += f" · prepared {format_local(doc['generated_at'])}"
     story.append(Paragraph(escape(meta), small))
     state = (f"Costing approved (snapshot {doc['snapshot'].id})" if doc["costing_approved"]
              else "DRAFT — the costing is not approved for this version yet.")

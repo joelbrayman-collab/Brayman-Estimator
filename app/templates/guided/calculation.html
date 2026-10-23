@@ -7,7 +7,7 @@
   <p class="eyebrow"><a href="{{ url_for('projects.view_project', id=project.id) }}">{{ project.name }}</a></p>
   <section class="ge-card">
     <h2>{{ record.summary }}</h2>
-    <p class="ge-muted">Calculated by {{ record.actor_display_name }} {{ record.created_at.strftime('%Y-%m-%d %H:%M') }}{% if record.engine_id %} · {{ record.engine_id }} {{ record.engine_version }}{% endif %}. Kept exactly as calculated: nothing needs to be entered again.</p>
+    <p class="ge-muted">Calculated by {{ record.actor_display_name }} {{ record.created_at|local_time("%Y-%m-%d %H:%M") }}{% if record.engine_id %} · {{ record.engine_id }} {{ record.engine_version }}{% endif %}. Kept exactly as calculated: nothing needs to be entered again.</p>
     {% if record.entered %}<h3>Entered</h3><ul data-carried-inputs>{% for row in record.entered %}<li>{{ row.label }}: {{ row.value }}</li>{% endfor %}</ul>{% endif %}
     {% if record.payload %}
     <h3>Quantities</h3>

@@ -6,7 +6,7 @@
 <div class="ge-wrap" data-internal-cost-document>
   <p class="ge-internal-mark" data-internal-marking>{{ doc.marking }}</p>
   <p class="eyebrow">{{ project.name }}{% if project.client %} · {{ project.client.name }}{% endif %}</p>
-  <p class="ge-muted">{{ doc.guided.project_type_label }} · {{ doc.guided.contractor_role_label }}{% if doc.version %} · Estimate {{ doc.guided.estimate.estimate_number }} {{ doc.version.display_label }} ({{ doc.version.status }}){% endif %} · prepared {{ doc.generated_at.strftime('%Y-%m-%d %H:%M') }} UTC</p>
+  <p class="ge-muted">{{ doc.guided.project_type_label }} · {{ doc.guided.contractor_role_label }}{% if doc.version %} · Estimate {{ doc.guided.estimate.estimate_number }} {{ doc.version.display_label }} ({{ doc.version.status }}){% endif %} · prepared {{ doc.generated_at|local_time("%Y-%m-%d %H:%M") }}</p>
   <p class="{{ 'ge-ok' if doc.costing_approved else 'ge-warn' }}" data-costing-state>{% if doc.costing_approved %}Costing approved (snapshot {{ doc.snapshot.id }}){% else %}DRAFT — the costing is not approved for this version yet; this document updates as stages are confirmed.{% endif %}</p>
   <div class="ge-actions ge-noprint">
     <a class="ge-secondary" href="{{ url_for('guided.internal_cost_pdf', project_id=project.id) }}" data-internal-cost-pdf>Download PDF</a>

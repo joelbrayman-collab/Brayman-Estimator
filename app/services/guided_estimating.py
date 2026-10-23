@@ -115,6 +115,8 @@ FRAMING_ESTIMATE = Tool("estimate_page", "estimates.framing_quantities", "Framin
                         "framing materials quote", "Count a wall, buy it, and ask the supplier to price it.")
 DECK_TAKEOFF = Tool("project_page", "deck_takeoff.review", "Construction model takeoff and framing quote request",
                     "The construction model's member counts and the one-click framing quote request.")
+MEMBER_COUNTS = Tool("estimate_page", "estimates.calculation_list", "Construction model member counts",
+                     "The project's verified construction model counts, offered to the estimate review.")
 ROOFING = _calc("roofing", "Roofing calculator", "Roof area, bundles, underlayment and ridge cap.")
 SIDING = _calc("siding", "Siding calculator", "Net wall area and pieces.")
 DRYWALL = _calc("drywall", "Drywall calculator", "Board area and sheets.")
@@ -145,11 +147,11 @@ STAGES: Dict[str, StageSpec] = {s.key: s for s in (
               (FOOTING, ICF, CONCRETE, LABOUR, MANUAL), "A foundation contractor forms and pours the foundation."),
     StageSpec("framing", "Framing", "Floors, walls, roof framing, sheathing and connectors, and the labour to build them.",
               (Part("floor_framing", "Floor framing", (DECK_TAKEOFF,)),
-               Part("wall_framing", "Wall framing", (WALL_FRAMING, FRAMING_ESTIMATE)),
+               Part("wall_framing", "Wall framing", (WALL_FRAMING, FRAMING_ESTIMATE, MEMBER_COUNTS)),
                Part("roof_framing", "Roof framing (rafters or trusses)"), Part("sheathing", "Sheathing"),
                Part("connectors", "Connectors and fasteners"),
                Part("framing_labour", "Framing installation labour", labour_part=True)),
-              (WALL_FRAMING, FRAMING_ESTIMATE, DECK_TAKEOFF, LABOUR, MANUAL),
+              (WALL_FRAMING, FRAMING_ESTIMATE, MEMBER_COUNTS, DECK_TAKEOFF, LABOUR, MANUAL),
               "A framing crew builds the frame. Supply the materials yourself and subcontract the installation by "
               "splitting the stage into its parts."),
     StageSpec("roofing", "Roofing", "Shingles, underlayment, ridge cap, flashing and the labour to install them.",

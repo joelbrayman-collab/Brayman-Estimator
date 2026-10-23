@@ -19,10 +19,11 @@
 {% for row in ov.modules %}
 <section class="tc-card tc-module" data-module="{{ row.module.key }}">
   <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small>{{ row.done }}/{{ row.total }}</small></h2>
+  {% if row.time %}<p class="tc-module-time" data-module-time="{{ row.time.minutes }}">{% if row.time.split %}{% for s in row.time.sessions %}<span data-session="{{ s.number }}">Session {{ s.number }}: {{ s.label|lower }}</span>{% if not loop.last %} · {% endif %}{% endfor %}{% else %}{{ row.time.label }}{% endif %}</p>{% endif %}
   <p>{{ row.module.summary }}</p>
   <ol class="tc-lessons">
     {% for x in row.lessons %}
-    <li class="tc-lesson tc-{{ x.state }}"><a href="{{ url_for('training.lesson', key=x.lesson.key, step=x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a>
+    <li class="tc-lesson tc-{{ x.state }}">{% if x.session_start %}<span class="tc-session-break" data-session-start="{{ x.session_start }}">Session {{ x.session_start }}</span>{% endif %}<a href="{{ url_for('training.lesson', key=x.lesson.key, step=x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a>
       <span class="tc-state" data-lesson-state>{% if x.state == 'done' %}Done{% elif x.ticked %}{{ x.ticked }} of {{ x.steps }} steps{% elif x.state == 'started' %}Started{% endif %}</span></li>
     {% endfor %}
   </ol>

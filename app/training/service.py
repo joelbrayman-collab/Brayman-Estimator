@@ -117,9 +117,16 @@ def _progress(trainee) -> Dict[str, TrainingLessonProgress]:
 
 def overview(trainee) -> dict:
     """The trainee's modules and lessons with their state, and where to resume."""
+    return _overview(trainee, trainee.track, trainee.role)
+
+
+def _overview(trainee, track: str, role: str) -> dict:
+    from app.training import estimates as E
+
     progress = _progress(trainee)
+    times = {m.key: e for m, e in E.for_track(track, role)}
     rows, done, total = [], 0, 0
-    for module in C.modules_for(trainee.track, trainee.role):
+    for module in C.modules_for(track, role):
         lessons = []
         for lesson in module.lessons:
             p = progress.get(lesson.key)
@@ -129,10 +136,14 @@ def overview(trainee) -> dict:
                             "ticked": min(ticked, len(lesson.steps)), "steps": len(lesson.steps)})
             total += 1
             done += state == "done"
-        rows.append({"module": module, "lessons": lessons,
+        time = times.get(module.key)
+        starts = time.session_starts() if time else {}
+        for x in lessons:
+            x["session_start"] = starts.get(x["lesson"].key)
+        rows.append({"module": module, "lessons": lessons, "time": time,
                      "done": sum(1 for x in lessons if x["state"] == "done"), "total": len(lessons)})
     nxt = None
-    if trainee.training_resume:
+    if trainee.training_resume and track == trainee.track:
         key, _, step = trainee.training_resume.partition(":")
         if any(x["lesson"].key == key and x["state"] != "done" for r in rows for x in r["lessons"]):
             nxt = (key, int(step or 0))
@@ -245,10 +256,11 @@ def uat_history(trainee) -> Dict[str, List[TrainingUatResult]]:
     return out
 
 
-def uat_overview(trainee) -> dict:
+def uat_overview(trainee, track: Optional[str] = None, role: Optional[str] = None) -> dict:
+    track, role = track or trainee.track, role or trainee.role
     history = uat_history(trainee)
     rows = []
-    for case in C.uat_for(trainee.track, trainee.role):
+    for case in C.uat_for(track, role):
         attempts = history.get(case.key, [])
         latest = attempts[-1] if attempts else None
         rows.append({"case": case, "latest": latest, "attempts": attempts,
@@ -258,7 +270,7 @@ def uat_overview(trainee) -> dict:
     # Continue testing opens only a test with no result yet (22 Oct 2026): the one the trainee had open, else
     # the next untested one after it in the list. A retest of a failed or blocked test is an explicit action
     # (its Retest link), never Continue.
-    resume = _next_untested(rows, trainee.uat_resume, include_self=True)
+    resume = _next_untested(rows, trainee.uat_resume if track == trainee.track else None, include_self=True)
     return {"rows": rows, "counts": counts, "total": len(rows), "resume": resume}
 
 
@@ -334,23 +346,63 @@ def visible_trainees(org: str) -> List[TrainingTrainee]:
     return q.order_by(TrainingTrainee.pathway, TrainingTrainee.display_name).all()
 
 
+TRACK_LABELS = {PATHWAY_CONTRACTOR: "Contractor training", PATHWAY_SUPPLIER: "Supplier training",
+                PATHWAY_FIELD_CREW: "Field Crew training"}
+
+
+def tracks_taken(trainee) -> List[Tuple[str, str, bool]]:
+    """[(track, role, current)]: the trainee's current training first, then (Joel, 23 Oct 2026) the other contractor
+    training when an office trainee has changed role to Field, or back, and has lessons or acceptance results in it.
+
+    Progress and results are kept per lesson key and test key, so each training's record is separate and intact.
+    The role shown for a Contractor training the trainee is not on now: Contractor owner when any of their records
+    is in the owner-only lessons or tests, otherwise Office staff."""
+    out = [(trainee.track, trainee.role, True)]
+    if trainee.pathway != PATHWAY_CONTRACTOR:
+        return out
+    keys = {p.lesson_key for p in TrainingLessonProgress.query.filter_by(trainee_id=trainee.id).all()}
+    keys |= {r.case_key for r in TrainingUatResult.query.filter_by(trainee_id=trainee.id).all()}
+
+    def _keys(track, role):
+        return ({lesson.key for _m, lesson in C.lessons_for(track, role)} | {c.key for c in C.uat_for(track, role)})
+
+    from app.models.training import ROLE_OFFICE, ROLE_OWNER
+
+    if trainee.track == PATHWAY_FIELD_CREW:
+        owner, office = _keys(PATHWAY_CONTRACTOR, ROLE_OWNER), _keys(PATHWAY_CONTRACTOR, ROLE_OFFICE)
+        if keys & owner:
+            out.append((PATHWAY_CONTRACTOR, ROLE_OWNER if keys & (owner - office) else ROLE_OFFICE, False))
+    elif keys & _keys(PATHWAY_FIELD_CREW, ROLE_FIELD):
+        out.append((PATHWAY_FIELD_CREW, ROLE_FIELD, False))
+    return out
+
+
 def admin_report(org: str) -> dict:
     rows = []
     for t in visible_trainees(org):
-        ov, uat = overview(t), uat_overview(t)
-        failing = [r for r in uat["rows"] if r["latest"] and r["latest"].status in (UAT_FAIL, UAT_BLOCKED)]
-        retested = [r for r in uat["rows"] if len(r["attempts"]) > 1]
-        ready = ov["done"] == ov["total"] and uat["counts"][UAT_PASS] == uat["total"] and uat["total"] > 0
-        rows.append({"trainee": t, "role": ROLE_LABELS.get(t.role, t.role), "track": t.track,
-                     "track_label": t.track_label, "overview": ov, "uat": uat,
-                     "failing": failing, "retested": retested, "feedback": len(feedback(t)),
-                     "readiness": "Ready" if ready else ("Issues to fix" if failing else "In training")})
-    issues = [(r["trainee"], x) for r in rows for x in r["failing"]]
+        for track, role, current in tracks_taken(t):
+            ov, uat = _overview(t, track, role), uat_overview(t, track, role)
+            failing = [r for r in uat["rows"] if r["latest"] and r["latest"].status in (UAT_FAIL, UAT_BLOCKED)]
+            retested = [r for r in uat["rows"] if len(r["attempts"]) > 1]
+            ready = ov["done"] == ov["total"] and uat["counts"][UAT_PASS] == uat["total"] and uat["total"] > 0
+            lesson_keys = {x["lesson"].key for m in ov["modules"] for x in m["lessons"]}
+            notes = sum(1 for f in feedback(t) if f.lesson_key in lesson_keys)
+            rows.append({"trainee": t, "role": ROLE_LABELS.get(role, role), "track": track, "current": current,
+                         "track_label": TRACK_LABELS.get(track, track), "overview": ov, "uat": uat,
+                         "failing": failing, "retested": retested, "feedback": notes,
+                         "readiness": "Ready" if ready else ("Issues to fix" if failing else "In training")})
+    issues = [(r["trainee"], x, r["track_label"]) for r in rows for x in r["failing"]]
     # The crew (Field Crew training) are shown in their own section of the dashboard, with each acceptance
     # test's latest result so a failing or blocked Field test stands out (Joel, 22 Oct 2026).
     crew = [r for r in rows if r["track"] == PATHWAY_FIELD_CREW]
     crew_cases = C.uat_for(PATHWAY_FIELD_CREW, ROLE_FIELD)
-    return {"rows": rows, "issues": issues, "crew": crew, "crew_cases": crew_cases,
+    from app.models.training import ROLE_OWNER, ROLE_SUPPLIER_OWNER
+    from app.training import estimates as E
+
+    times = [(TRACK_LABELS[PATHWAY_CONTRACTOR] + " (owner)", E.for_track(PATHWAY_CONTRACTOR, ROLE_OWNER)),
+             (TRACK_LABELS[PATHWAY_FIELD_CREW], E.for_track(PATHWAY_FIELD_CREW, ROLE_FIELD)),
+             (TRACK_LABELS[PATHWAY_SUPPLIER] + " (owner)", E.for_track(PATHWAY_SUPPLIER, ROLE_SUPPLIER_OWNER))]
+    return {"rows": rows, "issues": issues, "crew": crew, "crew_cases": crew_cases, "times": times,
             "others": [r for r in rows if r["track"] != PATHWAY_FIELD_CREW]}
 
 

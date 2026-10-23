@@ -111,18 +111,8 @@ def save_facts(project_id):
     return redirect(url_for("deck_takeoff.review", project_id=project.id))
 
 
-@deck_takeoff_bp.route("/<int:project_id>/deck-takeoff/request", methods=["POST"])
-def issue_request(project_id):
-    project, org_id = _project(project_id)
-    state = project_takeoff(organization_id=org_id, project_id=project.id)
-    if state["takeoff"] is None:
-        flash("The takeoff cannot be calculated yet. See the missing project facts.", "error")
-        return redirect(url_for("deck_takeoff.review", project_id=project.id))
-    account_id = request.form.get("contractor_supplier_account_id", type=int)
-    account = ContractorSupplierAccount.query.filter_by(id=account_id, organization_id=org_id, status="ACTIVE").first()
-    if account is None:
-        flash("Choose a supplier account before the supplier request.", "error")
-        return redirect(url_for("deck_takeoff.review", project_id=project.id))
+def _issued_request(project, org_id, state, account):
+    """Build the supplier request and keep it once. Returns the manifest and the PDF."""
     actor = form_actor("actor_display_name")
     built = build_request(
         takeoff=state["takeoff"],
@@ -142,12 +132,64 @@ def issue_request(project_id):
         storage.save_request(org_id, project.id, built["manifest"], pdf)
     else:
         pdf = storage.request_pdf(org_id, project.id, existing["request_id"])
+    return built["manifest"], pdf
+
+
+def _takeoff_and_account(project, org_id):
+    """The calculated takeoff and the chosen supplier account, or a flash message and None."""
+    state = project_takeoff(organization_id=org_id, project_id=project.id)
+    if state["takeoff"] is None:
+        flash("The takeoff cannot be calculated yet. See the missing project facts.", "error")
+        return None, None
+    account_id = request.form.get("contractor_supplier_account_id", type=int)
+    account = ContractorSupplierAccount.query.filter_by(id=account_id, organization_id=org_id, status="ACTIVE").first()
+    if account is None:
+        flash("Choose a supplier account before the supplier request.", "error")
+        return None, None
+    return state, account
+
+
+@deck_takeoff_bp.route("/<int:project_id>/deck-takeoff/request", methods=["POST"])
+def issue_request(project_id):
+    project, org_id = _project(project_id)
+    state, account = _takeoff_and_account(project, org_id)
+    if account is None:
+        return redirect(url_for("deck_takeoff.review", project_id=project.id))
+    manifest, pdf = _issued_request(project, org_id, state, account)
     return send_file(
         BytesIO(pdf),
         mimetype="application/pdf",
         as_attachment=True,
-        download_name=f"supplier-request-{project.id}-{built['manifest']['request_id']}.pdf",
+        download_name=f"supplier-request-{project.id}-{manifest['request_id']}.pdf",
     )
+
+
+@deck_takeoff_bp.route("/<int:project_id>/deck-takeoff/request-and-send", methods=["POST"])
+def issue_and_send(project_id):
+    """One click: issue the request and send it to the supplier in CalibraytAI."""
+    from datetime import date
+
+    from flask_login import current_user
+
+    from app.services.supplier_hub import SupplierHubError, send_material_request
+
+    project, org_id = _project(project_id)
+    state, account = _takeoff_and_account(project, org_id)
+    if account is None:
+        return redirect(url_for("deck_takeoff.review", project_id=project.id))
+    manifest, _pdf = _issued_request(project, org_id, state, account)
+    raw_date = (request.form.get("needed_by") or "").strip()
+    try:
+        needed_by = date.fromisoformat(raw_date) if raw_date else None
+        share = send_material_request(project=project, request_id=manifest["request_id"], user=current_user, needed_by=needed_by)
+    except ValueError:
+        flash("The needed-by date must be a date (YYYY-MM-DD).", "error")
+        return redirect(url_for("deck_takeoff.review", project_id=project.id))
+    except SupplierHubError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("deck_takeoff.review", project_id=project.id))
+    flash(f"Request {share.number} sent to {share.supplier.legal_name}. It is in their Supplier Hub inbox now.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id))
 
 
 @deck_takeoff_bp.route("/<int:project_id>/deck-takeoff/requests/<request_id>.pdf")

@@ -160,3 +160,27 @@ def test_a_missing_supplier_choice_is_refused_and_nothing_is_issued(app, client)
     page = client.post(_framing_url(estimate, version), data={**FIXTURE, "waste_percent": "10", "action": "request"}).get_data(as_text=True)
     assert "Choose a supplier account" in page
     assert not storage.list_requests(DEFAULT_ORGANIZATION_ID, project.id)
+
+
+def test_deck_takeoff_one_click_issues_and_sends(app, client):  # noqa: F811
+    from tests.test_deck_takeoff_workflow import _facts_form
+
+    project, _other, account = _setup()
+    _give_sign_in(client, account)
+    client.post(f"/projects/{project.id}/deck-takeoff/product-facts", data=_facts_form())
+    page = client.get(f"/projects/{project.id}/deck-takeoff").get_data(as_text=True)
+    assert "data-request-framing-quote" in page
+    resp = client.post(
+        f"/projects/{project.id}/deck-takeoff/request-and-send",
+        data={"contractor_supplier_account_id": account.id, "actor_display_name": "Test office"},
+        follow_redirects=True,
+    )
+    assert b"sent to BMR Winchester (synthetic)" in resp.data
+    share = SupplierRequestShare.query.one()
+    assert share.source_kind == SOURCE_DECK_FORM2 and share.request_kind == "MATERIAL"
+    # A second click does not create a second share.
+    client.post(f"/projects/{project.id}/deck-takeoff/request-and-send", data={"contractor_supplier_account_id": account.id})
+    assert SupplierRequestShare.query.count() == 1
+    # No account chosen: refused with the reason, nothing sent.
+    none = client.post(f"/projects/{project.id}/deck-takeoff/request-and-send", data={}, follow_redirects=True)
+    assert b"Choose a supplier account" in none.data

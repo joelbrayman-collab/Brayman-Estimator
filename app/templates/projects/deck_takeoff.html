@@ -116,7 +116,11 @@
             </select>
         </label>
         <label>Issued by <input name="actor_display_name" value=""></label>
-        <div class="form-actions"><button type="submit">Download the supplier request</button></div>
+        <label>Needed by (optional) <input name="needed_by" type="date"></label>
+        <div class="form-actions">
+            <button type="submit" formaction="{{ url_for('deck_takeoff.issue_and_send', project_id=project.id) }}" data-request-framing-quote>Request framing quote</button>
+            <button type="submit" class="button-secondary">Download the supplier request</button>
+        </div>
     </form>
     {% else %}
     <p class="empty-state">No active supplier account for this organization. <a href="{{ url_for('supplier_office.suppliers') }}">Add a supplier</a>.</p>

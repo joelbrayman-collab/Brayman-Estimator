@@ -14,7 +14,7 @@
     <div class="cal-hours-row cal-hours-head">
         <span class="cal-hours-gutter cal-hours-time">Time</span>
         {% for col in day_columns %}
-        <a class="cal-hours-day{% if col.today %} is-today{% endif %}{% if col.selected %} is-selected{% endif %}" href="{{ url_for('schedule.company', year=col.date.year, month=col.date.month, day=col.date.day, view='day', **calendar_keep) }}">
+        <a class="cal-hours-day{% if col.today %} is-today{% endif %}{% if col.selected %} is-selected{% endif %}{% if col.date.weekday() >= 5 %} is-weekend{% endif %}" href="{{ url_for('schedule.company', year=col.date.year, month=col.date.month, day=col.date.day, view='day', **calendar_keep) }}">
             <span class="cal-hours-dow">{{ col.date.strftime("%a") }}</span><span class="cal-hours-num">{{ col.date.strftime("%b") }} {{ col.date.day }}</span>
         </a>
         {% endfor %}
@@ -25,7 +25,7 @@
         <span class="cal-hours-gutter">All day</span>
         {% for col in day_columns %}
         {% set gcol = g.columns[loop.index0] %}
-        <div class="cal-hours-allday-cell" data-allday-date="{{ col.date.isoformat() }}">
+        <div class="cal-hours-allday-cell{% if col.date.weekday() >= 5 %} is-weekend{% endif %}" data-allday-date="{{ col.date.isoformat() }}">
             {% if col.work or gcol.all_day %}
             <ul class="cal-entries is-compact">
                 {% for e in gcol.all_day %}{% include "schedule/_calendar_entry.html" %}{% endfor %}
@@ -43,7 +43,7 @@
         </div>
         {% for col in day_columns %}
         {% set gcol = g.columns[loop.index0] %}
-        <div class="cal-hours-col{% if col.today %} is-today{% endif %}" data-hours-date="{{ col.date.isoformat() }}">
+        <div class="cal-hours-col{% if col.today %} is-today{% endif %}{% if col.date.weekday() >= 5 %} is-weekend{% endif %}" data-hours-date="{{ col.date.isoformat() }}">
             {% for h in g.hours %}
             <a class="cal-slot" data-slot="{{ col.date.isoformat() }}T{{ h.value }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.value, back=grid_kind, scope=appt_scope) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label }}"></a>
             <a class="cal-slot is-half" data-slot="{{ col.date.isoformat() }}T{{ h.half }}" href="{{ url_for('schedule.new_appointment', date=col.date.isoformat(), start=h.half, back=grid_kind, scope=appt_scope) }}" aria-label="New appointment {{ col.date.strftime('%a %b') }} {{ col.date.day }} at {{ h.label|replace(' ', ':30 ') }}"></a>

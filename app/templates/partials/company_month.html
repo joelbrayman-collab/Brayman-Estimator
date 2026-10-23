@@ -6,7 +6,7 @@
        identifiable"); every other month is shaded; the page title follows the heading. #}
     <div class="home-month{% if month_edges %} is-scrolling{% endif %}" id="home-month">
         <div class="home-dow">
-            <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span class="is-weekend">Sat</span><span class="is-weekend">Sun</span>
         </div>
         <div class="cal-month-scroll"{% if month_edges %} data-month-scroll="true" data-open-month="{{ '%04d-%02d'|format(calendar.year, calendar.month) }}" tabindex="0" aria-label="Months, scrollable"{% endif %}>
         {% if month_edges %}<a class="cal-month-edge" data-month-earlier="true" href="{{ url_for('schedule.company', year=month_edges.earlier.year, month=month_edges.earlier.month, view=calendar_view or None, **calendar_keep) }}">‹ Earlier months</a>{% endif %}
@@ -19,17 +19,25 @@
                 <a
                     class="home-day{% if month_edges %}{% if day.alt_month %} is-alt-month{% endif %}{% elif not day.in_month %} is-out{% endif %}{% if day.weekend %} is-weekend{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.today %} is-today{% endif %}{% if day.month_start %} is-first{% endif %}"
                     href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view=calendar_view or None, **calendar_keep) }}"
+                    style="grid-column: {{ loop.index }}; grid-row: 1;"
                 >
                     <span class="home-day-num">{% if day.month_start and month_edges %}<span class="home-day-mon">{{ day.month_short }} </span>{% endif %}{{ day.number }}</span>
-                    {% if day.overflow %}
-                    <span class="home-overflow">+{{ day.overflow }} {{ contractor_copy.HOME_OVERFLOW_MORE }}</span>
-                    {% endif %}
                 </a>
                 {% endfor %}
+                {# Shorter rows (Joel, 23 Oct 2026): two entries a day, then "+N more" beside the date, which opens that
+                   day with everything. In Mon–Fri the Friday also names what the hidden weekend holds. #}
+                {% for day in week.days %}{% set friday_marker = loop.index == 5 and week.weekend %}{% if day.overflow or friday_marker %}
+                <span class="home-tags{% if day.weekend %} is-weekend{% endif %}" style="grid-column: {{ loop.index }}; grid-row: 1;">
+                    {% if day.overflow %}<a class="home-more" data-more-day="{{ day.iso }}"
+                       href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view='day', **calendar_keep) }}"
+                       aria-label="{{ day.overflow }} more on {{ day.date.strftime('%A %B') }} {{ day.date.day }}">+{{ day.overflow }}<span class="home-more-word"> {{ contractor_copy.HOME_OVERFLOW_MORE }}</span></a>{% endif %}
+                    {% if friday_marker %}<span class="home-wkd" data-weekend-marker="{{ week.start.isoformat() }}">{% for w in week.weekend %}<a href="{{ url_for('schedule.company', year=w.date.year, month=w.date.month, day=w.date.day, view='day', **calendar_keep) }}">{{ w.label }}: {{ w.count }}<span class="home-wkd-word"> item{{ "s" if w.count != 1 }}</span></a>{% endfor %}</span>{% endif %}
+                </span>
+                {% endif %}{% endfor %}
                 <div class="home-bands">
                     {% for band in week.bands %}
                     <a
-                        class="home-band accent-{{ band.accent }} cal-cat-{{ band.category or 'general' }}{% if band.appt_type %} cal-type-{{ band.appt_type|lower }}{% endif %}{% if band.conflict %} is-conflict{% endif %}"
+                        class="home-band accent-{{ band.accent }} cal-cat-{{ band.category or 'general' }}{% if band.appt_type %} cal-type-{{ band.appt_type|lower }}{% endif %}{% if band.conflict %} is-conflict{% endif %}{% if band.col_start >= 6 %} is-weekend{% endif %}"
                         style="grid-column: {{ band.col_start }} / {{ band.col_end }}; grid-row: {{ band.lane + 1 }};"
                         href="{{ band.href if band.href else url_for('projects.view_project', id=band.project_id) ~ '#hub-schedule' }}"
                         title="{{ band.label }}"

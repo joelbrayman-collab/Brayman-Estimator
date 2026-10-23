@@ -70,10 +70,10 @@ def _user(user_id):
 
 def test_the_calendar_opens_on_my_calendar_with_a_switch(client, app):
     html = client.get("/schedule").get_data(as_text=True)
-    assert '<h1 class="header-page-title">My Calendar</h1>' in html and 'data-calendar-scope="mine"' in html
+    assert '<h1 class="header-page-title visually-hidden">My Calendar</h1>' in html and 'data-calendar-scope="mine"' in html
     assert 'data-scope-switch="true"' in html and ">My Calendar</a>" in html and ">Company Calendar</a>" in html
     company = client.get("/schedule?scope=company").get_data(as_text=True)
-    assert '<h1 class="header-page-title">Company Calendar</h1>' in company and 'data-calendar-scope="company"' in company
+    assert '<h1 class="header-page-title visually-hidden">Company Calendar</h1>' in company and 'data-calendar-scope="company"' in company
     # Moving through the company view keeps it.
     week = client.get("/schedule?scope=company&view=week").get_data(as_text=True)
     assert "scope=company" in week.split('aria-label="Next week"')[0].rsplit("href=", 1)[1]

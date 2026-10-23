@@ -3,6 +3,15 @@
 {% set calendar_heading = "My Calendar" if scope == "mine" else contractor_copy.COMPANY_CALENDAR_HEADING %}
 {% block title %}{{ calendar_heading }} | Brayman Construction Platform{% endblock %}
 {% block page_title %}{{ calendar_heading }}{% endblock %}
+{# Header clean-up (Joel, 23 Oct 2026): the My Calendar | Company Calendar switch takes the title's place in the
+   top bar; the page keeps its heading for screen readers and its browser tab title. #}
+{% block header_title %}
+<h1 class="header-page-title visually-hidden">{{ calendar_heading }}</h1>
+<nav class="cal-scope cal-scope-header" aria-label="Whose calendar" data-scope-switch="true">
+    <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view or None, scope='mine' if selected_project_id else None, **scope_keep) }}"{% if scope == "mine" %} aria-current="page"{% endif %} data-scope="mine">My Calendar</a>
+    <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=calendar_view or None, scope='company', **scope_keep) }}"{% if scope == "company" %} aria-current="page"{% endif %} data-scope="company">Company Calendar</a>
+</nav>
+{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
@@ -13,7 +22,9 @@
 {% set nd = calendar.nav_dates %}
 {% set day_count = d.work|length + d.deliveries|length + d.appointments|length %}
 {% set appt_scope = "company" if scope == "company" else None %}
-<div class="cal-workspace" data-calendar-view="{{ calendar_view or 'auto' }}" data-calendar-scope="{{ scope }}">
+<div class="cal-workspace" data-calendar-view="{{ calendar_view or 'auto' }}" data-calendar-scope="{{ scope }}" data-days="7">
+{# Mon–Fri / Full week (Joel, 23 Oct 2026): remembered on this device for this person; Full week by default. #}
+<script>(function (w) { try { if (window.localStorage.getItem("calibraytai.calendarDays.{{ current_user.id }}") === "5") w.setAttribute("data-days", "5"); } catch (e) {} })(document.currentScript.parentNode);</script>
 
 <div class="cal-toolbar" role="toolbar" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }}">
     <div class="cal-nav" aria-label="Move through the calendar">
@@ -53,16 +64,20 @@
                class="cal-view-{{ key }}"{% if calendar_view == key %} aria-current="page"{% endif %}>{{ label }}</a>
             {% endfor %}
         </nav>
+        <div class="cal-days" role="group" aria-label="Days shown" data-days-switch="true" data-days-key="calibraytai.calendarDays.{{ current_user.id }}" hidden>
+            <button type="button" data-days-choice="5" aria-pressed="false">Mon–Fri</button>
+            <button type="button" data-days-choice="7" aria-pressed="true">Full week</button>
+        </div>
     </div>
 
+    <div class="cal-toolbar-end">
+    <a class="button secondary cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+    <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>
     <a class="cal-new-appt" data-new-appointment="true" href="{{ url_for('schedule.new_appointment', date=calendar.selected.isoformat(), back=calendar_view or 'day', scope=appt_scope) }}"><span aria-hidden="true">+</span> New Appointment</a>
+    </div>
 </div>
 
 <div class="cal-subbar">
-    <nav class="cal-scope" aria-label="Whose calendar" data-scope-switch="true">
-        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='mine' if selected_project_id else None, **scope_keep) }}"{% if scope == "mine" %} aria-current="page"{% endif %} data-scope="mine">My Calendar</a>
-        <a href="{{ url_for('schedule.company', year=calendar.selected.year, month=calendar.selected.month, day=calendar.selected.day, view=keep_view, scope='company', **scope_keep) }}"{% if scope == "company" %} aria-current="page"{% endif %} data-scope="company">Company Calendar</a>
-    </nav>
     <details class="cal-selected-day" data-selected-day="{{ calendar.selected.isoformat() }}">
         <summary>
             <span class="cal-chip-label">{{ contractor_copy.COMPANY_CALENDAR_DAY }}</span>
@@ -131,6 +146,7 @@
         </form>
     </details>
 
+    <div class="cal-subbar-end">
     {% set sms_failed = sms_schedule_attention() %}
     <a class="cal-text-notices{% if sms_failed %} has-failed{% endif %}" data-text-notices-link="{{ sms_failed }}" href="{{ url_for('sms_notifications.office_notices') }}">Text notices{% if sms_failed %} · {{ sms_failed }} not delivered{% endif %}</a>
     <style>
@@ -140,8 +156,19 @@
         @media (max-width: 700px) { .cal-text-notices { margin-left: 0; } }
     </style>
     <a class="cal-connect" data-calendar-connect="true" href="{{ url_for('schedule.calendar_feed_settings') }}">Outlook · Google · Apple Calendar</a>
-    <a class="button secondary cal-set-dates" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
-    <div class="cal-help">{{ contextual_help(help_content.office_topic("schedule")) }}</div>
+    {# Print (Joel, 23 Oct 2026): top right, under New Appointment; opens on the period on screen. #}
+    <details class="cal-print-open" data-print-control="true">
+        <summary>Print</summary>
+        <form method="get" class="cal-print-pop" action="{{ url_for('schedule.print_calendar') }}" data-print-open-form="true">
+            <input type="hidden" name="scope" value="{{ scope }}">
+            {% if selected_project_id %}<input type="hidden" name="project_id" value="{{ selected_project_id }}">{% endif %}
+            <label>From <input type="date" name="from" value="{{ print_from.isoformat() }}" required></label>
+            <label>To <input type="date" name="to" value="{{ print_to.isoformat() }}" required></label>
+            <button type="submit" class="button">Print</button>
+            <p class="muted-copy">Shows a printable list of {{ "your" if scope == "mine" else "the company" }} calendar for these dates, up to 92 days.</p>
+        </form>
+    </details>
+    </div>
 </div>
 
 {% if calendar_view != "week" and calendar_view != "day" %}
@@ -149,10 +176,16 @@
 {% endif %}
 
 {% if calendar_view != "month" and calendar_view != "day" %}
+{% set weekend_days = [] %}{% for day in calendar.week_days %}{% if day.date.weekday() >= 5 and day.entries %}{% set _ = weekend_days.append(day) %}{% endif %}{% endfor %}
+{% if weekend_days %}
+<p class="cal-weekend-note" data-weekend-note="true">Weekend:
+    {% for day in weekend_days %}<a href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view='day', **calendar_keep) }}">{{ day.date.strftime("%a") }}: {{ day.entries|length }} item{{ "s" if day.entries|length != 1 }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+</p>
+{% endif %}
 {% if calendar_view == "week" %}{% include "schedule/_hour_grid.html" %}{% endif %}
 <section class="cal-week-view" aria-label="Week of {{ calendar.week_label }}" data-week-view="true">
     {% for day in calendar.week_days %}
-    <div class="cal-week-day{% if day.today %} is-today{% endif %}{% if day.selected %} is-selected{% endif %}">
+    <div class="cal-week-day{% if day.today %} is-today{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.date.weekday() >= 5 %} is-weekend{% endif %}">
         <div class="cal-week-head">
             <a class="cal-week-date" href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, view='day', **calendar_keep) }}">{{ day.label }}</a>
             <a class="cal-week-add" href="{{ url_for('schedule.new_appointment', date=day.date.isoformat(), back='week', scope=appt_scope) }}" aria-label="New appointment {{ day.long_label }}">+</a>
@@ -312,4 +345,5 @@
 </div>
 {% if hour_grid %}<script src="{{ url_for('static', filename='js/calendar-hours.js') }}" defer></script>{% endif %}
 {% if month_edges %}<script src="{{ url_for('static', filename='js/calendar-months.js') }}" defer></script>{% endif %}
+<script src="{{ url_for('static', filename='js/calendar-days.js') }}" defer></script>
 {% endblock %}

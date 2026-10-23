@@ -15,6 +15,7 @@ Update this file whenever an address moves; older addresses stay listed under "R
 | Contractor Workflow Map | Office: Workflow Guide in the menu, `/workflow` (from release v1rel6). Training: https://training.calibraytai.com/training/review/contractor | Render / HostPapa | Signed in; owner review on the training site without registering |
 | Supplier Workflow Map | Supplier Hub: Workflow Guide, `/supplier/<id>/workflow` (from v1rel6). Training: https://training.calibraytai.com/training/review/supplier | Render / HostPapa | Signed in |
 | Field Workflow | `/field/workflow` (from v1rel6); training: https://training.calibraytai.com/training/review/field-crew | Render / HostPapa | Signed in |
+| Calendar printout | Office: Calendar → Print (top right, under + New Appointment), `/schedule/print?from=YYYY-MM-DD&to=YYYY-MM-DD` (optional `scope=mine` or `company`, `project_id=`); up to 92 days, From and To included (from the calendar print change of 23 Oct 2026, not yet released) | Render (same service) | Signed-in office people; the same entries their calendar shows them. Field-only crew are sent to Field |
 | Contractor Storybook | https://claude.ai/artifact/EbLLAUMkuX2b9vj7M1EMtk | Claude artifact | Whoever Joel shares it with (Share → anyone with the link) |
 | Supplier Storybook (BMR Winchester edition) | https://claude.ai/artifact/PV6APezvX4iAUV5jXP4GEj | Claude artifact | As shared |
 | Supplier Connection Storybook (supplier-neutral) | https://claude.ai/artifact/NhdXg7hccjDMq8E8n1278b | Claude artifact | As shared |

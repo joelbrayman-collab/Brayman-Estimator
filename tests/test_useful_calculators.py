@@ -112,6 +112,13 @@ def test_the_approved_artwork_is_in_the_repository_unchanged():
     assert [p.name for p in UC_STATIC.glob("CalibraytAI_*.png")] == [APPROVED.name]
 
 
+def _pixels(path):
+    from PIL import Image
+
+    with Image.open(path) as im:
+        return im.mode, im.size, im.tobytes()
+
+
 def test_every_home_screen_size_is_the_approved_artwork_resized_by_the_script(tmp_path):
     """The script reproduces the committed sizes exactly from the approved PNG: a later swap is one step."""
     from tools.useful_calculators import make_icons
@@ -122,7 +129,8 @@ def test_every_home_screen_size_is_the_approved_artwork_resized_by_the_script(tm
     assert written[make_icons.APPROVED_NAME] == APPROVED_SHA256
     assert written["background"] == "#0039b1"
     for name in ICON_SIZES:
-        assert (tmp_path / name).read_bytes() == (UC_STATIC / name).read_bytes(), name
+        # Same pixels, not same bytes: PNG compression output differs between machines (zlib builds).
+        assert _pixels(tmp_path / name) == _pixels(UC_STATIC / name), name
     assert (tmp_path / make_icons.APPROVED_NAME).read_bytes() == APPROVED.read_bytes()
 
 

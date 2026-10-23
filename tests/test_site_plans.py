@@ -95,6 +95,13 @@ def test_the_approved_artwork_is_in_the_repository_unchanged():
     assert [p.name for p in SP_STATIC.glob("CalibraytAI_*.png")] == [APPROVED.name]
 
 
+def _pixels(path):
+    from PIL import Image
+
+    with Image.open(path) as im:
+        return im.mode, im.size, im.tobytes()
+
+
 def test_every_icon_has_its_size_and_recorded_checksum_and_the_script_makes_them_again(tmp_path):
     from tools.site_plans import make_icons
 
@@ -104,9 +111,10 @@ def test_every_icon_has_its_size_and_recorded_checksum_and_the_script_makes_them
     written = make_icons.make(APPROVED, tmp_path)
     assert written[make_icons.APPROVED_NAME] == APPROVED_SHA256
     assert written["background"] == "#1a2b3f"
-    for name, (_size, digest) in ICONS.items():
-        assert written[name] == digest, name
-        assert (tmp_path / name).read_bytes() == (SP_STATIC / name).read_bytes(), name
+    for name in ICONS:
+        # Same pixels, not same bytes: PNG compression output differs between machines (zlib builds), so
+        # the regenerated files are compared decoded. The committed files' own checksums are pinned above.
+        assert _pixels(tmp_path / name) == _pixels(SP_STATIC / name), name
 
 
 def test_the_icons_are_the_artwork_resized_and_only_the_phone_icons_are_opaque():

@@ -294,7 +294,14 @@ step("c02: People & Access: add a Field-only person, the access controls, Crews"
   await shot(pg, "c02-people-add", pg.locator("main form button[type=submit]"));
   await submit(pg, pg.locator("main form button[type=submit]"));
   assert.match(await flash(pg), /was added/);
-  W.tylerUrl = new URL(pg.url()).pathname;
+  // The training site does not deliver email (captured mail is not delivery there, 21 Oct 2026), so People &
+  // Access shows the owner Tyler's one-time link on the page it returns, at /settings/people/new. His own page is
+  // /settings/people/<id> (from its forms); the link is what Ben gives Tyler in person or by text.
+  const oneTime = pg.locator("[data-one-time-link] #one-time-link");
+  const shown = (await oneTime.count()) ? new URL(await oneTime.inputValue()) : null;
+  W.tylerLink = shown ? shown.pathname + shown.search + shown.hash : "";  // the credential is in the #fragment
+  const action = await pg.locator('main form[action*="/settings/people/"][action$="/deactivate"]').first().getAttribute("action");
+  W.tylerUrl = action ? action.replace(/\/deactivate$/, "") : new URL(pg.url()).pathname;
   await shot(pg, "c02-people-added");
   // Olivia's record: Field only, access areas, System Administrator, deactivate.
   await go(pg, "/settings/people");
@@ -332,11 +339,16 @@ step("c03: Tyler opens the invitation on his phone, chooses a password and sees 
   const { pg } = await ben();
   await go(pg, W.tylerUrl);
   await shot(pg, "c03-send-link", pg.getByRole("button", { name: "Email a link to choose a password" }));
-  const mail = newestMail("ACCOUNT_INVITATION", NEW_PERSON[1]);
-  assert.equal(mail.count, 1, "one invitation to Tyler");
+  let link = W.tylerLink;
+  if (!link) {  // a site that delivers email: the invitation in the captured mail
+    const mail = newestMail("ACCOUNT_INVITATION", NEW_PERSON[1]);
+    assert.equal(mail.count, 1, "one invitation to Tyler");
+    link = mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0];
+  }
+  assert.match(link, /^\/reset-password[/#?]/, "Tyler's set-password link");
   const p = await context(PHONE, { isMobile: true, hasTouch: true });
   sessions.tyler = p;
-  await go(p.pg, mail.body.match(/\/reset-password\/[A-Za-z0-9_\-.]+/)[0]);
+  await go(p.pg, link);
   await p.pg.fill("[name=password]", NEW_PERSON[2]);
   await p.pg.fill("[name=confirm_password]", NEW_PERSON[2]);
   await shot(p.pg, "c03-set-password", p.pg.locator("form button[type=submit]"));
@@ -470,14 +482,15 @@ step("c07: the plan PDF on the project, the concrete calculator, Deck Takeoff an
   await shot(pg, "c07-plan-listed", pg.locator("main", { hasText: "harbour-lane-deck-plan-training" }).locator("a", { hasText: /harbour-lane-deck-plan-training/ }));
   // The concrete calculator (Calculators → Concrete calculator).
   await go(pg, "/calculators/concrete");
-  await pg.selectOption("#variant", "standard");
-  await pg.selectOption("#measurement_system", "imperial");
+  // The redesigned calculator (23 Oct 2026): Standard slab and Feet and inches are radio choices.
+  await pg.locator("#v-standard").check({ force: true });
+  await pg.locator("#ms-imperial").check({ force: true });
   await pg.fill("#length", "12");
   await pg.fill("#width", "10");
   await pg.fill("#slab_thickness", "6");
   await pg.fill("#waste_percent", "5");
-  await shot(pg, "c07-concrete-calculator", pg.getByRole("button", { name: "Calculate" }));
-  await pg.getByRole("button", { name: "Calculate" }).click();
+  await shot(pg, "c07-concrete-calculator", pg.getByRole("button", { name: "Calculate concrete" }));
+  await pg.getByRole("button", { name: "Calculate concrete" }).click();
   await pg.locator("[data-concrete-result]").waitFor({ state: "visible" });
   W.concreteResult = await pg.locator("[data-concrete-result]").innerText();
   console.log("RECORDED concrete calculator result:\n" + W.concreteResult);

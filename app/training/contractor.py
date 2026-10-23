@@ -1112,15 +1112,16 @@ M07 = Module(
             roles=OFFICE,
             steps=(
                 Step(title="Open the calculator", app=O, where="CALCULATORS → Concrete calculator",
-                     do="Choose Slab type Standard slab and Measurement Imperial",
-                     expect="Length, Width, Slab thickness, Waste percent and Calculate.",
+                     do="Choose Standard slab and Measured in Feet and inches",
+                     expect="Length, Width, Slab thickness, Waste allowance, Order in (m³ or yd³) and Calculate concrete.",
                      if_wrong="CALCULATORS is folded in the menu; press it to open.",
                      shot="c07-concrete-calculator.png", endpoint="calculators.concrete"),
                 Step(title="Calculate", app=O, where="Concrete calculator",
-                     do="Type the sizes and press Calculate",
-                     enter="Length 12 ft, Width 10 ft, Slab thickness 6 in, Waste percent 5",
-                     expect="Result: Base slab concrete 2.222 yd3, Waste allowance 0.111, Total concrete 2.333 yd3 "
-                            "(about 1.8 m³). 'This result is not on an estimate.'",
+                     do="Type the sizes and press Calculate concrete",
+                     enter="Length 12 ft, Width 10 ft, Slab thickness 6 in, Waste allowance 5",
+                     expect="Order 2.00 m³ (total with waste 1.784 m³, 2.333 yd³, rounded up to the next 0.25 m³); "
+                            "Base slab concrete 2.222 yd³, Waste allowance 0.111 yd³, Total concrete 2.333 yd³. "
+                            "'This result is not on an estimate.'",
                      if_wrong="A blank or invalid measurement is refused; type numbers only.",
                      shot="c07-concrete-result.png", endpoint="calculators.concrete"),
             ),
@@ -1967,7 +1968,7 @@ UAT_CASES = (
        "Upload a PDF plan; then a scheduled crew member opens Field → Choose Project → Harbour Lane → Drawings and plans.",
        "The plan is listed in Current drawings and opens on the crew member's phone.", TEAM),
     _u("uat-c07-calculator", "c07", "Concrete calculator", "CALCULATORS → Concrete calculator",
-       "Standard slab, Imperial, 12 × 10 ft, 6 in, 5 % waste, Calculate.",
+       "Standard slab, Feet and inches, 12 × 10 ft, 6 in, 5 % waste, Calculate concrete.",
        "Total concrete 2.333 yd3 (base 2.222, waste 0.111); nothing is added to an estimate.", OFFICE),
     _u("uat-c08-quote", "c08", "Concrete request and quote", "Harbour Lane → Supplier requests, concrete and orders",
        "Send 2.5 m³ 32 MPa to BMR Winchester (training); BMR returns $215.00/m³ + $75.00 short-load; Approve this quote.",

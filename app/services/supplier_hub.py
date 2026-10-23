@@ -44,6 +44,7 @@ from app.models.supplier_portal import (
     SHARE_WITHDRAWN,
     SOURCE_CONCRETE,
     SOURCE_DECK_FORM2,
+    SOURCE_FRAMING_FORM2,
     ConcreteRequest,
     SupplierPurchaseOrder,
     SupplierRequestEvent,
@@ -240,7 +241,7 @@ def platform_suppliers_to_add(organization_id: str) -> list[tuple[int, str]]:
     return [(sid, name) for sid, name in rows]
 
 
-def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep_id=None):
+def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep_id=None, source_kind=None):
     for old in SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == organization_id,
         SupplierRequestShare.project_id == project_id,
@@ -248,6 +249,8 @@ def _supersede_open(organization_id, project_id, supplier_id, request_kind, keep
         SupplierRequestShare.request_kind == request_kind,
         SupplierRequestShare.status.in_((SHARE_SENT, SHARE_OPENED)),
     ):
+        if source_kind is not None and old.source_kind != source_kind:
+            continue
         if old.id != keep_id:
             old.status = SHARE_SUPERSEDED
 
@@ -262,12 +265,13 @@ def send_material_request(*, project: Project, request_id: str, user, needed_by:
         raise SupplierHubError("Issue the supplier request first.")
     if int(manifest.get("response_form") or 1) != 2:
         raise SupplierHubError("Only the current supplier request form can be sent in CalibraytAI. Issue the request again.")
+    source_kind = SOURCE_FRAMING_FORM2 if manifest.get("kind") == "framing_supplier_request" else SOURCE_DECK_FORM2
     account = _account(project.organization_id, int(manifest["contractor_supplier_account_id"]))
     if not supplier_has_sign_in(account.supplier_id):
         raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
     existing = SupplierRequestShare.query.filter(
         SupplierRequestShare.organization_id == project.organization_id,
-        SupplierRequestShare.source_kind == SOURCE_DECK_FORM2,
+        SupplierRequestShare.source_kind == source_kind,
         SupplierRequestShare.source_ref == request_id,
         SupplierRequestShare.status.in_(OPEN_SHARE_STATUSES),
     ).first()
@@ -295,7 +299,7 @@ def send_material_request(*, project: Project, request_id: str, user, needed_by:
         contractor_supplier_account_id=account.id,
         number=_next_number(SupplierRequestShare, project.organization_id, "SRQ"),
         request_kind=KIND_MATERIAL,
-        source_kind=SOURCE_DECK_FORM2,
+        source_kind=source_kind,
         source_ref=request_id,
         shared_json=shared,
         status=SHARE_SENT,
@@ -305,7 +309,7 @@ def send_material_request(*, project: Project, request_id: str, user, needed_by:
     )
     db.session.add(share)
     db.session.flush()
-    _supersede_open(project.organization_id, project.id, account.supplier_id, KIND_MATERIAL, keep_id=share.id)
+    _supersede_open(project.organization_id, project.id, account.supplier_id, KIND_MATERIAL, keep_id=share.id, source_kind=source_kind)
     _event(share, "SENT", "CONTRACTOR", share.sent_by_name)
     db.session.commit()
     return share

@@ -399,6 +399,7 @@ def create_project():
 
     clients = customer_clients_only(Client.query.filter_by(organization_id=org_id), org_id).order_by(Client.name.asc()).all()
     options = _context_options()
+    options.update(_guided_form_options(org_id))
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -458,7 +459,10 @@ def create_project():
 
             db.session.commit()
             flash("Project created successfully with commercial decision context.", "success")
+            guided_next = _guided_after_create(project, org_id, options)
             follow_on = _plan_start_after_create(project, org_id)
+            if guided_next and (request.form.get("plan_start") or "later") != "generate":
+                return guided_next  # the plan (if any) is uploaded; the estimate comes next
             if follow_on:
                 return follow_on
             return redirect(url_for("projects.project_setup", id=project.id))
@@ -473,6 +477,58 @@ def create_project():
             return render_template("projects/form.html", clients=clients, **options)
 
     return render_template("projects/form.html", clients=clients, **options)
+
+
+def _guided_form_options(org_id):
+    """Guided Estimating on New Project (23 Oct 2026): project type, contractor role, and a carried calculation."""
+    from app.models.guided_estimating import CONTRACTOR_ROLE_LABELS, PROJECT_TYPE_LABELS
+    from app.models.project_calculation import CALCULATORS
+    from app.services.calculator_projects import get_carry, restore_url
+    from app.services.guided_estimating import COMMERCIAL_TYPE_HINT
+
+    token = request.values.get("carry")
+    carry = get_carry(organization_id=org_id, user_id=getattr(current_user, "id", None), token=token) if token else None
+    return {
+        "guided_project_types": PROJECT_TYPE_LABELS,
+        "guided_roles": CONTRACTOR_ROLE_LABELS,
+        "guided_commercial_hint": COMMERCIAL_TYPE_HINT,
+        "start_guided": bool(request.values.get("guided") or carry),
+        "carry": carry,
+        "carry_label": CALCULATORS.get(carry.calculator, carry.calculator) if carry else "",
+        "carry_cancel_url": restore_url(carry) if carry else "",
+    }
+
+
+def _guided_after_create(project, org_id, options):
+    """After the project is saved: keep the carried calculation on it, and start the guided estimate if asked."""
+    from app.services import calculator_projects as CP
+    from app.services import guided_estimating as G
+
+    carry, record, guided = options.get("carry"), None, None
+    try:
+        if carry is not None:
+            record = CP.attach_carry(carry, project, user_id=getattr(current_user, "id", None),
+                                     actor_display_name=current_actor_display_name(fallback="Office"))
+        if request.form.get("start_guided"):
+            guided = G.start_guided_estimate(organization_id=org_id, project_id=project.id,
+                                             project_type=request.form.get("guided_project_type", ""),
+                                             contractor_role=request.form.get("contractor_role", ""),
+                                             actor=current_actor_display_name(fallback="Office"),
+                                             user_id=getattr(current_user, "id", None))
+    except (CP.CalculatorProjectError, G.GuidedEstimatingError) as exc:
+        db.session.rollback()
+        flash(f"The project was saved. {exc} You can start the estimate from the project page.", "error")
+    if guided is not None:
+        if record is not None:
+            flash(f"Your {record.calculator_label} result is saved on the project. Choose who does each stage and "
+                  "finalize the scope; the result then waits for its stage's review.", "success")
+        else:
+            flash("Choose who does each stage.", "success")
+        return redirect(url_for("guided.scope", project_id=project.id))
+    if record is not None:
+        flash(f"Your {record.calculator_label} result is saved on the project.", "success")
+        return redirect(url_for("guided.calculation", project_id=project.id, calculation_id=record.id))
+    return None
 
 
 def _plan_start_after_create(project, org_id):

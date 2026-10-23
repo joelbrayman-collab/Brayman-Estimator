@@ -10,6 +10,7 @@
         <h1>{{ page.engine_name }}{% if page.variant_name %} — {{ page.variant_name }}{% endif %}</h1>
     </div>
     <div>
+        {% if return_to %}<a class="button-link" href="{{ return_to }}" data-back-to-stage>Back to the estimating stage</a>{% endif %}
         <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a>
         <a class="button-link" href="{{ url_for('estimates.calculation_record', id=estimate.id, version_id=version.id, intake_id=intake.id) }}">Calculation details</a>
     </div>
@@ -78,6 +79,8 @@
                     <form method="post" action="{{ url_for('estimates.calculation_defer_labour', id=estimate.id, version_id=version.id, review_id=row.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="intake_id" value="{{ intake.id }}">
+                        {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+                        {% if section_hint %}<input type="hidden" name="section_hint" value="{{ section_hint }}">{% endif %}
                         <button type="submit">Leave for labour</button>
                     </form>
                     {% endif %}
@@ -89,12 +92,14 @@
                     <form method="post" action="{{ url_for('estimates.calculation_confirm', id=estimate.id, version_id=version.id, review_id=row.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="intake_id" value="{{ intake.id }}">
+                        {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+                        {% if section_hint %}<input type="hidden" name="section_hint" value="{{ section_hint }}">{% endif %}
                         <input type="hidden" name="confirmed_quantity" value="{{ row.quantity }}">
                         <label>
                             Section
                             <select name="section_id" required>
                                 {% for section in version.sections %}
-                                <option value="{{ section.id }}">{{ section.name }}</option>
+                                <option value="{{ section.id }}" {% if section_hint and section.id == section_hint %}selected{% endif %}>{{ section.name }}</option>
                                 {% endfor %}
                             </select>
                         </label>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Internal cost estimate — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Internal cost estimate{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-internal-cost-document>
+  <p class="ge-internal-mark" data-internal-marking>{{ doc.marking }}</p>
+  <p class="eyebrow">{{ project.name }}{% if project.client %} · {{ project.client.name }}{% endif %}</p>
+  <p class="ge-muted">{{ doc.guided.project_type_label }} · {{ doc.guided.contractor_role_label }}{% if doc.version %} · Estimate {{ doc.guided.estimate.estimate_number }} {{ doc.version.display_label }} ({{ doc.version.status }}){% endif %} · prepared {{ doc.generated_at.strftime('%Y-%m-%d %H:%M') }} UTC</p>
+  <p class="{{ 'ge-ok' if doc.costing_approved else 'ge-warn' }}" data-costing-state>{% if doc.costing_approved %}Costing approved (snapshot {{ doc.snapshot.id }}){% else %}DRAFT — the costing is not approved for this version yet; this document updates as stages are confirmed.{% endif %}</p>
+  <div class="ge-actions ge-noprint">
+    <a class="ge-secondary" href="{{ url_for('guided.internal_cost_pdf', project_id=project.id) }}" data-internal-cost-pdf>Download PDF</a>
+    <button class="ge-secondary" type="button" onclick="window.print()">Print</button>
+    <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}">Back to the workflow</a>
+  </div>
+
+  <section class="ge-card">
+    <h2>Totals</h2>
+    <div class="ge-scroll"><table class="ge-table" data-cost-totals>
+      <tbody>
+        <tr><td>Materials</td><td class="num">{{ "${:,.2f}".format(doc.totals.material|float) }}</td></tr>
+        <tr><td>Labour ({{ '%g'|format(doc.totals.labour_hours|float) }} hours)</td><td class="num">{{ "${:,.2f}".format(doc.totals.labour|float) }}</td></tr>
+        <tr><td>Subcontracts</td><td class="num">{{ "${:,.2f}".format(doc.totals.subcontract|float) }}</td></tr>
+        <tr><td>Equipment</td><td class="num">{{ "${:,.2f}".format(doc.totals.equipment|float) }}</td></tr>
+        <tr><td>Delivery</td><td class="num">{{ "${:,.2f}".format(doc.totals.delivery|float) }}</td></tr>
+        <tr><td>Allowances</td><td class="num">{{ "${:,.2f}".format(doc.totals.allowance|float) }}</td></tr>
+        <tr><td>Other direct costs</td><td class="num">{{ "${:,.2f}".format(doc.totals.other|float) }}</td></tr>
+        <tr><th>Direct cost</th><th class="num" data-direct-cost>{{ "${:,.2f}".format(doc.direct_cost|float) }}</th></tr>
+      </tbody>
+    </table></div>
+    {% if doc.blockers %}<div class="ge-warn" data-cost-missing><strong>Missing information</strong><ul>{% for b in doc.blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>{% endif %}
+  </section>
+
+  {% for s in doc.stages %}
+  <section class="ge-card" data-cost-stage="{{ s.stage.stage_key }}">
+    <div class="ge-stage-head"><h3>{{ s.stage.section_name }}</h3><span class="ge-badge">{{ s.status_label }}</span></div>
+    <p class="ge-resp">{{ s.stage.responsibility_label }}{% if s.basis %} · {{ s.basis }}{% endif %}{% if s.stage.scope_description %} · Scope: {{ s.stage.scope_description }}{% endif %}{% if s.stage.na_reason %} · {{ s.stage.na_reason }}{% endif %}</p>
+    {% if s.lines %}
+    <div class="ge-scroll"><table class="ge-table ge-stack">
+      <thead><tr><th>Item</th><th>Type</th><th class="num">Quantity</th><th class="num">Unit cost</th><th class="num">Cost</th><th>Source</th></tr></thead>
+      <tbody>{% for l in s.lines %}<tr>
+        <td data-label="Item">{{ l.line.description }}{% if l.missing %}<div class="ge-issues">{{ l.missing|join('; ') }}</div>{% endif %}</td>
+        <td data-label="Type">{{ l.bucket }}</td>
+        <td class="num" data-label="Quantity">{{ '%g'|format(l.line.quantity|float) }} {{ l.line.unit }}</td>
+        <td class="num" data-label="Unit cost">{{ "${:,.2f}".format(l.line.unit_cost|float) }}</td>
+        <td class="num" data-label="Cost">{{ "${:,.2f}".format(l.amount|float) }}</td>
+        <td data-label="Source">{{ l.provenance }}</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+    {% if not s.excluded %}<p><strong>Stage cost {{ "${:,.2f}".format(s.total|float) }}</strong></p>{% endif %}
+    {% if s.issues %}<ul class="ge-issues">{% for i in s.issues %}<li>{{ i }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+  {% endfor %}
+  <p class="ge-internal-mark">{{ doc.marking }}</p>
+</div>
+{% endblock %}

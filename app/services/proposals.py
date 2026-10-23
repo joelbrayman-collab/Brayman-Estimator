@@ -515,10 +515,15 @@ def proposal_issue_blockers(version):
     )
     from app.services.estimate_output import named_method_governs
 
+    # Guided Estimating (Joel, 23 Oct 2026): a guided estimate's proposal is not issued while an included stage
+    # has no confirmed cost, approved allowance or authorized exclusion.
+    from app.services.guided_estimating import guided_issue_blockers
+
+    guided = guided_issue_blockers(version)
     priced = [line for line in iter_version_line_items(version) if Decimal(line.extended_cost or 0) != 0]
     if not priced:
-        return []
-    blockers = []
+        return guided
+    blockers = list(guided)
     costing = current_costing_snapshot(version)
     if costing is None:
         blockers.append("Approve the estimate's costing.")

@@ -1,0 +1,79 @@
+/* Guided Project Estimating (23 Oct 2026): large choices, plain progress, phone first. Brand tokens from app.css. */
+.ge-wrap { max-width: 1080px; overflow-wrap: anywhere; }
+.ge-wrap * { box-sizing: border-box; }
+.ge-lede { color: var(--muted); margin: 4px 0 16px; }
+.ge-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.ge-actions form { margin: 0; }
+.ge-primary, .ge-actions .ge-primary { background: var(--gold); color: var(--black); border: 0; border-radius: 10px;
+  padding: 12px 18px; font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; }
+.ge-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+.ge-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+  margin: 0 0 14px; box-shadow: var(--shadow-soft); }
+.ge-card h2, .ge-card h3 { margin: 0 0 8px; }
+.ge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.ge-muted { color: var(--muted); }
+.ge-warn { border-left: 4px solid #b42318; padding: 8px 12px; background: #fff6f5; margin: 8px 0; }
+.ge-ok { border-left: 4px solid #1f7a3a; padding: 8px 12px; background: #f3fbf5; margin: 8px 0; }
+.ge-internal-mark { border: 2px solid #b42318; color: #b42318; font-weight: 800; letter-spacing: .04em;
+  padding: 8px 12px; text-align: center; margin: 0 0 12px; }
+
+/* scope: three mutually exclusive round choices per stage */
+.ge-stage-row { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 0 0 10px; background: var(--white); }
+.ge-stage-row.is-undecided { border-color: var(--gold); background: #fffbf0; }
+.ge-stage-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: baseline; }
+.ge-stage-head strong { font-size: 1.05rem; }
+.ge-choice { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; border: 0; padding: 0; }
+.ge-choice legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.ge-choice label { flex: 1 1 140px; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 14px;
+  border: 2px solid var(--border); border-radius: 999px; cursor: pointer; font-weight: 600; background: var(--white); }
+.ge-choice input[type=radio] { width: 24px; height: 24px; accent-color: var(--gold); margin: 0; flex: none; }
+.ge-choice label:has(input:checked) { border-color: var(--gold); background: #fff7e0; }
+.ge-parts { margin: 8px 0 0 0; padding: 8px 0 0 12px; border-left: 3px solid var(--gold-soft); }
+.ge-parts .ge-stage-row { background: var(--cream); }
+.ge-split { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-weight: 600; }
+.ge-split input { width: 22px; height: 22px; accent-color: var(--gold); }
+.ge-sticky { position: sticky; bottom: 0; background: var(--workspace); padding: 10px 0; border-top: 1px solid var(--border); z-index: 2; }
+
+/* workflow */
+.ge-progress { height: 14px; background: var(--cream); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+.ge-progress span { display: block; height: 100%; background: var(--gold); }
+.ge-steps { list-style: none; margin: 0; padding: 0; }
+.ge-steps > li { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 0 0 8px; background: var(--white); }
+.ge-steps a.ge-step-link { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+.ge-badge { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: .85rem; font-weight: 700;
+  background: var(--cream); border: 1px solid var(--border); white-space: nowrap; }
+.ge-badge.s-COMPLETE { background: #e8f6ec; border-color: #9fd3ae; }
+.ge-badge.s-NEEDS_REVIEW { background: #fff1e6; border-color: #f0b27a; }
+.ge-badge.s-WAITING_FOR_QUOTE { background: #eef3ff; border-color: #9db4ea; }
+.ge-badge.s-IN_PROGRESS { background: #fff7e0; border-color: var(--gold); }
+.ge-badge.s-EXCLUDED { background: #f1f1f1; color: var(--muted); }
+.ge-resp { font-size: .85rem; color: var(--muted); font-weight: 600; }
+.ge-issues { margin: 6px 0 0; padding-left: 18px; color: #8a3b12; }
+.ge-table { width: 100%; border-collapse: collapse; }
+.ge-table th, .ge-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.ge-table td.num, .ge-table th.num { text-align: right; white-space: nowrap; }
+.ge-scroll { overflow-x: auto; }
+.ge-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; align-items: end; }
+.ge-form-row label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; }
+.ge-form-row input, .ge-form-row select, .ge-form-row textarea, .ge-card textarea { width: 100%; min-height: 44px; padding: 8px;
+  border: 1px solid var(--border); border-radius: 8px; font: inherit; }
+.ge-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.ge-nav button, .ge-nav a { width: 100%; text-align: center; min-height: 48px; }
+.ge-tool { display: block; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--white);
+  text-decoration: none; color: var(--text); }
+.ge-tool strong { display: block; }
+.ge-tool:hover { border-color: var(--gold); }
+
+@media (max-width: 640px) {
+  .ge-choice label { flex: 1 1 100%; }
+  .ge-table.ge-stack thead { display: none; }
+  .ge-table.ge-stack tr { display: block; border-bottom: 1px solid var(--border); padding: 6px 0; }
+  .ge-table.ge-stack td { display: block; border: 0; padding: 2px 0; }
+  .ge-table.ge-stack td.num { text-align: left; }
+  .ge-table.ge-stack td[data-label]::before { content: attr(data-label) ": "; font-weight: 600; color: var(--muted); }
+}
+@media print {
+  .ge-actions, .ge-nav, .sidebar, header, nav, .ge-noprint { display: none !important; }
+  .ge-card { box-shadow: none; break-inside: avoid; }
+}

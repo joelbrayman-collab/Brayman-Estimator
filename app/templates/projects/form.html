@@ -12,8 +12,16 @@
     </div>
 </div>
 
+{% if carry %}
+<div class="cc-carry-banner" data-carry-banner>
+    <strong>Bringing your {{ carry_label }} result:</strong> {{ carry.summary }}.
+    It is saved on the new project for its estimate review, so nothing is entered again.
+    <a href="{{ carry_cancel_url }}" data-carry-cancel>Cancel and go back to the calculator</a>
+</div>
+{% endif %}
 {% if clients %}
 <form method="post" class="form-panel" enctype="multipart/form-data">
+    {% if carry %}<input type="hidden" name="carry" value="{{ carry.token }}">{% endif %}
     <h3>Project Details</h3>
     <div class="form-grid">
         <label>
@@ -49,6 +57,30 @@
             </select>
         </label>
     </div>
+
+    <fieldset class="plan-start" data-guided-start-fields>
+        <legend>What is being built, and your role</legend>
+        <p class="muted-copy">These choose the construction stages for the guided estimate. You decide who does each stage next.</p>
+        <label>Project type
+            <select name="guided_project_type" data-guided-project-type>
+                <option value="">Choose</option>
+                {% for key, label in guided_project_types.items() %}<option value="{{ key }}" data-commercial="{{ guided_commercial_hint[key] }}">{{ label }}</option>{% endfor %}
+            </select>
+        </label>
+        <div role="radiogroup" aria-label="Contractor role">
+            {% for key, label in guided_roles.items() %}
+            <label style="display:flex;gap:8px;align-items:center;min-height:40px;"><input type="radio" name="contractor_role" value="{{ key }}" style="width:22px;height:22px;"> {{ label }}</label>
+            {% endfor %}
+        </div>
+        <label style="display:flex;gap:8px;align-items:center;min-height:40px;"><input type="checkbox" name="start_guided" value="1" {% if start_guided %}checked{% endif %} data-start-guided style="width:22px;height:22px;"> Start the guided estimate when the project is saved</label>
+    </fieldset>
+    <script>
+    document.querySelector("[data-guided-project-type]")?.addEventListener("change", (event) => {
+        const hint = event.target.selectedOptions[0]?.dataset.commercial;
+        const commercial = document.querySelector('select[name="project_type"]');
+        if (hint && commercial && !commercial.value) commercial.value = hint;
+    });
+    </script>
 
     <fieldset class="plan-start" data-plan-start>
         <legend>Plans and drawings</legend>
@@ -195,7 +227,7 @@
 
     <div class="form-actions" style="margin-top: 20px;">
         <button type="submit">Save Project</button>
-        <a href="{{ url_for('projects.list_projects') }}">Cancel</a>
+        <a href="{{ carry_cancel_url if carry else url_for('projects.list_projects') }}">Cancel</a>
     </div>
 </form>
 {% else %}

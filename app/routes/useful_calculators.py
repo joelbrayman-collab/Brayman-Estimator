@@ -116,6 +116,11 @@ def projects():
     )
 
 
+# The result panel (Use Result Only / Add to Existing Project / Create New Project) for office people on the phone app
+# too (Guided Estimating, 23 Oct 2026); the crew sees the result alone.
+useful_calculators_bp.context_processor(calc_views.result_options_context)
+useful_calculators_bp.before_request(calc_views.restore_carried_result)
+
 # The existing calculator views, unchanged, under this app's scope.
 _SAME_VIEWS = (
     ("/concrete", "concrete", calc_views.concrete, ["GET"]),

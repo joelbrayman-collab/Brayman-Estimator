@@ -1,28 +1,59 @@
-{# Link to a project: save this calculator's result on a project (platform only, never on the public site).
-   Set link_calculator, link_result_selector and link_form_selector before including. #}
+{# After a result (Guided Estimating, 23 Oct 2026): Use Result Only, Add to Existing Project (the existing "Link to a
+   project" record, then the estimate review) or Create New Project. Office people only; the crew's calculators show
+   the result alone. Set link_calculator, link_result_selector and link_form_selector before including. #}
 {% if link_projects is defined %}
-<div class="cc-link" data-link-project
+<div class="cc-link" data-result-options
      data-calculator="{{ link_calculator }}"
      data-result="{{ link_result_selector }}"
      data-form="{{ link_form_selector }}"
-     data-endpoint="{{ url_for('calculators.link_project') }}">
-    <h3>Link to a project</h3>
-    {% if link_projects %}
-    <p>Save this result on a project. It is kept on the project page; nothing is added to the estimate.</p>
-    <label><span>Project</span>
-        <select data-link-select>
-            <option value="">Choose a project</option>
-            {% for pr in link_projects %}<option value="{{ pr.id }}">{{ pr.name }}</option>{% endfor %}
-        </select>
-    </label>
-    <label><span>Reference <span class="cc-optional">optional</span></span>
-        <input type="text" data-link-reference maxlength="160" placeholder="e.g. Garage slab">
-    </label>
-    <button type="button" data-link-button disabled>Link to project</button>
-    <p data-link-status hidden></p>
-    {% else %}
-    <p>There are no current projects to link to.</p>
-    {% endif %}
+     data-carry-endpoint="{{ url_for('calculators.carry_result') }}"
+     data-stages-endpoint="{{ url_for('calculators.project_stages', project_id=0)[:-1] }}"
+     data-return-path="{{ request.path }}">
+    <h3>What would you like to do with this result?</h3>
+    {% if carry_restored %}<p class="cc-carry-banner" data-carry-restored>Your result is back, exactly as calculated. Nothing was saved to a project.</p>{% endif %}
+    <div class="cc-option-grid">
+        <div class="cc-option" data-option-use-only>
+            <h4>Use Result Only</h4>
+            <p>Keep the result here, as always. No project is created and no estimate changes.</p>
+            <button type="button" data-use-result-only>Use result only</button>
+            <p data-a-status hidden>Nothing was saved. The result stays on this screen.</p>
+        </div>
+        <div class="cc-option" data-link-project
+             data-calculator="{{ link_calculator }}"
+             data-result="{{ link_result_selector }}"
+             data-form="{{ link_form_selector }}"
+             data-endpoint="{{ url_for('calculators.link_project') }}"
+             data-preselect-stage="{{ link_preselect_stage or '' }}">
+            <h4>Add to Existing Project</h4>
+            {% if link_projects %}
+            <p>Link to a project: the result is kept on the project with everything you entered. It reaches the estimate only after you review and confirm it there.</p>
+            <label><span>Select Project</span>
+                <select data-link-select>
+                    <option value="">Choose a project</option>
+                    {% for pr in link_projects %}<option value="{{ pr.id }}" {% if link_preselect_project and pr.id == link_preselect_project %}selected{% endif %}>{{ pr.name }}</option>{% endfor %}
+                </select>
+            </label>
+            <label data-stage-wrap hidden><span>Estimating stage <span class="cc-optional">optional</span></span>
+                <select data-link-stage><option value="">No stage</option></select>
+            </label>
+            <label><span>Reference <span class="cc-optional">optional</span></span>
+                <input type="text" data-link-reference maxlength="160" placeholder="e.g. Garage slab">
+            </label>
+            <button type="button" data-link-button disabled>Add to project</button>
+            <p data-link-status hidden></p>
+            {% else %}
+            <p>There are no current projects to link to.</p>
+            {% endif %}
+        </div>
+        <div class="cc-option" data-option-new-project>
+            <h4>Create New Project</h4>
+            <p>Start a new project with this result. You enter the job details; the result comes with it, nothing to calculate again.</p>
+            <button type="button" data-new-project-button disabled>New Project</button>
+            <p data-c-status hidden></p>
+        </div>
+    </div>
+    {% if calculator_contract %}<script type="application/json" data-calculator-contract>{{ calculator_contract|tojson }}</script>{% endif %}
+    {% if carry_form_state %}<script type="application/json" data-carry-form-state>{{ carry_form_state|tojson }}</script>{% endif %}
 </div>
 <script type="module" src="{{ url_for('static', filename='js/calculator-link.js') }}"></script>
 {% endif %}

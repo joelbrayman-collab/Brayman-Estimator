@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ record.calculator_label }} result — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ record.calculator_label }} result{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-project-calculation="{{ record.id }}">
+  <p class="eyebrow"><a href="{{ url_for('projects.view_project', id=project.id) }}">{{ project.name }}</a></p>
+  <section class="ge-card">
+    <h2>{{ record.summary }}</h2>
+    <p class="ge-muted">Calculated by {{ record.actor_display_name }} {{ record.created_at.strftime('%Y-%m-%d %H:%M') }}{% if record.engine_id %} · {{ record.engine_id }} {{ record.engine_version }}{% endif %}. Kept exactly as calculated: nothing needs to be entered again.</p>
+    {% if record.entered %}<h3>Entered</h3><ul data-carried-inputs>{% for row in record.entered %}<li>{{ row.label }}: {{ row.value }}</li>{% endfor %}</ul>{% endif %}
+    {% if record.payload %}
+    <h3>Quantities</h3>
+    <div class="ge-scroll"><table class="ge-table" data-carried-quantities><thead><tr><th>Quantity</th><th class="num">Amount</th><th>Unit</th></tr></thead><tbody>
+      {% for q in record.payload.quantities %}<tr><td>{{ q.label or q.code|replace('_',' ')|capitalize }}</td><td class="num">{{ q.quantity }}</td><td>{{ q.unit_code }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% if record.payload.assumptions %}<p class="ge-muted">Assumptions: {% for a in record.payload.assumptions %}{{ a.code|replace('_',' ') }} {{ a.value }}{{ '%' if a.unit_code == 'percent' else ' ' ~ a.unit_code }}{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+    {% else %}
+    <pre style="white-space:pre-wrap;">{{ record.result_text }}</pre>
+    {% endif %}
+  </section>
+
+  <section class="ge-card" data-send-to-review>
+    <h2>Add it to the estimate</h2>
+    {% if not record.payload %}
+    <p class="ge-warn">This calculator's result has no material quantities for the estimate review. It stays on the project as a record; enter the materials as cost lines on the stage.</p>
+    {% elif record.review_status == 'IN_REVIEW' %}
+    <p class="ge-ok">Sent to the estimate review by {{ record.sent_to_review_by }}.</p>
+    <form method="post" action="{{ url_for('guided.send_calculation', project_id=project.id, calculation_id=record.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="ge-primary" type="submit" data-review-again>Open its estimate review</button>
+    </form>
+    {% else %}
+    <p class="ge-muted">It goes to the estimate review first: you choose the company cost for each quantity and confirm it. An approved or issued estimate is never changed.</p>
+    <form method="post" action="{{ url_for('guided.send_calculation', project_id=project.id, calculation_id=record.id) }}" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if stages %}
+      <label>Estimating stage
+        <select name="stage_id" data-stage-select>
+          <option value="">No stage</option>
+          {% for sid, label in stages %}<option value="{{ sid }}" {% if (record.guided_stage_id and record.guided_stage_id == sid) or (not record.guided_stage_id and suggested and suggested.id == sid) %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      {% endif %}
+      <button class="ge-primary" type="submit" data-send-review>Send to the estimate review</button>
+    </form>
+    {% if not guided %}<p class="ge-muted">This project has no guided estimate yet. <a href="{{ url_for('guided.workflow', project_id=project.id) }}">Start New Estimate</a> for it, or send the result to the project's draft estimate.</p>{% endif %}
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

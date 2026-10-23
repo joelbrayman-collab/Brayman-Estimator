@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Estimate {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Start the estimate{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap">
+  <p class="eyebrow">{{ project.name }}</p>
+  <section class="ge-card">
+    <h2>What is being built, and your role</h2>
+    <p class="ge-muted">These choose the construction stages to start from. You can add, split or mark stages N/A next.</p>
+    <form method="post" action="{{ url_for('guided.begin', project_id=project.id) }}" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Project type
+        <select name="project_type" required>
+          <option value="">Choose</option>
+          {% for key, label in project_types.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Contractor role
+        <select name="contractor_role" required>
+          <option value="">Choose</option>
+          {% for key, label in roles.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <button class="ge-primary" type="submit">Start the estimate</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

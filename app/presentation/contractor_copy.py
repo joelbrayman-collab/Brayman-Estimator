@@ -594,6 +594,7 @@ HOME_ATTENTION_OFFICE = "Company attention stays with the people who run the com
 HOME_COMING_EMPTY = "Nothing is scheduled in the next seven days."
 PRINT_LABEL = "Print"
 HOME_START_PROJECT = "+ Start New Project"
+HOME_START_ESTIMATE = "Start New Estimate"  # Guided Estimating (23 Oct 2026)
 PROJECTS_LEDE = "Your current and completed work."
 PROJECTS_OPEN = "Open"
 HOME_PULSE_PROJECTS = "Current projects"

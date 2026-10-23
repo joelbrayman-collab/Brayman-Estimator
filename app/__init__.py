@@ -541,6 +541,7 @@ def create_app(config=None):
     from app.routes.business_owner_assessment import decision_tools_bp
     from app.routes.useful_calculators import useful_calculators_bp
     from app.routes.calculators import calculators_bp
+    from app.routes.guided_estimating import guided_bp
     from app.routes.supplier_economic_model import supplier_program_bp
 
     app.register_blueprint(main_bp)
@@ -596,6 +597,7 @@ def create_app(config=None):
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)
     app.register_blueprint(useful_calculators_bp)
+    app.register_blueprint(guided_bp)
     from app.routes.site_plans import site_plans_bp
 
     app.register_blueprint(site_plans_bp)

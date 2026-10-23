@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Review Pricing & Prepare Proposal — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Review Pricing &amp; Prepare Proposal{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-guided-pricing>
+  <p class="eyebrow"><a href="{{ url_for('guided.workflow', project_id=project.id) }}">{{ project.name }} — all stages</a></p>
+  <section class="ge-card" data-step="stages">
+    <h2>1. Every stage resolved</h2>
+    {% if blockers %}<div class="ge-warn" data-pricing-blocked><p>The proposal waits until each stage has confirmed costs, an approved allowance or an authorized exclusion:</p><ul>{% for b in blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>
+    {% else %}<p class="ge-ok" data-stages-resolved>Every included stage is complete.</p>{% endif %}
+    <a class="ge-secondary" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+  </section>
+
+  {% if version %}
+  <section class="ge-card" data-step="costing">
+    <h2>2. Approve the costing</h2>
+    {% if costing %}
+      {% if costing.current_snapshot and costing.working_matches_current %}<p class="ge-ok" data-costing-approved>Costing approved for {{ version.display_label }}: direct cost {{ "${:,.2f}".format(costing.current_snapshot.approved_direct_cost_total|float) if costing.current_snapshot.approved_direct_cost_total is not none else '' }}.</p>
+      {% elif costing.can_approve %}<p>The costing can be approved (it is checked by the existing costing rules).</p>
+      {% else %}<div class="ge-warn">Costing cannot be approved yet: {{ costing.block_codes|join(', ') }}</div>{% endif %}
+    {% endif %}
+    {% if not blockers and version.status == 'Draft' and not version.is_locked %}
+    <form method="post" action="{{ url_for('estimates.approve_all_costing_route', id=version.estimate_id, version_id=version.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+      <button class="ge-primary" type="submit" data-approve-costing>Approve the costing</button>
+    </form>
+    {% endif %}
+  </section>
+
+  <section class="ge-card" data-step="pricing">
+    <h2>3. Apply the company pricing</h2>
+    {% if snapshot %}
+    <table class="ge-table" data-pricing-snapshot>
+      <tr><td>Direct cost</td><td class="num">{{ "${:,.2f}".format(snapshot.direct_cost_basis|float) }}</td></tr>
+      <tr><td>Method</td><td class="num">{{ snapshot.method|replace('_',' ')|title }}</td></tr>
+      {% if snapshot.target_gross_margin is not none %}<tr><td>True gross margin</td><td class="num" data-gross-margin>{{ '%.1f'|format(snapshot.target_gross_margin|float * 100) }}%</td></tr>{% endif %}
+      <tr><td>Selling price before tax</td><td class="num" data-selling-price>{{ "${:,.2f}".format(snapshot.pre_tax_selling_price|float) }}</td></tr>
+      <tr><td>Tax ({{ snapshot.tax_jurisdiction or '' }} {{ snapshot.tax_percent }}%)</td><td class="num">{{ "${:,.2f}".format(snapshot.tax_amount|float) }}</td></tr>
+      <tr><th>Customer total</th><th class="num" data-customer-total>{{ "${:,.2f}".format(snapshot.customer_total|float) }}</th></tr>
+    </table>
+    {% else %}<p class="ge-muted">Not priced yet.</p>{% endif %}
+    {% if not blockers and version.status == 'Draft' and not version.is_locked %}
+    <form method="post" action="{{ url_for('estimates.apply_org_pricing', id=version.estimate_id, version_id=version.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+      <button class="ge-primary" type="submit" data-apply-pricing>Apply the company pricing policy</button>
+    </form>
+    {% endif %}
+  </section>
+
+  <section class="ge-card" data-step="proposal">
+    <h2>4. Prepare the customer proposal</h2>
+    <p class="ge-muted">The proposal shows the scope, inclusions, exclusions, allowances and the selling price. It never shows your internal costs, rates, supplier prices or margin.</p>
+    {% if issue_blockers %}<div class="ge-warn" data-issue-blockers><p>The proposal cannot be issued yet:</p><ul>{% for b in issue_blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>{% endif %}
+    {% if not blockers %}<a class="ge-primary" data-create-proposal href="{{ url_for('proposals.create_proposal_route', estimate_id=version.estimate_id, version_id=version.id) }}">Prepare the proposal</a>{% endif %}
+    {% if proposals %}<ul>{% for p in proposals %}<li><a href="{{ url_for('proposals.view_proposal', id=p.id) }}" data-proposal="{{ p.id }}">{{ p.proposal_number }}</a> — {{ p.status }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+
+  <section class="ge-card" data-step="build">
+    <h2>5. Into the build</h2>
+    <p class="ge-muted">Once the customer accepts, the same stages become the project's work items for the Company Calendar, crew scheduling, Field, time and job costing. Subcontracted stages go to subcontract coordination; your materials go to supplier purchasing. Estimated and actual costs stay separate.</p>
+    {% if handoff.seed %}<p class="ge-ok" data-work-plan-built>Work plan built: {{ handoff.elements|length }} work items.</p>{% endif %}
+    <div class="ge-actions">
+      <a class="ge-secondary" href="{{ url_for('work_structure.project_work_plan', project_id=project.id) }}" data-work-plan-link>Project work plan</a>
+      <a class="ge-secondary" href="{{ url_for('schedule.company') }}">Company Calendar</a>
+      <a class="ge-secondary" href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests</a>
+      <a class="ge-secondary" href="{{ url_for('project_controls.list_change_orders') }}">Change orders</a>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

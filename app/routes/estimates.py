@@ -713,6 +713,11 @@ def apply_org_pricing(id, version_id):
             flash(str(exc), "error")
         else:
             raise
+    from app.services.return_path import from_request
+
+    back = from_request()  # Review Pricing & Prepare Proposal (Guided Estimating)
+    if back:
+        return redirect(back)
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )
@@ -735,6 +740,11 @@ def approve_all_costing_route(id, version_id):
     except EstimateServiceError as exc:
         db.session.rollback()
         flash(str(exc), "error")
+    from app.services.return_path import from_request
+
+    back = from_request()  # Review Pricing & Prepare Proposal (Guided Estimating)
+    if back:
+        return redirect(back)
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )

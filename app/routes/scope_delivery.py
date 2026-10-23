@@ -65,6 +65,11 @@ def _selected_version(project, org_id):
 
 
 def _review_redirect(project, version=None):
+    from app.services.return_path import from_request
+
+    back = from_request()  # opened from a Guided Estimating stage: go back there
+    if back:
+        return redirect(back)
     kwargs = {"project_id": project.id}
     if version is not None:
         kwargs["version_id"] = version.id

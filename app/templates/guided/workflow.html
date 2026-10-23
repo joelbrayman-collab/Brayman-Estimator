@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Estimating workflow — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Estimating workflow{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-guided-workflow>
+  <p class="eyebrow">{{ project.name }} · {{ guided.project_type_label }} · {{ guided.contractor_role_label }}</p>
+  {% if view.version %}<p class="ge-muted">Estimate {{ guided.estimate.estimate_number }} · {{ view.version.display_label }} ({{ view.version.status }}{% if view.version.is_locked %}, locked{% endif %})</p>{% endif %}
+
+  <section class="ge-card" data-progress="{{ view.done }}/{{ view.included }}">
+    <h2>{{ view.done }} of {{ view.included }} stages complete</h2>
+    <div class="ge-progress" aria-label="Progress {{ view.percent }} percent"><span style="width: {{ view.percent }}%"></span></div>
+    <p class="ge-muted" style="margin-top:8px;">
+      {% for key, label in [('NOT_STARTED','Not Started'),('IN_PROGRESS','In Progress'),('WAITING_FOR_QUOTE','Waiting for Quote'),('NEEDS_REVIEW','Needs Review'),('COMPLETE','Complete'),('EXCLUDED','Excluded / N/A')] %}
+      <span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>
+      {% endfor %}
+    </p>
+    <div class="ge-actions">
+      {% if view.resume %}<a class="ge-primary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
+      <a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>
+      <a class="ge-secondary" data-internal-cost-link href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+      <a class="ge-secondary" data-pricing-link href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
+      <a class="ge-secondary" href="{{ url_for('useful_calculators.index') }}">Calculators</a>
+    </div>
+    {% if view.accepted %}<p class="ge-warn">The customer accepted proposal {{ view.accepted.proposal_number }}. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>
+    {% elif not view.editable and view.version %}
+    <div class="ge-warn">This estimate version is {{ view.version.status }}{% if view.version.is_locked %} and locked{% endif %}; it is never overwritten. To change costs, start a revision (a new version).
+      <form method="post" action="{{ url_for('guided.revision', project_id=project.id) }}" class="ge-form-row" style="margin-top:8px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Why it is being revised<input type="text" name="reason" required maxlength="300"></label>
+        <button class="ge-secondary" type="submit" data-start-revision>Start a revision</button>
+      </form>
+    </div>
+    {% endif %}
+    {% if guided.estimate and guided.estimate.versions|length > 1 %}<p><a href="{{ url_for('guided.compare', project_id=project.id) }}" data-compare-versions>Compare estimate versions</a></p>{% endif %}
+  </section>
+
+  {% if view.waiting_calculations %}
+  <section class="ge-card ge-warn" data-waiting-calculations>
+    <h2>Calculations waiting for a stage</h2>
+    <p>Saved from a calculator. Choose the stage and send each one to the estimate review; nothing needs to be entered again.</p>
+    <ul>{% for calc in view.waiting_calculations %}<li><a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-waiting-calculation="{{ calc.id }}">{{ calc.calculator_label }} — {{ calc.summary }}</a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  <h2>Stages, in construction order</h2>
+  <p class="ge-muted">Open any stage, in any order. A subcontractor's quote can take days: keep estimating the other stages while you wait.</p>
+  <ol class="ge-steps" data-stage-list>
+    {% for row in view.rows %}
+    <li data-stage="{{ row.stage.stage_key }}" data-status="{{ row.status }}">
+      <div class="ge-stage-head">
+        {% if row.status == 'EXCLUDED' %}<strong>{{ row.stage.display_name }}</strong>
+        {% else %}<a class="ge-step-link" href="{{ url_for('guided.stage', project_id=project.id, stage_id=row.stage.id) }}">{{ row.stage.display_name }}</a>{% endif %}
+        <span class="ge-badge s-{{ row.status }}">{{ row.status_label }}</span>
+      </div>
+      <div class="ge-resp">{{ row.responsibility_label }}{% if row.total and row.total != 0 %} · {{ "${:,.2f}".format(row.total) }} on the estimate{% endif %}</div>
+      {% if row.children %}
+      <ul class="ge-parts" style="list-style:none;">
+        {% for child in row.children %}
+        <li data-part="{{ child.stage.stage_key }}" data-status="{{ child.status }}">
+          {% if child.status == 'EXCLUDED' %}{{ child.stage.display_name }}{% else %}<a href="{{ url_for('guided.stage', project_id=project.id, stage_id=child.stage.id) }}">{{ child.stage.display_name }}</a>{% endif %}
+          — {{ child.stage.responsibility_label }} <span class="ge-badge s-{{ child.status }}">{{ child.status_label }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if row.next and row.status not in ('COMPLETE', 'EXCLUDED') %}<div class="ge-muted">Next: {{ row.next }}</div>{% endif %}
+      {% if row.issues and row.status not in ('COMPLETE', 'EXCLUDED') %}<ul class="ge-issues">{% for issue in row.issues[:4] %}<li>{{ issue }}</li>{% endfor %}</ul>{% endif %}
+      {% if row.stage.na_reason %}<div class="ge-muted">N/A: {{ row.stage.na_reason }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+
+  {% if view.outstanding %}
+  <section class="ge-card" data-outstanding>
+    <h2>Outstanding</h2>
+    <ul>{% for item in view.outstanding %}<li><strong>{{ item.stage.display_name }}</strong> — {{ item.status_label }}{% if item.issues %}: {{ item.issues[0] }}{% endif %}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  {% if history %}
+  <details class="ge-card"><summary>Recent decisions</summary>
+    <ul>{% for e in history %}<li>{{ e.created_at.strftime('%Y-%m-%d %H:%M') }} — {{ e.actor_display_name }}: {{ e.event|replace('_',' ')|lower }}{% if e.stage %} · {{ e.stage.section_name }}{% endif %}{% if e.to_value %} → {{ responsibility_labels.get(e.to_value, e.to_value) }}{% endif %}</li>{% endfor %}</ul>
+  </details>
+  {% endif %}
+</div>
+{% endblock %}

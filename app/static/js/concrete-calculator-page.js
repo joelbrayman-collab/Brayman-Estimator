@@ -176,6 +176,8 @@ function render(run, result, figures) {
     <p class="cc-note">A quantity only, not an engineering design. Confirm the order with the supplier. This result is not on an estimate.</p>
   `;
   resultNode.dataset.linkSummary = `Order ${formatMilli(figures.order, figures.stepMilli > 0n)} ${unit} · total ${formatMilli(figures.exact)} ${unit} (${other}) · ${result.variant === "standard" ? "standard slab" : "thickened edge"}, measured in ${result.measurement_system === "metric" ? "metric" : "feet and inches"}`;
+  // The engine's own Contract V1 result, for "Add to Existing Project" / "Create New Project" (the estimate review).
+  resultNode.dataset.contract = JSON.stringify(result);
   resultNode.hidden = false;
   emptyNode.hidden = true;
   resultNode.dispatchEvent(new CustomEvent("calculator:result", { bubbles: true }));
@@ -185,6 +187,7 @@ function clearResult() {
   resultNode.hidden = true;
   emptyNode.hidden = false;
   delete resultNode.dataset.linkSummary;
+  delete resultNode.dataset.contract;
   resultNode.dispatchEvent(new CustomEvent("calculator:cleared", { bubbles: true }));
 }
 

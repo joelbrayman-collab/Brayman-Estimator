@@ -17,6 +17,7 @@
         <p class="muted-copy">{{ contractor_copy.DASHBOARD_LEDE }}</p>
     </div>
     <div class="home-actions">
+        <a class="home-start home-start-estimate" data-home-start-estimate href="{{ url_for('guided.start') }}">{{ contractor_copy.HOME_START_ESTIMATE }}</a>
         <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
         <a class="home-calendar" href="{{ url_for('schedule.company') }}">
             <i class="bi bi-calendar3" aria-hidden="true"></i>

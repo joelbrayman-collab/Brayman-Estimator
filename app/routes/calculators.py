@@ -42,16 +42,70 @@ _QUANTITY_LABELS = {
 }
 
 
-@calculators_bp.context_processor
-def _link_projects():
-    """The project list for "Link to a project": the current operating projects, as on the Calendar."""
+def result_options_context():
+    """For the result panel (Use Result Only / Add to Existing Project / Create New Project): office people only.
+
+    The project list is this company's current operating projects, as on the Calendar. A Field-only crew member,
+    a supplier or a signed-out visitor gets no list, so the panel is not shown and the result stands alone.
+    """
+    from flask import g
+
     try:
         organization = get_current_organization()
     except Exception:  # signed out, or no single membership: no list
-        return {"link_projects": []}
+        return {}
+    if organization is None or getattr(g, "field_only", False):
+        return {}
+    from app.services.useful_calculators import viewer_kind
+
+    if viewer_kind(current_user, organization.id) != "office":
+        return {}
+    out = {"link_projects": list_current_operating_projects(organization.id)}
+    project_id = request.args.get("project", type=int)
+    if project_id and any(p.id == project_id for p in out["link_projects"]):
+        out["link_preselect_project"] = project_id
+        out["link_preselect_stage"] = request.args.get("stage", type=int)
+    token = request.args.get("carry")
+    if token and request.method == "GET":
+        from app.services.calculator_projects import get_carry
+
+        carry = get_carry(organization_id=organization.id, user_id=getattr(current_user, "id", None), token=token)
+        if carry is not None:
+            out["carry_form_state"] = [pair for pair in (carry.form_state or []) if not pair[0].startswith("post:")]
+            out["carry_restored"] = True
+    if request.args.get("restored"):
+        out["carry_restored"] = True
+    return out
+
+
+def restore_carried_result():
+    """Create New Project → Cancel on a server calculator: post the same entries again, so the same result shows."""
+    token = request.args.get("carry")
+    if request.method != "GET" or not token:
+        return None
+    try:
+        organization = get_current_organization()
+    except Exception:
+        return None
     if organization is None:
-        return {"link_projects": []}
-    return {"link_projects": list_current_operating_projects(organization.id)}
+        return None
+    from app.services.calculator_projects import get_carry
+
+    carry = get_carry(organization_id=organization.id, user_id=getattr(current_user, "id", None), token=token)
+    if carry is None:
+        return None
+    pairs = [(name[5:], value) for name, value in (carry.form_state or []) if name.startswith("post:")]
+    if not pairs:
+        return None
+    args = {k: v for k, v in request.args.items() if k != "carry"}
+    args["restored"] = "1"
+    from urllib.parse import urlencode
+
+    return render_template("calculators/carry_restore.html", pairs=pairs, action=request.path + "?" + urlencode(args))
+
+
+calculators_bp.context_processor(result_options_context)
+calculators_bp.before_request(restore_carried_result)
 
 
 def _clean(text, limit):
@@ -60,7 +114,9 @@ def _clean(text, limit):
 
 @calculators_bp.post("/link-project")
 def link_project():
-    """Save a calculator result on a project. A record only: no estimate or request changes."""
+    """Add to Existing Project: keep the result on a project (and optionally a stage). No estimate changes here."""
+    from app.services import calculator_projects as CP
+
     organization = get_current_organization()
     data = request.get_json(silent=True) or {}
     calculator = str(data.get("calculator") or "")
@@ -73,34 +129,59 @@ def link_project():
     project = get_organization_project(organization.id, project_id)
     if project is None:
         return jsonify(ok=False, error="Choose a project."), 404
-    summary = _clean(data.get("summary"), 600)
-    result_text = str(data.get("result_text") or "").strip()[:20000]
-    if not summary or not result_text:
-        return jsonify(ok=False, error="Calculate first, then link the result."), 400
-    entered = []
-    for row in (data.get("entered") or [])[:60]:
-        if isinstance(row, dict):
-            label, value = _clean(row.get("label"), 120), _clean(row.get("value"), 200)
-            if label and value:
-                entered.append({"label": label, "value": value})
-    record = ProjectCalculation(
-        organization_id=organization.id,
-        project_id=project.id,
-        calculator=calculator,
-        reference=_clean(data.get("reference"), 160) or None,
-        summary=summary,
-        entered=entered,
-        result_text=result_text,
-        user_id=getattr(current_user, "id", None),
-        actor_display_name=_clean(getattr(current_user, "display_name", "") or "Office", 150),
-    )
-    db.session.add(record)
-    db.session.commit()
+    source = str(data.get("source") or "CALCULATORS")
+    if source not in ("CALCULATORS", "USEFUL_CALCULATORS", "GUIDED"):
+        source = "CALCULATORS"
+    try:
+        record, created = CP.save_to_project(
+            organization_id=organization.id, project=project, calculator=calculator, summary=data.get("summary"),
+            result_text=data.get("result_text"), entered=data.get("entered"), reference=data.get("reference"),
+            payload=data.get("payload"), stage_id=data.get("stage_id"), source=source,
+            user_id=getattr(current_user, "id", None),
+            actor_display_name=_clean(getattr(current_user, "display_name", "") or "Office", 150))
+    except CP.CalculatorProjectError as exc:
+        return jsonify(ok=False, error=str(exc)), exc.status
+    review_url = (url_for("guided.calculation", project_id=project.id, calculation_id=record.id)
+                  if record.payload else None)
     return jsonify(
         ok=True,
+        created=created,
         project=project.name,
+        calculation_id=record.id,
+        review_url=review_url,
         url=url_for("projects.view_project", id=project.id) + "#calculations",
     )
+
+
+@calculators_bp.get("/project-stages/<int:project_id>")
+def project_stages(project_id):
+    """The estimating stages a result can go to on one of this company's projects (empty when not guided)."""
+    from app.services.calculator_projects import stage_choices
+
+    organization = get_current_organization()
+    if organization is None or get_organization_project(organization.id, project_id) is None:
+        return jsonify(ok=False, error="Choose a project."), 404
+    return jsonify(ok=True, stages=stage_choices(organization.id, project_id))
+
+
+@calculators_bp.post("/carry")
+def carry_result():
+    """Create New Project: keep the finished result while the New Project form is filled in."""
+    from app.services import calculator_projects as CP
+
+    organization = get_current_organization()
+    if organization is None or getattr(current_user, "id", None) is None:
+        return jsonify(ok=False, error="Sign in first."), 403
+    data = request.get_json(silent=True) or {}
+    try:
+        carry = CP.create_carry(organization_id=organization.id, user_id=current_user.id,
+                                calculator=str(data.get("calculator") or ""), summary=data.get("summary"),
+                                result_text=data.get("result_text"), entered=data.get("entered"),
+                                payload=data.get("payload"), form_state=data.get("form_state"),
+                                return_path=data.get("return_path"))
+    except CP.CalculatorProjectError as exc:
+        return jsonify(ok=False, error=str(exc)), exc.status
+    return jsonify(ok=True, url=url_for("projects.create_project", carry=carry.token))
 
 
 @calculators_bp.get("/concrete")
@@ -219,6 +300,8 @@ def wall_form():
         except (IcfQuantityInputError, IcfProfileError) as exc:
             error = str(exc)
             result = None
+    from app.services.calculator_contracts import contract_for_icf
+
     return render_template(
         "calculators/icf_wall.html",
         profiles=profiles,
@@ -226,6 +309,7 @@ def wall_form():
         error=error,
         result=result,
         quantity_rows=_quantity_rows(result),
+        calculator_contract=contract_for_icf(result),
     )
 
 
@@ -312,12 +396,15 @@ def wall_framing():
         except WallFramingInputError as exc:
             error = str(exc)
             result = None
+    from app.services.calculator_contracts import contract_for_wall_framing
+
     return render_template(
         "calculators/wall_framing.html",
         values=values,
         error=error,
         result=result,
         drawing=drawing,
+        calculator_contract=contract_for_wall_framing(result),
     )
 
 
@@ -424,8 +511,11 @@ def _trade_page(kind):
     system = values["unit_system"] if values["unit_system"] in _LEN else "imperial"
     words = {"len": _LEN[system], "area": "ft²" if system == "imperial" else "m²",
              "thick": "inches" if system == "imperial" else "millimetres"}
+    from app.services.calculator_contracts import contract_for_trade_page
+
     return render_template("calculators/trade_area.html", kind=kind, page=page, values=values,
-                           error=error, result=result, words=words)
+                           error=error, result=result, words=words,
+                           calculator_contract=contract_for_trade_page(kind, values, result, page))
 
 
 @calculators_bp.route("/roofing", methods=["GET", "POST"])

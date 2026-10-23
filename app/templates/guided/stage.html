@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block title %}{{ stage.section_name }} — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ stage.section_name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+{% set base = url_for('guided.stage_action', project_id=project.id, stage_id=stage.id, action='X')[:-1] %}
+<div class="ge-wrap" data-guided-stage="{{ stage.stage_key }}" data-stage-status="{{ status }}">
+  <p class="eyebrow"><a href="{{ url_for('guided.workflow', project_id=project.id) }}">{{ project.name }} — all stages</a></p>
+  <section class="ge-card">
+    <div class="ge-stage-head">
+      <h2 style="margin:0;">{{ stage.section_name }}</h2>
+      <span class="ge-badge s-{{ status }}" data-status-badge>{{ status_label }}</span>
+    </div>
+    <p class="ge-resp" data-responsibility="{{ stage.responsibility }}">{{ stage.responsibility_label }}{% if stage.parent %} · part of {{ stage.parent.display_name }}{% endif %}</p>
+    <p class="ge-muted">{{ stage.explanation or (stage.parent.explanation if stage.parent else '') }}</p>
+    {% if spec and stage.responsibility == 'SUBCONTRACTED' %}<p class="ge-muted">{{ spec.subcontract_note }}</p>{% endif %}
+    {% if next_action %}<p data-next-action><strong>Next:</strong> {{ next_action }}</p>{% endif %}
+    {% if stage.completion_basis and status == 'COMPLETE' %}<p class="ge-ok" data-completed>Complete — {{ basis_labels[stage.completion_basis] }}, by {{ stage.completed_by }} {{ stage.completed_at.strftime('%Y-%m-%d %H:%M') }}.</p>{% endif %}
+    {% if stage.completion_basis and status != 'COMPLETE' %}<p class="ge-warn" data-needs-review>This stage was completed, then its costs changed. Review it and complete it again.</p>{% endif %}
+    {% if accepted %}<p class="ge-warn">The customer accepted the proposal. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>
+    {% elif not editable %}<p class="ge-warn" data-not-editable>The estimate version is issued or locked. <a href="{{ url_for('guided.workflow', project_id=project.id) }}">Start a revision</a> to change it; the issued version is kept.</p>{% endif %}
+  </section>
+
+  {% if check and check.issues %}
+  <section class="ge-card ge-warn" data-missing>
+    <h3>Still missing</h3>
+    <ul>{% for issue in check.issues %}<li>{{ issue }}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  {% if stage.responsibility == 'INTERNAL' %}
+  <section class="ge-card" data-internal-tools>
+    <h3>Your tools for this stage</h3>
+    <p class="ge-muted">Each calculator opens with this project and stage chosen. Its result comes back here and goes through the estimate review: you confirm each quantity and its company cost before anything is added.</p>
+    {% if limitation %}<p class="ge-warn" data-limitation>{{ limitation }}</p>{% endif %}
+    <div class="ge-grid">
+      {% for link in tools %}{% if link.href %}
+      <a class="ge-tool" href="{{ link.href }}" data-tool="{{ link.tool.kind }}:{{ link.tool.target }}"><strong>{{ link.tool.label }}</strong><span class="ge-muted">{{ link.tool.note }}</span></a>
+      {% endif %}{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if check and check.calculations %}
+  <section class="ge-card" data-stage-calculations>
+    <h3>Calculations for this stage</h3>
+    <ul>
+      {% for calc in check.calculations %}
+      <li data-calculation="{{ calc.id }}">{{ calc.calculator_label }} — {{ calc.summary }}
+        {% if calc.review_status == 'IN_REVIEW' %}<a href="{{ url_for('estimates.calculation_review', id=version.estimate_id, version_id=calc.estimate_version_id, intake_id=calc.calculation_result_intake_id, section_id=(check.lines[0].line.estimate_section_id if check.lines else None), return_to=return_to) }}" data-review-calculation>Review the quantities</a>
+        {% elif calc.payload %}<a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-send-calculation>Send to the estimate review</a>
+        {% else %}<span class="ge-muted">(kept as a record)</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if check %}
+  <section class="ge-card" data-stage-lines>
+    <h3>On the estimate for this stage</h3>
+    {% if not check.lines %}<p class="ge-muted">Nothing yet.</p>{% else %}
+    <div class="ge-scroll"><table class="ge-table ge-stack">
+      <thead><tr><th>Line</th><th>Kind</th><th class="num">Quantity</th><th class="num">Unit cost</th><th class="num">Cost</th><th>Supplied and built by</th></tr></thead>
+      <tbody>
+      {% for row in check.lines %}
+      <tr data-line="{{ row.line.id }}" data-line-kind="{{ row.kind }}">
+        <td data-label="Line">{{ row.line.description }}{% if row.missing %}<div class="ge-issues">{{ row.missing|join('; ') }}</div>{% endif %}</td>
+        <td data-label="Kind">{{ row.kind_label }}</td>
+        <td class="num" data-label="Quantity">{{ '%g'|format(row.line.quantity|float) }} {{ row.line.unit }}</td>
+        <td class="num" data-label="Unit cost">{{ "${:,.2f}".format(row.line.unit_cost|float) }}</td>
+        <td class="num" data-label="Cost">{{ "${:,.2f}".format(row.line.extended_cost|float) }}</td>
+        <td data-label="Supplied and built by">{% if row.routing %}{{ row.routing.material_procurement|replace('_',' ')|lower }} / {{ row.routing.labour_delivery|replace('_',' ')|lower }}{% if row.routing_confirmed %} ✓{% endif %}{% else %}not set{% endif %}</td>
+      </tr>
+      {% if row.labour_suggestion %}{% set sug = row.labour_suggestion %}
+      <tr data-suggested-cost><td colspan="6">
+        <strong>Suggested cost</strong> from the selected quote: {{ sug.suggested_unit_cost }} per {{ row.line.unit }} (working cost {{ sug.current_unit_cost }}).
+        {% if sug.applied %}Applied by {{ sug.applied_by }}.{% endif %}
+        {% if editable %}
+        {% if not sug.applied %}
+        <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.apply_suggested_cost', project_id=project.id, line_id=row.line.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="kind" value="labour"><input type="hidden" name="return_to" value="{{ return_to }}">
+          <button type="submit" class="ge-primary" data-use-quote-cost>Use this cost on the line</button>
+        </form>
+        {% else %}
+        <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.revert_suggested_cost', project_id=project.id, line_id=row.line.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+          <button type="submit" class="ge-secondary" data-undo-quote-cost>Undo</button>
+        </form>
+        {% endif %}{% endif %}
+      </td></tr>
+      {% endif %}
+      {% if row.material_suggestion and not row.material_suggestion.applied and editable %}{% set ms = row.material_suggestion %}
+      <tr data-suggested-material-cost><td colspan="6"><strong>Suggested cost</strong> from the approved supplier cost: {{ ms.suggested_unit_cost }} per {{ row.line.unit }}.
+        <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.apply_suggested_cost', project_id=project.id, line_id=row.line.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="kind" value="material"><input type="hidden" name="return_to" value="{{ return_to }}">
+          <button type="submit" class="ge-secondary">Use this cost on the line</button>
+        </form></td></tr>
+      {% endif %}
+      {% endfor %}
+      </tbody>
+    </table></div>
+    <p><strong>Stage total on the estimate: {{ "${:,.2f}".format(check.total|float) }}</strong></p>
+    {% if editable and check.lines %}
+    <form method="post" action="{{ base }}routing">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="ge-secondary" type="submit" data-confirm-routing>Confirm who supplies and builds these lines ({{ stage.responsibility_label }})</button>
+    </form>
+    {% endif %}
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if editable and stage.responsibility == 'INTERNAL' and labour_rows %}
+  <section class="ge-card" data-stage-labour>
+    <h3>Labour hours</h3>
+    <p class="ge-muted">Hours for each item, at the approved company labour rate (the existing labour-hours service).</p>
+    <form method="post" action="{{ base }}labour_hours" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% for lr in labour_rows %}
+      <label>{{ lr.line.description }} (hours)<input type="text" inputmode="decimal" name="hours_{{ lr.line.id }}" value="{{ lr.labour.quantity if lr.labour else '' }}"></label>
+      {% endfor %}
+      <button class="ge-secondary" type="submit" data-save-labour>Save labour hours</button>
+    </form>
+  </section>
+  {% endif %}
+
+  {% if stage.responsibility == 'SUBCONTRACTED' and check %}
+  <section class="ge-card" data-subcontract>
+    <h3>Subcontract</h3>
+    {% set sub = (check.lines|selectattr('kind', 'equalto', 'subcontract')|list) %}
+    {% if editable %}
+    <form method="post" action="{{ base }}{{ 'save' if sub else 'subcontract' }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label><strong>What the subcontractor is to do</strong> (inclusions and anything left out)
+        <textarea name="scope_description" rows="3" data-scope-description>{{ stage.scope_description or '' }}</textarea></label>
+      <button class="ge-secondary" type="submit" data-setup-subcontract>{% if sub %}Save the scope{% else %}Set up the subcontract{% endif %}</button>
+    </form>
+    {% endif %}
+    {% if plans %}<p class="ge-muted">Drawings and specifications on this project (send them with the request): {% for plan in plans %}<a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=plan.id) }}">{{ plan.original_filename or plan.title or ('Plan ' ~ plan.id) }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+    <div class="ge-grid" style="margin:10px 0;">
+      {% for link in tools %}{% if link.href and link.tool.kind in ('quote_sheet', 'compare', 'project_page') %}
+      <a class="ge-tool" href="{{ link.href }}" data-tool="{{ link.tool.kind }}:{{ link.tool.target }}"><strong>{{ link.tool.label }}</strong><span class="ge-muted">{{ link.tool.note }}</span></a>
+      {% endif %}{% endfor %}
+    </div>
+    {% if editable %}
+    <form method="post" action="{{ base }}request_quote">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="ge-secondary" type="submit" data-quote-requested>{% if stage.quote_requested_at %}Quote requested {{ stage.quote_requested_at.strftime('%Y-%m-%d') }} — mark again{% else %}I have sent the quote request{% endif %}</button>
+    </form>
+    {% endif %}
+    {% for row in sub %}
+      {% if row.quotes %}
+      <h4>Quotes received</h4>
+      <div class="ge-scroll"><table class="ge-table ge-stack" data-quotes>
+        <thead><tr><th>Subcontractor</th><th>Reference</th><th class="num">Amount</th><th>Includes / excludes</th><th>Status</th><th></th></tr></thead>
+        <tbody>{% for q in row.quotes %}
+        <tr data-quote="{{ q.quote_reference }}" data-quote-status="{{ q.selection_status }}">
+          <td data-label="Subcontractor">{{ q.subcontractor.legal_name if q.subcontractor else '' }}</td>
+          <td data-label="Reference">{{ q.quote_reference }}</td>
+          <td class="num" data-label="Amount">{{ "${:,.2f}".format(q.amount|float) }} {{ q.currency }}</td>
+          <td data-label="Includes / excludes">{{ q.included_scope or '' }}{% if q.exclusions %} — excludes: {{ q.exclusions }}{% endif %}</td>
+          <td data-label="Status">{{ q.selection_status|lower }}</td>
+          <td>{% if editable and q.selection_status == 'RECEIVED' %}
+            <form method="post" action="{{ url_for('scope_delivery.select_quote_row', project_id=project.id, quote_id=q.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+              <button class="ge-secondary" type="submit" data-select-quote="{{ q.quote_reference }}">Select this quote</button>
+            </form>{% endif %}</td>
+        </tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="ge-muted">A selected quote only suggests the cost. Press <em>Use this cost on the line</em> above to apply it (you can undo it).</p>
+      {% endif %}
+      {% if editable %}
+      <details id="quote" {% if not row.quotes %}open{% endif %}>
+        <summary><strong>Record a quote</strong> (typed in from the subcontractor's quote)</summary>
+        <form method="post" action="{{ url_for('scope_delivery.receive_quote_row', project_id=project.id, line_id=row.line.id) }}" class="ge-form-row" data-record-quote>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="return_to" value="{{ return_to }}">
+          <label>Subcontractor
+            <select name="subcontractor_id"><option value="">New subcontractor (below)</option>{% for s in subcontractors %}<option value="{{ s.id }}">{{ s.legal_name }}</option>{% endfor %}</select></label>
+          <label>New subcontractor name<input type="text" name="subcontractor_legal_name" maxlength="180"></label>
+          <label>Short code<input type="text" name="subcontractor_code" maxlength="40" placeholder="e.g. SPARKS"></label>
+          <label>Quote reference<input type="text" name="quote_reference" required maxlength="80"></label>
+          <label>Amount (CAD, before HST)<input type="text" inputmode="decimal" name="amount" required></label>
+          <label>Quote date<input type="date" name="quote_date" required></label>
+          <label>Good until<input type="date" name="expires_on"></label>
+          <label>Includes<input type="text" name="included_scope" maxlength="500"></label>
+          <label>Excludes<input type="text" name="exclusions" maxlength="500"></label>
+          <button class="ge-primary" type="submit" data-save-quote>Record the quote</button>
+        </form>
+      </details>
+      {% endif %}
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if editable and check %}
+  <details class="ge-card" id="manual" {% if stage.responsibility == 'INTERNAL' and not check.lines and limitation %}open{% endif %}>
+    <summary><strong>Enter a cost line</strong> (labour, equipment, delivery, disposal, supplies or other costs no calculator covers)</summary>
+    <form method="post" action="{{ base }}add_cost" class="ge-form-row" data-manual-cost>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Kind<select name="kind" required>{% for key, label in manual_kinds %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label>
+      <label>Description<input type="text" name="description" required maxlength="200"></label>
+      <label>Quantity (hours for labour)<input type="text" inputmode="decimal" name="quantity" required></label>
+      <label>Unit<input type="text" name="unit" maxlength="40" placeholder="ea, load, day, ft²"></label>
+      <label>Unit cost (not for labour: the approved rate is used)<input type="text" inputmode="decimal" name="unit_cost"></label>
+      <button class="ge-secondary" type="submit">Add to the estimate</button>
+    </form>
+  </details>
+
+  <details class="ge-card" data-allowance-zero>
+    <summary><strong>Allowance or no-cost decision</strong> (needs your approval)</summary>
+    {% if stage.allowance_approved_at %}<p class="ge-ok">Allowance {{ "${:,.2f}".format(stage.allowance_amount|float) }} approved by {{ stage.allowance_approved_by }}.</p>{% endif %}
+    {% if stage.zero_cost_authorized_at %}<p class="ge-ok">No cost: {{ stage.zero_cost_reason }} — authorized by {{ stage.zero_cost_authorized_by }}.</p>{% endif %}
+    <form method="post" action="{{ base }}allowance" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Allowance amount<input type="text" inputmode="decimal" name="amount" required></label>
+      <label>Description<input type="text" name="description" maxlength="200" placeholder="{{ stage.section_name }} allowance"></label>
+      <button class="ge-secondary" type="submit" data-approve-allowance>Approve the allowance</button>
+    </form>
+    <form method="post" action="{{ base }}zero_cost" class="ge-form-row" style="margin-top:8px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Why this stage has no cost<input type="text" name="reason" required maxlength="300" placeholder="e.g. the owner supplies and installs it"></label>
+      <button class="ge-secondary" type="submit" data-authorize-zero>Authorize no cost</button>
+    </form>
+  </details>
+  {% endif %}
+
+  {% if not accepted %}
+  <details class="ge-card">
+    <summary>Change who does this {{ 'part' if stage.parent else 'stage' }}</summary>
+    <form method="post" action="{{ base }}responsibility" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Responsibility<select name="responsibility" required data-change-responsibility>
+        {% for key, label in [('INTERNAL','Internal'),('SUBCONTRACTED','Subcontracted'),('NA','N/A')] %}<option value="{{ key }}" {% if stage.responsibility == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></label>
+      <label>Reason<input type="text" name="reason" maxlength="300"></label>
+      <button class="ge-secondary" type="submit">Change</button>
+    </form>
+  </details>
+  {% endif %}
+
+  <div class="ge-sticky">
+    <div class="ge-nav" data-stage-nav>
+      <form method="post" action="{{ base }}back"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ge-secondary" type="submit" data-nav-back>Back</button></form>
+      <form method="post" action="{{ base }}save"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ge-secondary" type="submit" data-nav-save>Save</button></form>
+      <form method="post" action="{{ base }}save_exit"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ge-secondary" type="submit" data-nav-save-exit>Save &amp; Exit</button></form>
+      <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}" data-nav-all>All stages</a>
+      {% if status == 'COMPLETE' and not accepted %}
+      <form method="post" action="{{ base }}reopen"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ge-secondary" type="submit" data-nav-reopen>Reopen</button></form>
+      {% if following %}<a class="ge-primary" href="{{ url_for('guided.stage', project_id=project.id, stage_id=following.id) }}" data-nav-next>Next stage</a>{% endif %}
+      {% elif editable %}
+      <form method="post" action="{{ base }}complete_next"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ge-primary" type="submit" data-nav-complete-next>Complete &amp; Next</button></form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

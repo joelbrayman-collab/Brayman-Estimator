@@ -168,6 +168,12 @@ from app.models.payroll_time import (  # noqa: F401  approved time to QuickBooks
 )
 from app.models.training import TrainingFeedback, TrainingLessonProgress, TrainingTrainee, TrainingUatResult
 from app.models.project_calculation import ProjectCalculation
+from app.models.guided_estimating import (
+    CalculatorResultCarry,
+    GuidedEstimate,
+    GuidedEstimateEvent,
+    GuidedEstimateStage,
+)
 from app.models.appointment import (
     CalendarFeedKey,
     CompanyAppointment,
@@ -219,6 +225,10 @@ from app.plan_intelligence.models import (
 
 __all__ = [
     "ProjectCalculation",
+    "GuidedEstimate",
+    "GuidedEstimateStage",
+    "GuidedEstimateEvent",
+    "CalculatorResultCarry",
     "ConcreteRequest",
     "NotificationContact",
     "TextMessage",

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Showing your result again | CalibraytAI</title>
+<style>body{font-family:system-ui,-apple-system,sans-serif;background:#f6f5f2;color:#1c1f24;margin:0;padding:24px 16px}
+main{max-width:520px;margin:0 auto}button{min-height:48px;padding:10px 18px;border:0;border-radius:10px;background:#c79a2b;font-weight:700;font-size:1rem}</style>
+</head><body><main data-carry-restore>
+<p>Showing your result again, exactly as you calculated it…</p>
+<form method="post" action="{{ action }}" id="carry-restore">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% for name, value in pairs %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
+  <noscript><button type="submit">Show my result</button></noscript>
+</form>
+<script>document.getElementById("carry-restore").submit();</script>
+</main></body></html>

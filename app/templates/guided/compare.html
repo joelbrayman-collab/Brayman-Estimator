@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Compare estimate versions — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Compare estimate versions{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-version-compare>
+  <p class="eyebrow"><a href="{{ url_for('guided.workflow', project_id=project.id) }}">{{ project.name }} — all stages</a></p>
+  <form method="get" class="ge-form-row ge-card">
+    <label>Earlier version<select name="older">{% for v in versions %}<option value="{{ v.id }}" {% if older and v.id == older.id %}selected{% endif %}>{{ v.display_label }} ({{ v.status }})</option>{% endfor %}</select></label>
+    <label>Later version<select name="newer">{% for v in versions %}<option value="{{ v.id }}" {% if newer and v.id == newer.id %}selected{% endif %}>{{ v.display_label }} ({{ v.status }})</option>{% endfor %}</select></label>
+    <button class="ge-secondary" type="submit">Compare</button>
+  </form>
+  {% if not rows %}<p class="ge-muted">There is only one version.</p>{% endif %}
+  {% for row in rows %}
+  <section class="ge-card" data-compare-section="{{ row.section }}">
+    <div class="ge-stage-head"><h3>{{ row.section }}</h3><span>{{ "${:,.2f}".format(row.old_total|float) }} → {{ "${:,.2f}".format(row.new_total|float) }} ({{ "{:+,.2f}".format(row.difference|float) }})</span></div>
+    {% if row.changes %}<ul>{% for c in row.changes %}<li>{{ c }}</li>{% endfor %}</ul>{% else %}<p class="ge-muted">No change.</p>{% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

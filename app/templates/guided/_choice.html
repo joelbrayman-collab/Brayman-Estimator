@@ -1,0 +1,12 @@
+{# Three mutually exclusive round choices for one stage or part. Nothing is pre-selected for an undecided row. #}
+<fieldset class="ge-choice" data-choice="{{ row.stage_key }}">
+  <legend>Who does {{ row.display_name }}</legend>
+  <label><input type="radio" name="resp_{{ row.id }}" value="INTERNAL" {% if row.responsibility == 'INTERNAL' %}checked{% endif %} {% if locked %}disabled{% endif %} data-resp="INTERNAL"> Internal</label>
+  <label><input type="radio" name="resp_{{ row.id }}" value="SUBCONTRACTED" {% if row.responsibility == 'SUBCONTRACTED' %}checked{% endif %} {% if locked %}disabled{% endif %} data-resp="SUBCONTRACTED"> Subcontracted</label>
+  <label><input type="radio" name="resp_{{ row.id }}" value="NA" {% if row.responsibility == 'NA' %}checked{% endif %} {% if locked %}disabled{% endif %} data-resp="NA"> N/A</label>
+</fieldset>
+{% if row.responsibility == 'NA' %}
+<label class="ge-muted">Why it is N/A <span class="cc-optional">optional</span>
+  <input type="text" name="na_reason_{{ row.id }}" value="{{ row.na_reason or '' }}" maxlength="300" style="width:100%;min-height:40px;">
+</label>
+{% endif %}

@@ -26,6 +26,20 @@ from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_
 from app.services.organizations import get_current_organization_id
 
 
+def _guided_context():
+    """Keep a Guided Estimating stage's section and way back across the review's own redirects."""
+    from app.services.return_path import from_request
+
+    out = {}
+    back = from_request()
+    if back:
+        out["return_to"] = back
+    section_id = request.form.get("section_hint", type=int) or request.args.get("section_id", type=int)
+    if section_id:
+        out["section_id"] = section_id
+    return out
+
+
 def _version_or_404(estimate_id, version_id):
     return _get_estimate_version(estimate_id, version_id)
 
@@ -97,6 +111,7 @@ def stored_member_count_offer(id, version_id):
             id=estimate.id,
             version_id=version.id,
             intake_id=intake_id,
+            **_guided_context(),
         )
     )
 
@@ -188,12 +203,16 @@ def calculation_review(id, version_id, intake_id):
                 version_id=version.id,
             )
         )
+    from app.services.return_path import from_request
+
     return render_template(
         "estimates/calculation_review.html",
         estimate=estimate,
         version=version,
         intake=intake,
         page=review_page(intake),
+        return_to=from_request(),
+        section_hint=request.args.get("section_id", type=int),
     )
 
 
@@ -272,6 +291,7 @@ def calculation_confirm(id, version_id, review_id):
             id=estimate.id,
             version_id=version.id,
             intake_id=intake_id,
+            **_guided_context(),
         )
     )
 
@@ -308,6 +328,7 @@ def calculation_defer_labour(id, version_id, review_id):
             id=estimate.id,
             version_id=version.id,
             intake_id=intake_id,
+            **_guided_context(),
         )
     )
 

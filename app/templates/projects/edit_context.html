@@ -89,7 +89,7 @@
             Delivery Model *
             <select name="delivery_model" required>
                 {% for opt in delivery_models %}
-                <option value="{{ opt }}" {% if current_context and current_context.delivery_model == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Self-Perform' %}selected{% endif %}>{{ opt }}</option>
+                <option value="{{ opt }}" {% if current_context and current_context.delivery_model == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Self-Perform' %}selected{% endif %}>{{ opt|delivery_model_label }}</option>
                 {% endfor %}
             </select>
         </label>

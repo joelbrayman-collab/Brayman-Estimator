@@ -165,7 +165,7 @@
             Delivery Model *
             <select name="delivery_model" required>
                 {% for opt in delivery_models %}
-                <option value="{{ opt }}" {% if opt == "Self-Perform" %}selected{% endif %}>{{ opt }}</option>
+                <option value="{{ opt }}" {% if opt == "Self-Perform" %}selected{% endif %}>{{ opt|delivery_model_label }}</option>
                 {% endfor %}
             </select>
         </label>

@@ -10,7 +10,7 @@
 # only what is missing; it never resets a password, a trainee's progress or an acceptance result.
 # Idempotent: safe to run again. Prints no passwords or secrets.
 set -u
-COMMIT=${1:-V1REL8_DEFAULT_COMMIT}
+COMMIT=${1:-f3a01e1ba1929c2c698c7cb0fc821001be657f90}
 APP=/opt/calibrayt/app
 DATA=/opt/calibrayt/data
 DB=$DATA/training.db

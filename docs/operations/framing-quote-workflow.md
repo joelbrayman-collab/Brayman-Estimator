@@ -14,10 +14,23 @@ Branch: feature/framing-quote-workflow-20261023. Not released.
 - Wall framing count and purchase: `wall_framing`, `wall_framing_purchasing`. No quantity rule added.
 - Labour quote receipt/select/reject: existing Scope Delivery routes. Unchanged.
 
-## Not built, needs an owner decision
-- **Use this quote in the estimate** (price evidence or selected labour quote becoming an estimate line cost). Today the platform states deliberately that evidence "does not set cost" and cost needs Brayman approval (ADR-036, FG-031). Doing it in one click changes that pricing contract. Not done.
-- **Multi-supplier comparison**: no prior work found; not started.
-- `estimating_handoff.subcontract_request_from_project` exists but needs a plan-intelligence result, not an estimate; the sheet above is built from the estimate lines instead.
+## Suggested cost from a returned quote (owner decision A)
+- A selected labour quote suggests a unit cost (quote amount / line quantity). An approved supplier cost suggests the unit cost of its canonical material. Both show on the Scope Delivery Review line as "Suggested cost", with "Working cost differs from this quote" when they differ.
+- Nothing changes until a person clicks **Use this cost on the line**. Labour: sets the line's unit cost and records who, when and the prior unit cost in the line's own override provenance; **Undo** restores the prior cost. Materials use the existing `consume_approved_contractor_cost` (checks and costing freeze unchanged).
+- Existing safeguards kept: selecting a quote still does not set cost; humans only (AI refused); locked or non-draft versions refuse; applying a cost makes the costing snapshot stale, so costing is re-approved before pricing.
+- No migration: the audit trail is the line's override fields; no table or column added.
+
+## Multi-supplier comparison
+Read-only **Compare quotes** page (project supplier requests): returned quotes side by side per line, lowest net unit cost marked, priced total per supplier. Records and approves nothing.
+
+## Click counts (counted from the screens, not a timed walk)
+| Task | Before | After |
+|---|---|---|
+| Framing materials quote to a supplier | 7 (download, email, wait, key in) | 2 (supplier, Request) |
+| Deck takeoff to supplier | 5 | 1 |
+| Labour quote request | no sheet | 1 |
+| Quote cost onto the estimate line | re-key by hand | 1 confirm (1 undo) |
+| Compare suppliers | separate pages, by eye | 1 |
 
 ## Link point
 The permit lookup (address from Start New Project) is untouched; a "next: framing quote" step can link after it.

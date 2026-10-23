@@ -6,7 +6,7 @@
   <p class="tc-eyebrow">Module {{ module.number }} · {{ module.title }}</p>
   <h1>{{ lesson.title }}</h1>
   {% if workflow_stages %}<p class="tc-small tc-workflow-stage" data-lesson-stages>Workflow map:
-    {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id) }}#workflow-stage" data-lesson-stage="{{ s.id }}">Stage {{ s.number }} · {{ s.label }} — {{ s.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+    {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id, back=request.full_path[:-1] if request.full_path.endswith('?') else request.full_path) }}#workflow-stage" data-lesson-stage="{{ s.id }}">Stage {{ s.number }} · {{ s.label }} — {{ s.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
   <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p>
     <p class="tc-small">Work down the steps. Do each one on the training site, then tick it: it turns green and your place is saved.</p></div>
   <div class="tc-bar" aria-hidden="true"><span data-step-bar style="width: {{ (100 * ticked|length / lesson.steps|length)|round|int }}%"></span></div>
@@ -31,6 +31,12 @@
             <dt>You should see</dt><dd>{{ s.expect }}</dd>
             {% if s.why %}<dt>Why</dt><dd>{{ s.why }}</dd>{% endif %}
           </dl>
+          {% if step_links is defined and step_links.get(i) %}
+          <p class="tc-step-links" data-step-links>
+            {% for label, href in step_links[i] %}<a class="tc-btn tc-btn-primary" href="{{ href }}" data-step-link>{{ label }} ↗</a>{% endfor %}
+            <span class="tc-small">Opens the page on the training site. Press Back to the lesson step at the top of it to return here.</span>
+          </p>
+          {% endif %}
           <details class="tc-wrong"><summary>If something goes wrong</summary><p>{{ s.if_wrong }}</p></details>
         </div>
         {% if s.shot %}

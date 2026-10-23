@@ -141,3 +141,11 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
   .tc-js .tc-tutor-launch { padding:3px; }
 }
 @media (prefers-reduced-motion: reduce) { .tc-js .tc-tutor, .tc-js .tc-tutor.is-open { transition:none; } }
+
+/* Back above the Workflow map, and step buttons that open the page or calculator (23 Oct 2026) */
+.tc-map-back { margin:0 0 12px; }
+.tc-back { min-height:44px; }
+.tc-step-links { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:10px 0 0; }
+.tc-step-links .tc-btn { text-align:center; }
+.tc-step-links .tc-small { flex:1 1 220px; margin:0; }
+.tc-back:focus-visible, .tc-step-links a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }

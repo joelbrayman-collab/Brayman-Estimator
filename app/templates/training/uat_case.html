@@ -6,7 +6,7 @@
   <p class="tc-eyebrow">Acceptance test{% if module %} · Module {{ module.number }} {{ module.title }}{% endif %}</p>
   <h1>{{ case.title }}</h1>
   {% if workflow_stages %}<p class="tc-small" data-uat-stages>Workflow map:
-    {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id) }}#workflow-stage">Stage {{ s.number }} · {{ s.label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+    {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id, back=request.full_path[:-1] if request.full_path.endswith('?') else request.full_path) }}#workflow-stage">Stage {{ s.number }} · {{ s.label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
   <dl>
     <dt>Start here</dt><dd>{{ case.start }}</dd>
     <dt>Do this</dt><dd>{{ case.action }}</dd>

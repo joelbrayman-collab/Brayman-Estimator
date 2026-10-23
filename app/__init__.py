@@ -240,7 +240,19 @@ def _register_office_auth(app: Flask) -> None:
     def _training_site():
         from app.training.service import enabled
 
-        return {"training_site": enabled(app)}
+        from flask import request, session
+
+        on = enabled(app)
+        ret = focus = None
+        if on:
+            raw = (request.args.get("tc_back") or "").strip()
+            if (raw.startswith("/training/lessons/") and len(raw) <= 200 and "//" not in raw and "\\" not in raw
+                    and "://" not in raw and "\n" not in raw and "\r" not in raw):
+                session["tc_return"] = raw
+            ret = session.get("tc_return")
+            f = (request.args.get("tc_focus") or "").strip()
+            focus = f if f and len(f) <= 60 and all(c.isalnum() or c in "_.-" for c in f) else None
+        return {"training_site": on, "training_return": ret, "training_focus": focus}
 
     @app.before_request
     def protect_office_routes():

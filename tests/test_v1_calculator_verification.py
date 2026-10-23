@@ -189,8 +189,10 @@ def test_concrete_slab_office_bundle_matches_hand_worked_volumes():
 
 def test_concrete_page_offers_only_the_two_engine_variants(client):
     page = _text(client.get("/calculators/concrete"))
-    assert page.count("<option value=") == 4  # 2 slab types + 2 measurement systems
-    assert '<option value="standard">' in page and '<option value="thickened_edge">' in page
+    # Redesign (23 Oct 2026): choices are buttons (radio inputs). Still only the two engine variants.
+    assert page.count('name="variant"') == 2 and page.count('name="measurement_system"') == 2
+    assert 'name="variant" value="standard"' in page and 'name="variant" value="thickened_edge"' in page
+    assert "<option value=" not in page.split("data-link-project")[0]  # no other slab or unit choices
     assert "Nothing is added to an estimate." in page
 
 

@@ -89,8 +89,10 @@ def test_signed_in_contractor_can_open_concrete_without_a_project():
     assert "Concrete calculator" in html
     assert "Standard slab" in html
     assert "Thickened edge" in html
-    assert "Imperial" in html
+    assert "Feet and inches" in html
     assert "Metric" in html
+    assert "Cubic metres (m³)" in html  # order in metric when measured in feet and inches
+    assert "Link to a project" in html
     assert "No project is required" in html
     assert "concrete-calculator-page.js" in html
     assert EstimateLineItem.query.count() == before

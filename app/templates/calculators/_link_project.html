@@ -1,0 +1,28 @@
+{# Link to a project: save this calculator's result on a project (platform only, never on the public site).
+   Set link_calculator, link_result_selector and link_form_selector before including. #}
+{% if link_projects is defined %}
+<div class="cc-link" data-link-project
+     data-calculator="{{ link_calculator }}"
+     data-result="{{ link_result_selector }}"
+     data-form="{{ link_form_selector }}"
+     data-endpoint="{{ url_for('calculators.link_project') }}">
+    <h3>Link to a project</h3>
+    {% if link_projects %}
+    <p>Save this result on a project. It is kept on the project page; nothing is added to the estimate.</p>
+    <label><span>Project</span>
+        <select data-link-select>
+            <option value="">Choose a project</option>
+            {% for pr in link_projects %}<option value="{{ pr.id }}">{{ pr.name }}</option>{% endfor %}
+        </select>
+    </label>
+    <label><span>Reference <span class="cc-optional">optional</span></span>
+        <input type="text" data-link-reference maxlength="160" placeholder="e.g. Garage slab">
+    </label>
+    <button type="button" data-link-button disabled>Link to project</button>
+    <p data-link-status hidden></p>
+    {% else %}
+    <p>There are no current projects to link to.</p>
+    {% endif %}
+</div>
+<script type="module" src="{{ url_for('static', filename='js/calculator-link.js') }}"></script>
+{% endif %}

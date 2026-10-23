@@ -1047,6 +1047,36 @@
         {% endif %}
     </article>
 
+    <article class="panel panel-wide" id="calculations">
+        <div class="panel-header">
+            <h2>Calculations</h2>
+            <a href="{{ url_for('calculators.concrete') }}">Calculators</a>
+        </div>
+        {% if project_calculations %}
+        <p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; nothing here is on the estimate.</p>
+        <table class="data-table">
+            <thead><tr><th>Date</th><th>Calculator</th><th>Result</th><th>By</th></tr></thead>
+            <tbody>
+                {% for calc in project_calculations %}
+                <tr data-project-calculation="{{ calc.id }}">
+                    <td>{{ calc.created_at.strftime("%Y-%m-%d") }}</td>
+                    <td>{{ calc.calculator_label }}{% if calc.reference %}<br><span class="muted-copy">{{ calc.reference }}</span>{% endif %}</td>
+                    <td>{{ calc.summary }}
+                        <details><summary>Details</summary>
+                            {% if calc.entered %}<p><strong>Entered</strong></p><ul>{% for row in calc.entered %}<li>{{ row.label }}: {{ row.value }}</li>{% endfor %}</ul>{% endif %}
+                            <p><strong>Calculated</strong></p><pre style="white-space: pre-wrap; font: inherit;">{{ calc.result_text }}</pre>
+                        </details>
+                    </td>
+                    <td>{{ calc.actor_display_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted-copy">No calculations linked yet. On any calculator, calculate, choose this project under Link to a project, and select Link to project.</p>
+        {% endif %}
+    </article>
+
     <article class="panel panel-wide" id="hub-time">
         <div class="panel-header">
             <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>

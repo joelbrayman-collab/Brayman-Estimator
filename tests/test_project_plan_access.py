@@ -84,4 +84,5 @@ def test_view_project_plan_button_on_project_pages(env):
     db.session.commit()
     page = http.get(f"/projects/{project.id}").get_data(as_text=True)
     assert "View project plan" in page
+    assert "branding/icons/view-project-plan-96.png" in page  # Joel's View project plan icon (23 Oct 2026)
     assert "data-view-project-plan" not in http.get("/projects/").get_data(as_text=True)  # list page: no single project

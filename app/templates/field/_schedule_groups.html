@@ -15,7 +15,7 @@
     {% endif %}
     {% endif %}
     {% set _pid = group.project_id if group.project_id is defined and group.project_id else (group.cards[0].project_id if group.cards else None) %}
-    {% if _pid %}<a class="field-btn field-btn-secondary field-plan-link" href="{{ field_plan_link(_pid) }}" data-view-project-plan>View plan</a>{% endif %}
+    {% if _pid %}<a class="field-btn field-btn-secondary field-plan-link" href="{{ field_plan_link(_pid) }}" data-view-project-plan><img src="{{ url_for('static', filename='branding/icons/view-project-plan-48.png') }}" srcset="{{ url_for('static', filename='branding/icons/view-project-plan-96.png') }} 2x" width="26" height="26" alt="" style="margin-right:8px">View plan</a>{% endif %}
     <ul class="field-schedule-list">
         {% for card in group.cards %}
         <li class="field-schedule-card">

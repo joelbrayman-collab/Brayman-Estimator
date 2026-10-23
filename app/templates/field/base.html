@@ -44,7 +44,7 @@
         </div>
         {% set _plan_project = project if project is defined and project else (confirm_project if confirm_project is defined and confirm_project else None) %}
         {% if _plan_project and _plan_project.id is defined %}
-        <a class="field-plan-btn" href="{{ field_plan_link(_plan_project.id) }}" data-view-project-plan>View project plan</a>
+        <a class="field-plan-btn" href="{{ field_plan_link(_plan_project.id) }}" data-view-project-plan><img src="{{ url_for('static', filename='branding/icons/view-project-plan-96.png') }}" srcset="{{ url_for('static', filename='branding/icons/view-project-plan-192.png') }} 2x" width="36" height="36" alt="">View project plan</a>
         {% endif %}
         {% block content %}{% endblock %}
     </main>

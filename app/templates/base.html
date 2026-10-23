@@ -45,7 +45,7 @@
                 {% set plan_link = office_plan_link(_ctx_project) %}
                 {% if plan_link %}
                 <a class="header-plan-btn{% if not plan_link.count %} header-plan-btn-empty{% endif %}" href="{{ plan_link.url }}" data-view-project-plan title="{{ plan_link.label }}: {{ plan_link.project_name }}">
-                    <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i>
+                    <img class="header-plan-icon" src="{{ url_for('static', filename='branding/icons/view-project-plan-96.png') }}" srcset="{{ url_for('static', filename='branding/icons/view-project-plan-96.png') }} 1x, {{ url_for('static', filename='branding/icons/view-project-plan-192.png') }} 2x" width="28" height="28" alt="">
                     <span class="header-plan-label">{{ plan_link.label }}</span>{% if plan_link.count > 1 %}<span class="header-plan-count">{{ plan_link.count }}</span>{% endif %}
                 </a>
                 {% endif %}

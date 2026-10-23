@@ -49,3 +49,16 @@ No checksum was recorded when these were made; the values below are first record
 - `calibraytai-app-icon-32.png` has no reference in any template, script, manifest or service worker. It is kept (an approved derivative); adding it as the browser favicon or retiring it is Joel's decision.
 - `approved-logo-v1-dark-reference.png` is an intentional duplicate of the sidebar logo (the reference the tests compare with).
 - Historical record: [../current-state.md](../current-state.md) still lists `calibraytai-logo-office.png` (SHA `16d3b5b1…`) as the live office logo in its 27 Aug section. That file was removed on 15 Oct 2026 when `calibraytai-logo-v1-dark.png` replaced it; the old line is history, not the current state.
+
+## Ask the Tutor identity (23 Oct 2026)
+
+Joel's approved master (a circular badge: graduation cap, tassel and the two lines "Ask the Tutor", transparent outside the circle) recoloured to this platform's own tokens (`--gold #c79a2b`, `--gold-soft #e8d7a8`, `--black #141414`, `--sidebar #17191d` in `app/static/css/app.css`; font IBM Plex Sans is the app font, and the master's lettering is kept, recoloured, not re-set). Shape, proportions, layout and transparency are the master's. Made by `docs/branding/ask_the_tutor/make_ask_the_tutor_icons.py`. Used for: the Training Tutor panel header (`app/templates/training/_tutor.html`).
+
+| File | SHA-256 |
+|---|---|
+| `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai-192.png` | `4a5e77d92a1a3498bd7fa0ba61340b3298f2299aac44bac988cfbd8ecbb1ded9` |
+| `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai-48.png` | `6e217b8b328823d6666329e3dff526a0ec733e4f7705f80a1941c0290ae3b957` |
+| `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai-512.png` | `acd8c03d21be6bc2eedc9f5e463e2fdbc5b9f82f63d79beaaa5bcd25a7568776` |
+| `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai-96.png` | `fb898b27be4990521614a0cd9db94ade15237d22470b645a231c4d14893dde74` |
+| `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai.png` | `08cc6c64e889bcd1b42374ec552e2d388ffa9c00a4febc19cd327688bba401f0` |
+| `docs/branding/ask_the_tutor/ask-the-tutor-master.png` | `f0e3131f47324316af3fe89de2b46141069b2fab205dcabb80ea441613161582` |

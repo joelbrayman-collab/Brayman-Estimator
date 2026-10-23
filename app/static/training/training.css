@@ -116,3 +116,8 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
   .tc-card { padding:16px; }
   .tc-tick-btn { width:100%; justify-content:center; }
 }
+
+/* Ask the Tutor identity (23 Oct 2026) */
+.tc-tutor-title { display:inline-flex; align-items:center; gap:10px; min-width:0; }
+.tc-tutor-icon { width:56px; height:56px; flex:none; object-fit:contain; }
+@media (max-width: 480px) { .tc-tutor-icon { width:48px; height:48px; } }

@@ -77,7 +77,7 @@
       </tr>
       {% if row.labour_suggestion %}{% set sug = row.labour_suggestion %}
       <tr data-suggested-cost><td colspan="6">
-        <strong>Suggested cost</strong> from the selected quote: {{ sug.suggested_unit_cost }} per {{ row.line.unit }} (working cost {{ sug.current_unit_cost }}).
+        <strong>Suggested cost</strong> from the selected quote: {{ "${:,.2f}".format(sug.suggested_unit_cost|float) }} per {{ row.line.unit }} (the line's cost now: {{ "${:,.2f}".format(sug.current_unit_cost|float) }}).
         {% if sug.applied %}Applied by {{ sug.applied_by }}.{% endif %}
         {% if editable %}
         {% if not sug.applied %}
@@ -94,7 +94,7 @@
       </td></tr>
       {% endif %}
       {% if row.material_suggestion and not row.material_suggestion.applied and editable %}{% set ms = row.material_suggestion %}
-      <tr data-suggested-material-cost><td colspan="6"><strong>Suggested cost</strong> from the approved supplier cost: {{ ms.suggested_unit_cost }} per {{ row.line.unit }}.
+      <tr data-suggested-material-cost><td colspan="6"><strong>Suggested cost</strong> from the approved supplier cost: {{ "${:,.2f}".format(ms.suggested_unit_cost|float) }} per {{ row.line.unit }}.
         <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.apply_suggested_cost', project_id=project.id, line_id=row.line.id) }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="version_id" value="{{ version.id }}"><input type="hidden" name="estimate_id" value="{{ version.estimate_id }}"><input type="hidden" name="kind" value="material"><input type="hidden" name="return_to" value="{{ return_to }}">
           <button type="submit" class="ge-secondary">Use this cost on the line</button>

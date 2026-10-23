@@ -431,3 +431,9 @@
 .cc-option p { margin: 0 0 6px; }
 .cc-option select, .cc-option input[type=text] { width: 100%; min-height: 44px; }
 .cc-option [data-link-status], .cc-option [data-a-status], .cc-option [data-c-status] { margin-top: 6px; }
+/* The result panel sits on the dark calculation summary: the choice cards keep dark text on white. */
+.cc-option, .cc-option h4, .cc-option p, .cc-option label, .cc-option label span { color: #1c1f24; }
+.cc-option .cc-optional { color: #6b6f76; }
+.cc-option a { color: #7a5a0f; font-weight: 600; }
+.cc-option p.error, .cc-option [data-link-status].error { color: #b42318; }
+.cc-result-options > h3, [data-result-options] > h3 { margin-top: 18px; }

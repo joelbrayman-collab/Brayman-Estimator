@@ -8,7 +8,8 @@
      data-form="{{ link_form_selector }}"
      data-carry-endpoint="{{ url_for('calculators.carry_result') }}"
      data-stages-endpoint="{{ url_for('calculators.project_stages', project_id=0)[:-1] }}"
-     data-return-path="{{ request.path }}">
+     data-return-path="{{ request.path }}"
+     data-csrf="{{ csrf_token() }}">
     <h3>What would you like to do with this result?</h3>
     {% if carry_restored %}<p class="cc-carry-banner" data-carry-restored>Your result is back, exactly as calculated. Nothing was saved to a project.</p>{% endif %}
     <div class="cc-option-grid">

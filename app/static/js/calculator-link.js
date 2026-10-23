@@ -107,7 +107,8 @@ function restore(form, state) {
 }
 
 function csrf() {
-  return document.querySelector('meta[name="csrf-token"]')?.content || "";
+  return document.querySelector('meta[name="csrf-token"]')?.content
+    || document.querySelector("[data-result-options]")?.dataset.csrf || "";
 }
 
 function contractFor(resultNode, panel) {
@@ -136,9 +137,13 @@ panels.forEach((panel) => {
   if (saved && formNode()) {
     const state = JSON.parse(saved.textContent || "[]");
     const form = formNode();
-    restore(form, state);
-    const button = form.querySelector('button[type="submit"], [data-calculate], button:not([type])');
-    if (button) button.click(); else form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    // After every script on the page is running (the calculator's own engine listens for its form's submit).
+    const run = () => {
+      restore(form, state);
+      const button = form.querySelector('button[type="submit"], [data-calculate], button:not([type])');
+      if (button) button.click(); else form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    };
+    if (document.readyState === "complete") run(); else window.addEventListener("load", run, { once: true });
   }
 
   // A: use the result only.

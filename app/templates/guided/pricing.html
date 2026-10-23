@@ -37,7 +37,7 @@
       {% if snapshot.target_gross_margin is not none %}<tr><td>True gross margin</td><td class="num" data-gross-margin>{{ '%.1f'|format(snapshot.target_gross_margin|float * 100) }}%</td></tr>{% endif %}
       <tr><td>Selling price before tax</td><td class="num" data-selling-price>{{ "${:,.2f}".format(snapshot.pre_tax_selling_price|float) }}</td></tr>
       <tr><td>Tax ({{ snapshot.tax_jurisdiction or '' }} {{ snapshot.tax_percent }}%)</td><td class="num">{{ "${:,.2f}".format(snapshot.tax_amount|float) }}</td></tr>
-      <tr><th>Customer total</th><th class="num" data-customer-total>{{ "${:,.2f}".format(snapshot.customer_total|float) }}</th></tr>
+      <tr><td><strong>Customer total</strong></td><td class="num" data-customer-total><strong>{{ "${:,.2f}".format(snapshot.customer_total|float) }}</strong></td></tr>
     </table>
     {% else %}<p class="ge-muted">Not priced yet.</p>{% endif %}
     {% if not blockers and version.status == 'Draft' and not version.is_locked %}

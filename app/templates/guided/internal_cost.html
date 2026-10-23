@@ -25,7 +25,7 @@
         <tr><td>Delivery</td><td class="num">{{ "${:,.2f}".format(doc.totals.delivery|float) }}</td></tr>
         <tr><td>Allowances</td><td class="num">{{ "${:,.2f}".format(doc.totals.allowance|float) }}</td></tr>
         <tr><td>Other direct costs</td><td class="num">{{ "${:,.2f}".format(doc.totals.other|float) }}</td></tr>
-        <tr><th>Direct cost</th><th class="num" data-direct-cost>{{ "${:,.2f}".format(doc.direct_cost|float) }}</th></tr>
+        <tr><td><strong>Direct cost</strong></td><td class="num" data-direct-cost><strong>{{ "${:,.2f}".format(doc.direct_cost|float) }}</strong></td></tr>
       </tbody>
     </table></div>
     {% if doc.blockers %}<div class="ge-warn" data-cost-missing><strong>Missing information</strong><ul>{% for b in doc.blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>{% endif %}

@@ -186,7 +186,21 @@ def hub_record_template_vars(project, organization_id: str) -> dict:
         "hub_contracts": _hub_contracts(project.id, organization_id),
         "purchase_orders": project_purchase_orders(organization_id=organization_id, project_id=project.id),
         "project_calculations": _project_calculations(project.id, organization_id),
+        "guided_summary": _guided_summary(project.id, organization_id),
     }
+
+
+def _guided_summary(project_id: int, organization_id: str):
+    """The project's guided estimate, for the Project page (read only)."""
+    from app.services.guided_estimating import get_guided, workflow_view
+
+    guided = get_guided(organization_id, project_id)
+    if guided is None:
+        return None
+    if guided.scope_status != "FINALIZED":
+        return {"guided": guided, "done": 0, "included": 0}
+    view = workflow_view(guided)
+    return {"guided": guided, "done": view["done"], "included": view["included"]}
 
 
 def _project_calculations(project_id: int, organization_id: str):

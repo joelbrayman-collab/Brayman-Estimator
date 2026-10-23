@@ -522,6 +522,24 @@
 <p class="hub-section-label" id="hub-price">Estimates and proposals</p>
 {{ contextual_help(help_content.hub_topic("price")) }}
 <section class="dash-panels">
+    <article class="panel panel-wide" id="hub-guided-estimate" data-hub-guided>
+        <div class="panel-header">
+            <h2>Guided estimate</h2>
+            {% if guided_summary %}<a href="{{ url_for('guided.workflow', project_id=project.id) }}">All stages</a>{% endif %}
+        </div>
+        {% if guided_summary %}
+        {% set gs = guided_summary %}
+        <p class="muted-copy">{{ gs.guided.project_type_label }} · {{ gs.guided.contractor_role_label }} · {% if gs.guided.scope_status == 'FINALIZED' %}{{ gs.done }} of {{ gs.included }} stages complete{% else %}scope still a draft{% endif %}</p>
+        <p>
+            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
+            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
+        </p>
+        {% else %}
+        <p class="muted-copy">Choose what is being built and who does each stage; CalibraytAI brings the right calculator or quote to each one.</p>
+        <p><a class="button" data-hub-guided-start href="{{ url_for('guided.workflow', project_id=project.id) }}">Start New Estimate</a></p>
+        {% endif %}
+    </article>
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Estimates</h2>
@@ -1068,7 +1086,7 @@
             <a href="{{ url_for('calculators.concrete') }}">Calculators</a>
         </div>
         {% if project_calculations %}
-        <p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; nothing here is on the estimate.</p>
+        <p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p>
         <table class="data-table">
             <thead><tr><th>Date</th><th>Calculator</th><th>Result</th><th>By</th></tr></thead>
             <tbody>
@@ -1082,7 +1100,7 @@
                             <p><strong>Calculated</strong></p><pre style="white-space: pre-wrap; font: inherit;">{{ calc.result_text }}</pre>
                         </details>
                     </td>
-                    <td>{{ calc.actor_display_name }}</td>
+                    <td>{{ calc.actor_display_name }}{% if calc.payload %}<br><a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-calculation-review-link>{% if calc.review_status == 'IN_REVIEW' %}In the estimate review{% else %}Review it for the estimate{% endif %}</a>{% endif %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

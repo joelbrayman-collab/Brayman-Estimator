@@ -2,25 +2,19 @@
 
 {% block title %}Wall framing calculator | Brayman Construction Platform{% endblock %}
 {% block page_title %}Wall framing calculator{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/calculators.css') }}">{% endblock %}
 
 {% block content %}
-<div class="page-heading">
-    <div>
-        <h1>Wall framing calculator</h1>
-        {% if estimate %}
-        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
-        <p class="muted-copy">Count the wall, add your waste and plate stock length, then send it to this estimate's review. Nothing is added until you confirm it there.</p>
-        {% else %}
-        <p class="muted-copy">Straight wood-framed wall. No project is required. Nothing is added to an estimate. No waste is added, and no stock length is chosen. Openings, corners, and extra members are optional.</p>
-        {% endif %}
-    </div>
-    {% if estimate %}
-    <div><a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a></div>
-    {% endif %}
-</div>
-
-<section class="form-panel">
-    <p>Enter the wall the contractor measured. This count does not size the wall.</p>
+<div class="cc-page">
+    <header class="cc-hero">
+        <p class="cc-eyebrow">Wall framing calculator</p>
+        <h1>Every stud and plate, <span>counted.</span></h1>
+        <p>Straight wood-framed wall: studs, plates, openings, corners and extra members, with an elevation drawing. No waste is added and no stock length is chosen unless you enter them. No project is required. Nothing is added to an estimate.</p>
+        {% if estimate %}<p class="cc-hero-est">{{ estimate.estimate_number }} · {{ version.display_label }} · <a href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a></p>{% endif %}
+    </header>
+    <div class="cc-shell">
+<section class="cc-panel cc-form">
+<div class="cc-heading"><p class="cc-eyebrow">The wall</p><h2>Enter the wall the contractor measured</h2><p>This count does not size the wall. Openings, corners and extra members are optional.</p></div>
     {% if error %}
     <p class="form-error" role="alert">{{ error }}</p>
     {% endif %}
@@ -113,8 +107,13 @@
     </form>
 </section>
 
-{% if result %}
-<section class="form-panel" data-wall-framing-result>
+<section class="cc-summary" aria-live="polite">
+            <div class="cc-summary-heading">
+                <div><p class="cc-eyebrow">CalibraytAI</p><h2>Calculation summary</h2></div>
+                <span>Wall framing</span>
+            </div>
+            {% if result %}
+            <div class="cc-result" data-wall-framing-result>
     <h2>Wall elevation</h2>
     <div data-wall-elevation>
         {{ drawing|safe }}
@@ -157,6 +156,15 @@
     <p>This is a quantity layout, not a purchasing takeoff.</p>
     <p>These quantities are not on an estimate.</p>
     {% endif %}
-</section>
-{% endif %}
+</div>
+            {% else %}
+            <div class="cc-empty"><span>01</span><h3>Your framing count will appear here.</h3><p>Fill in the form and select Calculate.</p></div>
+            {% endif %}
+            {% set link_calculator = "wall_framing" %}
+            {% set link_result_selector = ".cc-summary .cc-result" %}
+            {% set link_form_selector = "[data-wall-framing-calculator]" %}
+            {% include "calculators/_link_project.html" %}
+        </section>
+    </div>
+</div>
 {% endblock %}

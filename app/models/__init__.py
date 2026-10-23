@@ -153,6 +153,7 @@ from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
 from app.models.onboarding import OrganizationOnboardingStep
 from app.models.training import TrainingFeedback, TrainingLessonProgress, TrainingTrainee, TrainingUatResult
+from app.models.project_calculation import ProjectCalculation
 from app.models.appointment import (
     CalendarFeedKey,
     CompanyAppointment,
@@ -203,6 +204,7 @@ from app.plan_intelligence.models import (
 )
 
 __all__ = [
+    "ProjectCalculation",
     "ConcreteRequest",
     "NotificationContact",
     "TextMessage",

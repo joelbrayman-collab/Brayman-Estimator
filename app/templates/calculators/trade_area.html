@@ -12,6 +12,7 @@
 
 {% block title %}{{ page.title }} | Brayman Construction Platform{% endblock %}
 {% block page_title %}{{ page.title }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/calculators.css') }}">{% endblock %}
 
 {% block content %}
 <style>
@@ -21,22 +22,16 @@
   .trade-row { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border: 1px solid #ddd; padding: 10px; border-radius: 6px; }
   .trade-row legend { font-weight: 600; }
 </style>
-<div class="page-heading">
-    <div>
-        <h1>{{ page.title }}</h1>
-        {% if estimate %}
-        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
-        <p class="muted-copy">Calculate the footings, then send the result to this estimate's review. You choose the company cost there; nothing is added until you confirm it.</p>
-        {% else %}
-        <p class="muted-copy">{{ page.intro }}</p>
-        {% endif %}
-    </div>
-    {% if estimate %}
-    <div><a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a></div>
-    {% endif %}
-</div>
-
-<section class="form-panel" data-trade-calculator data-units="{{ values.unit_system }}">
+<div class="cc-page">
+    <header class="cc-hero">
+        <p class="cc-eyebrow">{{ page.title }}</p>
+        <h1>Measure once. <span>Order what the job needs.</span></h1>
+        <p>{% if estimate %}Calculate the footings, then send the result to this estimate's review. You choose the company cost there; nothing is added until you confirm it.{% else %}{{ page.intro }}{% endif %}</p>
+        {% if estimate %}<p class="cc-hero-est">{{ estimate.estimate_number }} · {{ version.display_label }} · <a href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a></p>{% endif %}
+    </header>
+    <div class="cc-shell">
+<section class="cc-panel cc-form" data-trade-calculator data-units="{{ values.unit_system }}">
+<div class="cc-heading"><p class="cc-eyebrow">The measurements</p><h2>Enter what you measured</h2><p>Feet and inches or metres. Waste is never assumed.</p></div>
     {% if error %}
     <p class="form-error" role="alert">{{ error }}</p>
     {% endif %}
@@ -85,8 +80,13 @@
     </form>
 </section>
 
-{% if result %}
-<section class="form-panel" data-trade-result="{{ kind }}">
+<section class="cc-summary" aria-live="polite">
+            <div class="cc-summary-heading">
+                <div><p class="cc-eyebrow">CalibraytAI</p><h2>Calculation summary</h2></div>
+                <span>{{ page.title }}</span>
+            </div>
+            {% if result %}
+            <div class="cc-result" data-trade-result="{{ kind }}">
     <h2>Quantities</h2>
     {% if kind == "roofing" %}
         {% for p in result.planes %}<p data-plane>Plane {{ p.number }}: pitch {{ p.pitch }}/12, slope factor {{ p.slope_factor }}, plan {{ area(p.plan_area) }}, roof {{ area(p.area) }}</p>{% endfor %}
@@ -117,8 +117,17 @@
     {% endif %}
     {% for note in result.notes %}<p class="muted-copy">{{ note }}</p>{% endfor %}
     <p class="muted-copy">{% if estimate %}Not on the estimate until you send it to the review and confirm it.{% else %}These quantities are not on an estimate.{% endif %}</p>
-</section>
-{% endif %}
+</div>
+            {% else %}
+            <div class="cc-empty"><span>01</span><h3>Your quantities will appear here.</h3><p>Fill in the form and select Calculate.</p></div>
+            {% endif %}
+            {% set link_calculator = kind %}
+            {% set link_result_selector = ".cc-summary .cc-result" %}
+            {% set link_form_selector = "[data-trade-form]" %}
+            {% include "calculators/_link_project.html" %}
+        </section>
+    </div>
+</div>
 
 <script>
   (function () {

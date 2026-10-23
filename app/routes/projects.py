@@ -161,7 +161,16 @@ def hub_record_template_vars(project, organization_id: str) -> dict:
         "job_address": (project.address or "").strip() or _location_address(project),
         "hub_contracts": _hub_contracts(project.id, organization_id),
         "purchase_orders": project_purchase_orders(organization_id=organization_id, project_id=project.id),
+        "project_calculations": _project_calculations(project.id, organization_id),
     }
+
+
+def _project_calculations(project_id: int, organization_id: str):
+    """Calculator results linked to this project, newest first (read only)."""
+    from app.models.project_calculation import ProjectCalculation
+
+    return (ProjectCalculation.query.filter_by(project_id=project_id, organization_id=organization_id)
+            .order_by(ProjectCalculation.created_at.desc(), ProjectCalculation.id.desc()).all())
 
 
 def _hub_contracts(project_id: int, organization_id: str) -> list[dict]:

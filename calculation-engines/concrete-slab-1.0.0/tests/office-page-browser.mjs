@@ -75,6 +75,11 @@ async function waitForLogin(port) {
   throw new Error(`login page was not reachable: ${lastError}`);
 }
 
+const pick = (page, id) => page.click(`label[for="${id}"]`);
+const UNIT = { yd3: "yd³", m3: "m³" };
+const VARIANT_TEXT = { standard: "Standard slab", thickened_edge: "Thickened edge" };
+const SYSTEM_TEXT = { metric: "Metric", imperial: "Feet and inches" };
+
 async function shownResult(page) {
   const result = page.locator("[data-concrete-result]");
   await result.waitFor({ state: "visible" });
@@ -159,8 +164,8 @@ test("the contractor page Calculate button matches the original fixtures", async
     ];
 
     for (const item of cases) {
-      await page.selectOption("#variant", item.variant);
-      await page.selectOption("#measurement_system", item.system);
+      await pick(page, `v-${item.variant}`);
+      await pick(page, `ms-${item.system}`);
       if (item.variant === "thickened_edge") {
         await page.locator("[data-concrete-edge]").waitFor({ state: "visible" });
         await page.fill("#edge_width", item.edgeWidth);
@@ -172,11 +177,11 @@ test("the contractor page Calculate button matches the original fixtures", async
       await page.fill("#waste_percent", item.waste);
       await page.getByRole("button", { name: "Calculate" }).click();
       const text = await shownResult(page);
-      assert.match(text, new RegExp(`Total concrete\\s+${item.total}\\s+${item.unit}`), item.name);
-      assert.match(text, new RegExp(item.variant), item.name);
-      assert.match(text, new RegExp(item.system), item.name);
+      assert.equal(await page.locator("[data-total]").innerText(), `${item.total} ${UNIT[item.unit]}`, item.name);
+      assert.match(text, new RegExp(VARIANT_TEXT[item.variant]), item.name);
+      assert.equal(await page.locator("[data-measured]").innerText(), SYSTEM_TEXT[item.system], item.name);
       const layout = await page.evaluate(() => {
-        const table = document.querySelector("[data-concrete-result] table");
+        const table = document.querySelector("[data-concrete-result]");
         const box = table.getBoundingClientRect();
         const form = document.querySelector("[data-concrete-calculator]").getBoundingClientRect();
         let widest = "";
@@ -220,14 +225,68 @@ test("the contractor page Calculate button matches the original fixtures", async
     await page.screenshot({ path: "/tmp/concrete-page-mobile-error.png", fullPage: true });
 
     await page.fill("#length", "40");
-    await page.selectOption("#variant", "standard");
-    await page.selectOption("#measurement_system", "imperial");
+    await pick(page, "v-standard");
+    await pick(page, "ms-imperial");
     await page.fill("#width", "20");
     await page.fill("#slab_thickness", "6");
     await page.fill("#waste_percent", "0");
     await page.getByRole("button", { name: "Calculate" }).click();
     const recovered = await shownResult(page);
-    assert.match(recovered, /Total concrete\s+14\.815\s+yd3/);
+    assert.equal(await page.locator("[data-total]").innerText(), "14.815 yd³");
+
+    // Measured in feet and inches, ordered in cubic metres (the default order unit).
+    // 40 ft x 20 ft x 6 in is exactly the metric fixture 12.192 m x 6.096 m x 152.4 mm.
+    const orderAmount = () => page.locator("[data-order-amount]").innerText();
+    const orderExact = () => page.locator("[data-order-exact]").innerText();
+    assert.equal(await orderExact(), "11.327 m³");
+    assert.equal(await orderAmount(), "11.50 m³");
+    assert.match(recovered, /\(14\.815 yd³\), rounded up to the next 0\.25 m³/);
+
+    // Order in cubic yards instead: the result updates when the choice changes.
+    await pick(page, "ou-yd3");
+    await page.waitForFunction(() => document.querySelector("[data-order-amount]")?.innerText === "15.00 yd³");
+    assert.equal(await orderExact(), "14.815 yd³");
+
+    // No rounding: the exact amount.
+    await page.fill("#order_increment", "");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.waitForFunction(() => document.querySelector("[data-order-amount]")?.innerText === "14.815 yd³");
+
+    // Thickened edge measured in imperial gives the metric fixture's 18.553 m³.
+    await pick(page, "ou-m3");
+    await page.fill("#order_increment", "0.5");
+    await pick(page, "v-thickened_edge");
+    await page.locator("[data-concrete-edge]").waitFor({ state: "visible" });
+    await page.fill("#edge_width", "2");
+    await page.fill("#edge_depth", "12");
+    await page.fill("#waste_percent", "5");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.waitForFunction(() => document.querySelector("[data-order-exact]")?.innerText === "18.553 m³");
+    assert.equal(await orderAmount(), "19.00 m³");
+
+    // Measured in metric, ordered in cubic yards.
+    await pick(page, "ms-metric");
+    await page.fill("#length", "12.192");
+    await page.fill("#width", "6.096");
+    await page.fill("#slab_thickness", "152.4");
+    await page.fill("#edge_width", "609.6");
+    await page.fill("#edge_depth", "304.8");
+    await pick(page, "ou-yd3");
+    await page.fill("#order_increment", "0.25");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    // The engine run in feet and inches gives the imperial fixture's 24.267 yd³.
+    await page.waitForFunction(() => document.querySelector("[data-order-exact]")?.innerText === "24.267 yd³");
+    assert.equal(await orderAmount(), "24.50 yd³");
+
+    // A bad rounding step is refused with a plain message.
+    await page.fill("#order_increment", "0");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await error.waitFor({ state: "visible" });
+    assert.match(await error.innerText(), /Round the order up/);
+    await page.fill("#order_increment", "0.25");
+    await page.getByRole("button", { name: "Calculate" }).click();
+    await page.locator("[data-concrete-result]").waitFor({ state: "visible" });
+    await page.screenshot({ path: "/tmp/concrete-page-mobile-order.png", fullPage: true });
     assert.deepEqual(pageErrors, []);
   } finally {
     if (browser) await browser.close();

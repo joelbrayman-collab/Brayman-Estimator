@@ -2,56 +2,102 @@
 
 {% block title %}Concrete calculator | Brayman Construction Platform{% endblock %}
 {% block page_title %}Concrete calculator{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/calculators.css') }}">{% endblock %}
 
 {% block content %}
-<div class="page-heading">
-    <div>
-        <h1>Concrete calculator</h1>
-        <p class="muted-copy">Standard slab and thickened edge. No project is required. Nothing is added to an estimate.</p>
+<div class="cc-page" data-concrete-page>
+    <header class="cc-hero">
+        <p class="cc-eyebrow">Concrete slab calculator</p>
+        <h1>Know the volume <span>before the pour.</span></h1>
+        <p>Standard slab or thickened edge. Measure in feet and inches or in metres, and order in cubic metres or cubic yards. Nothing is priced. No project is required. Nothing is added to an estimate.</p>
+    </header>
+
+    <div class="cc-shell">
+        <form class="cc-panel" data-concrete-calculator novalidate>
+            <div class="cc-heading">
+                <p class="cc-eyebrow">The pour</p>
+                <h2>Enter the slab measurements</h2>
+                <p>Use the actual dimensions for this pour.</p>
+            </div>
+
+            <fieldset class="cc-choice">
+                <legend>Measure in</legend>
+                <div class="cc-segmented">
+                    <input type="radio" id="ms-imperial" name="measurement_system" value="imperial" checked>
+                    <label for="ms-imperial">Feet and inches</label>
+                    <input type="radio" id="ms-metric" name="measurement_system" value="metric">
+                    <label for="ms-metric">Metric</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="cc-choice">
+                <legend>Slab type</legend>
+                <div class="cc-variants">
+                    <input type="radio" id="v-standard" name="variant" value="standard" checked>
+                    <label for="v-standard"><strong>Standard slab</strong><span>One thickness across the full slab.</span></label>
+                    <input type="radio" id="v-thickened_edge" name="variant" value="thickened_edge">
+                    <label for="v-thickened_edge"><strong>Thickened edge</strong><span>Adds concrete below the slab around its perimeter.</span></label>
+                </div>
+            </fieldset>
+
+            <div class="cc-fields">
+                <label class="cc-field" for="length"><span>Length</span>
+                    <span class="cc-input"><input id="length" name="length" inputmode="decimal" autocomplete="off"><strong data-unit="plan">ft</strong></span></label>
+                <label class="cc-field" for="width"><span>Width</span>
+                    <span class="cc-input"><input id="width" name="width" inputmode="decimal" autocomplete="off"><strong data-unit="plan">ft</strong></span></label>
+                <label class="cc-field" for="slab_thickness"><span>Slab thickness</span>
+                    <span class="cc-input"><input id="slab_thickness" name="slab_thickness" inputmode="decimal" autocomplete="off"><strong data-unit="thickness">in</strong></span></label>
+                <label class="cc-field" for="waste_percent"><span>Waste</span>
+                    <span class="cc-input"><input id="waste_percent" name="waste_percent" inputmode="decimal" autocomplete="off"><strong>%</strong></span>
+                    <small>Your allowance. No hidden waste factor.</small></label>
+                <div class="cc-edge" data-concrete-edge hidden>
+                    <label class="cc-field" for="edge_width"><span>Edge width</span>
+                        <span class="cc-input"><input id="edge_width" name="edge_width" inputmode="decimal" autocomplete="off"><strong data-unit="edgeWidth">ft</strong></span>
+                        <small>Measured inward from the slab edge.</small></label>
+                    <label class="cc-field" for="edge_depth"><span>Depth below slab</span>
+                        <span class="cc-input"><input id="edge_depth" name="edge_depth" inputmode="decimal" autocomplete="off"><strong data-unit="edgeDepth">in</strong></span>
+                        <small>Extra depth below the slab, not total depth.</small></label>
+                </div>
+            </div>
+
+            <fieldset class="cc-choice cc-order-choice">
+                <legend>Order the concrete in</legend>
+                <div class="cc-segmented">
+                    <input type="radio" id="ou-m3" name="order_unit" value="m3" checked>
+                    <label for="ou-m3">Cubic metres (m³)</label>
+                    <input type="radio" id="ou-yd3" name="order_unit" value="yd3">
+                    <label for="ou-yd3">Cubic yards (yd³)</label>
+                </div>
+                <label class="cc-field cc-round" for="order_increment"><span>Round the order up to the next</span>
+                    <span class="cc-input"><input id="order_increment" name="order_increment" inputmode="decimal" autocomplete="off" value="0.25"><strong data-order-unit>m³</strong></span>
+                    <small>Leave blank to order the exact amount.</small></label>
+            </fieldset>
+
+            <p class="cc-error" data-concrete-error role="alert" hidden></p>
+            <button class="cc-calculate" type="submit">Calculate concrete</button>
+        </form>
+
+        <section class="cc-summary" aria-live="polite">
+            <div class="cc-summary-heading">
+                <div>
+                    <p class="cc-eyebrow">CalibraytAI</p>
+                    <h2>Calculation summary</h2>
+                </div>
+                <span>Concrete slab 1.0.0</span>
+            </div>
+            <div class="cc-empty" data-concrete-empty>
+                <span>01</span>
+                <h3>Your concrete order will appear here.</h3>
+                <p>Enter the slab dimensions and select Calculate concrete.</p>
+            </div>
+            <div data-concrete-result hidden></div>
+            {% set link_calculator = "concrete" %}
+            {% set link_result_selector = "[data-concrete-result]" %}
+            {% set link_form_selector = "[data-concrete-calculator]" %}
+            {% include "calculators/_link_project.html" %}
+        </section>
     </div>
 </div>
-
-<section class="form-panel">
-    <form data-concrete-calculator>
-        <label for="variant">Slab type</label>
-        <select id="variant" name="variant">
-            <option value="standard">Standard slab</option>
-            <option value="thickened_edge">Thickened edge</option>
-        </select>
-
-        <label for="measurement_system">Measurement</label>
-        <select id="measurement_system" name="measurement_system">
-            <option value="imperial">Imperial</option>
-            <option value="metric">Metric</option>
-        </select>
-
-        <label for="length">Length <span data-unit="plan">ft</span></label>
-        <input id="length" name="length" inputmode="decimal" autocomplete="off">
-
-        <label for="width">Width <span data-unit="plan">ft</span></label>
-        <input id="width" name="width" inputmode="decimal" autocomplete="off">
-
-        <label for="slab_thickness">Slab thickness <span data-unit="thickness">in</span></label>
-        <input id="slab_thickness" name="slab_thickness" inputmode="decimal" autocomplete="off">
-
-        <div data-concrete-edge hidden>
-            <label for="edge_width">Edge width <span data-unit="edgeWidth">ft</span></label>
-            <input id="edge_width" name="edge_width" inputmode="decimal" autocomplete="off">
-
-            <label for="edge_depth">Depth below slab <span data-unit="edgeDepth">in</span></label>
-            <input id="edge_depth" name="edge_depth" inputmode="decimal" autocomplete="off">
-        </div>
-
-        <label for="waste_percent">Waste percent</label>
-        <input id="waste_percent" name="waste_percent" inputmode="decimal" autocomplete="off">
-        <p class="muted-copy">Enter the waste allowance you want. A blank or invalid measurement is refused.</p>
-
-        <button type="submit">Calculate</button>
-    </form>
-    <p class="form-error" data-concrete-error hidden></p>
-</section>
-
-<section class="form-panel" data-concrete-result hidden></section>
 
 <script type="module" src="{{ url_for('static', filename='js/concrete-calculator-page.js') }}"></script>
 {% endblock %}

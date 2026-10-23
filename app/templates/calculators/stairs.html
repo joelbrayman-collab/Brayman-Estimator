@@ -4,16 +4,28 @@
 {% block page_title %}Stair calculator{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/stair-calculator.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calculators.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="page-heading">
-    <div>
-        <h1>Stair calculator</h1>
-        <p class="muted-copy">Ontario residential straight stair. No project is required. Nothing is added to an estimate.</p>
+<div class="cc-page">
+    <header class="cc-hero">
+        <p class="cc-eyebrow">Stair calculator</p>
+        <h1>Rise and run, <span>checked against the code.</span></h1>
+        <p>Ontario residential straight stair: risers, treads, stringer length and the Ontario Building Code limits. No project is required. Nothing is added to an estimate.</p>
+    </header>
+
+    <div class="cc-shell cc-wide">
+        <section class="cc-panel">
+            <div data-stair-calculator></div>
+        </section>
+    </div>
+    <div class="cc-stair-link">
+        {% set link_calculator = "stairs" %}
+        {% set link_result_selector = "[data-stair-calculator] .tool-calculator-results" %}
+        {% set link_form_selector = "[data-stair-calculator]" %}
+        {% include "calculators/_link_project.html" %}
     </div>
 </div>
-
-<div data-stair-calculator></div>
 <script type="module" src="{{ url_for('static', filename='js/stair-calculator.js') }}"></script>
 {% endblock %}

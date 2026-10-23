@@ -4,14 +4,21 @@ Concrete and Stair render the preserved Website engines in the browser.
 The Employment vs Entrepreneurship page sends the preserved Website file.
 The ICF page calls the existing 8-inch quantity service.
 The wall framing page calls the straight-wall quantity function.
-This module does not write a project or an estimate.
+This module does not write an estimate. "Link to a project" (23 Oct 2026) saves a snapshot of a
+calculator result on a project (project_calculations); nothing else changes.
 """
 
 import uuid
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, jsonify, render_template, request, send_file, url_for
+from flask_login import current_user
+
+from app import db
+from app.models.project_calculation import CALCULATORS, ProjectCalculation
+from app.services.organizations import get_current_organization
+from app.services.shared_api import get_organization_project, list_current_operating_projects
 
 from app.services.icf_manufacturer_profiles import IcfProfileError, list_profiles
 from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
@@ -33,6 +40,67 @@ _QUANTITY_LABELS = {
     "corner_45_8_forms": "45-degree corners",
     "concrete": "Concrete",
 }
+
+
+@calculators_bp.context_processor
+def _link_projects():
+    """The project list for "Link to a project": the current operating projects, as on the Calendar."""
+    try:
+        organization = get_current_organization()
+    except Exception:  # signed out, or no single membership: no list
+        return {"link_projects": []}
+    if organization is None:
+        return {"link_projects": []}
+    return {"link_projects": list_current_operating_projects(organization.id)}
+
+
+def _clean(text, limit):
+    return " ".join(str(text or "").split())[:limit]
+
+
+@calculators_bp.post("/link-project")
+def link_project():
+    """Save a calculator result on a project. A record only: no estimate or request changes."""
+    organization = get_current_organization()
+    data = request.get_json(silent=True) or {}
+    calculator = str(data.get("calculator") or "")
+    if organization is None or calculator not in CALCULATORS:
+        return jsonify(ok=False, error="This calculator cannot be linked."), 400
+    try:
+        project_id = int(data.get("project_id"))
+    except (TypeError, ValueError):
+        return jsonify(ok=False, error="Choose a project."), 400
+    project = get_organization_project(organization.id, project_id)
+    if project is None:
+        return jsonify(ok=False, error="Choose a project."), 404
+    summary = _clean(data.get("summary"), 600)
+    result_text = str(data.get("result_text") or "").strip()[:20000]
+    if not summary or not result_text:
+        return jsonify(ok=False, error="Calculate first, then link the result."), 400
+    entered = []
+    for row in (data.get("entered") or [])[:60]:
+        if isinstance(row, dict):
+            label, value = _clean(row.get("label"), 120), _clean(row.get("value"), 200)
+            if label and value:
+                entered.append({"label": label, "value": value})
+    record = ProjectCalculation(
+        organization_id=organization.id,
+        project_id=project.id,
+        calculator=calculator,
+        reference=_clean(data.get("reference"), 160) or None,
+        summary=summary,
+        entered=entered,
+        result_text=result_text,
+        user_id=getattr(current_user, "id", None),
+        actor_display_name=_clean(getattr(current_user, "display_name", "") or "Office", 150),
+    )
+    db.session.add(record)
+    db.session.commit()
+    return jsonify(
+        ok=True,
+        project=project.name,
+        url=url_for("projects.view_project", id=project.id) + "#calculations",
+    )
 
 
 @calculators_bp.get("/concrete")

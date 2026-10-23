@@ -1,0 +1,27 @@
+{% extends "site_plans/base.html" %}
+{% block title %}Site Plans{% endblock %}
+{% block sp_page %}projects{% endblock %}
+{% block sp_content %}
+<section class="sp-intro">
+    <h1>Projects</h1>
+    {% if kind == "field_only" %}
+    <p>The jobs you are booked on. Tap a job to open its plans.</p>
+    {% else %}
+    <p>Your company's active projects. Tap a project to open its plans.</p>
+    {% endif %}
+</section>
+{% if projects %}
+<ul class="sp-list" data-sp-projects="{{ projects|length }}">
+    {% for p in projects %}
+    <li>
+        <a class="sp-card" href="{{ url_for('site_plans.project', project_id=p.id) }}" data-sp-project="{{ p.id }}">
+            <span class="sp-card-title">{{ p.name }}</span>
+            {% if p.project_number %}<span class="sp-card-text">{{ p.project_number }}</span>{% endif %}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="sp-empty" data-sp-projects="0">{% if kind == "field_only" %}You are not booked on a job right now. Ask the office.{% else %}No active projects yet.{% endif %}</p>
+{% endif %}
+{% endblock %}

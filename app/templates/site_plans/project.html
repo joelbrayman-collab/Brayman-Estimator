@@ -1,0 +1,45 @@
+{% extends "site_plans/base.html" %}
+{% block title %}{{ project.name }} plans | Site Plans{% endblock %}
+{% block sp_page %}project{% endblock %}
+{% block sp_back %}
+        <a class="sp-back" href="{{ url_for('site_plans.index') }}" data-sp-back><span aria-hidden="true">&lsaquo;</span> Projects</a>
+{% endblock %}
+{% block sp_content %}
+<section class="sp-intro">
+    <h1 data-sp-project-name>{{ project.name }}</h1>
+    {% if project.project_number %}<p>{{ project.project_number }}</p>{% endif %}
+    {% if kind == "office" %}
+    <p class="sp-office-links">
+        <a href="{{ url_for('projects.view_project', id=project.id) }}" data-sp-office-project>Back to the project</a>
+        · <a href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}" data-sp-upload>Upload a plan PDF</a>
+    </p>
+    {% endif %}
+</section>
+{% if files %}
+<div class="sp-save" data-sp-save-panel>
+    <button type="button" class="sp-button sp-button-secondary" data-sp-save
+            data-sp-project-url="{{ url_for('site_plans.project', project_id=project.id) }}">Save for offline</button>
+    <p class="sp-save-status" data-sp-save-status role="status">Plans you open stay on this phone for when there is no signal. Save for offline keeps them all.</p>
+</div>
+<ul class="sp-list" data-sp-files="{{ files|length }}">
+    {% for f in files %}
+    {% set view = url_for('site_plans.viewer', project_id=project.id, kind=f.kind, file_id=f.id) %}
+    <li class="sp-file" data-sp-file="{{ f.key }}"
+        data-sp-view="{{ view }}"
+        data-sp-whole="{{ url_for('site_plans.file', project_id=project.id, kind=f.kind, file_id=f.id) }}"
+        data-sp-page-base="{{ view }}/page-" data-sp-pages="{{ f.page_count }}">
+        <a class="sp-card" href="{{ view }}" data-sp-open="{{ f.key }}" aria-label="Open {{ f.title }}">
+            <span class="sp-card-title">{{ f.title }}{% if f.latest %} <span class="sp-chip">Latest</span>{% endif %}</span>
+            <span class="sp-card-text">{{ f.detail }}</span>
+            {% if f.sheets %}
+            <span class="sp-sheets">{% for s in f.sheets[:8] %}<span class="sp-chip" data-sp-sheet>{{ s.label }}</span>{% endfor %}{% if f.sheets|length > 8 %}<span class="sp-chip">+{{ f.sheets|length - 8 }} more</span>{% endif %}</span>
+            {% endif %}
+            <span class="sp-saved" data-sp-saved hidden>On this phone</span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="sp-empty" data-sp-files="0">No plans for this project yet.{% if kind == "office" %} Upload the plan PDF on the project's Plans page.{% else %} Ask the office.{% endif %}</p>
+{% endif %}
+{% endblock %}

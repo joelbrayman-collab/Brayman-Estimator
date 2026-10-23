@@ -1161,3 +1161,24 @@ button.button-secondary {
     .cal-print-open[open] > summary { width: 100%; }
     .cal-print-pop { position: static; width: auto; margin-top: 6px; box-shadow: none; }
 }
+
+/* ---------- Plans button (Site Plans, 23 Oct 2026): every project page, beside the page title ---------- */
+.header-plans-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 12px 0 7px;
+    border: 1px solid #c9d3df;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #1a2b3f;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.header-plans-btn img { display: block; width: 24px; height: 24px; }
+.header-plans-btn:hover { border-color: #1a2b3f; background: #f3f6fa; }
+.header-plans-btn:focus-visible { outline: 3px solid #1f6fd1; outline-offset: 2px; }

@@ -174,7 +174,9 @@ def _register_office_auth(app: Flask) -> None:
     login_manager.login_message = "Please log in to access the office application."
     # Useful Calculators pages send a signed-out phone to that app's own sign-in, not the office one, so the
     # Home Screen app never leaves its scope (22 Oct 2026). Same check, same "next" back to the page.
-    login_manager.blueprint_login_views = {"useful_calculators": "useful_calculators.sign_in"}
+    # Site Plans (23 Oct 2026) does the same: its Home Screen app signs in at /site-plans/sign-in.
+    login_manager.blueprint_login_views = {"useful_calculators": "useful_calculators.sign_in",
+                                           "site_plans": "site_plans.sign_in"}
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -276,6 +278,10 @@ def _register_office_auth(app: Flask) -> None:
             # visitor, and its sign-in is the office check kept inside the Home Screen app's scope.
             "useful_calculators.index",
             "useful_calculators.sign_in",
+            # Site Plans, 23 Oct 2026: its sign-in (the office check inside the Home Screen app's scope) and its
+            # service worker script (static code, like field_service_worker; no plan or company data).
+            "site_plans.sign_in",
+            "site_plans.service_worker",
             # SMS schedule notices, 22 Oct 2026: Twilio's delivery reports and replies. No sign-in; each
             # request must carry a valid X-Twilio-Signature (app/services/text_messages.py), else 403.
             "sms_notifications.twilio_status",
@@ -581,6 +587,9 @@ def create_app(config=None):
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(calculators_bp)
     app.register_blueprint(useful_calculators_bp)
+    from app.routes.site_plans import site_plans_bp
+
+    app.register_blueprint(site_plans_bp)
     app.register_blueprint(supplier_program_bp)
     from app.routes.session_status import session_status_bp
 

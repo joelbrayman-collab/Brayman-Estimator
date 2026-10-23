@@ -1,0 +1,14 @@
+{# The Plans button (Joel, 23 Oct 2026): on every office page that belongs to one project (the project hub and its
+   pages: estimate, proposals, schedule items, costs, supplier requests, drawings, plans...). The project is found
+   once, in app/routes/site_plans.py _plans_button; this partial is included once, in base.html. It opens the
+   project's plans in Site Plans, the same viewer the crew use on their iPhones. #}
+{% if plans_button_project_id %}
+<a class="header-plans-btn" href="{{ url_for('site_plans.project', project_id=plans_button_project_id) }}"
+   aria-label="Plans: open this project's plans and drawings" title="Open this project's plans and drawings"
+   data-plans-button="{{ plans_button_project_id }}">
+    <img src="{{ url_for('static', filename='site-plans/site-plans-icon-32.png') }}"
+         srcset="{{ url_for('static', filename='site-plans/site-plans-icon-32.png') }} 1x, {{ url_for('static', filename='site-plans/site-plans-icon-192.png') }} 4x"
+         alt="" width="24" height="24">
+    <span>Plans</span>
+</a>
+{% endif %}

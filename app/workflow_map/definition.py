@@ -535,8 +535,8 @@ FIELD_STAGES: Tuple[Stage, ...] = (
             S("drawings", "Drawings and plans", _field("field.drawings", "Open Drawings and plans", project=True),
               lesson="f04-drawings"),
         ),
-        lessons=("f02-confirm-job", "f04-drawings", "f04-job-info"),
-        uat=("uat-f02-confirm", "uat-f04-drawings"),
+        lessons=("f02-confirm-job", "f04-drawings", "f04-site-plans", "f04-job-info"),
+        uat=("uat-f02-confirm", "uat-f04-drawings", "uat-f04-site-plans"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(

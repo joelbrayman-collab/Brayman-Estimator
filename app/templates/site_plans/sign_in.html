@@ -1,0 +1,21 @@
+{% extends "site_plans/base.html" %}
+{% block title %}Sign in | Site Plans{% endblock %}
+{% block sp_page %}sign-in{% endblock %}
+{% block sp_content %}
+<section class="sp-intro">
+    <h1>Sign in</h1>
+    <p>Use your CalibraytAI email and password (the same as Field). You come straight back to your plans.</p>
+</section>
+<form method="post" action="{{ url_for('site_plans.sign_in') }}" class="sp-form" novalidate data-sp-sign-in-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next_path }}">
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" autocomplete="username" inputmode="email" required autofocus>
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" autocomplete="current-password" required>
+    <button type="submit" class="sp-button">Sign in</button>
+    <p><a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a></p>
+</form>
+{# Plans kept on this phone for an earlier sign-in are removed here, like Field's pages (B2, 15 Oct 2026). #}
+<script src="{{ url_for('static', filename='js/sign-in-clears-field-cache.js', v='site-plans-1') }}"></script>
+{% endblock %}

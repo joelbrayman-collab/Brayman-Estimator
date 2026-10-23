@@ -1,0 +1,38 @@
+{% extends "site_plans/base.html" %}
+{% block title %}{{ plan.title }} | Site Plans{% endblock %}
+{% block sp_page %}viewer{% endblock %}
+{% block sp_back %}
+        <a class="sp-back" href="{{ url_for('site_plans.project', project_id=project.id) }}" data-sp-back><span aria-hidden="true">&lsaquo;</span> Plans</a>
+{% endblock %}
+{% block sp_content %}
+{% set whole = url_for('site_plans.file', project_id=project.id, kind=plan.kind, file_id=plan.id) %}
+<section class="sp-viewer" data-sp-viewer="{{ plan.key }}" data-sp-whole="{{ whole }}" data-sp-pages="{{ pages }}">
+    <div class="sp-viewer-head">
+        <h1>{{ plan.title }}</h1>
+        <p class="sp-muted">{{ project.name }}{% if plan.detail %} · {{ plan.detail }}{% endif %}</p>
+        {% if sheets|length > 1 %}
+        <nav class="sp-sheet-nav" aria-label="Sheets">
+            {% for s in sheets %}
+            <a class="sp-chip sp-chip-link" href="#page-{{ s.page }}" data-sp-goto="{{ s.page }}">{{ s.label }}</a>
+            {% endfor %}
+        </nav>
+        {% endif %}
+        <p class="sp-hint">Pinch with two fingers to zoom. <a href="{{ whole }}" target="_blank" rel="noopener" data-sp-open-file>Open the PDF on its own</a></p>
+    </div>
+    {# Computers and Android: the browser's own PDF viewer, all pages, with its zoom. #}
+    <div class="sp-whole" data-sp-whole-frame>
+        <iframe data-src="{{ whole }}#view=FitH" title="{{ plan.title }}, all pages" loading="lazy"></iframe>
+    </div>
+    {# iPhone and iPad: Safari shows only the first page of a PDF inside a page, so each page is its own
+       one-page PDF in an image, which Safari draws sharp at any zoom (site-plans.js picks this layout). #}
+    <ol class="sp-pages" data-sp-page-list hidden>
+        {% for s in sheets %}
+        <li class="sp-page" id="page-{{ s.page }}" data-sp-page="{{ s.page }}">
+            <h2>{{ s.label }}</h2>
+            <img alt="{{ s.label }}" data-src="{{ request.path }}/page-{{ s.page }}.pdf" loading="lazy" decoding="async"
+                 width="{{ s.width or 1200 }}" height="{{ s.height or 850 }}">
+        </li>
+        {% endfor %}
+    </ol>
+</section>
+{% endblock %}

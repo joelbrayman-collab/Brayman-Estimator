@@ -142,6 +142,41 @@
                     {% endif %}
                 </td>
             </tr>
+            {% set ls = row.labour_suggestion %}{% set ms = row.material_suggestion %}
+            {% if ls or ms %}
+            <tr data-suggested-cost>
+                <td colspan="6">
+                    {% for sug in [ls, ms] if sug %}
+                    <div class="muted-copy" style="margin-bottom: 6px;">
+                        <strong>Suggested cost</strong>
+                        ({{ 'selected subcontract quote' if sug.kind == 'labour' else 'approved supplier cost' }}):
+                        {{ sug.suggested_unit_cost }} per {{ row.line_item.unit }}.
+                        Working cost is {{ sug.current_unit_cost }}.
+                        {% if sug.applied %}Applied{% if sug.applied_by %} by {{ sug.applied_by }}{% endif %}.
+                        {% elif sug.differs %}<strong data-cost-differs>Working cost differs from this quote.</strong>{% endif %}
+                        {% if review.editable %}
+                        {% if not sug.applied %}
+                        <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.apply_suggested_cost', project_id=project.id, line_id=row.line_item.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                            <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                            <input type="hidden" name="kind" value="{{ sug.kind }}">
+                            <button type="submit" data-confirm-suggested-cost>Use this cost on the line</button>
+                        </form>
+                        {% elif sug.kind == 'labour' %}
+                        <form method="post" style="display:inline;" action="{{ url_for('scope_delivery.revert_suggested_cost', project_id=project.id, line_id=row.line_item.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                            <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                            <button type="submit" data-revert-suggested-cost>Undo</button>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
             {% if row.quote_review and row.quote_review.eligible %}
             <tr>
                 <td colspan="6">

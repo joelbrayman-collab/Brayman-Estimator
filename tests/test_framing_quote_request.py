@@ -184,3 +184,25 @@ def test_deck_takeoff_one_click_issues_and_sends(app, client):  # noqa: F811
     # No account chosen: refused with the reason, nothing sent.
     none = client.post(f"/projects/{project.id}/deck-takeoff/request-and-send", data={}, follow_redirects=True)
     assert b"Choose a supplier account" in none.data
+
+
+def test_labour_quote_request_sheet_lists_only_subcontract_lines(app, client):  # noqa: F811
+    from app.services.estimate_scope_delivery import (
+        LABOUR_SUBCONTRACT, MATERIAL_SUBCONTRACTOR_SUPPLIED, save_scope_delivery,
+    )
+    from app.services.estimate_builder import add_manual_line, create_section
+    project, _other, _account = _setup()
+    estimate, version = _estimate(project)
+    section = create_section(version, name="Direct")
+    sub = add_manual_line(section, line_type="Custom", description="Framing labour package",
+                          quantity=1, unit="ls", unit_cost=100)
+    own = add_manual_line(section, line_type="Custom", description="Own crew cleanup",
+                          quantity=1, unit="ls", unit_cost=10)
+    save_scope_delivery(sub, material_procurement=MATERIAL_SUBCONTRACTOR_SUPPLIED,
+                        labour_delivery=LABOUR_SUBCONTRACT, actor="Test")
+    page = client.get(f"/projects/{project.id}/scope-delivery?version_id={version.id}&estimate_id={estimate.id}").get_data(as_text=True)
+    assert "data-labour-quote-request-link" in page
+    sheet = client.get(f"/projects/{project.id}/scope-delivery/labour-quote-request?version_id={version.id}&estimate_id={estimate.id}")
+    text = sheet.get_data(as_text=True)
+    assert sheet.status_code == 200 and "data-labour-quote-request" in text
+    assert "Framing labour package" in text and "Own crew cleanup" not in text

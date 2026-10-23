@@ -177,6 +177,38 @@ def approve_all(project_id):
     return _review_redirect(project, version)
 
 
+@scope_delivery_bp.route("/<int:project_id>/scope-delivery/labour-quote-request")
+def labour_quote_request(project_id):
+    """Printable sheet of the lines a subcontractor does, to send out for a labour quote.
+
+    Quantities are the estimate's own. Quote and allowance stay blank; nothing is priced
+    here and the returned quote is recorded as evidence on the Scope Delivery Review.
+    """
+    from datetime import date
+
+    project, org_id = _project(project_id)
+    version = _selected_version(project, org_id)
+    review_model = assemble_scope_delivery_review(
+        project=project, version=version, organization_id=org_id,
+        actor=form_actor("actor_display_name", fallback="office-reviewer"),
+    )
+    rows = [
+        {
+            "section": row["section"].name if getattr(row["section"], "name", None) else "",
+            "description": row["line_item"].description,
+            "qty": row["line_item"].quantity,
+            "unit": row["line_item"].unit,
+            "labour": row["labour_delivery"],
+        }
+        for row in review_model["rows"]
+        if row["quote_review"] and row["quote_review"]["eligible"]
+    ]
+    return render_template(
+        "projects/labour_quote_request.html",
+        project=project, review=review_model, rows=rows, issued_on=date.today().isoformat(),
+    )
+
+
 @scope_delivery_bp.route(
     "/<int:project_id>/scope-delivery/lines/<int:line_id>/quotes/receive",
     methods=["POST"],

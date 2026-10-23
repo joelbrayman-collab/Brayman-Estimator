@@ -70,8 +70,10 @@ def serialize_project(project: Project, organization_id: str) -> dict:
 
 def list_organization_projects(organization_id: str):
     """All current-org project identity rows. Includes CLOSED historical Projects."""
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work is not a job
+
     return (
-        Project.query.filter_by(organization_id=organization_id)
+        customer_projects_only(Project.query.filter_by(organization_id=organization_id))
         .order_by(Project.created_at.desc())
         .all()
     )
@@ -79,11 +81,13 @@ def list_organization_projects(organization_id: str):
 
 def list_current_operating_projects(organization_id: str):
     """ACTIVE operating Projects only. Shared current-work authority."""
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work is not a job
+
     return (
-        Project.query.filter_by(
+        customer_projects_only(Project.query.filter_by(
             organization_id=organization_id,
             operating_state=OPERATING_STATE_ACTIVE,
-        )
+        ))
         .order_by(Project.created_at.desc(), Project.id.desc())
         .all()
     )
@@ -91,11 +95,13 @@ def list_current_operating_projects(organization_id: str):
 
 def list_closed_projects(organization_id: str):
     """CLOSED operating Projects only. Historical discovery. Not an Archive product."""
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work is not a job
+
     return (
-        Project.query.filter_by(
+        customer_projects_only(Project.query.filter_by(
             organization_id=organization_id,
             operating_state=OPERATING_STATE_CLOSED,
-        )
+        ))
         .order_by(Project.created_at.desc(), Project.id.desc())
         .all()
     )

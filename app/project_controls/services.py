@@ -213,6 +213,9 @@ def create_change_order(
         error_class=ChangeOrderServiceError,
         message="Project not found.",
     )
+    from app.services.time_entry import raise_if_company_time
+
+    raise_if_company_time(project, ChangeOrderServiceError)  # Shop / Company Work is not a customer job
     raise_if_project_closed(project, ChangeOrderServiceError)
     if status not in CHANGE_ORDER_STATUSES:
         raise ChangeOrderServiceError("Select a valid status.")

@@ -10,7 +10,7 @@
     <h1>{{ contractor_copy.FIELD_TIME_BUTTON }}</h1>
     <p class="field-project-name">{{ project.name }}</p>
     {% if company_time %}
-    <p class="field-muted" data-company-time>Company time: not a customer's job, never billed to a customer.</p>
+    <p class="field-muted" data-company-time>Shop / Company Work: paid company time, not a customer's job, never billed to a customer. Choose the kind of work below.</p>
     {% endif %}
     {% if project.operating_state != 'ACTIVE' %}
     <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>

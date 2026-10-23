@@ -1028,6 +1028,18 @@ Second defect found the same way: the contract also refused when the free-text "
 | TC-07 | September signing files | OPEN — OWNER DECISION | 19 synthetic UAT records (14–15 Sep) on the live database; their 19 files are on the Mac (`instance/signing_artifacts/ORG-001`) and were never copied when the hosted database was seeded from the Mac on 25 Sep. New signing writes are not affected (folder created on first write; disk mounted at `instance/`) | Copy the 19 files to the live disk (production change, needs authorization), or leave the synthetic records as they are |
 | TC-08 | Production dependency pins | OPEN — OWNER DECISION | `requirements.txt` uses minimum versions; Render resolves the newest each build | Pin production to `requirements-lock.txt` (changes the build) |
 
+### 15.8 SMS schedule-change notifications — 22 Oct 2026 (branch `v1/sms-schedule-2026-10-22`, not deployed)
+
+Owner decision (Joel, 22 Oct 2026): SMS notifications are **mandatory V1**.
+
+| ID | Item | Class | Evidence | Outstanding |
+|---|---|---|---|---|
+| SMS-01 | Automatic text to directly affected workers when their scheduled work moves, is added, removed or cancelled (G1 design; coalesced; no duplicates; no text about your own edit) | IMPLEMENTED / TESTED / NOT SWITCHED ON | `app/services/crew_notices.py`, `app/services/text_messages.py`, migration `u7b3d9f2a4c6` (4 new `sms_` tables, shared with the v1rel7 payroll tables), `tests/test_sms_schedule_notices.py`, `tools/release/evidence_sms_notifications.mjs`, [operations/sms-notifications.md](operations/sms-notifications.md) | Twilio account, sender, webhooks; consent-policy approval; production activation authorization (operations doc §6–7) |
+| SMS-02 | Consent per worker (Field → Texts; owner/admin on People & Access with how they agreed), STOP / START, consent history | IMPLEMENTED / TESTED | `sms_consent_events`; Field-only sees only their own setting | Joel approves wording and the office-on-behalf rule |
+| SMS-03 | Office visibility: Calendar → Text notices (sent / delivered / failed / not sent, reason, Retry, Send waiting now); Calendar link and Home flag on failures | IMPLEMENTED / TESTED | `/schedule/text-notices` | — |
+| SMS-04 | Twilio delivery reports and replies, signature-verified public endpoints | IMPLEMENTED / TESTED (no real Twilio call) | `/sms/twilio/status`, `/sms/twilio/inbound`; security route sweep updated | Configure the two webhook URLs in Twilio |
+| SMS-05 | Training: Field Crew lesson f03-texts and UAT, Getting Started notes, Workflow Map (Field TODAY, contractor BUILD), Tutor | IMPLEMENTED | `app/training/field_crew.py`, `app/services/onboarding.py`, `app/workflow_map/definition.py`, `app/training/service.py` | — |
+
 ---
 
 ## Related

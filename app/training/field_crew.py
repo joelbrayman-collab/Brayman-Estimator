@@ -12,8 +12,11 @@ promises more than Field does, the lesson says so plainly and says what the offi
 
 - Drawings: Field opens the job's construction drawings and plan PDFs read-only. It cannot mark up, upload or
   change a drawing, and it does not show the customer's contract, the quote or the material list.
-- Schedule changes: only the office changes dates. Field has no message or alert when a date moves; the new
-  dates show the next time a Field page opens (it checks itself when the app comes back on screen).
+- Schedule changes: only the office changes dates. The new dates show the next time a Field page opens (it checks
+  itself when the app comes back on screen). A worker who turns on schedule texts (Field → Texts) also gets one
+  text when the office moves their work, puts them on it or takes them off it (22 Oct 2026). Field asks once,
+  the first time the worker opens it (Yes / Not now); Field → Texts changes it later. The training site never
+  sends a real text.
 - Progress updates: there is no percent-complete or status button. A progress update is a note and photos on
   Capture; the office reads them under Field Observations.
 - Refresh: there is no refresh button. Tap Today (or This week) again, or close and reopen the app.
@@ -142,10 +145,20 @@ M01 = Module(
                             "Help; Print; the date; My Work — your first name.",
                      if_wrong="If an office page opens, stop and tell Ben: you should be Field only.",
                      shot="f01-field-today.png", endpoint="field.today"),
+                Step(title="Answer the schedule texts question", app=F,
+                     where="Field Today → Get a text when your schedule changes? (only the first time)",
+                     do="Check your mobile number. Tap Yes, text me, or Not now",
+                     expect="Yes: Schedule texts are on. Not now: No schedule texts. Either way Field opens and the "
+                            "question does not come back.",
+                     why="Yes is your agreement to get a text when the office moves your work. It is saved with "
+                         "the date. You can change your mind any time under Texts.",
+                     if_wrong="'Enter your mobile number' means the number box was empty or too short. Type it, or "
+                              "tap Not now and turn texts on later (lesson 'Schedule texts').",
+                     shot="f01-texts-setup.png", endpoint="field.today"),
                 Step(title="The buttons at the very top", app=F, where="Field → the black bar at the top",
-                     do="Find Guide, Password and Sign out",
-                     expect="Guide opens your day on Field step by step. Password changes your password. Sign out "
-                            "signs you out.",
+                     do="Find Guide, Texts, Password and Sign out",
+                     expect="Guide opens your day on Field step by step. Texts turns schedule texts on or off. "
+                            "Password changes your password. Sign out signs you out.",
                      if_wrong="On the training site a dark bar above it says Training site, with ← Back to my "
                               "training. That is only on the training site.",
                      shot="f01-field-today.png", endpoint="field.today"),
@@ -167,7 +180,7 @@ M01 = Module(
                      if_wrong="Not there? Type the training site address and /training in Safari.",
                      endpoint="training.home"),
             ),
-            exercise="Open Field from your training home, find Guide, Password and Sign out, then go back to your "
+            exercise="Open Field from your training home, find Guide, Texts, Password and Sign out, then go back to your "
                      "training with ← Back to my training.",
         ),
         Lesson(
@@ -371,8 +384,9 @@ M03 = Module(
                 Step(title="See the new dates", app=F, where="Field → This week",
                      do="Tap This week again (or close and reopen Field)",
                      expect="The work shows on its new days.",
-                     why="Field does not send a message when a date moves. It checks for the newest schedule each "
-                         "time a page opens, and when you come back to the app after a few minutes.",
+                     why="Field checks for the newest schedule each time a page opens, and when you come back to "
+                         "the app after a few minutes. If you turned on schedule texts (next lesson), you also get "
+                         "a text about the move.",
                      if_wrong="Still the old dates? Check you have a signal (lesson 'No signal'). An Offline bar means "
                               "you are looking at the copy saved on the phone.",
                      shot="f03-week-moved.png", endpoint="field.week"),
@@ -384,6 +398,51 @@ M03 = Module(
             ),
             exercise="Ask the trainer (or Ben) to move your Harbour Lane dates on the training site. Then tap This "
                      "week again and find the work on its new days.",
+        ),
+        Lesson(
+            key="f03-texts", title="Schedule texts: a text when your work moves",
+            what="Turn on schedule texts (if you said Not now at first), know what a text says, and turn them off "
+                 "again.",
+            why="When the office moves your work, puts you on a job or takes you off one, you get one text with the "
+                "old and new dates, so you do not drive to the wrong site. Texts are only sent if you agree.",
+            steps=(
+                Step(title="Open Texts", app=F, where="Field → Texts (at the very top, next to Password)",
+                     do="Tap Texts",
+                     expect="Schedule texts. If you said Yes when Field first asked, it says Texts are on. If you "
+                            "tapped Not now, it says Texts are off, with a box for your mobile number and a box to "
+                            "tick.",
+                     if_wrong="No Texts button? Tap Today first; Texts is in the black bar at the top of every "
+                              "Field page.",
+                     shot="f03-texts-off.png", endpoint="field.text_messages"),
+                Step(title="Turn texts on", app=F, where="Schedule texts",
+                     do="Type your mobile number. Read the sentence beside the box and tick it. Tap Turn on "
+                        "schedule texts",
+                     enter="Your own mobile number, for example 613-555-0100",
+                     expect="Schedule texts are on. The page says Texts are on for your number.",
+                     why="Ticking the box is your agreement. It is saved with the date, so the office knows you "
+                         "said yes.",
+                     if_wrong="'Tick the box' means the box was not ticked. 'Enter a mobile number like "
+                              "613-555-0100' means the number is too short or too long.",
+                     shot="f03-texts-on.png", endpoint="field.text_messages"),
+                Step(title="What a text looks like", app=F, where="Messages on your iPhone",
+                     do="Read the text when one comes",
+                     expect="For example: Brayman Construction: schedule change. Footings (Merrickville) moved: "
+                            "Mon Nov 2 -> Wed Nov 4. Field: and a link. Tap the link to open This week.",
+                     why="One text comes about five minutes after the office stops editing, even if they changed "
+                         "several things. It never has money or the customer's details in it. Nobody reads replies: "
+                         "call the office with questions.",
+                     if_wrong="No text? Field still shows the newest dates; check This week. The office can see "
+                              "whether your text was delivered. The training site never sends a real text.",
+                     shot="f03-week-moved.png", endpoint="field.week"),
+                Step(title="Turn texts off", app=F, where="Field → Texts",
+                     do="Tap Stop schedule texts. Or reply STOP to any text",
+                     expect="Schedule texts are off. You still see every change on Field.",
+                     if_wrong="Still getting texts? Reply STOP to the text, then call the office.",
+                     shot="f03-texts-on.png", endpoint="field.text_messages"),
+            ),
+            exercise="On the training site: open Texts, turn on schedule texts with your mobile number (if you "
+                     "said Not now when Field first asked), then tap Stop schedule texts. (The training site never "
+                     "sends a real text.)",
         ),
     ),
 )
@@ -451,7 +510,8 @@ M04 = Module(
 # ====================================================================================== 5
 # TIME ENTRY LESSONS (Joel, 22 Oct 2026): everything about Time, My time, returned time, Ben's approval and
 # shop / company time is in this module only (f05-send-time, f05-my-time-review, f05-returned-time,
-# f05-approved, f05-company-time; shots f05-time*.png, f05-my-time*.png, f05-today-returned.png and
+# f05-approved, f05-company-time, f05-banked-hours (22 Oct 2026, shots f05-banked-*.png from
+# tools/release/evidence_time_payroll.mjs TRAINING_SHOTS); shots f05-time*.png, f05-my-time*.png, f05-today-returned.png and
 # f05-company-time.png from the TIME ENTRY steps of tools/training/capture_field_crew_shots.mjs; UAT
 # uat-f05-time*, uat-f05-my-time, uat-f05-returned, uat-f05-approved, uat-f05-company-time). Written against
 # the final Field time screens recorded in docs/operations/field-time.md (merged 22 Oct 2026). When those
@@ -584,30 +644,58 @@ M05 = Module(
                      "Approved.",
         ),
         Lesson(
-            key="f05-company-time", title="Shop and company time",
-            what="Send hours that are not for a customer's job: the shop and yard, equipment upkeep, picking up "
-                 "material, safety meetings.",
-            why="Company time is never billed to a customer. Keep it off the customer's job.",
+            key="f05-company-time", title="Shop / Company Work",
+            what="Send paid hours that are not for a customer's job: the shop and yard, equipment upkeep, picking up "
+                 "material, safety meetings, office work.",
+            why="Shop / Company Work is paid like any other time but is never billed to a customer. Keep it off the "
+                "customer's job.",
             steps=(
-                Step(title="Open Shop / company time", app=F, where="Today → My time → Shop / company time",
-                     do="Tap My time, then Shop / company time",
-                     expect="Time for 'Shop and company time', with 'Company time: not a customer's job, never "
-                            "billed to a customer.'",
-                     why="The office sets it up once (Set up shop and company time). Until then the button is not "
-                         "on My time.",
-                     if_wrong="No Shop / company time button? Ask Ben to set it up.",
+                Step(title="Open Shop / Company Work", app=F, where="Today → Shop / Company Work (or My time → Shop / "
+                                                                    "Company Work)",
+                     do="Tap Shop / Company Work",
+                     expect="Time for 'Shop / Company Work', with 'Shop / Company Work: paid company time, not a "
+                            "customer's job, never billed to a customer. Choose the kind of work below.'",
+                     why="The office sets it up once (Set up Shop / Company Work). Until then the button is not there.",
+                     if_wrong="No Shop / Company Work button? Ask Ben to set it up.",
                      shot="f05-company-time.png", endpoint="field.my_time"),
-                Step(title="Pick the work and send", app=F, where="Shop and company time → Work",
+                Step(title="Pick the kind of work and send", app=F, where="Shop / Company Work → Work",
                      do="Pick the Work, type the hours, tap Send time",
                      enter="Work: Equipment and vehicle upkeep. Hours: 1.5",
                      expect="Time sent for approval. My time lists it with Company time.",
-                     why="The Works are: Shop and yard, Equipment and vehicle upkeep, Material pickup and "
-                         "deliveries, Safety meetings and training, Office and estimating. There is no Extra work "
-                         "here, and it does not change the job you are on today.",
+                     why="The kinds of work are: Shop and yard, Equipment and vehicle upkeep, Material pickup and "
+                         "deliveries, Safety meetings and training, Office and estimating (and any the office adds). "
+                         "There is no Extra work here, and it does not change the job you are on today.",
                      if_wrong="'Choose the work you did.' means Work is empty."),
             ),
             exercise="Once Ben has set it up on the training site, send 1.5 hours of Equipment and vehicle upkeep as "
-                     "shop / company time and find it on My time.",
+                     "Shop / Company Work and find it on My time.",
+        ),
+        Lesson(
+            key="f05-banked-hours", title="Your banked hours",
+            what="See how many hours you have banked, this week's hours, and what was earned or taken.",
+            why="Hours over the company's work week are banked under the company's own hours policy. You see your "
+                "own balance on the phone; the office records time off.",
+            steps=(
+                Step(title="See your balance", app=F, where="Field → Today (or My time)",
+                     do="Look at the Banked hours card at the top",
+                     expect="Banked hours in large figures, this week (worked approved · regular · extra · banked) and "
+                            "the company's hours policy in one line.",
+                     why="Only approved hours count. Hours waiting for approval are not in it yet.",
+                     if_wrong="No card? The office has not entered the hours policy yet.",
+                     shot="f05-banked-hours.png", endpoint="field.today"),
+                Step(title="See the history", app=F, where="Banked hours card → See banked hours",
+                     do="Tap See banked hours",
+                     expect="Each week earned (with that week's worked, regular and extra hours), time off taken and "
+                            "adjustments, with the reason.",
+                     if_wrong="Something looks wrong? Ask the office; they can correct approved time or adjust it.",
+                     shot="f05-banked-history.png", endpoint="field.banked_hours"),
+                Step(title="Time off", app=F, where="Ask the office",
+                     do="Tell the office the day and the hours you want off",
+                     expect="After the office records it, the history shows Time off taken and the balance goes down.",
+                     if_wrong="You cannot record time off on the phone; the office does it."),
+            ),
+            exercise="After Ben approves your Harbour Lane hours on the training site, open Today and read your Banked "
+                     "hours card and the policy line under it.",
         ),
         Lesson(
             key="f05-extra-work", title="Extra work the customer asks for",
@@ -928,6 +1016,11 @@ UAT_CASES = (
        "Field → This week, after the office moves your Harbour Lane dates",
        "Tap This week again.",
        "The work shows on the new days. Field has no button to change a date."),
+    _u("uat-f03-texts", "f03", "Turn schedule texts on and off",
+       "Field → Texts on your iPhone",
+       "Type your mobile number, tick the box, tap Turn on schedule texts. Then tap Stop schedule texts.",
+       "First 'Schedule texts are on.' with your number, then 'Schedule texts are off.' Only your own number is "
+       "shown. No sideways scrolling on the iPhone."),
     _u("uat-f04-drawings", "f04", "Drawings and plans open",
        f"Field → Choose Project → {JOB} → Drawings and plans",
        "Tap the plan's name.",
@@ -952,11 +1045,16 @@ UAT_CASES = (
        "After Ben approves your fixed entry, open My time.",
        "The entry says Approved and has no Fix and send again button. A failing result here goes on Ben's "
        "administrator dashboard."),
-    _u("uat-f05-company-time", "f05", "Shop / company time",
-       "Office first: Ben presses Set up shop and company time (Time review, once). Then Field → My time",
-       "Tap Shop / company time, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
+    _u("uat-f05-company-time", "f05", "Shop / Company Work",
+       "Office first: Ben presses Set up Shop / Company Work (Time review, once). Then Field → Today",
+       "Tap Shop / Company Work, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
        "Time sent for approval; My time lists it as Company time; it is not on the customer's job and Today's "
        "job is unchanged."),
+    _u("uat-f05-banked-hours", "f05", "See your banked hours",
+       "Office first: the owner has entered the hours policy and Ben has approved your hours. Then Field → Today",
+       "Read the Banked hours card, then tap See banked hours.",
+       "The card shows your balance, this week's worked, regular, extra and banked hours, and the company's policy; "
+       "the history lists each week earned. No pay, rate or money anywhere; no sideways scrolling."),
     _u("uat-f05-extra-work", "f05", "Record extra work",
        "Field → Today → Extra work",
        "Describe the customer's request, name a new work item, tap Record extra work.",

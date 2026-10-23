@@ -322,6 +322,12 @@ step("Kevin on Field: Today, Help, Guide, Password, the job, Company today, the 
   assert.match(pg.url(), /\/field\/today/);
   const today = await pg.locator("main").innerText();
   assert.match(today, /Harbour Lane Pool Deck/);
+  // The one-time schedule-texts question on the first Field visit (22 Oct 2026). Kevin answers Not now here;
+  // module 3 turns texts on from Field → Texts.
+  assert.match(await pg.locator("[data-field-texts-setup]").innerText(), /Get a text when your schedule changes\?/);
+  await shot(pg, "f01-texts-setup", pg.locator("[data-field-texts-setup]"));
+  await submit(pg, pg.locator("[data-texts-setup-no]"));
+  assert.equal(await pg.locator("[data-field-texts-setup]").count(), 0);
   await shot(pg, "f01-field-today");
   await shot(pg, "f02-today", pg.locator(".field-schedule-group").first());
   await pg.locator("details.contextual-help summary").first().click();
@@ -443,13 +449,13 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   assert.match(await k.locator("main").innerText(), /Approved/);
   assert.equal(await k.getByRole("link", { name: "Fix and send again" }).count(), 0);
   await shot(k, "f05-time-approved", k.locator(".field-time-item").first());
-  // Shop / company time: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
+  // Shop / Company Work: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
   await go(pg, "/time");
-  await submit(pg, pg.getByRole("button", { name: "Set up shop and company time" }));
-  assert.match(await flash(pg), /Shop and company time is ready/);
+  await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
+  assert.match(await flash(pg), /Shop \/ Company Work is ready/);
   await go(k, "/field/time");
   await submit(k, k.locator("[data-company-time]"));
-  assert.match(await k.locator("main").innerText(), /Company time: not a customer's job/);
+  assert.match(await k.locator("main").innerText(), /Shop \/ Company Work: paid company time, not a customer's job/);
   const cw = k.locator("[name=project_work_activity_id]");
   if (await k.locator("#field-time-other-toggle").count() && !(await cw.isVisible())) await k.click("#field-time-other-toggle");
   const shopEl = k.locator("[name=project_work_element_id]");
@@ -461,6 +467,20 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   await submit(k, k.getByRole("button", { name: "Send time" }));
   assert.match(await flash(k), /Time sent for approval/);
   assert.match(await k.locator("main").innerText(), /Company time/);
+});
+
+step("Kevin turns on schedule texts on Field (SMS notices, 22 Oct 2026)", async () => {
+  const k = sessions.kevin.pg;
+  await go(k, "/field/today");
+  await submit(k, k.locator("[data-field-texts-link]"));
+  assert.match(k.url(), /\/field\/text-messages$/);
+  assert.match(await k.locator("[data-field-texts-status]").innerText(), /Texts are off/);
+  await shot(k, "f03-texts-off");
+  await k.fill("input[name=mobile_phone]", "613-555-0142");
+  await k.check("input[name=consent]");
+  await submit(k, k.locator("[data-field-texts-save]"));
+  assert.match(await flash(k), /Schedule texts are on/);
+  await shot(k, "f03-texts-on");
 });
 
 step("the office moves the dates; Kevin sees them on This week", async () => {
@@ -480,7 +500,7 @@ step("the office moves the dates; Kevin sees them on This week", async () => {
 step("Kevin's Field acceptance tests on the iPhone", async () => {
   const k = sessions.kevin.pg;
   await go(k, "/training/uat");
-  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 17/);
+  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 19/);
   await shot(k, "f08-uat-list", k.locator("[data-uat-continue]"));
   await submit(k, k.locator("[data-uat-continue]"));
   await k.check('input[name=status][value="FAIL"]');

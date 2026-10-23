@@ -187,7 +187,9 @@ def match_projects(org_id: str, words) -> list:
 
     if not words:
         return []
-    projects = Project.query.filter(Project.organization_id == org_id).order_by(Project.name.asc()).all()
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work is not a job
+
+    projects = customer_projects_only(Project.query.filter(Project.organization_id == org_id)).order_by(Project.name.asc()).all()
     return [p for p in projects if _contains_all(_project_haystack(p), words)]
 
 
@@ -335,7 +337,9 @@ def company_wide(dest: str, org_id: str) -> list:
 
     items: list = []
     if dest == DEST_PROJECTS:
-        projects = (Project.query.filter(Project.organization_id == org_id)
+        from app.services.time_entry import customer_projects_only
+
+        projects = (customer_projects_only(Project.query.filter(Project.organization_id == org_id))
                     .order_by(Project.id.desc()).limit(MAX_PER_GROUP).all())
         items = [project_item(p) for p in projects]
         items.append(Item("All projects", url_for("projects.list_projects"), "The Projects register", "tool"))
@@ -367,7 +371,9 @@ def company_wide(dest: str, org_id: str) -> list:
     else:
         # Drawings, contracts, quotations and purchase orders live on a project.
         rows = []
-        for p in Project.query.filter(Project.organization_id == org_id).order_by(Project.id.desc()).all():
+        from app.services.time_entry import customer_projects_only
+
+        for p in customer_projects_only(Project.query.filter(Project.organization_id == org_id)).order_by(Project.id.desc()).all():
             found = records_for_project(dest, p, org_id)
             rows += found
             if len(rows) >= MAX_PER_GROUP:
@@ -386,7 +392,10 @@ def match_references(org_id: str, refs) -> list:
 
     items: list = []
     for ref in refs:
-        for p in Project.query.filter(Project.organization_id == org_id, func.lower(Project.project_number) == ref).all():
+        from app.services.time_entry import customer_projects_only
+
+        for p in customer_projects_only(Project.query.filter(Project.organization_id == org_id,
+                                                             func.lower(Project.project_number) == ref)).all():
             items.append(project_item(p))
         for e in Estimate.query.filter(Estimate.organization_id == org_id, func.lower(Estimate.estimate_number) == ref).all():
             items.append(Item(f"{e.estimate_number} — {e.title}", url_for("estimates.view_estimate", id=e.id),

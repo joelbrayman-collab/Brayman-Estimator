@@ -115,6 +115,30 @@ def list_projects():
     )
 
 
+@projects_bp.before_app_request
+def _shop_and_company_work_is_not_a_job():
+    """Every /projects/<id>/... page (hub, estimates, proposals, contract, change orders, supplier requests…)
+    treats the internal Shop / Company Work record as what it is: not a customer job. Its office page is
+    /time/company; crew use Shop / Company Work on Field (Joel, 22 Oct 2026)."""
+    rule = getattr(request.url_rule, "rule", "") or ""
+    if not rule.startswith("/projects/<"):
+        return None
+    args = request.view_args or {}
+    pid = args.get("id", args.get("project_id"))
+    if pid is None:
+        return None
+    from app.services.time_entry import company_time_project_number
+
+    try:
+        org_id = get_current_organization_id()
+    except Exception:  # noqa: BLE001 - no organization: the page's own checks answer
+        return None
+    if Project.query.filter_by(id=pid, organization_id=org_id,
+                               project_number=company_time_project_number(org_id)).first() is not None:
+        return redirect(url_for("payroll_time.company_work"))
+    return None
+
+
 @projects_bp.route("/<int:id>")
 def view_project(id):
     org_id = get_current_organization_id()
@@ -371,7 +395,9 @@ def reopen_project_action(id):
 @projects_bp.route("/new", methods=["GET", "POST"])
 def create_project():
     org_id = get_current_organization_id()
-    clients = Client.query.filter_by(organization_id=org_id).order_by(Client.name.asc()).all()
+    from app.services.time_entry import customer_clients_only  # the own-company record is not a customer
+
+    clients = customer_clients_only(Client.query.filter_by(organization_id=org_id), org_id).order_by(Client.name.asc()).all()
     options = _context_options()
 
     if request.method == "POST":

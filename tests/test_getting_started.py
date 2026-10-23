@@ -28,12 +28,13 @@ def client(app):
     return app.test_client()
 
 
-def test_fifteen_steps_link_to_real_pages_and_progress_is_saved(app, client):
-    assert len(STEPS) == 15 and len({s.key for s in STEPS}) == 15
+def test_sixteen_steps_link_to_real_pages_and_progress_is_saved(app, client):
+    # 16 since 22 Oct 2026: "Hours and banked time" (the owner enters the company's hours policy)
+    assert len(STEPS) == 16 and len({s.key for s in STEPS}) == 16
     page = client.get("/getting-started")
     assert page.status_code == 200
     html = page.get_data(as_text=True)
-    assert 'data-getting-started="1/15"' in html  # signed in: step 1 is done by itself
+    assert 'data-getting-started="1/16"' in html  # signed in: step 1 is done by itself
     for step in STEPS:
         assert f'data-step="{step.key}"' in html
     # A step the platform can see ticks itself: a client and a project.
@@ -60,7 +61,8 @@ def test_every_go_there_link_opens(app, client):
     import re
 
     for href in sorted(set(re.findall(r'href="(/[^"#]*)"[^>]*>Go there', html))):
-        expected = (200, 302, 403) if href.startswith("/settings/people") else (200, 302)  # People & Access: owner only
+        # People & Access and the hours policy: owner or System Administrator only
+        expected = (200, 302, 403) if href.startswith(("/settings/people", "/settings/hours-policy")) else (200, 302)
         assert client.get(href).status_code in expected, href
 
 

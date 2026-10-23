@@ -235,8 +235,28 @@ def today():
         returned_time_count=len(
             returned_time_for_worker(worker_user_id=current_user.id, organization_id=organization.id)
         ),
+        banked=_banked_card(organization.id),
+        company_project=_active_company_project(organization.id),
         actor_name=current_user.display_name,
     )
+
+
+def _banked_card(organization_id):
+    """The person's own banked hours for Field (hours only, under the company's own policy), or None while
+    the company has no hours policy and no banked hours."""
+    from app.services.banked_hours import worker_summary
+
+    summary = worker_summary(organization_id, current_user.id)
+    if summary["policy"] is None and not summary["rows"]:
+        return None
+    return summary
+
+
+def _active_company_project(organization_id):
+    company = get_company_time_project(organization_id)
+    if company is not None and company.operating_state != OPERATING_STATE_ACTIVE:
+        return None
+    return company
 
 
 @field_bp.route("/today/print.pdf")
@@ -513,9 +533,7 @@ def my_time():
     project = _confirmed_operating_project(organization)
     if is_company_time_project(project):
         project = None
-    company_project = get_company_time_project(organization.id)
-    if company_project is not None and company_project.operating_state != OPERATING_STATE_ACTIVE:
-        company_project = None
+    company_project = _active_company_project(organization.id)
     returned = returned_time_for_worker(worker_user_id=current_user.id, organization_id=organization.id)
     shown = {entry.id for entry in entries}
     # A returned entry always shows, however old, so it can be fixed (22 Oct 2026).
@@ -527,8 +545,19 @@ def my_time():
         company_project=company_project,
         returned_count=len(returned),
         week=worker_time_totals(worker_user_id=current_user.id, organization_id=organization.id),
+        banked=_banked_card(organization.id),
         actor_name=current_user.display_name,
     )
+
+
+@field_bp.route("/banked-hours")
+def banked_hours():
+    """The person's own banked-hours ledger: balance, this week, earned, taken, adjustments. Hours only."""
+    from app.services.banked_hours import worker_summary
+
+    organization = _organization()
+    return render_template("field/banked_hours.html", summary=worker_summary(organization.id, current_user.id),
+                           actor_name=current_user.display_name)
 
 
 @field_bp.route("/projects/<int:project_id>/time", methods=["GET", "POST"])
@@ -669,3 +698,19 @@ def plan_pdf(project_id, document_id):
     except PlanIntelligenceServiceError:
         abort(404)
     return send_file(path, mimetype="application/pdf", as_attachment=False, download_name=document.original_filename)
+
+
+@field_bp.route("/text-messages", methods=["GET", "POST"])
+def text_messages():
+    """Schedule texts (SMS notices, 22 Oct 2026): the signed-in person's own mobile number and consent only."""
+    from app.routes.sms_notifications import field_settings_view
+
+    return field_settings_view()
+
+
+@field_bp.route("/text-messages/setup", methods=["POST"])
+def text_messages_setup():
+    """The answer to the one-time schedule-texts question shown when a worker first opens Field (22 Oct 2026)."""
+    from app.routes.sms_notifications import field_setup_answer_view
+
+    return field_setup_answer_view()

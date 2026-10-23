@@ -1,0 +1,19 @@
+{# The phone layout for the existing calculator templates (app/templates/calculators/*). They choose it with
+   {% raw %}{% extends calculator_layout | default("base.html") %}{% endraw %}; the office keeps base.html. #}
+{% extends "useful_calculators/base.html" %}
+{% block uc_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+{% endblock %}
+{% block uc_back %}
+        <a class="uc-back" href="{{ url_for('useful_calculators.index') }}" data-uc-back>
+            <span aria-hidden="true">&lsaquo;</span> All calculators
+        </a>
+{% endblock %}
+{% block uc_content %}
+    <div class="uc-calculator" data-uc-calculator="{{ request.endpoint }}">
+        {% block content %}{% endblock %}
+    </div>
+    <p class="uc-return"><a class="uc-button uc-button-secondary" href="{{ url_for('useful_calculators.index') }}">Back to all calculators</a></p>
+{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block page_title %}{% endblock %}

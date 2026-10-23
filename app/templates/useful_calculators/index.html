@@ -1,0 +1,93 @@
+{% extends "useful_calculators/base.html" %}
+{% block title %}Useful Calculators | CalibraytAI{% endblock %}
+{% block uc_content %}
+<section class="uc-intro" data-uc-dashboard="{{ kind }}">
+    <h1>Useful Calculators</h1>
+    {% if kind == "signed_out" %}
+    <p>Construction calculators from CalibraytAI. The public calculators are open to everyone. Sign in to use the
+       rest with your CalibraytAI account.</p>
+    <p><a class="uc-button" href="{{ url_for('useful_calculators.sign_in') }}" data-uc-sign-in>Sign in</a></p>
+    {% elif kind == "field_only" %}
+    <p>Signed in as {{ current_user.display_name or current_user.email }}. Tap a calculator. Nothing you enter is
+       saved or added to a job.</p>
+    {% elif kind == "office" %}
+    <p>Signed in as {{ current_user.display_name or current_user.email }}. Tap a calculator. Nothing you enter here
+       is saved or added to an estimate; to work on a job, choose it under Job calculators.</p>
+    {% else %}
+    <p>This account does not have the contractor calculators. The public calculators are below.</p>
+    {% endif %}
+</section>
+
+{% for group in groups %}
+<section class="uc-group" aria-labelledby="uc-group-{{ loop.index }}">
+    <h2 id="uc-group-{{ loop.index }}">{{ group.title }}</h2>
+    <ul class="uc-cards">
+        {% for item in group['items'] %}{% set c = item.calc %}
+        <li>
+        {% if item.state == "open" %}
+            <a class="uc-card" href="{{ url_for(c.phone_endpoint) }}" data-uc-calc="{{ c.key }}" data-uc-state="open">
+                <span class="uc-card-title">{{ c.title }}</span>
+                <span class="uc-card-text">{{ c.description }}</span>
+                {% if c.units %}<span class="uc-chip">{{ c.units }}</span>{% endif %}
+            </a>
+        {% elif item.state == "office" %}
+            <a class="uc-card" href="{{ url_for(c.office_endpoint) }}" target="_blank" rel="noopener" data-uc-calc="{{ c.key }}" data-uc-state="office">
+                <span class="uc-card-title">{{ c.title }}</span>
+                <span class="uc-card-text">{{ c.description }}</span>
+                <span class="uc-chip">Opens in the office</span>
+            </a>
+        {% elif item.state == "public" %}
+            <a class="uc-card" href="{{ c.public_url }}" target="_blank" rel="noopener" data-uc-calc="{{ c.key }}" data-uc-state="public">
+                <span class="uc-card-title">{{ c.title }}</span>
+                <span class="uc-card-text">{{ c.description }}</span>
+                <span class="uc-chip">Public · opens calibraytai.com</span>
+            </a>
+        {% elif item.state == "sign_in" %}
+            <a class="uc-card uc-card-locked" href="{{ url_for('useful_calculators.sign_in', next=url_for(c.phone_endpoint) if c.phone_endpoint else None) }}" data-uc-calc="{{ c.key }}" data-uc-state="sign_in">
+                <span class="uc-card-title">{{ c.title }}</span>
+                <span class="uc-card-text">{{ c.description }}</span>
+                <span class="uc-chip">Sign in to use</span>
+            </a>
+        {% else %}
+            <div class="uc-card uc-card-locked" aria-disabled="true" data-uc-calc="{{ c.key }}" data-uc-state="restricted">
+                <span class="uc-card-title">{{ c.title }}</span>
+                <span class="uc-card-text">{{ item.reason }}</span>
+                <span class="uc-chip">Office only</span>
+            </div>
+        {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endfor %}
+
+{% if kind == "office" %}
+<section class="uc-group" aria-labelledby="uc-group-jobs">
+    <h2 id="uc-group-jobs">Job calculators</h2>
+    <ul class="uc-cards">
+        <li>
+            <a class="uc-card" href="{{ url_for('useful_calculators.projects') }}" data-uc-calc="jobs" data-uc-state="choose-job">
+                <span class="uc-card-title">Choose a job</span>
+                <span class="uc-card-text">Add from calculation, labour hours, deck takeoff, construction information and drawings for one job's estimate.</span>
+                <span class="uc-chip">Office</span>
+            </a>
+        </li>
+    </ul>
+</section>
+{% elif kind == "field_only" %}
+<section class="uc-group" aria-labelledby="uc-group-jobs">
+    <h2 id="uc-group-jobs">Job calculators</h2>
+    <ul class="uc-cards">
+        <li>
+            <div class="uc-card uc-card-locked" aria-disabled="true" data-uc-calc="jobs" data-uc-state="restricted">
+                <span class="uc-card-title">Job calculators</span>
+                <span class="uc-card-text">{{ project_reason }}</span>
+                <span class="uc-chip">Office only</span>
+            </div>
+        </li>
+    </ul>
+</section>
+{% endif %}
+
+<p class="uc-foot">Results are the existing CalibraytAI calculators. Check measurements on site before ordering.</p>
+{% endblock %}

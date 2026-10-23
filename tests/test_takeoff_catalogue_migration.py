@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "u1b2c3d4e5f6"
 NEXT = "v2c3d4e5f6a7"
-HEAD = "w7d3b9c1e5a8"
+HEAD = "u7b3d9f2a4c6"
 PRIOR = "t0a1b2c3d4e5"
 WATCHED = (
     "canonical_materials",

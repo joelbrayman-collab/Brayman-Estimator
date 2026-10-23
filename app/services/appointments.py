@@ -200,7 +200,10 @@ def list_people(organization_id: str) -> list[User]:
 
 
 def list_clients(organization_id: str) -> list[Client]:
-    return Client.query.filter_by(organization_id=organization_id).order_by(Client.name, Client.id).all()
+    from app.services.time_entry import customer_clients_only  # the own-company record is not a customer
+
+    return customer_clients_only(Client.query.filter_by(organization_id=organization_id), organization_id).order_by(
+        Client.name, Client.id).all()
 
 
 def _is_member(organization_id: str, user_id: int) -> bool:

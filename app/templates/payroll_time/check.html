@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Check QuickBooks Time | Brayman Construction Platform{% endblock %}
+{% block page_title %}Check QuickBooks Time{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Check QuickBooks Time</h2>
+  <p class="page-purpose">Compares what QuickBooks Time has for these dates with what CalibraytAI sent. It reads only; nothing is changed in either place.</p></div>
+  <a class="button button-secondary" href="{{ url_for('payroll_time.quickbooks_time') }}">QuickBooks Time</a></section>
+<form class="form-panel" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="acct-actions"><label>From <input type="date" name="from" value="{{ start.isoformat() }}"></label>
+    <label>To <input type="date" name="to" value="{{ end.isoformat() }}"></label><button class="button-primary" type="submit" data-qbt-check>Check</button></div>
+  {% if not connection.connected %}<p class="muted-copy">{{ connection.message }} The check still lists approved time that has not been sent.</p>{% endif %}
+</form>
+{% if result %}
+<div class="form-panel" data-qbt-reconciliation>
+  <h3>Result</h3>
+  {% if result.connected %}<p data-matched>{{ result.matched|length }} match.</p>{% endif %}
+  {% if result.differs %}<p><strong>Different in QuickBooks Time</strong> (someone changed it there: change it back there, or correct the approved time here)</p><ul class="acct-list" data-differs>{% for d in result.differs %}<li>{{ d.who }}: {{ d.what }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.missing_in_qbt %}<p><strong>Sent but no longer in QuickBooks Time</strong> (deleted there: Retry on the transfer creates it again)</p><ul class="acct-list" data-missing>{% for d in result.missing_in_qbt %}<li>{{ d.who }}: {{ d.hours }} h</li>{% endfor %}</ul>{% endif %}
+  {% if result.duplicates %}<p><strong>In QuickBooks Time more than once</strong> (delete the extra one there)</p><ul class="acct-list" data-duplicates>{% for d in result.duplicates %}<li>{{ d.ref }}: timesheets {{ d.timesheets|join(', ') }}</li>{% endfor %}</ul>{% endif %}
+  {% if result.entered_in_qbt %}<p><strong>Entered directly in QuickBooks Time</strong> (not from CalibraytAI: check it is not a double)</p><ul class="acct-list" data-entered-there>{% for d in result.entered_in_qbt %}<li>{{ d.who }}, {{ d.date }}: {{ d.hours }} h</li>{% endfor %}</ul>{% endif %}
+  {% if result.not_sent %}<p><strong>Approved here, not in QuickBooks Time yet</strong></p><ul class="acct-list" data-not-sent>{% for d in result.not_sent %}<li>{{ d.ref }} {{ d.who }}, {{ d.date }}: {{ d.hours }} h — {{ d.status }}</li>{% endfor %}</ul>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

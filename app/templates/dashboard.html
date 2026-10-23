@@ -25,6 +25,11 @@
     </div>
 </section>
 
+{% set sms_failed = sms_schedule_attention() %}
+{% if sms_failed %}
+<p class="home-sms-attention" role="alert" data-home-sms-attention="{{ sms_failed }}"><a href="{{ url_for('sms_notifications.office_notices') }}">{{ sms_failed }} schedule text{{ '' if sms_failed == 1 else 's' }} to workers not delivered. Check and retry.</a></p>
+<style>.home-sms-attention { border-left: 4px solid var(--danger, #b42318); padding: 8px 12px; margin: 0 0 12px; overflow-wrap: anywhere; } .home-sms-attention a { color: var(--danger, #b42318); font-weight: 600; }</style>
+{% endif %}
 <section class="home-briefing" aria-label="Today, attention, and coming days">
     <div>
         <h2>{{ contractor_copy.HOME_TODAY }} <span class="home-briefing-count{% if view.briefing.today_empty %} is-zero{% endif %}">{{ view.briefing.today_work|length }}</span></h2>

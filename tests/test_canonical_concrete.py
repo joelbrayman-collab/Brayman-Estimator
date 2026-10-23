@@ -58,7 +58,7 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 ACTOR = "Joel Brayman"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "w7d3b9c1e5a8"
+GRAPH_HEAD = "u7b3d9f2a4c6"
 PRIOR = "r8e9f0a1b2c3"
 
 

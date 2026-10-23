@@ -1,0 +1,35 @@
+{% extends "field/base.html" %}
+{% block title %}Banked hours — CalibraytAI{% endblock %}
+{% block field_page %}banked-hours{% endblock %}
+{% block content %}
+{% set nav_current = '' %}
+{% include "field/_field_nav.html" %}
+{% set banked = summary %}{% set show_banked_link = false %}
+{% if summary.policy is none and not summary.rows %}
+<section class="field-panel">
+    <h1>Banked hours</h1>
+    <p class="field-muted" data-banked-policy>{{ summary.policy_text }}</p>
+</section>
+{% else %}
+{% include "field/_banked_balance.html" %}
+<section class="field-panel">
+    <h1>Banked hours history</h1>
+    <p class="field-muted">Time off taken so far: {{ "%.2f"|format(summary.used_total) }} hours. Ask the office about time off or a correction.</p>
+    {% if summary.rows %}
+    <ul class="field-time-list" data-banked-ledger>
+        {% for row in summary.rows %}
+        <li class="field-time-item" data-banked-kind="{{ row.kind }}">
+            <p class="field-recent-meta">{{ row.created_at|local_time('%a %b %d') }} · {{ summary.kind_label[row.kind] }}</p>
+            <p>{{ "%+.2f"|format(row.hours) }} hours{% if row.week_start and row.kind == 'EARNED' %} · week of {{ row.week_start.strftime('%b %d') }}{% endif %}{% if row.on_date %} · day off {{ row.on_date.strftime('%a %b %d') }}{% endif %}</p>
+            {% if row.kind == 'EARNED' and row.worked_hours is not none %}<p class="field-muted">That week: worked {{ "%.2f"|format(row.worked_hours) }}, regular {{ "%.2f"|format(row.regular_hours) }}, extra {{ "%.2f"|format(row.extra_hours) }}</p>{% endif %}
+            <p class="field-muted">{{ row.reason }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="field-muted">Nothing banked yet.</p>
+    {% endif %}
+</section>
+{% endif %}
+<a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">My time</a>
+{% endblock %}

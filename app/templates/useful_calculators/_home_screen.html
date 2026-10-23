@@ -1,0 +1,11 @@
+{# Useful Calculators Home Screen app (22 Oct 2026). Its own manifest, scope and icon; CalibraytAI Field keeps
+   partials/home_screen.html (manifest.webmanifest, /field-sw.js). No service worker is registered here. #}
+<link rel="manifest" href="{{ url_for('static', filename='useful-calculators/manifest.webmanifest') }}">
+<meta name="theme-color" content="#00204a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Useful Calculators">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="Useful Calculators">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='useful-calculators/useful-calculators-icon-180.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='useful-calculators/useful-calculators-icon-32.png') }}">

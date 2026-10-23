@@ -80,6 +80,34 @@
     <p><a class="button button-secondary" href="{{ url_for('organization_crew.index') }}">Manage crews</a></p>
 </section>
 
+<section class="form-panel" aria-labelledby="texts-heading" data-person-texts="{{ 'on' if texts.contact and texts.contact.sms_opt_in else 'off' }}">
+    <h2 id="texts-heading">Schedule texts</h2>
+    <p class="muted-copy">A text when their scheduled work moves, or they are put on or taken off work. Only with their agreement. The first time they open Field it asks them (Yes / Not now), with the number you save here filled in; they can change it any time under Texts. Tick the box only if they have already told you yes.</p>
+    {% if texts.contact and texts.contact.sms_opt_in %}
+    <p><strong>On</strong> for {{ texts.contact.mobile_phone }}{% if texts.contact.opted_in_at %} since {{ texts.contact.opted_in_at|local_time("%b %d, %Y") }}{% endif %}.</p>
+    <form method="post" action="{{ url_for('sms_notifications.person_texts', membership_id=person.membership_id) }}" class="people-access-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="stop">
+        <label>Why <input type="text" name="how" maxlength="200" placeholder="Asked to stop, 22 Oct"></label>
+        <button type="submit" class="button button-secondary" data-person-texts-stop>Turn off schedule texts</button>
+    </form>
+    {% else %}
+    <p><strong>Off.</strong></p>
+    {% endif %}
+    {% if person.can_sign_in %}
+    <form method="post" action="{{ url_for('sms_notifications.person_texts', membership_id=person.membership_id) }}" class="form-grid people-access-actions" data-person-texts-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Mobile number <input type="tel" name="mobile_phone" autocomplete="off" placeholder="613-555-0100" value="{{ texts.contact.mobile_phone if texts.contact and texts.contact.mobile_phone else '' }}"></label>
+        <label>How they agreed <input type="text" name="how" maxlength="200" placeholder="In person at the shop, 22 Oct"></label>
+        <label class="checkbox-label"><input type="checkbox" name="consent" value="yes"> {{ person.display_name }} agreed to get work schedule texts at this number, and knows they can reply STOP or turn them off on Field at any time.</label>
+        <div class="form-actions"><button type="submit" class="button">{{ "Save number" if texts.contact and texts.contact.sms_opt_in else "Turn on schedule texts" }}</button></div>
+    </form>
+    {% endif %}
+    {% if texts.history %}
+    <ul class="people-history" data-person-texts-history="{{ texts.history|length }}">{% for h in texts.history %}<li><strong>{{ h.created_at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ {"OPTED_IN": "Texts turned on", "OPTED_OUT": "Texts turned off", "NUMBER_CHANGED": "Number changed", "NOT_NOW": "Not now (asked at Field setup)"}.get(h.action, h.action) }} · {{ {"SELF_FIELD_SETUP": "by them at Field setup", "SELF_FIELD": "by them on Field", "SELF_ACCOUNT": "by them", "OFFICE_ON_BEHALF": "by " ~ h.recorded_by_display_name, "REPLY_STOP": "they replied STOP", "REPLY_START": "they replied START", "PROVIDER": "Twilio: number opted out"}.get(h.method, h.method) }}{% if h.note %} ({{ h.note }}){% endif %}</li>{% endfor %}</ul>
+    {% endif %}
+</section>
+
 <section class="form-panel" aria-labelledby="access-heading">
     <h2 id="access-heading">Access</h2>
     {% for domain in domains %}

@@ -53,6 +53,16 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # secret key in the address is the only credential; a wrong, replaced or turned-off key, or a
     # person who has left, gets 404 (tests/test_calendar_sync.py). It only reads.
     "calendar_feed.feed",
+    # Added 22 Oct 2026 (Useful Calculators): the phone dashboard shows a signed-out visitor only the public
+    # calculators (links to calibraytai.com) and a sign-in; its sign-in is the office check (authenticate) kept
+    # inside the Home Screen app's scope and returns only to a /useful-calculators/ path.
+    "useful_calculators.index",
+    "useful_calculators.sign_in",
+    # Added 22 Oct 2026 (SMS schedule notices): Twilio's delivery reports and replies (STOP). No sign-in and
+    # no CSRF token; every request must carry a valid X-Twilio-Signature for TWILIO_AUTH_TOKEN, else 403
+    # (tests/test_sms_schedule_notices.py). They only update a text's status or record an opt-out.
+    "sms_notifications.twilio_status",
+    "sms_notifications.twilio_inbound",
 }
 # supplier_quote_link. added 20 Oct 2026 (Supplier PRO Desk): a supplier's walk-in customer opens and answers
 # an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
@@ -100,6 +110,10 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "session_status.status",
     "session_status.keepalive",
     "calendar_feed.feed",
+    "useful_calculators.index",  # Useful Calculators dashboard and sign-in (22 Oct 2026), see above
+    "useful_calculators.sign_in",
+    "sms_notifications.twilio_status",  # Twilio delivery reports, signature-checked (22 Oct 2026), see above
+    "sms_notifications.twilio_inbound",  # Twilio replies (STOP / START), signature-checked (22 Oct 2026)
 }
 
 
@@ -227,6 +241,10 @@ def test_every_non_public_route_refuses_a_signed_out_request(app):
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/supplier/login" or nxt != [path]:
                 problem = f"expected 302 /supplier/login, got {status} {response.headers.get('Location')}"
+        elif endpoint.startswith("useful_calculators."):  # the same wall, to that app's own sign-in (22 Oct 2026)
+            target, nxt = _next_of(response.headers.get("Location", ""))
+            if status != 302 or target != "/useful-calculators/sign-in" or nxt != [path]:
+                problem = f"expected 302 /useful-calculators/sign-in, got {status} {response.headers.get('Location')}"
         else:
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/login" or nxt != [path]:
@@ -297,6 +315,23 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "field.drawing_pdf",
     "field.plan_pdf",
     "field.workflow",  # the simplified Field workflow: Field destinations only (Workflow Maps, 21 Oct 2026)
+    # Added 22 Oct 2026 (banked hours): the person's OWN banked-hours balance and ledger, hours only, under the
+    # company's hours policy. No other person's record, no rate, wage or money (tests/test_time_payroll_handoff.py).
+    "field.banked_hours",
+    # Useful Calculators (22 Oct 2026): the quantity-only calculators (the same views as /calculators/*) and
+    # signing out of that app. No project, estimate, cost, price, rate or company record.
+    "useful_calculators.concrete",
+    "useful_calculators.stairs",
+    "useful_calculators.wall_form",
+    "useful_calculators.wall_framing",
+    "useful_calculators.footing",
+    "useful_calculators.roofing",
+    "useful_calculators.siding",
+    "useful_calculators.drywall",
+    "useful_calculators.flooring",
+    "useful_calculators.sign_out",
+    "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
+    "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",

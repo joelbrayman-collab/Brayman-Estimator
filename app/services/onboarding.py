@@ -1,6 +1,6 @@
 """Ben's First Day: the guided setup checklist (Joel, 21 Oct 2026).
 
-Fifteen steps in the order a contractor sets up and starts using CalibraytAI. Each step links to the real
+Sixteen steps in the order a contractor sets up and starts using CalibraytAI. Each step links to the real
 page that does it. A step is done when the records show it (a client exists, a proposal was made, a crew
 member was invited) or when the office marked it done by hand (steps the platform cannot see, such as
 setting up the crew's phones). Read-only apart from those marks; never changes business records.
@@ -67,6 +67,16 @@ def _people(org, _user):
     from app.models.user import UserMembership
 
     return _count(UserMembership, organization_id=org) > 1
+
+
+def _hours_policy(org, _user):
+    from app.services.banked_hours import onboarding_done
+
+    try:
+        return onboarding_done(org)
+    except Exception:
+        db.session.rollback()
+        return False
 
 
 def _appointments(org, _user):
@@ -139,7 +149,12 @@ STEPS: List[Step] = [
          "Company → People & Access → Add a person. Tick Field only for crew. They get an email to set a password.",
          "people_access.index", _people),
     Step("phones", "Set up their iPhones", "Field works on the phone like an app.",
-         "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen. Mark done.",
+         "On each iPhone: open the email link in Safari, set the password, then Share → Add to Home Screen (the "
+         "CalibraytAI icon is Field). Then open the CalibraytAI address ending in /useful-calculators/ in Safari, "
+         "Share → Add to Home Screen, keep the name Useful Calculators, open the new icon, sign in, try a calculator "
+         "and tap ‹ All calculators to return. The first time each one opens Field it asks: Get a text when your "
+         "schedule changes? They check their mobile number and tap Yes or Not now (save their number first on "
+         "their People & Access page and it is filled in). They can change it later under Texts. Mark done.",
          "people_access.index"),
     Step("calendars", "Company and personal calendars", "Appointments and the job schedule in one place.",
          "Calendar → New appointment. Choose Company (everyone sees it) or Personal (only you).",
@@ -163,8 +178,13 @@ STEPS: List[Step] = [
          "Project → Supplier requests → approve the supplier's quote → Place order.",
          "supplier_office.deliveries", _purchase_order),
     Step("crew_schedule", "Schedule the crew", "The boys see their work on their phones.",
-         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew.",
+         "Project → Open project work → Add work item. Then Calendar → Set dates, and on those dates assign a crew. It shows on Field for that crew; when you move it later, each worker who agreed to texts gets one text (Calendar → Text notices shows sent, delivered or failed).",
          "schedule.company", _crew_scheduling),
+    Step("hours_policy", "Hours and banked time", "Your own work-week rules decide regular hours and banked time.",
+         "Company → Hours policy: enter your normal work week (hours), the weekly hours after which extra hours are "
+         "banked or paid as overtime, the banked hours for each extra hour, whether Shop / Company Work counts, the "
+         "day the week starts and the date it takes effect. Save hours policy. Nothing is banked until you do.",
+         "payroll_time.hours_policy", _hours_policy),
     Step("working_day", "Run a complete working day", "Schedule, field time, deliveries and changes, end to end.",
          "Check Home in the morning, follow the job on Field, approve time, answer deliveries. Mark done after a full day.",
          "main.dashboard"),

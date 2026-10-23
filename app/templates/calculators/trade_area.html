@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends calculator_layout | default("base.html") %}
 
 {% macro unit_label(text) -%}
 {{ text

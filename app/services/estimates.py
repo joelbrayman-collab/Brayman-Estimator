@@ -72,6 +72,9 @@ def create_estimate(
     project = Project.query.filter_by(id=project_id, organization_id=org_id).first()
     if not project:
         raise EstimateServiceError(f"Project {project_id} not found in current organization.")
+    from app.services.time_entry import raise_if_company_time
+
+    raise_if_company_time(project, EstimateServiceError)  # Shop / Company Work is not a customer job
 
     if Estimate.query.filter_by(
         organization_id=project.organization_id,

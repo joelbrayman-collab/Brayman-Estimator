@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Banked hours — {{ worker.display_name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Banked hours{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">{{ worker.display_name }}: {{ "%.2f"|format(summary.balance) }} banked hours</h2>
+  <p class="page-purpose" data-banked-policy>{{ summary.policy_text }}</p></div>
+  <a class="button button-secondary" href="{{ url_for('payroll_time.banked_hours_index') }}">All banked hours</a></section>
+<div class="form-panel" data-banked-balance="{{ '%.2f'|format(summary.balance) }}">
+  {% if summary.week %}
+  <p data-banked-week>This week ({{ summary.week.week_start.strftime('%a %b %d') }} – {{ summary.week.week_end.strftime('%a %b %d') }}): hours worked (approved) {{ "%.2f"|format(summary.week.worked) }} · regular {{ "%.2f"|format(summary.week.regular) }} · extra {{ "%.2f"|format(summary.week.extra) }}{% if summary.week.overtime_paid > 0 %} (paid as overtime){% endif %} · banked {{ "%.2f"|format(summary.week.earned) }}</p>
+  {% endif %}
+  <p>Time off taken so far: {{ "%.2f"|format(summary.used_total) }} hours. Current balance: <strong data-banked-number>{{ "%.2f"|format(summary.balance) }}</strong> hours.</p>
+</div>
+{% if not is_self %}
+<div class="acct-grid">
+  <form class="form-panel" method="post" action="{{ url_for('payroll_time.banked_hours_time_off', user_id=worker.id) }}" data-banked-time-off>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h3>Record time off taken</h3>
+    <label>Day off <input type="date" name="on_date" value="{{ today.isoformat() }}" required></label>
+    <label>Hours <input type="number" name="hours" min="0.25" step="0.25" required></label>
+    <label>What for <input type="text" name="reason" required></label>
+    <div class="acct-actions"><button type="submit">Record time off</button></div>
+  </form>
+  <form class="form-panel" method="post" action="{{ url_for('payroll_time.banked_hours_adjust', user_id=worker.id) }}" data-banked-adjust>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h3>Adjust</h3>
+    <label>Hours (add 2, or remove -2) <input type="number" name="hours" step="0.25" required></label>
+    <label>Why <input type="text" name="reason" required></label>
+    <div class="acct-actions"><button type="submit">Adjust</button></div>
+  </form>
+</div>
+{% else %}<div class="form-panel"><p class="muted-copy">Someone else in the office records your time off and adjustments.</p></div>{% endif %}
+<div class="form-panel">
+  <h3>Ledger</h3>
+  {% if summary.rows %}<div class="acct-scroll"><table class="acct-table" data-banked-ledger>
+    <thead><tr><th>When</th><th>What</th><th class="num">Hours</th><th>Week</th><th class="num">Worked</th><th class="num">Regular</th><th class="num">Extra</th><th>Why</th><th>Who</th></tr></thead><tbody>
+    {% for row in summary.rows %}<tr data-banked-kind="{{ row.kind }}">
+      <td data-label="When">{{ row.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
+      <td data-label="What">{{ summary.kind_label[row.kind] }}</td>
+      <td data-label="Hours" class="num">{{ "%+.2f"|format(row.hours) }}</td>
+      <td data-label="Week">{% if row.on_date %}day off {{ row.on_date.isoformat() }}{% elif row.week_start %}{{ row.week_start.isoformat() }}{% else %}—{% endif %}</td>
+      <td data-label="Worked" class="num">{{ "%.2f"|format(row.worked_hours) if row.worked_hours is not none else "—" }}</td>
+      <td data-label="Regular" class="num">{{ "%.2f"|format(row.regular_hours) if row.regular_hours is not none else "—" }}</td>
+      <td data-label="Extra" class="num">{{ "%.2f"|format(row.extra_hours) if row.extra_hours is not none else "—" }}</td>
+      <td data-label="Why">{{ row.reason }}{% if row.policy %} <span class="muted-copy">(policy v{{ row.policy.version }})</span>{% endif %}</td>
+      <td data-label="Who">{{ row.actor_name }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="muted-copy">Nothing yet.</p>{% endif %}
+</div>
+{% endblock %}

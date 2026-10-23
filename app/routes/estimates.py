@@ -77,7 +77,9 @@ def _get_scoped_estimate_or_404(id):
 
 def _projects():
     org_id = get_current_organization_id()
-    return Project.query.filter_by(organization_id=org_id).order_by(Project.name.asc()).all()
+    from app.services.time_entry import customer_projects_only  # Shop / Company Work has no estimate
+
+    return customer_projects_only(Project.query.filter_by(organization_id=org_id)).order_by(Project.name.asc()).all()
 
 
 def _active_cost_items():

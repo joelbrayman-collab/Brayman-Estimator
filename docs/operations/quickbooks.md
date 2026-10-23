@@ -44,6 +44,13 @@ QuickBooks entry) lists the cost classes to enter.
 - Accounting → **Purchase orders**: QuickBooks has no purchase-order import. The file is a list to enter
   by hand (+ New → Purchase order) if you track POs in QuickBooks.
 
+## Crew hours to QuickBooks Time (no retyping) — see `docs/operations/quickbooks-time.md`
+
+Approved hours go to QuickBooks Time by themselves once Joel switches the connection on (Company → Accounting →
+QuickBooks Time transfers). Until then, and for anything held back, the hand-entry file below still works.
+An entry goes one way only: once QuickBooks Time has (or may have) it, it is left out of the file; an entry
+already in a file is not sent to QuickBooks Time unless the office releases it with a reason.
+
 ## Crew hours (approved time) — entered by hand
 
 QuickBooks Online's Import data has **no time import**, so CalibraytAI does not and cannot put hours into
@@ -61,7 +68,7 @@ QuickBooks by itself. What is supported and tested is a file plus a check:
    Customer (blank for shop and company time), Service = Labour, Billable as in the file, the hours on the
    day, and paste the row's Description (it ends with **[CT-T…]**, which lets the check find doubles).
    If payroll pulls hours from timesheets, payroll uses these; otherwise give the file to whoever runs
-   payroll. Shop and company time has no customer and is never billable.
+   payroll. Shop / Company Work has no customer and is never billable.
    Billable is Yes only for **extra work** not yet on an approved change order (it still needs pricing);
    original work and change-order work are No (they are invoiced from the proposal and the change order).
 5. Check (weekly): QuickBooks → **Reports → Time Activities by Employee Detail** → the same dates →

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}QuickBooks Time transfers | Brayman Construction Platform{% endblock %}
+{% block page_title %}QuickBooks Time{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">QuickBooks Time</h2>
+  <p class="page-purpose">Crew enter hours once, on Field. When the office approves them, each approved entry is sent to QuickBooks Time once, for payroll. A correction changes the same QuickBooks Time timesheet. Hours only: no rates or pay are sent.</p></div>
+  <a class="button button-secondary" href="{{ url_for('time_entry.review') }}">Time review</a>
+  <a class="button button-secondary" href="{{ url_for('payroll_time.quickbooks_time_links') }}">People and job links</a>
+  <a class="button button-secondary" href="{{ url_for('payroll_time.quickbooks_time_check') }}">Check QuickBooks Time</a>
+</section>
+
+<div class="form-panel" data-qbt-connection="{{ connection.mode }}">
+  <h3>Connection</h3>
+  <p><strong>{{ connection.message }}</strong></p>
+  {% if connection.connected %}
+  <form method="post" action="{{ url_for('payroll_time.quickbooks_time_send') }}" class="acct-actions">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="button-primary" type="submit" data-qbt-send>Send waiting and retry failed</button>
+    <span class="muted-copy">Safe to press more than once: CalibraytAI checks QuickBooks Time first and never enters anything twice.</span>
+  </form>
+  {% endif %}
+</div>
+
+<div class="form-panel">
+  <h3>Transfers</h3>
+  <p class="acct-actions" data-qbt-counts>
+    <a href="{{ url_for('payroll_time.quickbooks_time') }}">All</a>
+    {% for key, label in labels.items() %}{% if counts[key] %}· <a href="{{ url_for('payroll_time.quickbooks_time', status=key) }}" data-qbt-count="{{ key }}">{{ label }}: {{ counts[key] }}</a>{% endif %}{% endfor %}
+  </p>
+  {% if rows %}
+  <div class="acct-scroll"><table class="acct-table" data-qbt-transfers>
+    <thead><tr><th>Ref</th><th>Worker</th><th>Date</th><th class="num">Hours</th><th>Job</th><th>Status</th><th>What to do</th></tr></thead>
+    <tbody>
+    {% for row in rows %}{% set t = row.transfer %}{% set e = row.entry %}
+      <tr data-qbt-transfer="{{ t.id }}" data-qbt-status="{{ t.status }}">
+        <td data-label="Ref" style="white-space:nowrap"><a href="{{ url_for('time_entry.detail', time_entry_id=e.id) }}">CT-T{{ e.id }}</a>{% if t.operation == 'UPDATE' %} <span class="muted-copy">(correction)</span>{% endif %}</td>
+        <td data-label="Worker">{{ e.worker_display_name }}</td>
+        <td data-label="Date" style="white-space:nowrap">{{ e.work_date.isoformat() }}</td>
+        <td data-label="Hours" class="num">{{ "%.2f"|format(e.hours) }}</td>
+        <td data-label="Job">{{ e.project_name }} — {{ e.activity_display_name }}</td>
+        <td data-label="Status"><span class="status">{{ row.label }}</span>{% if t.qbt_timesheet_id %}<div class="muted-copy">Timesheet {{ t.qbt_timesheet_id }}</div>{% endif %}{% if t.attempts %}<div class="muted-copy">Tries: {{ t.attempts }}</div>{% endif %}</td>
+        <td data-label="What to do">
+          {% if t.last_error and t.status in ('FAILED', 'NEEDS_SETUP') %}<div data-qbt-error>{{ t.last_error }}</div>{% endif %}
+          {% if t.status == 'NEEDS_SETUP' %}<a href="{{ url_for('payroll_time.quickbooks_time_links') }}">Add the link</a>{% endif %}
+          {% if t.status in ('FAILED', 'NEEDS_SETUP', 'WAITING') and connection.connected %}
+          <form method="post" action="{{ url_for('payroll_time.quickbooks_time_retry', transfer_id=t.id) }}" class="acct-actions">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" data-qbt-retry>Retry</button></form>
+          {% endif %}
+          {% if t.status == 'IN_FILE' %}
+          <form method="post" action="{{ url_for('payroll_time.quickbooks_time_send_anyway', transfer_id=t.id) }}" class="acct-actions">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="text" name="reason" placeholder="Why (it was not entered by hand)" aria-label="Reason" required>
+            <button type="submit">Send anyway</button></form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <p class="muted-copy">Nothing yet. Approved time appears here.</p>
+  {% endif %}
+</div>
+
+<div class="form-panel">
+  <h3>History</h3>
+  {% if events %}
+  <ul class="acct-list" data-qbt-history>{% for ev in events %}<li>{{ ev.created_at|local_time("%Y-%m-%d %H:%M") }} · {{ ev.actor_name }} · {{ ev.message }}</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">Nothing yet.</p>{% endif %}
+</div>
+{% endblock %}

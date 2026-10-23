@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}QuickBooks Time links | Brayman Construction Platform{% endblock %}
+{% block page_title %}QuickBooks Time links{% endblock %}
+{% block content %}
+{% include "accounting/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">People and job links</h2>
+  <p class="page-purpose">Each crew member is linked to their QuickBooks Time person, and each customer job and Shop / Company Work category to a QuickBooks Time job code. Time without a link waits as "Needs a link". Only the owner or a System Administrator changes links; every change is kept in the history.</p></div>
+  <a class="button button-secondary" href="{{ url_for('payroll_time.quickbooks_time') }}">QuickBooks Time</a></section>
+{% if directory.error %}<div class="form-panel"><p><strong>{{ directory.error }}</strong></p></div>{% endif %}
+{% if not directory.connected %}<div class="form-panel"><p class="muted-copy">Not switched on, so the QuickBooks Time lists cannot be read. You can still type each QuickBooks Time number (QuickBooks Time → Team or Jobs, or ask the QuickBooks Time admin).</p></div>{% endif %}
+{% macro choice(name, options, current, label) %}
+  {% if options %}
+  <select name="{{ name }}" aria-label="{{ label }}"><option value="">— not linked —</option>
+    {% for o in options %}<option value="{{ o.id }}" {% if current == o.id %}selected{% endif %}>{{ o.name }} ({{ o.id }})</option>{% endfor %}</select>
+  {% else %}<input type="text" inputmode="numeric" name="{{ name }}" value="{{ current or '' }}" aria-label="{{ label }}" placeholder="QuickBooks Time number">{% endif %}
+{% endmacro %}
+<div class="form-panel">
+  <h3>People</h3>
+  {% if workers %}<div class="acct-scroll"><table class="acct-table" data-qbt-people>
+    <thead><tr><th>CalibraytAI</th><th>QuickBooks Time person</th></tr></thead><tbody>
+    {% for w in workers %}{% set link = people.get(w.id) %}
+    <tr data-qbt-person="{{ w.id }}"><td data-label="CalibraytAI">{{ w.display_name }}</td><td data-label="QuickBooks Time">
+      {% if can_administer %}
+      <form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="kind" value="person"><input type="hidden" name="user_id" value="{{ w.id }}">
+        {{ choice('qbt_user_id', directory.users, link.qbt_user_id if link else None, 'QuickBooks Time person for ' ~ w.display_name) }}
+        <button type="submit">Save</button></form>
+      {% endif %}
+      {% if link %}<div class="muted-copy">Linked to {{ link.qbt_display_name or link.qbt_user_id }} by {{ link.linked_by_name }}</div>{% else %}<div class="muted-copy">Not linked</div>{% endif %}
+    </td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<p class="muted-copy">People appear here once they have recorded time.</p>{% endif %}
+</div>
+<div class="form-panel">
+  <h3>Customer jobs</h3>
+  {% if projects %}<div class="acct-scroll"><table class="acct-table" data-qbt-jobs>
+    <thead><tr><th>Job</th><th>QuickBooks Time job code</th></tr></thead><tbody>
+    {% for p in projects %}{% set link = jobs.get(('project', p.id)) %}
+    <tr data-qbt-job="{{ p.id }}"><td data-label="Job">{{ p.name }}</td><td data-label="Job code">
+      {% if can_administer %}<form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="kind" value="project"><input type="hidden" name="project_id" value="{{ p.id }}">
+        {{ choice('qbt_jobcode_id', directory.jobcodes, link.qbt_jobcode_id if link else None, 'Job code for ' ~ p.name) }}
+        <button type="submit">Save</button></form>{% endif %}
+      {% if link %}<div class="muted-copy">Linked to {{ link.qbt_jobcode_name or link.qbt_jobcode_id }} by {{ link.linked_by_name }}</div>{% else %}<div class="muted-copy">Not linked</div>{% endif %}
+    </td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<p class="muted-copy">No jobs yet.</p>{% endif %}
+</div>
+<div class="form-panel">
+  <h3>Shop / Company Work</h3>
+  <p class="muted-copy">Use QuickBooks Time job codes that belong to no customer (for example "Shop" or "Safety meetings").</p>
+  {% if categories %}<div class="acct-scroll"><table class="acct-table" data-qbt-categories>
+    <thead><tr><th>Category</th><th>QuickBooks Time job code</th></tr></thead><tbody>
+    {% for a in categories %}{% set link = jobs.get(('activity', a.id)) %}
+    <tr data-qbt-category="{{ a.id }}"><td data-label="Category">{{ a.display_name }}</td><td data-label="Job code">
+      {% if can_administer %}<form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="kind" value="activity"><input type="hidden" name="activity_id" value="{{ a.id }}">
+        {{ choice('qbt_jobcode_id', directory.jobcodes, link.qbt_jobcode_id if link else None, 'Job code for ' ~ a.display_name) }}
+        <button type="submit">Save</button></form>{% endif %}
+      {% if link %}<div class="muted-copy">Linked to {{ link.qbt_jobcode_name or link.qbt_jobcode_id }} by {{ link.linked_by_name }}</div>{% else %}<div class="muted-copy">Not linked</div>{% endif %}
+    </td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<p class="muted-copy">Set up Shop / Company Work on Time review first.</p>{% endif %}
+</div>
+{% endblock %}

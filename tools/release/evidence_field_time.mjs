@@ -1,6 +1,6 @@
 // Release evidence for Field time and labour cost (Joel, 22 Oct 2026): Kevin records his hours on an
 // iPhone-sized page, Ben returns one and approves on a desktop, Kevin fixes it and sends it again, shop
-// time goes on the company-time project, and the job shows estimated against actual labour hours and
+// time goes on Shop / Company Work, and the job shows estimated against actual labour hours and
 // cost. The approved hours go to QuickBooks as a file once and are checked back. Real pages only,
 // against a local office on a temporary database (tests/field_time_server.py). Synthetic data only.
 //
@@ -230,14 +230,14 @@ step("4 Ben approves the corrected entry; its whole history is kept", async () =
   await shot(pg, "04-approved-history");
 });
 
-step("5 Shop time goes on shop and company time, never a customer's job", async () => {
+step("5 Shop time goes on Shop / Company Work, never a customer's job", async () => {
   const pg = ben.pg;
   await timeReview(pg);
-  await submit(pg, pg.getByRole("button", { name: "Set up shop and company time" }));
-  assert.match(await flash(pg), /Shop and company time is ready\./);
+  await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
+  assert.match(await flash(pg), /Shop \/ Company Work is ready\./);
   const k = kevin.pg;
   await go(k, "/field/time");
-  await submit(k, k.getByRole("link", { name: "Shop / company time" }));
+  await submit(k, k.getByRole("link", { name: "Shop / Company Work" }));
   assert.match(await text(k), /never billed to a customer/);
   assert.equal(await k.locator("#field-time-extra-toggle").count(), 0);
   await phone(k, "05-shop-time-form");
@@ -246,7 +246,7 @@ step("5 Shop time goes on shop and company time, never a customer's job", async 
   await phone(k, "05-my-time-shop");
   await timeReview(pg);
   const row = pg.locator("tbody tr").filter({ hasText: "Equipment and vehicle upkeep" });
-  assert.match(await row.innerText(), /Shop and company time[\s\S]*Company time/);
+  assert.match(await row.innerText(), /Shop \/ Company Work[\s\S]*Company time/);
   await row.locator("input[type=checkbox]").check();
   await submit(pg, pg.getByRole("button", { name: "Approve selected" }));
   assert.match(await flash(pg), /Approved 1 time entry\./);
@@ -292,7 +292,7 @@ step("8 Ben puts the approved hours in a QuickBooks file once and checks QuickBo
   assert.equal(lines.length, 4, csv);
   assert.match(lines[0], /^Activity Date,Employee,Customer,Job,Service Item,Hours,Duration \(h:mm\),Billable,Kind of work,Change order/);
   assert.doesNotMatch(csv, /\$/);
-  assert.ok(lines.some((l) => l.includes("Company time") && l.includes(",Shop and company time,")), csv);
+  assert.ok(lines.some((l) => l.includes("Company time") && l.includes(",Shop / Company Work,")), csv);
   await go(pg, "/accounting/export/time");
   assert.match(await pg.locator("[data-fresh-count]").innerText(), /^0$/);
   // QuickBooks' Time Activities by Employee Detail report, as exported to CSV after entering the timesheet

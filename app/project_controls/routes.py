@@ -13,6 +13,7 @@ from flask import (
     url_for,
 )
 
+from app.services.time_entry import customer_projects_only  # Shop / Company Work has no change order
 from app.models import Estimate, EstimateVersion, Project
 from app.project_controls import repository as repo
 from app.project_controls.models import CHANGE_ORDER_STATUSES, ChangeOrderItem
@@ -139,7 +140,7 @@ def list_change_orders():
         date_to=date_to,
         search=search,
     )
-    projects = Project.query.filter_by(organization_id=get_current_organization_id()).order_by(Project.name).all()
+    projects = customer_projects_only(Project.query.filter_by(organization_id=get_current_organization_id())).order_by(Project.name).all()
     signing_overlays = overlays_for_change_orders(
         get_current_organization_id(), [row.id for row in change_orders]
     )
@@ -204,7 +205,7 @@ def _render_change_order_form(
 @project_controls_bp.route("/project-controls/change-orders/new", methods=["GET", "POST"])
 def create_change_order_route():
     org_id = get_current_organization_id()
-    projects = Project.query.filter_by(organization_id=org_id).order_by(Project.name).all()
+    projects = customer_projects_only(Project.query.filter_by(organization_id=org_id)).order_by(Project.name).all()
     if not projects:
         flash("Create a project before adding a change order.", "error")
         return redirect(url_for("projects.create_project"))
@@ -332,7 +333,7 @@ def create_from_estimate_version(estimate_id, version_id):
         estimate_id=estimate.id,
     ).first_or_404()
     project = estimate.project
-    projects = Project.query.filter_by(organization_id=org_id).order_by(Project.name).all()
+    projects = customer_projects_only(Project.query.filter_by(organization_id=org_id)).order_by(Project.name).all()
 
     if request.method == "POST":
         copy_lines = request.form.get("copy_estimate_lines") == "on"
@@ -467,7 +468,7 @@ def edit_change_order(id):
     change_order = repo.get_change_order(id)
     if change_order is None:
         abort(404)
-    projects = Project.query.filter_by(organization_id=get_current_organization_id()).order_by(Project.name).all()
+    projects = customer_projects_only(Project.query.filter_by(organization_id=get_current_organization_id())).order_by(Project.name).all()
 
     if request.method == "POST":
         try:

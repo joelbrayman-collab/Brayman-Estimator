@@ -96,6 +96,19 @@ def _flash_delivery_proposals():
         flash(message, "error")
 
 
+def _flash_text_notices():
+    """Tell the office that affected workers will get a schedule text (Joel, 22 Oct 2026)."""
+    try:
+        from app.services.crew_notices import coalesce_seconds, waiting_count
+
+        if waiting_count(_org().id):
+            minutes = max(1, round(coalesce_seconds() / 60))
+            flash(f"Workers on this work who agreed to texts get one text about it in about {minutes} minute"
+                  f"{'' if minutes == 1 else 's'} (see Text notices on the calendar).", "success")
+    except Exception:  # a notice line never breaks the schedule page
+        pass
+
+
 def _org():
     return get_current_organization()
 
@@ -385,6 +398,7 @@ def edit_item(item_id):
                 )
             flash("Schedule updated.", "success")
             _flash_delivery_proposals()
+            _flash_text_notices()
             # G8 (schedule review, 19 Oct): "Edit dates" from the Project page returns to the Project page.
             return redirect(_return_after_item(item))
         except (ScheduleError, ScheduleNotFoundError) as exc:
@@ -421,6 +435,7 @@ def create_assignment(item_id):
         else:
             raise ScheduleError("Choose a person or a crew.")
         flash("Assignment saved.", "success")
+        _flash_text_notices()
         return redirect(_return_after_item(item))
     except ScheduleNotFoundError as exc:
         flash(str(exc), "error")
@@ -447,6 +462,7 @@ def remove_assignment(item_id, assignment_id):
             organization_id=organization.id,
         )
         flash("Assignment removed.", "success")
+        _flash_text_notices()
         return redirect(_return_after_item(item))
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
@@ -459,6 +475,7 @@ def retire(item_id):
     try:
         item = retire_schedule_item(item_id, organization_id=organization.id)
         flash("Schedule retired.", "success")
+        _flash_text_notices()
         return redirect(url_for("schedule.company", project_id=item.project_id))
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
@@ -477,6 +494,7 @@ def shift_project(project_id):
         )
         flash("Project schedule moved.", "success")
         _flash_delivery_proposals()
+        _flash_text_notices()
     except (TypeError, ValueError):
         flash("Enter how many days to move this project.", "error")
     except (ScheduleError, ScheduleNotFoundError) as exc:

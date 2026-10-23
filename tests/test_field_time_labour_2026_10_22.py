@@ -260,11 +260,11 @@ def test_field_only_never_sees_rates_costs_or_payroll(app):
 def test_shop_time_goes_on_company_time_never_a_customer_job(app):
     ben, kevin, project, activity = _setup()
     k = _client(app, KEVIN)
-    assert "Shop / company time" not in k.get("/field/time").get_data(as_text=True)  # not set up yet
+    assert "Shop / Company Work" not in k.get("/field/time").get_data(as_text=True)  # not set up yet
 
     b = _client(app, BEN)
     r = b.post("/time/company-time", follow_redirects=True)
-    assert "Shop and company time is ready." in r.get_data(as_text=True)
+    assert "Shop / Company Work is ready." in r.get_data(as_text=True)
     assert b.post("/time/company-time", follow_redirects=True).status_code == 200  # idempotent
     company = get_company_time_project(ORG)
     assert Project.query.filter_by(organization_id=ORG, project_number=company.project_number).count() == 1
@@ -272,7 +272,7 @@ def test_shop_time_goes_on_company_time_never_a_customer_job(app):
 
     k = _client(app, KEVIN)
     my_time = k.get("/field/time").get_data(as_text=True)
-    assert "Shop / company time" in my_time
+    assert "Shop / Company Work" in my_time
     form = k.get(f"/field/projects/{company.id}/time").get_data(as_text=True)
     assert "never billed to a customer" in form and "field-time-extra-toggle" not in form
     shop = [a for a in company.work_elements[0].activities if a.display_name == "Equipment and vehicle upkeep"][0]
@@ -288,7 +288,7 @@ def test_shop_time_goes_on_company_time_never_a_customer_job(app):
 
     approve_time(time_entry_id=entry.id, reviewer_user_id=ben.id)
     row = acct.preview(ORG, "time")["rows"][0]
-    assert (row["Customer"], row["Job"], row["Billable"], row["Kind of work"]) == ("", "Shop and company time", "No", "Company time")
+    assert (row["Customer"], row["Job"], row["Billable"], row["Kind of work"]) == ("", "Shop / Company Work", "No", "Company time")
     customers = [r["Name"] for r in acct.preview(ORG, "customers")["rows"]]
     assert company.client.name not in customers and "Synthetic Mill Pond deck Client" in customers
     cost = assemble_project_labour_cost(ORG, company.id)

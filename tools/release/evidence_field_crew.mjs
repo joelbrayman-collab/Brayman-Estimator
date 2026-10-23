@@ -179,7 +179,7 @@ test("every Field Crew lesson fits the iPhone, shows no money, and every picture
   const { pg } = S.kevin;
   await go(pg, "/training");
   const hrefs = await pg.locator("a[data-lesson]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
-  assert.equal(hrefs.length, 27);
+  assert.equal(hrefs.length, 30);
   for (const href of hrefs) {
     assert.match(href, /^\/training\/lessons\/f0[1-8]-/);
     await go(pg, href.split("?")[0]);
@@ -198,7 +198,7 @@ test("every Field Crew lesson fits the iPhone, shows no money, and every picture
 test("a Field acceptance test fails, then a retest passes; both attempts are kept, apart from the lessons", async () => {
   const { pg } = S.kevin;
   await go(pg, "/training/uat");
-  assert.match(await pg.textContent("[data-uat-counts]"), /0 passed · 0 failed · 0 blocked · 17 not tested, of 17/);
+  assert.match(await pg.textContent("[data-uat-counts]"), /0 passed · 0 failed · 0 blocked · 20 not tested, of 20/);
   await noSideways(pg, "acceptance tests (phone)");
   await nav(pg, pg.locator("[data-uat-continue]"));
   const key = await pg.getAttribute("[data-uat-case]", "data-uat-case");
@@ -231,9 +231,9 @@ test("a Field acceptance test fails, then a retest passes; both attempts are kep
   await noSideways(pg, "test with two attempts (phone)");
   await shot(pg, "field-crew-uat-case");
   await go(pg, "/training/uat");
-  assert.match(await pg.textContent("[data-uat-counts]"), /^1 passed · 0 failed · 1 blocked · 15 not tested/);
+  assert.match(await pg.textContent("[data-uat-counts]"), /^1 passed · 0 failed · 1 blocked · 18 not tested/);
   await go(pg, "/training");
-  assert.match(await pg.textContent("[data-progress]"), /^0 of 27 lessons done .* 1 passed, 0 failed, 1 blocked/);
+  assert.match(await pg.textContent("[data-progress]"), /^0 of 30 lessons done .* 1 passed, 0 failed, 1 blocked/);
 });
 
 test("the Workflow Map's Field section carries the Field Crew lessons, in training and on Field's Guide", async () => {
@@ -283,8 +283,8 @@ test("Ben's administrator dashboard shows Kevin's Field Crew progress with the b
     const card = s.pg.locator('[data-admin-crew-member="Kevin Field (training crew)"]');
     assert.ok(await card.isVisible(), "Kevin is in Ben's crew");
     const text = await card.innerText();
-    assert.match(text, /Lessons: 0 of 27 done/);
-    assert.match(text, /1 pass · 0 fail · 1 blocked · 15 to do · 1 retested/);
+    assert.match(text, /Lessons: 0 of 30 done/);
+    assert.match(text, /1 pass · 0 fail · 1 blocked · 18 to do · 1 retested/);
     assert.match(text, /Issues to fix/);
     assert.equal(await card.locator("[data-flag]").count(), 1, "the blocked test is flagged; the retested one is not");
     assert.match(await card.locator("[data-flag]").innerText(), /No signal on site/);
@@ -292,5 +292,5 @@ test("Ben's administrator dashboard shows Kevin's Field Crew progress with the b
     await shot(s.pg, `field-crew-admin-${viewport.width}`);
   }
   await go(S.ben.pg, "/training/review/field-crew");
-  assert.equal(await S.ben.pg.locator("[data-review-lesson-link]").count(), 27, "the owner previews all 27 lessons");
+  assert.equal(await S.ben.pg.locator("[data-review-lesson-link]").count(), 30, "the owner previews all 30 lessons");
 });

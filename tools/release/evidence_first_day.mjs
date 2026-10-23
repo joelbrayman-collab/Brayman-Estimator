@@ -1,10 +1,10 @@
 // Release evidence for Ben's First Day (21 Oct 2026): a brand-new synthetic contractor account walks the
-// fifteen steps of the Getting started checklist (app/services/onboarding.py, Company → Getting started)
+// sixteen steps of the Getting started checklist (app/services/onboarding.py, Company → Getting started)
 // in a real browser, through the real pages only, against a local office on a temporary database
 // (tests/first_day_server.py). Synthetic data only.
 //
 // After each step the checklist must show that step done (steps the platform cannot see are marked with
-// the page's own Mark done button), and at the end 15 of 15. Any response of 500 or more, or a page
+// the page's own Mark done button), and at the end 16 of 16. Any response of 500 or more, or a page
 // JavaScript error, fails the walk. Phone pages (390 x 844) must not scroll sideways.
 //
 // Run: EVIDENCE_REPO=$PWD EVIDENCE_EXECUTABLE=/path/to/chromium node --test --test-concurrency=1 tools/release/evidence_first_day.mjs
@@ -142,7 +142,7 @@ async function checklist(pg) {
 }
 async function expectDone(pg, key, number) {
   const c = await checklist(pg);
-  assert.equal(c.total, 15);
+  assert.equal(c.total, 16);
   assert.equal(c.steps[key], true, `Getting started shows step ${number} (${key}) done`);
   await pg.locator(`#step-${key}`).scrollIntoViewIfNeeded();
   return c;
@@ -176,7 +176,7 @@ function noCosts(text, label) {
 }
 
 // ================================================================== 1. Sign in
-step("01 sign in: Ben signs in for the first time; the empty office and the checklist (1 of 15)", async () => {
+step("01 sign in: Ben signs in for the first time; the empty office and the checklist (1 of 16)", async () => {
   const s = await context(DESK);
   await go(s.pg, "/login");
   await s.pg.fill("input[name=email]", facts.ben[0]);
@@ -190,7 +190,7 @@ step("01 sign in: Ben signs in for the first time; the empty office and the chec
   const c = await expectDone(s.pg, "sign_in", 1);
   // Brand new: nothing the company has to do itself is done yet (the seeded pricing policy is recorded below).
   for (const key of ["company", "accounting", "people", "phones", "calendars", "subscribe", "suppliers", "customers", "estimate",
-    "proposal", "purchase_order", "crew_schedule", "working_day"]) assert.equal(c.steps[key], false, `${key} not done on a new account`);
+    "proposal", "purchase_order", "crew_schedule", "hours_policy", "working_day"]) assert.equal(c.steps[key], false, `${key} not done on a new account`);
   W.financeAtStart = c.steps.finance;
   console.log(`RECORDED finance step done before Ben did anything: ${c.steps.finance} (the migrations seed the company's approved pricing policy)`);
   await shot(s.pg, "01-sign-in", "checklist");
@@ -669,15 +669,52 @@ step("14 crew schedule: a work item, dates on the calendar, a crew with Kevin; K
   await expectDone(pg, "crew_schedule", 14);
 });
 
-// ================================================================== 15. Working day
-step("15 working day: Home in the morning, Kevin's Field day, then Ben marks the day done: 15 of 15", async () => {
+// ================================================================== 15. Hours and banked time (22 Oct 2026)
+step("15 hours policy: Ben enters the company's own work-week rules (no preset values); Kevin sees the policy on Field", async () => {
+  const { pg } = await owner();
+  await checklist(pg);
+  await submit(pg, pg.locator("#step-hours_policy").getByRole("link", { name: /Go there/ }));
+  assert.match(new URL(pg.url()).pathname, /\/settings\/hours-policy$/);
+  const form = pg.locator("[data-hours-policy-form]");
+  for (const name of ["normal_week_hours", "extra_after_hours", "bank_rate", "effective_from"]) {
+    assert.equal(await form.locator(`[name=${name}]`).inputValue(), "", `${name} starts empty`);
+  }
+  assert.equal(await form.locator("input[type=radio]:checked").count(), 0, "no choice is preset");
+  assert.match(await pg.locator("main").innerText(), /No hours policy has been entered yet/);
+  await shot(pg, "15-hours-policy", "empty");
+  const monday = new Date(); monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const iso = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, "0")}-${String(monday.getDate()).padStart(2, "0")}`;
+  await form.locator("[name=normal_week_hours]").fill("40");
+  await form.locator("[name=extra_after_hours]").fill("40");
+  await form.locator("input[name=extra_hours_treatment][value=BANK]").check();
+  await form.locator("[name=bank_rate]").fill("1");
+  await form.locator("input[name=counts_company_time][value=yes]").check();
+  await form.locator("[name=week_start_day]").selectOption("0");
+  await form.locator("[name=effective_from]").fill(iso);
+  await shot(pg, "15-hours-policy", "filled");
+  await submit(pg, pg.getByRole("button", { name: "Save hours policy" }));
+  assert.match(await flash(pg), /Hours policy saved \(version 1/);
+  assert.match(await pg.locator("[data-hours-policy-current]").innerText(), /Normal work week: 40\.00 hours \(Monday to Sunday\)\. Hours after 40\.00 in a week are banked/);
+  await shot(pg, "15-hours-policy", "saved");
+  const k = sessions.kevin;
+  await go(k.pg, "/field/today");
+  const today = await k.pg.locator("body").innerText();
+  assert.match(today, /Banked hours[\s\S]*0\.00[\s\S]*Normal work week: 40\.00 hours/);
+  noCosts(today, "Field Today with banked hours");
+  await noSideways(k.pg, "Field Today with banked hours");
+  await shot(k.pg, "15-hours-policy", "field-today");
+  await expectDone(pg, "hours_policy", 15);
+});
+
+// ================================================================== 16. Working day
+step("16 working day: Home in the morning, Kevin's Field day, then Ben marks the day done: 16 of 16", async () => {
   const { pg } = await owner();
   await go(pg, "/");
   assert.match(await pg.locator("main").innerText(), /Mill Pond Road deck/);
-  await shot(pg, "15-working-day", "home");
+  await shot(pg, "16-working-day", "home");
   const phone = await ownerPhone();
   await go(phone.pg, "/");
-  await shot(phone.pg, "15-working-day", "home");
+  await shot(phone.pg, "16-working-day", "home");
   // Kevin sends his hours from Field Today.
   const k = sessions.kevin;
   await go(k.pg, "/field/today");
@@ -689,28 +726,28 @@ step("15 working day: Home in the morning, Kevin's Field day, then Ben marks the
   await k.pg.selectOption("[name=project_work_activity_id]", activityValue);
   await k.pg.fill("[name=hours]", "8");
   await k.pg.fill("[name=worker_note]", "Ledger and joists in (synthetic)");
-  await shot(k.pg, "15-working-day", "field-time");
+  await shot(k.pg, "16-working-day", "field-time");
   await submit(k.pg, k.pg.getByRole("button", { name: "Send time" }));
   assert.match(await flash(k.pg), /Time sent for approval/);
   noCosts(await k.pg.locator("body").innerText(), "Field my time");
-  await shot(k.pg, "15-working-day", "time-sent");
+  await shot(k.pg, "16-working-day", "time-sent");
   // Ben approves it.
   await go(pg, `/time?project_id=${W.projectId}`);
   assert.match(await pg.locator("main").innerText(), /Kevin Fieldhand/);
-  await shot(pg, "15-working-day", "time-review");
+  await shot(pg, "16-working-day", "time-review");
   await submit(pg, pg.locator('main a[href^="/time/"]').filter({ hasText: day(0) }).first());
   await submit(pg, pg.getByRole("button", { name: "Approve", exact: true }));
   assert.match(await pg.locator("main").innerText(), /Approved/);
-  await shot(pg, "15-working-day", "time-approved");
+  await shot(pg, "16-working-day", "time-approved");
   await go(k.pg, "/field/week");
   noCosts(await k.pg.locator("body").innerText(), "Field week");
-  await shot(k.pg, "15-working-day", "field-week");
+  await shot(k.pg, "16-working-day", "field-week");
   await go(pg, "/deliveries");
   assert.match(await pg.locator("main").innerText(), new RegExp(W.po));
-  await shot(pg, "15-working-day", "deliveries");
+  await shot(pg, "16-working-day", "deliveries");
   await markDone(pg, "working_day");
   const c = await checklist(pg);
-  assert.equal(c.done, 15, `Getting started shows ${c.done} of 15`);
+  assert.equal(c.done, 16, `Getting started shows ${c.done} of 16`);
   assert.equal(await pg.locator("[data-all-done]").count(), 1);
-  await shot(pg, "15-working-day", "all-done");
+  await shot(pg, "16-working-day", "all-done");
 });

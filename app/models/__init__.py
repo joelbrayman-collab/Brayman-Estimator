@@ -121,6 +121,12 @@ from app.models.supplier_portal import (
     SupplierRequestShare,
     SupplierUserMembership,
 )
+from app.models.sms_notification import (  # SMS schedule-change notices (22 Oct 2026)
+    SmsConsentEvent,
+    SmsDeliveryEvent,
+    SmsScheduleNotice,
+    SmsTextMessageDetail,
+)
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
     OrganizationPricingPolicy,
@@ -152,6 +158,14 @@ from app.models.work_structure import (
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
 from app.models.onboarding import OrganizationOnboardingStep
+from app.models.payroll_time import (  # noqa: F401  approved time to QuickBooks Time, banked hours (22 Oct 2026)
+    BankedHoursLedgerEntry,
+    BankedHoursPolicy,
+    QuickBooksTimeEmployeeLink,
+    QuickBooksTimeEvent,
+    QuickBooksTimeJobcodeLink,
+    QuickBooksTimeTransfer,
+)
 from app.models.training import TrainingFeedback, TrainingLessonProgress, TrainingTrainee, TrainingUatResult
 from app.models.project_calculation import ProjectCalculation
 from app.models.appointment import (
@@ -208,6 +222,10 @@ __all__ = [
     "ConcreteRequest",
     "NotificationContact",
     "TextMessage",
+    "SmsConsentEvent",
+    "SmsDeliveryEvent",
+    "SmsScheduleNotice",
+    "SmsTextMessageDetail",
     "SupplierBrandProfile",
     "SupplierDeliveryChange",
     "SupplierNotificationNumber",

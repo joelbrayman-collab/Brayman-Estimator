@@ -3,6 +3,7 @@
 {% block field_page %}today{% endblock %}
 {% block content %}
 {% set nav_current = 'today' %}
+{% include "field/_texts_setup.html" %}
 {% include "field/_field_nav.html" %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.field_topic("today")) }}
@@ -14,6 +15,7 @@
 {% if returned_time_count %}
 <p class="field-time-returned" data-returned-time><a href="{{ url_for('field.my_time') }}">{{ returned_time_count }} time {{ 'entry was' if returned_time_count == 1 else 'entries were' }} returned to you. Fix and send again on My time.</a></p>
 {% endif %}
+{% include "field/_banked_balance.html" %}
 <section class="field-panel">
     <h1>{{ my_work_heading }}</h1>
     {% if not schedule.cards %}
@@ -37,11 +39,13 @@
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=project.id) }}">{{ contractor_copy.FIELD_TIME_BUTTON }}</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.extra_work', project_id=project.id) }}">{{ contractor_copy.FIELD_EXTRA_WORK_BUTTON }}</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">{{ contractor_copy.FIELD_MY_TIME_HEADING }}</a>
+    {% if company_project %}<a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=company_project.id) }}" data-company-time>Shop / Company Work</a>{% endif %}
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">{{ contractor_copy.FIELD_CHANGE_PROJECT }}</a>
     {% else %}
     <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>
     <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose Project</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">{{ contractor_copy.FIELD_MY_TIME_HEADING }}</a>
+    {% if company_project %}<a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=company_project.id) }}" data-company-time>Shop / Company Work</a>{% endif %}
     {% endif %}
 </section>
 

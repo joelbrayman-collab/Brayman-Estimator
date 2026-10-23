@@ -139,6 +139,9 @@ def create_invoice(org, project, *, user, proposal_id=None, change_order_id=None
     pct = None
     if project is None or project.organization_id != org:
         raise AccountingError("Choose one of your projects.")
+    from app.services.time_entry import raise_if_company_time
+
+    raise_if_company_time(project, AccountingError)  # Shop / Company Work is never invoiced
     proposal = change_order = None
     if change_order_id:
         change_order = next((c for c in approved_change_orders(org, project.id) if c.id == int(change_order_id)), None)
@@ -577,10 +580,15 @@ def _time_rows(org):
     from app.models.time_entry import TIME_STATUS_APPROVED, LabourTimeEntry
     from app.services.time_entry import is_company_time_project
 
+    from app.services.quickbooks_time import sent_entry_keys
+
     rows = []
     entries = (LabourTimeEntry.query.filter_by(organization_id=org, status=TIME_STATUS_APPROVED)
                .order_by(LabourTimeEntry.worker_display_name, LabourTimeEntry.work_date, LabourTimeEntry.id).all())
+    in_quickbooks_time = sent_entry_keys(org)  # already sent by the QuickBooks Time connection: never by hand too
     for e in entries:
+        if f"T{e.id}" in in_quickbooks_time:
+            continue
         project = e.project
         company = is_company_time_project(project)
         job = project.name if company else job_reference(project)

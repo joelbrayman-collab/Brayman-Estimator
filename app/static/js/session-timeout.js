@@ -1,5 +1,5 @@
 // Inactivity sign-out warning (Joel, 18 Oct 2026). The server signs an office or supplier
-// account out after 30 minutes without activity (app/services/session_timeout.py). This page
+// account out after 30 minutes without activity, Field crew after 8 hours (app/services/session_timeout.py). This page
 // script warns shortly before, lets the person stay signed in, counts typing and tapping as
 // activity, and keeps what was typed in a form if the time runs out, so it can be put back
 // after signing in again. Drafts live in this tab's sessionStorage only and are restored only

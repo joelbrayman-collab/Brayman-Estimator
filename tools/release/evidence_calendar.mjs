@@ -194,14 +194,21 @@ for (const [label, width, height] of [["desktop", 1280, 900], ["phone", 390, 844
   });
 }
 
-// Laptop screens (Joel, 23 Oct 2026): the tighter header keeps the month grid on screen, with New Appointment
-// and Print at the top right. Page viewports of 1440 x 900 and 1366 x 768 screens less the browser's own bars.
+// Laptop screens (Joel, 23 Oct 2026): a whole five-week month (October 2026: Sep 28 – Nov 1) shows without
+// scrolling, its heading and last week row on screen, with New Appointment and Print at the top right. Page
+// viewports of 1440 x 900 and 1366 x 768 screens less the browser's own bars.
 for (const [width, height] of [[1440, 800], [1366, 670]]) {
-  test(`desktop ${width}x${height}: the month grid's bottom edge is on screen; New Appointment and Print top right`, async () => {
+  test(`desktop ${width}x${height}: the whole month shows, heading to last week row; New Appointment and Print top right`, async () => {
     const { ctx, pg, errors } = await signedIn(width, height);
-    await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);
-    const grid = await pg.locator("[data-month-scroll]").boundingBox();
-    assert.ok(grid && grid.y + grid.height <= height, `month grid bottom ${grid && grid.y + grid.height} > ${height}`);
+    await pg.goto(`${base}/schedule?year=2026&month=10&view=month`);
+    const box = await pg.locator("[data-month-scroll]").boundingBox();
+    const heading = await pg.locator('[data-month-band="2026-10"]').boundingBox();
+    const last = await pg.locator('.home-week[data-week-start="2026-10-26"]').boundingBox();
+    assert.ok(heading.y >= box.y - 1, JSON.stringify({ box, heading }));
+    assert.ok(last.y + last.height <= box.y + box.height + 1, JSON.stringify({ box, last }));
+    assert.ok(last.y + last.height <= height, `last week row ends at ${last.y + last.height} > ${height}`);
+    const dayText = await pg.locator(".home-day-num").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    assert.ok(dayText >= 14, `day numbers ${dayText}px`);
     const appt = await pg.locator(".cal-new-appt").boundingBox();
     const print = await pg.locator("[data-print-control] > summary").boundingBox();
     assert.ok(print.y >= appt.y + appt.height && print.y - (appt.y + appt.height) < 16, JSON.stringify({ appt, print }));
@@ -213,6 +220,68 @@ for (const [width, height] of [[1440, 800], [1366, 670]]) {
     await ctx.close();
   });
 }
+
+test("desktop: a busy day shows two entries and +N more, which opens the day with everything", async () => {
+  const { ctx, pg, errors } = await signedIn(1440, 800);
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);
+  const more = pg.locator(`[data-more-day="${facts.monday}"]`);
+  assert.equal((await more.innerText()).trim(), "+1 more");  // "+1" on a phone
+  await Promise.all([pg.waitForURL(/view=day/), more.click()]);
+  const text = await workspace(pg);
+  for (const t of ["Slab pour", "Site visit — new client", "Meet supplier — BMR"]) assert.ok(text.includes(t), t);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test("desktop: Mon–Fri hides the weekend in Month and Week, marks weekend work, and is remembered", async () => {
+  const { ctx, pg, errors } = await signedIn(1440, 800);
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);
+  const sw = pg.locator("[data-days-switch]");
+  assert.ok(await sw.isVisible());
+  assert.equal(await sw.locator('[data-days-choice="7"]').getAttribute("aria-pressed"), "true");  // Full week first
+  const satCell = pg.locator(`.home-week[data-week-start="${facts.monday}"] .home-day.is-weekend`).first();
+  const monCell = pg.locator(`.home-week[data-week-start="${facts.monday}"] .home-day`).first();
+  const fullWidth = (await monCell.boundingBox()).width;
+  assert.ok(await satCell.isVisible());
+  const marker = pg.locator(`[data-weekend-marker="${facts.monday}"]`);
+  assert.equal(await marker.isVisible(), false);
+  await sw.locator('[data-days-choice="5"]').click();
+  assert.equal(await satCell.isVisible(), false);
+  assert.ok((await monCell.boundingBox()).width > fullWidth * 1.3, "weekday columns widen");
+  assert.ok(await marker.isVisible());
+  assert.match(await marker.innerText(), /Sat: 1 item/);
+  await noSideways(pg, "Mon–Fri month");
+  // Remembered: the week view opens in Mon–Fri, without Saturday and Sunday, with the weekend named.
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=week`);
+  assert.equal(await pg.locator(".cal-workspace").getAttribute("data-days"), "5");
+  assert.equal(await pg.locator(".cal-hours-day:visible").count(), 5);
+  assert.match(await pg.locator("[data-weekend-note]").innerText(), /Sat: 1 item/);
+  await Promise.all([pg.waitForURL(/view=day/), pg.locator("[data-weekend-note] a").first().click()]);
+  assert.ok((await workspace(pg)).includes("Saturday pour check"));
+  // Back to Full week.
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=week`);
+  await pg.locator('[data-days-choice="7"]').click();
+  assert.equal(await pg.locator(".cal-hours-day:visible").count(), 7);
+  assert.equal(await pg.locator("[data-weekend-note]").isVisible(), false);
+  await pg.reload();
+  assert.equal(await pg.locator(".cal-workspace").getAttribute("data-days"), "7");
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
+test("phone: Mon–Fri on the week list hides the weekend and names what it holds", async () => {
+  const { ctx, pg, errors } = await signedIn(390, 844);
+  await pg.goto(`${base}/schedule?${at(facts.monday)}`);
+  await pg.locator('[data-days-choice="5"]').click();
+  assert.equal(await pg.locator(".cal-week-view .cal-week-day:visible").count(), 5);
+  assert.match(await pg.locator("[data-weekend-note]").innerText(), /Sat: 1 item/);
+  await noSideways(pg, "phone Mon–Fri");
+  await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);
+  assert.ok(await pg.locator(`[data-weekend-marker="${facts.monday}"]`).isVisible());
+  await noSideways(pg, "phone Mon–Fri month");
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
 
 test("desktop: overlapping appointments sit side by side on the company week", async () => {
   const { ctx, pg } = await signedIn(1280, 900);

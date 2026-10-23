@@ -69,9 +69,12 @@ def seed() -> dict:
          location="Office boardroom")
     appt(office, title="Lunch with accountant", appointment_date=day(2).isoformat(), start_time="12:00",
          end_time="13:00", visibility="PERSONAL")
+    # A Saturday (Joel, 23 Oct 2026: in Mon–Fri view weekend work must never be missed).
+    appt(office, title="Saturday pour check", appointment_date=day(5).isoformat(), start_time="08:00", end_time="09:00",
+         location="Synthetic Calendar Deck", assigned_user_id=str(office.id))
     appt(kevin, title="Kevin dentist", appointment_date=day(1).isoformat(), start_time="15:00", end_time="16:00",
          location="Synthetic Clinic", visibility="PERSONAL")
-    return {"monday": monday.isoformat(), "empty_day": day(13).isoformat(), "kevin": list(KEVIN)}
+    return {"monday": monday.isoformat(), "saturday": day(5).isoformat(), "empty_day": day(13).isoformat(), "kevin": list(KEVIN)}
 
 
 def main():

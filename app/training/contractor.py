@@ -838,9 +838,10 @@ M05 = Module(
             steps=(
                 Step(title="Open the calendar", app=O, where="Calendar (menu), or Home → Company Calendar",
                      do="Press Calendar",
-                     expect="My Calendar | Company Calendar in the top bar; the month; the buttons Today, Month, Week, Day, "
-                            "Text notices, Set dates, ? and + New Appointment; under them SELECTED DAY, All projects, This "
-                            "period, Outlook · Google · Apple Calendar and Print.",
+                     expect="My Calendar | Company Calendar in the top bar; the whole month; the buttons Today, Month, Week, "
+                            "Day, Mon–Fri | Full week, Set dates, ? and + New Appointment; under them the selected day, All "
+                            "projects, This period, Text notices, Outlook · Google · Apple Calendar and Print. A busy day "
+                            "shows two entries and +N more; press it to see the whole day.",
                      if_wrong="Use ‹ and › to move months, or Go to a date.",
                      shot="c05-calendar.png", endpoint="schedule.company"),
                 Step(title="My or Company", app=O, where="Calendar → My Calendar | Company Calendar (top bar)",
@@ -851,7 +852,8 @@ M05 = Module(
                 Step(title="Day and Week", app=O, where="Calendar → Day / Week",
                      do="Press Week, then Day",
                      expect="Week shows seven days with + to add; Day shows the hours.",
-                     if_wrong="Today brings you back to today.", shot="c05-week.png", endpoint="schedule.company"),
+                     if_wrong="Today brings you back to today. Mon–Fri hides Saturday and Sunday (a Sat: or Sun: tag shows "
+                              "anything booked then); Full week brings them back.", shot="c05-week.png", endpoint="schedule.company"),
                 Step(title="Print", app=O, where="Calendar → Print (top right, under + New Appointment)",
                      do="Press Print, check From and To (they start on the dates on screen), press Print, then Print "
                         "on the printout",

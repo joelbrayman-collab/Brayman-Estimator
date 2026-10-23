@@ -54,6 +54,8 @@ from app.services.shared_api import list_current_operating_projects
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 
 MONTHS_BACK, MONTHS_AHEAD = 3, 12  # scrolling month view (Joel, 20 Oct 2026: at least a year out)
+# Shorter month rows (Joel, 23 Oct 2026): a busy day shows two entries and "+N more", which opens the day.
+MONTH_VISIBLE_ENTRIES = 2
 
 # G7 (Joel, 21 Oct 2026): only office users with scheduling authority (office members, so the owner and
 # System Administrators) create, move or retire scheduled work, assignments, dependencies and business
@@ -204,6 +206,7 @@ def company():
         mine_user_id=int(current_user.id) if mine else None,
         months_before=months_before,
         months_after=months_after,
+        visible_lanes=MONTH_VISIBLE_ENTRIES,
     )
     # Month / Week / Day (Joel, 18 Oct 2026). No choice = month on a computer, week list on a phone.
     calendar_view = request.args.get("view") if request.args.get("view") in ("month", "week", "day") else ""
@@ -349,17 +352,18 @@ def _month_edges(calendar):
 
 
 def _period_title(calendar, calendar_view):
-    """Monday, October 19, 2026 · October 19 – 25, 2026 · October 2026."""
+    """Monday, October 19, 2026 · Oct 19 – 25, 2026 · October 2026."""
     selected = calendar["selected"]
     if calendar_view == "day":
         return f"{selected.strftime('%A, %B')} {selected.day}, {selected.year}"
     if calendar_view == "week":
+        # Short month names (23 Oct 2026) so the week title shares the top row with Mon–Fri / Full week.
         first, last = calendar["week_dates"][0], calendar["week_dates"][-1]
         if first.month == last.month:
-            return f"{first.strftime('%B')} {first.day} – {last.day}, {last.year}"
+            return f"{first.strftime('%b')} {first.day} – {last.day}, {last.year}"
         if first.year == last.year:
-            return f"{first.strftime('%B')} {first.day} – {last.strftime('%B')} {last.day}, {last.year}"
-        return f"{first.strftime('%B')} {first.day}, {first.year} – {last.strftime('%B')} {last.day}, {last.year}"
+            return f"{first.strftime('%b')} {first.day} – {last.strftime('%b')} {last.day}, {last.year}"
+        return f"{first.strftime('%b')} {first.day}, {first.year} – {last.strftime('%b')} {last.day}, {last.year}"
     return calendar["month_label"]
 
 

@@ -102,7 +102,7 @@ def _lane_pack(segments: list[dict]) -> list[dict]:
     return packed
 
 
-def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: date):
+def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: date, visible_lanes: int = VISIBLE_LANES):
     weeks = []
     cursor = grid_start
     week_number = 1
@@ -130,19 +130,29 @@ def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: da
         week_bands = [
             band
             for band in bands
-            if band["week_start"] == cursor and band["lane"] < VISIBLE_LANES
+            if band["week_start"] == cursor and band["lane"] < visible_lanes
         ]
         overflow_by_day = {}
+        count_by_day = {}
         for band in bands:
-            if band["week_start"] != cursor or band["lane"] < VISIBLE_LANES:
+            if band["week_start"] != cursor:
                 continue
             current = band["start"]
             while current <= band["end"]:
-                overflow_by_day[current] = overflow_by_day.get(current, 0) + 1
+                count_by_day[current] = count_by_day.get(current, 0) + 1
+                if band["lane"] >= visible_lanes:
+                    overflow_by_day[current] = overflow_by_day.get(current, 0) + 1
                 current += timedelta(days=1)
         for day in days:
             hidden = overflow_by_day.get(day["date"], 0)
             day["overflow"] = hidden
+            day["count"] = count_by_day.get(day["date"], 0)
+        # Mon–Fri view (Joel, 23 Oct 2026): what a hidden Saturday or Sunday holds, so it is never missed.
+        weekend = [
+            {"date": d["date"], "label": d["date"].strftime("%a"), "count": d["count"]}
+            for d in days
+            if d["weekend"] and d["count"]
+        ]
         first_of_month = next((d["date"] for d in days if d["date"].day == 1), None)
         thursday = cursor + timedelta(days=3)  # the week belongs to the month of its Thursday
         weeks.append(
@@ -157,6 +167,7 @@ def _week_rows(grid_start: date, grid_end: date, bands: list[dict], selected: da
                 "end": week_end,
                 "days": days,
                 "bands": week_bands,
+                "weekend": weekend,
             }
         )
         cursor += timedelta(days=7)
@@ -423,6 +434,7 @@ def assemble_home_planning(
     mine_user_id: Optional[int] = None,
     months_before: int = 0,
     months_after: int = 0,
+    visible_lanes: int = VISIBLE_LANES,
 ) -> dict:
     """Month planning data. ``project_id`` (Company Calendar filter) limits the bars, the selected
     day and the week/day lists to one project; Home never passes it. ``appointments`` (Company
@@ -529,7 +541,7 @@ def assemble_home_planning(
     for week_start, rows in by_week.items():
         packed.extend(_lane_pack(rows))
 
-    weeks = _week_rows(grid_start, grid_end, packed, selected)
+    weeks = _week_rows(grid_start, grid_end, packed, selected, visible_lanes)
     for week in weeks:
         for day in week["days"]:
             day["today"] = day["date"] == today

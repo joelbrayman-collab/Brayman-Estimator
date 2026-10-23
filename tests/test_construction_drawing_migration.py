@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
-HEAD = "t6a2c8e4f1b3"  # decision 4 binding follows this revision
+HEAD = "w7d3b9c1e5a8"  # decision 4 binding follows this revision
 
 
 def _config(db_path):

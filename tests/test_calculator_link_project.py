@@ -110,3 +110,17 @@ def test_link_requires_sign_in():
         assert response.status_code in (302, 401, 403)
         assert ProjectCalculation.query.count() == 0
         db.drop_all()
+
+
+def test_project_calculations_migration_follows_the_training_centre():
+    from pathlib import Path
+
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+
+    root = Path(__file__).resolve().parents[1]
+    cfg = Config(str(root / "migrations" / "alembic.ini")) if (root / "migrations" / "alembic.ini").exists() else Config()
+    cfg.set_main_option("script_location", str(root / "migrations"))
+    script = ScriptDirectory.from_config(cfg)
+    assert script.get_heads() == ["w7d3b9c1e5a8"]
+    assert script.get_revision("w7d3b9c1e5a8").down_revision == "t6a2c8e4f1b3"

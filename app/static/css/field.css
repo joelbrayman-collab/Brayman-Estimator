@@ -820,3 +820,23 @@ input:focus-visible {
     .field-header .field-logout-btn { padding: 8px 9px; }
     .field-brand img { max-width: 92px; height: auto; }
 }
+
+/* View project plan (23 Oct 2026): the plan one tap away on every job screen */
+.field-plan-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+    margin: 0 0 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #0b1b2e;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    border: 2px solid #c99220;
+}
+.field-plan-btn img { flex: none; border-radius: 8px; }
+.field-plan-link { border-color: #c99220; }

@@ -88,7 +88,7 @@
             <div><p class="eyebrow">Schedule Condition</p><p><strong>{{ ctx.schedule_condition }}</strong></p></div>
             <div><p class="eyebrow">Site Condition</p><p><strong>{{ ctx.site_condition }}</strong></p></div>
             <div><p class="eyebrow">Estimate Stage</p><p><strong>{{ ctx.estimate_stage }}</strong></p></div>
-            <div><p class="eyebrow">Delivery Model</p><p><strong>{{ ctx.delivery_model }}</strong></p></div>
+            <div><p class="eyebrow">Delivery Model</p><p><strong>{{ ctx.delivery_model|delivery_model_label }}</strong></p></div>
             <div><p class="eyebrow">Captured By</p><p>{{ ctx.created_by or "System" }} ({{ ctx.created_at.strftime("%Y-%m-%d") }})</p></div>
         </div>
         {% endif %}

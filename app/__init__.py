@@ -232,6 +232,15 @@ def _register_office_auth(app: Flask) -> None:
 
     register_local_time(app)
 
+    from app.services.commercial_context import delivery_model_label
+
+    app.add_template_filter(delivery_model_label, "delivery_model_label")
+
+    from app.services.project_plan_link import field_plan_link, office_plan_link
+
+    app.add_template_global(office_plan_link, "office_plan_link")
+    app.add_template_global(field_plan_link, "field_plan_link")
+
     @app.context_processor
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}

@@ -63,6 +63,17 @@ DELIVERY_MODELS = (
     "Primarily Subcontracted",
 )
 
+# Labels shown to people. The stored values above do not change (23 Oct 2026: "Self-Perform" reads "Internal").
+DELIVERY_MODEL_LABELS = {
+    "Self-Perform": "Internal",
+}
+
+
+def delivery_model_label(value):
+    """The label for a stored delivery model value."""
+    return DELIVERY_MODEL_LABELS.get(value, value)
+
+
 LEGACY_UNKNOWN_VALUE = "Legacy / Unknown"
 
 # Organization-configurable policy registry for reason-required selections.

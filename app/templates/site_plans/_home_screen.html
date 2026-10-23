@@ -1,0 +1,12 @@
+{# Site Plans Home Screen app (23 Oct 2026). Its own manifest, scope, icon and service worker (scope /site-plans/
+   only). CalibraytAI Field keeps partials/home_screen.html (manifest.webmanifest, /field-sw.js, scope "/") and
+   Useful Calculators keeps its own; neither is changed. #}
+<link rel="manifest" href="{{ url_for('static', filename='site-plans/manifest.webmanifest') }}">
+<meta name="theme-color" content="#1a2b3f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Site Plans">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="application-name" content="Site Plans">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='site-plans/site-plans-icon-180.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='site-plans/site-plans-icon-32.png') }}">

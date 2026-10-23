@@ -58,6 +58,11 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # inside the Home Screen app's scope and returns only to a /useful-calculators/ path.
     "useful_calculators.index",
     "useful_calculators.sign_in",
+    # Added 23 Oct 2026 (Site Plans): that Home Screen app's sign-in (the office check, kept inside the app's scope,
+    # returning only to a /site-plans/ path) and its service worker script (static code, like
+    # field_service_worker). Every plans page and file needs a sign-in (tests/test_site_plans.py).
+    "site_plans.sign_in",
+    "site_plans.service_worker",
     # Added 22 Oct 2026 (SMS schedule notices): Twilio's delivery reports and replies (STOP). No sign-in and
     # no CSRF token; every request must carry a valid X-Twilio-Signature for TWILIO_AUTH_TOKEN, else 403
     # (tests/test_sms_schedule_notices.py). They only update a text's status or record an opt-out.
@@ -112,6 +117,8 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "calendar_feed.feed",
     "useful_calculators.index",  # Useful Calculators dashboard and sign-in (22 Oct 2026), see above
     "useful_calculators.sign_in",
+    "site_plans.sign_in",  # Site Plans sign-in and service worker script (23 Oct 2026), see above
+    "site_plans.service_worker",
     "sms_notifications.twilio_status",  # Twilio delivery reports, signature-checked (22 Oct 2026), see above
     "sms_notifications.twilio_inbound",  # Twilio replies (STOP / START), signature-checked (22 Oct 2026)
 }
@@ -245,6 +252,10 @@ def test_every_non_public_route_refuses_a_signed_out_request(app):
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/useful-calculators/sign-in" or nxt != [path]:
                 problem = f"expected 302 /useful-calculators/sign-in, got {status} {response.headers.get('Location')}"
+        elif endpoint.startswith("site_plans."):  # the same wall, to Site Plans' own sign-in (23 Oct 2026)
+            target, nxt = _next_of(response.headers.get("Location", ""))
+            if status != 302 or target != "/site-plans/sign-in" or nxt != [path]:
+                problem = f"expected 302 /site-plans/sign-in, got {status} {response.headers.get('Location')}"
         else:
             target, nxt = _next_of(response.headers.get("Location", ""))
             if status != 302 or target != "/login" or nxt != [path]:
@@ -330,6 +341,14 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "useful_calculators.drywall",
     "useful_calculators.flooring",
     "useful_calculators.sign_out",
+    # Site Plans (23 Oct 2026): the plans and drawings of the jobs the crew member is booked on (field.drawings'
+    # rule), read only: names, sheet numbers and the PDFs. No estimate, cost, price, wage or customer contact.
+    "site_plans.index",
+    "site_plans.project",
+    "site_plans.viewer",
+    "site_plans.file",
+    "site_plans.page",
+    "site_plans.sign_out",
     "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
     "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
     "auth.change_password",
@@ -418,7 +437,9 @@ def test_field_only_user_still_reaches_field_endpoints(app):
         response = client.open(path, method=method, follow_redirects=False)
         if response.status_code == 403 or response.status_code >= 500:
             failures.append(f"{method} {path} ({endpoint}): {response.status_code}")
-        if response.status_code == 302 and not urlparse(response.headers["Location"]).path.startswith("/field"):
+        # Site Plans (23 Oct 2026) sends a job the person may not see back to its own project list.
+        if response.status_code == 302 and not urlparse(response.headers["Location"]).path.startswith(
+                ("/field", "/site-plans/")):
             failures.append(f"{method} {path} ({endpoint}): left Field for {response.headers['Location']}")
     assert failures == []
 

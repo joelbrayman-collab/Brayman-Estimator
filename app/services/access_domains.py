@@ -61,6 +61,15 @@ FIELD_ONLY_ALLOWED_ENDPOINTS = frozenset(
         "useful_calculators.drywall",
         "useful_calculators.flooring",
         "useful_calculators.sign_out",
+        # Site Plans (Joel, 23 Oct 2026): the plans and drawings of the jobs the crew member is booked on, read
+        # only, with the same project rule as field.drawings (field_visible_project_ids below); file names, sheet
+        # numbers and the PDFs. No estimate, cost, price, wage or customer contact. Sign-in and sw.js are public.
+        "site_plans.index",
+        "site_plans.project",
+        "site_plans.viewer",
+        "site_plans.file",
+        "site_plans.page",
+        "site_plans.sign_out",
     }
 )
 

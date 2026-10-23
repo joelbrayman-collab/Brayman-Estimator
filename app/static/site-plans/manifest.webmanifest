@@ -1,0 +1,38 @@
+{
+  "name": "Site Plans",
+  "short_name": "Site Plans",
+  "description": "Every CalibraytAI project's plans and drawings on your phone, also without signal.",
+  "id": "/site-plans/",
+  "start_url": "/site-plans/?source=home-screen",
+  "scope": "/site-plans/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a2b3f",
+  "theme_color": "#1a2b3f",
+  "icons": [
+    {
+      "src": "/static/site-plans/site-plans-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/site-plans/site-plans-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/site-plans/site-plans-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/site-plans/site-plans-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

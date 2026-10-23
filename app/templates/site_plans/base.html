@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}Site Plans{% endblock %}</title>
+    {% include "site_plans/_home_screen.html" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='site-plans/site-plans.css', v='1') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="sp-body" data-site-plans data-sp-copy="live" data-sp-screen="{% block sp_page %}{% endblock %}">
+    <header class="sp-bar" role="banner">
+        {% block sp_back %}{% endblock %}
+        <a class="sp-brand" href="{{ url_for('site_plans.index') }}" aria-label="Site Plans: all projects">
+            <img src="{{ url_for('static', filename='site-plans/site-plans-icon-180.png') }}" alt="" width="36" height="36">
+            <span>Site Plans</span>
+        </a>
+        <div class="sp-account">
+            {% if current_user.is_authenticated %}
+            <form method="post" action="{{ url_for('site_plans.sign_out') }}" data-sp-sign-out-form>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="sp-link-button" data-sp-sign-out>Sign out</button>
+            </form>
+            {% endif %}
+        </div>
+    </header>
+    <p class="sp-offline-note" data-sp-offline-note hidden role="status">No signal: this is the copy saved on this phone.</p>
+    <main class="sp-main" id="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) | rejectattr("1", "in", sp_hidden_messages or ()) | list %}
+            {% if messages %}
+            <div class="sp-flash">
+                {% for category, message in messages %}
+                <p class="sp-alert sp-alert-{{ category }}" role="status">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        {% block sp_content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', filename='site-plans/site-plans.js', v='1') }}"></script>
+    {% include "partials/session_timeout.html" %}
+</body>
+</html>

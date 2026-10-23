@@ -19,7 +19,7 @@
         <p class="sem-kicker">Supplier program · live discussion</p>
         <h1 class="sem-title">Supplier economic model</h1>
         <p class="sem-lede">Enter the supplier’s own operating assumptions. Results update as the numbers change. Estimated assumptions stay marked as estimates. This page does not read contractor projects, estimates, margins, or labour rates, and it does not store a supplier result.</p>
-        <p class="sem-note">Takeoff labour value, capacity value, and commercial material value stay separate. The same released hours are not counted twice.</p>
+        <p class="sem-note">Takeoff labour value, capacity value, and commercial material value stay separate. The same released hours are not counted twice. The won and unsuccessful split divides the same takeoff labour value; it is not added again.</p>
 
         <div class="sem-layout">
             <form id="sem-form" class="sem-panel" novalidate>
@@ -37,7 +37,9 @@
                     ("quote_to_order_percent", "Percent of quotes that become orders. 0 to 100."),
                     ("material_gross_margin_percent", "Supplier gross margin percent. Sales revenue is not profit."),
                     ("base_platform_cost", "Annual amount the supplier enters. This page does not set the price."),
-                    ("active_contractor_cost", "Annual amount the supplier enters. It is not multiplied by the contractor count.")
+                    ("active_contractor_cost", "Annual amount the supplier enters. It is not multiplied by the contractor count. Together with the base cost, this is the supplier’s sponsorship and program cost."),
+                    ("unpriced_requested_value", "Value of items contractors asked for that the supplier did not price, in a year. Leave blank if unknown."),
+                    ("missed_capture_percent", "Percent of that value the supplier could reasonably capture by stocking, special-ordering or matching. 0 to 100.")
                 ] %}
                 {% for key, help in fields %}
                 <div class="sem-field">
@@ -80,10 +82,14 @@
             additional_quote_capacity: "Additional quote capacity",
             capacity_value: "Capacity value",
             commercial_value: "Commercial value",
-            program_cost: "Program cost",
+            takeoff_labour_value_won_quotes: "Takeoff labour value on won quotes",
+            takeoff_labour_value_unsuccessful_quotes: "Takeoff labour value on unsuccessful quotes",
+            missed_opportunity_value: "Potential missed-material opportunity (gross profit)",
+            program_cost: "Sponsorship and program cost",
             net_supplier_value: "Net supplier value",
             roi_multiple: "ROI multiple",
-            additional_material_sales: "Additional material sales required"
+            additional_material_sales: "Additional material sales required",
+            net_supplier_value_with_missed_opportunity: "Net value including the missed-material opportunity"
         };
         var money = {
             takeoff_labour_value: true,
@@ -91,7 +97,11 @@
             commercial_value: true,
             program_cost: true,
             net_supplier_value: true,
-            additional_material_sales: true
+            additional_material_sales: true,
+            takeoff_labour_value_won_quotes: true,
+            takeoff_labour_value_unsuccessful_quotes: true,
+            missed_opportunity_value: true,
+            net_supplier_value_with_missed_opportunity: true
         };
 
         function badge(classification) {

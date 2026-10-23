@@ -241,3 +241,54 @@ def test_page_requires_login_and_does_not_show_contractor_records():
         payload = calculated.get_json()
         assert payload["results"]["takeoff_labour_value"]["classification"] == "estimated"
         assert payload["model_id"] == "supplier-program-economic-model"
+
+
+# Version 2: storybook economics addendum (22 Oct 2026).
+
+def test_version_two_splits_takeoff_labour_by_quote_outcome():
+    result = calculate(_base())
+    assert result["model_version"] == "2"
+    won = result["results"]["takeoff_labour_value_won_quotes"]
+    lost = result["results"]["takeoff_labour_value_unsuccessful_quotes"]
+    # 12000 takeoff labour value; 25% of quotes become orders.
+    assert won["value"] == "3000.00"
+    assert lost["value"] == "9000.00"
+    # The split divides the same value; it is not added to operational or net value again.
+    assert result["results"]["operational_value"]["value"] == "24000.00"
+    assert result["results"]["net_supplier_value"]["value"] == "76000.00"
+
+
+def test_split_needs_conversion():
+    result = calculate(_base(quote_to_order_percent=_field("")))
+    assert result["results"]["takeoff_labour_value_won_quotes"]["status"] == "not_established"
+    assert result["results"]["takeoff_labour_value_unsuccessful_quotes"]["status"] == "not_established"
+
+
+def test_missed_opportunity_is_gross_profit_and_kept_separate():
+    result = calculate(_base(unpriced_requested_value=_field("50000"), missed_capture_percent=_field("30", "estimated")))
+    missed = result["results"]["missed_opportunity_value"]
+    # 50000 × 30% × 20% margin
+    assert missed["value"] == "3000.00"
+    assert missed["classification"] == "estimated"
+    assert missed["actual_sales"] is False
+    assert result["results"]["net_supplier_value"]["value"] == "76000.00"
+    assert result["results"]["net_supplier_value_with_missed_opportunity"]["value"] == "79000.00"
+
+
+def test_missing_missed_inputs_invent_nothing():
+    result = calculate(_base())
+    assert result["results"]["missed_opportunity_value"]["status"] == "not_established"
+    assert result["results"]["net_supplier_value_with_missed_opportunity"]["status"] == "not_established"
+
+
+def test_capture_percent_is_bounded():
+    result = calculate(_base(unpriced_requested_value=_field("50000"), missed_capture_percent=_field("120")))
+    assert result["inputs"]["missed_capture_percent"]["error"] == "Enter a percent from 0 to 100."
+    assert result["results"]["missed_opportunity_value"]["status"] == "not_established"
+
+
+def test_page_offers_the_new_inputs_and_outputs():
+    text = TEMPLATE.read_text()
+    for needle in ("unpriced_requested_value", "missed_capture_percent", "takeoff_labour_value_unsuccessful_quotes",
+                   "missed_opportunity_value", "Sponsorship and program cost"):
+        assert needle in text

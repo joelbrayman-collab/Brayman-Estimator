@@ -3,6 +3,12 @@
 Typed assumptions only. No contractor records. No stored supplier prices.
 The formulas follow the operational ROI extension of the supplier-channel
 specification. This module does not create a second commercial model.
+
+Version 2 (22 Oct 2026, storybook economics addendum) adds two outputs to the
+same model: the takeoff labour value split between won and unsuccessful
+quotes, and the potential missed-material opportunity from requested items the
+supplier did not price. Both are scenarios from typed assumptions, never
+measured results.
 """
 
 from __future__ import annotations
@@ -10,7 +16,7 @@ from __future__ import annotations
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 MODEL_ID = "supplier-program-economic-model"
-MODEL_VERSION = "1"
+MODEL_VERSION = "2"
 
 CLASS_KNOWN = "known"
 CLASS_ESTIMATED = "estimated"
@@ -37,6 +43,8 @@ FIELDS = (
     "material_gross_margin_percent",
     "base_platform_cost",
     "active_contractor_cost",
+    "unpriced_requested_value",
+    "missed_capture_percent",
 )
 
 PERCENT_FIELDS = frozenset(
@@ -44,6 +52,7 @@ PERCENT_FIELDS = frozenset(
         "takeoff_share_percent",
         "quote_to_order_percent",
         "material_gross_margin_percent",
+        "missed_capture_percent",
     }
 )
 
@@ -61,6 +70,8 @@ FIELD_LABELS = {
     "material_gross_margin_percent": "Material gross margin",
     "base_platform_cost": "Base supplier platform cost",
     "active_contractor_cost": "Active contractor cost",
+    "unpriced_requested_value": "Requested material value not priced, per year",
+    "missed_capture_percent": "Share of unpriced requests the supplier could capture",
 }
 
 
@@ -186,6 +197,8 @@ def _results(parsed):
     margin = _dec(parsed, "material_gross_margin_percent")
     base_cost = _dec(parsed, "base_platform_cost")
     active_cost = _dec(parsed, "active_contractor_cost")
+    unpriced = _dec(parsed, "unpriced_requested_value")
+    capture = _dec(parsed, "missed_capture_percent")
 
     annual = None
     if requests is not None:
@@ -448,6 +461,38 @@ def _results(parsed):
     else:
         additional_sales = _missing()
 
+    # Version 2: the same takeoff labour value, split by quote outcome. Every takeoff
+    # costs the same labour whether the quote is won or not, so the split uses conversion.
+    won_keys = labour_keys + ("quote_to_order_percent",)
+    if labour_value is not None and conversion is not None:
+        won_share = conversion / Decimal("100")
+        labour_won = _established(labour_value * won_share, _class_of(parsed, won_keys), MONEY)
+        labour_unsuccessful = _established(labour_value * (Decimal("1") - won_share), _class_of(parsed, won_keys), MONEY)
+    else:
+        labour_won = _missing()
+        labour_unsuccessful = _missing()
+
+    missed_keys = ("unpriced_requested_value", "missed_capture_percent", "material_gross_margin_percent")
+    if unpriced is not None and capture is not None and margin is not None:
+        missed_amount = unpriced * (capture / Decimal("100")) * (margin / Decimal("100"))
+        missed = _established(missed_amount, _class_of(parsed, missed_keys), MONEY)
+        missed["formula"] = (
+            "requested material value not priced × share captured × material gross margin"
+        )
+        missed["actual_sales"] = False
+    else:
+        missed_amount = None
+        missed = _missing()
+
+    if net["status"] == STATUS_ESTABLISHED and missed_amount is not None:
+        net_with_missed = _established(
+            Decimal(net["value"]) + missed_amount,
+            _broader_class(net, missed),
+            MONEY,
+        )
+    else:
+        net_with_missed = _missing()
+
     return {
         "annual_takeoff_volume": annual,
         "calibraytai_originated_takeoff_volume": originated,
@@ -464,6 +509,10 @@ def _results(parsed):
         "roi_multiple": roi,
         "break_even": break_even,
         "additional_material_sales": additional_sales,
+        "takeoff_labour_value_won_quotes": labour_won,
+        "takeoff_labour_value_unsuccessful_quotes": labour_unsuccessful,
+        "missed_opportunity_value": missed,
+        "net_supplier_value_with_missed_opportunity": net_with_missed,
         "manual_labour_cost": _money_or_missing(manual_cost, labour),
         "validation_labour_cost": _money_or_missing(validation_cost, labour),
     }

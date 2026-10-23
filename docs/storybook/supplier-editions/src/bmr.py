@@ -2,7 +2,7 @@
 Content read (not modified) from sbuild/build_store.py; assets from sbuild/assets."""
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from deck import sponsor_concept, calc_pages, Deck, E, P, S, img, folio, points, shots, ci, co  # noqa: E402
+from deck import hook_page, sponsor_concept, calc_pages, Deck, E, P, S, img, folio, points, shots, ci, co  # noqa: E402
 
 A = f"{S}/sbuild/assets"
 BR = f"{S}/deck/brand"
@@ -35,12 +35,13 @@ d.add("cover", "Cover", f'''<div class="l"><div class="kicker" style="color:var(
 <div style="margin-top:calc(var(--u)*2.2);display:flex;align-items:center;gap:calc(var(--u)*1.2)"><span style="background:#fff;border-radius:4px;padding:calc(var(--u)*.5) calc(var(--u)*.8);line-height:0"><img src="{BMRLOGO}" alt="BMR" style="height:calc(var(--u)*3)"></span><div class="ser" style="margin-top:0">Prepared for BMR Winchester<br>October 2026</div></div>
 <button class="start" data-go="intro">Start reading ›</button></div>
 <div class="r"><img src="{img(f"{A}/art-supplier-hero.png", 1600, 82)}" alt="CalibraytAI connecting plans to materials"></div>''', "cover", menu="Cover")
-d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="" style="object-fit:contain;background:#000">
+d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="">
 <div class="ov"><div class="kicker" style="color:var(--gold2)">Supplier Connection</div>
 <h2>Let your Pro Account contractors <span>do the work for you.</span></h2>
 <p>CalibraytAI connects your Pro Accounts to your Pro Desk by streamlining the entire estimate, order and delivery process.</p>
 <div class="lifeline">ESTIMATE → ORDER → DELIVER</div>
-<p style="margin-top:calc(var(--u)*1.4);font-size:calc(var(--u)*1);line-height:1.4;color:#aab4c2;max-width:60em">The BMR, BMR PRO and Elevation 360 names and logos shown in this book are used for illustrative purposes only, to facilitate discussion. They belong to BMR Group. Their use does not mean BMR Group or BMR Winchester has endorsed, approved or agreed to the proposed partnership or sponsorship.</p></div>''', "art dark")
+<p style="margin-top:calc(var(--u)*1.4);font-size:calc(var(--u)*1);line-height:1.4;color:#aab4c2;max-width:60em">The BMR, BMR PRO and Elevation 360 names and logos shown in this book are used for illustrative purposes only, to facilitate discussion. They belong to BMR Group. Their use does not mean BMR Group or BMR Winchester has endorsed, approved or agreed to the proposed partnership or sponsorship.</p></div>''', "art dark hero")
+hook_page(d, nxt, "BMR Winchester", "your Pro Account contractors", "your Pro Desk")
 d.add("intro", "Introduction", f'''<div class="pad"><div class="kicker">Introduction</div>
 <h2>Getting your price into more estimates.</h2>
 <div class="split"><div style="font-size:calc(var(--u)*1.62)">{P(["Brayman Construction is a residential contractor that buys its building materials, and its concrete, from BMR Winchester; BMR supplies the concrete through its own purchasing relationship with Tomlinson. CalibraytAI is the platform Brayman built to run its own jobs. The Supplier Hub is the part of CalibraytAI that connects a contractor’s jobs to the stores that supply them.",

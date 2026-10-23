@@ -1,0 +1,59 @@
+screen-ch01
+  'Brayman Construction Home' -> 'Home'  at (551, 45, 1035, 93)  size 36  ink (28, 31, 36) bg (247, 246, 242)
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+screen-ch03
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (31, 1696, 348, 1726)  size 23  ink (139, 145, 156) bg (23, 25, 29)
+  'The Brayman contract is generated from' -> 'The contract is generated from'  at (2303, 701, 2827, 742)  size 29  ink (107, 111, 118) bg (246, 245, 242)
+screen-ch04
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+screen-ch06
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (31, 1696, 348, 1726)  size 23  ink (139, 145, 156) bg (23, 25, 29)
+  'Brayman calculates.' -> 'You calculate.'  at (543, 344, 818, 386)  size 29  ink (107, 111, 118) bg (246, 245, 242)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+screen-ch07
+  "is Brayman's quantity" -> 'is your quantity'  at (2276, 344, 2570, 386)  size 30  ink (107, 111, 118) bg (246, 245, 242)
+screen-ch08
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (31, 1696, 348, 1726)  size 23  ink (139, 145, 156) bg (23, 25, 29)
+screen-ch09
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (31, 1696, 348, 1726)  size 23  ink (139, 145, 156) bg (23, 25, 29)
+screen-ch10a
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+  'active Brayman V1 Ontario contract package.' -> 'active V1 Ontario contract package.'  at (831, 728, 1440, 770)  size 30  ink (28, 31, 36) bg (255, 255, 255)
+  'Brayman V1 Interim Contract' -> 'V1 Interim Contract'  at (585, 1004, 983, 1046)  size 29  ink (28, 31, 36) bg (255, 255, 255)
+  'Package CA-ON-BRAYMAN-V1-INTERIM' -> 'Package CA-ON-V1-INTERIM'  at (585, 1310, 1132, 1352)  size 30  ink (107, 111, 118) bg (255, 255, 255)
+screen-ch10b
+  'Brayman Construction' -> 'Your Company'  at (67, 198, 489, 250)  size 40  ink (28, 31, 36) bg (255, 255, 255)
+  'and contact Brayman Construction.' -> 'and contact your contractor.'  at (65, 1318, 575, 1363)  size 32  ink (28, 31, 36) bg (255, 255, 255)
+screen-ch11
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+screen-ch12
+  'Brayman Construction' -> 'Your Company'  at (2024, 48, 2305, 87)  size 27  ink (107, 111, 118) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (2421, 47, 2629, 88)  size 28  ink (28, 31, 36) bg (255, 255, 255)
+  'Brayman Office' -> 'Office'  at (793, 798, 1004, 840)  size 29  ink (28, 31, 36) bg (255, 255, 255)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (34, 272, 414, 304)  size 26  ink (255, 255, 255) bg (23, 25, 29)
+  'BRAYMAN CONSTRUCTION' -> 'YOUR COMPANY'  at (31, 1696, 348, 1726)  size 23  ink (139, 145, 156) bg (23, 25, 29)
+j1-sheet-2
+  'Brayman Construction' -> 'Your Company'  at (369, 36, 767, 85)  size 40  ink (31, 58, 95) bg (255, 255, 255)
+j1-sheet-5
+  'Brayman Construction' -> 'Your Company'  at (368, 35, 768, 85)  size 40  ink (31, 58, 95) bg (255, 255, 255)
+j1-sheet-7
+  'Brayman Construction' -> 'Your Company'  at (369, 36, 767, 85)  size 40  ink (31, 58, 95) bg (255, 255, 255)

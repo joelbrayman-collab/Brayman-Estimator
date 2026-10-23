@@ -81,7 +81,7 @@ d.add("begin", "Before we begin", f'''<div class="pad"><div class="kicker">Befor
 <p class="lede" style="margin-bottom:calc(var(--u)*1.2)">Most contractors run their business on a patchwork, and they hold it together through sheer effort.</p>
 <div class="cols2">{P(["A spreadsheet for estimates. A notebook in the truck. Texts with the crew, emails with the supplier, a folder of contracts and a great deal kept in memory. Every handoff is a chance to retype a number wrong, lose a detail or forget what was agreed.",
  "CalibraytAI replaces the patchwork with one connected record. Each job is a single project that carries everything about it, from the first call to the final walkthrough. The office works at a computer, the crew works on a phone, and both are looking at the same job.",
- "It is built around your way of working: your costs, your crews, your pricing, your templates and your brand. It was built by a contractor, for contractors, and proven on real residential jobs."])}</div>
+ "It is built around your way of working: your costs, your crews, your pricing, your templates and your brand. It was built by a contractor, for contractors, and tested on real residential jobs."])}</div>
 {folio("Before we begin", nxt())}</div>''', menu="Before we begin")
 vs = [("Estimates in a spreadsheet", "One estimate with four outputs"), ("Material lists on a scratch pad", "A takeoff from the confirmed job"),
       ("Supplier prices retyped from emails", "The supplier’s completed request, uploaded"), ("Contracts printed, signed and scanned", "Signed on the customer’s phone"),
@@ -225,14 +225,14 @@ d.add("notes", "Notes and credits", f'''<div class="pad"><div class="kicker">Abo
 <p><b>The real job.</b> The pool-deck sketch and drawing issue J1 in Chapter 04 come from a real job. The customer’s name and address are not shown.</p>
 <p><b>Artwork and branding.</b> The cover, the Chapter 07 and 10 openers, the lifecycle pages and the closing page use CalibraytAI artwork. The logo is the approved original file.</p>
 <p><b>Photography.</b> The Chapter 01 and 02 photographs are the author’s own. Phones showing actual CalibraytAI screens were added to the Chapter 01, 02 and 11 photographs. Other photographs are from Pexels and Unsplash, used under their free licences.</p></div>
-<table class="t" style="font-size:calc(var(--u)*1.3)">{crs}</table></div>
+<table class="t tight" style="font-size:calc(var(--u)*1.12)">{crs}</table></div>
 {folio("CalibraytAI · Plan • Price • Build", nxt())}</div>''', menu="Notes and credits")
 d.add("end", "Back cover", f'''<div class="l" style="justify-content:center"><img src="{img(f"{A}/approved-logo-v1-dark-reference.png", 900, 90)}" alt="CalibraytAI" style="width:70%;margin-bottom:calc(var(--u)*2)">
 <h2 style="color:#fff">Construction intelligence. <span style="color:var(--gold2)">Calibrated.</span></h2>
 <p style="color:#c3ccd8">From the first customer call to the final walkthrough, a clearer, easier way to plan, price and build.</p>
 <div class="lifeline">PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN</div>
 <button class="start" data-go="contents">‹ Back to contents</button></div>
-<div class="r"><img src="{img(f"{A}/web-connection.jpg", 1500, 82)}" alt="" style="object-fit:contain;background:#000"></div>''', "cover")
+<div class="r"><img src="{img(f"{S}/nbuild/assets/web-connection.png", 1500, 82)}" alt=""></div>''', "cover")
 
 out = f"{S}/deck/out/contractor.html"
 open(out, "w").write(d.html())

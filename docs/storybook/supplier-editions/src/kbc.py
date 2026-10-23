@@ -3,7 +3,7 @@ CalibraytAI — Supplier Connection, Kemptville Home Hardware Building Centre (K
 No concrete chapter and no other supplier’s content. KBC-named synthetic screens (sup/kshots)."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from deck import sponsor_concept, calc_pages, Deck, E, P, S, img, folio, points, shot, ci, co  # noqa: E402
+from deck import hook_page, sponsor_concept, calc_pages, Deck, E, P, S, img, folio, points, shot, ci, co  # noqa: E402
 
 A = f"{S}/kbc/assets"
 BR = f"{S}/deck/brand"
@@ -68,12 +68,13 @@ d.add("cover", "Cover", f'''<div class="l"><div class="kicker" style="color:var(
 <div style="margin-top:calc(var(--u)*2.2);display:flex;align-items:center;gap:calc(var(--u)*1.2)"><span style="background:#fff;border-radius:4px;padding:calc(var(--u)*.5) calc(var(--u)*.8);line-height:0"><img src="{HHBC}" alt="Home Hardware Building Centre" style="height:calc(var(--u)*3.4)"></span><div class="ser" style="margin-top:0">Prepared for KBC, Kemptville<br>October 2026</div></div>
 <button class="start" data-go="intro">Start reading ›</button></div>
 <div class="r"><img src="{img(f"{A}/art-supplier-hero.png", 1600, 82)}" alt="CalibraytAI connecting plans to materials"></div>''', "cover", menu="Cover")
-d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="" style="object-fit:contain;background:#000">
+d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="">
 <div class="ov"><div class="kicker" style="color:var(--gold2)">Supplier Connection</div>
 <h2>The contractor plans and prices. <span>The supplier quotes and delivers.</span></h2>
 <p>CalibraytAI connects the two on one record: the request, the quote, the order and the delivery, each agreed and kept.</p>
 <div class="lifeline">REQUEST → QUOTE → ORDER → CONFIRM → DELIVER</div>
-<p style="margin-top:calc(var(--u)*1.4);font-size:calc(var(--u)*1);line-height:1.4;color:#aab4c2;max-width:60em">The Home Hardware Building Centre name and logo shown in this book belong to Home Hardware Stores Limited. They are used for illustrative purposes only, to facilitate discussion. Their use does not mean Home Hardware Stores Limited or KBC has endorsed, approved or agreed to the proposed connection or sponsorship.</p></div>''', "art dark")
+<p style="margin-top:calc(var(--u)*1.4);font-size:calc(var(--u)*1);line-height:1.4;color:#aab4c2;max-width:60em">The Home Hardware Building Centre name and logo shown in this book belong to Home Hardware Stores Limited. They are used for illustrative purposes only, to facilitate discussion. Their use does not mean Home Hardware Stores Limited or KBC has endorsed, approved or agreed to the proposed connection or sponsorship.</p></div>''', "art dark hero")
+hook_page(d, nxt, "KBC", "your Pro Account contractors", "the KBC Pro Desk")
 d.add("intro", "Introduction", f'''<div class="pad"><div class="kicker">Introduction</div>
 <h2>From the estimate to the delivery, one connected workflow.</h2>
 <div class="split"><div>{P(["Residential construction runs on materials. Every home passes through estimates, supplier quotes, purchase orders and delivery dates, and most of that still moves by phone, email and spreadsheet.",

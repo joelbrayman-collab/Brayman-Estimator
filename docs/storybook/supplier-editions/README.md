@@ -73,3 +73,11 @@ Retained and checked in the text: BMR PRO sponsorship concept (proposed); contra
 - `verify_model.py`: parity OK on all three.
 - Text scans: KBC has no BMR, Elevation, Tomlinson, Winchester, Darcy, Brayman, Linda, Bushel, concrete, RONA or Lennar; master has no supplier names; BMR has no Home Hardware, KBC, RONA, Linda, Bushel or Lennar.
 - `tests/test_supplier_economic_model.py`: 21 passed (6 new).
+
+## 23 Oct 2026 changes (all four books)
+
+- **New opening page, "Why give your contractors CalibraytAI"** (page 3, all three supplier books; shared `hook_page` in `deck.py`): the reason a supplier would put CalibraytAI in its contractors' hands, in three points, with a button to the worksheet. Store-specific wording per edition; no exclusivity implied.
+- **Hero art restored to navy.** The 21 Oct screen redesign had put a black panel behind the transparent hero on the cover, the inside page and the Contractor back cover, and shaded its lower part. The art now sits on navy, uncovered, as in the approved print editions.
+- **Phone width.** On phones the Contractor, BMR and KBC books were wider than the screen (header text set the column width); fixed in the engine (`#app` column `minmax(0,1fr)`), every page checked at 390 px.
+- **Contractor book: 22 Oct audit corrections restored.** That audit was applied to page images in another session, so the screen rebuild (from source files) lost it. Re-applied at source: "Brayman Construction", the Brayman logo and street address removed from 11 app screens and 3 drawing title blocks (`src/contractor-scrub/scrub.py`, log alongside; OCR re-scan finds none); "everything down to the interior materials" removed; "proven" → "tested on real residential jobs"; Chapter 10 now "the Ontario contract package for the job’s location". Photo credits to Joel Brayman kept.
+- Checks: `qa.py` (laptop and phone) no problems on all four books; `verify_model.py` parity OK on the three supplier books.

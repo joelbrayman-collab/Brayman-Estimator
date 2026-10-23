@@ -32,6 +32,8 @@ _cache = {}
 def img(path, w=1800, q=80, crop=None):
     """Embed an image as WebP (photos and screens), resized for the screen."""
     key = (path, w, q, crop)
+    if os.environ.get("IMGLOG"):
+        open(os.environ["IMGLOG"], "a").write(path + "\n")
     if key in _cache:
         return _cache[key]
     im = Image.open(path)
@@ -51,7 +53,7 @@ CSS = r"""
 :root{--navy:#061426;--navy2:#0b2138;--gold:#c99220;--gold2:#e0b14b;--ink:#1c2430;--mute:#525c69;--paper:#ffffff;--stone:#f4f1ea;--rule:#dcd6ca;--u:13px}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--ink);font-family:Plex,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-#app{display:grid;grid-template-rows:auto 1fr auto;height:100vh;height:100dvh}
+#app{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);width:100%;height:100vh;height:100dvh}
 #top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;color:#fff}
 #top .t{min-width:0;font:600 13px/1.2 Plex,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .s{min-width:0;font:400 13px/1.2 Plex,sans-serif;color:#b9c3d0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -102,8 +104,9 @@ p+p{margin-top:calc(var(--u)*.9)}
 .cover .strap{font-family:Serif,Georgia,serif;font-size:calc(var(--u)*2.3);color:#fff;line-height:1.3}
 .cover .sub{margin-top:calc(var(--u)*1.4);color:#c3ccd8;font-size:calc(var(--u)*1.6)}
 .cover .ser{margin-top:calc(var(--u)*2.4);font-size:calc(var(--u)*1.1);letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);font-weight:600}
-.cover .r{background:#000 center/cover no-repeat;position:relative}
-.cover .r img{width:100%;height:100%;object-fit:contain;background:#000}
+.cover .r{background:var(--navy);position:relative}
+.cover .r img{width:100%;height:100%;object-fit:contain;background:transparent}
+.art.hero{background:var(--navy)}.art.hero img.bg{top:3%;height:49%;object-fit:contain;object-position:50% 50%;background:transparent}.art.hero .ov{background:none}
 .cover .start{margin-top:calc(var(--u)*2.6);align-self:flex-start;font:600 calc(var(--u)*1.5)/1 Plex,sans-serif;padding:calc(var(--u)*1.1) calc(var(--u)*2);border-radius:999px;border:0;background:var(--gold);color:var(--navy);cursor:pointer}
 
 /* full-bleed art / photo pages */
@@ -530,3 +533,39 @@ def sponsor_concept(d, nxt, pid, menu, sponsor_text, logo_uri, store, rewards_li
 </div>
 <p class="small" style="margin-top:calc(var(--u)*.5);font-size:calc(var(--u)*1.05);line-height:1.35">{E(foot)}</p>
 {folio(menu, nxt())}</div>''', menu=menu)
+
+
+HOOK_CSS = """<style>
+.hook .hk{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6);margin-top:calc(var(--u)*1.6)}
+.hook .hk>div{background:#fff;border:1px solid var(--line,#d9dee6);border-top:5px solid var(--gold);border-radius:6px;padding:calc(var(--u)*1.4) calc(var(--u)*1.5)}
+.hook .hk b.n{display:block;font-family:Plex,sans-serif;font-size:calc(var(--u)*1.05);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:calc(var(--u)*.5)}
+.hook .hk h4{font-size:calc(var(--u)*1.85);line-height:1.2;color:var(--navy);margin:0 0 calc(var(--u)*.6)}
+.hook .hk p{font-size:calc(var(--u)*1.42);line-height:1.42;margin:0}
+.hook .ask{display:flex;align-items:center;gap:calc(var(--u)*1.6);margin-top:auto;background:var(--navy);color:#fff;border-radius:6px;padding:calc(var(--u)*1.2) calc(var(--u)*1.6)}
+.hook .ask p{flex:1;margin:0;font-family:Serif,Georgia,serif;font-size:calc(var(--u)*1.9);line-height:1.3;color:#fff}
+.hook .ask button.go{color:#fff;white-space:nowrap}
+.hook .fine{font-size:calc(var(--u)*1.1);color:#5b6675;margin-top:calc(var(--u)*.7)}
+#app.flow .hook .hk{grid-template-columns:1fr}#app.flow .hook .ask{flex-direction:column;align-items:flex-start}
+</style>"""
+
+
+def hook_page(d, nxt, store, accounts, desk):
+    """The opening argument: why a supplier would put CalibraytAI in its contractors' hands. One wording, every edition.
+    store: who the reader is ("your store", "KBC"); accounts: their contractor customers; desk: where requests land."""
+    cards = (("You are first in line",
+              f"The price that comes back first and complete usually wins the order. When {accounts} estimate in CalibraytAI, "
+              f"{store} is already connected: one click sends the takeoff to {desk} as a complete request. The contractor can still ask anyone else."),
+             ("A reason to stay that is not a price cut",
+              "CalibraytAI helps contractors plan, price and build their jobs. Offered by your store, it is a Pro Account benefit "
+              "they use every day, and it keeps them coming back without another discount."),
+             ("Your desk does less, and sees more",
+              "Requests arrive ready to price, with nothing retyped, and the order comes back to the store that quoted it. "
+              "You also see what contractors ask for that you do not price or stock."))
+    hk = "".join(f'<div><b class="n">{i}</b><h4>{E(h)}</h4><p>{E(p)}</p></div>' for i, (h, p) in enumerate(cards, 1))
+    d.add("hook", "Why give your contractors CalibraytAI", f'''{HOOK_CSS}<div class="pad hook"><div class="kicker">Why give your contractors CalibraytAI</div>
+<h2>Put {E(store)} inside your contractors’ estimates.</h2>
+<p class="lede">Give {E(accounts)} CalibraytAI, and the jobs they price can come to {E(desk)} as complete requests, ready to quote, before the work goes anywhere else.</p>
+<div class="hk">{hk}</div>
+<div class="ask"><p>What would that be worth to {E(store)}?</p><button class="go" data-go="calc1">Try your own numbers ›</button></div>
+<p class="fine">A proposal for discussion. Contractors always choose their suppliers and what they share; sponsorship never makes a contractor exclusive.</p>
+{folio("Why give your contractors CalibraytAI", nxt())}</div>''', menu="Why give your contractors CalibraytAI")

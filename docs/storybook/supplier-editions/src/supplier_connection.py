@@ -1,7 +1,7 @@
 """CalibraytAI — Supplier Connection, screen edition (supplier-neutral). Content from nbuild/build_neutral.py."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from deck import calc_pages, Deck, E, P, S, img, folio, points, shot, ci, co  # noqa: E402
+from deck import hook_page, calc_pages, Deck, E, P, S, img, folio, points, shot, ci, co  # noqa: E402
 
 A = f"{S}/nbuild/assets"
 src = open(f"{S}/nbuild/build_neutral.py").read()
@@ -33,11 +33,12 @@ d.add("cover", "Cover", f'''<div class="l"><div class="kicker" style="color:var(
 <div class="ser">Supplier-neutral edition · October 2026</div>
 <button class="start" data-go="intro">Start reading ›</button></div>
 <div class="r"><img src="{img(f"{A}/art-supplier-hero.png", 1600, 82)}" alt="CalibraytAI connecting plans to materials"></div>''', "cover", menu="Cover")
-d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="" style="object-fit:contain;background:#000">
+d.add("connect", "Supplier Connection", f'''<img class="bg" src="{img(f"{A}/web-connection.png", 1900, 80)}" alt="">
 <div class="ov"><div class="kicker" style="color:var(--gold2)">Supplier Connection</div>
 <h2>The contractor plans and prices. <span>The supplier quotes and delivers.</span></h2>
 <p>CalibraytAI connects the two on one record: the request, the quote, the order and the delivery, each agreed and kept.</p>
-<div class="lifeline">REQUEST → QUOTE → ORDER → CONFIRM → DELIVER</div></div>''', "art dark")
+<div class="lifeline">REQUEST → QUOTE → ORDER → CONFIRM → DELIVER</div></div>''', "art dark hero")
+hook_page(d, nxt, "your store", "your contractor customers", "your quoting desk")
 d.add("intro", "Introduction", f'''<div class="pad"><div class="kicker">Introduction</div>
 <h2>From the estimate to the delivery, one connected workflow.</h2>
 <div class="split"><div>{P(["Residential construction runs on materials. Every home passes through estimates, supplier quotes, purchase orders and delivery dates, and most of that still moves by phone, email and spreadsheet.",

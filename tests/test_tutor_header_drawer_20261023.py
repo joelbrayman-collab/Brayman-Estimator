@@ -30,3 +30,14 @@ def test_the_drawer_scrolls_on_its_own_and_is_full_screen_on_a_phone():
 def test_keyboard_escape_and_focus_return():
     assert '"Escape"' in JS and "launch.focus()" in JS and "aria-expanded" in JS
     assert 'classList.add("tc-js")' in JS
+
+
+def test_every_trainee_facing_string_names_the_header_button():
+    import re
+    texts = [TEMPLATE] + [(ROOT / "app" / "training" / n).read_text() for n in ("contractor.py", "field_crew.py", "supplier.py")
+                           if (ROOT / "app" / "training" / n).exists()]
+    blob = "\n".join(texts)
+    assert 'aria-label="Ask the Tutor"' in TEMPLATE
+    for stale in ("Open the Tutor", "Tutor at the side", "Tutor panel", "under the steps", "at the side of the lesson"):
+        assert stale not in blob, stale
+    assert "Ask the Tutor in the header" in blob

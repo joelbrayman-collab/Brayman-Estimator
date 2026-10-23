@@ -6,6 +6,17 @@ The Training & Acceptance Centre runs at https://training.calibraytai.com on the
 switched on in the production office: there, every `/training` page answers 404 and the training
 company cannot be built (the command refuses).
 
+## Updating it to a release (23 Oct 2026)
+
+`bash tools/hosting/install_training_centre.sh [commit]` as root in WHM Terminal. With no argument it runs the
+v1rel8 release candidate named in the script. It checks out that pinned commit (not a branch head), stops the
+service, takes a timestamped copy of `/opt/calibrayt/data/training.db` in `/opt/calibrayt/data/backups/` with
+SQLite's backup, runs the migrations against that database, runs `flask training build-environment
+--passwords-from-env` (adds only what is missing; never resets passwords, progress or acceptance results),
+restarts, and checks over HTTPS that `/training/signin` answers 200 and shows the three choices (contractor,
+crew (Field), supplier). `/opt/calibrayt/env` and the rest of `/opt/calibrayt/data` are not changed. To go back:
+stop the service, copy the backup over `training.db`, and run the script with the earlier commit.
+
 ## What it is
 
 - The same CalibraytAI code as production (branch `main`, so the lessons match the released version),

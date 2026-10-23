@@ -7,7 +7,8 @@
        data-lesson="{{ lesson.key if lesson is defined and lesson else '' }}" data-step="{{ step if step is defined else 0 }}"
        aria-label="Training Tutor">
   <div class="tc-tutor-head">
-    <strong>Training Tutor</strong>
+    {# Ask the Tutor identity (23 Oct 2026): the approved master recoloured to the CalibraytAI palette. Decorative; the visible words and the aria-label carry the name. #}
+    <span class="tc-tutor-title"><img class="tc-tutor-icon" src="{{ url_for('static', filename='branding/ask_the_tutor/ask-the-tutor-calibraytai-96.png') }}" srcset="{{ url_for('static', filename='branding/ask_the_tutor/ask-the-tutor-calibraytai-96.png') }} 1x, {{ url_for('static', filename='branding/ask_the_tutor/ask-the-tutor-calibraytai-192.png') }} 2x" width="56" height="56" alt="" data-tutor-icon><strong>Training Tutor</strong></span>
     <form method="post" action="{{ url_for('training.tutor_state') }}" data-tutor-toggle>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="minimized" value="{{ '0' if trainee.tutor_minimized else '1' }}">

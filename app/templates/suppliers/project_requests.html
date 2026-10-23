@@ -5,7 +5,7 @@
 {% block content %}
 <div class="page-heading"><div><p class="eyebrow">Purchasing</p><h1>Supplier requests — {{ project.name }}</h1>
 <p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p></div>
-<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a></div></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a> <a class="button button-secondary" data-compare-quotes href="{{ url_for('supplier_office.quote_comparison', project_id=project.id) }}">Compare quotes</a></div></div>
 
 <section class="form-panel" data-project-deliveries="true">
     <h2>Deliveries</h2>

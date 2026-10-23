@@ -206,3 +206,27 @@ def test_labour_quote_request_sheet_lists_only_subcontract_lines(app, client):  
     text = sheet.get_data(as_text=True)
     assert sheet.status_code == 200 and "data-labour-quote-request" in text
     assert "Framing labour package" in text and "Own crew cleanup" not in text
+
+
+def test_quote_comparison_marks_the_lowest_net_and_changes_nothing(app, client):  # noqa: F811
+    from app.services.quote_comparison import compare_responses
+
+    def rec(rid, source, net, total):
+        return {"response_id": rid, "source": source, "supplier_share_number": rid, "recordable_quoted_total": total,
+                "rows": [{"key": "framing.studs", "description": "10 studs", "purchasing_quantity": 10,
+                          "purchasing_unit": "EA", "net_price": net, "line_value": str(float(net) * 10),
+                          "answers": {"sku": "S-" + rid}}]}
+
+    out = compare_responses([rec("A", "BMR", "4.00", "40"), rec("B", "KBC", "3.50", "35")])
+    cells = out["lines"][0]["cells"]
+    assert cells[1]["lowest"] and not cells[0]["lowest"]
+
+    project, _other, account = _setup()
+    before = SupplierRequestShare.query.count()
+    page = client.get(f"/projects/{project.id}/supplier-quote-comparison")
+    assert page.status_code == 200 and b"data-quote-comparison" in page.data and b"No supplier has returned" in page.data
+    from flask import url_for
+    with app.test_request_context():
+        requests_url = url_for("supplier_office.project_requests", project_id=project.id)
+    assert b"data-compare-quotes" in client.get(requests_url).data
+    assert SupplierRequestShare.query.count() == before

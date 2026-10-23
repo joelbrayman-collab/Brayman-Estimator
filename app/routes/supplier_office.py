@@ -259,6 +259,18 @@ def project_requests(project_id):
                            today=date.today())
 
 
+@supplier_office_bp.route("/projects/<int:project_id>/supplier-quote-comparison")
+def quote_comparison(project_id):
+    """Side by side prices from every supplier that returned a quote. Read only."""
+    from app.services.deck_takeoff import storage
+    from app.services.quote_comparison import compare_responses
+
+    project, org_id = _project(project_id)
+    records = [r for r in storage.list_responses(org_id, project.id) if r.get("supplier_share_number")]
+    return render_template("suppliers/quote_comparison.html", project=project,
+                           comparison=compare_responses(records))
+
+
 @supplier_office_bp.route("/projects/<int:project_id>/deck-takeoff/requests/<request_id>/send-to-supplier", methods=["POST"])
 def send_material(project_id, request_id):
     project, _org = _project(project_id)

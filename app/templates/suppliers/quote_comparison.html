@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Compare supplier quotes | {{ project.name }}{% endblock %}
+{% block page_title %}Compare supplier quotes{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1 data-quote-comparison>Compare supplier quotes</h1>
+        <p class="muted-copy">{{ project.name }}. Read only: nothing is recorded or approved here. The lowest net unit cost on a line is marked.</p>
+    </div>
+    <div><a class="button-link" href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Back to supplier requests</a></div>
+</div>
+{% if comparison.suppliers|length < 1 %}
+<p class="muted-copy">No supplier has returned a quote yet.</p>
+{% else %}
+<div style="overflow-x: auto;"><table class="data-table">
+    <thead><tr><th>Item</th><th>Qty</th>{% for s in comparison.suppliers %}<th>{{ s.label }}{% if s.valid_until %}<div class="muted-copy">valid to {{ s.valid_until }}</div>{% endif %}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for line in comparison.lines %}
+        <tr><td>{{ line.description }}</td><td>{{ line.qty if line.qty is not none else 'TBD' }} {{ line.unit or '' }}</td>
+        {% for s in comparison.suppliers %}{% set c = line.cells.get(loop.index0) %}
+            <td>{% if c and c.net is not none %}<span {% if c.lowest %}data-lowest style="font-weight:600"{% endif %}>{{ c.net }}</span>{% if c.total is not none %}<div class="muted-copy">total {{ c.total }}</div>{% endif %}{% if c.sku %}<div class="muted-copy">{{ c.sku }}</div>{% endif %}{% else %}—{% endif %}</td>
+        {% endfor %}</tr>
+    {% endfor %}
+        <tr><th colspan="2">Priced total (lines the supplier priced)</th>{% for s in comparison.suppliers %}<th>{{ s.total if s.total is not none else '—' }}</th>{% endfor %}</tr>
+    </tbody>
+</table></div>
+{% endif %}
+{% endblock %}

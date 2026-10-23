@@ -37,6 +37,16 @@ SUPPLIER_PEOPLE = (
 CUSTOMER = "Morgan Ellis (training)"
 JOB = "Harbour Lane Pool Deck (training)"
 JOB_ADDRESS = "14 Harbour Lane, Merrickville, ON"
+# Guided Estimating practice (23 Oct 2026): the customer for the synthetic new home each trainee creates, and the
+# company costs the estimate review matches by unit. Kevin's Contractor Review needs no company or QuickBooks set-up:
+# the labour rate and the pricing policy are already the company's (seeded by the migrations).
+NEW_HOME_CUSTOMER = "Jordan Avery (training)"
+PRACTICE_COSTS = (
+    ("TRN-CONC-YD3", "Ready-mix concrete 25 MPa (training)", "yd3", "210.00"),
+    ("TRN-CONC-M3", "Ready-mix concrete 25 MPa per m3 (training)", "m3", "275.00"),
+    ("TRN-STUD-EA", "2x6 stud 92-5/8 in (training)", "ea", "7.25"),
+    ("TRN-FLOOR-FT2", "Engineered flooring (training)", "ft2", "4.10"),
+)
 
 
 class TrainingEnvironmentError(RuntimeError):
@@ -177,9 +187,27 @@ def build(app, passwords: Dict[str, str] | None = None, administrator: tuple | N
         db.session.commit()
     _job_location_and_model(project)
     db.session.commit()
+    _guided_estimating_practice(ORG)
     out["_facts"] = {"organization_id": ORG, "supplier_id": supplier.id, "company": COMPANY, "customer": CUSTOMER,
                      "job": JOB, "supplier": SUPPLIER}
     return out
+
+
+def _guided_estimating_practice(org_id) -> None:
+    """The new-home customer and the practice costs for module 13 (added once; nothing else changes)."""
+    from decimal import Decimal
+
+    from app.models import Client, CostItem
+
+    if Client.query.filter_by(organization_id=org_id, name=NEW_HOME_CUSTOMER).first() is None:
+        db.session.add(Client(organization_id=org_id, name=NEW_HOME_CUSTOMER,
+                              email="jordan.avery@training.calibraytai.invalid", phone="613-555-0177",
+                              address="22 Lakeview Road, Kemptville, ON"))
+    for code, name, unit, cost in PRACTICE_COSTS:
+        if CostItem.query.filter_by(organization_id=org_id, code=code).first() is None:
+            db.session.add(CostItem(organization_id=org_id, code=code, name=name, category="Material", unit=unit,
+                                    unit_cost=Decimal(cost), default_markup_percent=Decimal("0"), is_active=True))
+    db.session.commit()
 
 
 def _job_location_and_model(project) -> None:

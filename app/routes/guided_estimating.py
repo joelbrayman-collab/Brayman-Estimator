@@ -197,8 +197,8 @@ def _tool_links(project, guided, stage):
 @guided_bp.route("/projects/<int:project_id>/guided/stages/<int:stage_id>")
 def stage(project_id, stage_id):
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     try:
         row = G.get_stage(guided, stage_id)
     except G.GuidedEstimatingError:
@@ -241,8 +241,8 @@ def stage(project_id, stage_id):
 @guided_bp.route("/projects/<int:project_id>/guided/stages/<int:stage_id>/<action>", methods=["POST"])
 def stage_action(project_id, stage_id, action):
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     try:
         row = G.get_stage(guided, stage_id)
     except G.GuidedEstimatingError:
@@ -337,16 +337,16 @@ def stage_action(project_id, stage_id, action):
 @guided_bp.route("/projects/<int:project_id>/guided/internal-cost")
 def internal_cost(project_id):
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     return render_template("guided/internal_cost.html", project=project, doc=G.internal_cost_document(guided))
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/internal-cost.pdf")
 def internal_cost_pdf(project_id):
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     from app.services.guided_internal_cost_pdf import render_internal_cost_pdf
 
     payload = render_internal_cost_pdf(G.internal_cost_document(guided))
@@ -358,8 +358,8 @@ def internal_cost_pdf(project_id):
 def pricing(project_id):
     """Review Pricing & Prepare Proposal: the existing costing approval, pricing engine and proposal, in order."""
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     from app.services.estimate_costing import evaluate_costing
     from app.services.proposals import proposal_issue_blockers
 
@@ -385,8 +385,8 @@ def pricing(project_id):
 @guided_bp.route("/projects/<int:project_id>/guided/revision", methods=["POST"])
 def revision(project_id):
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        abort(404)
+    if guided is None:  # no guided estimate yet: the page that starts one
+        return redirect(url_for("guided.workflow", project_id=project.id))
     try:
         version = G.start_revision(guided, reason=request.form.get("reason", ""), actor=_actor(), user_id=_uid())
     except G.GuidedEstimatingError as exc:
@@ -400,7 +400,7 @@ def revision(project_id):
 def compare(project_id):
     project, guided = _project_and_guided(project_id)
     if guided is None or guided.estimate is None:
-        abort(404)
+        return redirect(url_for("guided.workflow", project_id=project.id))
     versions = sorted(guided.estimate.versions, key=lambda v: v.version_number)
     by_id = {v.id: v for v in versions}
     newer = by_id.get(request.args.get("newer", type=int)) or (versions[-1] if versions else None)

@@ -169,8 +169,11 @@ STEPS: List[Step] = [
          "Clients → New client, then Home → + Start New Project for each current job.",
          "clients.list_clients", _customers),
     Step("estimate", "Your first estimate", "Price a job with your costs and the calculators.",
-         "Open the project → New estimate. Add lines or use a calculator, then review costing and pricing.",
-         "projects.create_project", _estimate),
+         "Home → Start New Estimate: choose the project (or a new one), what you are building and your role, then "
+         "Internal, Subcontracted or N/A for each stage. Each stage opens its calculator or quote; review and confirm "
+         "each result, approve the costing, then Review Pricing & Prepare Proposal. (Or open the project → New "
+         "estimate and add lines yourself.)",
+         "guided.start", _estimate),
     Step("proposal", "Your first proposal", "Send the customer a link to accept or decline.",
          "Once: Proposals → Templates → New template. Then on the priced estimate → Sign off estimate → Send proposal to client.",
          "clients.list_clients", _proposal),

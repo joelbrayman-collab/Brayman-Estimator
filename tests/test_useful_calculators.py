@@ -224,9 +224,11 @@ def test_the_collection_names_every_existing_calculator(app):
     menu = next(s for s in NAV_SECTIONS if s["title"] == "Calculators")
     office = {c.office_endpoint for c in UC.CALCULATORS}
     assert {link["endpoint"] for link in menu["links"]} <= office
-    # "Link to a project" (release 8) is a save action on the office pages, not a calculator: it stays office only
-    assert "calculators.link_project" in endpoints and "calculators.link_project" not in FIELD_ONLY_ALLOWED_ENDPOINTS
-    assert {e for e in endpoints if e.startswith("calculators.") and e != "calculators.link_project"} <= office
+    # "Link to a project" (release 8) and the Guided Estimating result actions (23 Oct 2026: the stages of a project,
+    # and Create New Project's carry) are save actions, not calculators: they stay office only.
+    actions = {"calculators.link_project", "calculators.project_stages", "calculators.carry_result"}
+    assert actions <= endpoints and actions.isdisjoint(FIELD_ONLY_ALLOWED_ENDPOINTS)
+    assert {e for e in endpoints if e.startswith("calculators.") and e not in actions} <= office
     for calc in UC.CALCULATORS:
         assert calc.office_endpoint in endpoints, calc.key
         if calc.audience == UC.AUDIENCE_CREW:
@@ -308,7 +310,13 @@ def test_concrete_and_stair_engines_load_the_same_scripts(app):
         assert f"/static/{script}" in html
         assert ("data-concrete-calculator" if slug == "concrete" else "data-stair-calculator") in html
         assert 'name="measurement_system"' in html or slug == "stairs"  # metric/imperial where it already exists
-        assert "data-link-project" not in html  # "Link to a project" is office pages only, never the phone app
+        # Guided Estimating (23 Oct 2026): an office person on the phone app gets the result's three choices too
+        # (Use Result Only / Add to Existing Project / Create New Project); the crew never do (checked below).
+        assert "data-link-project" in html and "Create New Project" in html
+    crew = _signed_in(app, "crew.uc@example.invalid", CREW_PW)
+    for slug in ("concrete", "stairs"):
+        html = _get(crew, f"/useful-calculators/{slug}").get_data(as_text=True)
+        assert "data-link-project" not in html and "data-result-options" not in html  # the crew: the result alone
     # The office pages keep the office shell.
     assert "shell-sidebar" in _get(office, "/calculators/concrete").get_data(as_text=True)
 

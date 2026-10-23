@@ -33,7 +33,7 @@ from app.models.training import (
     ROLE_SUPPLIER_OWNER,
 )
 
-DEFINITION_VERSION = "2026-10-22.2"  # .2: schedule texts (SMS notices, 22 Oct 2026)
+DEFINITION_VERSION = "2026-10-23.1"  # .1: Guided Estimating and the calculators' three choices (23 Oct 2026)
 
 # ------------------------------------------------------------------ vocabulary
 
@@ -252,6 +252,7 @@ D_CHANGE_ORDERS = _d("project_controls.list_change_orders", "Open Change orders"
 D_TIME = _d("time_entry.review", "Open Time review")
 D_SCHEDULE_NEW = _d("schedule.new_item", "Open Schedule work")
 D_CONCRETE = _d("calculators.concrete", "Open Concrete calculator")
+D_START_ESTIMATE = _d("guided.start", "Open Start New Estimate")
 D_ATTENTION = _d("company_attention.index", "Open Attention", REQ_COMPANY_MANAGEMENT)
 D_FIELD_TODAY = _field("field.today", "Open Field Today")
 
@@ -334,6 +335,8 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("upload", "Upload drawings and documents",
               _project("plan_intelligence.upload_plan", "Open Upload Plan PDF"), lesson="c07-plans"),
             S("calculators", "Use construction calculators", D_CONCRETE, lesson="c07-concrete-calculator"),
+            S("calculator-choices", "Calculator result: use it only, add it to a project, or start a new project",
+              D_CONCRETE, lesson="c14-add-to-existing"),
             S("drawings", "Generate or review drawings", D_DRAWINGS, lesson="c07-deck-takeoff"),
             S("takeoff", "Prepare material takeoffs", _project("deck_takeoff.review", "Open Deck Takeoff"),
               lesson="c07-deck-takeoff"),
@@ -344,18 +347,32 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
                    "drawings come from a designer or engineer."),
         ),
         lessons=("c06-clients", "c06-project-hub", "c06-project-setup", "c06-existing-jobs", "c07-plans",
-                 "c07-concrete-calculator", "c07-deck-takeoff"),
-        uat=("uat-c06-project", "uat-c06-hub", "uat-c07-plan", "uat-c07-calculator"),
+                 "c07-concrete-calculator", "c07-deck-takeoff", "c14-use-result-only", "c14-add-to-existing",
+                 "c14-create-new-project", "c14-phone"),
+        uat=("uat-c06-project", "uat-c06-hub", "uat-c07-plan", "uat-c07-calculator", "uat-c14-use-only",
+             "uat-c14-existing", "uat-c14-new-project"),
         roles=OFFICE_ROLES, project_statuses=("Lead",),
     ),
     Stage(
         id="c-price", journey="contractor", number=3, label="PRICE", title="Know what the job will cost",
         summary="Supplier quotations, approved material costs, labour, the estimate, margin and taxes.",
-        description="Ask the suppliers for prices, compare and approve what they return, add the labour, and "
-                    "build the estimate with the company's pricing and true gross margin. Costing waits until "
-                    "each line says who supplies and who builds it.",
-        primary=D_ESTIMATES,
+        description="Guided Estimating: say what is being built and who does each stage (Internal, Subcontracted "
+                    "or N/A); each stage brings its calculator or its quotation tools, and every confirmed stage "
+                    "adds to one internal cost estimate. Ask the suppliers for prices, compare and approve what "
+                    "they return, add the labour, and price the estimate with the company's pricing and true gross "
+                    "margin. Costing waits until each line says who supplies and who builds it.",
+        primary=D_START_ESTIMATE,
         substeps=(
+            S("guided-start", "Start New Estimate (project type and your role)", D_START_ESTIMATE,
+              lesson="c13-start-new-estimate"),
+            S("guided-scope", "Construction scope: Internal, Subcontracted or N/A for each stage",
+              _project("guided.scope", "Open Construction scope"), lesson="c13-scope"),
+            S("guided-workflow", "Guided estimating workflow: each stage's calculator or quote",
+              _project("guided.workflow", "Open Estimating workflow"), lesson="c13-internal-stage"),
+            S("guided-internal-cost", "Internal cost estimate (office only)",
+              _project("guided.internal_cost", "Open Internal cost estimate"), lesson="c13-internal-cost"),
+            S("guided-pricing", "Review Pricing & Prepare Proposal",
+              _project("guided.pricing", "Open Review Pricing & Prepare Proposal"), lesson="c13-pricing-proposal"),
             S("select-suppliers", "Select suppliers", D_SUPPLIERS, lesson="c08-suppliers"),
             S("request", "Request material quotations", D_SUPPLIER_REQUESTS, lesson="c08-concrete-request"),
             S("compare", "Receive and compare supplier responses", D_SUPPLIER_REQUESTS, lesson="c08-approve-quote"),
@@ -367,9 +384,11 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("finalize", "Finalize the estimate (scope delivery and costing approval)",
               _project("scope_delivery.review", "Open Scope Delivery Review"), lesson="c09-scope-delivery-costing"),
         ),
-        lessons=("c08-concrete-request", "c08-approve-quote", "c09-new-estimate", "c09-scope-delivery-costing",
-                 "c09-pricing"),
-        uat=("uat-c08-quote", "uat-c09-estimate", "uat-c09-block"),
+        lessons=("c13-start-new-estimate", "c13-scope", "c13-internal-stage", "c13-subcontracted-stage",
+                 "c13-missing-costs", "c13-internal-cost", "c13-pricing-proposal", "c08-concrete-request",
+                 "c08-approve-quote", "c09-new-estimate", "c09-scope-delivery-costing", "c09-pricing"),
+        uat=("uat-c13-scope", "uat-c13-internal", "uat-c13-subcontract", "uat-c13-missing-cost", "uat-c13-internal-cost",
+             "uat-c13-proposal", "uat-c08-quote", "uat-c09-estimate", "uat-c09-block"),
         handoffs=(1, 2, 3, 4), roles=OFFICE_ROLES, project_statuses=("Estimating",),
         loops=(Loop("c-plan", "Price → Plan", "A quotation or takeoff shows the scope or quantities need to change.",
                     "Go back to Plan"),),
@@ -955,11 +974,12 @@ PRIVACY_NOTE = ("Suppliers see only what a contractor chose to share with them o
 
 CONTRACTOR_BRANCHES: Tuple[Branch, ...] = (
     Branch("calculators", "Calculators", "Concrete, stairs, ICF walls, framing, footings, roofing, siding, "
-           "drywall and flooring: use them on their own or for a project.",
+           "drywall and flooring: use them on their own or for a project. After a result: Use Result Only, Add to "
+           "Existing Project or Create New Project; Guided Estimating opens them from each stage.",
            (D_CONCRETE, _d("calculators.stairs", "Open Stair calculator"),
             _d("calculators.wall_form", "Open ICF wall calculator"),
-            _d("calculators.wall_framing", "Open Wall framing calculator")),
-           lessons=("c07-concrete-calculator",)),
+            _d("calculators.wall_framing", "Open Wall framing calculator"), D_START_ESTIMATE),
+           lessons=("c07-concrete-calculator", "c14-use-result-only", "c14-add-to-existing", "c14-create-new-project")),
     Branch("drawings", "Drawings and plans", "The job's construction drawings and plan PDFs, from Plan to Close.",
            (D_DRAWINGS, _project("plan_intelligence.list_plans", "Open Drawings (plan PDFs)")),
            lessons=("c07-plans", "c07-deck-takeoff")),

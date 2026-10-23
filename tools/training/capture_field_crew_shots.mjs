@@ -500,7 +500,7 @@ step("the office moves the dates; Kevin sees them on This week", async () => {
 step("Kevin's Field acceptance tests on the iPhone", async () => {
   const k = sessions.kevin.pg;
   await go(k, "/training/uat");
-  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 19/);
+  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 21/);
   await shot(k, "f08-uat-list", k.locator("[data-uat-continue]"));
   await submit(k, k.locator("[data-uat-continue]"));
   await k.check('input[name=status][value="FAIL"]');

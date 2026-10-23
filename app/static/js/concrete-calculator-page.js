@@ -173,7 +173,7 @@ function render(run, result, figures) {
       <div class="cc-line cc-total"><span>Total concrete</span><strong data-total>${total.quantity} ${UNIT_TEXT[total.unit_code]}</strong></div></div>
     <div class="cc-block"><h3>Measurements</h3>${inputs}
       <div class="cc-line"><span>Waste allowance</span><strong>${result.assumptions[0].value}%</strong></div></div>
-    <p class="cc-note">A quantity, not a price or an engineering design. Confirm the order with the supplier. This result is not on an estimate.</p>
+    <p class="cc-note">A quantity only, not an engineering design. Confirm the order with the supplier. This result is not on an estimate.</p>
   `;
   resultNode.dataset.linkSummary = `Order ${formatMilli(figures.order, figures.stepMilli > 0n)} ${unit} · total ${formatMilli(figures.exact)} ${unit} (${other}) · ${result.variant === "standard" ? "standard slab" : "thickened edge"}, measured in ${result.measurement_system === "metric" ? "metric" : "feet and inches"}`;
   resultNode.hidden = false;

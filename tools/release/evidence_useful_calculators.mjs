@@ -98,7 +98,8 @@ async function homeScreenTags(pg) {
 }
 async function useCalculator(pg, key) {
   if (key === "concrete") {
-    await pg.selectOption("#measurement_system", "imperial");
+    // The redesigned calculator (release 8): Feet and inches is a radio choice; order in m³ or yd³.
+    await pg.locator("#ms-imperial").check({ force: true });
     await pg.fill("#length", "20"); await pg.fill("#width", "10"); await pg.fill("#slab_thickness", "4");
     await pg.fill("#waste_percent", "0");
     await pg.locator("[data-concrete-calculator] button[type=submit]").click();
@@ -196,6 +197,7 @@ test("iPhone, Field-only crew: every crew calculator opens and works; office one
     assert.equal(await s.pg.locator("[data-uc-back]").count(), 1, key);
     assert.equal(await s.pg.locator(".shell-sidebar, #shell-sidebar").count(), 0, `${key}: no office navigation`);
     await useCalculator(s.pg, key);
+    assert.equal(await s.pg.locator("[data-link-project]").count(), 0, `${key}: no "Link to a project" for the crew`);
     await noSideways(s.pg, key);
     await noInternal(s.pg, key);
   }

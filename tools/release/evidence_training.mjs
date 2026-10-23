@@ -6,7 +6,8 @@
 // Back / Next, Save and exit then Continue where I left off, screenshot enlargement, Tutor minimize and
 // restore (kept after reloading) and its answers, a lesson completes only with its exercise ticked, notes,
 // acceptance tests separate from training with Pass / Fail / Blocked and a retest that keeps the earlier
-// result, the administrator dashboard (and its refusal to others), and no sideways scrolling on a phone.
+// result, the administrator dashboard (and its refusal to others), no sideways scrolling on a phone, module times,
+// and one office trainee changing role to Field and back with both records kept and on the dashboard.
 // Any response of 500 or more, or a page JavaScript error, fails the walk.
 //
 // Run: EVIDENCE_REPO=$PWD EVIDENCE_EXECUTABLE=/path/to/chromium node --test --test-concurrency=1 tools/release/evidence_training.mjs
@@ -278,6 +279,73 @@ test("administrator dashboard: Ben sees his company and BMR's trainees; others a
   await shot(pg, "training-admin");
   const r = await sessions.darcy.pg.goto(`${base}/training/admin`);
   assert.equal(r.status(), 403);
+});
+
+// One office training account on two pathways (Joel, 23 Oct 2026): Olivia (Office staff, not Field-only) takes a
+// Contractor lesson and test, changes role to Field (Change my role), takes a Field Crew lesson and test, and changes
+// back. Each pathway's progress and results are kept separately, and Ben's dashboard shows both.
+async function finishFirstLesson(pg) {
+  const href = await pg.locator("a[data-lesson]").first().getAttribute("href");
+  await pg.goto(`${base}${href}`);
+  const steps = await pg.locator("[data-step-card]").count();
+  for (let i = 0; i < steps; i += 1) {
+    await pg.click(`[data-tick="${i}"]`);
+    await pg.waitForFunction((n) => document.querySelector(`[data-step-card="${n}"]`).classList.contains("is-done"), i);
+  }
+  await pg.check("[data-exercise]");
+  await Promise.all([pg.waitForNavigation(), pg.click("[data-complete]")]);
+  await pg.goto(`${base}/training`);
+}
+async function recordFirstTest(pg, status, issue) {
+  await pg.goto(`${base}/training/uat`);
+  const first = await pg.locator("[data-uat-row] a").first().getAttribute("href");
+  await pg.goto(`${base}${first}`);
+  await pg.check(`input[name=status][value="${status}"]`);
+  if (issue) await pg.fill("textarea[name=issue]", issue);
+  await Promise.all([pg.waitForNavigation(), pg.click("[data-record]")]);
+  await pg.goto(`${base}/training`);
+}
+async function changeRole({ pg }, role) {
+  await pg.locator("details.tc-card summary", { hasText: "Change my role" }).click();
+  await pg.check(`.tc-roles input[name=role][value="${role}"]`);
+  await Promise.all([pg.waitForNavigation(), pg.locator(".tc-roles button[type=submit]").click()]);
+  await pg.waitForSelector("[data-progress]");
+}
+
+test("one office trainee: Contractor, then Field (Change my role), then back; both records kept and on the dashboard", async () => {
+  const olivia = await signIn("olivia", DESK);
+  const { pg } = olivia;
+  await register(olivia, "Office staff");
+  assert.match(await pg.textContent('[data-module="c06"] [data-module-time]'), /^About \d+ minutes$/, "module time shown");
+  assert.ok(await pg.locator('[data-module="c04"] [data-session="2"]').count(), "a long module is shown in sessions");
+  await finishFirstLesson(pg);
+  await recordFirstTest(pg, "PASS");
+  const office = await pg.textContent("[data-progress]");
+  assert.match(office, /^1 of \d+ lessons done .*1 passed, 0 failed/);
+  await shot(pg, "training-home-office-times");
+  await changeRole(olivia, "FIELD");
+  assert.equal(await pg.locator('[data-module^="c"]').count(), 0, "Field: only the Field Crew lessons");
+  assert.match(await pg.textContent("[data-progress]"), /^0 of 31 lessons done .*0 passed, 0 failed, 0 blocked/);
+  await finishFirstLesson(pg);
+  await recordFirstTest(pg, "FAIL", "Synthetic: the Field button was greyed out");
+  assert.match(await pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/);
+  await changeRole(olivia, "OFFICE");
+  assert.equal(await pg.textContent("[data-progress]"), office, "the Contractor record is exactly as it was");
+  await changeRole(olivia, "FIELD");
+  assert.match(await pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/, "and the Field record");
+  await changeRole(olivia, "OFFICE");
+  const ben = sessions.ben.pg;
+  await ben.goto(`${base}/training/admin`);
+  const rows = ben.locator('tr[data-admin-trainee^="Olivia"]');
+  assert.equal(await rows.count(), 2, "the dashboard shows both pathways");
+  const contractor = ben.locator('tr[data-admin-trainee^="Olivia"][data-admin-track="CONTRACTOR"]');
+  const field = ben.locator('tr[data-admin-trainee^="Olivia"][data-admin-track="FIELD_CREW"]');
+  assert.equal(await contractor.getAttribute("data-admin-current"), "");
+  assert.match(await contractor.textContent(), /1 pass · 0 fail/);
+  assert.match(await field.textContent(), /1\/31[\s\S]*0 pass · 1 fail/);
+  assert.match(await ben.textContent('[data-admin-crew-member^="Olivia"]'), /Lessons: 1 of 31 done/);
+  assert.ok(await ben.locator("[data-admin-module-times]").isVisible(), "Module times on the dashboard");
+  await shot(ben, "training-admin-two-pathways");
 });
 
 test("the training site says so on every workspace and links to the Centre", async () => {

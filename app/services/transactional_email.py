@@ -32,6 +32,7 @@ from app.models.transactional_message import (
     TEMPLATE_DELIVERY_SCHEDULE,
     TEMPLATE_PASSWORD_RESET,
     TEMPLATE_ACCOUNT_INVITATION,
+    TEMPLATE_INVITATION_SENT_CONFIRMATION,
     TEMPLATE_PROPOSAL_INVITATION,
     TEMPLATE_SIGNING_COMPLETE,
     TEMPLATE_SIGNING_INVITATION,
@@ -148,6 +149,19 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
             f"{url}\n\n"
             "On an iPhone: open the link in Safari, choose your password, then tap Share and Add to Home Screen.\n\n"
             "If you were not expecting this, ignore this message."
+        )
+        return subject, body
+    if template_id == TEMPLATE_INVITATION_SENT_CONFIRMATION:
+        # Built only from a name, an address, a kind and two times: there is no link variable to render.
+        kind = "invitation" if variables.get("kind") == "invitation" else "set-password link"
+        name = str(variables.get("person_name") or "")
+        email = str(variables.get("person_email") or "")
+        subject = f"Your CalibraytAI {kind} to {name} was sent"
+        body = (
+            f"Your CalibraytAI {kind} to {name} ({email}) was sent at {variables.get('sent_at') or ''}. "
+            f"It works once and expires {variables.get('expires') or ''}.\n\n"
+            "This note does not contain the link. If the person did not get the email, send a new link from "
+            "Company \u2192 People & Access."
         )
         return subject, body
     if template_id == TEMPLATE_DELIVERY_SCHEDULE:

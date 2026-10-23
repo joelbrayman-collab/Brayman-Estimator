@@ -113,6 +113,7 @@ def _send_link(user):
     if outcome.delivered:
         if membership is not None:
             record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user)
+        _confirm_to_sender(user, invitation is not None, outcome)
         flash(LINK_SENT.format(email=user.email, expires=_expires_phrase(outcome)), "success")
         return None
     reason = NOT_DELIVERED_REASONS.get(outcome.status, "the email could not be sent")
@@ -126,6 +127,73 @@ def _send_link(user):
 
     base = link_base_url()
     return {"url": f"{base}{outcome.path}", "expires_at": outcome.expires_at, "email": user.email}
+
+
+def _confirm_to_sender(user, is_invitation, outcome):
+    """People & Access (Joel, 23 Oct 2026): tell the person who pressed the button that the invitation or
+    set-password link was accepted by the mail service. A separate email to them, never a copy of the real one:
+    it has the person's name and address, the kind and the times only, never the link or any part of its token.
+    The same transactional service and allowlist as every other send. If it is not delivered, the invitation's
+    own outcome is unchanged."""
+    from datetime import datetime
+
+    from app.models.transactional_message import TEMPLATE_INVITATION_SENT_CONFIRMATION
+    from app.services.local_time import format_local
+    from app.services.transactional_email import send_transactional_message
+
+    sender = (getattr(current_user, "email", "") or "").strip()
+    if not sender:
+        return None
+    try:
+        return send_transactional_message(
+            TEMPLATE_INVITATION_SENT_CONFIRMATION,
+            sender,
+            {"kind": "invitation" if is_invitation else "password_link",
+             "person_name": user.display_name or user.email, "person_email": user.email,
+             "sent_at": format_local(datetime.utcnow(), "%b %-d, %Y at %-I:%M %p"),
+             "expires": format_local(outcome.expires_at, "%b %-d, %Y at %-I:%M %p")},
+            related_type="user",
+            related_id=getattr(current_user, "id", None),
+        )
+    except Exception:  # pragma: no cover - a confirmation never changes the invitation's outcome
+        from flask import current_app
+
+        current_app.logger.warning("People & Access: the sender's confirmation email could not be sent")
+        return None
+
+
+EMAIL_KINDS = {
+    "ACCOUNT_INVITATION": "Invitation",
+    "PASSWORD_RESET": "Set-password link",
+    "INVITATION_SENT_CONFIRMATION": "Confirmation of a link they sent",
+    "PROPOSAL_INVITATION": "Proposal",
+    "SIGNING_INVITATION": "Signing invitation",
+    "SIGNING_RESEND": "Signing reminder",
+    "SIGNING_COMPLETE": "Signed copy",
+    "DELIVERY_SCHEDULE": "Delivery schedule",
+    "SUPPLIER_QUOTE": "Quotation",
+}
+
+
+def email_history(email, limit=5):
+    """The last emails to this person (transactional_messages): when, what kind, Sent or Not sent with a plain
+    reason. Never a link: the table keeps no link, token or message body."""
+    from app import db
+    from app.models.transactional_message import TransactionalMessage
+    from app.services.password_reset import _delivered
+
+    address = (email or "").strip().lower()
+    if not address:
+        return []
+    rows = (TransactionalMessage.query.filter(db.func.lower(TransactionalMessage.to_email) == address)
+            .order_by(TransactionalMessage.created_at.desc(), TransactionalMessage.id.desc()).limit(limit).all())
+    out = []
+    for row in rows:
+        sent = _delivered(row.status)
+        out.append({"at": row.created_at, "kind": EMAIL_KINDS.get(row.template_id, row.template_id.replace("_", " ").title()),
+                    "sent": sent,
+                    "reason": "" if sent else NOT_DELIVERED_REASONS.get(row.status, "the email could not be sent")})
+    return out
 
 
 def db_session_get(model, ident):
@@ -234,6 +302,7 @@ def _detail_page(membership_id, one_time_link=None):
         crews=_crews_of(membership_id),
         one_time_link=one_time_link,
         texts=texts,
+        emails=email_history(person.email),
     )
     if one_time_link is None:
         return page

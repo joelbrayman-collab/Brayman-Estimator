@@ -232,7 +232,10 @@ def test_owner_sent_links_do_not_use_the_office_forgot_password_budget(app):
     for n in range(6):
         assert owner.post("/settings/people/new", data={"display_name": f"P{n}", "email": f"p{n}@example.invalid"}).status_code == 302
     with app.app_context():
-        assert TransactionalMessage.query.count() == 6
+        assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_ACCOUNT_INVITATION).count() == 6
+        # plus one confirmation to the owner for each (23 Oct 2026), never counted against anyone's budget
+        assert TransactionalMessage.query.filter_by(template_id="INVITATION_SENT_CONFIRMATION",
+                                                    to_email=OWNER[0]).count() == 6
     # The office's own forgot-password still works from the same address.
     assert app.test_client().post("/forgot-password", data={"email": STAFF[0]}).status_code == 302
     with app.app_context():
@@ -531,3 +534,127 @@ def test_only_the_owner_side_ever_sees_the_link(app):
     staff = _client(app, STAFF)
     response = staff.post(f"/settings/people/{ids['admin_m']}/send-link")
     assert response.status_code == 403 and b"reset-password" not in response.data
+
+
+# ------------------------------------------------------------------ the sender's confirmation and Email history (23 Oct 2026)
+
+
+def _confirmations(app):
+    root = app.config["MAIL_CAPTURE_ROOT"]
+    names = sorted(n for n in os.listdir(root) if "INVITATION_SENT_CONFIRMATION" in n) if os.path.isdir(root) else []
+    return [open(os.path.join(root, n), encoding="utf-8").read() for n in names]
+
+
+def test_the_sender_gets_a_confirmation_without_the_link_and_the_page_shows_email_history(app):
+    owner = _client(app, OWNER)
+    assert owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]}).status_code == 302
+    invitation = _captured(app, NEW_PERSON[1])
+    assert len(invitation) == 1
+    credential = re.search(r"/reset-password#([A-Za-z0-9_\-.]+)", invitation[0]).group(1)
+    lookup_key, secret = credential.split(".", 1)[0], credential.rsplit(".", 1)[1]
+    confirmations = _confirmations(app)
+    assert len(confirmations) == 1
+    note = confirmations[0]
+    assert f"To: {OWNER[0]}" in note and f"To: {NEW_PERSON[1]}" not in note  # to the person who pressed the button
+    assert f"Your CalibraytAI invitation to {NEW_PERSON[0]} ({NEW_PERSON[1]}) was sent at " in note
+    assert "It works once and expires " in note
+    for forbidden in (credential, secret, lookup_key, "/reset-password", "reset-password", "http"):
+        assert forbidden not in note, forbidden
+    with app.app_context():
+        row = TransactionalMessage.query.filter_by(template_id="INVITATION_SENT_CONFIRMATION").one()
+        assert row.to_email == OWNER[0] and row.status == STATUS_LOCAL_CAPTURED
+        user = User.query.filter_by(email=NEW_PERSON[1]).one()
+        membership = UserMembership.query.filter_by(user_id=user.id).one()
+    # Send the link again: a set-password link confirmation too.
+    owner.post(f"/settings/people/{membership.id}/send-link")
+    assert len(_confirmations(app)) == 2
+    assert f"Your CalibraytAI invitation to {NEW_PERSON[0]}" in _confirmations(app)[-1]  # not activated yet
+    html = owner.get(f"/settings/people/{membership.id}").get_data(as_text=True)
+    section = re.search(r'data-person-email-history="(\d+)">(.*?)</section>', html, re.S)
+    assert section and int(section.group(1)) == 2
+    assert section.group(2).count("data-email-history-row") == 2 and "Sent" in section.group(2)
+    assert "Invitation" in section.group(2)
+    for forbidden in (credential, secret, lookup_key, "/reset-password"):
+        assert forbidden not in section.group(2)
+
+
+def test_email_history_shows_the_last_five_with_a_plain_reason(app):
+    ids = _ids(app)
+    app.config["TRANSACTIONAL_UAT_ALLOWLIST"] = "joel@example.invalid"
+    from app.models.transactional_message import STATUS_SKIPPED_ALLOWLIST
+
+    with app.app_context():
+        for n in range(7):
+            db.session.add(TransactionalMessage(template_id=TEMPLATE_PASSWORD_RESET, to_email=STAFF[0],
+                                                from_email="noreply@localhost", provider="local",
+                                                status=STATUS_SKIPPED_ALLOWLIST, error_code="ALLOWLIST"))
+        db.session.commit()
+    owner = _client(app, OWNER)
+    html = owner.get(f"/settings/people/{ids['staff_m']}").get_data(as_text=True)
+    section = re.search(r'data-person-email-history="(\d+)">(.*?)</section>', html, re.S)
+    assert int(section.group(1)) == 5 and section.group(2).count("data-email-not-sent") == 5
+    assert "Set-password link" in section.group(2) and "allowlist" in section.group(2)
+
+
+def test_the_confirmation_respects_the_allowlist_and_never_changes_the_invitation(app):
+    # The person is on the allowlist, the sender is not: the invitation goes, the confirmation is held back
+    # (recorded as SKIPPED_ALLOWLIST), and the owner is still told the invitation was emailed.
+    app.config["TRANSACTIONAL_UAT_ALLOWLIST"] = NEW_PERSON[1]
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
+                          follow_redirects=True)
+    html = response.get_data(as_text=True)
+    assert "was emailed to" in html and "data-one-time-link" not in html
+    assert _confirmations(app) == []
+    with app.app_context():
+        row = TransactionalMessage.query.filter_by(template_id="INVITATION_SENT_CONFIRMATION").one()
+        assert row.to_email == OWNER[0] and row.status == "SKIPPED_ALLOWLIST"
+        assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_ACCOUNT_INVITATION,
+                                                    to_email=NEW_PERSON[1]).one().status == STATUS_LOCAL_CAPTURED
+
+
+def test_no_confirmation_when_the_invitation_was_not_delivered(app):
+    app.config["CALIBRAYTAI_HOSTED"] = "1"  # captured mail is not delivery on a hosted office
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]})
+    assert "data-one-time-link" in response.get_data(as_text=True)
+    with app.app_context():
+        assert TransactionalMessage.query.filter_by(template_id="INVITATION_SENT_CONFIRMATION").count() == 0
+
+
+def test_the_confirmation_template_cannot_render_a_link():
+    from app.services.transactional_email import _render
+
+    subject, body = _render("INVITATION_SENT_CONFIRMATION", {
+        "kind": "invitation", "person_name": "Nora", "person_email": "nora@example.invalid",
+        "sent_at": "Oct 23, 2026 at 9:00 AM", "expires": "Oct 26, 2026 at 9:00 AM",
+        "reset_url": "https://x.invalid/reset-password#abc.def", "invitation_url": "https://x.invalid/i/abc"})
+    assert "abc" not in body and "reset-password" not in body and "http" not in body
+    assert subject == "Your CalibraytAI invitation to Nora was sent"
+
+
+def test_the_training_site_sends_the_same_confirmation_when_its_mail_server_accepts(app):
+    """The training site uses the same code: captured mail is never delivery there, so the confirmation goes only
+    when a real mail service accepted the invitation (here a synthetic transport that accepts everything)."""
+    from app.services.transactional_email import TransportResult
+
+    sent = []
+
+    class Accepting:
+        def send(self, payload):
+            sent.append(payload)
+            return TransportResult(status="ACCEPTED", provider="fake", provider_message_id=f"m{len(sent)}")
+
+    app.config["TRAINING_ENVIRONMENT"] = True
+    app.config["TRANSACTIONAL_EMAIL_TRANSPORT"] = Accepting()
+    owner = _client(app, OWNER)
+    response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
+                          follow_redirects=True)
+    assert "data-one-time-link" not in response.get_data(as_text=True)
+    assert [p.template_id for p in sent] == [TEMPLATE_ACCOUNT_INVITATION, "INVITATION_SENT_CONFIRMATION"]
+    invitation, note = sent
+    assert invitation.to_email == NEW_PERSON[1] and note.to_email == OWNER[0]
+    credential = re.search(r"/reset-password#([A-Za-z0-9_\-.]+)", invitation.text_body).group(1)
+    for forbidden in (credential, credential.split(".")[0], credential.rsplit(".", 1)[1], "/reset-password"):
+        assert forbidden not in note.text_body and forbidden not in note.subject
+    assert not any(k in note.variables for k in ("reset_url", "invitation_url", "token", "secret"))

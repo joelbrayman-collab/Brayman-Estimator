@@ -8,6 +8,8 @@ can never touch the production office. Everything is synthetic and marked so:
     Customer Morgan Ellis (training), job "Harbour Lane Pool Deck (training)", 14 Harbour Lane, Merrickville ON
     BMR Winchester (training): Darcy (store) and Pat (PRO Desk), already Brayman's supplier. BMR sells
         concrete to the contractor; Tomlinson Ready-Mix supplies it to BMR (upstream, not a CalibraytAI party).
+    "<Name> (supplier practice)" for each training administrator: a BMR Winchester (training) login with no
+        password, opened only from the Training Centre (app/training/practice.py).
 
 Passwords are made at random and printed once by the command; nothing is stored in code. Running it again
 changes nothing that exists (it only adds what is missing).
@@ -188,6 +190,11 @@ def build(app, passwords: Dict[str, str] | None = None, administrator: tuple | N
     _job_location_and_model(project)
     db.session.commit()
     _guided_estimating_practice(ORG)
+    # Supplier practice logins for the training administrators (Joel, 24 Oct 2026; app/training/practice.py): the
+    # supplier lessons' Supplier Hub practice, on the synthetic training supplier only, with no usable password.
+    from app.training.practice import ensure_practice_logins
+
+    out["_practice"] = ensure_practice_logins(ORG, supplier)
     out["_facts"] = {"organization_id": ORG, "supplier_id": supplier.id, "company": COMPANY, "customer": CUSTOMER,
                      "job": JOB, "supplier": SUPPLIER}
     return out
@@ -256,10 +263,15 @@ def register_cli(app) -> None:
         for key, row in people.items():
             if key.startswith("_"):
                 continue
-            if passwords_from_env:
+            if row["password"] is None:  # the account already existed: build() left its password alone
+                pw = "(already existed; password unchanged)"
+            elif passwords_from_env:
                 pw = "(password from the site's settings)" if key in given else "(random; reset it to sign in)"
             else:
-                pw = row["password"] or "(already existed; password unchanged)"
+                pw = row["password"]
             click.echo(f"{row['role']:<9} {row['name']:<48} {row['email']:<42} {pw}")
+        for row in people.get("_practice", []):
+            click.echo(f"{'PRACTICE':<9} {row['name']:<48} {row['email']:<42} (no password: opened from the "
+                       f"Training Centre by {row['for']})")
         if not passwords_from_env:
             click.echo("Give each person their own email and password privately. Passwords are not shown again.")

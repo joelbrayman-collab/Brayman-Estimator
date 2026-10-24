@@ -266,7 +266,17 @@ def _register_office_auth(app: Flask) -> None:
             ret = session.get("tc_return")
             f = (request.args.get("tc_focus") or "").strip()
             focus = f if f and len(f) <= 60 and all(c.isalnum() or c in "_.-" for c in f) else None
-        return {"training_site": on, "training_return": ret, "training_focus": focus}
+        practice = None
+        if on:
+            # Signed in as a training administrator's supplier practice login (24 Oct 2026): the way back.
+            from flask_login import current_user
+
+            from app.training.practice import is_practice_login, marker_for
+
+            if getattr(current_user, "is_authenticated", False) and is_practice_login(current_user):
+                marker = marker_for(current_user._get_current_object())
+                practice = {"admin": marker["admin"].display_name, "back": ret or marker["back"]} if marker else None
+        return {"training_site": on, "training_return": ret, "training_focus": focus, "training_practice": practice}
 
     @app.before_request
     def protect_office_routes():

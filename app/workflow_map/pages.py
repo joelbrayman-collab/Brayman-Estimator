@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 
 from flask_login import current_user
 
-from app.models.training import ROLE_FIELD, ROLE_OFFICE, ROLE_OWNER
+from app.models.training import ROLE_FIELD, ROLE_OFFICE, ROLE_OWNER, SUPPLIER_ROLES
 from app.workflow_map import definition as D
 from app.workflow_map.build import KIND_FIELD, KIND_OFFICE, KIND_SUPPLIER, Viewer
 
@@ -53,6 +53,8 @@ def office_viewer(project_id: Optional[int]) -> Viewer:
                customer_projects_only(Project.query.filter_by(organization_id=org_id)).order_by(Project.name.asc())
                .limit(MAX_PROJECT_CHOICES)]
     role = trainee.role if trainee is not None else (ROLE_OWNER if people_admin else ROLE_OFFICE)
+    if role in SUPPLIER_ROLES:  # an administrator on the Supplier pathway reading the office map (24 Oct 2026)
+        role = ROLE_OWNER if people_admin else ROLE_OFFICE
     return Viewer(kind=KIND_OFFICE, people_admin=people_admin, company_management=company_management,
                   project_id=project.id if project else None, project_name=project.name if project else "",
                   training=training, trainee=trainee, role=role if training else None, projects=choices,
@@ -68,7 +70,8 @@ def field_viewer(project) -> Viewer:
     training, trainee = _training()
     return Viewer(kind=KIND_FIELD, project_id=project.id if project else None,
                   project_name=project.name if project else "", training=training, trainee=trainee,
-                  role=(trainee.role if trainee is not None else ROLE_FIELD) if training else None, projects=None)
+                  role=(trainee.role if trainee is not None and trainee.role not in SUPPLIER_ROLES else ROLE_FIELD)
+                  if training else None, projects=None)
 
 
 def supplier_viewer(supplier) -> Viewer:
@@ -83,7 +86,7 @@ def training_viewer(trainee) -> Tuple[str, Viewer]:
     from app.training import service as svc
 
     pathway, org_id, supplier_id, field_only = svc.principal(current_user)
-    if trainee.pathway == PATHWAY_SUPPLIER:
+    if trainee.track == PATHWAY_SUPPLIER:  # a supplier, or a training administrator on the Supplier pathway
         if pathway != PATHWAY_SUPPLIER or not supplier_id:
             return D.MAP_SUPPLIER, Viewer(kind=KIND_SUPPLIER, training=True, trainee=trainee, role=trainee.role,
                                           projects=None)

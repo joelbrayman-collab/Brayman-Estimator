@@ -80,7 +80,13 @@ def principal(user) -> Tuple[Optional[str], Optional[str], Optional[int], bool]:
 def allowed_roles(user) -> Tuple[str, ...]:
     pathway, _org, _sup, field_only = principal(user)
     if pathway == PATHWAY_CONTRACTOR:
-        return (ROLE_FIELD,) if field_only else CONTRACTOR_ROLES
+        if field_only:
+            return (ROLE_FIELD,)
+        # Training administrators also take the Supplier pathway from their own sign-in (Joel, 24 Oct 2026); its
+        # Supplier Hub practice uses their synthetic supplier practice login (app/training/practice.py).
+        if enabled() and is_admin(user) is not None:
+            return CONTRACTOR_ROLES + SUPPLIER_ROLES
+        return CONTRACTOR_ROLES
     if pathway == PATHWAY_SUPPLIER:
         return SUPPLIER_ROLES
     return ()
@@ -366,14 +372,19 @@ def tracks_taken(trainee) -> List[Tuple[str, str, bool]]:
     def _keys(track, role):
         return ({lesson.key for _m, lesson in C.lessons_for(track, role)} | {c.key for c in C.uat_for(track, role)})
 
-    from app.models.training import ROLE_OFFICE, ROLE_OWNER
+    from app.models.training import ROLE_OFFICE, ROLE_OWNER, ROLE_PRO_DESK, ROLE_SUPPLIER_OWNER
 
-    if trainee.track == PATHWAY_FIELD_CREW:
+    if trainee.track != PATHWAY_CONTRACTOR:
         owner, office = _keys(PATHWAY_CONTRACTOR, ROLE_OWNER), _keys(PATHWAY_CONTRACTOR, ROLE_OFFICE)
         if keys & owner:
             out.append((PATHWAY_CONTRACTOR, ROLE_OWNER if keys & (owner - office) else ROLE_OFFICE, False))
-    elif keys & _keys(PATHWAY_FIELD_CREW, ROLE_FIELD):
+    if trainee.track != PATHWAY_FIELD_CREW and keys & _keys(PATHWAY_FIELD_CREW, ROLE_FIELD):
         out.append((PATHWAY_FIELD_CREW, ROLE_FIELD, False))
+    # A training administrator's Supplier pathway (24 Oct 2026): kept on the same record, shown as its own training.
+    if trainee.track != PATHWAY_SUPPLIER:
+        supplier, desk = _keys(PATHWAY_SUPPLIER, ROLE_SUPPLIER_OWNER), _keys(PATHWAY_SUPPLIER, ROLE_PRO_DESK)
+        if keys & supplier:
+            out.append((PATHWAY_SUPPLIER, ROLE_SUPPLIER_OWNER if keys & (supplier - desk) else ROLE_PRO_DESK, False))
     return out
 
 
@@ -462,8 +473,9 @@ GENERAL_HELP = GENERAL_HELP + (
      "tick Decide this stage part by part (for example your materials, the subcontractor's installation)."),
     ("complete completed cost missing allowance zero refused incomplete", "A stage is Complete only with confirmed "
      "costs, an approved allowance (Allowance or no-cost decision → Approve the allowance, with the reason) or a "
-     "no-cost decision, which only the owner or a System Administrator can authorize. Pressing Complete & Next alone never completes it: the page lists what is missing, and the proposal "
-     "waits until every stage is resolved."),
+     "no-cost decision, which only the owner or a System Administrator can authorize. Pressing Complete & Next "
+     "alone never completes it: the page lists what is missing, and the proposal waits until every stage is "
+     "resolved."),
     ("quote quotes subcontractor waiting suggested select compare", "Subcontracted stage: set up the subcontract, send "
      "the Printable quote request sheet and press I have sent the quote request (the stage shows Waiting for Quote; "
      "carry on with other stages). Record each quote, press Select this quote, then Use this cost on the line. A "
@@ -476,6 +488,16 @@ GENERAL_HELP = GENERAL_HELP + (
     ("internal cost document pdf customer distribution", "Estimating workflow → Internal cost estimate: every stage's "
      "materials, labour, subcontracts and allowances with their sources, marked INTERNAL — NOT FOR CUSTOMER "
      "DISTRIBUTION. Download PDF or Print. The customer gets the proposal, never this."),
+)
+
+# Supplier training for administrators (Joel, 24 Oct 2026): the pathway switch and the supplier practice login.
+GENERAL_HELP = GENERAL_HELP + (
+    ("supplier practice administrator pathway store hub bmr password", "Training administrators take the Supplier "
+     "pathway from their own sign-in: Pathway (top of the page) → Supplier owner, Supplier administrator or PRO Desk. "
+     "Your lessons and test results stay on your own training record, apart from your Contractor and Field ones. For "
+     "the Supplier Hub steps press Open the supplier practice site as <your name> (supplier practice): it opens BMR "
+     "Winchester (training) as your practice login, with training records only and no supplier password. Press Back "
+     "to the Training Centre as <your name> at the top of the page to come back signed in as yourself."),
 )
 
 _WHERE = {"where", "find", "menu", "button", "press", "click", "open", "locate"}

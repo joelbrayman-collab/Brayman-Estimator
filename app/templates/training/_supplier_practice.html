@@ -1,0 +1,15 @@
+{# Supplier pathway for a training administrator (Joel, 24 Oct 2026): the Supplier Hub steps open through the
+   administrator's own synthetic supplier practice login (app/training/practice.py). Included once per step. #}
+{% if practice.missing %}{% if i == 0 %}<p class="tc-small" data-supplier-practice-missing>{{ practice.message }}</p>{% endif %}
+{% elif practice_steps.get(i) %}
+<div class="tc-step-links" data-supplier-practice>
+  {% for label, href in practice_steps[i] %}
+  <form method="post" action="{{ url_for('training.supplier_practice_open') }}" style="display:inline-block;margin:0 8px 8px 0;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ href }}">
+    <button class="tc-btn tc-btn-primary" type="submit" data-supplier-practice-open>{% if loop.first %}Open the supplier practice site as {{ practice.name }}{% else %}{{ label }} as {{ practice.name }}{% endif %}</button>
+  </form>
+  {% endfor %}
+  {% if i == (practice_steps.keys()|min) %}<p class="tc-small" data-supplier-practice-intro>{{ practice.intro }}</p>{% endif %}
+</div>
+{% endif %}

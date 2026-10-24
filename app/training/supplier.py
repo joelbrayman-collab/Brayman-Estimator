@@ -31,6 +31,16 @@ from app.training.content import (
     UatCase,
 )
 
+# Training administrators (the contractor's owner, Joel) take this pathway from their own sign-in (24 Oct 2026):
+# shown when they choose it in the header Pathway switch and beside each Supplier Hub step of their lessons. Their
+# Supplier Hub practice opens as their synthetic supplier practice login (app/training/practice.py).
+ADMIN_PRACTICE_INTRO = ("Supplier training from your own sign-in: your lessons and test results are kept on your own "
+                        "training record, separate from your Contractor and Field training. Where a step says to sign "
+                        "in to the Supplier Hub, you do not need a supplier password: press Open the supplier "
+                        "practice site. It opens BMR Winchester (training) as your supplier practice login, with "
+                        "training records only. Press Back to the Training Centre at the top of the page to come back "
+                        "signed in as yourself.")
+
 STORE = "Supplier Hub → your store's page (BMR Winchester (training))"
 PRO_DESK = "Supplier Hub → your store's page → PRO Desk quotations"
 REQUESTS_OFFICE = "Projects → Harbour Lane Pool Deck (training) → Purchasing → Supplier requests, concrete and orders"

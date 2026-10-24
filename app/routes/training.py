@@ -20,7 +20,7 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import current_user
 
-from app.models.training import ROLE_FIELD, ROLE_LABELS, UAT_STATUSES
+from app.models.training import PATHWAY_SUPPLIER, ROLE_FIELD, ROLE_LABELS, UAT_STATUSES
 from app.training import content as C
 from app.training import service as svc
 from app.training.links import links_for_lesson
@@ -35,6 +35,15 @@ def _guard():
     session.pop("tc_return", None)  # back in the Training Centre: the 'Back to the lesson step' bar is done
     if not current_user.is_authenticated and request.endpoint != "training.signin":
         return redirect(url_for("training.signin"))
+    # A supplier practice login never registers or records training (24 Oct 2026): it is offered the way back to
+    # the administrator's own sign-in instead.
+    from app.training import practice as P
+
+    if current_user.is_authenticated and P.is_practice_login(current_user) \
+            and request.endpoint != "training.supplier_practice_return":
+        marker = P.marker_for(current_user._get_current_object())
+        return render_template("training/supplier_practice_away.html", marker=marker,
+                               back=request.full_path.rstrip("?")), 200
     return None
 
 
@@ -59,7 +68,9 @@ def _review_nav():
 
 
 # Header names for the pathways (the lessons and records stay keyed by role).
-PATHWAY_LABELS = {"OWNER": "Contractor (owner)", "OFFICE": "Contractor (office)", ROLE_FIELD: "Field Crew"}
+PATHWAY_LABELS = {"OWNER": "Contractor (owner)", "OFFICE": "Contractor (office)", ROLE_FIELD: "Field Crew",
+                  "SUPPLIER_OWNER": "Supplier owner", "SUPPLIER_ADMIN": "Supplier administrator",
+                  "PRO_DESK": "PRO Desk"}
 
 
 @training_bp.route("/signin")
@@ -99,7 +110,67 @@ def register():
         if before is not None and trainee.role != before:
             flash(f"You are now on {PATHWAY_LABELS.get(trainee.role, ROLE_LABELS.get(trainee.role, trainee.role))} "
                   "training. Your other pathway's lessons, progress and test results are kept.", "success")
+        if trainee.track == PATHWAY_SUPPLIER and trainee.pathway != PATHWAY_SUPPLIER:
+            flash(SUPPLIER_ADMIN_INTRO, "success")
     return redirect(url_for("training.home"))
+
+
+# The Supplier pathway for training administrators (Joel, 24 Oct 2026): shown when they choose it and on the
+# supplier lesson steps that practise in the Supplier Hub (the wording lives with the supplier lessons).
+from app.training.supplier import ADMIN_PRACTICE_INTRO as SUPPLIER_ADMIN_INTRO  # noqa: E402
+
+
+def _practice_steps(trainee, key, item):
+    """For an administrator on the Supplier pathway: {step index: [(label, Supplier Hub path)]} opened through the
+    supplier practice login, or None when this is not that case. {} means the login is not set up yet."""
+    from types import SimpleNamespace
+
+    from app.training import practice as P
+    from app.training.content import APP_PRO_DESK, APP_SUPPLIER
+    from app.training.links import _with_return
+
+    if trainee.track != PATHWAY_SUPPLIER or trainee.pathway == PATHWAY_SUPPLIER:
+        return None, None
+    login = P.practice_login_for(current_user._get_current_object())
+    if login is None:
+        return None, {"missing": True, "message": P.NOT_SET_UP}
+    supplier = P.training_supplier()
+    built = links_for_lesson(key, SimpleNamespace(supplier_id=supplier.id, organization_id=None))
+    steps = {}
+    for i, step in enumerate(item.steps):
+        if step.app not in (APP_SUPPLIER, APP_PRO_DESK):
+            continue
+        rows = [(label, href) for label, href in built.get(i, []) if href.startswith("/supplier")]
+        steps[i] = rows or [("Open the supplier practice site", _with_return("/supplier/", key, i + 1, "first"))]
+    return steps, {"name": login.display_name, "intro": SUPPLIER_ADMIN_INTRO}
+
+
+@training_bp.route("/supplier-practice/open", methods=["POST"])
+def supplier_practice_open():
+    """Open the Supplier Hub as the administrator's own supplier practice login (training site only, audited)."""
+    from app.training import practice as P
+
+    try:
+        _login, path = P.open_practice(current_user._get_current_object(), request.form.get("next", ""),
+                                       request.form.get("back", ""))
+    except P.PracticeError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("training.home"))
+    return redirect(path)
+
+
+@training_bp.route("/supplier-practice/return", methods=["POST"])
+def supplier_practice_return():
+    """From the supplier practice login back to the administrator's own sign-in and the lesson step."""
+    from app.training import practice as P
+
+    try:
+        admin, back = P.return_to_admin(current_user._get_current_object(), request.form.get("back", ""))
+    except P.PracticeError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("training.signin"))
+    flash(f"You are signed in as {admin.display_name} again.", "success")
+    return redirect(back)
 
 
 @training_bp.route("/lessons/<key>")
@@ -115,11 +186,13 @@ def lesson(key):
     progress = svc.save_step(trainee, key, step)
     prev_key, next_key = svc.neighbours(trainee, key)
     ticked = set(svc.steps_ticked(trainee, key))
+    practice_steps, practice = _practice_steps(trainee, key, item)
     return render_template("training/lesson.html", trainee=trainee, module=module, lesson=item, step=step,
                            current=item.steps[step], prev_key=prev_key, next_key=next_key, ticked=ticked,
                            progress=progress, notes=svc.feedback(trainee, key),
                            workflow_stages=_workflow_stages(trainee, key),
-                           step_links=links_for_lesson(key, trainee))
+                           step_links={} if practice else links_for_lesson(key, trainee),
+                           practice=practice, practice_steps=practice_steps or {})
 
 
 def _workflow_stages(trainee, lesson_key):
@@ -322,8 +395,15 @@ def uat_case(key):
     from app.workflow_map.pages import training_viewer
 
     on_map = {s.id for s in WD.map_stages(training_viewer(trainee)[0])}
+    practice_uat = None
+    if trainee.track == PATHWAY_SUPPLIER and trainee.pathway != PATHWAY_SUPPLIER:  # an administrator (24 Oct 2026)
+        from app.training import practice as P
+
+        login = P.practice_login_for(current_user._get_current_object())
+        practice_uat = ({"name": login.display_name, "back": url_for("training.uat_case", key=key)} if login
+                        else {"missing": True, "message": P.NOT_SET_UP})
     return render_template("training/uat_case.html", trainee=trainee, case=case, attempts=attempts, module=module,
-                           statuses=UAT_STATUSES, tutor_mode="uat",
+                           statuses=UAT_STATUSES, tutor_mode="uat", practice_uat=practice_uat,
                            workflow_stages=[s for s in WD.stages_for_uat(key) if s.id in on_map])
 
 

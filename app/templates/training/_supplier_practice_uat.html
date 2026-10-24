@@ -1,0 +1,12 @@
+{# A training administrator's supplier acceptance test (Joel, 24 Oct 2026): the Supplier Hub opens as their own
+   synthetic supplier practice login; the result is saved on their own record when they come back. #}
+{% if practice_uat.missing %}<p class="tc-small" data-supplier-practice-missing>{{ practice_uat.message }}</p>
+{% else %}
+<form method="post" action="{{ url_for('training.supplier_practice_open') }}" class="tc-step-links" data-supplier-practice>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="next" value="/supplier/">
+  <input type="hidden" name="back" value="{{ practice_uat.back }}">
+  <button class="tc-btn tc-btn-primary" type="submit" data-supplier-practice-open>Open the supplier practice site as {{ practice_uat.name }}</button>
+  <span class="tc-small">Do the test there, then press Back to the Training Centre at the top of the page and save the result here.</span>
+</form>
+{% endif %}

@@ -34,6 +34,28 @@ stop the service, copy the backup over `training.db`, and run the script with th
   schema change. The owner previews it at `/training/review/field-crew` and follows the crew's lessons
   and Field acceptance results (failing or blocked tests flagged) on `/training/admin`.
 
+## Supplier practice login (training administrators, 24 Oct 2026)
+
+Joel takes the Supplier trainee pathway from his own Owner training sign-in, so his Contractor and Field progress
+and all acceptance results stay where they are (one trainee record, each pathway's lessons and tests kept apart by
+key). One sign-in cannot be on the contractor and the supplier side at once, so the Supplier Hub practice uses a
+separate synthetic login (`app/training/practice.py`):
+
+- `flask training build-environment` adds, for each training administrator (the training company's Instance Owner
+  and System Administrators), "<Name> (supplier practice)" at `supplier-practice-<user id>@training.calibraytai.invalid`:
+  a member of BMR Winchester (training) only (the synthetic supplier), no contractor membership and no usable
+  password, so it cannot sign in from any sign-in page. Running the command again adds nothing; it is printed as a
+  `PRACTICE` line. Existing accounts print "(already existed; password unchanged)".
+- The administrator chooses Supplier owner, Supplier administrator or PRO Desk in the header Pathway switch. On each
+  Supplier Hub step of a supplier lesson, "Open the supplier practice site as <Name> (supplier practice)" (a
+  CSRF-protected POST) checks again that he is a training administrator and that the login is his own, synthetic,
+  supplier-only practice login, writes an audit line (`app.training.supplier_practice` in the application log) and
+  opens the Supplier Hub page as that login. Every training-site page then shows "Back to the Training Centre as
+  <Name>", which signs him back in as himself (same checks, audited) at the lesson step. The practice login never
+  registers or records training; the Training Centre only offers it the way back.
+- With `TRAINING_ENVIRONMENT` off nothing of this exists: the routes answer 404, the Supplier roles are not offered
+  and the build refuses. No production permission or sign-in changed.
+
 ## Setting it up (needs Joel's authorization: a new paid service)
 
 1. Render → New → Web Service, repository `joelbrayman-collab/Brayman-Estimator`, branch `main`,

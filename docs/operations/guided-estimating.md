@@ -32,18 +32,33 @@ New nullable columns on `project_calculations`: `result_id`, `engine_id`, `engin
 `sent_to_review_by`. Existing rows unchanged (NULL in the new columns). Downgrade refuses while any of it is used.
 Release gate: `--migration-to g5e7c2a9d1b4 --new-tables guided_estimates,guided_estimate_stages,guided_estimate_events,calculator_result_carries --altered-tables project_calculations`.
 
-## Decisions for Joel (nothing below was changed without him)
+## Decisions (approved by Joel 24 Oct 2026)
 
-1. **Allowance and no-cost authority** uses the existing costing-approval authority (the signed-in approver), not a
-   new permission. A stricter owner-only rule would be a permission change.
-2. **Proposal issue** of a guided estimate now also waits for every included stage (brief section 9); non-guided
-   estimates are unchanged.
-3. **Labour-rate notes**: the existing labour-hours lines carried the company labour rate in their notes, which the
-   customer proposal printed. Those provenance notes (and the guided manual-line note) are now treated like the other
-   platform provenance notes and kept off customer documents. Typed notes are still shown.
+1. **Allowances and no-cost decisions.** An authorized costing approver (the signed-in person with the existing
+   costing-approval authority) may approve a documented allowance: the amount, a description and a required reason;
+   who approved it, when and why are kept in the stage history (`ALLOWANCE_APPROVED` event) and shown on the stage.
+   An **explicit zero-cost decision for included work** needs the **instance owner or a System Administrator** (the
+   existing delegated equivalent authority, `instance_authority`). Anyone else sees "Only the owner or a System
+   Administrator can decide that included work has no cost …" instead of the form, and the service refuses it
+   whatever sends it. Field-only crew never reach the stage pages. Tests: `tests/test_guided_owner_decisions_20261024.py`.
+2. **Proposal issue** of a guided estimate waits while any included stage has unresolved costing, quotation or scope
+   requirements: costing missing, a quote waiting, a quote selected but not used on the line, a stage changed after
+   it was completed (Needs Review), or the scope not finalized (an undecided stage). Non-guided estimates are
+   unchanged. Tests: the same file.
+3. **Internal labour rates and internal costing notes never reach a customer document** (proposal page and PDF, the
+   customer's proposal link and PDF, the generated contract, the change order PDF that is also sent for signature;
+   the PRO Desk quotation is drawn from its frozen issued record, which carries no contractor notes). The platform's
+   provenance notes (labour rate, approved cost, calculator hand-off, guided manual line, guided allowance approval)
+   and any note that mentions rates, wages, costs, margin, markup, overhead or supplier/wholesale prices stay on the
+   estimate line (the internal costing record and the internal cost estimate) and are left off. A note written for
+   the customer is still shown. A change order priced from direct cost or carrying a markup lists its lines without
+   internal unit prices and shows one price before tax. Test: `tests/test_customer_documents_no_internal_costing_20261024.py`.
 4. **Revisions re-confirm routing**: a cloned version's lines need "who supplies and builds" confirmed again
    (existing clone rule); guided stages show Needs Review until then.
-5. **Stairs** has no material quantities (it checks a stair design), so its result is kept on the project as a
-   record and the stair materials are entered as lines.
+5. **Stairs** has no material quantities (the stair calculator checks a stair design), so its result is kept on the
+   project as a record and the stair materials are entered as the governed manual material-cost lines. No stair
+   material list is invented.
 6. **Kevin's Contractor Review** uses an office (not Field-only) training account, like Olivia's; his Field Crew
    pathway uses his Field account.
+7. **Supplier training for training administrators** (training site only): see `docs/operations/training-site.md`,
+   "Supplier practice login".

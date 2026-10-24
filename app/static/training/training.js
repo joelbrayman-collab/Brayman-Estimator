@@ -66,24 +66,36 @@
         .catch(function () { form.submit(); });
     });
   });
-  // Tutor: minimize and restore without leaving the page (the choice is saved on the server).
+  // Tutor: a header button opens it as a drawer that scrolls on its own; it starts closed on every page.
+  // Closing and opening are still saved on the server (the same /training/tutor call as before).
   var tutor = document.querySelector("[data-tutor]");
   if (!tutor) return;
+  document.documentElement.classList.add("tc-js");
   var toggle = tutor.querySelector("[data-tutor-toggle]");
-  toggle.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var input = toggle.querySelector('[name="minimized"]');
+  var launch = document.querySelector("[data-tutor-launch]");
+  var tbtn = toggle.querySelector("[data-tutor-button]");
+  var nav = document.querySelector(".tc-top .tc-nav") || document.querySelector(".tc-top");
+  if (launch) { if (nav) nav.appendChild(launch); launch.hidden = false; }
+  tbtn.textContent = "Minimize";
+  tbtn.setAttribute("aria-expanded", "false");
+  var saveState = function (minimized) {
     var body = new FormData(toggle);
-    fetch(toggle.action, { method: "POST", body: body, headers: { "X-Requested-With": "fetch", "X-CSRFToken": token } })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        tutor.classList.toggle("is-min", data.minimized);
-        input.value = data.minimized ? "0" : "1";
-        var b = toggle.querySelector("[data-tutor-button]");
-        b.textContent = data.minimized ? "Open the Tutor" : "Minimize";
-        b.setAttribute("aria-expanded", data.minimized ? "false" : "true");
-      })
-      .catch(function () { toggle.submit(); });
+    body.set("minimized", minimized ? "1" : "0");
+    tutor.classList.toggle("is-min", minimized);
+    fetch(toggle.action, { method: "POST", body: body, headers: { "X-Requested-With": "fetch", "X-CSRFToken": token } }).catch(function () {});
+  };
+  var setOpen = function (open, returnFocus) {
+    tutor.classList.toggle("is-open", open);
+    tbtn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (launch) launch.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) { var q = tutor.querySelector("#tutor-q"); (q || tutor).focus({ preventScroll: true }); }
+    else if (returnFocus && launch) launch.focus();
+    saveState(!open);
+  };
+  if (launch) launch.addEventListener("click", function () { setOpen(!tutor.classList.contains("is-open"), true); });
+  toggle.addEventListener("submit", function (e) { e.preventDefault(); setOpen(false, true); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && tutor.classList.contains("is-open")) setOpen(false, true);
   });
   var ask = tutor.querySelector("[data-tutor-ask]");
   tutor.querySelectorAll("[data-tutor-quick]").forEach(function (chip) {

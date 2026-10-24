@@ -1,4 +1,8 @@
-{% if training_site %}<div class="training-site-bar" style="background:#1c1f24;color:#fff;font:600 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;padding:8px 14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;" data-training-site>
+{% if training_site %}<div class="training-site-bar" style="background:#1c1f24;color:#fff;font:600 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;padding:8px 14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;" data-training-site{% if training_focus %} data-tc-focus="{{ training_focus }}"{% endif %}>
   <span>Training site · practice here with fictional training records</span>
-  <a href="{{ url_for('training.home') }}" style="background:#c79a2b;color:#141414;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;" data-training-link>← Back to my training</a>
-</div>{% endif %}
+  <span style="display:flex;flex-wrap:wrap;gap:10px;">
+  {% if training_return %}<a href="{{ training_return }}" style="background:#c79a2b;color:#141414;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;" data-training-return>← Back to the lesson step</a>
+  <a href="{{ url_for('training.home') }}" style="color:#fff;text-decoration:underline;padding:8px 6px;" data-training-link>My training</a>
+  {% else %}<a href="{{ url_for('training.home') }}" style="background:#c79a2b;color:#141414;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;" data-training-link>← Back to my training</a>{% endif %}
+  </span>
+</div>{% if training_return %}<a href="{{ training_return }}" style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2000;background:#c79a2b;color:#141414;text-decoration:none;padding:12px 18px;min-height:44px;border-radius:999px;font:700 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.3);" data-training-return-float>← Back to the lesson step</a>{% endif %}{% if training_focus %}<script src="{{ url_for('static', filename='training/site-bar.js') }}" defer></script>{% endif %}{% endif %}

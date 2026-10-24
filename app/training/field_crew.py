@@ -88,11 +88,11 @@ M01 = Module(
                      if_wrong="Tapped it by mistake? Tap Done again and the tick goes away.",
                      shot="f01-lesson.png", endpoint="training.lesson"),
                 Step(title="Ask the Tutor, then make it small", app=TC_APP,
-                     where="Any lesson → Training Tutor (under the steps)",
-                     do="Tap a question button such as Where is it? Then tap Minimize. Tap Open the Tutor to bring it "
-                        "back",
-                     expect="The Tutor answers about the step you are on. Minimize makes it small; Open the Tutor "
-                            "brings it back. It stays the way you left it on every page.",
+                     where="Any lesson → Ask the Tutor (in the header)",
+                     do="Tap Ask the Tutor in the header, then tap a question button such as Where is it? Then tap "
+                        "Minimize. Tap Ask the Tutor again to bring it back",
+                     expect="The Tutor answers about the step you are on. Minimize closes it; Ask the Tutor in the "
+                            "header brings it back.",
                      if_wrong="No answer? Check you have a signal and tap the question again.",
                      shot="f01-tutor.png", endpoint="training.lesson"),
                 Step(title="Save and exit", app=TC_APP, where="Any lesson → Save and exit (below the practice exercise)",

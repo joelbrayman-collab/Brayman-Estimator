@@ -124,3 +124,45 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 /* Module times (Joel, 23 Oct 2026): "About 35 minutes", or Session 1 / Session 2 between lessons. */
 .tc-module-time { margin:-4px 0 6px; font-size:.9rem; font-weight:600; color:var(--muted, #5b6470); }
 .tc-session-break { display:block; margin:10px 0 2px; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted, #5b6470); }
+
+/* Tutor in the header (23 Oct 2026): lessons use the whole page; the Tutor opens as a drawer that scrolls on its own.
+   Applies only once training.js has run (html.tc-js), so without JS the Tutor stays under the lesson. */
+.tc-tutor-launch { display:none; }
+.tc-js .tc-tutor-launch { display:inline-flex; align-items:center; gap:8px; background:transparent; color:#fff; border:1px solid var(--gold); border-radius:999px; padding:3px 14px 3px 4px; font:inherit; font-weight:600; cursor:pointer; }
+.tc-js .tc-tutor-launch[hidden] { display:none; }
+.tc-js .tc-tutor-launch:hover { color:var(--gold); }
+.tc-tutor-launch:focus-visible, .tc-tutor button:focus-visible, .tc-tutor input:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.tc-tutor-launch img { width:36px; height:36px; object-fit:contain; flex:none; }
+.tc-js .tc-layout { grid-template-columns:minmax(0,1fr); }
+.tc-js .tc-tutor { position:fixed; top:0; right:0; bottom:0; z-index:60; width:min(400px,100vw); margin:0; border-radius:12px 0 0 12px; overflow-y:auto; overscroll-behavior:contain; box-shadow:-8px 0 28px rgba(0,0,0,.22); transform:translateX(105%); visibility:hidden; transition:transform .2s ease, visibility 0s linear .2s; }
+.tc-js .tc-tutor.is-open { transform:none; visibility:visible; transition:transform .2s ease; }
+.tc-js .tc-tutor.is-min .tc-tutor-body { display:block; }
+.tc-js .tc-tutor-head { position:sticky; top:-14px; z-index:1; background:#fff; margin:-14px -14px 0; padding:14px; border-bottom:1px solid var(--border); }
+@media (max-width: 600px) {
+  .tc-js .tc-tutor { width:100vw; border-radius:0; border:0; }
+  .tc-tutor-launch span { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .tc-js .tc-tutor-launch { padding:3px; }
+}
+@media (prefers-reduced-motion: reduce) { .tc-js .tc-tutor, .tc-js .tc-tutor.is-open { transition:none; } }
+
+/* Back above the Workflow map, and step buttons that open the page or calculator (23 Oct 2026) */
+.tc-map-back { margin:0 0 12px; }
+.tc-back { min-height:44px; }
+.tc-step-links { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:10px 0 0; }
+.tc-step-links .tc-btn { text-align:center; }
+.tc-step-links .tc-small { flex:1 1 220px; margin:0; }
+.tc-back:focus-visible, .tc-step-links a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+
+/* Change training pathway in the header (24 Oct 2026) */
+.tc-pathway { position:relative; }
+.tc-pathway > summary { list-style:none; cursor:pointer; color:#fff; border:1px solid var(--gold); border-radius:999px; padding:4px 12px; font-weight:600; font-size:.9rem; white-space:nowrap; }
+.tc-pathway > summary::-webkit-details-marker { display:none; }
+.tc-pathway > summary::after { content:" \25BE"; }
+.tc-pathway > summary:focus-visible, .tc-pathway-menu button:focus-visible, .tc-pathway-menu a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.tc-pathway-menu { position:absolute; right:0; top:calc(100% + 8px); z-index:70; min-width:240px; max-width:calc(100vw - 24px); background:#fff; color:#1b1b1b; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:10px; display:flex; flex-direction:column; gap:6px; }
+.tc-pathway-title { margin:0 0 4px; font-weight:700; font-size:.9rem; }
+.tc-pathway-note { margin:4px 0 0; font-size:.8rem; color:var(--muted, #5b6470); }
+.tc-pathway-menu button, .tc-pathway-menu a { display:block; text-align:left; min-height:44px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fff; color:#1b1b1b; font:inherit; cursor:pointer; text-decoration:none; }
+.tc-pathway-menu button:hover, .tc-pathway-menu a:hover { border-color:var(--gold); }
+.tc-pathway-menu button[disabled] { background:#f4efe3; cursor:default; font-weight:600; }
+@media (max-width: 600px) { .tc-pathway-menu { position:fixed; left:12px; right:12px; top:auto; min-width:0; } }

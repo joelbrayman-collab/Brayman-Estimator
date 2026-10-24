@@ -294,6 +294,13 @@ test("compact header: back control in the dark header; the diagram's top within 
 });
 
 // The Supplier map's journey selector and the header Owner review menu (24 Oct 2026).
+// "In this stage": the first item's name is laid out at a readable width (never one letter per line).
+async function inThisStageReadable(pg, url, label) {
+  await pg.goto(`${base}${url}`);
+  const w = await pg.locator(".wf-page:not([hidden]) .wf-steps .wf-step").first().evaluate((li) =>
+    [li.getBoundingClientRect().width, li.querySelector(".wf-step-label").getBoundingClientRect().width]);
+  assert.ok(w[0] > 200 && w[1] > 200, `${label} ${url}: the first "In this stage" item is ${Math.round(w[0])} px wide, its name ${Math.round(w[1])} px`);
+}
 async function journeyOf(pg) {
   return pg.locator("[data-wf-journey-tab][aria-selected=true]").getAttribute("data-wf-journey-tab");
 }
@@ -302,6 +309,11 @@ async function shownJourneys(pg) {
 }
 test("Supplier map: journey selector (click, keyboard, deep links), Back / Next across journeys, Owner review menu", async () => {
   const { pg, ctx } = sessions.ben;
+  await pg.setViewportSize({ width: 1440, height: 800 });
+  for (const url of ["/training/review/supplier", "/training/review/supplier?stage=sb-order", "/training/review/supplier?stage=sc-setup",
+    "/training/review/contractor?stage=c-price", "/training/review/field", "/training/workflow?stage=c-price", "/workflow?stage=c-price"]) {
+    await inThisStageReadable(pg, url, "1440 x 800");
+  }
   await pg.setViewportSize({ width: 1366, height: 670 });
   try {
     await pg.goto(`${base}/training/review/supplier`);
@@ -378,6 +390,9 @@ test("Supplier map on the phone (390 x 844): selector fits, no sideways scrollin
   const { pg } = sessions.ben;
   await pg.setViewportSize(PHONE);
   try {
+    for (const url of ["/training/review/supplier", "/training/review/contractor?stage=c-price", "/workflow?stage=c-price"]) {
+      await inThisStageReadable(pg, url, "390 x 844");
+    }
     await pg.goto(`${base}/training/review/supplier?stage=sb-order`);
     await noSideways(pg, "supplier map (phone)");
     for (const t of await pg.locator("[data-wf-journey-tab]").all()) {

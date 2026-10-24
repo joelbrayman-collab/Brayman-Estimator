@@ -126,11 +126,13 @@ html:has(.wf-controls) { scroll-padding-bottom: 96px; }
 
 .wf-sub { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--wf-gold-deep); margin: 18px 0 8px; font-weight: 700; }
 .wf-steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--wf-line); }
-.wf-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--wf-line); }
+.wf-step { display: grid; grid-template-columns: minmax(min(12em, 100%), 1fr) fit-content(50%); gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--wf-line); }
 .wf-step-label { font-size: 15px; font-weight: 500; }
 .wf-step-note { grid-column: 1 / -1; font-size: 13px; color: var(--wf-muted); line-height: 1.45; }
 .wf-step-go { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 12px; grid-column: 2; grid-row: 1; }
 .wf-step .wf-chip { justify-self: start; }
+/* A long reason (no link) goes under the step's name, so the name is never squeezed to one letter per line. */
+.wf-step-go:has(> .wf-reason) { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; }
 .wf-go { font-size: 14px; font-weight: 600; color: var(--wf-ink); text-decoration: underline; text-decoration-color: var(--wf-gold); text-underline-offset: 4px; padding: 6px 0; display: inline-block; }
 .wf-go.is-choose { text-decoration-style: dashed; }
 .wf-go-quiet { font-weight: 500; color: var(--wf-muted); }

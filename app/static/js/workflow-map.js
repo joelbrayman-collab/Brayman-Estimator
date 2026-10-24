@@ -23,6 +23,15 @@
     }
   }
 
+  // On a phone the stage row scrolls within itself: keep the current stage in view there.
+  function revealStep(id) {
+    root.querySelectorAll("[data-wf-step]").forEach(function (li) {
+      if (li.getAttribute("data-wf-step") !== id) return;
+      var list = li.parentElement;
+      if (list && list.scrollWidth > list.clientWidth) list.scrollLeft = Math.max(0, li.offsetLeft - 8);  // the list is the offset parent (position: relative)
+    });
+  }
+
   function show(id, opts) {
     var target = page(id);
     if (!target) return false;
@@ -55,6 +64,7 @@
       });
     }
     root.setAttribute("data-wf-current", id);
+    revealStep(id);
     setLink(root.querySelector("[data-wf-control-back]"), target.getAttribute("data-wf-prev"));
     setLink(root.querySelector("[data-wf-control-next]"), target.getAttribute("data-wf-next"));
     var count = root.querySelector("[data-wf-count]");
@@ -83,6 +93,7 @@
     if (focusTab) tab.focus();
     return true;
   }
+  revealStep(current());
   if (tabs) {
     tabs.addEventListener("keydown", function (ev) {
       var list = Array.prototype.slice.call(tabs.querySelectorAll("[data-wf-journey-tab]"));

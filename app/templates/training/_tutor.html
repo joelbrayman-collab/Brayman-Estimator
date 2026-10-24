@@ -3,7 +3,9 @@
    training guide (app/training/service.tutor_answer); it reads no records and calls no outside service.
    tutor_mode: "lesson" (a lesson page), "home" (the training home) or "uat" (an acceptance test). #}
 {% set mode = tutor_mode if tutor_mode is defined else ('lesson' if lesson is defined and lesson else 'home') %}
-<aside class="tc-tutor{% if trainee.tutor_minimized %} is-min{% endif %}" id="tutor" data-tutor data-tutor-mode="{{ mode }}"
+{# Header launcher (23 Oct 2026): training.js moves this button into the page header and opens the Tutor as a drawer that scrolls on its own. Hidden until then, so a page without JS still shows the Tutor under the lesson as before. #}
+<button type="button" class="tc-tutor-launch" data-tutor-launch hidden aria-controls="tutor" aria-expanded="false" aria-label="Ask the Tutor" title="Ask the Tutor"><img src="{{ url_for('static', filename='branding/ask_the_tutor/ask-the-tutor-calibraytai-48.png') }}" width="36" height="36" alt=""><span>Ask the Tutor</span></button>
+<aside class="tc-tutor{% if trainee.tutor_minimized %} is-min{% endif %}" id="tutor" data-tutor tabindex="-1" data-tutor-mode="{{ mode }}"
        data-lesson="{{ lesson.key if lesson is defined and lesson else '' }}" data-step="{{ step if step is defined else 0 }}"
        aria-label="Training Tutor">
   <div class="tc-tutor-head">
@@ -13,7 +15,7 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="minimized" value="{{ '0' if trainee.tutor_minimized else '1' }}">
       <input type="hidden" name="back" value="{{ request.full_path }}">
-      <button type="submit" class="tc-link" data-tutor-button aria-expanded="{{ 'false' if trainee.tutor_minimized else 'true' }}" aria-controls="tutor-body">{{ 'Open the Tutor' if trainee.tutor_minimized else 'Minimize' }}</button>
+      <button type="submit" class="tc-link" data-tutor-button aria-expanded="{{ 'false' if trainee.tutor_minimized else 'true' }}" aria-controls="tutor-body">Minimize</button>
     </form>
   </div>
   <div class="tc-tutor-body" id="tutor-body">

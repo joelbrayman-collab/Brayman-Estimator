@@ -124,3 +124,99 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 /* Module times (Joel, 23 Oct 2026): "About 35 minutes", or Session 1 / Session 2 between lessons. */
 .tc-module-time { margin:-4px 0 6px; font-size:.9rem; font-weight:600; color:var(--muted, #5b6470); }
 .tc-session-break { display:block; margin:10px 0 2px; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted, #5b6470); }
+/* Lesson status on the training home (24 Oct 2026): Completed, In Progress and the next recommended lesson, from the
+   saved progress. Reviewing a completed lesson never changes it. */
+.tc-lesson { padding:5px 8px; border-radius:10px; border:1px solid transparent; overflow-wrap:anywhere; }
+.tc-lesson-line { display:inline; }
+.tc-lesson-line a { margin-left:6px; }
+.tc-lesson.tc-done a::before { content:none; }
+.tc-lesson-box { display:inline-grid; vertical-align:-4px; place-items:center; width:22px; height:22px; border:2px solid #c9c4b8; border-radius:5px; background:#fff; color:#fff; font-size:.9rem; font-weight:700; line-height:1; }
+.tc-done .tc-lesson-box { background:var(--green); border-color:var(--green); }
+.tc-started .tc-lesson-box { border-color:var(--amber); background:linear-gradient(90deg, #f3e3b8 50%, #fff 50%); }
+.tc-lesson-badges { display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 8px; margin-left:6px; vertical-align:middle; }
+.tc-lesson-badges .tc-state { margin-left:0; }
+.tc-badge { display:inline-block; padding:1px 9px; border-radius:999px; font-size:.8rem; font-weight:700; line-height:1.6; white-space:nowrap; }
+.tc-badge-done { background:#e3f1e8; color:var(--green); }
+.tc-badge-progress { background:#f6ecd2; color:#7a5500; }
+.tc-badge-next { background:var(--gold); color:#141414; }
+.tc-review-again { font-size:.85rem; font-weight:600; color:var(--green); }
+.tc-lesson.tc-next { border-color:var(--gold); background:#fbf6e8; box-shadow:0 0 0 2px rgba(199,154,43,.2); }
+.tc-module-progress { margin:4px 0 8px; } .tc-module-progress .tc-bar { height:8px; margin:6px 0 2px; }
+.tc-module-progress p { margin:0; }
+.tc-module-done { color:var(--green); }
+.tc-module-complete .tc-bar span { background:var(--green); }
+.tc-review-note { background:#eef6f0; border:1px solid #9fd0b0; border-radius:10px; padding:10px 12px; }
+.tc-tick-btn:disabled { cursor:default; opacity:.85; }
+.tc-module h2 small { white-space:nowrap; }
+
+/* Tutor in the header (23 Oct 2026): lessons use the whole page; the Tutor opens as a drawer that scrolls on its own.
+   Applies only once training.js has run (html.tc-js), so without JS the Tutor stays under the lesson. */
+.tc-tutor-launch { display:none; }
+.tc-js .tc-tutor-launch { display:inline-flex; align-items:center; gap:8px; background:transparent; color:#fff; border:1px solid var(--gold); border-radius:999px; padding:3px 14px 3px 4px; font:inherit; font-weight:600; cursor:pointer; }
+.tc-js .tc-tutor-launch[hidden] { display:none; }
+.tc-js .tc-tutor-launch:hover { color:var(--gold); }
+.tc-tutor-launch:focus-visible, .tc-tutor button:focus-visible, .tc-tutor input:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.tc-tutor-launch img { width:36px; height:36px; object-fit:contain; flex:none; }
+.tc-js .tc-layout { grid-template-columns:minmax(0,1fr); }
+.tc-js .tc-tutor { position:fixed; top:0; right:0; bottom:0; z-index:60; width:min(400px,100vw); margin:0; border-radius:12px 0 0 12px; overflow-y:auto; overscroll-behavior:contain; box-shadow:-8px 0 28px rgba(0,0,0,.22); transform:translateX(105%); visibility:hidden; transition:transform .2s ease, visibility 0s linear .2s; }
+.tc-js .tc-tutor.is-open { transform:none; visibility:visible; transition:transform .2s ease; }
+.tc-js .tc-tutor.is-min .tc-tutor-body { display:block; }
+.tc-js .tc-tutor-head { position:sticky; top:-14px; z-index:1; background:#fff; margin:-14px -14px 0; padding:14px; border-bottom:1px solid var(--border); }
+@media (max-width: 600px) {
+  .tc-js .tc-tutor { width:100vw; border-radius:0; border:0; }
+  .tc-tutor-launch span { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .tc-js .tc-tutor-launch { padding:3px; }
+}
+@media (prefers-reduced-motion: reduce) { .tc-js .tc-tutor, .tc-js .tc-tutor.is-open { transition:none; } }
+
+/* Back above the Workflow map, and step buttons that open the page or calculator (23 Oct 2026) */
+.tc-map-back { margin:0 0 12px; }
+.tc-back { min-height:44px; }
+.tc-step-links { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:10px 0 0; }
+.tc-step-links .tc-btn { text-align:center; }
+.tc-step-links .tc-small { flex:1 1 220px; margin:0; }
+.tc-back:focus-visible, .tc-step-links a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+
+/* Change training pathway in the header (24 Oct 2026) */
+.tc-pathway { position:relative; }
+.tc-pathway > summary { list-style:none; cursor:pointer; color:#fff; border:1px solid var(--gold); border-radius:999px; padding:4px 12px; font-weight:600; font-size:.9rem; white-space:nowrap; }
+.tc-pathway > summary::-webkit-details-marker { display:none; }
+.tc-pathway > summary::after { content:" \25BE"; }
+.tc-pathway > summary:focus-visible, .tc-pathway-menu button:focus-visible, .tc-pathway-menu a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.tc-pathway-menu { position:absolute; right:0; top:calc(100% + 8px); z-index:70; min-width:240px; max-width:calc(100vw - 24px); background:#fff; color:#1b1b1b; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:10px; display:flex; flex-direction:column; gap:6px; }
+.tc-pathway-title { margin:0 0 4px; font-weight:700; font-size:.9rem; }
+.tc-pathway-note { margin:4px 0 0; font-size:.8rem; color:var(--muted, #5b6470); }
+.tc-pathway-menu button, .tc-pathway-menu a { display:block; text-align:left; min-height:44px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fff; color:#1b1b1b; font:inherit; cursor:pointer; text-decoration:none; }
+.tc-pathway-menu button:hover, .tc-pathway-menu a:hover { border-color:var(--gold); }
+.tc-pathway-menu button[disabled] { background:#f4efe3; cursor:default; font-weight:600; }
+@media (max-width: 600px) { .tc-pathway-menu { position:fixed; left:12px; right:12px; top:auto; min-width:0; } }
+/* Compact headers (24 Oct 2026): the back control sits in the dark header; less space above the content. */
+.tc-top { padding:8px 16px; gap:8px 12px; }
+.tc-brand img { height:30px; }
+.tc-brand span { font-size:1rem; white-space:nowrap; }
+.tc-nav { gap:6px 14px; font-size:.95rem; }
+.tc-back { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:4px 12px; border:1px solid #4a4d52; border-radius:999px; color:#fff; text-decoration:none; font-weight:600; font-size:.9rem; flex:none; }
+.tc-back:hover, .tc-back:focus-visible { border-color:var(--gold); color:var(--gold); outline:none; }
+.tc-back span[aria-hidden] { font-size:1.1rem; line-height:1; }
+.tc-banner { padding:4px 16px; font-size:.82rem; }
+.tc-main { padding-top:14px; }
+.tc-review-bar { padding:8px 14px; margin-bottom:10px; }
+.tc-review-label { font-weight:700; margin-right:4px; }
+.tc-review-bar .tc-review-links { gap:4px 14px; font-size:.9rem; }
+.tc-map-intro { margin:12px 0 0; } .tc-map-intro summary { cursor:pointer; font-weight:600; }
+.tc-hero h1 { font-size:1.7rem; margin:.1em 0; }
+.tc-hero { padding:16px 20px; }
+@media (max-width: 640px) {
+  .tc-back-text { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .tc-back { padding:4px 10px; min-height:36px; min-width:44px; justify-content:center; }
+  .tc-top { padding:6px 12px; }
+  .tc-hero h1 { font-size:1.45rem; }
+}
+.tc-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+@media (max-width: 640px) {
+  .tc-nav { gap:2px 14px; font-size:.92rem; }
+  .tc-brand img { height:26px; }
+}
+/* Owner review menu in the header (24 Oct 2026), styled like Change training pathway. */
+.tc-pathway-menu a[aria-current] { background:#f4efe3; font-weight:600; }
+.tc-review-menu .tc-pathway-menu { min-width:260px; }

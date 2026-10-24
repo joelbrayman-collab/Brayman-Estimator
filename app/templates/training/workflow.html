@@ -3,7 +3,7 @@
 {% block title %}Workflow map{% endblock %}
 {% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/workflow-map.css', v=wf.version) }}">{% endblock %}
 {% block content %}
-<p class="tc-small tc-map-intro">{{ trainee.track_label }} · {{ trainee.role_label }}. Each stage lists its lessons and acceptance tests with your progress. Open a lesson and come back here: your ticked steps are kept.</p>
 {{ workflow_map(wf) }}
+<details class="tc-map-intro tc-small" data-map-help><summary>How this map works with your training</summary><p>{{ trainee.track_label }} · {{ trainee.role_label }}. Each stage lists its lessons and acceptance tests with your progress. Open a lesson and come back here: your ticked steps are kept.</p></details>
 <script src="{{ url_for('static', filename='js/workflow-map.js', v=wf.version) }}" defer></script>
 {% endblock %}

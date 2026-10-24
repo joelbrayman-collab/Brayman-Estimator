@@ -200,8 +200,12 @@ test("supplier owner: the Supplier Workflow Map from the Supplier Hub, three jou
   await s.pg.goto(`${base}/supplier/`);
   await Promise.all([s.pg.waitForNavigation(), s.pg.click("[data-supplier-workflow]")]);
   assert.equal(new URL(s.pg.url()).pathname, `/supplier/${facts.supplier_id}/workflow`);
-  for (const j of ["supplier-a", "supplier-b", "supplier-c"]) assert.ok(await s.pg.locator(`[data-wf-journey-map="${j}"]`).isVisible());
+  // Three journeys behind a selector (24 Oct 2026): A is shown, B and C one click away.
+  assert.equal(await s.pg.locator("[data-wf-journey-tab]").count(), 3);
+  assert.ok(await s.pg.locator('[data-wf-journey-map="supplier-a"]').isVisible());
+  for (const j of ["supplier-b", "supplier-c"]) assert.equal(await s.pg.locator(`[data-wf-journey-map="${j}"]`).isVisible(), false);
   assert.equal(await current(s.pg), "sa-receive");
+  await s.pg.locator('[data-wf-journey-tab="supplier-b"]').click();
   await s.pg.locator('[data-wf-card="sb-order"]').click();
   assert.match(await s.pg.locator('[data-wf-substep="sb-order:pos"]').textContent(), /Not in CalibraytAI yet/);
   assert.equal(await s.pg.locator('[data-wf-substep="sb-order:pos"] a').count(), 0, "no link for what is not in CalibraytAI");
@@ -257,6 +261,166 @@ test("Training Centre: the map lists each stage's lessons; map -> lesson -> tick
   assert.equal(await current(pg), "c-price");
 });
 
+// Compact headers (24 Oct 2026): the back control sits in the dark Training Centre header, and the map starts high
+// on the screen: at 1366 x 670 the journey diagram's top is within the first 40 % of the window.
+test("compact header: back control in the dark header; the diagram's top within 40 % of a 1366 x 670 window", async () => {
+  const { pg } = sessions.ben;
+  await pg.setViewportSize({ width: 1366, height: 670 });
+  try {
+    await pg.goto(`${base}/training/workflow`);
+    const back = pg.locator("header.tc-top [data-back-to-training]");
+    assert.ok(await back.isVisible(), "the back control is in the dark header");
+    assert.equal(await back.getAttribute("aria-label"), "Back to the Training Centre");
+    assert.equal(await back.getAttribute("href"), "/training");
+    assert.equal(await pg.locator("main [data-back-to-training]").count(), 0, "no separate back button in the page");
+    for (const url of ["/training/workflow", "/training/review/contractor", "/workflow"]) {
+      await pg.goto(`${base}${url}`);
+      const top = await pg.locator(".wf-overview").evaluate((el) => el.getBoundingClientRect().top);
+      assert.ok(top <= 0.4 * 670, `${url}: the diagram starts at ${Math.round(top)} px (no lower than 268 px)`);
+      assert.ok(await pg.locator(".wf-process").isVisible(), `${url}: the stage stepper is shown`);
+      await noSideways(pg, `${url} at 1366 x 670`);
+    }
+    await pg.goto(`${base}/training/workflow?stage=c-price`);
+    await Promise.all([pg.waitForNavigation(), pg.locator("[data-back-to-training]").click()]);
+    assert.equal(new URL(pg.url()).pathname, "/training", "back goes to the Training Centre");
+    await pg.goBack();
+    assert.equal(new URL(pg.url()).pathname, "/training/workflow", "the browser's Back returns to the map");
+    assert.equal(await pg.locator("[data-back-to-training]").count(), 1);
+    await pg.goto(`${base}/training`);
+    assert.equal(await pg.locator("[data-back-to-training]").count(), 0, "no back control on the training home itself");
+  } finally {
+    await pg.setViewportSize(DESK);
+  }
+});
+
+// The Supplier map's journey selector and the header Owner review menu (24 Oct 2026).
+// "In this stage": the first item's name is laid out at a readable width (never one letter per line).
+async function inThisStageReadable(pg, url, label) {
+  await pg.goto(`${base}${url}`);
+  const w = await pg.locator(".wf-page:not([hidden]) .wf-steps .wf-step").first().evaluate((li) =>
+    [li.getBoundingClientRect().width, li.querySelector(".wf-step-label").getBoundingClientRect().width]);
+  assert.ok(w[0] > 200 && w[1] > 200, `${label} ${url}: the first "In this stage" item is ${Math.round(w[0])} px wide, its name ${Math.round(w[1])} px`);
+}
+async function journeyOf(pg) {
+  return pg.locator("[data-wf-journey-tab][aria-selected=true]").getAttribute("data-wf-journey-tab");
+}
+async function shownJourneys(pg) {
+  return pg.locator("[data-wf-journey-map]").evaluateAll((els) => els.filter((e) => !e.hidden).map((e) => e.getAttribute("data-wf-journey-map")));
+}
+test("Supplier map: journey selector (click, keyboard, deep links), Back / Next across journeys, Owner review menu", async () => {
+  const { pg, ctx } = sessions.ben;
+  await pg.setViewportSize({ width: 1440, height: 800 });
+  for (const url of ["/training/review/supplier", "/training/review/supplier?stage=sb-order", "/training/review/supplier?stage=sc-setup",
+    "/training/review/contractor?stage=c-price", "/training/review/field", "/training/workflow?stage=c-price", "/workflow?stage=c-price"]) {
+    await inThisStageReadable(pg, url, "1440 x 800");
+  }
+  await pg.setViewportSize({ width: 1366, height: 670 });
+  try {
+    await pg.goto(`${base}/training/review/supplier`);
+    assert.equal(await pg.locator(".wf-head .wf-eyebrow, .wf-page:not([hidden]) > .wf-eyebrow").count(), 0, "no eyebrow above the title or the stage");
+    assert.equal(await pg.locator("main [data-map-back], main .tc-review-bar").count(), 0, "no Back button or review box in the page");
+    const top = await pg.locator(".wf-overview").evaluate((el) => el.getBoundingClientRect().top);
+    assert.ok(top <= 0.4 * 670, `the supplier diagram starts at ${Math.round(top)} px`);
+    assert.equal(await journeyOf(pg), "supplier-a");
+    assert.deepEqual(await shownJourneys(pg), ["supplier-a"], "only the selected journey is expanded");
+    const aStages = await pg.locator('[data-wf-journey-map="supplier-a"] [data-wf-card]').evaluateAll((els) => els.map((e) => e.getAttribute("data-wf-card")));
+    const bFirst = await pg.getAttribute('[data-wf-journey-tab="supplier-b"]', "data-wf-first");
+    const cFirst = await pg.getAttribute('[data-wf-journey-tab="supplier-c"]', "data-wf-first");
+    // One click switches the journey and opens its first stage.
+    await pg.click('[data-wf-journey-tab="supplier-b"]');
+    assert.equal(await journeyOf(pg), "supplier-b");
+    assert.equal(await current(pg), bFirst);
+    assert.deepEqual(await shownJourneys(pg), ["supplier-b"]);
+    assert.ok(await pg.locator(`[data-wf-page="${bFirst}"]`).isVisible());
+    assert.equal(new URL(pg.url()).searchParams.get("stage"), bFirst);
+    // Keyboard: arrows, Home and End move between journeys with focus on the selector; Tab leaves it; Enter opens.
+    await pg.focus('[data-wf-journey-tab="supplier-b"]');
+    await pg.keyboard.press("ArrowRight");
+    assert.equal(await journeyOf(pg), "supplier-c");
+    assert.equal(await pg.evaluate(() => document.activeElement.getAttribute("data-wf-journey-tab")), "supplier-c", "focus follows the arrow");
+    assert.equal(await current(pg), cFirst, "the arrow does not move the stage pages instead");
+    await pg.keyboard.press("Home");
+    assert.equal(await journeyOf(pg), "supplier-a");
+    await pg.keyboard.press("End");
+    assert.equal(await journeyOf(pg), "supplier-c");
+    await pg.keyboard.press("Tab");
+    assert.equal(await pg.evaluate(() => document.activeElement.hasAttribute("data-wf-journey-tab")), false, "Tab leaves the selector");
+    await pg.keyboard.press("Shift+Tab");
+    assert.equal(await pg.evaluate(() => document.activeElement.getAttribute("data-wf-journey-tab")), "supplier-c");
+    await pg.goto(`${base}/training/review/supplier?stage=${aStages[0]}`);
+    await pg.focus('[data-wf-journey-tab="supplier-a"]');
+    await pg.keyboard.press("ArrowLeft");
+    assert.equal(await journeyOf(pg), "supplier-c", "the arrows wrap round");
+    await pg.focus('[data-wf-journey-tab="supplier-a"]');
+    await pg.keyboard.press("Enter");
+    await pg.waitForFunction(() => document.querySelector("[data-wf-journey-tab][aria-selected=true]").getAttribute("data-wf-journey-tab") === "supplier-a");
+    // Deep links open the right journey.
+    for (const [stage, journey] of [["sb-order", "supplier-b"], [cFirst, "supplier-c"]]) {
+      await pg.goto(`${base}/training/review/supplier?stage=${stage}`);
+      assert.equal(await journeyOf(pg), journey, `?stage=${stage}`);
+      assert.deepEqual(await shownJourneys(pg), [journey]);
+      assert.ok(await pg.locator(`[data-wf-page="${stage}"]`).isVisible());
+    }
+    // Back / Next across the A -> B boundary.
+    const aLast = aStages[aStages.length - 1];
+    await pg.goto(`${base}/training/review/supplier?stage=${aLast}`);
+    await pg.click("[data-wf-control-next]");
+    assert.equal(await current(pg), bFirst);
+    assert.equal(await journeyOf(pg), "supplier-b", "the selector follows Next into Journey B");
+    await pg.click("[data-wf-control-back]");
+    assert.equal(await current(pg), aLast);
+    assert.equal(await journeyOf(pg), "supplier-a", "and Back into Journey A");
+    // The header Owner review menu keeps all five destinations (and the list of maps).
+    const menu = pg.locator("header [data-owner-review-menu]");
+    await menu.locator("summary").click();
+    assert.ok(await menu.evaluate((d) => d.open));
+    const hrefs = await menu.locator("a").evaluateAll((as) => as.map((a) => [a.textContent.trim(), new URL(a.href).pathname]));
+    assert.deepEqual(hrefs.map((h) => h[0]), ["All maps for review", "Contractor Workflow Map", "Supplier Workflow Map", "Field (crew) map", "Field Crew training", "Administrator dashboard"]);
+    assert.deepEqual(hrefs.map((h) => h[1]), ["/training/review", "/training/review/contractor", "/training/review/supplier", "/training/review/field", "/training/review/field-crew", "/training/admin"]);
+    for (const [, href] of hrefs) assert.equal((await ctx.request.get(`${base}${href}`)).status(), 200, href);
+    await Promise.all([pg.waitForNavigation(), menu.locator('[data-review-menu-link="contractor"]').click()]);
+    assert.equal(new URL(pg.url()).pathname, "/training/review/contractor");
+    assert.equal(await pg.locator("[data-wf-journey-tabs]").count(), 0, "a one-journey map has no selector");
+  } finally {
+    await pg.setViewportSize(DESK);
+  }
+});
+
+test("Supplier map on the phone (390 x 844): selector fits, no sideways scrolling, Back / Next bar covers nothing", async () => {
+  const { pg } = sessions.ben;
+  await pg.setViewportSize(PHONE);
+  try {
+    for (const url of ["/training/review/supplier", "/training/review/contractor?stage=c-price", "/workflow?stage=c-price"]) {
+      await inThisStageReadable(pg, url, "390 x 844");
+    }
+    await pg.goto(`${base}/training/review/supplier?stage=sb-order`);
+    await noSideways(pg, "supplier map (phone)");
+    for (const t of await pg.locator("[data-wf-journey-tab]").all()) {
+      const b = await t.boundingBox();
+      assert.ok(b.x >= 0 && b.x + b.width <= 391 && b.height >= 40, "each journey choice fits and is easy to tap");
+    }
+    await pg.click('[data-wf-journey-tab="supplier-c"]');
+    assert.equal(await journeyOf(pg), "supplier-c");
+    await noSideways(pg, "supplier map, journey C (phone)");
+    await pg.locator("header [data-owner-review-menu] summary").click();
+    await noSideways(pg, "Owner review menu open (phone)");
+    await pg.locator("header [data-owner-review-menu] summary").click();
+    // At the end of the page the sticky Back / Next bar sits below the last content, not over it.
+    await pg.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    const [lastBottom, barTop] = await pg.evaluate(() => {
+      const bar = document.querySelector(".wf-controls");
+      let last = bar.previousElementSibling;
+      while (last && (last.hidden || last.getBoundingClientRect().height === 0)) last = last.previousElementSibling;
+      return [last.getBoundingClientRect().bottom, bar.getBoundingClientRect().top];
+    });
+    assert.ok(lastBottom <= barTop + 1, `the bar does not cover the last content (${Math.round(lastBottom)} > ${Math.round(barTop)})`);
+    const visible = await pg.locator(".wf-controls [data-wf-control-next]").isVisible();
+    assert.ok(visible, "Back / Next stay available");
+  } finally {
+    await pg.setViewportSize(DESK);
+  }
+});
+
 test("Training Centre on an iPhone: a field trainee gets the Field workflow with Field lessons", async () => {
   const s = sessions.kevin;
   await s.pg.goto(`${base}/training`);
@@ -268,5 +432,8 @@ test("Training Centre on an iPhone: a field trainee gets the Field workflow with
   assert.ok(await s.pg.locator('[data-wf-card="f-today"]').isVisible());
   assert.equal(await s.pg.locator('[data-wf-card="c-price"]').count(), 0);
   await noSideways(s.pg, "training map (phone)");
+  const back = s.pg.locator("header.tc-top [data-back-to-training]");
+  assert.ok(await back.isVisible(), "the compact back control is in the header on the phone");
+  assert.ok((await back.evaluate((el) => el.getBoundingClientRect().right)) <= 390);
   await everyLinkAnswers(s, "field training map");
 });

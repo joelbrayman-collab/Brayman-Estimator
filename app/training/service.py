@@ -140,8 +140,10 @@ def _overview(trainee, track: str, role: str) -> dict:
         starts = time.session_starts() if time else {}
         for x in lessons:
             x["session_start"] = starts.get(x["lesson"].key)
-        rows.append({"module": module, "lessons": lessons, "time": time,
-                     "done": sum(1 for x in lessons if x["state"] == "done"), "total": len(lessons)})
+        m_done = sum(1 for x in lessons if x["state"] == "done")
+        rows.append({"module": module, "lessons": lessons, "time": time, "done": m_done, "total": len(lessons),
+                     "started": sum(1 for x in lessons if x["state"] == "started"),
+                     "percent": int(round(100 * m_done / len(lessons))) if lessons else 0})
     nxt = None
     if trainee.training_resume and track == trainee.track:
         key, _, step = trainee.training_resume.partition(":")
@@ -150,6 +152,10 @@ def _overview(trainee, track: str, role: str) -> dict:
     if nxt is None:
         first = next((x for r in rows for x in r["lessons"] if x["state"] != "done"), None)
         nxt = (first["lesson"].key, first["step"]) if first else None
+    # The next recommended lesson (24 Oct 2026) is the one Continue where I left off opens; it is highlighted.
+    for r in rows:
+        for x in r["lessons"]:
+            x["next"] = bool(nxt and x["lesson"].key == nxt[0])
     return {"modules": rows, "done": done, "total": total, "percent": int(round(100 * done / total)) if total else 0,
             "resume": nxt}
 
@@ -171,6 +177,10 @@ def save_step(trainee, key: str, step: int) -> TrainingLessonProgress:
     _module, lesson = lesson_for_trainee(trainee, key)
     step = max(0, min(int(step), len(lesson.steps) - 1))
     p = TrainingLessonProgress.query.filter_by(trainee_id=trainee.id, lesson_key=key).first()
+    if p is not None and p.completed_at:
+        # Reviewing a completed lesson (24 Oct 2026) is read-only: opening it or stepping through it changes
+        # neither its record nor where Continue where I left off goes.
+        return p
     if p is None:
         p = TrainingLessonProgress(trainee_id=trainee.id, lesson_key=key, step_reached=step, steps_done=[],
                                    exercise_done=False, release=release_label())
@@ -188,6 +198,8 @@ def check_step(trainee, key: str, index: int, done: bool) -> TrainingLessonProgr
     if not 0 <= index < len(lesson.steps):
         raise TrainingError("That step is not in this lesson.")
     p = save_step(trainee, key, index)
+    if p.completed_at:
+        return p  # a completed lesson's ticks are kept as they were; review cannot untick them
     ticked = set(p.steps_done or [])
     if done:
         ticked.add(index)
@@ -208,6 +220,9 @@ def steps_ticked(trainee, key: str) -> List[int]:
 
 def complete_lesson(trainee, key: str, exercise_done: bool) -> TrainingLessonProgress:
     _module, lesson = lesson_for_trainee(trainee, key)
+    done = TrainingLessonProgress.query.filter_by(trainee_id=trainee.id, lesson_key=key).first()
+    if done is not None and done.completed_at:
+        return done  # already complete: its completion date and release stay as recorded
     missing = [i + 1 for i in range(len(lesson.steps)) if i not in set(steps_ticked(trainee, key))]
     if missing:
         raise TrainingError("Tick each step as you do it first. Not ticked yet: step " + ", ".join(map(str, missing)) + ".")

@@ -174,7 +174,7 @@ def test_an_office_trainee_takes_contractor_then_field_and_back_with_both_record
     assert _post(olivia, "/training/register", data={"role": "OFFICE"}).status_code == 302
     db.session.expire_all()
     home = _get(olivia, "/training").get_data(as_text=True)
-    assert re.search(rf'tc-done"><a [^>]*data-lesson="{office_lesson}"', home)
+    assert re.search(rf'data-lesson-row="{office_lesson}" data-lesson-status="completed"[^>]*class="tc-lesson tc-done', home)
     total = len(C.lessons_for(C.PATHWAY_CONTRACTOR, "OFFICE"))
     assert f"1 of {total} lessons done" in home and "Acceptance tests: 1 passed, 0 failed" in home
     assert _snapshot(trainee.id, contractor_keys) == contractor_before

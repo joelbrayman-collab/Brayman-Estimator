@@ -1,7 +1,6 @@
 {% extends "training/base.html" %}
 {% block title %}{{ case.key }} · owner review{% endblock %}
 {% block content %}
-{% include "training/_review_bar.html" %}
 <article class="tc-card" data-review-uat="{{ case.key }}">
   <p><a class="tc-btn" href="{{ back }}" data-review-back>&larr; Back to the map</a></p>
   <p class="tc-eyebrow">Acceptance test {{ case.key }}{% if module %} · Module {{ module.number }} · {{ module.title }}{% endif %}</p>

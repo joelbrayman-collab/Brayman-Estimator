@@ -138,7 +138,7 @@ def test_lessons_save_resume_back_next_and_complete(app):
     p = TrainingLessonProgress.query.one()
     assert p.completed_at is not None and p.exercise_done and p.step_reached == last
     home = _get(ben, "/training").get_data(as_text=True)
-    assert "1 of" in home and "Done" in home
+    assert "1 of" in home and ">Completed<" in home and "Review again" in home
     # A lesson outside the person's pathway is not theirs.
     supplier_lesson = C.lessons_for("SUPPLIER", "PRO_DESK")[0][1]
     assert _get(ben, f"/training/lessons/{supplier_lesson.key}").status_code == 404

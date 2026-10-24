@@ -32,34 +32,55 @@
 /* Eyebrow with the short gold rule (AiRIA) */
 .wf-eyebrow { font-size: 11px; letter-spacing: .2em; color: var(--wf-gold-deep); font-weight: 700; text-transform: uppercase; margin: 0 0 12px; }
 .wf-eyebrow::after { content: ""; display: block; width: 44px; height: 2px; background: var(--wf-gold); margin-top: 10px; }
-.wf-head h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.12; letter-spacing: -.02em; font-weight: 600; margin: 0 0 10px; color: var(--wf-ink); }
+.wf-head h1 { font-size: clamp(22px, 2.6vw, 28px); line-height: 1.15; letter-spacing: -.01em; font-weight: 600; margin: 0; color: var(--wf-ink); }
 .wf-intro { font-size: 16px; line-height: 1.55; color: var(--wf-muted); max-width: 760px; margin: 0 0 16px; }
+/* Compact header (24 Oct 2026): the title on one line with About this map beside it; the introduction opens on
+   demand, so the stages and the map start near the top of the screen. */
+.wf-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin: 0 0 8px; }
+.wf-title-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; flex: 0 1 auto; min-width: 0; }
+.wf-head:has(.wf-about[open]) .wf-title-row { flex-basis: 100%; }
+.wf-head .wf-project { flex: 1 1 420px; margin: 0; }
+.wf-about { font-size: 14px; color: var(--wf-muted); min-width: 0; }
+.wf-about summary { cursor: pointer; font-weight: 600; color: var(--wf-gold-deep); min-height: 32px; display: inline-flex; align-items: center; }
+.wf-about[open] { flex-basis: 100%; }
+.wf-about .wf-intro { margin: 4px 0 6px; font-size: 15px; }
 
-.wf-project { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 18px; padding: 10px 12px; background: var(--wf-cream); border: 1px solid var(--wf-line); border-radius: 10px; }
+.wf-project { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; padding: 6px 10px; background: var(--wf-cream); border: 1px solid var(--wf-line); border-radius: 10px; }
 .wf-project label { font-weight: 600; font-size: 14px; }
 .wf-project select { font: inherit; font-size: 15px; min-height: 40px; padding: 6px 8px; border: 1px solid #c9c3b8; border-radius: 8px; background: #fff; max-width: 100%; min-width: 0; flex: 1 1 240px; }
 .wf-project-note { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--wf-muted); }
 
 /* Connected numbered stages (AiRIA process orientation) */
-.wf-process { margin: 0 0 8px; padding: 8px 12px; border: 1px solid var(--wf-line); border-radius: 10px; background: var(--wf-paper); }
+.wf-process { display: flex; align-items: center; gap: 4px 12px; margin: 0 0 8px; padding: 4px 10px; border: 1px solid var(--wf-line); border-radius: 10px; background: var(--wf-paper); }
 .wf-process.is-current-journey { border-color: var(--wf-gold); box-shadow: 0 0 0 1px rgba(199, 154, 43, .25); }
-.wf-journey-name { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--wf-muted); }
+.wf-journey-name { flex: none; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--wf-muted); }
 .wf-journey-letter { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 4px; background: var(--wf-ink); color: var(--wf-gold); font-size: 12px; font-weight: 700; letter-spacing: 0; }
-.wf-process-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+.wf-process-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 0; min-width: 0; flex: 1 1 auto; position: relative; }
 .wf-process-step { display: flex; align-items: center; min-width: 0; }
 .wf-process-step:not(:last-child)::after { content: "→"; color: var(--wf-gold); font-weight: 700; margin: 0 6px; flex-shrink: 0; }
-.wf-process-item { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 4px 8px; border-radius: 8px; text-decoration: none; color: var(--wf-muted); font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.wf-process-item { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 2px 8px; border-radius: 8px; text-decoration: none; color: var(--wf-muted); font-size: 13px; font-weight: 600; letter-spacing: .02em; }
 .wf-process-item:hover { background: var(--wf-cream); color: var(--wf-ink); }
 .wf-process-marker { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #c8c3b9; background: #fff; color: var(--wf-muted); font-size: 12px; font-weight: 700; flex-shrink: 0; }
 .wf-process-step.is-current .wf-process-item { color: var(--wf-ink); }
 .wf-process-step.is-current .wf-process-marker { background: var(--wf-gold); border-color: var(--wf-gold); color: var(--wf-ink); box-shadow: 0 0 0 3px rgba(199, 154, 43, .25); }
 
+/* Journey selector (24 Oct 2026): a map with several journeys shows one at a time. */
+.wf-journey-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.wf-journey-tab { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 12px 4px 6px; border: 1px solid var(--wf-line); border-radius: 999px; background: var(--wf-paper); color: var(--wf-muted); font-size: 14px; font-weight: 600; text-decoration: none; }
+.wf-journey-tab .wf-journey-letter { margin-right: 0; }
+.wf-journey-tab-count { font-weight: 500; font-size: 12px; }
+.wf-journey-tab:hover { border-color: var(--wf-gold); color: var(--wf-ink); }
+.wf-journey-tab[aria-selected="true"] { border-color: var(--wf-gold); background: #fff8e6; color: var(--wf-ink); box-shadow: 0 0 0 1px rgba(199, 154, 43, .25); }
+.wf-journey-tab:focus-visible { outline: 3px solid var(--wf-gold); outline-offset: 2px; }
+/* Keep focused controls clear of the sticky Back / Next bar. */
+html:has(.wf-controls) { scroll-padding-bottom: 96px; }
+
 /* The spread: journey map beside the stage page (AiRIA's two pages) */
-.wf-spread { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin: 18px 0 0; background: var(--wf-paper); border: 1px solid var(--wf-line); box-shadow: 0 16px 48px rgba(20, 20, 20, .08); }
-.wf-overview { padding: 26px 24px 28px; border-right: 1px solid var(--wf-line); background: var(--wf-paper); }
+.wf-spread { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin: 10px 0 0; background: var(--wf-paper); border: 1px solid var(--wf-line); box-shadow: 0 16px 48px rgba(20, 20, 20, .08); }
+.wf-overview { padding: 18px 24px 28px; border-right: 1px solid var(--wf-line); background: var(--wf-paper); }
 .wf-pages { padding: 0; min-width: 0; outline: none; }
-.wf-journey + .wf-journey { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--wf-line); }
-.wf-journey-title { margin: 0 0 4px; font-size: 18px; font-weight: 600; color: var(--wf-ink); display: flex; align-items: center; }
+.wf-journey:not([hidden]) ~ .wf-journey:not([hidden]) { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--wf-line); }
+.wf-journey-title { margin: 0 0 12px; font-size: 18px; font-weight: 600; color: var(--wf-ink); display: flex; align-items: center; }
 .wf-journey-flow { margin: 0 0 14px; font-size: 12px; letter-spacing: .05em; color: var(--wf-muted); }
 .wf-journey-body { position: relative; padding-left: 46px; }
 .wf-loop-art { position: absolute; left: 0; top: 0; width: 42px; height: 100%; }
@@ -80,8 +101,8 @@
 .wf-loop-label { margin: 12px 0 0 46px; font-size: 14px; font-style: italic; color: var(--wf-gold-deep); }
 
 /* One stage page */
-.wf-page { padding: 72px 30px 30px; position: relative; min-height: 100%; }
-.wf-ribbon { position: absolute; top: 20px; left: 30px; right: 30px; color: var(--wf-muted); }
+.wf-page { padding: 16px 30px 30px; position: relative; min-height: 100%; }
+.wf-ribbon { margin: 0 0 14px; color: var(--wf-muted); }
 .wf-bars { display: grid; grid-template-columns: repeat(var(--wf-count, 6), minmax(0, 1fr)); gap: 4px; }
 .wf-bar { display: block; height: 3px; background: #dfdbd2; }
 .wf-bar.is-other { background: #efece6; }
@@ -105,11 +126,13 @@
 
 .wf-sub { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--wf-gold-deep); margin: 18px 0 8px; font-weight: 700; }
 .wf-steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--wf-line); }
-.wf-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--wf-line); }
+.wf-step { display: grid; grid-template-columns: minmax(min(12em, 100%), 1fr) fit-content(50%); gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--wf-line); }
 .wf-step-label { font-size: 15px; font-weight: 500; }
 .wf-step-note { grid-column: 1 / -1; font-size: 13px; color: var(--wf-muted); line-height: 1.45; }
 .wf-step-go { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 12px; grid-column: 2; grid-row: 1; }
 .wf-step .wf-chip { justify-self: start; }
+/* A long reason (no link) goes under the step's name, so the name is never squeezed to one letter per line. */
+.wf-step-go:has(> .wf-reason) { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; }
 .wf-go { font-size: 14px; font-weight: 600; color: var(--wf-ink); text-decoration: underline; text-decoration-color: var(--wf-gold); text-underline-offset: 4px; padding: 6px 0; display: inline-block; }
 .wf-go.is-choose { text-decoration-style: dashed; }
 .wf-go-quiet { font-weight: 500; color: var(--wf-muted); }
@@ -175,7 +198,9 @@
 }
 @media (max-width: 640px) {
   .wf-intro { font-size: 15px; }
-  .wf-process { padding: 8px; }
+  .wf-process { padding: 4px 6px; flex-wrap: wrap; }
+  .wf-process-list { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .wf-process-step { flex: none; }
   .wf-process-item { padding: 4px 4px; font-size: 12px; gap: 5px; }
   .wf-process-step:not(:last-child)::after { margin: 0 2px; }
   .wf-overview { padding: 20px 14px 22px; }
@@ -184,8 +209,7 @@
   .wf-loop-label { margin-left: 34px; }
   .wf-stage-card { padding: 10px; gap: 9px; }
   .wf-stage-number { width: 27px; height: 27px; font-size: 14px; }
-  .wf-page { padding: 64px 16px 22px; }
-  .wf-ribbon { left: 16px; right: 16px; top: 16px; }
+  .wf-page { padding: 14px 16px 22px; }
   .wf-position { font-size: 10px; letter-spacing: .03em; }
   .wf-step { grid-template-columns: minmax(0, 1fr); }
   .wf-step-go { grid-column: 1; grid-row: auto; justify-content: flex-start; }
@@ -198,6 +222,9 @@
   .wf-control, .wf-map-control { padding: 10px 12px; font-size: 13px; }
   .wf-count { min-width: 0; flex-basis: 100%; order: -1; font-size: 12px; }
   .wf-hint { display: none; }
+  .wf-journey-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+  .wf-journey-tab { font-size: 12px; line-height: 1.2; padding: 4px 6px; border-radius: 10px; min-height: 44px; overflow-wrap: anywhere; }
+  .wf-journey-tab-count { display: none; }
 }
 
 /* Desktop: the stage page stays in view beside the long journey map. */

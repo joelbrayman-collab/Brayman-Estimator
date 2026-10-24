@@ -17,12 +17,13 @@ only the Field Crew training.
 
 from __future__ import annotations
 
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_login import current_user
 
 from app.models.training import ROLE_FIELD, ROLE_LABELS, UAT_STATUSES
 from app.training import content as C
 from app.training import service as svc
+from app.training.links import links_for_lesson
 
 training_bp = Blueprint("training", __name__, url_prefix="/training")
 
@@ -31,6 +32,7 @@ training_bp = Blueprint("training", __name__, url_prefix="/training")
 def _guard():
     if not svc.enabled():
         abort(404)
+    session.pop("tc_return", None)  # back in the Training Centre: the 'Back to the lesson step' bar is done
     if not current_user.is_authenticated and request.endpoint != "training.signin":
         return redirect(url_for("training.signin"))
     return None
@@ -47,8 +49,17 @@ def _trainee_or_register():
 def _review_nav():
     """Training administrators see Owner review in the Training Centre menu (21 Oct 2026)."""
     if not current_user.is_authenticated:
-        return {"training_admin": False}
-    return {"training_admin": svc.is_admin(current_user._get_current_object()) is not None}
+        return {"training_admin": False, "pathway_roles": (), "pathway_current": None}
+    user = current_user._get_current_object()
+    trainee = svc.trainee_for(user)
+    # Change training pathway (Joel, 24 Oct 2026): the roles this sign-in may take, shown in the header.
+    return {"training_admin": svc.is_admin(user) is not None,
+            "pathway_roles": tuple((r, PATHWAY_LABELS.get(r, ROLE_LABELS.get(r, r))) for r in svc.allowed_roles(user)),
+            "pathway_current": trainee.role if trainee is not None else None}
+
+
+# Header names for the pathways (the lessons and records stay keyed by role).
+PATHWAY_LABELS = {"OWNER": "Contractor (owner)", "OFFICE": "Contractor (office)", ROLE_FIELD: "Field Crew"}
 
 
 @training_bp.route("/signin")
@@ -78,10 +89,16 @@ def home():
 
 @training_bp.route("/register", methods=["POST"])
 def register():
+    had = svc.trainee_for(current_user)
+    before = had.role if had is not None else None
     try:
-        svc.register(current_user, request.form.get("role", ""))
+        trainee = svc.register(current_user, request.form.get("role", ""))
     except svc.TrainingError as exc:
         flash(str(exc), "error")
+    else:
+        if before is not None and trainee.role != before:
+            flash(f"You are now on {PATHWAY_LABELS.get(trainee.role, ROLE_LABELS.get(trainee.role, trainee.role))} "
+                  "training. Your other pathway's lessons, progress and test results are kept.", "success")
     return redirect(url_for("training.home"))
 
 
@@ -101,7 +118,8 @@ def lesson(key):
     return render_template("training/lesson.html", trainee=trainee, module=module, lesson=item, step=step,
                            current=item.steps[step], prev_key=prev_key, next_key=next_key, ticked=ticked,
                            progress=progress, notes=svc.feedback(trainee, key),
-                           workflow_stages=_workflow_stages(trainee, key))
+                           workflow_stages=_workflow_stages(trainee, key),
+                           step_links=links_for_lesson(key, trainee))
 
 
 def _workflow_stages(trainee, lesson_key):
@@ -234,6 +252,22 @@ def tutor_ask():
     return redirect(url_for("training.uat_case", key=case.key) if case else url_for("training.home"))
 
 
+_BACK_LABELS = (("/training/lessons/", "the lesson"), ("/training/uat", "the acceptance test"),
+                ("/training/review", "the owner review"), ("/training/workflow", "the Workflow map"))
+
+
+def _map_back():
+    """Where the Back button above a Workflow map goes (23 Oct 2026): the page the map was opened from, passed as
+    ``?back=`` (same-site /training pages only), or the Training Centre home when the map is opened directly."""
+    raw = (request.args.get("back") or "").strip()
+    ok = (raw.startswith("/training") and not raw.startswith("//") and "\\" not in raw and "://" not in raw
+          and "\n" not in raw and "\r" not in raw and len(raw) <= 300 and not raw.startswith("/training/workflow"))
+    if not ok:
+        return {"raw": "", "href": url_for("training.home"), "label": "← Back to the Training Centre"}
+    label = next((txt for prefix, txt in _BACK_LABELS if raw.startswith(prefix)), "the Training Centre")
+    return {"raw": raw, "href": raw, "label": "← Back to " + label}
+
+
 @training_bp.route("/workflow")
 def workflow_map():
     """The Workflow map in the Training Centre (Joel, 21 Oct 2026): the trainee's side of the governed workflow
@@ -248,8 +282,10 @@ def workflow_map():
     from app.workflow_map.pages import training_viewer
 
     map_key, viewer = training_viewer(trainee)
-    wf = build_map(map_key, viewer, current=request.args.get("stage"), stage_endpoint="training.workflow_map")
-    return render_template("training/workflow.html", trainee=trainee, wf=wf)
+    back = _map_back()
+    wf = build_map(map_key, viewer, current=request.args.get("stage"), stage_endpoint="training.workflow_map",
+                   stage_args={"back": back["raw"]} if back["raw"] else {})
+    return render_template("training/workflow.html", trainee=trainee, wf=wf, map_back=back)
 
 
 @training_bp.route("/uat")
@@ -355,9 +391,10 @@ def review_map(map_key):
     people_admin, company_management = _office_access(org) if kind == KIND_OFFICE else (False, False)
     viewer = Viewer(kind=kind, people_admin=people_admin, company_management=company_management, training=True,
                     trainee=None, role=None, projects=None, review_map=key)
+    back = _map_back()
     wf = build_map(key, viewer, current=request.args.get("stage"), stage_endpoint="training.review_map",
-                   stage_args={"map_key": key})
-    return render_template("training/review_map.html", wf=wf, map_key=key, maps=REVIEW_MAPS)
+                   stage_args={"map_key": key, **({"back": back["raw"]} if back["raw"] else {})})
+    return render_template("training/review_map.html", wf=wf, map_key=key, maps=REVIEW_MAPS, map_back=back)
 
 
 def _review_back(key):

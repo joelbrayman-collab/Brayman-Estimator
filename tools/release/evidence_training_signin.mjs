@@ -116,8 +116,17 @@ for (const [label, vp] of [["desktop", DESK], ["iPhone", PHONE]]) {
       await noSideways(pg, `${key} map`);
       const cards = await pg.locator("[data-wf-card]").evaluateAll((els) => els.map((e) => e.getAttribute("data-wf-card")));
       assert.ok(cards.length >= 5, `${key}: stages shown`);
+      // A map with several journeys shows one at a time (24 Oct 2026): choose the card's journey first.
+      const openCard = async (id) => {
+        const card = pg.locator(`[data-wf-card="${id}"]`);
+        if (!(await card.isVisible())) {
+          const j = await card.evaluate((e) => e.closest("[data-wf-journey-map]").getAttribute("data-wf-journey-map"));
+          await pg.locator(`[data-wf-journey-tab="${j}"]`).click();
+        }
+        await card.click();
+      };
       for (const id of cards) {
-        await pg.locator(`[data-wf-card="${id}"]`).click();
+        await openCard(id);
         assert.ok(await pg.locator(`[data-wf-page="${id}"]`).isVisible(), `${key}: stage ${id} expands`);
         assert.equal(new URL(pg.url()).searchParams.get("stage"), id);
       }
@@ -131,7 +140,7 @@ for (const [label, vp] of [["desktop", DESK], ["iPhone", PHONE]]) {
       }
       // a lesson and an acceptance test open read-only and come back to the same stage
       const stage = cards[1];
-      await pg.locator(`[data-wf-card="${stage}"]`).click();
+      await openCard(stage);
       for (const kind of ["lessons", "uat"]) {
         const link = pg.locator(`[data-wf-page="${stage}"] a[href^="/training/review/${kind}/"]`).first();
         if ((await link.count()) === 0) continue;

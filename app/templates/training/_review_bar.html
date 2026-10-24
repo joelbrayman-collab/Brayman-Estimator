@@ -1,10 +1,17 @@
-<nav class="tc-card tc-review-bar" aria-label="Owner review" data-review-bar>
-  <p class="tc-eyebrow">Owner review · read-only, nothing is saved</p>
-  <p class="tc-review-links">
-    <a href="{{ url_for('training.review_map', map_key='contractor') }}" data-review-map-link="contractor"{% if map_key == 'contractor' %} aria-current="page"{% endif %}>Contractor Workflow Map</a>
-    <a href="{{ url_for('training.review_map', map_key='supplier') }}" data-review-map-link="supplier"{% if map_key == 'supplier' %} aria-current="page"{% endif %}>Supplier Workflow Map</a>
-    <a href="{{ url_for('training.review_map', map_key='field') }}" data-review-map-link="field"{% if map_key == 'field' %} aria-current="page"{% endif %}>Field (crew) map</a>
-    <a href="{{ url_for('training.review_field_crew') }}" data-review-field-crew{% if map_key == 'field-crew' %} aria-current="page"{% endif %}>Field Crew training</a>
-    <a href="{{ url_for('training.admin') }}">Administrator dashboard</a>
-  </p>
-</nav>
+{# Owner review menu in the header (24 Oct 2026): one compact control in place of the box of links above each
+   review page. A <details> menu, so it opens with Enter or Space and needs no JavaScript. #}
+{% set _back = (map_back.raw if map_back is defined and map_back else None) or None %}
+{% set _mk = map_key if map_key is defined else '' %}
+<details class="tc-pathway tc-review-menu" data-owner-review-menu{% if request.endpoint and request.endpoint.startswith('training.review') %} data-review-bar{% endif %}>
+  <summary aria-label="Owner review menu (read-only, nothing is saved)">Owner review</summary>
+  <nav class="tc-pathway-menu" aria-label="Owner review">
+    <p class="tc-pathway-title">Owner review · read-only</p>
+    <a href="{{ url_for('training.review') }}" data-owner-review-link{% if request.endpoint == 'training.review' %} aria-current="page"{% endif %}>All maps for review</a>
+    <a href="{{ url_for('training.review_map', map_key='contractor', back=_back) }}" data-review-menu-link="contractor"{% if _mk == 'contractor' %} aria-current="page"{% endif %}>Contractor Workflow Map</a>
+    <a href="{{ url_for('training.review_map', map_key='supplier', back=_back) }}" data-review-menu-link="supplier"{% if _mk == 'supplier' %} aria-current="page"{% endif %}>Supplier Workflow Map</a>
+    <a href="{{ url_for('training.review_map', map_key='field', back=_back) }}" data-review-menu-link="field"{% if _mk == 'field' %} aria-current="page"{% endif %}>Field (crew) map</a>
+    <a href="{{ url_for('training.review_field_crew') }}" data-review-menu-link="field-crew"{% if _mk == 'field-crew' %} aria-current="page"{% endif %}>Field Crew training</a>
+    <a href="{{ url_for('training.admin') }}" data-review-menu-link="admin"{% if request.endpoint == 'training.admin' %} aria-current="page"{% endif %}>Administrator dashboard</a>
+    <p class="tc-pathway-note">Nothing here is saved or registers you as a trainee.</p>
+  </nav>
+</details>

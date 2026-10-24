@@ -14,6 +14,10 @@
 </head>
 <body class="tc">
   <header class="tc-top">
+    {% if map_back is defined and map_back %}{% include "training/_map_back.html" %}
+    {% elif current_user.is_authenticated and request.endpoint not in ('training.home', 'training.signin') %}
+    <a class="tc-back" href="{{ url_for('training.home') }}" data-back-to-training aria-label="Back to the Training Centre" title="Back to the Training Centre"><span aria-hidden="true">&#8592;</span><span class="tc-back-text">Back</span></a>
+    {% endif %}
     <a class="tc-brand" href="{{ url_for('training.home') }}">
       <img src="{{ url_for('static', filename='branding/calibraytai-logo-v1-dark.png') }}" alt="CalibraytAI">
       <span>Training &amp; Acceptance Centre</span>
@@ -21,9 +25,21 @@
     <nav class="tc-nav" aria-label="Training">
       {% if current_user.is_authenticated %}
       <a href="{{ url_for('training.home') }}">My training</a>
-      <a href="{{ url_for('training.workflow_map') }}" data-workflow-map-link>Workflow map</a>
+      {% set _here = request.full_path[:-1] if request.full_path.endswith('?') else request.full_path %}<a href="{{ url_for('training.workflow_map') if request.endpoint in ('training.workflow_map', 'training.review_map') else url_for('training.workflow_map', back=_here) }}" data-workflow-map-link>Workflow map</a>
       <a href="{{ url_for('training.uat') }}">Acceptance tests</a>
-      {% if training_admin %}<a href="{{ url_for('training.review') }}" data-owner-review-link>Owner review</a>{% endif %}
+      {% if training_admin %}{% include "training/_review_bar.html" %}{% endif %}
+      {% if pathway_current and pathway_roles|length > 1 %}
+      <details class="tc-pathway" data-pathway-switch>
+        <summary aria-label="Change training pathway">Pathway: {% for r, l in pathway_roles %}{% if r == pathway_current %}{{ l }}{% endif %}{% endfor %}</summary>
+        <form method="post" action="{{ url_for('training.register') }}" class="tc-pathway-menu">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <p class="tc-pathway-title">Change training pathway</p>
+          {% for r, l in pathway_roles %}<button type="submit" name="role" value="{{ r }}" data-pathway="{{ r }}" {% if r == pathway_current %}aria-current="true" disabled{% endif %}>{{ l }}{% if r == pathway_current %} (current){% endif %}</button>{% endfor %}
+          {% if training_admin %}<a href="{{ url_for('training.review_map', map_key='supplier') }}" data-pathway-supplier-review>Supplier (owner review)</a>{% endif %}
+          <p class="tc-pathway-note">Each pathway keeps its own lessons, progress and test results.</p>
+        </form>
+      </details>
+      {% endif %}
       <span class="tc-who">{{ current_user.display_name }}</span>
       {% endif %}
     </nav>

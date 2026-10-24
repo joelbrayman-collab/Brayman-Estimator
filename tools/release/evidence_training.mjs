@@ -72,6 +72,24 @@ async function noSideways(pg, label) {
   const [sw, iw] = await pg.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
   assert.ok(sw <= iw + 1, `${label}: page scrolls sideways (${sw} > ${iw})`);
 }
+// The Tutor is a drawer opened from the header's Ask the Tutor button (23 Oct 2026); it starts closed on every page.
+async function openTutor(pg) {
+  const launch = pg.locator("header [data-tutor-launch]");
+  assert.ok(await launch.isVisible(), "Ask the Tutor is in the header");
+  assert.equal(await launch.getAttribute("aria-expanded"), "false", "the drawer starts closed");
+  const saved = pg.waitForResponse((r) => r.url().endsWith("/training/tutor") && r.request().method() === "POST");
+  await launch.click();
+  await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-open"));
+  await saved;  // the open state is saved on the server
+  assert.equal(await launch.getAttribute("aria-expanded"), "true");
+}
+async function closeTutor(pg) {
+  const saved = pg.waitForResponse((r) => r.url().endsWith("/training/tutor") && r.request().method() === "POST");
+  await pg.click("[data-tutor-button]");
+  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-open"));
+  await saved;
+  assert.equal(await pg.getAttribute("header [data-tutor-launch]", "aria-expanded"), "false");
+}
 async function signIn(key, viewport) {
   if (sessions[key]) return sessions[key];
   const s = await context(viewport);
@@ -132,10 +150,10 @@ test("tick each step: it turns green and is saved; screenshot enlargement; Save 
   assert.match(new URL(pg.url()).pathname, /^\/training$/);
   const href = await pg.getAttribute("[data-continue]", "href");
   assert.ok(href.includes(`/training/lessons/${lesson}`), `Continue returns to ${lesson}: ${href}`);
-  assert.match(await pg.locator(`[data-lesson="${lesson}"]`).locator("xpath=..").textContent(), new RegExp(`1 of ${total} steps`));
+  assert.match(await pg.locator(`[data-lesson-row="${lesson}"]`).textContent(), new RegExp(`1 of ${total} steps`));
 });
 
-test("Training Tutor: follows the step, quick help, troubleshooting, minimize and restore kept on every page", async () => {
+test("Training Tutor: follows the step, quick help, troubleshooting, the header drawer's state kept on every page", async () => {
   const { pg } = sessions.ben;
   await pg.goto(`${base}/training`);
   assert.equal(await pg.getAttribute("[data-tutor]", "data-tutor-mode"), "home");
@@ -146,6 +164,7 @@ test("Training Tutor: follows the step, quick help, troubleshooting, minimize an
   const target = cards > 1 ? 1 : 0;
   const title = await pg.getAttribute(`[data-step-card="${target}"]`, "data-t-title");
   await pg.locator(`[data-step-card="${target}"] .tc-step-head h2`).click();
+  await openTutor(pg);
   assert.ok((await pg.textContent("[data-tutor-title]")).includes(title), "the Tutor shows the step the trainee is on");
   // Quick help: "It didn't work" gives that step's recovery.
   await pg.click('[data-tutor-quick="It didn\'t work"]');
@@ -157,22 +176,26 @@ test("Training Tutor: follows the step, quick help, troubleshooting, minimize an
   await pg.locator("[data-tutor-ask] button").click();
   await pg.waitForFunction(() => /Go to/.test(document.querySelector("[data-tutor-live]").textContent));
   await shot(pg, "training-tutor");
-  // Minimize: kept after reloading and on the other training pages; restore brings it back.
-  await pg.click("[data-tutor-button]");
+  // Close: saved (minimized) after reloading and on the other training pages; the drawer starts closed everywhere.
+  await closeTutor(pg);
   await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-min"));
-  assert.equal(await pg.getAttribute("[data-tutor-button]", "aria-expanded"), "false");
   await pg.reload();
-  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still minimized after reload");
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min") && !t.classList.contains("is-open")), "still closed after reload");
   await pg.goto(`${base}/training`);
-  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still minimized on the home page");
-  await pg.click("[data-tutor-button]");
-  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-min"));
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "still closed on the home page");
+  await openTutor(pg);
+  await pg.keyboard.press("Escape");
+  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-open"));
+  assert.equal(await pg.evaluate(() => document.activeElement?.hasAttribute("data-tutor-launch")), true, "Escape returns focus to Ask the Tutor");
   await pg.goto(`${base}/training/uat`);
   const first = await pg.locator("[data-uat-row] a").first().getAttribute("href");
   await pg.goto(`${base}${first}`);
   assert.equal(await pg.getAttribute("[data-tutor]", "data-tutor-mode"), "uat");
+  await openTutor(pg);
   await pg.click('[data-tutor-quick="When is it a fail or blocked?"]');
   await pg.waitForFunction(() => /Blocked:/.test(document.querySelector("[data-tutor-live]").textContent));
+  await pg.reload();
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => !t.classList.contains("is-min")), "opening is saved too");
 });
 
 test("a lesson completes only when its exercise is ticked; notes are kept", async () => {
@@ -198,6 +221,63 @@ test("a lesson completes only when its exercise is ticked; notes are kept", asyn
   assert.ok(await pg.locator("[data-note]", { hasText: "The sign-in page was clear" }).isVisible());
   await pg.goto(`${base}/training`);
   assert.match(await pg.textContent("[data-progress]"), /^[1-9]\d* of \d+ lessons done/);
+});
+
+// Lesson status on the training home (24 Oct 2026): Completed with a green check and Review again, In Progress, the
+// next recommended lesson highlighted; reviewing a completed lesson keeps it Completed.
+async function lessonBadges(pg, label) {
+  await pg.goto(`${base}/training`);
+  const done = pg.locator('[data-lesson-row="c01-sign-in"]');
+  assert.equal(await done.getAttribute("data-lesson-status"), "completed", `${label}: the finished lesson is Completed`);
+  assert.equal((await done.locator("[data-lesson-state]").textContent()).trim(), "Completed");
+  const box = await done.locator(".tc-lesson-box").evaluate((el) => [getComputedStyle(el).backgroundColor, el.textContent.trim()]);
+  assert.deepEqual(box, ["rgb(47, 125, 74)", "\u2713"], `${label}: a green checked box`);
+  assert.ok(await done.locator("[data-review-again]").isVisible(), `${label}: Review again is shown`);
+  const started = pg.locator('[data-lesson-status="in-progress"]');
+  assert.ok(await started.count() >= 1, `${label}: the started lesson is In Progress`);
+  assert.equal((await started.first().locator("[data-lesson-state]").textContent()).trim(), "In Progress");
+  const next = pg.locator("[data-next-recommended]");
+  assert.equal(await next.count(), 1, `${label}: one next recommended lesson`);
+  assert.ok(await next.locator("[data-next-badge]").isVisible());
+  const key = await next.getAttribute("data-lesson-row");
+  assert.ok((await pg.getAttribute("[data-continue]", "href")).includes(`/training/lessons/${key}`), `${label}: Next is where Continue goes`);
+  assert.notEqual(await next.evaluate((el) => getComputedStyle(el).borderTopColor), "rgba(0, 0, 0, 0)", `${label}: Next is highlighted`);
+  assert.match(await pg.locator('[data-module="c01"] [data-module-count-text]').textContent(), /^\d+ of \d+ lessons completed$/);
+  assert.match(await pg.locator('[data-module="c01"] [data-module-summary]').textContent(), /in progress/);
+  await noSideways(pg, `${label}: training home`);
+  return { done, key };
+}
+
+test("training home: Completed, In Progress and Next; Review again keeps the lesson Completed (desktop)", async () => {
+  const { pg } = sessions.ben;
+  const { done, key } = await lessonBadges(pg, "desktop");
+  await shot(pg, "training-home-progress-desktop");
+  await Promise.all([pg.waitForNavigation(), done.locator("[data-review-again]").click()]);
+  assert.ok(await pg.locator("[data-reviewing]").isVisible(), "the lesson says it is being reviewed");
+  assert.equal(await pg.locator("[data-complete]").count(), 0, "no Finish button on a completed lesson");
+  assert.ok(await pg.locator('[data-tick="0"]').isDisabled(), "ticks cannot be undone while reviewing");
+  const last = (await pg.locator("[data-step-card]").count()) - 1;
+  await pg.goto(`${base}/training/lessons/c01-sign-in?step=${last}`);
+  await pg.locator(`[data-step-card="${last}"] .tc-step-head h2`).click();
+  await Promise.all([pg.waitForNavigation(), pg.click("[data-exit]")]);
+  assert.equal(await pg.getAttribute('[data-lesson-row="c01-sign-in"]', "data-lesson-status"), "completed", "still Completed after review");
+  assert.equal(await pg.getAttribute("[data-next-recommended]", "data-lesson-row"), key, "Next is unchanged by the review");
+});
+
+test("training home: Completed, In Progress and Next on the phone (390 px), no sideways scrolling", async () => {
+  const s = await context(PHONE);
+  sessions.benPhone = s;
+  const ben = facts.people.ben;
+  await s.pg.goto(`${base}/login`);
+  await s.pg.fill("input[name=email]", ben.email);
+  await s.pg.fill("input[name=password]", ben.password);
+  await Promise.all([s.pg.waitForNavigation(), s.pg.locator("form button[type=submit]").first().click()]);
+  await lessonBadges(s.pg, "phone");
+  const right = await s.pg.locator('[data-lesson-row="c01-sign-in"] [data-review-again]').evaluate((el) => el.getBoundingClientRect().right);
+  assert.ok(right <= 390, "Review again fits the phone width");
+  await shot(s.pg, "training-home-progress-phone");
+  await s.pg.goto(`${base}/training/lessons/c01-sign-in`);
+  await noSideways(s.pg, "reviewing a completed lesson (phone)");
 });
 
 test("acceptance tests: separate from lessons; Fail, then a retest Pass keeps the first result", async () => {
@@ -239,6 +319,8 @@ test("field worker on an iPhone: Field lessons only, no sideways scrolling", asy
     await kevin.pg.goto(`${base}${href}`);
     await noSideways(kevin.pg, href);
   }
+  await openTutor(kevin.pg);
+  await noSideways(kevin.pg, "lesson with the Tutor drawer open (phone)");
   await kevin.pg.click('[data-tutor-quick="Where is it?"]');
   await kevin.pg.waitForFunction(() => /Go to/.test(document.querySelector("[data-tutor-live]").textContent));
   await noSideways(kevin.pg, "lesson with the Tutor answer (phone)");
@@ -346,6 +428,47 @@ test("one office trainee: Contractor, then Field (Change my role), then back; bo
   assert.match(await ben.textContent('[data-admin-crew-member^="Olivia"]'), /Lessons: 1 of 31 done/);
   assert.ok(await ben.locator("[data-admin-module-times]").isVisible(), "Module times on the dashboard");
   await shot(ben, "training-admin-two-pathways");
+});
+
+// Change training pathway in the header (24 Oct 2026): beside the account name, Office -> Field -> Office, each
+// pathway's record kept; it works on the phone without sideways scrolling.
+async function switchPathway(pg, role, label) {
+  const sw = pg.locator("header [data-pathway-switch]");
+  await sw.locator("summary").click();
+  assert.ok(await sw.evaluate((d) => d.open), `${label}: the switch opens`);
+  const btn = sw.locator(`[data-pathway="${role}"]`);
+  assert.ok(await btn.isVisible(), `${label}: ${role} is offered`);
+  const box = await btn.boundingBox();
+  assert.ok(box.x >= 0 && box.x + box.width <= pg.viewportSize().width + 1, `${label}: the choice fits the screen`);
+  await noSideways(pg, `${label}: switch open`);
+  await Promise.all([pg.waitForNavigation(), btn.click()]);
+}
+test("Change training pathway in the header: Office -> Field -> Office on desktop and the phone (390 px)", async () => {
+  const { pg } = sessions.olivia;
+  await pg.goto(`${base}/training`);
+  const summary = pg.locator("header [data-pathway-switch] summary");
+  assert.match(await summary.textContent(), /Pathway: Contractor \(office\)/);
+  const adjacent = await pg.locator("header [data-pathway-switch]").evaluate((d) => d.nextElementSibling?.classList.contains("tc-who"));
+  assert.ok(adjacent, "the switch sits next to the account name");
+  const office = await pg.textContent("[data-progress]");
+  const s = await context(PHONE);
+  sessions.oliviaPhone = s;
+  await s.pg.goto(`${base}/login`);
+  await s.pg.fill("input[name=email]", facts.people.olivia.email);
+  await s.pg.fill("input[name=password]", facts.people.olivia.password);
+  await Promise.all([s.pg.waitForNavigation(), s.pg.locator("form button[type=submit]").first().click()]);
+  await s.pg.goto(`${base}/training`);
+  await noSideways(s.pg, "phone home with the switch");
+  await switchPathway(s.pg, "FIELD", "phone");
+  assert.match(await s.pg.textContent("header [data-pathway-switch] summary"), /Pathway: Field Crew/);
+  assert.match(await s.pg.textContent("main"), /You are now on Field Crew training/);
+  assert.equal(await s.pg.locator('[data-module^="c"]').count(), 0, "Field: only the Field Crew lessons");
+  assert.match(await s.pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/, "the Field record is kept");
+  await noSideways(s.pg, "phone home on Field Crew");
+  await switchPathway(s.pg, "OFFICE", "phone");
+  assert.match(await s.pg.textContent("header [data-pathway-switch] summary"), /Pathway: Contractor \(office\)/);
+  assert.equal(await s.pg.textContent("[data-progress]"), office, "the Contractor record is exactly as it was");
+  await noSideways(s.pg, "phone home back on Office");
 });
 
 test("the training site says so on every workspace and links to the Centre", async () => {

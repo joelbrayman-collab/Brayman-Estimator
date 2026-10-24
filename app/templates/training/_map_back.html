@@ -1,0 +1,3 @@
+{# Back control for a Workflow map (23 Oct 2026; in the dark header since 24 Oct 2026): a real link, so Tab and Enter
+   work and the browser's Back still works; it goes to the page the map was opened from. #}
+{% set _label = map_back.label|replace('← ', '') %}<a class="tc-back" href="{{ map_back.href }}" data-map-back data-back-to-training aria-label="{{ _label }}" title="{{ _label }}"><span aria-hidden="true">&#8592;</span><span class="tc-back-text">Back</span></a>

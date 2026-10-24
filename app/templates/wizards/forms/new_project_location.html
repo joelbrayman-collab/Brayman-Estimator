@@ -1,0 +1,30 @@
+{% for k, v in f.hidden.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+<input type="hidden" name="plan_start" value="later">
+<div class="wz-fields">
+  <label class="wz-wide">Street / civic address<input type="text" name="street" value="{{ f['values'].get('street', '') }}"></label>
+  <label>Municipality<input type="text" name="municipality" value="{{ f['values'].get('municipality', '') }}"></label>
+  <label>Province<input type="text" name="province_state" value="{{ f['values'].get('province_state', '') }}"></label>
+  <label>Postal code<input type="text" name="postal_zip" value="{{ f['values'].get('postal_zip', '') }}"></label>
+  <label>Country<input type="text" name="country" value="{{ f['values'].get('country', '') }}"></label>
+  <label class="wz-wide">Address as written (optional)<input type="text" name="address" value="{{ f['values'].get('address', '') }}"></label>
+</div>
+<details class="wz-more">
+  <summary>Permit class and commercial decision gate (pre-filled)</summary>
+  <div class="wz-fields">
+    <label>Permit context class
+      <select name="permit_context_class">{% for opt in f.permit_context_classes %}<option value="{{ opt }}" {% if (f['values'].get('permit_context_class') or f.default_permit) == opt %}selected{% endif %}>{{ opt }}</option>{% endfor %}</select>
+    </label>
+    {% for name, label, options in [('pricing_posture', 'Pricing posture', f.pricing_postures), ('execution_risk', 'Execution risk', f.execution_risks), ('schedule_condition', 'Schedule condition', f.schedule_conditions), ('site_condition', 'Site condition', f.site_conditions), ('estimate_stage', 'Estimate stage', f.estimate_stages), ('delivery_model', 'Delivery model', f.delivery_models)] %}
+    <label>{{ label }}
+      <select name="{{ name }}">{% for opt in options %}<option value="{{ opt }}" {% if f['values'].get(name) == opt %}selected{% endif %}>{{ opt|delivery_model_label if name == 'delivery_model' else opt }}</option>{% endfor %}</select>
+    </label>
+    {% endfor %}
+    <label class="wz-wide">Justification (needed for an exceptional posture or risk)<textarea name="justification_reason" rows="2">{{ f['values'].get('justification_reason', '') }}</textarea></label>
+  </div>
+</details>
+{% if f.ready %}
+<button type="submit" class="wz-primary wz-create" formaction="{{ f.create_url }}" formmethod="post" name="wizard_run" value="{{ f.run_id }}" data-create-project>Create the project</button>
+<p class="wz-note">The project is created once, exactly as the New Project form creates it.</p>
+{% else %}
+<p class="wz-note">Finish steps 1 and 2 first; then Create the project appears here.</p>
+{% endif %}

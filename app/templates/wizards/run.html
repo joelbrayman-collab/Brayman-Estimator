@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ wizard.title }}: {{ step.title }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ wizard.title }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block content %}{% include "wizards/_run.html" %}{% endblock %}

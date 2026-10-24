@@ -9,6 +9,8 @@
     <p class="muted-copy">{{ describe }}</p></div>
     <div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}">All quotations</a></div>
 </div>
+{% from "wizards/_entry.html" import wizard_entry with context %}
+{{ wizard_entry("SUPPLIER_PRO_DESK", "Supplier Pro Desk wizard:", "this quotation, step by step to the order.", url_for('supplier_portal.wizard_start', supplier_id=supplier.id), fields={"quote_id": q.id}, manual_label="Continue Manually (this page)") }}
 {% if q.demo_synthetic or p.demo_prices %}<p class="pd-synthetic" data-synthetic="true">Synthetic demonstration data — not a real customer{% if p.demo_prices %} and not real store prices{% endif %}.</p>{% endif %}
 <ol class="pd-steps" aria-label="Steps">
     <li><a href="#sketch" data-done="{{ 'true' if sketches else 'false' }}">1 Customer &amp; sketch</a></li>

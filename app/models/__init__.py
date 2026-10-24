@@ -174,6 +174,7 @@ from app.models.guided_estimating import (
     GuidedEstimateEvent,
     GuidedEstimateStage,
 )
+from app.models.wizard import WizardRun, WizardRunEvent
 from app.models.appointment import (
     CalendarFeedKey,
     CompanyAppointment,
@@ -227,6 +228,8 @@ __all__ = [
     "ProjectCalculation",
     "GuidedEstimate",
     "GuidedEstimateStage",
+    "WizardRun",
+    "WizardRunEvent",
     "GuidedEstimateEvent",
     "CalculatorResultCarry",
     "ConcreteRequest",

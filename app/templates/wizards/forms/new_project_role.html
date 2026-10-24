@@ -1,0 +1,11 @@
+{% if f.ask_type or not f.chosen_type %}
+<fieldset class="wz-choices">
+  <legend>What is being built *</legend>
+  {% for key, label in f.types.items() %}<label class="wz-choice"><input type="radio" name="guided_project_type" value="{{ key }}" {% if f.chosen_type == key %}checked{% endif %}> {{ label }}</label>{% endfor %}
+</fieldset>
+{% else %}<input type="hidden" name="guided_project_type" value="{{ f.chosen_type }}"><p>What is being built: <strong>{{ f.types[f.chosen_type] }}</strong></p>{% endif %}
+<fieldset class="wz-choices">
+  <legend>Your role on this project *</legend>
+  {% for key, label in f.roles.items() %}<label class="wz-choice"><input type="radio" name="contractor_role" value="{{ key }}" {% if f.chosen_role == key %}checked{% endif %}> {{ label }}</label>{% endfor %}
+</fieldset>
+<button type="submit" class="wz-primary" data-save-role>Confirm</button>

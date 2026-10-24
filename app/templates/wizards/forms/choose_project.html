@@ -1,0 +1,11 @@
+{% if f.projects %}
+<label>Project
+  <select name="project_id" required data-choose-project>
+    <option value="">Choose</option>
+    {% for p in f.projects %}<option value="{{ p.id }}">{{ p.name }}{% if p.client %} — {{ p.client.name }}{% endif %}</option>{% endfor %}
+  </select>
+</label>
+<button type="submit" class="wz-primary" data-use-project>Use this project</button>
+{% else %}
+<p class="wz-note">{% if f.accepted_only %}No current project has an accepted proposal yet.{% else %}There is no current project yet.{% endif %}</p>
+{% endif %}

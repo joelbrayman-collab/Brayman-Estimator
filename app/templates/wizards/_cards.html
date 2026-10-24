@@ -1,0 +1,32 @@
+{# "WHAT DO YOU NEED TO DO?" — the guided wizards with Start Guided Wizard (primary) and Continue Manually. #}
+<section class="wz-home" data-wizard-home aria-labelledby="wz-home-title">
+  <h2 id="wz-home-title" class="wz-home-title">What do you need to do?</h2>
+  <div class="wz-home-grid">
+    {% for w in wizard_list %}
+    <article class="wz-home-card" data-wizard-card="{{ w.key }}">
+      <h3>{{ w.title }}</h3>
+      <p>{{ w.short }}</p>
+      <div class="wz-home-actions">
+        <form method="post" action="{{ start_url(w) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="wz-primary" data-start-wizard="{{ w.key }}">Start Guided Wizard</button>
+        </form>
+        <a class="wz-secondary" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}">Continue Manually</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% if summaries %}
+  <div class="wz-resume" data-wizard-resume-list>
+    <h3>Unfinished</h3>
+    <ul>
+      {% for s in summaries %}
+      <li data-resume-run="{{ s.run.id }}">
+        <a class="wz-resume-link" href="{{ s.resume_url }}" data-resume-wizard="{{ s.wizard.key }}"><strong>Resume {{ s.wizard.title }}</strong> — {{ s.subject }}</a>
+        <span class="wz-resume-meta">{{ s.progress.done }} of {{ s.progress.total }} steps{% if s.next %} · next: <a href="{{ s.next_url }}" data-next-action>{{ s.next.step.title }}</a> ({{ s.next.view.headline }}){% endif %}{% if s.record_url %} · <a href="{{ s.record_url }}" data-open-record>open the record</a>{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>

@@ -55,6 +55,8 @@
         </div>
     </header>
     <main class="supplier-main" id="main-content">
+        {% set back_to_wizard = supplier_wizard_return() if supplier_wizard_return is defined else None %}
+        {% include "partials/wizard_return.html" %}
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
         <div class="flash flash-{{ category }}" role="status">{{ message }}</div>

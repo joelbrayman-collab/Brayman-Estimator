@@ -1,0 +1,11 @@
+{% extends "supplier/base.html" %}
+{% block title %}Guided wizard{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
+{% block content %}
+{% set wizard_list = wizards %}
+{% macro _start(w) %}{{ url_for('supplier_portal.wizard_start', supplier_id=supplier.id) }}{% endmacro %}
+{% set start_url = _start %}
+{% macro _manual(w) %}{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}{% endmacro %}
+{% set manual_url = _manual %}
+{% include "wizards/_cards.html" %}
+{% endblock %}

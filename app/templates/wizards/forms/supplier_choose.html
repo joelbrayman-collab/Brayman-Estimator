@@ -1,0 +1,8 @@
+{% if f.shares or f.quotes %}
+<fieldset class="wz-choices">
+  <legend>Choose one</legend>
+  {% for s in f.shares %}<label class="wz-choice"><input type="radio" name="record" value="share:{{ s.id }}"> Contractor request {{ s.number }} — {{ (s.shared_json or {}).get('company', '') }} ({{ s.status|lower }})</label>{% endfor %}
+  {% for q in f.quotes %}<label class="wz-choice"><input type="radio" name="record" value="quote:{{ q.id }}"> Quotation {{ q.number }} — {{ q.customer.display_name }} ({{ q.status|lower }})</label>{% endfor %}
+</fieldset>
+<button type="submit" class="wz-primary" data-use-record>Work on this</button>
+{% else %}<p class="wz-note">No open request or quotation. Start a Quick Quote or a new quotation.</p>{% endif %}

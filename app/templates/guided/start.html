@@ -4,6 +4,8 @@
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
 {% block content %}
 <div class="ge-wrap" data-guided-start>
+  {% from "wizards/_entry.html" import wizard_entry with context %}
+  {{ wizard_entry("GUIDED_ESTIMATING", "Guided Estimating, step by step:", "choose the project and the wizard takes you through every stage to the proposal.", url_for('wizards.start', wizard_key='GUIDED_ESTIMATING'), manual_label="Continue Manually (this page)") }}
   <p class="ge-lede">Tell CalibraytAI what you are building and who does each part. It then walks you through each stage with the right calculator or quote, and builds one internal cost estimate.</p>
 
   <div class="ge-grid">

@@ -620,6 +620,9 @@ def create_app(config=None):
     app.register_blueprint(calculators_bp)
     app.register_blueprint(useful_calculators_bp)
     app.register_blueprint(guided_bp)
+    from app.routes.wizards import wizards_bp
+
+    app.register_blueprint(wizards_bp)
     from app.routes.site_plans import site_plans_bp
 
     app.register_blueprint(site_plans_bp)

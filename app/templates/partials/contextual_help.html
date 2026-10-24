@@ -1,4 +1,4 @@
-{% macro contextual_help(topic) %}
+{% macro contextual_help(topic, ask_url=None) %}
 <details class="contextual-help{% if topic.future %} is-future{% endif %}"
           id="help-{{ topic.key }}"
           data-help-surface="{{ topic.surface }}"
@@ -15,7 +15,7 @@
         {% endif %}
         <form
             class="contextual-help-ask"
-            action="{{ url_for('help.ask_help') }}"
+            action="{{ ask_url or url_for('help.ask_help') }}"
             method="post"
             data-help-mic-denied="{{ help_content.HELP_MIC_DENIED }}"
             data-help-mic-unsupported="{{ help_content.HELP_MIC_UNSUPPORTED }}"

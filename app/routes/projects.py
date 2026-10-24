@@ -417,18 +417,22 @@ def create_project():
     options.update(_guided_form_options(org_id))
 
     if request.method == "POST":
+        wizard_run = _wizard_run_for_create(org_id)
+        if wizard_run is not None and wizard_run.project_id:
+            flash("This project is already created. Nothing new was made.", "success")
+            return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="location"))
         name = request.form.get("name", "").strip()
         client_id = request.form.get("client_id", type=int)
 
         if not name or not client_id:
             flash("Project name and client are required.", "error")
-            return render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
 
         # Verify client belongs to current organization
         client = Client.query.filter_by(id=client_id, organization_id=org_id).first()
         if not client:
             flash("Invalid client selection.", "error")
-            return render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
 
         context_data = {
             "project_type": request.form.get("project_type", "").strip(),
@@ -471,9 +475,22 @@ def create_project():
                 generated_by=created_by,
                 commit=False,
             )
+            if wizard_run is not None:
+                from app.wizards.service import claim_project, record
+
+                if not claim_project(wizard_run.id, org_id, project.id):
+                    # Pressed twice, or sent from two windows: the first press made the project.
+                    db.session.rollback()
+                    flash("This project is already created. Nothing new was made.", "success")
+                    return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="location"))
+                record(wizard_run, "PROJECT_CREATED", actor=created_by or current_actor_display_name(),
+                       step="location", detail=f"Project {project.id}: {project.name}"[:600],
+                       user_id=getattr(current_user, "id", None))
 
             db.session.commit()
             flash("Project created successfully with commercial decision context.", "success")
+            if wizard_run is not None:
+                return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="documents"))
             guided_next = _guided_after_create(project, org_id, options)
             follow_on = _plan_start_after_create(project, org_id)
             if guided_next and (request.form.get("plan_start") or "later") != "generate":
@@ -485,13 +502,36 @@ def create_project():
         except (CommercialContextValidationError, PermitFoundationError) as e:
             db.session.rollback()
             flash(str(e), "error")
-            return render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
         except Exception as e:
             db.session.rollback()
             flash(f"Error creating project: {str(e)}", "error")
-            return render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
 
     return render_template("projects/form.html", clients=clients, **options)
+
+
+def _wizard_run_for_create(org_id):
+    """Start a New Project wizard (24 Oct 2026): the run this form was sent from, in this company, or None."""
+    run_id = request.form.get("wizard_run", type=int)
+    if not run_id:
+        return None
+    from app.wizards.service import WizardError, contractor_run
+
+    try:
+        run = contractor_run(org_id, run_id)
+    except WizardError:
+        abort(404)
+    if run.wizard_key != "NEW_PROJECT" or not run.is_active:
+        abort(404)
+    return run
+
+
+def _wizard_create_failed(wizard_run):
+    """Sent from the wizard: back to its location step, where every answer is still kept in the draft."""
+    if wizard_run is None:
+        return None
+    return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="location"))
 
 
 def _guided_form_options(org_id):

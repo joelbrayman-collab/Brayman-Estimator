@@ -12,6 +12,8 @@
     </div>
 </div>
 
+{% from "wizards/_entry.html" import wizard_entry with context %}
+{% if not carry %}{{ wizard_entry("NEW_PROJECT", "Start a New Project, step by step:", "customer, type, location, drawings, your role and the stages — then estimating.", url_for('wizards.start', wizard_key='NEW_PROJECT'), manual_label="Continue Manually (this form)") }}{% endif %}
 {% if carry %}
 <div class="cc-carry-banner" data-carry-banner>
     <strong>Bringing your {{ carry_label }} result:</strong> {{ carry.summary }}.

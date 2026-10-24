@@ -26,6 +26,15 @@
     </div>
 </section>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
+{% set wizard_list = office_wizards() %}
+{% set summaries = office_wizard_summaries(6) %}
+{% macro _start(w) %}{{ url_for('wizards.start', wizard_key=w.key) }}{% endmacro %}
+{% set start_url = _start %}
+{% macro _manual(w) %}{{ w.manual_url() }}{% endmacro %}
+{% set manual_url = _manual %}
+{% include "wizards/_cards.html" %}
+
 {% set sms_failed = sms_schedule_attention() %}
 {% if sms_failed %}
 <p class="home-sms-attention" role="alert" data-home-sms-attention="{{ sms_failed }}"><a href="{{ url_for('sms_notifications.office_notices') }}">{{ sms_failed }} schedule text{{ '' if sms_failed == 1 else 's' }} to workers not delivered. Check and retry.</a></p>

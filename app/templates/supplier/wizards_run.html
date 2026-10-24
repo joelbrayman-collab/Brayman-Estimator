@@ -1,0 +1,7 @@
+{% extends "supplier/base.html" %}
+{% block title %}{{ wizard.title }}: {{ step.title }}{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
+{% block content %}
+{% include "wizards/_run.html" %}
+<script src="{{ url_for('static', filename='js/contextual_help.js', v='d5-voice') }}" defer></script>
+{% endblock %}

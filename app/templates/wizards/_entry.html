@@ -1,0 +1,16 @@
+{# Start Guided Wizard (primary) / Continue Manually (secondary) on an activity's natural entry page. #}
+{% macro wizard_entry(key, title, text, action, fields={}, manual_href="#wz-manual-start", manual_label="Continue Manually", resume=None) %}
+<div class="wz-entry" data-wizard-entry="{{ key }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
+  <p class="wz-entry-text"><strong>{{ title }}</strong> {{ text }}</p>
+  <div class="wz-entry-actions">
+    <form method="post" action="{{ action }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% for k, v in fields.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+      <button type="submit" class="wz-primary" data-start-wizard="{{ key }}">{{ 'Resume Guided Wizard' if resume else 'Start Guided Wizard' }}</button>
+    </form>
+    <a class="wz-secondary" href="{{ manual_href }}" data-continue-manually="{{ key }}">{{ manual_label }}</a>
+  </div>
+</div>
+<span id="wz-manual-start"></span>
+{% endmacro %}

@@ -80,6 +80,8 @@
         </header>
 
         <main class="shell-workspace" id="main-content">
+            {% set back_to_wizard = wizard_return() if wizard_return is defined else None %}
+            {% include "partials/wizard_return.html" %}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                 <div class="flash-stack">

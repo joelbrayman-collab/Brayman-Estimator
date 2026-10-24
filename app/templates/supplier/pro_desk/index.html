@@ -12,6 +12,8 @@
     <a class="button button-secondary" href="{{ url_for('supplier_pro_desk.settings', supplier_id=supplier.id) }}">Quote settings</a>
     <a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Contractor requests</a></div>
 </div>
+{% from "wizards/_entry.html" import wizard_entry with context %}
+{{ wizard_entry("SUPPLIER_PRO_DESK", "Supplier Pro Desk wizard:", "a contractor request or a walk-in quotation, step by step.", url_for('supplier_portal.wizard_start', supplier_id=supplier.id), manual_label="Continue Manually (this page)") }}
 {% if settings_blockers %}<section class="form-panel pd-blockers"><h2>Before the first quotation</h2><ul>{% for b in settings_blockers %}<li>{{ b }}</li>{% endfor %}</ul></section>{% endif %}
 {% if not imports %}<section class="form-panel pd-blockers"><h2>No price file loaded</h2><p>Quotations can be prepared, but no line can be priced until {{ brand_for(supplier).name }}'s own price file is loaded.</p></section>{% endif %}
 <section class="form-panel" data-pro-desk-quotes="{{ quotes|length }}">

@@ -47,6 +47,7 @@ HELP_FIELD_ATTENTION = (
 SURFACE_HUB = "hub"
 SURFACE_OFFICE = "office"
 SURFACE_FIELD = "field"
+SURFACE_WIZARD = "wizard"  # Guided Workflow Wizards (24 Oct 2026): one topic per wizard step
 
 
 @dataclass(frozen=True)
@@ -602,10 +603,43 @@ FIELD_TOPICS: dict[str, HelpTopic] = {
     )
 }
 
+class _WizardTopics:
+    """Wizard step Help, read from each step's own instructions (app/wizards). Key: "<WIZARD_KEY>.<step_key>".
+
+    The step's what / do / next is the one copy of its instructions; Ask the Tutor answers from it here."""
+
+    def get(self, key, default=None):
+        from app.wizards.registry import wizard_for
+
+        wizard_key, _, step_key = (key or "").partition(".")
+        wizard = wizard_for(wizard_key)
+        step = wizard.step(step_key) if wizard is not None else None
+        if step is None:
+            return default
+        return HelpTopic(key=key, title=f"{wizard.title}: {step.title}", what=step.what, do=step.do, next=step.next,
+                         surface=SURFACE_WIZARD)
+
+    def values(self):
+        from app.wizards.registry import all_wizards
+
+        return [self.get(f"{w.key}.{s.key}") for w in all_wizards() for s in w.steps]
+
+
+WIZARD_TOPICS = _WizardTopics()
+
+
+def wizard_topic(wizard_key: str, step_key: str) -> HelpTopic:
+    topic = WIZARD_TOPICS.get(f"{wizard_key}.{step_key}")
+    if topic is None:
+        raise KeyError(f"Unknown wizard Help topic: {wizard_key}.{step_key}")
+    return topic
+
+
 _SURFACE_TOPICS: dict[str, dict[str, HelpTopic]] = {
     SURFACE_HUB: HUB_TOPICS,
     SURFACE_OFFICE: OFFICE_TOPICS,
     SURFACE_FIELD: FIELD_TOPICS,
+    SURFACE_WIZARD: WIZARD_TOPICS,
 }
 
 
@@ -697,6 +731,7 @@ def all_help_text() -> str:
         *HUB_TOPICS.values(),
         *OFFICE_TOPICS.values(),
         *FIELD_TOPICS.values(),
+        *WIZARD_TOPICS.values(),
     ):
         parts.extend(
             part

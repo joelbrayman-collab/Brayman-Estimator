@@ -1,0 +1,11 @@
+<div class="wz-fields">
+  <label>Customer *
+    <select name="client_id" data-field="client_id">
+      <option value="">Choose the customer</option>
+      {% for c in f.clients %}<option value="{{ c.id }}" {% if f["values"].get("client_id")|string == c.id|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Project name *<input type="text" name="name" maxlength="180" value="{{ f['values'].get('name', '') }}" data-field="name"></label>
+  <label>Project number<input type="text" name="project_number" maxlength="50" value="{{ f['values'].get('project_number', '') }}"></label>
+  <label class="wz-wide">Short description<textarea name="description" rows="2">{{ f['values'].get('description', '') }}</textarea></label>
+</div>

@@ -1,0 +1,3 @@
+{% if f.outstanding %}<div class="wz-missing"><strong>Still outstanding (stays listed on the project)</strong><ul>{% for o in f.outstanding %}<li>{{ o }}</li>{% endfor %}</ul></div>{% endif %}
+<label class="wz-choice"><input type="checkbox" name="confirmed" value="1"> {{ f.text }}</label>
+<button type="submit" class="wz-primary" data-confirm>{{ f.label }}</button>

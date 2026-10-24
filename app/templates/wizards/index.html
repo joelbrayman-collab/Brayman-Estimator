@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Guided wizards | Brayman Construction Platform{% endblock %}
+{% block page_title %}Guided wizards{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
+{% block content %}
+{% set wizard_list = wizards %}
+{% macro _start(w) %}{{ url_for('wizards.start', wizard_key=w.key) }}{% endmacro %}
+{% set start_url = _start %}
+{% macro _manual(w) %}{{ w.manual_url() }}{% endmacro %}
+{% set manual_url = _manual %}
+{% include "wizards/_cards.html" %}
+{% endblock %}

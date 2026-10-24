@@ -387,3 +387,6 @@ def remove_text_number(supplier_id, number_id):
         abort(404)
     flash("Number removed.", "success")
     return redirect(url_for("supplier_portal.account"))
+
+
+import app.routes.supplier_wizards  # noqa: E402,F401 — registers the Supplier Pro Desk wizard pages

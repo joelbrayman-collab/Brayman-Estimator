@@ -1,0 +1,7 @@
+<fieldset class="wz-choices">
+  <legend>What do the drawings give you?</legend>
+  <label class="wz-choice"><input type="radio" name="plan_review" value="measured" {% if not f.measurements %}disabled{% endif %}> Measurements were taken on the drawings and checked{% if not f.measurements %} (none taken yet){% endif %}</label>
+  <label class="wz-choice"><input type="radio" name="plan_review" value="manual"> Measurements are missing or not reliable — I will enter and confirm the quantities</label>
+</fieldset>
+<label class="wz-wide">Note (optional)<input type="text" name="plan_note" maxlength="300"></label>
+<button type="submit" class="wz-primary" data-confirm-plan>Record my review</button>

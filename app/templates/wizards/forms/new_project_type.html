@@ -1,0 +1,29 @@
+<fieldset class="wz-choices" {% if f.locked %}data-locked{% endif %}>
+  <legend>What is being built *</legend>
+  {% for key, label in f.guided_types.items() %}
+  <label class="wz-choice"><input type="radio" name="guided_project_type" value="{{ key }}" data-commercial="{{ f.hints[key] }}" {% if f['values'].get('guided_project_type') == key %}checked{% endif %}> {{ label }}</label>
+  {% endfor %}
+</fieldset>
+{% if not f.locked %}
+<div class="wz-fields">
+  <label>Commercial project type
+    <select name="project_type" data-commercial-type>
+      {% for opt in f.commercial_types %}<option value="{{ opt }}" {% if f['values'].get('project_type') == opt %}selected{% endif %}>{{ opt }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Status
+    <select name="status">{% for s in f.statuses %}<option {% if f['values'].get('status') == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+  </label>
+</div>
+<script>
+document.querySelectorAll('input[name="guided_project_type"]').forEach(function (r) {
+  r.addEventListener("change", function () {
+    var c = document.querySelector("[data-commercial-type]");
+    if (c && r.dataset.commercial) c.value = r.dataset.commercial;
+  });
+});
+</script>
+{% else %}
+<p class="wz-note">Choose what is being built; it waits here until your role is chosen (step 6).</p>
+<button type="submit" name="wizard_action" value="submit" class="wz-secondary">Save the project type</button>
+{% endif %}

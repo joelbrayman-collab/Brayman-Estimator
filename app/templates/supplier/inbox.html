@@ -6,6 +6,14 @@
     <p class="muted-copy">Requests contractors sent to {{ brand_for(supplier).name }}. You see only what each contractor chose to send.</p></div>
     <div><a class="button" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}" data-pro-desk-link="true">PRO Desk quotations</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_deliveries', supplier_id=supplier.id) }}">Deliveries</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_dashboard', supplier_id=supplier.id) }}">Dashboard</a> <a class="button button-secondary" href="{{ url_for('supplier_portal.supplier_demand', supplier_id=supplier.id) }}">Material demand</a></div>
 </div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
+{% set wizard_list = supplier_wizard_list() %}
+{% set summaries = supplier_wizard_summaries(supplier, 6) %}
+{% macro _start(w) %}{{ url_for('supplier_portal.wizard_start', supplier_id=supplier.id) }}{% endmacro %}
+{% set start_url = _start %}
+{% macro _manual(w) %}{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}{% endmacro %}
+{% set manual_url = _manual %}
+{% include "wizards/_cards.html" %}
 {% include "supplier/_attention.html" %}
 {% if changes_waiting %}
 <section class="form-panel delivery-alert" id="changes" data-changes-waiting="{{ changes_waiting|length }}">

@@ -17,14 +17,18 @@
   </div>
 </section>
 {% for row in ov.modules %}
-<section class="tc-card tc-module" data-module="{{ row.module.key }}">
-  <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small>{{ row.done }}/{{ row.total }}</small></h2>
+<section class="tc-card tc-module{% if row.done == row.total %} tc-module-complete{% endif %}" data-module="{{ row.module.key }}">
+  <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small data-module-count>{{ row.done }}/{{ row.total }}</small></h2>
   {% if row.time %}<p class="tc-module-time" data-module-time="{{ row.time.minutes }}">{% if row.time.split %}{% for s in row.time.sessions %}<span data-session="{{ s.number }}">Session {{ s.number }}: {{ s.label|lower }}</span>{% if not loop.last %} · {% endif %}{% endfor %}{% else %}{{ row.time.label }}{% endif %}</p>{% endif %}
+  <div class="tc-module-progress" data-module-progress="{{ row.percent }}">
+    <div class="tc-bar tc-bar-module" role="progressbar" aria-label="{{ row.module.title }} progress" aria-valuenow="{{ row.percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ row.percent }}%"></span></div>
+    <p class="tc-small" data-module-summary>{% if row.done == row.total %}<b class="tc-module-done">&#10003; Module complete</b> · {{ row.total }} of {{ row.total }} lessons completed{% else %}{{ row.done }} of {{ row.total }} lessons completed{% if row.started %} · {{ row.started }} in progress{% endif %}{% endif %}</p>
+  </div>
   <p>{{ row.module.summary }}</p>
   <ol class="tc-lessons">
     {% for x in row.lessons %}
-    <li class="tc-lesson tc-{{ x.state }}">{% if x.session_start %}<span class="tc-session-break" data-session-start="{{ x.session_start }}">Session {{ x.session_start }}</span>{% endif %}<a href="{{ url_for('training.lesson', key=x.lesson.key, step=x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a>
-      <span class="tc-state" data-lesson-state>{% if x.state == 'done' %}Done{% elif x.ticked %}{{ x.ticked }} of {{ x.steps }} steps{% elif x.state == 'started' %}Started{% endif %}</span></li>
+    <li data-lesson-row="{{ x.lesson.key }}" data-lesson-status="{{ 'completed' if x.state == 'done' else ('in-progress' if x.state == 'started' else 'not-started') }}"{% if x.next %} data-next-recommended{% endif %} class="tc-lesson tc-{{ x.state }}{% if x.next %} tc-next{% endif %}">{% if x.session_start %}<span class="tc-session-break" data-session-start="{{ x.session_start }}">Session {{ x.session_start }}</span>{% endif %}<span class="tc-lesson-line"><span class="tc-lesson-box" aria-hidden="true">{% if x.state == 'done' %}&#10003;{% endif %}</span><a href="{{ url_for('training.lesson', key=x.lesson.key, step=0 if x.state == 'done' else x.step) }}" data-lesson="{{ x.lesson.key }}">{{ x.lesson.title }}</a></span>
+      <span class="tc-lesson-badges">{% if x.state == 'done' %}<span class="tc-badge tc-badge-done" data-lesson-state>Completed</span> <a class="tc-review-again" href="{{ url_for('training.lesson', key=x.lesson.key, step=0) }}" data-review-again="{{ x.lesson.key }}" aria-label="Review again: {{ x.lesson.title }}">Review again</a>{% elif x.state == 'started' %}<span class="tc-badge tc-badge-progress" data-lesson-state>In Progress</span> <span class="tc-state" data-lesson-steps>{% if x.ticked %}{{ x.ticked }} of {{ x.steps }} steps{% else %}Started{% endif %}</span>{% endif %}{% if x.next %} <span class="tc-badge tc-badge-next" data-next-badge>Next</span>{% endif %}</span></li>
     {% endfor %}
   </ol>
 </section>

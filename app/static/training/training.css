@@ -124,3 +124,27 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 /* Module times (Joel, 23 Oct 2026): "About 35 minutes", or Session 1 / Session 2 between lessons. */
 .tc-module-time { margin:-4px 0 6px; font-size:.9rem; font-weight:600; color:var(--muted, #5b6470); }
 .tc-session-break { display:block; margin:10px 0 2px; font-size:.78rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted, #5b6470); }
+/* Lesson status on the training home (24 Oct 2026): Completed, In Progress and the next recommended lesson, from the
+   saved progress. Reviewing a completed lesson never changes it. */
+.tc-lesson { padding:5px 8px; border-radius:10px; border:1px solid transparent; overflow-wrap:anywhere; }
+.tc-lesson-line { display:inline; }
+.tc-lesson-line a { margin-left:6px; }
+.tc-lesson.tc-done a::before { content:none; }
+.tc-lesson-box { display:inline-grid; vertical-align:-4px; place-items:center; width:22px; height:22px; border:2px solid #c9c4b8; border-radius:5px; background:#fff; color:#fff; font-size:.9rem; font-weight:700; line-height:1; }
+.tc-done .tc-lesson-box { background:var(--green); border-color:var(--green); }
+.tc-started .tc-lesson-box { border-color:var(--amber); background:linear-gradient(90deg, #f3e3b8 50%, #fff 50%); }
+.tc-lesson-badges { display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px 8px; margin-left:6px; vertical-align:middle; }
+.tc-lesson-badges .tc-state { margin-left:0; }
+.tc-badge { display:inline-block; padding:1px 9px; border-radius:999px; font-size:.8rem; font-weight:700; line-height:1.6; white-space:nowrap; }
+.tc-badge-done { background:#e3f1e8; color:var(--green); }
+.tc-badge-progress { background:#f6ecd2; color:#7a5500; }
+.tc-badge-next { background:var(--gold); color:#141414; }
+.tc-review-again { font-size:.85rem; font-weight:600; color:var(--green); }
+.tc-lesson.tc-next { border-color:var(--gold); background:#fbf6e8; box-shadow:0 0 0 2px rgba(199,154,43,.2); }
+.tc-module-progress { margin:4px 0 8px; } .tc-module-progress .tc-bar { height:8px; margin:6px 0 2px; }
+.tc-module-progress p { margin:0; }
+.tc-module-done { color:var(--green); }
+.tc-module-complete .tc-bar span { background:var(--green); }
+.tc-review-note { background:#eef6f0; border:1px solid #9fd0b0; border-radius:10px; padding:10px 12px; }
+.tc-tick-btn:disabled { cursor:default; opacity:.85; }
+.tc-module h2 small { white-space:nowrap; }

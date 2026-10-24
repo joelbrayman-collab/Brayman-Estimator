@@ -132,7 +132,7 @@ test("tick each step: it turns green and is saved; screenshot enlargement; Save 
   assert.match(new URL(pg.url()).pathname, /^\/training$/);
   const href = await pg.getAttribute("[data-continue]", "href");
   assert.ok(href.includes(`/training/lessons/${lesson}`), `Continue returns to ${lesson}: ${href}`);
-  assert.match(await pg.locator(`[data-lesson="${lesson}"]`).locator("xpath=..").textContent(), new RegExp(`1 of ${total} steps`));
+  assert.match(await pg.locator(`[data-lesson-row="${lesson}"]`).textContent(), new RegExp(`1 of ${total} steps`));
 });
 
 test("Training Tutor: follows the step, quick help, troubleshooting, minimize and restore kept on every page", async () => {
@@ -198,6 +198,62 @@ test("a lesson completes only when its exercise is ticked; notes are kept", asyn
   assert.ok(await pg.locator("[data-note]", { hasText: "The sign-in page was clear" }).isVisible());
   await pg.goto(`${base}/training`);
   assert.match(await pg.textContent("[data-progress]"), /^[1-9]\d* of \d+ lessons done/);
+});
+
+// Lesson status on the training home (24 Oct 2026): Completed with a green check and Review again, In Progress, the
+// next recommended lesson highlighted; reviewing a completed lesson keeps it Completed.
+async function lessonBadges(pg, label) {
+  await pg.goto(`${base}/training`);
+  const done = pg.locator('[data-lesson-row="c01-sign-in"]');
+  assert.equal(await done.getAttribute("data-lesson-status"), "completed", `${label}: the finished lesson is Completed`);
+  assert.equal((await done.locator("[data-lesson-state]").textContent()).trim(), "Completed");
+  const box = await done.locator(".tc-lesson-box").evaluate((el) => [getComputedStyle(el).backgroundColor, el.textContent.trim()]);
+  assert.deepEqual(box, ["rgb(47, 125, 74)", "\u2713"], `${label}: a green checked box`);
+  assert.ok(await done.locator("[data-review-again]").isVisible(), `${label}: Review again is shown`);
+  const started = pg.locator('[data-lesson-status="in-progress"]');
+  assert.ok(await started.count() >= 1, `${label}: the started lesson is In Progress`);
+  assert.equal((await started.first().locator("[data-lesson-state]").textContent()).trim(), "In Progress");
+  const next = pg.locator("[data-next-recommended]");
+  assert.equal(await next.count(), 1, `${label}: one next recommended lesson`);
+  assert.ok(await next.locator("[data-next-badge]").isVisible());
+  const key = await next.getAttribute("data-lesson-row");
+  assert.ok((await pg.getAttribute("[data-continue]", "href")).includes(`/training/lessons/${key}`), `${label}: Next is where Continue goes`);
+  assert.notEqual(await next.evaluate((el) => getComputedStyle(el).borderTopColor), "rgba(0, 0, 0, 0)", `${label}: Next is highlighted`);
+  assert.match(await pg.locator('[data-module="c01"] [data-module-summary]').textContent(), /\d+ of \d+ lessons completed/);
+  await noSideways(pg, `${label}: training home`);
+  return { done, key };
+}
+
+test("training home: Completed, In Progress and Next; Review again keeps the lesson Completed (desktop)", async () => {
+  const { pg } = sessions.ben;
+  const { done, key } = await lessonBadges(pg, "desktop");
+  await shot(pg, "training-home-progress-desktop");
+  await Promise.all([pg.waitForNavigation(), done.locator("[data-review-again]").click()]);
+  assert.ok(await pg.locator("[data-reviewing]").isVisible(), "the lesson says it is being reviewed");
+  assert.equal(await pg.locator("[data-complete]").count(), 0, "no Finish button on a completed lesson");
+  assert.ok(await pg.locator('[data-tick="0"]').isDisabled(), "ticks cannot be undone while reviewing");
+  const last = (await pg.locator("[data-step-card]").count()) - 1;
+  await pg.goto(`${base}/training/lessons/c01-sign-in?step=${last}`);
+  await pg.locator(`[data-step-card="${last}"] .tc-step-head h2`).click();
+  await Promise.all([pg.waitForNavigation(), pg.click("[data-exit]")]);
+  assert.equal(await pg.getAttribute('[data-lesson-row="c01-sign-in"]', "data-lesson-status"), "completed", "still Completed after review");
+  assert.equal(await pg.getAttribute("[data-next-recommended]", "data-lesson-row"), key, "Next is unchanged by the review");
+});
+
+test("training home: Completed, In Progress and Next on the phone (390 px), no sideways scrolling", async () => {
+  const s = await context(PHONE);
+  sessions.benPhone = s;
+  const ben = facts.people.ben;
+  await s.pg.goto(`${base}/login`);
+  await s.pg.fill("input[name=email]", ben.email);
+  await s.pg.fill("input[name=password]", ben.password);
+  await Promise.all([s.pg.waitForNavigation(), s.pg.locator("form button[type=submit]").first().click()]);
+  await lessonBadges(s.pg, "phone");
+  const right = await s.pg.locator('[data-lesson-row="c01-sign-in"] [data-review-again]').evaluate((el) => el.getBoundingClientRect().right);
+  assert.ok(right <= 390, "Review again fits the phone width");
+  await shot(s.pg, "training-home-progress-phone");
+  await s.pg.goto(`${base}/training/lessons/c01-sign-in`);
+  await noSideways(s.pg, "reviewing a completed lesson (phone)");
 });
 
 test("acceptance tests: separate from lessons; Fail, then a retest Pass keeps the first result", async () => {

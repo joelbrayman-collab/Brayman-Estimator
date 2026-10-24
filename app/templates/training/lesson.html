@@ -5,6 +5,8 @@
 <article class="tc-card tc-lesson-page" data-lesson-page="{{ lesson.key }}" data-step-index="{{ step }}">
   <p class="tc-eyebrow">Module {{ module.number }} · {{ module.title }}</p>
   <h1>{{ lesson.title }}</h1>
+  {% set reviewing = progress and progress.completed_at %}
+  {% if reviewing %}<p class="tc-review-note" data-reviewing><span class="tc-badge tc-badge-done">&#10003; Completed</span> {{ progress.completed_at|local_time("%d %b %Y", zone_label=False) }}. You are reviewing this lesson: step through it as often as you like. Your completion and your acceptance test results stay as they are.</p>{% endif %}
   {% if workflow_stages %}<p class="tc-small tc-workflow-stage" data-lesson-stages>Workflow map:
     {% for s in workflow_stages %}<a href="{{ url_for('training.workflow_map', stage=s.id) }}#workflow-stage" data-lesson-stage="{{ s.id }}">Stage {{ s.number }} · {{ s.label }} — {{ s.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
   <div class="tc-intro"><p><b>What you will do:</b> {{ lesson.what }}</p><p><b>Why it matters:</b> {{ lesson.why }}</p>
@@ -46,7 +48,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="step" value="{{ i }}">
         <input type="hidden" name="done" value="{{ '0' if i in ticked else '1' }}">
-        <button type="submit" class="tc-tick-btn{% if i in ticked %} is-done{% endif %}" data-tick="{{ i }}" aria-pressed="{{ 'true' if i in ticked else 'false' }}">
+        <button type="submit" class="tc-tick-btn{% if i in ticked %} is-done{% endif %}" data-tick="{{ i }}" aria-pressed="{{ 'true' if i in ticked else 'false' }}"{% if reviewing %} disabled title="This lesson is completed: reviewing it keeps your ticks"{% endif %}>
           <span class="tc-tick-box" aria-hidden="true">{% if i in ticked %}&#10003;{% endif %}</span>
           <span class="tc-tick-label">{{ 'Done' if i in ticked else 'I did this step' }}</span>
         </button>
@@ -59,9 +61,9 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <h2>Practice exercise</h2>
     <p>{{ lesson.exercise }}</p>
-    <label><input type="checkbox" name="exercise_done" value="1" {% if progress and progress.exercise_done %}checked{% endif %} data-exercise> I did the practice exercise on the training site</label>
-    <button class="tc-btn tc-btn-primary" type="submit" data-complete>Finish this lesson</button>
-    {% if progress and progress.completed_at %}<p class="tc-lesson-done" data-lesson-complete>&#10003; Lesson complete</p>{% endif %}
+    {% if reviewing %}<p class="tc-lesson-done" data-lesson-complete>&#10003; Lesson complete</p>
+    {% else %}<label><input type="checkbox" name="exercise_done" value="1" {% if progress and progress.exercise_done %}checked{% endif %} data-exercise> I did the practice exercise on the training site</label>
+    <button class="tc-btn tc-btn-primary" type="submit" data-complete>Finish this lesson</button>{% endif %}
   </form>
   <form method="post" action="{{ url_for('training.move', key=lesson.key) }}" class="tc-moves">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

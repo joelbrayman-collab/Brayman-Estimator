@@ -21,7 +21,7 @@
     <nav class="tc-nav" aria-label="Training">
       {% if current_user.is_authenticated %}
       <a href="{{ url_for('training.home') }}">My training</a>
-      <a href="{{ url_for('training.workflow_map') }}" data-workflow-map-link>Workflow map</a>
+      {% set _here = request.full_path[:-1] if request.full_path.endswith('?') else request.full_path %}<a href="{{ url_for('training.workflow_map') if request.endpoint in ('training.workflow_map', 'training.review_map') else url_for('training.workflow_map', back=_here) }}" data-workflow-map-link>Workflow map</a>
       <a href="{{ url_for('training.uat') }}">Acceptance tests</a>
       {% if training_admin %}<a href="{{ url_for('training.review') }}" data-owner-review-link>Owner review</a>{% endif %}
       <span class="tc-who">{{ current_user.display_name }}</span>

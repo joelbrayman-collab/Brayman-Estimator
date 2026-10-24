@@ -331,7 +331,8 @@ def test_tutor_answers_from_the_field_crew_lesson_and_minimizes(app):
     assert 'data-tutor-mode="lesson"' in page and 'class="tc-tutor"' in page
     _post(kevin, "/training/tutor", data={"minimized": "1"}, headers={"X-Requested-With": "fetch"})
     assert 'class="tc-tutor is-min"' in _get(kevin, f"/training/lessons/{lesson.key}").get_data(as_text=True)
-    assert "Open the Tutor" in _get(kevin, "/training").get_data(as_text=True)
+    home = _get(kevin, "/training").get_data(as_text=True)
+    assert 'aria-label="Ask the Tutor"' in home and "Open the Tutor" not in home
     _post(kevin, "/training/tutor", data={"minimized": "0"}, headers={"X-Requested-With": "fetch"})
     page = _get(kevin, f"/training/lessons/{lesson.key}").get_data(as_text=True)
     assert 'class="tc-tutor"' in page and 'class="tc-tutor is-min"' not in page

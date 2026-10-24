@@ -78,8 +78,9 @@ def test_projects_workspace_matches_home_action_language(client, app):
     response = client.get("/projects/")
     assert response.status_code == 200
     html = response.get_data(as_text=True)
-    assert 'class="home-greeting">Projects</h2>' in html
-    assert contractor_copy.PROJECTS_LEDE in html
+    # Office tidy (24 Oct 2026): the top bar names the page; no second "Projects" heading or lede.
+    assert '<h1 class="header-page-title">Projects</h1>' in html
+    assert 'class="home-greeting">Projects</h2>' not in html
     assert contractor_copy.HOME_START_PROJECT in html
     assert 'href="/projects/new"' in html
     assert contractor_copy.PROJECT_LIST_CURRENT in html

@@ -452,7 +452,7 @@ step("the office returns Kevin's time; Kevin fixes it from My time; Ben approves
   assert.equal(await k.getByRole("link", { name: "Fix and send again" }).count(), 0);
   await shot(k, "f05-time-approved", k.locator(".field-time-item").first());
   // Shop / Company Work: Ben sets it up once; Kevin sends 1.5 hours of equipment upkeep.
-  await go(pg, "/time");
+  await go(pg, "/settings/hours-policy");  // the set-up moved from Time review (office tidy, 24 Oct 2026)
   await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
   assert.match(await flash(pg), /Shop \/ Company Work is ready/);
   await go(k, "/field/time");

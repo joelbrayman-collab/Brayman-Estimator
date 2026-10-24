@@ -237,9 +237,12 @@ def hours_policy():
         except banked.BankedHoursError as exc:
             db.session.rollback()
             flash(str(exc), "error")
+    from app.services.time_entry import get_company_time_project
+
     return render_template("payroll_time/hours_policy.html", current=current, versions=banked.policy_versions(org),
                            policy_text=banked.policy_summary(current), form=form, days=banked.DAY_NAMES,
-                           fields=dict(banked.POLICY_FIELDS), today=date.today())
+                           fields=dict(banked.POLICY_FIELDS), today=date.today(),
+                           company_time_project=get_company_time_project(org))
 
 
 # ------------------------------------------------------------------ Shop / Company Work

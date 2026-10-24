@@ -5,10 +5,14 @@
 
 {% block content %}
 <div class="page-heading">
-    <div>
-        <p class="eyebrow">People &amp; Access</p>
+    <div class="person-identity">
         <h1>{{ person.display_name }}{% if person.is_self %} (you){% endif %}</h1>
         <p class="people-access-email">{{ person.email }}</p>
+        <details class="page-more" data-page-more><summary>More about this page</summary><div class="page-more-body">
+            <p><strong>Crews:</strong> crew work shows on their phone only when they are on the crew assigned to it.</p>
+            <p><strong>Schedule texts:</strong> a text when their scheduled work moves, or they are put on or taken off work. Only with their agreement. The first time they open Field it asks them (Yes / Not now), with the number you save here filled in; they can change it any time under Texts. Tick the box only if they have already told you yes.</p>
+            <p><strong>System Administrator:</strong> can manage people and access, close and reopen projects, and see wages. Only the owner appoints one.</p>
+        </div></details>
     </div>
     <a href="{{ url_for('people_access.index') }}">Back to People &amp; Access</a>
 </div>
@@ -76,13 +80,12 @@
 <section class="form-panel" aria-labelledby="crews-heading" data-person-crews="{{ crews|length }}">
     <h2 id="crews-heading">Crews</h2>
     {% if crews %}<ul>{% for c in crews %}<li>{{ c.crew.name }} · from {{ c.member.effective_from.strftime('%b %d, %Y') }}{% if c.member.effective_to %} to {{ c.member.effective_to.strftime('%b %d, %Y') }}{% endif %}</li>{% endfor %}</ul>
-    {% else %}<p class="muted-copy">Not on a crew. Crew work shows on their phone only when they are on the crew assigned to it.</p>{% endif %}
+    {% else %}<p class="muted-copy">Not on a crew.</p>{% endif %}
     <p><a class="button button-secondary" href="{{ url_for('organization_crew.index') }}">Manage crews</a></p>
 </section>
 
 <section class="form-panel" aria-labelledby="texts-heading" data-person-texts="{{ 'on' if texts.contact and texts.contact.sms_opt_in else 'off' }}">
     <h2 id="texts-heading">Schedule texts</h2>
-    <p class="muted-copy">A text when their scheduled work moves, or they are put on or taken off work. Only with their agreement. The first time they open Field it asks them (Yes / Not now), with the number you save here filled in; they can change it any time under Texts. Tick the box only if they have already told you yes.</p>
     {% if texts.contact and texts.contact.sms_opt_in %}
     <p><strong>On</strong> for {{ texts.contact.mobile_phone }}{% if texts.contact.opted_in_at %} since {{ texts.contact.opted_in_at|local_time("%b %d, %Y") }}{% endif %}.</p>
     <form method="post" action="{{ url_for('sms_notifications.person_texts', membership_id=person.membership_id) }}" class="people-access-actions">
@@ -125,7 +128,6 @@
 
 <section class="form-panel" aria-labelledby="role-heading">
     <h2 id="role-heading">System Administrator</h2>
-    <p class="muted-copy">A System Administrator can manage people and access, close and reopen projects, and see wages. Only the owner appoints one.</p>
     {% if person.is_owner %}
     <p>The owner already has every administrator permission.</p>
     {% elif person.is_administrator %}

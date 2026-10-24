@@ -148,8 +148,8 @@ def test_project_hub_renders_org_scoped(client, project):
     response = client.get(f"/projects/{project.id}")
     assert response.status_code == 200
     html = _html(response)
-    assert "Project Hub" in html
-    assert "Hub Project" in html
+    # Office tidy (24 Oct 2026): no "Project Hub" label over the name; the page names the project.
+    assert "<h1>Hub Project</h1>" in html
     assert "HUB-001" in html
     assert "Hub Client" in html
     assert "PLAN" in html

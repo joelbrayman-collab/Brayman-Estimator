@@ -172,7 +172,8 @@ step("1 Ben enters the company's own hours policy from Getting started; the form
 
 step("2 Ben sets up Shop / Company Work and links Kevin, the job and shop work to QuickBooks Time", async () => {
   const pg = ben.pg;
-  await go(pg, "/time");
+  // Office tidy (24 Oct 2026): the one-time set-up is on Hours policy (company setup), not Time review.
+  await go(pg, "/settings/hours-policy");
   await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
   assert.match(await flash(pg), /Shop \/ Company Work is ready\./);
   assert.match(new URL(pg.url()).pathname, /\/time\/company$/);

@@ -5,18 +5,15 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.office_topic("change_orders")) }}
+
 <div class="page-heading">
-    <div>
-        <p class="eyebrow">Project Controls</p>
-        <h1>Change Orders</h1>
-    </div>
+    <div></div>
     <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=filters.project_id or none) }}">New Change Order</a>
 </div>
 
-{{ contextual_help(help_content.office_topic("change_orders")) }}
-
 <section class="form-panel" style="margin-bottom: 20px;">
-    <form method="get" class="form-grid">
+    <form method="get" class="form-grid filter-bar">
         <label>
             Search
             <input type="search" name="q" value="{{ filters.q }}" placeholder="Number, title, project, description">

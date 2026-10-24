@@ -14,7 +14,6 @@
         {% else %}
         <h2 class="home-greeting">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
         {% endif %}
-        <p class="muted-copy">{{ contractor_copy.DASHBOARD_LEDE }}</p>
     </div>
     <div class="home-actions">
         <a class="home-start-estimate" data-home-start-estimate href="{{ url_for('guided.start') }}">{{ contractor_copy.HOME_START_ESTIMATE }}</a>

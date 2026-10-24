@@ -410,9 +410,17 @@ OFFICE_TIME_REVIEW = HelpTopic(
     do=(
         "Filter by date, worker, or Project. Record time, then review and "
         "approve when you are authorized. This screen does not show wages or "
-        "payroll."
+        "payroll. Shop, yard, equipment and safety-meeting time is Shop / "
+        "Company Work, never a customer job; once it is set up (Hours policy "
+        "or Shop / Company Work) choose it in the Project filter and approve it "
+        "like any other time."
     ),
-    next="Keep current hours reviewed so the job record stays accurate.",
+    next=(
+        "Keep current hours reviewed so the job record stays accurate. After "
+        "approval, QuickBooks Time shows what was sent for payroll (nothing is "
+        "sent while it says not connected) and Banked hours shows the "
+        "balance for each worker."
+    ),
     surface=SURFACE_OFFICE,
 )
 

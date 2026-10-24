@@ -99,7 +99,8 @@ def test_clients_use_the_shared_header_and_register_table():
         db.session.remove()
         db.drop_all()
     assert 'class="page-header"' in html
-    assert 'class="page-title"' in html
+    # Office tidy (24 Oct 2026): the top bar names the page; no second "Clients" heading.
+    assert '<h1 class="header-page-title">Clients</h1>' in html
     assert "People and companies you build jobs for." in html
     assert html.count("button-primary") == 1
     assert 'href="/clients/new"' in html

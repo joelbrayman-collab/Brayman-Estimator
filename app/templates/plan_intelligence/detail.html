@@ -123,7 +123,7 @@
 {% if not document.is_archived %}
 <section class="form-panel">
     <h2>Archive</h2>
-    <p class="muted-copy">Documents are archived rather than hard-deleted once indexing data exists (ADR-012 / FG-003).</p>
+    <p class="muted-copy">Documents are archived rather than hard-deleted once indexing data exists.</p>
     <form method="post" action="{{ url_for('plan_intelligence.delete_plan', project_id=project.id, document_id=document.id) }}" onsubmit="return confirm('Archive this plan document?');">
         <button type="submit">Archive document</button>
     </form>

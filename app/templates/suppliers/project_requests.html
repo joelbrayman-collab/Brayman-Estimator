@@ -3,8 +3,8 @@
 {% block title %}Supplier requests | {{ project.name }}{% endblock %}
 {% block page_title %}Supplier requests{% endblock %}
 {% block content %}
-<div class="page-heading"><div><p class="eyebrow">Purchasing</p><h1>Supplier requests — {{ project.name }}</h1>
-<p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p></div>
+<div class="page-heading"><div><h1>Supplier requests — {{ project.name }}</h1>
+<details class="page-more" data-page-more><summary>More about this page</summary><div class="page-more-body"><p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p><p class="muted-copy">Concrete is its own request, sent only to the concrete supplier and never combined with material requests.</p></div></details></div>
 <div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a> <a class="button button-secondary" data-compare-quotes href="{{ url_for('supplier_office.quote_comparison', project_id=project.id) }}">Compare quotes</a></div></div>
 
 <section class="form-panel" data-project-deliveries="true">
@@ -98,7 +98,6 @@
 
 <section class="form-panel" id="concrete" data-concrete-requests="true">
     <h2>Concrete</h2>
-    <p class="muted-copy">Concrete is its own request, sent only to the concrete supplier and never combined with material requests.</p>
     {% if concrete %}
     <ul>{% for c in concrete %}{% set cd = concrete_deliveries.get(c.id) %}<li data-concrete-request="{{ c.id }}">{{ c.number }} — {{ c.volume_m3 }} m³, {{ c.strength_mpa }} MPa, {{ c.placement|lower }}, requested delivery {{ c.delivery_date.isoformat() }}{% if c.delivery_window %} {{ c.delivery_window }}{% endif %}{% if cd and cd.schedule and cd.schedule.date %}; <strong data-concrete-current="{{ cd.schedule.date.isoformat() }}">{{ "agreed" if cd.schedule.agreed else "ordered for" }} {{ cd.schedule.date.isoformat() }}{% if cd.schedule.window %} {{ cd.schedule.window }}{% endif %}</strong> ({{ cd.order.number }}){% if cd.pending %}, change waiting → {{ cd.pending.new_date.isoformat() }}{% endif %}{% endif %}, {{ c.delivery_town }}
         {% set sent_share = concrete_sent.get(c.id) %}

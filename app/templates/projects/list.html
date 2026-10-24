@@ -12,24 +12,20 @@
 {{ contextual_help(help_content.office_topic("projects_current")) }}
 {% endif %}
 
-<section class="home-intro projects-intro">
-    <div>
-        <h2 class="home-greeting">Projects</h2>
-        <p class="muted-copy">{{ contractor_copy.PROJECTS_LEDE }}</p>
-    </div>
+{# Office tidy (Joel, 24 Oct 2026): the top bar names the page; Current | Closed and + Start New Project share one row. #}
+<div class="projects-toolbar projects-intro">
+    <nav class="projects-view" aria-label="{{ contractor_copy.PROJECT_LIST_CURRENT }} or {{ contractor_copy.PROJECT_LIST_CLOSED }}">
+        <a class="{% if list_view == 'current' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='current') }}">
+            {{ contractor_copy.PROJECT_LIST_CURRENT }}
+            <span class="projects-view-count">{{ current_count }}</span>
+        </a>
+        <a class="{% if list_view == 'closed' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='closed') }}">
+            {{ contractor_copy.PROJECT_LIST_CLOSED }}
+            <span class="projects-view-count">{{ closed_count }}</span>
+        </a>
+    </nav>
     <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
-</section>
-
-<nav class="projects-view" aria-label="{{ contractor_copy.PROJECT_LIST_CURRENT }} or {{ contractor_copy.PROJECT_LIST_CLOSED }}">
-    <a class="{% if list_view == 'current' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='current') }}">
-        {{ contractor_copy.PROJECT_LIST_CURRENT }}
-        <span class="projects-view-count">{{ current_count }}</span>
-    </a>
-    <a class="{% if list_view == 'closed' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='closed') }}">
-        {{ contractor_copy.PROJECT_LIST_CLOSED }}
-        <span class="projects-view-count">{{ closed_count }}</span>
-    </a>
-</nav>
+</div>
 
 {% if projects %}
 <div class="projects-workspace{% if list_view == 'closed' %} is-closed-view{% endif %}">

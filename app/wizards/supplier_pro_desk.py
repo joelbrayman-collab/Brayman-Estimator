@@ -179,7 +179,7 @@ def _documents(ctx):
         return blocked
     if is_request(ctx):
         lines = (ctx.share.shared_json or {}).get("lines", [])
-        opened = ctx.share.opened_at is not None
+        opened = ctx.share.opened_at is not None or ctx.share.status == "RETURNED"
         return StepView(DONE if opened else TODO,
                         f"{len(lines)} shared takeoff lines" + (" — opened" if opened else " — not opened yet"),
                         items=[Item(f"{l.get('number')}: {l.get('description') or l.get('item') or ''}", INFO,

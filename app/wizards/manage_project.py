@@ -163,8 +163,8 @@ def _schedule(ctx):
     elements = _elements(ctx)
     items_by_element = {}
     for item in _schedule_items(ctx):
-        if item.element_id and item.activity_id is None:
-            items_by_element.setdefault(item.element_id, item)
+        if item.project_work_element_id and item.project_work_activity_id is None:
+            items_by_element.setdefault(item.project_work_element_id, item)
     rows = []
     for element in elements:
         item = items_by_element.get(element.id)
@@ -172,7 +172,7 @@ def _schedule(ctx):
                 else f"{item.scheduled_start:%b %d}" if item else "not scheduled")
         rows.append(Item(element.display_name, DONE if item else TODO, span,
                          url_for("schedule.edit_item", item_id=item.id) if item else
-                         url_for("schedule.new_item", project_id=pid, element_id=element.id)))
+                         url_for("schedule.new_item", project_id=pid)))
     scheduled = sum(1 for r in rows if r.state == DONE)
     actions.append(Action("Schedule work", url_for("schedule.new_item", project_id=pid), primary=scheduled < len(rows),
                           key="schedule-new"))
@@ -198,7 +198,7 @@ def _assign(ctx):
         name = item.element.display_name if item.element else "Work"
         if item.activity is not None:
             name += f" · {item.activity.display_name}"
-        who = ", ".join(p.get("label") or p.get("display_name") or "" for p in people) if people else "no one assigned"
+        who = ", ".join(p.get("name") or "" for p in people) if people else "no one assigned"
         assigned += 1 if people else 0
         rows.append(Item(name, DONE if people else TODO, who, url_for("schedule.edit_item", item_id=item.id)))
     from app.services import guided_estimating as G
@@ -455,7 +455,8 @@ def _changes(ctx):
     from app.services.work_scope import list_unresolved_extra_work
 
     rows = change_orders.list_change_orders_for_project(ctx.project.id)
-    extra = list_unresolved_extra_work(ctx.project.id, organization_id=ctx.organization_id)
+    unresolved = list_unresolved_extra_work(ctx.project.id, organization_id=ctx.organization_id)
+    extra = list(unresolved.get("elements", [])) + list(unresolved.get("activities", []))
     open_rows = [c for c in rows if c.status in ("Draft", "Pending Approval")]
     items = [Item(f"Change order {c.number or c.id}", DONE if c.status not in ("Draft", "Pending Approval") else
                   WAITING if c.status == "Pending Approval" else TODO, c.status,

@@ -261,6 +261,10 @@ def _sub_rows(ctx):
     return out
 
 
+def G_BASIS(stage):
+    return _g().BASIS_LABELS.get(stage.completion_basis, "resolved").lower()
+
+
 def _request_quotes(ctx):
     blocked = _need_scope(ctx)
     if blocked:
@@ -270,10 +274,12 @@ def _request_quotes(ctx):
     for row in rows:
         stage, line = row["stage"], row["line"]
         has_quote = bool(line and line["quotes"])
-        requested = stage.quote_requested_at is not None or has_quote
+        complete = row["status"] == "COMPLETE"
+        requested = stage.quote_requested_at is not None or has_quote or complete
         asked += 1 if requested else 0
         note = ("quote recorded" if has_quote else
-                f"requested by {stage.quote_requested_by}" if stage.quote_requested_at else "not requested yet")
+                f"requested by {stage.quote_requested_by}" if stage.quote_requested_at else
+                f"complete ({G_BASIS(stage)})" if complete else "not requested yet")
         items.append(Item(stage.section_name, DONE if requested else TODO, note,
                           url_for("guided.stage", project_id=ctx.project.id, stage_id=stage.id)))
     version = _g().current_version(ctx.guided)

@@ -49,8 +49,17 @@ def _trainee_or_register():
 def _review_nav():
     """Training administrators see Owner review in the Training Centre menu (21 Oct 2026)."""
     if not current_user.is_authenticated:
-        return {"training_admin": False}
-    return {"training_admin": svc.is_admin(current_user._get_current_object()) is not None}
+        return {"training_admin": False, "pathway_roles": (), "pathway_current": None}
+    user = current_user._get_current_object()
+    trainee = svc.trainee_for(user)
+    # Change training pathway (Joel, 24 Oct 2026): the roles this sign-in may take, shown in the header.
+    return {"training_admin": svc.is_admin(user) is not None,
+            "pathway_roles": tuple((r, PATHWAY_LABELS.get(r, ROLE_LABELS.get(r, r))) for r in svc.allowed_roles(user)),
+            "pathway_current": trainee.role if trainee is not None else None}
+
+
+# Header names for the pathways (the lessons and records stay keyed by role).
+PATHWAY_LABELS = {"OWNER": "Contractor (owner)", "OFFICE": "Contractor (office)", ROLE_FIELD: "Field Crew"}
 
 
 @training_bp.route("/signin")
@@ -80,10 +89,16 @@ def home():
 
 @training_bp.route("/register", methods=["POST"])
 def register():
+    had = svc.trainee_for(current_user)
+    before = had.role if had is not None else None
     try:
-        svc.register(current_user, request.form.get("role", ""))
+        trainee = svc.register(current_user, request.form.get("role", ""))
     except svc.TrainingError as exc:
         flash(str(exc), "error")
+    else:
+        if before is not None and trainee.role != before:
+            flash(f"You are now on {PATHWAY_LABELS.get(trainee.role, ROLE_LABELS.get(trainee.role, trainee.role))} "
+                  "training. Your other pathway's lessons, progress and test results are kept.", "success")
     return redirect(url_for("training.home"))
 
 

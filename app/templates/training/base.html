@@ -24,6 +24,18 @@
       {% set _here = request.full_path[:-1] if request.full_path.endswith('?') else request.full_path %}<a href="{{ url_for('training.workflow_map') if request.endpoint in ('training.workflow_map', 'training.review_map') else url_for('training.workflow_map', back=_here) }}" data-workflow-map-link>Workflow map</a>
       <a href="{{ url_for('training.uat') }}">Acceptance tests</a>
       {% if training_admin %}<a href="{{ url_for('training.review') }}" data-owner-review-link>Owner review</a>{% endif %}
+      {% if pathway_current and pathway_roles|length > 1 %}
+      <details class="tc-pathway" data-pathway-switch>
+        <summary aria-label="Change training pathway">Pathway: {% for r, l in pathway_roles %}{% if r == pathway_current %}{{ l }}{% endif %}{% endfor %}</summary>
+        <form method="post" action="{{ url_for('training.register') }}" class="tc-pathway-menu">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <p class="tc-pathway-title">Change training pathway</p>
+          {% for r, l in pathway_roles %}<button type="submit" name="role" value="{{ r }}" data-pathway="{{ r }}" {% if r == pathway_current %}aria-current="true" disabled{% endif %}>{{ l }}{% if r == pathway_current %} (current){% endif %}</button>{% endfor %}
+          {% if training_admin %}<a href="{{ url_for('training.review_map', map_key='supplier') }}" data-pathway-supplier-review>Supplier (owner review)</a>{% endif %}
+          <p class="tc-pathway-note">Each pathway keeps its own lessons, progress and test results.</p>
+        </form>
+      </details>
+      {% endif %}
       <span class="tc-who">{{ current_user.display_name }}</span>
       {% endif %}
     </nav>

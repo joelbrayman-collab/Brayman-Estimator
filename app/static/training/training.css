@@ -152,3 +152,17 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 .tc-step-links .tc-btn { text-align:center; }
 .tc-step-links .tc-small { flex:1 1 220px; margin:0; }
 .tc-back:focus-visible, .tc-step-links a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+
+/* Change training pathway in the header (24 Oct 2026) */
+.tc-pathway { position:relative; }
+.tc-pathway > summary { list-style:none; cursor:pointer; color:#fff; border:1px solid var(--gold); border-radius:999px; padding:4px 12px; font-weight:600; font-size:.9rem; white-space:nowrap; }
+.tc-pathway > summary::-webkit-details-marker { display:none; }
+.tc-pathway > summary::after { content:" \25BE"; }
+.tc-pathway > summary:focus-visible, .tc-pathway-menu button:focus-visible, .tc-pathway-menu a:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.tc-pathway-menu { position:absolute; right:0; top:calc(100% + 8px); z-index:70; min-width:240px; max-width:calc(100vw - 24px); background:#fff; color:#1b1b1b; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:10px; display:flex; flex-direction:column; gap:6px; }
+.tc-pathway-title { margin:0 0 4px; font-weight:700; font-size:.9rem; }
+.tc-pathway-note { margin:4px 0 0; font-size:.8rem; color:var(--muted, #5b6470); }
+.tc-pathway-menu button, .tc-pathway-menu a { display:block; text-align:left; min-height:44px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fff; color:#1b1b1b; font:inherit; cursor:pointer; text-decoration:none; }
+.tc-pathway-menu button:hover, .tc-pathway-menu a:hover { border-color:var(--gold); }
+.tc-pathway-menu button[disabled] { background:#f4efe3; cursor:default; font-weight:600; }
+@media (max-width: 600px) { .tc-pathway-menu { position:fixed; left:12px; right:12px; top:auto; min-width:0; } }

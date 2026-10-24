@@ -26,28 +26,18 @@ TMP=$(mktemp -d)
 sudo -u calibrayt git -C /opt/calibrayt/app archive FETCH_HEAD storybook | tar -x -C "$TMP" || { echo "STOP: unpack failed"; exit 1; }
 
 echo "== 3. install under $DOC/storybook"
-# Contractor and supplier-neutral books: open addresses.
-# BMR and KBC books: private addresses. Their random names are made once on this server, kept in
-# /root/calibrayt-storybook-links.txt and reused every run; they are not stored in GitHub.
-KEYS=/root/calibrayt-storybook-links.txt
-if [ ! -s "$KEYS" ]; then
-  umask 077
-  echo "BMR=$(tr -dc a-z0-9 </dev/urandom | head -c 14)" >  "$KEYS"
-  echo "KBC=$(tr -dc a-z0-9 </dev/urandom | head -c 14)" >> "$KEYS"
-fi
-. "$KEYS"
-[ -n "$BMR" ] && [ -n "$KBC" ] || { echo "STOP: $KEYS is damaged"; exit 1; }
+# All four storybooks at plain, open addresses (Joel, 24 Oct 2026: no private links, search engines may list them).
 S="$DOC/storybook"; mkdir -p "$S"
-cp -r "$TMP"/storybook/contractor "$TMP"/storybook/supplier-connection "$S/"
-rm -rf "$S/bmr-winchester" "$S/kbc"                       # old open addresses for the two supplier editions
-for d in "$S"/bmr-winchester-* "$S"/kbc-*; do              # earlier private names, if the keys were ever changed
-  case "$d" in "$S/bmr-winchester-$BMR"|"$S/kbc-$KBC") ;; *) [ -d "$d" ] && rm -rf "$d";; esac
+rm -rf "$S/contractor" "$S/supplier-connection" "$S/bmr-winchester" "$S/kbc"
+cp -r "$TMP"/storybook/contractor "$TMP"/storybook/supplier-connection "$TMP"/storybook/bmr-winchester "$TMP"/storybook/kbc "$S/"
+# Links already given out at the earlier private addresses keep working: each now forwards to the open address.
+for d in "$S"/bmr-winchester-* "$S"/kbc-*; do
+  [ -d "$d" ] || continue
+  case "$d" in */bmr-winchester-*) to=/storybook/bmr-winchester/;; *) to=/storybook/kbc/;; esac
+  rm -f "$d"/*; printf '<!doctype html><meta charset="utf-8"><title>CalibraytAI</title><meta http-equiv="refresh" content="0;url=%s"><a href="%s">Continue</a>\n' "$to" "$to" > "$d/index.html"
 done
-mkdir -p "$S/bmr-winchester-$BMR" "$S/kbc-$KBC"
-cp "$TMP"/storybook/bmr-winchester/index.html "$S/bmr-winchester-$BMR/index.html"
-cp "$TMP"/storybook/kbc/index.html "$S/kbc-$KBC/index.html"
-# never list the folder (that would reveal the private names)
-printf '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>CalibraytAI</title><meta http-equiv="refresh" content="0;url=/">\n' > "$S/index.html"
+# /storybook/ itself goes to the website home page (no folder listing)
+printf '<!doctype html><meta charset="utf-8"><title>CalibraytAI</title><meta http-equiv="refresh" content="0;url=/">\n' > "$S/index.html"
 printf 'Options -Indexes\n' > "$S/.htaccess"
 chown -R "$OWNER":"$OWNER" "$S"; chmod -R u=rwX,go=rX "$S"
 rm -rf "$TMP"
@@ -56,11 +46,7 @@ sha256sum "$S"/*/index.html
 echo "== 4. check the addresses"
 code(){ curl -s -o /dev/null -w "%{http_code}" "$1"; }
 U=https://calibraytai.com/storybook
-for p in contractor supplier-connection "bmr-winchester-$BMR" "kbc-$KBC"; do printf "%-36s %s (expect 200)\n" "$p" "$(code "$U/$p/")"; done
-for p in bmr-winchester kbc; do printf "%-36s %s (expect 404, old open address)\n" "$p" "$(code "$U/$p/")"; done
-printf "%-36s %s\n" "folder listing" "$(curl -s "$U/" | grep -q -e "bmr-winchester-" -e "kbc-" && echo "SHOWS PRIVATE NAMES - send Claude this output" || echo "hidden (good)")"
+for p in contractor supplier-connection bmr-winchester kbc; do printf "%-24s %s (expect 200)  %s/%s/\n" "$p" "$(code "$U/$p/")" "$U" "$p"; done
 echo
-echo "PRIVATE LINKS - give each only to that supplier:"
-echo "  BMR Winchester:        $U/bmr-winchester-$BMR/"
-echo "  KBC (Home Hardware):   $U/kbc-$KBC/"
-echo "If any check is not as expected, send Claude this whole output (the private links can be left out)."
+echo "STORYBOOK LINKS (open to anyone):"
+for p in contractor supplier-connection bmr-winchester kbc; do echo "  $U/$p/"; done

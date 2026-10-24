@@ -6,16 +6,15 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.office_topic("estimating")) }}
+
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Estimating</p>
         <h1>Estimates</h1>
     </div>
 
     <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New Estimate</a>
 </div>
-
-{{ contextual_help(help_content.office_topic("estimating")) }}
 
 {% if estimates %}
 <div class="estimate-index">

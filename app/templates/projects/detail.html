@@ -6,8 +6,8 @@
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
-    <div>
-        <p class="eyebrow">Project Hub</p>
+    {# Office tidy (Joel, 24 Oct 2026): no "Project Hub" label over the name; number, client and current/closed on one line. #}
+    <div class="hub-heading-identity">
         <h1>{{ project.name }}</h1>
         <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
         <p class="hub-operating-identity">{{ operating_identity }}</p>
@@ -41,15 +41,20 @@
     </div>
 </div>
 
-<nav class="hub-lifecycle" aria-label="CalibraytAI lifecycle">
-    <a class="hub-lifecycle-step" href="#hub-identity">Project</a>
-    <a class="hub-lifecycle-step" href="#hub-commercial">Settings</a>
-    <a class="hub-lifecycle-step" href="#hub-monitor">Money</a>
-    <a class="hub-lifecycle-step" href="#hub-plan">Documents</a>
-    <a class="hub-lifecycle-step" href="#hub-build">Project work</a>
-    <span class="hub-lifecycle-step is-future">LEARN · Future</span>
-</nav>
-<p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p>
+<div class="hub-lifecycle-row">
+    <nav class="hub-lifecycle" aria-label="CalibraytAI lifecycle">
+        <a class="hub-lifecycle-step" href="#hub-identity">Project</a>
+        <a class="hub-lifecycle-step" href="#hub-commercial">Settings</a>
+        <a class="hub-lifecycle-step" href="#hub-monitor">Money</a>
+        <a class="hub-lifecycle-step" href="#hub-plan">Documents</a>
+        <a class="hub-lifecycle-step" href="#hub-build">Project work</a>
+        <span class="hub-lifecycle-step is-future">LEARN · Future</span>
+    </nav>
+    <details class="page-more" data-page-more>
+        <summary>More about this page</summary>
+        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p></div>
+    </details>
+</div>
 
 <section class="form-panel" id="hub-identity" style="margin-bottom: 20px;">
     <p class="hub-section-label">Project</p>

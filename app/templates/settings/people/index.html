@@ -4,9 +4,9 @@
 {% block page_title %}People &amp; Access{% endblock %}
 
 {% block content %}
+{# Office tidy (Joel, 24 Oct 2026): the top bar names the page; no second page heading here. #}
 <section class="page-header">
     <div>
-        <h2 class="page-title">People &amp; Access</h2>
         <p class="page-purpose">Everyone who can sign in to this company's office and Field. Add a person, deactivate a sign-in, and choose what each person can see.</p>
     </div>
     <a class="button-primary" href="{{ url_for('people_access.new') }}">Add a person</a>

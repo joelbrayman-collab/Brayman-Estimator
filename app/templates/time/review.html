@@ -5,11 +5,12 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.office_topic("time_review")) }}
+
 <div class="page-heading">
     <div>
-        <p class="eyebrow">BUILD</p>
         <h1>{{ contractor_copy.TIME_REVIEW_HEADING }}</h1>
-        <p>Submitted time is not approved labour until someone else reviews it.</p>
+        <p class="muted-copy">Submitted time is not approved labour until someone else reviews it.</p>
     </div>
     <a class="button" href="{{ url_for('time_entry.new_entry', project_id=filters.project_id) }}">Record time</a>
 </div>
@@ -31,10 +32,8 @@
         <a href="{{ url_for('payroll_time.banked_hours_index') }}">Banked hours</a></p>
 </section>
 
-{{ contextual_help(help_content.office_topic("time_review")) }}
-
 <section class="form-panel" style="margin-bottom: 20px;">
-    <form method="get" class="form-grid">
+    <form method="get" class="form-grid filter-bar">
         <label>
             From
             <input type="date" name="from" value="{{ filters.from }}">

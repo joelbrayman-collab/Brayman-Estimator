@@ -6,15 +6,15 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.office_topic("clients")) }}
+
+{# Office tidy (Joel, 24 Oct 2026): the top bar names the page; no second "Clients" heading. #}
 <section class="page-header">
     <div>
-        <h2 class="page-title">Clients</h2>
         <p class="page-purpose">{{ contractor_copy.CLIENTS_LEDE }}</p>
     </div>
     <a class="button-primary" href="{{ url_for('clients.create_client') }}">New Client</a>
 </section>
-
-{{ contextual_help(help_content.office_topic("clients")) }}
 
 {% if clients %}
 <p class="register-count">{{ clients|length }} client{{ "" if clients|length == 1 else "s" }}</p>

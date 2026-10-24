@@ -166,7 +166,20 @@ def test_only_training_administrators_get_the_supplier_pathway_and_the_practice_
     assert {"SUPPLIER_OWNER", "SUPPLIER_ADMIN", "PRO_DESK"} <= set(svc.allowed_roles(joel))
 
 
-def test_joel_takes_the_supplier_pathway_on_his_own_record_with_the_practice_login(app, caplog):
+class _Lines(logging.Handler):
+    def __init__(self):
+        super().__init__(logging.INFO)
+        self.lines = []
+
+    def emit(self, record):
+        self.lines.append(record.getMessage())
+
+    @property
+    def text(self):
+        return "\n".join(self.lines)
+
+
+def test_joel_takes_the_supplier_pathway_on_his_own_record_with_the_practice_login(app):
     joel_user = _joel()
     owner_lesson = C.lessons_for(C.PATHWAY_CONTRACTOR, "OWNER")[0][1].key
     owner_case = C.uat_for(C.PATHWAY_CONTRACTOR, "OWNER")[0].key
@@ -205,7 +218,10 @@ def test_joel_takes_the_supplier_pathway_on_his_own_record_with_the_practice_log
     assert f"Open the supplier practice site as {PRACTICE_NAME}" in lesson
     nexts = re.findall(r'name="next" value="([^"]+)"', lesson)
     assert nexts and all(n.startswith("/supplier") for n in nexts)
-    caplog.set_level(logging.INFO, logger="app.training.supplier_practice")
+    caplog = _Lines()  # the audit lines, read straight from the audit logger (other tests reconfigure logging)
+    P.audit.addHandler(caplog)
+    P.audit.setLevel(logging.INFO)
+    P.audit.disabled = False  # a logging dictConfig elsewhere in the suite may have disabled existing loggers
     r = _post(joel, "/training/supplier-practice/open", data={"next": nexts[0].replace("&amp;", "&")})
     assert r.status_code == 302 and r.headers["Location"].startswith("/supplier")
     hub = _get(joel, "/supplier/", follow_redirects=True).get_data(as_text=True)
@@ -223,6 +239,7 @@ def test_joel_takes_the_supplier_pathway_on_his_own_record_with_the_practice_log
     r = _post(joel, "/training/supplier-practice/return", data={"back": f"/training/lessons/{supplier_lesson}?step=0"})
     assert r.headers["Location"].endswith(f"/training/lessons/{supplier_lesson}?step=0")
     assert "supplier practice closed" in caplog.text
+    P.audit.removeHandler(caplog)
     home = _get(joel, "/training").get_data(as_text=True)
     assert "data-supplier-practice-away" not in home and "Pathway: Supplier owner" in home
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from io import BytesIO
 
 import pytest
@@ -73,7 +74,7 @@ def test_home_empty_briefing(client):
 
 
 def test_home_shows_today_and_coming_days_and_hides_closed(client, app):
-    office_today = date.today()
+    office_today = local_today()
     with app.app_context():
         live = _project("Briefing Live Job", "P-LIVE")
         closed = _project("Briefing Closed Job", "P-CLOSED")

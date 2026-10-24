@@ -10,6 +10,7 @@ activity. Historical Time snapshots are not rewritten.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 import pytest
 
@@ -154,7 +155,7 @@ def _submit(project, activity, hours="3.5"):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours=hours,
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=_worker().id,
     )
 

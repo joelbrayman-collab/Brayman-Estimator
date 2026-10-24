@@ -35,8 +35,15 @@ _MONTHS = (
 )
 
 
+def local_today() -> date:
+    """The office's date (company zone), from the one clock in app.services.local_time."""
+    from app.services.local_time import local_today as office_today
+
+    return office_today()
+
+
 def field_date_phrase(value: date, *, today: Optional[date] = None) -> str:
-    today = today or date.today()
+    today = today or local_today()
     if value == today:
         return contractor_copy.FIELD_NAV_TODAY
     return f"{_WEEKDAYS[value.weekday()]} {value.day} {_MONTHS[value.month - 1]}"
@@ -48,7 +55,7 @@ def field_date_range(
     *,
     today: Optional[date] = None,
 ) -> str:
-    today = today or date.today()
+    today = today or local_today()
     if start == end:
         return field_date_phrase(start, today=today)
     return (
@@ -74,17 +81,17 @@ _MONTHS_LONG = (
 
 
 def field_today_weekday(today: Optional[date] = None) -> str:
-    today = today or date.today()
+    today = today or local_today()
     return _WEEKDAYS_LONG[today.weekday()]
 
 
 def field_today_natural_date(today: Optional[date] = None) -> str:
-    today = today or date.today()
+    today = today or local_today()
     return f"{_MONTHS_LONG[today.month - 1]} {today.day}"
 
 
 def field_today_heading(today: Optional[date] = None) -> str:
-    today = today or date.today()
+    today = today or local_today()
     return f"{field_today_weekday(today)}, {field_today_natural_date(today)}"
 
 

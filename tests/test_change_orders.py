@@ -1,4 +1,5 @@
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 from io import BytesIO
 
@@ -166,7 +167,7 @@ def test_status_approved_sets_date(project):
     co = create_change_order(project=project, title="Approve me")
     update_change_order_status(co, "Approved")
     assert co.status == "Approved"
-    assert co.approved_date == date.today()
+    assert co.approved_date == local_today()
 
 
 def test_create_from_estimate_copies_lines(estimate):
@@ -234,7 +235,7 @@ def test_create_from_estimate_version_route(client, estimate):
             "title": "Version CO",
             "description": "Scope add",
             "status": "Draft",
-            "requested_date": date.today().isoformat(),
+            "requested_date": local_today().isoformat(),
             "markup_percent": "0",
             "tax_percent": "0",
             "copy_estimate_lines": "on",

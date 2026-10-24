@@ -9,6 +9,7 @@ request to its own supplier account, kept apart from material requests.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 from pathlib import Path
 
@@ -114,7 +115,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
     _pdf, fields, keys = _issue(client, project, account)
     request_id = fields["request_id"]["/V"]
     sent = client.post(f"/projects/{project.id}/deck-takeoff/requests/{request_id}/send-to-supplier",
-                       data={"needed_by": (date.today() + timedelta(days=10)).isoformat()}, follow_redirects=True)
+                       data={"needed_by": (local_today() + timedelta(days=10)).isoformat()}, follow_redirects=True)
     assert b"is in their Supplier Hub inbox now" in sent.data
     share = SupplierRequestShare.query.one()
     # Only the approved shared fields: no customer name, no site address, no costs.
@@ -155,7 +156,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     placed = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-                         data={"delivery_date": (date.today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"},
+                         data={"delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"},
                          follow_redirects=True)
     assert b"It is agreed when they confirm it" in placed.data
     order = SupplierPurchaseOrder.query.one()
@@ -165,7 +166,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
     order_page = supplier.get(f"/supplier/{account.supplier_id}/requests/{share.id}")
     assert b"Arcy" in order_page.data and b"Confirm order" in order_page.data
     supplier.post(f"/supplier/{account.supplier_id}/orders/{order.id}/confirm",
-                  data={"action": "confirm", "expected_delivery": (date.today() + timedelta(days=12)).isoformat()})
+                  data={"action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
     order = db.session.get(SupplierPurchaseOrder, order.id)
     assert order.status == "CONFIRMED" and order.supplier_responded_by_name == DARCY[0]
     events = [e.event_type for e in SupplierRequestEvent.query.filter_by(share_id=share.id).order_by(SupplierRequestEvent.id)]
@@ -201,7 +202,7 @@ def test_concrete_is_its_own_request_to_its_own_supplier_and_is_ordered_and_conf
     _give_sign_in(client, bmr)
     _give_sign_in(client, tomlinson)  # Darcy also handles Tomlinson concrete, in a separate area
     assert SupplierUserMembership.query.filter_by(user_id=User.query.filter_by(email=DARCY[1]).one().id).count() == 2
-    delivery = (date.today() + timedelta(days=7)).isoformat()
+    delivery = (local_today() + timedelta(days=7)).isoformat()
     saved = client.post(f"/projects/{project.id}/concrete-requests", data={
         "volume_m3": "4.5", "strength_mpa": "32", "exposure_class": "C-2", "air_entrainment": "5–8%", "slump_mm": "100",
         "delivery_date": delivery, "delivery_window": "7:00–9:00", "placement": "Chute",
@@ -303,7 +304,7 @@ def _concrete_order(app, client):
     project, _other, _bmr = _setup()
     tomlinson = _tomlinson()
     darcy_user = _give_sign_in(client, tomlinson)
-    delivery = (date.today() + timedelta(days=7)).isoformat()
+    delivery = (local_today() + timedelta(days=7)).isoformat()
     client.post(f"/projects/{project.id}/concrete-requests", data={
         "volume_m3": "4.5", "strength_mpa": "32", "delivery_date": delivery, "placement": "Pump",
         "contractor_supplier_account_id": tomlinson.id})
@@ -603,7 +604,7 @@ def _material_round(app, client, project, account, *, sku="TEST-SKU-1", minutes=
     _pdf, fields, keys = _issue(client, project, account)
     request_id = fields["request_id"]["/V"]
     client.post(f"/projects/{project.id}/deck-takeoff/requests/{request_id}/send-to-supplier",
-                data={"needed_by": (date.today() + timedelta(days=10)).isoformat()})
+                data={"needed_by": (local_today() + timedelta(days=10)).isoformat()})
     share = SupplierRequestShare.query.filter_by(source_ref=request_id).one()
     supplier = _supplier_client(app)
     first = next(iter(keys.values()))
@@ -619,7 +620,7 @@ def _material_round(app, client, project, account, *, sku="TEST-SKU-1", minutes=
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-                data={"delivery_date": (date.today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
+                data={"delivery_date": (local_today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
     return supplier, share, keys, first
 
 
@@ -629,7 +630,7 @@ def test_needs_attention_lists_what_waits_for_the_store_and_period_figures_use_a
     project, tomlinson, darcy, _user, order = _concrete_order(app, client)
     # A second concrete request is waiting for a quote; the first is ordered and confirmed for next week.
     client.post(f"/projects/{project.id}/concrete-requests", data={
-        "volume_m3": "2", "strength_mpa": "25", "delivery_date": (date.today() + timedelta(days=20)).isoformat(),
+        "volume_m3": "2", "strength_mpa": "25", "delivery_date": (local_today() + timedelta(days=20)).isoformat(),
         "placement": "Chute", "contractor_supplier_account_id": tomlinson.id})
     waiting = SupplierRequestShare.query.filter_by(status="SENT").one()
     attention = I.attention(tomlinson.supplier_id)
@@ -669,11 +670,11 @@ def test_quote_to_order_conversion_shows_a_percentage_from_five_returned_quotes(
     project, tomlinson, darcy, _user, _order = _concrete_order(app, client)
     for n in range(4):
         client.post(f"/projects/{project.id}/concrete-requests", data={
-            "volume_m3": "1", "strength_mpa": str(20 + n), "delivery_date": (date.today() + timedelta(days=30)).isoformat(),
+            "volume_m3": "1", "strength_mpa": str(20 + n), "delivery_date": (local_today() + timedelta(days=30)).isoformat(),
             "placement": "Chute", "contractor_supplier_account_id": tomlinson.id})
         share = SupplierRequestShare.query.filter_by(status="SENT").one()
         darcy.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote",
-                   data={"price_per_m3": "200", "valid_until": (date.today() + timedelta(days=30)).isoformat(),
+                   data={"price_per_m3": "200", "valid_until": (local_today() + timedelta(days=30)).isoformat(),
                          "minutes_reported": "6"})
     figures = I.period_figures(tomlinson.supplier_id, I.resolve_period("90d"))
     assert figures["quotes_returned"] == 5 and figures["quotes_ordered"] == 1 and figures["conversion_percent"] == 20
@@ -853,11 +854,11 @@ def test_closing_a_job_lists_its_open_supplier_orders_without_blocking(app, clie
 
     project, _tomlinson, _darcy, _user, order = _concrete_order(app, client)
     _make_owner()  # closing a project is for the instance owner
-    order.scheduled_date = date.today() + timedelta(days=3)
+    order.scheduled_date = local_today() + timedelta(days=3)
     db.session.commit()
     page = client.get(f"/projects/{project.id}/close").get_data(as_text=True)
     assert 'data-open-orders="1"' in page and order.number in page and "Closing does not cancel them" in page
-    order.scheduled_date = date.today() - timedelta(days=1)  # delivered in the past: nothing to warn about
+    order.scheduled_date = local_today() - timedelta(days=1)  # delivered in the past: nothing to warn about
     db.session.commit()
     assert "data-open-orders" not in client.get(f"/projects/{project.id}/close").get_data(as_text=True)
 
@@ -870,7 +871,7 @@ def test_a_sent_concrete_request_is_not_offered_for_sending_again(app, client):
     project, _other, _bmr = _setup()
     tomlinson = _tomlinson()
     _give_sign_in(client, tomlinson)
-    delivery = (date.today() + timedelta(days=7)).isoformat()
+    delivery = (local_today() + timedelta(days=7)).isoformat()
     client.post(f"/projects/{project.id}/concrete-requests", data={
         "volume_m3": "4.5", "strength_mpa": "32", "delivery_date": delivery, "placement": "Pump",
         "contractor_supplier_account_id": tomlinson.id})

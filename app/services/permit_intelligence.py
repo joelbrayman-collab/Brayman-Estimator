@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import date, datetime
+from app.services.local_time import local_today
 from typing import Optional
 
 from app import db
@@ -129,7 +130,7 @@ def assert_platform_rules_not_org_mutable():
 
 def operational_rules(*, as_of: Optional[date] = None):
     """APPROVED + currently effective rules only."""
-    day = as_of or date.today()
+    day = as_of or local_today()
     rows = PermitRule.query.filter_by(approval_state="APPROVED").order_by(
         PermitRule.code.asc(), PermitRule.version_number.asc()
     ).all()

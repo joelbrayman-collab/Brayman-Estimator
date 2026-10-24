@@ -18,10 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app import create_app, db  # noqa: E402
+import app.models  # noqa: E402,F401  (models load before app.services)
+from app.services.local_time import local_today  # noqa: E402  (the office's date, as the app uses)
 
 STORE = ("pro.desk@example.invalid", "Synthetic-pro-desk-pass-1")
 RIVAL = ("rival.store@example.invalid", "Synthetic-rival-pass-1")
-TODAY = date.today()
+TODAY = local_today()
 
 PRICES = [  # sku, description, unit, price, discount, rule
     ("SYN-POST", "Laminated column 3-ply 2x6 (synthetic)", "EA", "62.00", "", ""),

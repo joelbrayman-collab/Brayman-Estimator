@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -50,7 +51,7 @@ from app.services.work_scope import add_authorized_change_order_activity
 from tests.auth_fixtures import create_membership, create_user, ensure_office_user, login_office_user
 from tests.test_work_time_fg035 import _seeded_project, app  # noqa: F401
 
-TODAY = date.today()
+TODAY = local_today()
 YESTERDAY = TODAY - timedelta(days=1)
 BEN = ("ben.time@example.invalid", "Synthetic-ben-time-1", "Ben Brayman (synthetic)")
 KEVIN = ("kevin.time@example.invalid", "Synthetic-kevin-time-1", "Kevin Fieldhand (synthetic)")

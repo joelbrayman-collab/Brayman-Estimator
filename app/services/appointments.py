@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from datetime import date, datetime, time
+from app.services.local_time import local_today
 from typing import Optional
 
 from app import db
@@ -700,7 +701,7 @@ def feed_for_key(key: str, *, today: Optional[date] = None, base_url: str = ""):
     member = UserMembership.query.filter_by(user_id=row.user_id, organization_id=row.organization_id, is_active=True).first()
     if user is None or not user.is_active or member is None:
         return None
-    today = today or date.today()
+    today = today or local_today()
     appts = (
         CompanyAppointment.query.filter(
             CompanyAppointment.organization_id == row.organization_id,

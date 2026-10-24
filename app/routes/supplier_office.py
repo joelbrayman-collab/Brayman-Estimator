@@ -7,6 +7,7 @@ supplier, sends concrete as its own request, and places orders on returned quote
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -256,7 +257,7 @@ def project_requests(project_id):
                            deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),
                            accounts=accounts, placements=CONCRETE_PLACEMENT,
                            signed_in={a.supplier_id: supplier_has_sign_in(a.supplier_id) for a in accounts},
-                           today=date.today())
+                           today=local_today())
 
 
 @supplier_office_bp.route("/projects/<int:project_id>/supplier-quote-comparison")

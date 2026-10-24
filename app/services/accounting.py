@@ -24,6 +24,7 @@ import io
 import json
 import re
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_date, local_today
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Dict, List, Optional
 
@@ -90,7 +91,7 @@ def history(org, limit=100):
 
 
 def _next_number(org) -> str:
-    year = date.today().year
+    year = local_today().year
     prefix = f"INV-{year}-"
     count = CustomerInvoice.query.filter(CustomerInvoice.organization_id == org,
                                          CustomerInvoice.number.like(f"{prefix}%")).count()
@@ -188,7 +189,7 @@ def create_invoice(org, project, *, user, proposal_id=None, change_order_id=None
         raise AccountingError("The amount must be more than zero.")
     # A change order is invoiced whole, so its own HST figure is used; part of a proposal is taxed at its rate.
     tax = co_tax if change_order is not None else (subtotal * tax_percent / 100).quantize(CENT, rounding=ROUND_HALF_UP)
-    day = invoice_date or date.today()
+    day = invoice_date or local_today()
     invoice = CustomerInvoice(
         organization_id=org, project_id=project.id, client_id=project.client_id,
         proposal_id=proposal.id if proposal else None, change_order_id=change_order.id if change_order else None,
@@ -404,7 +405,7 @@ def _bill_rows(org):
             continue
         project = db.session.get(Project, o.project_id)
         tax = (amount * Decimal("13") / 100).quantize(CENT, rounding=ROUND_HALF_UP)
-        day = o.scheduled_date or o.delivery_date or (o.placed_at.date() if o.placed_at else date.today())
+        day = o.scheduled_date or o.delivery_date or (local_date(o.placed_at) if o.placed_at else local_today())
         rows.append({"BillNo": o.number, "Supplier": _supplier_name(o), "BillDate": day.strftime(DATE_FORMAT),
                      "DueDate": (day + timedelta(days=30)).strftime(DATE_FORMAT), "Terms": "Net 30",
                      "Memo": f"Job: {job_reference(project)} · PO {o.number}", "Account": "Job Materials",

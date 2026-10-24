@@ -29,6 +29,8 @@ from alembic import command  # noqa: E402
 from alembic.config import Config  # noqa: E402
 
 from app import create_app, db  # noqa: E402
+import app.models  # noqa: E402,F401  (models load before app.services)
+from app.services.local_time import local_today  # noqa: E402  (the office's date, as the app uses)
 
 BEN = ("ben.sms@example.invalid", "Synthetic-ben-sms-1", "Ben Brayman (synthetic)")
 KEVIN = ("kevin.sms@example.invalid", "Synthetic-kevin-sms-1", "Kevin Fieldhand (synthetic)")
@@ -79,7 +81,7 @@ def _seed():
                                    municipality="Merrickville", province_state="ON"))
     db.session.commit()
     element = add_project_element(project_id=project.id, display_name=WORK, organization_id=ORG)
-    start = date.today() + timedelta(days=7)
+    start = local_today() + timedelta(days=7)
     item = create_schedule_item(project_id=project.id, project_work_element_id=element.id, scheduled_start=start,
                                 scheduled_end=start, organization_id=ORG)
     assign_user(item.id, worker_user_id=kevin.id, organization_id=ORG)

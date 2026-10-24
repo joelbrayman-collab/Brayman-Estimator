@@ -8,6 +8,7 @@ No durable PERF or attention state.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 from typing import Optional
 
@@ -192,7 +193,7 @@ def assemble_project_attention(
         labour = assemble_project_performance(organization_id, project_id, today=today)
         return labour["attention"]
     org_id = _org_id(organization_id)
-    as_of = today or date.today()
+    as_of = today or local_today()
     extra_items = _extra_work_attention_items(project_id, labour)
     labour_items = _labour_attention_items(project_id, labour)
     finish_items = []
@@ -523,7 +524,7 @@ class _RateBook:
 
 def company_costing_rate(organization_id, *, on: Optional[date] = None) -> Optional[dict]:
     """The authorized company costing rate in force on a date (default today), or None."""
-    row = _RateBook(_org_id(organization_id)).on(on or date.today())
+    row = _RateBook(_org_id(organization_id)).on(on or local_today())
     if row is None:
         return None
     return {
@@ -567,7 +568,7 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
         raise TimeEntryNotFoundError("Project not found.") from exc
     company = is_company_time_project(project)
     rates = _RateBook(org_id)
-    as_of = today or date.today()
+    as_of = today or local_today()
     current_rate = rates.on(as_of)
 
     activities = (

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime
+from app.services.local_time import local_date
 from decimal import Decimal
 
 from sqlalchemy import event, inspect as sa_inspect
@@ -504,9 +505,9 @@ def assemble_quickbooks_preview(
             "tax_label": tax_label,
             "customer_message": proposal.intro_text,
             "estimate_date": (
-                proposal.issued_at.date()
+                local_date(proposal.issued_at)
                 if proposal.issued_at is not None
-                else proposal.created_at.date()
+                else local_date(proposal.created_at)
                 if proposal.created_at is not None
                 else None
             ),

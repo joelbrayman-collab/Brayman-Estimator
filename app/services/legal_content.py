@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from datetime import date
+from app.services.local_time import local_today
 from typing import Optional
 
 from app.models import Project
@@ -264,7 +265,7 @@ def select_legal_content_package_for_project(
     Reuses ADR-037 / FG-015 ``resolve_jurisdiction``. Does not consult
     Organization.tax_jurisdiction, Permit Rules, or FG-022 presentation masters.
     """
-    day = as_of or date.today()
+    day = as_of or local_today()
     if authority_class not in AUTHORITY_CLASSES:
         return _block(BLOCK_JURISDICTION_NOT_SUPPORTED)
     project = Project.query.get(project_id)

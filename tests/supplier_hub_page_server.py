@@ -22,6 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app import create_app, db  # noqa: E402
+import app.models  # noqa: E402,F401  (models load before app.services)
+from app.services.local_time import local_today  # noqa: E402  (the office's date, as the app uses)
 
 OFFICE = ("office@example.com", "office-test-password")
 DARCY = ("Darcy Synthetic", "darcy.store@example.invalid", "Synthetic-darcy-pass-1")
@@ -32,7 +34,7 @@ ADDRESS = "12 Harbour Lane, Winchester (synthetic)"
 SECOND = "Rideau Street deck (synthetic)"
 # Internal office figures a supplier must never see: a company cost, its markup, the labour rate.
 INTERNAL_COST = ("INT-ZEPHYR", "Zephyr internal crew allowance (synthetic)", "8765.43", "41.25")
-TODAY = date.today()
+TODAY = local_today()
 
 
 def _set_password(user, password):

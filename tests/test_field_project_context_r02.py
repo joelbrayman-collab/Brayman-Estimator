@@ -10,6 +10,7 @@ the confirmed operating Field Project.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 import pytest
 from sqlalchemy.pool import NullPool
@@ -270,7 +271,7 @@ def test_closed_time_and_extra_writes_remain_r04_fail_closed(app, client):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="2",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=owner.id,
             organization_id=DEFAULT_ORGANIZATION_ID,
         )
@@ -285,7 +286,7 @@ def test_closed_time_and_extra_writes_remain_r04_fail_closed(app, client):
     posted_time = client.post(
         f"/field/projects/{project.id}/time",
         data={
-            "work_date": date.today().isoformat(),
+            "work_date": local_today().isoformat(),
             "project_work_activity_id": activity.id,
             "hours": "2.00",
         },
@@ -298,7 +299,7 @@ def test_closed_time_and_extra_writes_remain_r04_fail_closed(app, client):
     posted_stale = client.post(
         f"/field/projects/{project.id}/time",
         data={
-            "work_date": date.today().isoformat(),
+            "work_date": local_today().isoformat(),
             "project_work_activity_id": activity.id,
             "hours": "2.00",
         },

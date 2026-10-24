@@ -1,4 +1,5 @@
 from datetime import date
+from app.services.local_time import local_today
 
 from flask import Blueprint, render_template, request
 from flask_login import current_user
@@ -11,7 +12,7 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def dashboard():
-    today = date.today()
+    today = local_today()
     view = assemble_home_planning(
         get_current_organization_id(),
         year=request.args.get("year", type=int),

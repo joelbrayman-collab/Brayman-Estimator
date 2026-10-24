@@ -8,6 +8,7 @@ holiday, capacity, or readiness facts.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from typing import Optional
 
 from flask_login import current_user
@@ -443,7 +444,7 @@ def assemble_home_planning(
     (My Calendar) keeps only work assigned to that person, directly or through a crew they are on
     at the time, and deliveries for those projects. ``months_before`` / ``months_after`` (Calendar
     month view) extend the weeks so the month view scrolls through several months."""
-    today = today or date.today()
+    today = today or local_today()
     year = int(year or today.year)
     month = int(month or today.month)
     if month < 1 or month > 12:

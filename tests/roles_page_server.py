@@ -36,6 +36,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app import create_app, db  # noqa: E402
+import app.models  # noqa: E402,F401  (models load before app.services)
+from app.services.local_time import local_today  # noqa: E402  (the office's date, as the app uses)
 
 OWNER = ("office@example.com", "office-test-password", "Office Test User")
 STAFF = ("sam.staff@example.invalid", "Synthetic-staff-pass-1", "Sam Staff (synthetic office)")
@@ -86,7 +88,7 @@ def _users():
     staff = ensure_office_user(email=STAFF[0], password=STAFF[1], display_name=STAFF[2])
     kevin = ensure_office_user(email=KEVIN[0], password=KEVIN[1], display_name=KEVIN[2])
     crew = create_crew(name="North Crew (synthetic)", organization_id=ORG)
-    add_crew_member(crew.id, user_id=kevin.id, effective_from=(datetime.utcnow().date() - timedelta(days=30)).isoformat(),
+    add_crew_member(crew.id, user_id=kevin.id, effective_from=(local_today() - timedelta(days=30)).isoformat(),
                     organization_id=ORG)
     ensure_brayman_v1_interim_ontario_package()
     db.session.add(Organization(id=ORG_B[0], legal_name=ORG_B[1], display_name=ORG_B[1], is_active=True))
@@ -186,7 +188,7 @@ def _scheduled_work(project_id):
 
     ensure_baseline_work_catalog()
     element = add_project_element(project_id=project_id, display_name="Deck framing (synthetic)", organization_id=ORG)
-    today = date.today()
+    today = local_today()
     item = create_schedule_item(project_id=project_id, project_work_element_id=element.id,
                                 scheduled_start=today, scheduled_end=today, organization_id=ORG)
     return {"schedule_item_id": item.id, "schedule_item_start": today.isoformat()}

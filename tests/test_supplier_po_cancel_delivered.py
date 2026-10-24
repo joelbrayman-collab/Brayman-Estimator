@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from pathlib import Path
 
 import pytest
@@ -50,24 +51,24 @@ def test_either_side_marks_a_confirmed_order_delivered_and_it_leaves_upcoming_de
     from tests.test_core_close_close_reopen_fg035 import _make_owner
 
     project, tomlinson, darcy, _user, order = _concrete_order(app, client)
-    order.scheduled_date = date.today() + timedelta(days=2); db.session.commit()
+    order.scheduled_date = local_today() + timedelta(days=2); db.session.commit()
     assert [r["order"].id for r in H.upcoming_deliveries(organization_id=DEFAULT_ORGANIZATION_ID)] == [order.id]
     _make_owner()
     assert 'data-open-orders="1"' in client.get(f"/projects/{project.id}/close").get_data(as_text=True)
-    future = (date.today() + timedelta(days=1)).isoformat()
+    future = (local_today() + timedelta(days=1)).isoformat()
     refused = darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/delivered", data={"delivered_on": future},
                          follow_redirects=True)
     assert b"cannot be in the future" in refused.data and _order(order.id).status == "CONFIRMED"
     darcy.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/delivered",
-               data={"delivered_on": date.today().isoformat(), "note": "Pumped at 7:40"})
+               data={"delivered_on": local_today().isoformat(), "note": "Pumped at 7:40"})
     delivered = _order(order.id)
     assert delivered.status == "DELIVERED"
     closure = H.order_closure(delivered)
-    assert closure["day"] == date.today() and closure["note"] == "Pumped at 7:40" and closure["side"] == "SUPPLIER"
+    assert closure["day"] == local_today() and closure["note"] == "Pumped at 7:40" and closure["side"] == "SUPPLIER"
     assert H.upcoming_deliveries(organization_id=DEFAULT_ORGANIZATION_ID) == []  # Field and the calendar read this
     assert "data-open-orders" not in client.get(f"/projects/{project.id}/close").get_data(as_text=True)
     office = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
-    assert f'data-po-delivered="{date.today().isoformat()}"' in office and "Pumped at 7:40" in office
+    assert f'data-po-delivered="{local_today().isoformat()}"' in office and "Pumped at 7:40" in office
     assert f'data-cancel-order="{order.id}"' not in office
     assert "Delivered" in client.get(f"/projects/{project.id}").get_data(as_text=True)
     with pytest.raises(H.SupplierHubError, match="cannot be cancelled"):

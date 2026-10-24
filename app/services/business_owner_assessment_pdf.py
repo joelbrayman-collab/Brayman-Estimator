@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal, InvalidOperation
 from html import escape
 from io import BytesIO
@@ -57,7 +58,7 @@ def generate_assessment_pdf(result, *, calculation_date=None) -> BytesIO:
     """Render the already-computed assessment result. Do not recompute economics."""
     if not isinstance(result, dict):
         raise TypeError("PDF renderer requires the assessment result object")
-    calc_date = _iso_date(calculation_date) or date.today().isoformat()
+    calc_date = _iso_date(calculation_date) or local_today().isoformat()
     inputs = result.get("inputs") or {}
     title = resolved_scenario_title(inputs.get("scenario_name"))
     buffer = BytesIO()
@@ -99,7 +100,7 @@ def generate_assessment_pdf(result, *, calculation_date=None) -> BytesIO:
 
 
 def assessment_pdf_filename(scenario_name, calculation_date):
-    date_part = _iso_date(calculation_date) or date.today().isoformat()
+    date_part = _iso_date(calculation_date) or local_today().isoformat()
     slug = _filename_slug(scenario_name)
     if slug:
         return f"CalibraytAI_Employment_vs_Entrepreneurship_{slug}_{date_part}.pdf"

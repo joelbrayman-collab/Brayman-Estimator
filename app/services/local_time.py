@@ -36,6 +36,29 @@ def company_timezone() -> ZoneInfo:
         return ZoneInfo(DEFAULT_TZID)
 
 
+def utc_now() -> datetime:
+    """Now, as naive UTC (the way timestamps are stored). The one clock the date rules read.
+
+    Tests freeze time by monkeypatching this function; nothing here depends on the machine's TZ.
+    """
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+def local_now() -> datetime:
+    """Now, as an aware datetime in the company's zone."""
+    return utc_now().replace(tzinfo=timezone.utc).astimezone(company_timezone())
+
+
+def local_today() -> date:
+    """Today's date in the office (company zone), not the server's UTC date (Joel, 24 Oct 2026).
+
+    The server runs UTC; between 8 pm and midnight in Toronto the UTC date is already tomorrow.
+    Every "today" in a business rule (deliveries, schedule, time entries, change orders, invoices,
+    calendar) reads this, and stored UTC timestamps are compared through :func:`local_date`.
+    """
+    return local_now().date()
+
+
 def _parse_stamp(value):
     """A stored ISO timestamp string (some records keep JSON text) as a datetime; else the value."""
     if not isinstance(value, str):

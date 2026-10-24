@@ -8,6 +8,7 @@ from __future__ import annotations
 import inspect
 import re
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 from pathlib import Path
 
@@ -323,7 +324,7 @@ def test_db_checks_reject_invalid_class_amount_and_source(app, project):
 
 
 def test_incurred_on_accepts_any_parseable_date_including_future(app, project):
-    future = date.today() + timedelta(days=40)
+    future = local_today() + timedelta(days=40)
     row = _enter_actual(
         project, cost_class="other_direct", amount="1.00", incurred_on=future
     )

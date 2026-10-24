@@ -164,6 +164,8 @@ def _priced_estimate(project, organization_id):
 
 
 def seed() -> dict:
+    from app.services.local_time import local_today  # the office's date, as the app uses
+
     """Seed everything above; returns the facts the checks need (ids, names, passwords)."""
     from app.models.organization import Organization
     from app.models.user import UserMembership
@@ -185,7 +187,7 @@ def seed() -> dict:
     assigned = _project(ASSIGNED, ORG, CUSTOMER)
     unassigned = _project(UNASSIGNED, ORG)
     element = add_project_element(project_id=assigned.id, display_name="Deck framing (synthetic)", organization_id=ORG)
-    today = date.today()
+    today = local_today()
     item = create_schedule_item(project_id=assigned.id, project_work_element_id=element.id, scheduled_start=today,
                                 scheduled_end=today + timedelta(days=2), organization_id=ORG)
     assign_user(item.id, worker_user_id=kevin.id, organization_id=ORG)

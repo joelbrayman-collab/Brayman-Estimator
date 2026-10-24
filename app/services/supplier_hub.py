@@ -18,6 +18,7 @@ from __future__ import annotations
 import re
 import secrets
 from datetime import date, datetime
+from app.services.local_time import local_date, local_today
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Optional
 
@@ -679,7 +680,7 @@ def concrete_order_lines(share: SupplierRequestShare) -> tuple[list[dict], list[
         if value:
             lines.append({"number": number, "description": label, "sku": "", "quantity": "1", "unit": "EA",
                           "net_unit_cost": str(value), "line_value": str(value), "cost_approved": True})
-    if quote.get("valid_until") and date.fromisoformat(quote["valid_until"]) < date.today():
+    if quote.get("valid_until") and date.fromisoformat(quote["valid_until"]) < local_today():
         return lines, ["The supplier's price has expired. Ask for a new quote."]
     if not quote.get("approved_at"):
         return lines, ["Approve the concrete quote first."]
@@ -827,10 +828,11 @@ def mark_order_delivered(order: SupplierPurchaseOrder, *, side: str, user, deliv
     if order.status != PO_CONFIRMED:
         raise SupplierHubError("Only a confirmed order can be marked delivered.")
     day = _date(delivered_on, "delivery date", required=False) if isinstance(delivered_on, str) else delivered_on
-    day = day or date.today()
-    if day > date.today():
+    today = local_today()  # the office's date; the server's UTC date is tomorrow after 8 pm Toronto
+    day = day or today
+    if day > today:
         raise SupplierHubError("The delivery date cannot be in the future.")
-    if order.placed_at and day < order.placed_at.date():
+    if order.placed_at and day < local_date(order.placed_at):
         raise SupplierHubError("The delivery date cannot be before the order was placed.")
     who = _display(user)
     text = (note or "").strip().replace("\n", " ")[:500]
@@ -869,7 +871,7 @@ def recently_cancelled_orders(*, supplier_id: int, days: int = 30):
     """Cancelled orders whose delivery was still ahead (or recent), so the supplier's deliveries list shows them."""
     from datetime import timedelta
 
-    since = date.today() - timedelta(days=days)
+    since = local_today() - timedelta(days=days)
     rows = []
     for order in SupplierPurchaseOrder.query.filter_by(supplier_id=supplier_id, status=PO_CANCELLED).all():
         schedule = current_schedule(order)

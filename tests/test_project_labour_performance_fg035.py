@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 from pathlib import Path
 
@@ -198,7 +199,7 @@ def test_project_allowed_used_waiting_remaining(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="6",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=submitted.id, reviewer_user_id=reviewer.id)
@@ -206,7 +207,7 @@ def test_project_allowed_used_waiting_remaining(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="4",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     labour = assemble_project_performance(DEFAULT_ORGANIZATION_ID, project.id)
@@ -228,7 +229,7 @@ def test_project_over_by_not_negative_remaining(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours=str(over_hours),
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=entry.id, reviewer_user_id=reviewer.id)
@@ -259,7 +260,7 @@ def test_unknown_allowance_does_not_fake_zero(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="8",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=entry.id, reviewer_user_id=reviewer.id)
@@ -296,7 +297,7 @@ def test_no_double_count_activity_grain(app):
         project_id=project.id,
         project_work_activity_id=original.id,
         hours="5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=first.id, reviewer_user_id=reviewer.id)
@@ -304,7 +305,7 @@ def test_no_double_count_activity_grain(app):
         project_id=project.id,
         project_work_activity_id=extra_activity.id,
         hours="3",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=extra_entry.id, reviewer_user_id=reviewer.id)
@@ -352,7 +353,7 @@ def test_element_excludes_extra_work_on_same_element(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="2",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=authorized_entry.id, reviewer_user_id=reviewer.id)
@@ -360,7 +361,7 @@ def test_element_excludes_extra_work_on_same_element(app):
         project_id=project.id,
         project_work_activity_id=extra.id,
         hours="14",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=extra_entry.id, reviewer_user_id=reviewer.id)
@@ -379,7 +380,7 @@ def test_retired_activity_with_historical_time_remains(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="4.5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=entry.id, reviewer_user_id=reviewer.id)
@@ -405,7 +406,7 @@ def test_extra_work_waiting_and_authorization_move(app):
         project_id=project.id,
         project_work_activity_id=extra.id,
         hours="7",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=approved_extra.id, reviewer_user_id=reviewer.id)
@@ -413,7 +414,7 @@ def test_extra_work_waiting_and_authorization_move(app):
         project_id=project.id,
         project_work_activity_id=extra.id,
         hours="3",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     before = assemble_project_performance(DEFAULT_ORGANIZATION_ID, project.id)
@@ -448,7 +449,7 @@ def test_time_states_used_waiting_returned_superseded(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=approved.id, reviewer_user_id=reviewer.id)
@@ -456,14 +457,14 @@ def test_time_states_used_waiting_returned_superseded(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="2",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     returned = submit_time(
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="9",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     return_time(
@@ -511,7 +512,7 @@ def test_hub_labour_copy_and_monitor_firewall(client, app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="6",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=authorized.id, reviewer_user_id=reviewer.id)
@@ -519,7 +520,7 @@ def test_hub_labour_copy_and_monitor_firewall(client, app):
         project_id=project.id,
         project_work_activity_id=extra.id,
         hours="7",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     approve_time(time_entry_id=extra_entry.id, reviewer_user_id=reviewer.id)

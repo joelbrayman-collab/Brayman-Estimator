@@ -2,6 +2,7 @@
 
 import re
 from datetime import date, datetime
+from app.services.local_time import local_today
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 from app import db
@@ -244,8 +245,8 @@ def create_change_order(
         reason=(reason or "").strip() or None,
         status=status,
         requested_by=(requested_by or "").strip() or None,
-        requested_date=requested_date or date.today(),
-        approved_date=date.today() if status == "Approved" else None,
+        requested_date=requested_date or local_today(),
+        approved_date=local_today() if status == "Approved" else None,
         markup_percent=as_decimal(markup_percent),
         tax_percent=(
             project_default_tax_percent(project)
@@ -419,7 +420,7 @@ def update_change_order_status(
 
     change_order.status = status
     if entering_approved:
-        change_order.approved_date = date.today()
+        change_order.approved_date = local_today()
     if status != "Approved" and previous == "Approved" and status in (
         "Draft",
         "Pending Approval",
@@ -461,7 +462,7 @@ def capture_approved_internal_direct_cost_on_late_extra_link(
         parsed_cost = None
     change_order.approved_internal_direct_cost = parsed_cost
     if change_order.status == "Approved" and change_order.approved_date is None:
-        change_order.approved_date = date.today()
+        change_order.approved_date = local_today()
     change_order.updated_at = datetime.utcnow()
     return change_order
 

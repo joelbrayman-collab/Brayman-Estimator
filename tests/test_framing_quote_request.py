@@ -7,6 +7,7 @@ manifest, Supplier Hub share, price return and price evidence as the deck takeof
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 
@@ -92,7 +93,7 @@ def test_one_click_sends_the_framing_request_and_the_supplier_prices_it(app, cli
     assert "data-framing-request" in page and "BMR Winchester (synthetic)" in page
     form = {**FIXTURE, "waste_percent": "10", "plate_stock_length_ft": "16", "action": "request",
             "contractor_supplier_account_id": str(account.id),
-            "needed_by": (date.today() + timedelta(days=10)).isoformat()}
+            "needed_by": (local_today() + timedelta(days=10)).isoformat()}
     sent = client.post(url, data=form)
     text = sent.get_data(as_text=True)
     assert "data-framing-request-sent" in text and "sent to BMR Winchester (synthetic)" in text, text[-1500:]

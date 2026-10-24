@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date
+from app.services.local_time import local_today
 from typing import Optional
 
 from app import db
@@ -87,7 +88,7 @@ def reopen_project_stage(project_or_id) -> bool:
 def scheduled_work_started(project, *, today: Optional[date] = None) -> bool:
     from app.models.schedule import SCHEDULE_STATUS_ACTIVE, WorkScheduleItem
 
-    today = today or date.today()
+    today = today or local_today()
     return (
         WorkScheduleItem.query.filter(
             WorkScheduleItem.project_id == project.id,

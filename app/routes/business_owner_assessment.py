@@ -7,6 +7,7 @@ Narrow login exemption via blueprint prefix.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 from flask import Blueprint, jsonify, render_template, request, send_file
 
@@ -62,7 +63,7 @@ def download_results_pdf():
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
         payload = {}
-    calc_date = _iso_date(payload.pop("calculation_date", None)) or date.today().isoformat()
+    calc_date = _iso_date(payload.pop("calculation_date", None)) or local_today().isoformat()
     result = assert_finite_payload(calculate(payload))
     buffer = generate_assessment_pdf(result, calculation_date=calc_date)
     filename = assessment_pdf_filename(result["inputs"].get("scenario_name"), calc_date)

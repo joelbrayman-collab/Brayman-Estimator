@@ -75,7 +75,9 @@ class Period:
 
 
 def local_today() -> date:
-    return datetime.now(LOCAL_TZ).date()
+    from app.services.local_time import local_today as office_today
+
+    return office_today()
 
 
 def _parse_day(raw) -> Optional[date]:

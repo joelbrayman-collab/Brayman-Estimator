@@ -4,6 +4,7 @@ Projects owns Schedule. Hub is a project-filtered view of the same service.
 """
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -147,7 +148,7 @@ def _schedule_cancel_url(*, project_id=None, next_view=""):
 @schedule_bp.route("")
 def company():
     organization = _org()
-    today = date.today()
+    today = local_today()
     try:
         window_start = _optional_date(request.args.get("from")) or today
         window_end = _optional_date(request.args.get("to")) or (today + timedelta(days=41))
@@ -285,7 +286,7 @@ def print_calendar():
     from app.services.home_planning import calendar_print_days
 
     organization = _org()
-    today = date.today()
+    today = local_today()
     try:
         project_id = _optional_int(request.args.get("project_id"))
     except (TypeError, ValueError):
@@ -667,7 +668,7 @@ def _appointment_form_context(organization, **extra):
 def _prefill_from_query():
     from datetime import datetime as _dt
 
-    day = _optional_date(request.args.get("date")) or date.today()
+    day = _optional_date(request.args.get("date")) or local_today()
     start = (request.args.get("start") or "").strip()
     end = ""
     all_day = request.args.get("all_day") == "1"
@@ -749,9 +750,9 @@ def new_appointment():
 
 def _optional_date_safe(value):
     try:
-        return _optional_date(value) or date.today()
+        return _optional_date(value) or local_today()
     except ValueError:
-        return date.today()
+        return local_today()
 
 
 @schedule_bp.route("/appointments/<int:appointment_id>", methods=["GET", "POST"])

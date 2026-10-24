@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import os
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
@@ -274,7 +275,7 @@ def test_artifact_custody_and_retrieval(app):
 
 def test_historical_generated_contracts_remain_valid_without_storage_key(app):
     project, _, _, _, version, proposal, _ = _ready_ontario(number="EST-FG024C-HIST")
-    now = date.today()
+    now = local_today()
     from datetime import datetime
 
     now_dt = datetime.utcnow()

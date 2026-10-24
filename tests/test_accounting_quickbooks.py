@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import io
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -96,7 +97,7 @@ def test_quickbooks_acceptance(app, people, job):
     q = lambda v: v.quantize(Decimal("0.01"), rounding="ROUND_HALF_UP")  # noqa: E731
 
     deposit = svc.create_invoice(ORG, project, user=ben, proposal_id=proposal.id, kind="DEPOSIT", percent="30")
-    assert deposit.number == f"INV-{date.today().year}-0001"
+    assert deposit.number == f"INV-{local_today().year}-0001"
     assert deposit.subtotal == q(before_tax * Decimal("0.30")) == Decimal("3529.41")
     assert deposit.tax_amount == Decimal("458.82") and deposit.total == Decimal("3988.23")
     assert deposit.tax_code == "HST ON" and deposit.percent_of_contract == Decimal("30")

@@ -5,6 +5,7 @@ No office sidebar. Same FG-018 session. No PWA.
 """
 
 from datetime import date
+from app.services.local_time import local_today
 from io import BytesIO
 
 from flask import (
@@ -223,10 +224,10 @@ def today():
         schedule=assemble_field_schedule(
             organization.id,
             worker_user_id=current_user.id,
-            window_start=date.today(),
-            window_end=date.today(),
+            window_start=local_today(),
+            window_end=local_today(),
             scope=FIELD_SCOPE_WORKER,
-            today=date.today(),
+            today=local_today(),
         ),
         today_heading=field_today_heading(),
         today_weekday=field_today_weekday(),
@@ -267,10 +268,10 @@ def print_today():
     schedule = assemble_field_schedule(
         organization.id,
         worker_user_id=current_user.id,
-        window_start=date.today(),
-        window_end=date.today(),
+        window_start=local_today(),
+        window_end=local_today(),
         scope=FIELD_SCOPE_WORKER,
-        today=date.today(),
+        today=local_today(),
     )
     lines = []
     for group in schedule.get("groups") or []:
@@ -311,7 +312,7 @@ def week():
 @field_bp.route("/month")
 def month():
     organization = _organization()
-    today = date.today()
+    today = local_today()
     try:
         year = int(request.args.get("year") or today.year)
         month_number = int(request.args.get("month") or today.month)
@@ -370,7 +371,7 @@ def schedule_today():
 @field_bp.route("/company-today")
 def company_today():
     organization = _organization()
-    today = date.today()
+    today = local_today()
     return render_template(
         "field/company_today.html",
         view=_restrict_view(assemble_field_schedule(
@@ -626,7 +627,7 @@ def time_entry(project_id):
         last_element_id = choices[0]["element"].id
     if returned is not None:
         last_element_id = returned.project_work_element_id
-    work_date = returned.work_date if returned is not None else date.today()
+    work_date = returned.work_date if returned is not None else local_today()
     suggestions = [
         row
         for row in suggest_time_attribution(
@@ -645,7 +646,7 @@ def time_entry(project_id):
         returned=returned,
         suggestions=[] if company_time else suggestions,
         company_time=company_time,
-        today=date.today().isoformat(),
+        today=local_today().isoformat(),
         actor_name=current_user.display_name,
     )
 

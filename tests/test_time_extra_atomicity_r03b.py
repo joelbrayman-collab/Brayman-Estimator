@@ -7,6 +7,7 @@ No schema. No migration. Extra-only and Time-only remain separate actions.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 import pytest
 from sqlalchemy.pool import NullPool
@@ -157,7 +158,7 @@ def _combined(project, worker, description="Move drain."):
         project_id=project.id,
         project_work_activity_id=0,
         hours="3.5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
         extra_work_description=description,
         organization_id=DEFAULT_ORGANIZATION_ID,
@@ -306,7 +307,7 @@ def test_time_only_submit_creates_time_without_extra(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="4",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=owner.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
     )

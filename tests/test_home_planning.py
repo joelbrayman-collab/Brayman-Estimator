@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 
@@ -95,7 +96,7 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     with app.app_context():
         project = _project()
         element = _element(project, "Framing")
-        office_today = date.today()
+        office_today = local_today()
         _schedule(project, element, office_today, office_today + timedelta(days=3))
     response = client.get("/")
     assert response.status_code == 200
@@ -153,7 +154,7 @@ def test_home_does_not_list_schedule_work(client, app):
     with app.app_context():
         live = _project("Home V22 Live Job")
         closed = _project("Home V22 Closed Job")
-        office_today = date.today()
+        office_today = local_today()
         _schedule(live, _element(live, "Slab"), office_today, office_today)
         _schedule(closed, _element(closed, "Roofing"), office_today, office_today)
         closed.operating_state = OPERATING_STATE_CLOSED

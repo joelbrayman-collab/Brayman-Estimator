@@ -13,6 +13,7 @@ import io
 import json
 import urllib.error
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 
 import pytest
 
@@ -48,7 +49,7 @@ from app.services.text_messages import save_contact
 from app.services.work_structure import add_project_element, ensure_baseline_work_catalog
 from tests.auth_fixtures import create_membership, create_user, ensure_office_user, login_office_user
 
-MON = date.today() + timedelta(days=(7 - date.today().weekday()) % 7 + 7)  # a Monday at least a week away
+MON = local_today() + timedelta(days=(7 - local_today().weekday()) % 7 + 7)  # a Monday at least a week away
 LATER = datetime.utcnow() + timedelta(days=1)  # "after the quiet period"
 CLIENT_NAME = "Pat Synthetic-Homeowner"
 PROJECT_NAME = "Synthetic Homeowner deck — Lot 7"

@@ -1,5 +1,6 @@
 """Project Hub PRICE — Scope Delivery Review (FG-031 Slice A)."""
 
+from app.services.local_time import local_today
 from app import db
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -246,7 +247,7 @@ def labour_quote_request(project_id):
     ]
     return render_template(
         "projects/labour_quote_request.html",
-        project=project, review=review_model, rows=rows, issued_on=date.today().isoformat(),
+        project=project, review=review_model, rows=rows, issued_on=local_today().isoformat(),
     )
 
 

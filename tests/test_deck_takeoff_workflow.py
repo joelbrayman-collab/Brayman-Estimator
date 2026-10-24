@@ -10,6 +10,7 @@ another organization cannot see or use the response.
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 from io import BytesIO
 
@@ -45,7 +46,7 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 from tests.test_deck_takeoff_linda_j1 import TEST_PRODUCT
 
 ACTOR = "Joel (test)"
-TODAY = datetime.utcnow().date()
+TODAY = local_today()
 RESPONSE_DATE = TODAY.isoformat()
 VALID_UNTIL = (TODAY + timedelta(days=45)).isoformat()
 LATER_VALID_UNTIL = (TODAY + timedelta(days=90)).isoformat()

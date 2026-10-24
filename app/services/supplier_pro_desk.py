@@ -17,6 +17,7 @@ import io
 import json
 import secrets
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Dict, List, Optional, Tuple
 
@@ -157,7 +158,7 @@ def _clean(raw, limit):
 
 
 def _next_number(supplier_id: int) -> str:
-    year = date.today().year
+    year = local_today().year
     prefix = f"Q{year}-"
     count = SupplierQuote.query.filter(SupplierQuote.supplier_id == supplier_id,
                                        SupplierQuote.number.like(f"{prefix}%")).count()
@@ -745,7 +746,7 @@ def price_quote(quote: SupplierQuote, *, on: Optional[date] = None) -> Dict:
     staff leave it out with a reason. Lines that are by design (no quantity, technical review) are listed
     as not included.
     """
-    on = on or date.today()
+    on = on or local_today()
     result = takeoff_for(quote)
     choices = quote.choices_json or {}
     rows = []
@@ -850,7 +851,7 @@ def issue_quote(quote: SupplierQuote, *, user, drawing_fingerprint: str = "") ->
     if priced["blockers"]:
         raise ProDeskError("Not ready to issue: " + " ".join(priced["blockers"][:4]))
     settings = settings_for(quote.supplier_id)
-    today = date.today()
+    today = local_today()
     location = db.session.get(SupplierLocation, quote.supplier_location_id) if quote.supplier_location_id else None
     frozen = {
         "number": quote.number,
@@ -989,7 +990,7 @@ def resolve_link(credential: str, *, record_view: bool = True) -> SupplierQuoteL
 
 
 def _expired(quote: SupplierQuote) -> bool:
-    return bool(quote.valid_until and quote.valid_until < date.today())
+    return bool(quote.valid_until and quote.valid_until < local_today())
 
 
 def _accept(quote, *, method, name, recorded_by, side, accepted: bool):

@@ -410,7 +410,7 @@ class PermitRule(db.Model):
     jurisdiction = db.relationship("JurisdictionDefinition")
 
     def is_currently_effective(self, as_of=None):
-        day = as_of or date.today()
+        day = as_of or _office_today()
         if self.effective_from and day < self.effective_from:
             return False
         if self.effective_to is not None and day > self.effective_to:
@@ -633,3 +633,10 @@ class PermitFinding(db.Model):
 
     def __repr__(self):
         return f"<PermitFinding {self.status} {self.topic}>"
+
+
+def _office_today():
+    """The office's date (company zone). Imported here, not at the top, so models never load services."""
+    from app.services.local_time import local_today
+
+    return local_today()

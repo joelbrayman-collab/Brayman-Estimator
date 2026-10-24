@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app import create_app, db  # noqa: E402
+import app.models  # noqa: E402,F401  (models load before app.services)
+from app.services.local_time import local_today  # noqa: E402  (the office's date, as the app uses)
 from tests.auth_fixtures import create_membership, create_user, ensure_office_user  # noqa: E402
 
 KEVIN = ("kevin.calendar@example.invalid", "Synthetic-calendar-pass-1")
@@ -35,7 +37,7 @@ def seed() -> dict:
     kevin = create_user(email=KEVIN[0], password=KEVIN[1], display_name="Kevin Synthetic")
     create_membership(kevin)
     db.session.commit()
-    monday = date.today() - timedelta(days=date.today().weekday())
+    monday = local_today() - timedelta(days=local_today().weekday())
     day = lambda n: monday + timedelta(days=n)  # noqa: E731
     client = Client(name="Synthetic Calendar Client", organization_id=ORG)
     db.session.add(client)

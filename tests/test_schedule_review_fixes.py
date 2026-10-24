@@ -9,13 +9,14 @@ Synthetic data only.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 from app import db
 from app.models.schedule import WorkScheduleItem
 from app.services.schedule import FIELD_SCOPE_COMPANY, assemble_field_schedule, create_schedule_item, update_schedule_window
 from tests.test_work_schedule_fg035 import _project, _work, app, client  # noqa: F401
 
-TODAY = date.today()
+TODAY = local_today()
 
 
 def _item(project, element, start, end=None):

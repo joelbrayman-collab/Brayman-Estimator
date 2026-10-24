@@ -4,6 +4,7 @@ only office members with scheduling authority change the schedule (G7). Syntheti
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 
@@ -29,7 +30,7 @@ from tests.auth_fixtures import ensure_office_user, login_office_user
 
 pytestmark = pytest.mark.no_office_auth
 
-TODAY = date.today()
+TODAY = local_today()
 OWNER = ("owner@example.invalid", "owner-test-password", "Olive Owner (synthetic)")
 STAFF = ("staff@example.invalid", "staff-test-password", "Sam Staff (synthetic)")
 KEVIN = ("kevin.field@example.invalid", "field-test-password", "Kevin Field (synthetic crew)")

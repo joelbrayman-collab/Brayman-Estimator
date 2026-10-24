@@ -13,6 +13,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import date, datetime
+from app.services.local_time import local_date
 from decimal import Decimal
 from typing import Optional
 
@@ -325,7 +326,7 @@ def generate_project_contract(
         "project_name": project_name,
         "project_address": project_address,
         "site": project_address,
-        "contract_date": generated_at.date().isoformat(),
+        "contract_date": local_date(generated_at).isoformat(),
         "estimate_id": estimate.id,
         "estimate_number": estimate_number,
         "estimate_version_id": version.id,

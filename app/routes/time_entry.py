@@ -4,6 +4,7 @@ Same LabourTimeEntry authority as Field Web. No separate desktop engine.
 """
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 from flask import (
     Blueprint,
@@ -82,8 +83,8 @@ def review():
         flash("Check the time filters.", "error")
         return redirect(url_for("time_entry.review"))
     if date_from is None and date_to is None and not request.args:
-        date_from = date.today() - timedelta(days=6)
-        date_to = date.today()
+        date_from = local_today() - timedelta(days=6)
+        date_to = local_today()
     entries = list_time_entries(
         organization_id=organization.id,
         project_id=project_id,
@@ -219,7 +220,7 @@ def new_entry():
         projects=projects,
         project=project,
         choices=choices,
-        today=date.today().isoformat(),
+        today=local_today().isoformat(),
         lock_project=bound_from_query and project is not None,
         next_view=next_view,
         cancel_url=cancel_url,

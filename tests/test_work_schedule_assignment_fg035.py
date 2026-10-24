@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 import sqlalchemy as sa
@@ -48,8 +49,8 @@ from tests.auth_fixtures import (
     login_office_user,
 )
 
-# Execution-relative: Company Schedule default window starts at date.today() (FG-035 SCH-A).
-TODAY = date.today()
+# Execution-relative: Company Schedule default window starts at local_today() (FG-035 SCH-A).
+TODAY = local_today()
 
 
 @pytest.fixture

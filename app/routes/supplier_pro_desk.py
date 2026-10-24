@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import tempfile
 from datetime import date
+from app.services.local_time import local_date, local_today
 
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -65,7 +66,7 @@ def identity_for(quote) -> OB.Identity:
     location = db.session.get(SupplierLocation, quote.supplier_location_id) if quote.supplier_location_id else None
     lines = [x for x in ((location.display_name if location else ""), (settings.contact_line if settings else "")) if x]
     customer = quote.customer
-    when = (quote.issued_at.date() if quote.issued_at else date.today()).isoformat()
+    when = (local_date(quote.issued_at) if quote.issued_at else local_today()).isoformat()
     return OB.Identity(company=name, company_lines=lines or ["Prepared at the PRO Desk"],
                        project=f"{quote.number} · {customer.display_name}",
                        address=", ".join(x for x in (customer.address, customer.town) if x) or "Address to be confirmed",
@@ -216,7 +217,7 @@ def quote(supplier_id, quote_id):
         max_openings=S.MAX_OPENINGS, drawable=S.drawable(values), describe=S.describe(values), priced=priced,
         summary=T.summary(priced["takeoff"]), sketches=P.active_sketches(q), events=P.quote_events(q),
         products=P.supplier_products_for(supplier.id), settings=P.settings_for(supplier.id),
-        frozen=q.issued_json or {}, today=date.today(), draft=q.status == QUOTE_DRAFT,
+        frozen=q.issued_json or {}, today=local_today(), draft=q.status == QUOTE_DRAFT,
         credential=request.args.get("link"), statuses={"DRAFT": "Draft", "ISSUED": "Issued", "ACCEPTED": "Accepted",
                                                        "DECLINED": "Declined", "CANCELLED": "Replaced by a revision"})
 

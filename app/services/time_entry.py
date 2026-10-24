@@ -9,6 +9,7 @@ SCH / PERF / CLOSE / LEARN / QB-T are not implemented here.
 from __future__ import annotations
 
 from datetime import date, datetime
+from app.services.local_time import local_today
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Optional
 
@@ -136,7 +137,7 @@ def parse_hours(value) -> Decimal:
 
 
 def parse_work_date(value, *, today: Optional[date] = None) -> date:
-    today = today or date.today()
+    today = today or local_today()
     if value is None or str(value).strip() == "":
         raise TimeEntryError("Choose the work date.")
     if isinstance(value, date) and not isinstance(value, datetime):
@@ -1137,7 +1138,7 @@ def worker_time_totals(
     from datetime import timedelta
 
     org_id = _org_id(organization_id)
-    today = today or date.today()
+    today = today or local_today()
     week_start = today - timedelta(days=today.weekday())
     totals = {}
     for status in (TIME_STATUS_SUBMITTED, TIME_STATUS_RETURNED, TIME_STATUS_APPROVED):

@@ -10,6 +10,7 @@ in the URL and with its own supplier id plus A's share/order/change ids. Synthet
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from io import BytesIO
 
 import pytest
@@ -77,7 +78,7 @@ def world(app, client):  # noqa: F811
     change = SupplierDeliveryChange.query.one()
     assert change.status == "PENDING" and change.requested_by_side == "CONTRACTOR"
     # A second, still-open concrete request to A (a quote could still be returned on it).
-    delivery = (date.today() + timedelta(days=9)).isoformat()
+    delivery = (local_today() + timedelta(days=9)).isoformat()
     client.post(f"/projects/{project.id}/concrete-requests", data={
         "volume_m3": "2.0", "strength_mpa": "25", "delivery_date": delivery, "placement": "Chute",
         "contractor_supplier_account_id": tomlinson.id})

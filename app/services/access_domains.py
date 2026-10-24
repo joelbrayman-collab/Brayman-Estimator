@@ -6,6 +6,7 @@ from flask import abort
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 
+from app.services.local_time import local_today
 from app import db, login_manager
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.services.organizations import (
@@ -390,7 +391,7 @@ def field_visible_project_ids(user, organization_id):
     if not user_is_field_only(user, organization_id):
         return None
     user_id = int(getattr(user, "id", user))
-    since = date.today() - timedelta(days=FIELD_ASSIGNMENT_LOOKBACK_DAYS)
+    since = local_today() - timedelta(days=FIELD_ASSIGNMENT_LOOKBACK_DAYS)
     items = (WorkScheduleItem.query.filter(WorkScheduleItem.organization_id == organization_id,
                                            WorkScheduleItem.status == SCHEDULE_STATUS_ACTIVE,
                                            WorkScheduleItem.scheduled_end >= since).all())

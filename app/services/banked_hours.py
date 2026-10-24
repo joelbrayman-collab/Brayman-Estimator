@@ -16,6 +16,7 @@ wage, rate or money is read or shown here.
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Optional
 
@@ -115,7 +116,7 @@ def _decimal_field(raw, label, *, allow_zero=False, maximum=Decimal("168")) -> D
 
 def parse_policy_form(form, *, today: Optional[date] = None, current: Optional[BankedHoursPolicy] = None) -> dict:
     """Every value must be entered by the owner: no defaults are filled in."""
-    today = today or date.today()
+    today = today or local_today()
     normal = _decimal_field(form.get("normal_week_hours"), "the normal work week (hours)")
     after = _decimal_field(form.get("extra_after_hours"), "the weekly hours after which extra hours start")
     if after < normal:
@@ -391,7 +392,7 @@ KIND_LABELS = {BANKED_KIND_EARNED: "Earned", BANKED_KIND_USED: "Time off taken",
 
 def worker_summary(organization_id: str, user_id: int, *, today: Optional[date] = None) -> dict:
     """What a worker (and the office) sees: balance, this week, recent movements, the policy in words."""
-    today = today or date.today()
+    today = today or local_today()
     policy, week_start = policy_for_week_containing(organization_id, today)
     shown_policy = policy or latest_policy(organization_id)
     week = week_figures(organization_id, user_id, week_start, policy) if policy is not None else None

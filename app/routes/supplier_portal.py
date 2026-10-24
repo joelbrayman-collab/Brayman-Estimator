@@ -7,6 +7,7 @@ a supplier the signed-in person belongs to; anything else is Not found.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
@@ -132,7 +133,7 @@ def request_detail(supplier_id, share_id):
                            pending=pending_change(order) if order else None,
                            changes=change_history(order) if order else [],
                            closure=order_closure(order),
-                           today=date.today(),
+                           today=local_today(),
                            concrete_charges=CONCRETE_CHARGES, kind_concrete=KIND_CONCRETE)
 
 

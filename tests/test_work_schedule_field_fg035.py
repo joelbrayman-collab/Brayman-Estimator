@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 from pathlib import Path
 from urllib.parse import quote
@@ -415,7 +416,7 @@ def _login_worker(client, email=WORKER_EMAIL, password=WORKER_PASSWORD):
 
 
 def test_field_surfaces_and_time_suggestion(client, app):
-    day = date.today()
+    day = local_today()
     project = _project(name="Field SCH-D House")
     element = _element(project)
     activity = _activity(element)
@@ -492,7 +493,7 @@ def test_field_surfaces_and_time_suggestion(client, app):
     posted = client.post(
         f"/field/projects/{project.id}/time",
         data={
-            "work_date": date.today().isoformat(),
+            "work_date": local_today().isoformat(),
             "project_work_activity_id": activity.id,
             "hours": "3.00",
         },
@@ -502,7 +503,7 @@ def test_field_surfaces_and_time_suggestion(client, app):
     assert LabourTimeEntry.query.filter_by(worker_user_id=worker.id).count() == 1
     assert unassigned_item.id not in {
         row["schedule_item_id"]
-        for row in suggest_time_attribution(DEFAULT_ORGANIZATION_ID, worker.id, date.today())
+        for row in suggest_time_attribution(DEFAULT_ORGANIZATION_ID, worker.id, local_today())
     }
 
 
@@ -530,7 +531,7 @@ def test_field_card_dates_and_duplicate_warnings(app):
 
 
 def test_enter_time_from_today_does_not_require_project_confirm(client, app):
-    day = date.today()
+    day = local_today()
     project = _project(name="Field SCH-D Time Gate House")
     element = _element(project, "Pour")
     activity = _activity(element, "Place concrete")
@@ -775,7 +776,7 @@ def test_field_uses_project_address_and_omits_broken_directions(app):
 
 
 def test_field_surfaces_show_address_directions_and_month_calendar(client, app):
-    day = date.today()
+    day = local_today()
     addressed = _project(name="Barn Job", address="48 Main Street, Ottawa, ON")
     other_project = _project(name="Shop Job", address="9 Other Road, Ottawa, ON")
     missing = _project(name="Quiet Job")
@@ -866,7 +867,7 @@ def test_field_surfaces_show_address_directions_and_month_calendar(client, app):
 
 
 def test_missing_address_has_no_directions_action(client, app):
-    day = date.today()
+    day = local_today()
     project = _project(name="No Site Address")
     element = _element(project)
     item = _item(project, element, day, day)
@@ -911,7 +912,7 @@ def test_field_prefers_civic_location_and_omits_country_postal(app):
 
 def test_directions_destination_is_encoded_and_html_escaped(client, app):
     nasty = '12 A&B St?x=1"><script>alert(1)</script>'
-    day = date.today()
+    day = local_today()
     project = _project(name="Safe Job", address=nasty)
     element = _element(project)
     item = _item(project, element, day, day)

@@ -8,6 +8,7 @@ remain separate actions.
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 
 import pytest
 from sqlalchemy.pool import NullPool
@@ -228,7 +229,7 @@ def _path2_post(client, project, extra, title="Office extra CO"):
             "description": extra.display_name,
             "project_id": str(project.id),
             "status": "Draft",
-            "requested_date": date.today().isoformat(),
+            "requested_date": local_today().isoformat(),
             "markup_percent": "0",
             "tax_percent": "0",
             "extra_work_activity_id": str(extra.id),
@@ -390,7 +391,7 @@ def test_office_standalone_co_create_works_without_extra(app, client):
             "title": "Office standalone CO",
             "project_id": str(project.id),
             "status": "Draft",
-            "requested_date": date.today().isoformat(),
+            "requested_date": local_today().isoformat(),
             "markup_percent": "0",
             "tax_percent": "0",
         },
@@ -418,7 +419,7 @@ def test_estimate_version_standalone_co_create_works(app, client):
             "title": "Version standalone CO",
             "description": "Scope add",
             "status": "Draft",
-            "requested_date": date.today().isoformat(),
+            "requested_date": local_today().isoformat(),
             "markup_percent": "0",
             "tax_percent": "0",
         },

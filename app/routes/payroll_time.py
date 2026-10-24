@@ -11,6 +11,7 @@ Administrator (checked in the services). Every query is scoped to the signed-in 
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -61,7 +62,7 @@ def quickbooks_time():
     return render_template("payroll_time/quickbooks_time.html", connection=qbt.connection_status(),
                            rows=qbt.transfer_rows(org, status=status), counts=qbt.counts(org),
                            labels=qbt.STATUS_LABELS, status=status, events=qbt.history(org, 40),
-                           can_administer=_can_administer(org), today=date.today())
+                           can_administer=_can_administer(org), today=local_today())
 
 
 @payroll_time_bp.route("/time/quickbooks-time/send", methods=["POST"])
@@ -154,8 +155,8 @@ def quickbooks_time_links():
 def quickbooks_time_check():
     """Office: compare QuickBooks Time with what CalibraytAI sent, for a date range. Reads only."""
     org = _org()
-    start = _date_arg("from", date.today() - timedelta(days=date.today().weekday() + 7))
-    end = _date_arg("to", date.today())
+    start = _date_arg("from", local_today() - timedelta(days=local_today().weekday() + 7))
+    end = _date_arg("to", local_today())
     result = None
     if request.method == "POST":
         try:
@@ -189,7 +190,7 @@ def banked_hours_worker(user_id):
     if worker is None or UserMembership.query.filter_by(user_id=user_id, organization_id=org).first() is None:
         abort(404)
     return render_template("payroll_time/banked_worker.html", worker=worker,
-                           summary=banked.worker_summary(org, user_id), today=date.today(),
+                           summary=banked.worker_summary(org, user_id), today=local_today(),
                            is_self=worker.id == current_user.id)
 
 
@@ -241,7 +242,7 @@ def hours_policy():
 
     return render_template("payroll_time/hours_policy.html", current=current, versions=banked.policy_versions(org),
                            policy_text=banked.policy_summary(current), form=form, days=banked.DAY_NAMES,
-                           fields=dict(banked.POLICY_FIELDS), today=date.today(),
+                           fields=dict(banked.POLICY_FIELDS), today=local_today(),
                            company_time_project=get_company_time_project(org))
 
 
@@ -258,8 +259,8 @@ def company_work():
     company = get_company_time_project(org)
     if company is None:
         return render_template("payroll_time/company.html", company=None)
-    start = _date_arg("from", date.today() - timedelta(days=date.today().weekday()))
-    end = _date_arg("to", date.today())
+    start = _date_arg("from", local_today() - timedelta(days=local_today().weekday()))
+    end = _date_arg("to", local_today())
     entries = list_time_entries(organization_id=org, project_id=company.id, work_date_from=start, work_date_to=end)
     by_category = {}
     for e in entries:

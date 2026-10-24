@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import threading
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 from sqlalchemy.pool import NullPool
@@ -160,7 +161,7 @@ def test_sequential_already_closed_operational_writes_fail(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="4",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=worker.id,
             organization_id=DEFAULT_ORGANIZATION_ID,
         )
@@ -174,8 +175,8 @@ def test_sequential_already_closed_operational_writes_fail(app):
         create_schedule_item(
             project_id=project.id,
             project_work_element_id=element.id,
-            scheduled_start=date.today(),
-            scheduled_end=date.today() + timedelta(days=2),
+            scheduled_start=local_today(),
+            scheduled_end=local_today() + timedelta(days=2),
             organization_id=project.organization_id,
         )
     with pytest.raises(ChangeOrderServiceError, match=PROJECT_CLOSED_NEW_WORK):
@@ -185,7 +186,7 @@ def test_sequential_already_closed_operational_writes_fail(app):
             project,
             cost_class=COST_CLASS_OTHER_DIRECT,
             amount="10",
-            incurred_on=date.today(),
+            incurred_on=local_today(),
             actor_display_name="Office",
             organization_id=DEFAULT_ORGANIZATION_ID,
         )
@@ -227,7 +228,7 @@ def test_active_operational_write_still_succeeds(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="3",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
@@ -253,7 +254,7 @@ def test_reopen_then_new_work_still_succeeds(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="1",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
@@ -351,7 +352,7 @@ def test_concurrent_close_vs_time_fails_closed(app, monkeypatch):
                 project_id=project_id,
                 project_work_activity_id=activity_id,
                 hours="2",
-                work_date=date.today(),
+                work_date=local_today(),
                 worker_user_id=worker_id,
                 organization_id=DEFAULT_ORGANIZATION_ID,
             )
@@ -481,8 +482,8 @@ def test_concurrent_close_vs_schedule(app, monkeypatch):
         create_schedule_item(
             project_id=project_id,
             project_work_element_id=ctx["element_id"],
-            scheduled_start=date.today(),
-            scheduled_end=date.today() + timedelta(days=1),
+            scheduled_start=local_today(),
+            scheduled_end=local_today() + timedelta(days=1),
             organization_id=DEFAULT_ORGANIZATION_ID,
         )
 
@@ -514,7 +515,7 @@ def test_concurrent_close_vs_direct_cost_actual(app, monkeypatch):
             db.session.get(Project, project_id),
             cost_class=COST_CLASS_OTHER_DIRECT,
             amount="25",
-            incurred_on=date.today(),
+            incurred_on=local_today(),
             actor_display_name="Office",
             organization_id=DEFAULT_ORGANIZATION_ID,
         )

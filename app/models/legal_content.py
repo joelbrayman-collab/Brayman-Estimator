@@ -119,7 +119,7 @@ class LegalContentJurisdictionPackage(db.Model):
     )
 
     def is_effective_on(self, as_of=None):
-        day = as_of or date.today()
+        day = as_of or _office_today()
         if self.effective_from is None:
             return False
         if day < self.effective_from:
@@ -495,3 +495,10 @@ class LegalContentActivationEvent(db.Model):
 
     def __repr__(self):
         return f"<LegalContentActivationEvent {self.action} {self.actor_kind}>"
+
+
+def _office_today():
+    """The office's date (company zone). Imported here, not at the top, so models never load services."""
+    from app.services.local_time import local_today
+
+    return local_today()

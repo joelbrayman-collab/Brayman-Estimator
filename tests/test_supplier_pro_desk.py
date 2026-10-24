@@ -10,6 +10,7 @@ from __future__ import annotations
 import io
 import re
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -52,7 +53,7 @@ REFERENCE = {
     "opening_1_offset_ft": "4",
 }
 
-TODAY = date.today()
+TODAY = local_today()
 PRICE_FILE = (
     "sku,description,unit,pack_qty,price,discount_percent,discount_rule,effective_from,effective_to,availability,store\n"
     f"SYN-2416,2x4x16 SPF (synthetic),EA,,9.00,,,{TODAY - timedelta(days=5)},,IN_STOCK,\n"

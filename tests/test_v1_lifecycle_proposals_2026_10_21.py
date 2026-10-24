@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 from datetime import date
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -89,7 +90,7 @@ def test_the_stage_advances_at_send_accept_field_time_close_and_reopen(app):
     assert _project(project.id).status == "Proposal Sent"
     PA.accept_via_link(_credential(sent), confirmed_name=CLIENT[0], accepted=True, client_ip=None, user_agent=None)
     assert _project(project.id).status == "Contracted"
-    submit_time(project_id=project.id, project_work_activity_id=0, hours="2", work_date=date.today().isoformat(),
+    submit_time(project_id=project.id, project_work_activity_id=0, hours="2", work_date=local_today().isoformat(),
                 worker_user_id=user.id, organization_id=DEFAULT_ORGANIZATION_ID,
                 extra_work_description="Site layout", extra_work_element_name="Layout")
     assert _project(project.id).status == "Active"

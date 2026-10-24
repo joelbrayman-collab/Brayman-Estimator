@@ -13,6 +13,7 @@ from __future__ import annotations
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
+from app.services.local_time import local_today
 from app.models.user import UserMembership
 from app.services.access_domains import (
     RECOGNIZED_STORED_DOMAINS,
@@ -223,7 +224,7 @@ def _crews_of(membership_id):
     for m in rows:
         crew = OrganizationCrew.query.get(m.crew_id)
         ends = m.effective_to
-        if crew is not None and (ends is None or ends >= date.today()):
+        if crew is not None and (ends is None or ends >= local_today()):
             out.append({"crew": crew, "member": m})
     return out
 

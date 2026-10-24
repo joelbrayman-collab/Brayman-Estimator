@@ -6,6 +6,7 @@ import inspect
 import json
 import os
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 from io import BytesIO
 
 import pytest
@@ -294,13 +295,13 @@ def test_effective_dating_excludes_future_and_expired_rules(app):
     future = _insert_non_operational_rule(
         code="OTT-CH-FUTURE",
         state="APPROVED",
-        effective_from=date.today() + timedelta(days=30),
+        effective_from=local_today() + timedelta(days=30),
     )
     expired = _insert_non_operational_rule(
         code="OTT-CH-EXPIRED",
         state="APPROVED",
         effective_from=date(2020, 1, 1),
-        effective_to=date.today() - timedelta(days=1),
+        effective_to=local_today() - timedelta(days=1),
     )
     live = operational_rules()
     live_codes = {row.code for row in live}

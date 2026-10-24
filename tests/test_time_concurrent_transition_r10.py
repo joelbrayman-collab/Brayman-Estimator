@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import threading
 from datetime import date
+from app.services.local_time import local_today
 
 import pytest
 from sqlalchemy import UniqueConstraint
@@ -127,7 +128,7 @@ def _submit(project, activity, worker, hours="4"):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours=hours,
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
@@ -198,7 +199,7 @@ def test_normal_approve_return_resubmit_succeed(app):
     resubmitted = resubmit_time(
         time_entry_id=other.id,
         hours="3",
-        work_date=date.today(),
+        work_date=local_today(),
         project_work_activity_id=activity.id,
         worker_user_id=worker.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
@@ -340,7 +341,7 @@ def test_stale_resubmit_cannot_overwrite_newer_status(app, monkeypatch):
                 resubmit_time(
                     time_entry_id=entry_id,
                     hours=hours,
-                    work_date=date.today(),
+                    work_date=local_today(),
                     project_work_activity_id=activity_id,
                     worker_user_id=worker_id,
                     organization_id=DEFAULT_ORGANIZATION_ID,

@@ -7,6 +7,7 @@ direct URLs. Synthetic data only.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 from app import db
 from app.models.user import UserMembership
@@ -17,7 +18,7 @@ from app.services.schedule import assign_user, create_schedule_item
 from tests.auth_fixtures import ensure_office_user, login_office_user
 from tests.test_work_schedule_fg035 import _project, _work, app  # noqa: F401
 
-TODAY = date.today()
+TODAY = local_today()
 
 
 def _crew_member(email, owner):

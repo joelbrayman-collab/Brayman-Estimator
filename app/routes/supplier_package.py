@@ -1,6 +1,7 @@
 """Project Hub PRICE — Supplier Package / mapping review (FG-029)."""
 
 from datetime import datetime
+from app.services.local_time import local_now
 from io import BytesIO
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
@@ -244,7 +245,7 @@ def download_estimate_request(project_id):
     if not review["requirements"]:
         flash("Add a material requirement before the estimate request.", "error")
         return redirect(url_for("supplier_package.mapping_review", project_id=project.id))
-    issued_on = datetime.now().strftime("%d %B %Y").lstrip("0")
+    issued_on = local_now().strftime("%d %B %Y").lstrip("0")
     document = job_supplier_estimate_request(
         project_name=project.name,
         project_address=project.address or "",

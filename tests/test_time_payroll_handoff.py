@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -43,7 +44,7 @@ from tests.auth_fixtures import create_membership, create_user
 from tests.test_field_time_labour_2026_10_22 import BEN, KEVIN, MONEY, _client, _post_time, _setup
 from tests.test_work_time_fg035 import app  # noqa: F401
 
-TODAY = date.today()
+TODAY = local_today()
 WEEK_START = TODAY - timedelta(days=TODAY.weekday())  # Monday
 POLICY = {"normal_week_hours": "8", "extra_after_hours": "8", "extra_hours_treatment": "BANK", "bank_rate": "1.5",
           "counts_company_time": "yes", "week_start_day": "0", "effective_from": WEEK_START.isoformat()}

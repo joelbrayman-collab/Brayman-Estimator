@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import calendar
 from datetime import date, datetime, timedelta
+from app.services.local_time import local_today
 from typing import Optional
 
 from flask_login import current_user
@@ -1341,7 +1342,7 @@ def assemble_schedule(
     include_conflicts: bool = False,
 ) -> dict:
     org_id = _org_id(organization_id)
-    today = date.today()
+    today = local_today()
     if window_start is None:
         window_start = today
     if window_end is None:
@@ -1456,7 +1457,7 @@ FIELD_SCOPE_COMPANY = "company"
 
 
 def calendar_week_bounds(today: Optional[date] = None) -> tuple[date, date]:
-    today = today or date.today()
+    today = today or local_today()
     start = today - timedelta(days=today.weekday())
     return start, start + timedelta(days=6)
 
@@ -1467,7 +1468,7 @@ def calendar_month_bounds(year: int, month: int) -> tuple[date, date]:
 
 
 def field_month_bounds(today: Optional[date] = None) -> tuple[date, date]:
-    today = today or date.today()
+    today = today or local_today()
     return calendar_month_bounds(today.year, today.month)
 
 
@@ -1605,7 +1606,7 @@ def assemble_field_schedule(
 ) -> dict:
     """Same Schedule rows as Company/Hub. Field projection only. No second store."""
     org_id = _org_id(organization_id)
-    today = today or date.today()
+    today = today or local_today()
     if window_start is None:
         window_start = today
     if window_end is None:

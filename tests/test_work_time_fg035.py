@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, timedelta
+from app.services.local_time import local_today
 from decimal import Decimal
 
 import pytest
@@ -202,7 +203,7 @@ def test_original_submit_approve_approved_service(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="4.5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     assert entry.status == TIME_STATUS_SUBMITTED
@@ -236,7 +237,7 @@ def test_change_order_time_inherits_without_worker_selecting_co(app):
         project_id=project.id,
         project_work_activity_id=co_activity.id,
         hours="14",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     assert entry.scope_origin == SCOPE_CHANGE_ORDER
@@ -258,7 +259,7 @@ def test_extra_work_time_uses_existing_scope_authority(app):
         project_id=project.id,
         project_work_activity_id=0,
         hours="3.5",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
         extra_work_description="Move garage drain",
     )
@@ -283,7 +284,7 @@ def test_return_resubmit_and_post_approval_correction(app):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="8",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     returned = return_time(
@@ -297,7 +298,7 @@ def test_return_resubmit_and_post_approval_correction(app):
     resubmitted = resubmit_time(
         time_entry_id=entry.id,
         hours="6",
-        work_date=date.today(),
+        work_date=local_today(),
         project_work_activity_id=activity.id,
         worker_user_id=worker.id,
     )
@@ -325,7 +326,7 @@ def test_validation_future_date_hours_and_inactive_work(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="4",
-            work_date=date.today() + timedelta(days=1),
+            work_date=local_today() + timedelta(days=1),
             worker_user_id=worker.id,
         )
     with pytest.raises(TimeEntryError):
@@ -333,7 +334,7 @@ def test_validation_future_date_hours_and_inactive_work(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="0",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=worker.id,
         )
     with pytest.raises(TimeEntryError):
@@ -341,14 +342,14 @@ def test_validation_future_date_hours_and_inactive_work(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="16.25",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=worker.id,
         )
     submit_time(
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="16",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     with pytest.raises(TimeEntryError):
@@ -356,7 +357,7 @@ def test_validation_future_date_hours_and_inactive_work(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="9",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=worker.id,
         )
     activity.status = "INACTIVE"
@@ -366,7 +367,7 @@ def test_validation_future_date_hours_and_inactive_work(app):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="1",
-            work_date=date.today() - timedelta(days=1),
+            work_date=local_today() - timedelta(days=1),
             worker_user_id=worker.id,
         )
 
@@ -385,7 +386,7 @@ def test_tenant_isolation_blocks_cross_org_time(app, org_b):
             project_id=project.id,
             project_work_activity_id=activity.id,
             hours="2",
-            work_date=date.today(),
+            work_date=local_today(),
             worker_user_id=outsider.id,
         )
     worker = _worker()
@@ -393,7 +394,7 @@ def test_tenant_isolation_blocks_cross_org_time(app, org_b):
         project_id=project.id,
         project_work_activity_id=activity.id,
         hours="2",
-        work_date=date.today(),
+        work_date=local_today(),
         worker_user_id=worker.id,
     )
     with pytest.raises(TimeEntryForbiddenError):
@@ -423,7 +424,7 @@ def test_field_and_office_time_surfaces(client, app):
     posted = client.post(
         f"/field/projects/{project.id}/time",
         data={
-            "work_date": date.today().isoformat(),
+            "work_date": local_today().isoformat(),
             "project_work_activity_id": activity.id,
             "hours": "4.50",
         },
@@ -439,7 +440,7 @@ def test_field_and_office_time_surfaces(client, app):
     extra = client.post(
         f"/field/projects/{project.id}/time",
         data={
-            "work_date": date.today().isoformat(),
+            "work_date": local_today().isoformat(),
             "hours": "1.00",
             "extra_work_description": "Night pump-out",
         },

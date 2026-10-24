@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, timedelta
+from app.services.local_time import local_today
 
 import pytest
 import sqlalchemy as sa
@@ -52,7 +53,7 @@ from tests.auth_fixtures import (
     logout_office_user,
 )
 
-TODAY = date.today()
+TODAY = local_today()
 
 
 @pytest.fixture

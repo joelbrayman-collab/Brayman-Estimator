@@ -3,6 +3,7 @@ from io import BytesIO
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 
+from app.services.local_time import local_today
 from app import db
 from app.models import Client, Project
 from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE
@@ -334,7 +335,7 @@ def _open_supplier_orders(project) -> list:
     rows = []
     for row in project_purchase_orders(organization_id=project.organization_id, project_id=project.id):
         when = row["schedule"]["date"]
-        if row["order"].status in (PO_PLACED, PO_CONFIRMED) and (when is None or when >= _date.today()):
+        if row["order"].status in (PO_PLACED, PO_CONFIRMED) and (when is None or when >= local_today()):
             rows.append(row)
     return rows
 

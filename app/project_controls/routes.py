@@ -1,4 +1,5 @@
 from datetime import datetime
+from app.services.local_time import local_today
 
 from flask import (
     Blueprint,
@@ -299,7 +300,7 @@ def create_change_order_route():
         "reason": "",
         "status": "Draft",
         "requested_by": "",
-        "requested_date": datetime.utcnow().date().isoformat(),
+        "requested_date": local_today().isoformat(),
         "project_id": str(bound_project.id) if bound_project else "",
         "markup_percent": "0.00",
         # The project's established rate (accepted proposal / estimate / organization), never a silent 0 %.
@@ -387,7 +388,7 @@ def create_from_estimate_version(estimate_id, version_id):
         "reason": "",
         "status": "Draft",
         "requested_by": "",
-        "requested_date": datetime.utcnow().date().isoformat(),
+        "requested_date": local_today().isoformat(),
         "project_id": str(project.id),
         "markup_percent": (
             "0.00" if snapshot else f"{version.overhead_percent:.2f}"

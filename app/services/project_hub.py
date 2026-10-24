@@ -13,6 +13,7 @@ from types import SimpleNamespace
 
 from sqlalchemy import func
 
+from app.services.local_time import local_today
 from app import db
 from app.models import Proposal
 from app.models.direct_cost_actual import COST_CLASSES
@@ -233,7 +234,7 @@ def _project_schedule_window(project_id: int, organization_id) -> dict:
     ends = [r[1] or r[0] for r in rows if (r[1] or r[0])]
     if not starts:
         return {}
-    today = _date.today()
+    today = local_today()
     return {"window_start": min(min(starts), today), "window_end": max(max(ends), today)}
 
 

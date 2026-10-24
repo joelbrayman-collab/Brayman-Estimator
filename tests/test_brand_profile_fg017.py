@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, datetime
+from app.services.local_time import local_today
 from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
@@ -523,7 +524,7 @@ def test_change_order_pdf_still_uses_static_product_branding(app):
         title="FG017 CO",
         description="Unchanged family",
         status="Draft",
-        requested_date=date.today(),
+        requested_date=local_today(),
         estimate_version=estimate.current_version,
     )
     add_change_order_item(

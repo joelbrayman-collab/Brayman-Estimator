@@ -33,6 +33,7 @@
             <dt>You should see</dt><dd>{{ s.expect }}</dd>
             {% if s.why %}<dt>Why</dt><dd>{{ s.why }}</dd>{% endif %}
           </dl>
+          {% if practice is defined and practice %}{% include "training/_supplier_practice.html" %}{% endif %}
           {% if step_links is defined and step_links.get(i) %}
           <p class="tc-step-links" data-step-links>
             {% for label, href in step_links[i] %}<a class="tc-btn tc-btn-primary" href="{{ href }}" data-step-link>{{ label }} ↗</a>{% endfor %}

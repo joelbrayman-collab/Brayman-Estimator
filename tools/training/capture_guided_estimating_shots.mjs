@@ -166,6 +166,7 @@ async function allowance(pg, amount) {
   const box = pg.locator("[data-allowance-zero]");
   if (!(await box.getAttribute("open"))) await box.locator("summary").click();
   await box.locator("input[name=amount]").fill(amount);
+  await box.locator("form[data-allowance-form] input[name=reason]").fill("The quote is still to come");
   await submit(pg, box.locator("button[data-approve-allowance]"));
 }
 

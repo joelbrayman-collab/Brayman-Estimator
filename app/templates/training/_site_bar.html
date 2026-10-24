@@ -1,16 +1,18 @@
 {% if training_site %}<style>
 .training-site-bar { background:#1c1f24; color:#e6e6e6; font:500 13px/1.3 'IBM Plex Sans',system-ui,sans-serif; padding:4px 12px; display:flex; flex-wrap:wrap; gap:4px 12px; align-items:center; }
-.training-site-bar a { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:4px 12px; border-radius:999px; background:#c79a2b; color:#141414; text-decoration:none; font-weight:700; font-size:13px; }
+.training-site-bar a, .training-site-bar button[data-supplier-practice-return] { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:4px 12px; border:0; border-radius:999px; background:#c79a2b; color:#141414; text-decoration:none; font:700 13px/1.3 'IBM Plex Sans',system-ui,sans-serif; cursor:pointer; }
 .training-site-bar a.is-quiet { background:transparent; color:#fff; text-decoration:underline; padding:4px 6px; }
-.training-site-bar a:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.training-site-bar a:focus-visible, .training-site-bar button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
 .training-site-bar span { min-width:0; }
+.training-site-bar form { margin:0; }
 @media (min-width: 901px) {
   body.app-shell .training-site-bar { margin-left:var(--sidebar-width, 248px); }
   body.app-shell[data-sidebar-collapsed="true"] .training-site-bar { margin-left:var(--sidebar-collapsed-width, 76px); }
 }
 </style><div class="training-site-bar" data-training-site{% if training_focus %} data-tc-focus="{{ training_focus }}"{% endif %}>
-  {% if training_return %}<a href="{{ training_return }}" data-training-return><span aria-hidden="true">&#8592;</span> Back to the lesson step</a>
+  {% if training_practice %}<form method="post" action="{{ url_for('training.supplier_practice_return') }}" data-supplier-practice-bar><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="back" value="{{ training_practice.back }}"><button type="submit" data-supplier-practice-return><span aria-hidden="true">&#8592;</span> Back to the Training Centre as {{ training_practice.admin }}</button></form>
+  {% elif training_return %}<a href="{{ training_return }}" data-training-return><span aria-hidden="true">&#8592;</span> Back to the lesson step</a>
   <a href="{{ url_for('training.home') }}" class="is-quiet" data-training-link>My training</a>
   {% else %}<a href="{{ url_for('training.home') }}" data-training-link aria-label="Back to my training (Training Centre)"><span aria-hidden="true">&#8592;</span> Back to my training</a>{% endif %}
   <span>Training site · practice here with fictional training records</span>
-</div>{% if training_return %}<a href="{{ training_return }}" style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2000;background:#c79a2b;color:#141414;text-decoration:none;padding:12px 18px;min-height:44px;border-radius:999px;font:700 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.3);" data-training-return-float>← Back to the lesson step</a>{% endif %}{% if training_focus %}<script src="{{ url_for('static', filename='training/site-bar.js') }}" defer></script>{% endif %}{% endif %}
+</div>{% if training_return and not training_practice %}<a href="{{ training_return }}" style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2000;background:#c79a2b;color:#141414;text-decoration:none;padding:12px 18px;min-height:44px;border-radius:999px;font:700 15px/1.4 'IBM Plex Sans',system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.3);" data-training-return-float>← Back to the lesson step</a>{% endif %}{% if training_focus %}<script src="{{ url_for('static', filename='training/site-bar.js') }}" defer></script>{% endif %}{% endif %}

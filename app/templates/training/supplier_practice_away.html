@@ -1,0 +1,21 @@
+{% extends "training/base.html" %}
+{% block title %}Supplier practice{% endblock %}
+{% block content %}
+<section class="tc-card tc-hero" data-supplier-practice-away>
+  <p class="tc-eyebrow">Supplier practice site</p>
+  <h1>You are signed in as {{ current_user.display_name }}</h1>
+  <p>This is a supplier practice login for the Supplier Hub on the training site. Training progress and test results are recorded on your own sign-in, not here.</p>
+  {% if marker %}
+  <form method="post" action="{{ url_for('training.supplier_practice_return') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="back" value="{{ back }}">
+    <button class="tc-btn tc-btn-primary" type="submit" data-supplier-practice-return>Back to the Training Centre as {{ marker.admin.display_name }}</button>
+  </form>
+  {% else %}
+  <form method="post" action="{{ url_for('auth.logout') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="tc-btn tc-btn-primary" type="submit" data-supplier-practice-signout>Sign out and sign in as yourself</button>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

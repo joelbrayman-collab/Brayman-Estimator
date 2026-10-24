@@ -12,6 +12,7 @@
     <dt>Do this</dt><dd>{{ case.action }}</dd>
     <dt>Expected result</dt><dd>{{ case.expected }}</dd>
   </dl>
+  {% if practice_uat %}{% include "training/_supplier_practice_uat.html" %}{% endif %}
   <form method="post" class="tc-uat-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <fieldset><legend>Result</legend>

@@ -211,20 +211,25 @@
   </details>
 
   <details class="ge-card" data-allowance-zero>
-    <summary><strong>Allowance or no-cost decision</strong> (needs your approval)</summary>
-    {% if stage.allowance_approved_at %}<p class="ge-ok">Allowance {{ "${:,.2f}".format(stage.allowance_amount|float) }} approved by {{ stage.allowance_approved_by }}.</p>{% endif %}
-    {% if stage.zero_cost_authorized_at %}<p class="ge-ok">No cost: {{ stage.zero_cost_reason }} — authorized by {{ stage.zero_cost_authorized_by }}.</p>{% endif %}
-    <form method="post" action="{{ base }}allowance" class="ge-form-row">
+    <summary><strong>Allowance or no-cost decision</strong> (needs approval)</summary>
+    {% if stage.allowance_approved_at %}<p class="ge-ok" data-allowance-record>Allowance {{ "${:,.2f}".format(stage.allowance_amount|float) }} approved by {{ stage.allowance_approved_by }} on {{ stage.allowance_approved_at.strftime("%b %d, %Y") }}{% if allowance_event and allowance_event.detail and "Reason: " in allowance_event.detail %}. Reason: {{ allowance_event.detail.split("Reason: ", 1)[1] }}{% endif %}</p>{% endif %}
+    {% if stage.zero_cost_authorized_at %}<p class="ge-ok">No cost: {{ stage.zero_cost_reason }} — authorized by {{ stage.zero_cost_authorized_by }} on {{ stage.zero_cost_authorized_at.strftime("%b %d, %Y") }}.</p>{% endif %}
+    <form method="post" action="{{ base }}allowance" class="ge-form-row" data-allowance-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>Allowance amount<input type="text" inputmode="decimal" name="amount" required></label>
       <label>Description<input type="text" name="description" maxlength="200" placeholder="{{ stage.section_name }} allowance"></label>
+      <label>Why an allowance<input type="text" name="reason" required maxlength="300" placeholder="e.g. the quote is still to come"></label>
       <button class="ge-secondary" type="submit" data-approve-allowance>Approve the allowance</button>
     </form>
-    <form method="post" action="{{ base }}zero_cost" class="ge-form-row" style="margin-top:8px;">
+    {% if can_zero_cost %}
+    <form method="post" action="{{ base }}zero_cost" class="ge-form-row" style="margin-top:8px;" data-zero-cost-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>Why this stage has no cost<input type="text" name="reason" required maxlength="300" placeholder="e.g. the owner supplies and installs it"></label>
-      <button class="ge-secondary" type="submit" data-authorize-zero>Authorize no cost</button>
+      <button class="ge-secondary" type="submit" data-authorize-zero>Authorize no cost (owner decision)</button>
     </form>
+    {% else %}
+    <p class="ge-muted" data-zero-cost-owner-only>{{ zero_cost_refused }}</p>
+    {% endif %}
   </details>
   {% endif %}
 

@@ -82,6 +82,8 @@ class TrainingTrainee(db.Model):
     @property
     def track(self):
         """The lessons this trainee follows: CONTRACTOR, SUPPLIER or FIELD_CREW (role FIELD)."""
+        if self.pathway == PATHWAY_CONTRACTOR and self.role in SUPPLIER_ROLES:
+            return PATHWAY_SUPPLIER  # a training administrator on the Supplier pathway (24 Oct 2026)
         return PATHWAY_FIELD_CREW if (self.pathway == PATHWAY_CONTRACTOR and self.role == ROLE_FIELD) else self.pathway
 
     @property

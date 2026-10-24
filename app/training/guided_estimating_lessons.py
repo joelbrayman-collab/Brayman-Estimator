@@ -154,7 +154,7 @@ M13 = Module(
                      do="Press Confirm who supplies and builds these lines, then Complete & Next",
                      expect="'Footings & foundation is complete.' The next stage that is not complete opens.",
                      if_wrong="'Not complete yet' lists what is missing: a stage completes only with confirmed costs, "
-                              "an approved allowance or an authorized no-cost decision.",
+                              "an approved allowance or a no-cost decision authorized by the owner.",
                      shot="c13-stage-complete.png", endpoint="guided.stage"),
             ),
             exercise="Estimate Footings & foundation on your Lakeview project with the footing calculator (the two "
@@ -199,8 +199,9 @@ M13 = Module(
         Lesson(
             key="c13-missing-costs", title="Missing costs, allowances and coming back later",
             what="See a stage refused without a cost, approve an allowance, save and come back.",
-            why="A missing cost stays visible until it is resolved; the proposal waits for it. An allowance is your "
-                "explicit, approved decision.",
+            why="A missing cost stays visible until it is resolved; the proposal waits for it. An allowance is an "
+                "explicit, approved decision with a reason. Deciding that included work has no cost at all is the "
+                "owner's decision (or a System Administrator's).",
             steps=(
                 Step(title="No cost, no completion", app=O, where="Estimating workflow → HVAC",
                      do="Press Complete & Next without any cost",
@@ -208,11 +209,14 @@ M13 = Module(
                      if_wrong="That is the rule working: nothing completes on a click alone.",
                      shot="c13-missing.png", endpoint="guided.stage"),
                 Step(title="Approve an allowance", app=O, where="HVAC → Allowance or no-cost decision",
-                     do="Type the allowance and press Approve the allowance, then Complete & Next",
-                     enter="16000",
-                     expect="An allowance line on the estimate, approved in your name; the stage completes as an "
-                            "Approved allowance.",
-                     if_wrong="Only a person who can approve costing can approve an allowance.",
+                     do="Type the allowance amount and why an allowance is used, press Approve the allowance, then "
+                        "Complete & Next",
+                     enter="16000; Why an allowance: The HVAC quote is still to come",
+                     expect="An allowance line on the estimate, approved in your name with the date and your reason "
+                            "(kept in the stage history); the stage completes as an Approved allowance.",
+                     if_wrong="'Say why this stage uses an allowance': the reason is required. Only a person who can "
+                              "approve costing can approve an allowance. 'Authorize no cost' is shown only to the "
+                              "owner and System Administrators: everyone else sees that it is the owner's decision.",
                      shot="c13-allowance.png", endpoint="guided.stage"),
                 Step(title="Save & Exit, then Resume", app=O, where="Any stage → Save & Exit",
                      do="Press Save & Exit; on the project page press Resume estimating",
@@ -391,7 +395,8 @@ UAT_CASES = (
        "Record two quotes, try Complete & Next, select one, press Use this cost on the line, then Complete & Next.",
        "Complete is refused until the selected quote's cost is used on the line; then the stage completes at that cost."),
     _u("uat-c13-missing-cost", "c13", "Missing costs hold the proposal", "Review Pricing & Prepare Proposal",
-       "With one stage left without a cost, open Review Pricing & Prepare Proposal; then approve an allowance for it.",
+       "With one stage left without a cost, open Review Pricing & Prepare Proposal; then approve an allowance for it "
+       "(with the reason).",
        "The page names the stage and offers no proposal until the allowance is approved."),
     _u("uat-c13-internal-cost", "c13", "Internal cost estimate, office only", "Estimating workflow → Internal cost estimate",
        "Open the internal cost estimate and download the PDF.",

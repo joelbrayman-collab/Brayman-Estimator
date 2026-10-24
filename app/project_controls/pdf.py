@@ -87,6 +87,13 @@ def _logo_flowable():
         return None
 
 
+def _customer_line_prices(change_order) -> bool:
+    """Show line prices only when they are selling prices with no markup on top (never internal costs)."""
+    if change_order.pricing_snapshot_id:
+        return False
+    return Decimal(str(change_order.markup_percent or 0)) == 0 and Decimal(str(change_order.markup or 0)) == 0
+
+
 def generate_change_order_pdf(change_order) -> BytesIO:
     styles_base = getSampleStyleSheet()
     primary = colors.HexColor(DEFAULT_PRIMARY)
@@ -263,40 +270,30 @@ def generate_change_order_pdf(change_order) -> BytesIO:
         HRFlowable(width="100%", thickness=1.5, color=accent, spaceBefore=0, spaceAfter=8)
     )
 
-    table_data = [
-        [
-            Paragraph("Description", styles["header_cell"]),
-            Paragraph("Qty", styles["header_cell"]),
-            Paragraph("Unit", styles["header_cell"]),
-            Paragraph("Unit Price", styles["header_cell"]),
-            Paragraph("Amount", styles["header_cell"]),
-        ]
-    ]
+    # Joel's decision (24 Oct 2026): the customer's change order never shows internal labour rates, costs or the
+    # contractor's markup. Lines priced from direct cost (an estimate pricing snapshot) or carrying a markup are listed
+    # without their internal unit prices, and the price is one figure before tax.
+    priced_lines = _customer_line_prices(change_order)
+    headers = ["Description", "Qty", "Unit"] + (["Unit Price", "Amount"] if priced_lines else [])
+    table_data = [[Paragraph(h, styles["header_cell"]) for h in headers]]
     if change_order.items:
         for item in change_order.items:
-            table_data.append(
-                [
-                    Paragraph(_escape(item.description), styles["cell"]),
-                    Paragraph(_qty(item.quantity), styles["cell"]),
-                    Paragraph(_escape(item.unit), styles["cell"]),
-                    Paragraph(_money(item.unit_price), styles["cell"]),
-                    Paragraph(_money(item.total), styles["cell"]),
-                ]
-            )
-    else:
-        table_data.append(
-            [
-                Paragraph("No line items", styles["cell"]),
-                "",
-                "",
-                "",
-                "",
+            row = [
+                Paragraph(_escape(item.description), styles["cell"]),
+                Paragraph(_qty(item.quantity), styles["cell"]),
+                Paragraph(_escape(item.unit), styles["cell"]),
             ]
-        )
+            if priced_lines:
+                row += [Paragraph(_money(item.unit_price), styles["cell"]),
+                        Paragraph(_money(item.total), styles["cell"])]
+            table_data.append(row)
+    else:
+        table_data.append([Paragraph("No line items", styles["cell"])] + [""] * (len(headers) - 1))
 
     items_table = Table(
         table_data,
-        colWidths=[3.2 * inch, 0.7 * inch, 0.7 * inch, 1.0 * inch, 1.0 * inch],
+        colWidths=([3.2 * inch, 0.7 * inch, 0.7 * inch, 1.0 * inch, 1.0 * inch] if priced_lines
+                   else [5.2 * inch, 0.7 * inch, 0.7 * inch]),
         repeatRows=1,
     )
     items_table.setStyle(
@@ -316,19 +313,14 @@ def generate_change_order_pdf(change_order) -> BytesIO:
     )
     story.append(items_table)
 
+    tax_row = [f"Tax ({Decimal(str(change_order.tax_percent)):.2f}%)", _money(change_order.tax)]
+    if priced_lines:
+        total_rows = [["Subtotal", _money(change_order.subtotal)], tax_row]
+    else:
+        before_tax = Decimal(str(change_order.subtotal or 0)) + Decimal(str(change_order.markup or 0))
+        total_rows = [["Change order price before tax", _money(before_tax)], tax_row]
     totals = Table(
-        [
-            ["Subtotal", _money(change_order.subtotal)],
-            [
-                f"Markup ({Decimal(str(change_order.markup_percent)):.2f}%)",
-                _money(change_order.markup),
-            ],
-            [
-                f"Tax ({Decimal(str(change_order.tax_percent)):.2f}%)",
-                _money(change_order.tax),
-            ],
-            ["Grand Total", _money(change_order.total)],
-        ],
+        total_rows + [["Grand Total", _money(change_order.total)]],
         colWidths=[2.2 * inch, 1.3 * inch],
         hAlign="RIGHT",
     )
@@ -347,7 +339,9 @@ def generate_change_order_pdf(change_order) -> BytesIO:
     story.append(Spacer(1, 12))
     story.append(totals)
 
-    if change_order.notes:
+    from app.models.proposal import is_internal_costing_note
+
+    if change_order.notes and not is_internal_costing_note(change_order.notes):
         story.append(Paragraph("Notes", styles["heading"]))
         story.append(Paragraph(_escape(change_order.notes), styles["body"]))
 

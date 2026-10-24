@@ -83,6 +83,15 @@ def _field_only_kevin(application, ben):
     return _login(application, KEVIN)
 
 
+def _make_owner(user):
+    from app.models.user import UserMembership
+    from app.services.instance_authority import set_instance_owner
+
+    membership = UserMembership.query.filter_by(user_id=user.id, organization_id=ORG).one()
+    set_instance_owner(ORG, membership.id, user.id)
+    db.session.commit()
+
+
 def _other_company(application):
     if db.session.get(Organization, "ORG-GUIDED-OTHER") is None:
         db.session.add(Organization(id="ORG-GUIDED-OTHER", legal_name="Other Synthetic Builder",
@@ -207,7 +216,7 @@ def _cost_new_home(d, project, *, skip=()):
         ("siding", lambda st: _quote(d, project, st, reference="SD-77", amount="21800", name="Clad Right (synthetic)", code="CLAD")),
         ("electrical", lambda st: _quote(d, project, st, reference="EL-9", amount="24500", name="Sparks Electric (synthetic)", code="SPARKS")),
         ("plumbing", lambda st: _quote(d, project, st, reference="PL-3", amount="19750", name="Flow Plumbing (synthetic)", code="FLOW")),
-        ("hvac", lambda st: d.action(project, st, "allowance", {"amount": "16000", "description": "HVAC allowance (quote to follow)"})),
+        ("hvac", lambda st: d.action(project, st, "allowance", {"amount": "16000", "description": "HVAC allowance (quote to follow)", "reason": "The HVAC quote is still to come"})),
         ("insulation", lambda st: _quote(d, project, st, reference="IN-5", amount="9800", name="Warm Walls (synthetic)", code="WARM")),
         ("drywall", lambda st: _quote(d, project, st, reference="DW-12", amount="17600", name="Smooth Board (synthetic)", code="SMOOTH")),
         ("interior_finishes", lambda st: (_calculator_to_stage(d, project, st, "flooring", FLOOR_FORM, "flooring", {"floor_area_to_order": "SYN-FLOOR-FT2"}),
@@ -420,7 +429,7 @@ def test_missing_costs_block_the_proposal_until_an_allowance_or_exclusion_is_app
         update_proposal_status(proposal, "Issued")
     # A stage marked complete with no cost is refused; an explicitly approved allowance resolves it.
     _complete(d, project, s["hvac"], expect_ok=False)
-    d.action(project, s["hvac"], "allowance", {"amount": "16000"})
+    d.action(project, s["hvac"], "allowance", {"amount": "16000", "reason": "The HVAC quote is still to come"})
     _complete(d, project, s["hvac"])
     assert G.guided_blockers(G.get_guided(ORG, project.id)) == []
 
@@ -451,6 +460,7 @@ def test_completion_needs_confirmed_cost_an_approved_allowance_or_an_authorized_
     added = next(st for st in guided.top_stages if st.is_custom)
     assert added.responsibility is None
     d.scope(project, dict(NEW_HOME_SCOPE, **{added.stage_key: "INTERNAL"}), action="finalize")
+    _make_owner(_ben)  # an explicit no-cost decision is the owner's (Joel, 24 Oct 2026)
     d.action(project, added, "zero_cost", {"reason": "The owner buys and installs the appliances"})
     _complete(d, project, added)
     row = db.session.get(GuidedEstimateStage, added.id)

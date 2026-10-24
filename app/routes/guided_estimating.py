@@ -269,6 +269,8 @@ def stage(project_id, stage_id):
         manual_kinds=G.MANUAL_KINDS, subcontractors=list_subcontractors(_org()),
         plans=project_plans(_org(), project.id), labour_rows=labour_rows, spec=G.spec_for(row),
         accepted=G.accepted_proposal(guided), basis_labels=G.BASIS_LABELS,
+        can_zero_cost=G.can_authorize_zero_cost(current_user._get_current_object(), _org()),
+        zero_cost_refused=G.ZERO_COST_REFUSED, allowance_event=G.allowance_record(row),
         return_to=_stage_url(project, row),
         stage_section_id=(G.section_for(row, version).id if G.section_for(row, version) is not None else None))
 
@@ -343,7 +345,8 @@ def stage_action(project_id, stage_id, action):
             return redirect(here)
         if action == "allowance":
             G.approve_allowance(guided, row, amount=form.get("amount", ""), approver=signed_in_approver(),
-                                description=form.get("description", ""), user_id=_uid())
+                                description=form.get("description", ""), reason=form.get("reason", ""),
+                                user_id=_uid())
             flash("Allowance approved and put on the estimate as an allowance line.", "success")
             return redirect(here)
         if action == "zero_cost":

@@ -461,8 +461,8 @@ GENERAL_HELP = GENERAL_HELP + (
      "a draft may have undecided stages, but Finalize needs every one. For mixed work open Parts of this stage and "
      "tick Decide this stage part by part (for example your materials, the subcontractor's installation)."),
     ("complete completed cost missing allowance zero refused incomplete", "A stage is Complete only with confirmed "
-     "costs, an approved allowance (Allowance or no-cost decision → Approve the allowance) or an authorized no-cost "
-     "decision. Pressing Complete & Next alone never completes it: the page lists what is missing, and the proposal "
+     "costs, an approved allowance (Allowance or no-cost decision → Approve the allowance, with the reason) or a "
+     "no-cost decision, which only the owner or a System Administrator can authorize. Pressing Complete & Next alone never completes it: the page lists what is missing, and the proposal "
      "waits until every stage is resolved."),
     ("quote quotes subcontractor waiting suggested select compare", "Subcontracted stage: set up the subcontract, send "
      "the Printable quote request sheet and press I have sent the quote request (the stage shows Waiting for Quote; "

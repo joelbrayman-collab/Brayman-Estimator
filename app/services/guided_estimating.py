@@ -999,11 +999,38 @@ def confirm_stage_routing(guided, stage, *, actor, user_id=None) -> int:
     return done
 
 
-def approve_allowance(guided, stage, *, amount, approver, description="", user_id=None) -> EstimateLineItem:
+# Joel's decisions (24 Oct 2026). An allowance is approved by a person with costing-approval authority, with a
+# reason, and the who/when/why is kept in the stage history. An explicit no-cost decision for included work needs the
+# instance owner or a System Administrator (the delegated equivalent authority).
+ALLOWANCE_REASON_REQUIRED = "Say why this stage uses an allowance (for example: the HVAC quote is still to come)."
+ZERO_COST_REFUSED = ("Only the owner or a System Administrator can decide that included work has no cost. Enter "
+                     "the stage's costs or approve an allowance, or ask the owner to make this decision.")
+
+
+def can_authorize_zero_cost(user, organization_id: str) -> bool:
+    """The instance owner or a System Administrator of the estimate's company (instance_authority)."""
+    if user is None:
+        return False
+    from app.services.instance_authority import is_instance_owner, is_system_administrator
+
+    return bool(is_instance_owner(user, organization_id) or is_system_administrator(user, organization_id))
+
+
+def allowance_record(stage) -> Optional[GuidedEstimateEvent]:
+    """The stage's latest allowance approval in its history (who, when and the reason)."""
+    return (GuidedEstimateEvent.query.filter_by(guided_estimate_id=stage.guided_estimate_id, stage_id=stage.id,
+                                                event="ALLOWANCE_APPROVED")
+            .order_by(GuidedEstimateEvent.id.desc()).first())
+
+
+def approve_allowance(guided, stage, *, amount, approver, description="", reason="", user_id=None) -> EstimateLineItem:
     """An explicitly approved allowance for the stage, as an ordinary Allowance line on the estimate."""
     name = _actor(approver)
     version = _require_editable(guided)
     _leaf(stage)
+    why = " ".join((reason or "").split())
+    if not why:
+        raise GuidedEstimatingError(ALLOWANCE_REASON_REQUIRED)
     try:
         value = _money(Decimal(str(amount).replace(",", "").replace("$", "").strip()))
     except (InvalidOperation, ValueError):
@@ -1017,24 +1044,31 @@ def approve_allowance(guided, stage, *, amount, approver, description="", user_i
     text = (description or f"{stage.section_name} allowance").strip()[:255]
     if line is not None and line.estimate_section_id == section.id:
         update_line_item(line, description=text, quantity=1, unit="allowance", unit_cost=value,
-                         notes=f"Allowance approved by {name}.")
+                         notes=f"Allowance approved by {name}. Reason: {why}"[:2000])
     else:
         line = add_manual_line(section, line_type="Allowance", description=text, quantity=1, unit="allowance",
-                               unit_cost=value, code="GE-ALLOWANCE", notes=f"Allowance approved by {name}.")
+                               unit_cost=value, code="GE-ALLOWANCE",
+                               notes=f"Allowance approved by {name}. Reason: {why}"[:2000])
     stage.allowance_line_id = line.id
     stage.allowance_amount = value
     stage.allowance_approved_by = name
     stage.allowance_approved_at = _now()
     _clear_completion(stage)
     _event(guided, "ALLOWANCE_APPROVED", actor=name, stage=stage, to_value=str(value), version=version,
-           user_id=user_id)
+           detail=f"{text}. Reason: {why}", user_id=user_id)
     db.session.commit()
     return line
 
 
 def authorize_zero_cost(guided, stage, *, reason, approver, user_id=None):
-    """A person with approval authority records that this included stage has no cost (e.g. owner supplies it)."""
+    """The owner (or a System Administrator) records that this included stage has no cost (e.g. owner supplies
+    it). Refused for everyone else, including ordinary costing approvers (Joel, 24 Oct 2026)."""
     name = _actor(approver)
+    from app.models.user import User
+
+    user = db.session.get(User, user_id) if user_id else None
+    if not can_authorize_zero_cost(user, guided.organization_id):
+        raise GuidedEstimatingError(ZERO_COST_REFUSED)
     _require_editable(guided)
     _leaf(stage)
     text = (reason or "").strip()

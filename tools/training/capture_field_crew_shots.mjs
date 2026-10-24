@@ -309,6 +309,8 @@ step("Kevin registers into the Field Crew training, ticks a step, asks the Tutor
   await k.pg.click('[data-tick="0"]');
   await k.pg.waitForFunction(() => document.querySelector('[data-step-card="0"]').classList.contains("is-done"));
   await shot(k.pg, "f01-lesson", k.pg.locator('[data-step-card="0"] [data-tick]'));
+  await k.pg.click("[data-tutor-launch]");  // the Tutor opens as a drawer from the header (23 Oct 2026)
+  await k.pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-open"));
   await k.pg.click('[data-tutor-quick="Where is it?"]');
   await k.pg.waitForFunction(() => /Go to/.test(document.querySelector("[data-tutor-live]")?.textContent || ""));
   await shot(k.pg, "f01-tutor", k.pg.locator("[data-tutor-live]"));

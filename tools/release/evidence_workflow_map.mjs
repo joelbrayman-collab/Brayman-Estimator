@@ -257,6 +257,38 @@ test("Training Centre: the map lists each stage's lessons; map -> lesson -> tick
   assert.equal(await current(pg), "c-price");
 });
 
+// Compact headers (24 Oct 2026): the back control sits in the dark Training Centre header, and the map starts high
+// on the screen: at 1366 x 670 the journey diagram's top is within the first 40 % of the window.
+test("compact header: back control in the dark header; the diagram's top within 40 % of a 1366 x 670 window", async () => {
+  const { pg } = sessions.ben;
+  await pg.setViewportSize({ width: 1366, height: 670 });
+  try {
+    await pg.goto(`${base}/training/workflow`);
+    const back = pg.locator("header.tc-top [data-back-to-training]");
+    assert.ok(await back.isVisible(), "the back control is in the dark header");
+    assert.equal(await back.getAttribute("aria-label"), "Back to the Training Centre");
+    assert.equal(await back.getAttribute("href"), "/training");
+    assert.equal(await pg.locator("main [data-back-to-training]").count(), 0, "no separate back button in the page");
+    for (const url of ["/training/workflow", "/training/review/contractor", "/workflow"]) {
+      await pg.goto(`${base}${url}`);
+      const top = await pg.locator(".wf-overview").evaluate((el) => el.getBoundingClientRect().top);
+      assert.ok(top <= 0.4 * 670, `${url}: the diagram starts at ${Math.round(top)} px (no lower than 268 px)`);
+      assert.ok(await pg.locator(".wf-process").isVisible(), `${url}: the stage stepper is shown`);
+      await noSideways(pg, `${url} at 1366 x 670`);
+    }
+    await pg.goto(`${base}/training/workflow?stage=c-price`);
+    await Promise.all([pg.waitForNavigation(), pg.locator("[data-back-to-training]").click()]);
+    assert.equal(new URL(pg.url()).pathname, "/training", "back goes to the Training Centre");
+    await pg.goBack();
+    assert.equal(new URL(pg.url()).pathname, "/training/workflow", "the browser's Back returns to the map");
+    assert.equal(await pg.locator("[data-back-to-training]").count(), 1);
+    await pg.goto(`${base}/training`);
+    assert.equal(await pg.locator("[data-back-to-training]").count(), 0, "no back control on the training home itself");
+  } finally {
+    await pg.setViewportSize(DESK);
+  }
+});
+
 test("Training Centre on an iPhone: a field trainee gets the Field workflow with Field lessons", async () => {
   const s = sessions.kevin;
   await s.pg.goto(`${base}/training`);
@@ -268,5 +300,8 @@ test("Training Centre on an iPhone: a field trainee gets the Field workflow with
   assert.ok(await s.pg.locator('[data-wf-card="f-today"]').isVisible());
   assert.equal(await s.pg.locator('[data-wf-card="c-price"]').count(), 0);
   await noSideways(s.pg, "training map (phone)");
+  const back = s.pg.locator("header.tc-top [data-back-to-training]");
+  assert.ok(await back.isVisible(), "the compact back control is in the header on the phone");
+  assert.ok((await back.evaluate((el) => el.getBoundingClientRect().right)) <= 390);
   await everyLinkAnswers(s, "field training map");
 });

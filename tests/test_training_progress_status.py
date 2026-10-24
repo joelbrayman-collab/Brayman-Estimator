@@ -73,11 +73,13 @@ def test_home_shows_completed_in_progress_next_and_module_counts(app, who, role,
     ov = service.overview(TrainingTrainee.query.one())
     row = ov["modules"][0]
     m = re.search(rf'data-module="{row["module"].key}".*?</section>', home, re.S).group(0)
-    assert f'<small data-module-count>{row["done"]}/{row["total"]}</small>' in m
+    assert f'<span aria-hidden="true">{row["done"]}/{row["total"]}</span>' in m
     assert f'data-module-progress="{row["percent"]}"' in m
     in_module = {x["lesson"].key for x in row["lessons"]}
     assert row["done"] == 1 and row["started"] == (1 if second.key in in_module else 0)
-    assert f"{row['done']} of {row['total']} lessons completed" in m
+    assert f'{row["done"]} of {row["total"]} lessons completed</span>' in m
+    if row["started"]:
+        assert f"{row['started']} in progress" in m
     # Module times are kept.
     if row["time"]:
         assert f'data-module-time="{row["time"].minutes}"' in m

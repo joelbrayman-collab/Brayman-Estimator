@@ -18,11 +18,11 @@
 </section>
 {% for row in ov.modules %}
 <section class="tc-card tc-module{% if row.done == row.total %} tc-module-complete{% endif %}" data-module="{{ row.module.key }}">
-  <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small data-module-count>{{ row.done }}/{{ row.total }}</small></h2>
+  <h2><span class="tc-num">{{ row.module.number }}</span> {{ row.module.title }} <small data-module-count><span aria-hidden="true">{{ row.done }}/{{ row.total }}</span><span class="tc-sr" data-module-count-text>{{ row.done }} of {{ row.total }} lessons completed</span></small></h2>
   {% if row.time %}<p class="tc-module-time" data-module-time="{{ row.time.minutes }}">{% if row.time.split %}{% for s in row.time.sessions %}<span data-session="{{ s.number }}">Session {{ s.number }}: {{ s.label|lower }}</span>{% if not loop.last %} · {% endif %}{% endfor %}{% else %}{{ row.time.label }}{% endif %}</p>{% endif %}
   <div class="tc-module-progress" data-module-progress="{{ row.percent }}">
     <div class="tc-bar tc-bar-module" role="progressbar" aria-label="{{ row.module.title }} progress" aria-valuenow="{{ row.percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ row.percent }}%"></span></div>
-    <p class="tc-small" data-module-summary>{% if row.done == row.total %}<b class="tc-module-done">&#10003; Module complete</b> · {{ row.total }} of {{ row.total }} lessons completed{% else %}{{ row.done }} of {{ row.total }} lessons completed{% if row.started %} · {{ row.started }} in progress{% endif %}{% endif %}</p>
+    {% if row.done == row.total or row.started %}<p class="tc-small" data-module-summary>{% if row.done == row.total %}<b class="tc-module-done">&#10003; Module complete</b>{% else %}{{ row.started }} in progress{% endif %}</p>{% endif %}
   </div>
   <p>{{ row.module.summary }}</p>
   <ol class="tc-lessons">

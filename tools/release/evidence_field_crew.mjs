@@ -98,6 +98,25 @@ async function signInKevin() {
   return s;
 }
 
+// The Tutor is a drawer opened from the header's Ask the Tutor button (23 Oct 2026); it starts closed on every page.
+async function openTutor(pg) {
+  const launch = pg.locator("header [data-tutor-launch]");
+  assert.ok(await launch.isVisible(), "Ask the Tutor is in the header");
+  assert.equal(await launch.getAttribute("aria-expanded"), "false", "the drawer starts closed");
+  const saved = pg.waitForResponse((r) => r.url().endsWith("/training/tutor") && r.request().method() === "POST");
+  await launch.click();
+  await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-open"));
+  await saved;  // the open state is saved on the server
+  assert.equal(await launch.getAttribute("aria-expanded"), "true");
+}
+async function closeTutor(pg) {
+  const saved = pg.waitForResponse((r) => r.url().endsWith("/training/tutor") && r.request().method() === "POST");
+  await pg.click("[data-tutor-button]");
+  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-open"));
+  await saved;
+  assert.equal(await pg.getAttribute("header [data-tutor-launch]", "aria-expanded"), "false");
+}
+
 test("Kevin chooses the crew, signs in and registers straight into the Field Crew training", async () => {
   S.kevin = await signInKevin();
   const { pg } = S.kevin;
@@ -151,28 +170,31 @@ test("ticked steps turn green and are saved; Save and exit, then Continue where 
   assert.equal(await pg.getAttribute("[data-lesson-page]", "data-lesson-page"), lesson);
 });
 
-test("the Tutor answers from the Field Crew step, minimizes and restores, kept across pages", async () => {
+test("the Tutor answers from the Field Crew step, opens and closes from the header, kept across pages", async () => {
   const { pg } = S.kevin;
   await go(pg, "/training/lessons/f05-send-time");
   await pg.locator('[data-step-card="1"] .tc-step-head h2').click();
+  await openTutor(pg);
   assert.match(await pg.textContent("[data-tutor-title]"), /Pick the work/);
   await pg.click('[data-tutor-quick="It didn\'t work"]');
   await pg.waitForFunction(() => /Choose the work you did/.test(document.querySelector("[data-tutor-live]")?.textContent || ""));
   await pg.click('[data-tutor-quick="What do I type?"]');
   await pg.waitForFunction(() => /Framing and decking/.test(document.querySelector("[data-tutor-live]").textContent));
   await noSideways(pg, "lesson with a Tutor answer (phone)");
+  const width = await pg.locator("[data-tutor]").evaluate((t) => t.getBoundingClientRect().width);
+  assert.ok(width >= 389, "the drawer fills the phone");
   await shot(pg, "field-crew-tutor");
-  await pg.click("[data-tutor-button]");
+  await closeTutor(pg);
   await pg.waitForFunction(() => document.querySelector("[data-tutor]").classList.contains("is-min"));
   await pg.reload();
-  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "minimized after a reload");
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min") && !t.classList.contains("is-open")), "closed after a reload");
   await go(pg, "/training");
-  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "minimized on the home page");
-  assert.equal(await pg.textContent("[data-tutor-button]"), "Open the Tutor");
-  await pg.click("[data-tutor-button]");
-  await pg.waitForFunction(() => !document.querySelector("[data-tutor]").classList.contains("is-min"));
+  assert.ok(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min")), "closed on the home page");
+  await openTutor(pg);
+  await noSideways(pg, "home with the Tutor drawer open (phone)");
   await go(pg, "/training/lessons/f05-send-time");
-  assert.ok(!(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min"))), "restored everywhere");
+  assert.ok(!(await pg.locator("[data-tutor]").evaluate((t) => t.classList.contains("is-min"))), "opening is kept everywhere");
+  assert.equal(await pg.getAttribute("header [data-tutor-launch]", "aria-expanded"), "false", "each page starts with the drawer closed");
 });
 
 test("every Field Crew lesson fits the iPhone, shows no money, and every picture loads", async () => {

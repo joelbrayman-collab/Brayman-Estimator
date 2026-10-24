@@ -14,6 +14,10 @@
 </head>
 <body class="tc">
   <header class="tc-top">
+    {% if map_back is defined and map_back %}{% include "training/_map_back.html" %}
+    {% elif current_user.is_authenticated and request.endpoint not in ('training.home', 'training.signin') %}
+    <a class="tc-back" href="{{ url_for('training.home') }}" data-back-to-training aria-label="Back to the Training Centre" title="Back to the Training Centre"><span aria-hidden="true">&#8592;</span><span class="tc-back-text">Back</span></a>
+    {% endif %}
     <a class="tc-brand" href="{{ url_for('training.home') }}">
       <img src="{{ url_for('static', filename='branding/calibraytai-logo-v1-dark.png') }}" alt="CalibraytAI">
       <span>Training &amp; Acceptance Centre</span>

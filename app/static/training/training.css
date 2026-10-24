@@ -190,3 +190,30 @@ dl dt { font-weight:700; margin-top:10px; } dl dd { margin:2px 0 0; overflow-wra
 .tc-pathway-menu button:hover, .tc-pathway-menu a:hover { border-color:var(--gold); }
 .tc-pathway-menu button[disabled] { background:#f4efe3; cursor:default; font-weight:600; }
 @media (max-width: 600px) { .tc-pathway-menu { position:fixed; left:12px; right:12px; top:auto; min-width:0; } }
+/* Compact headers (24 Oct 2026): the back control sits in the dark header; less space above the content. */
+.tc-top { padding:8px 16px; gap:8px 12px; }
+.tc-brand img { height:30px; }
+.tc-brand span { font-size:1rem; white-space:nowrap; }
+.tc-nav { gap:6px 14px; font-size:.95rem; }
+.tc-back { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:4px 12px; border:1px solid #4a4d52; border-radius:999px; color:#fff; text-decoration:none; font-weight:600; font-size:.9rem; flex:none; }
+.tc-back:hover, .tc-back:focus-visible { border-color:var(--gold); color:var(--gold); outline:none; }
+.tc-back span[aria-hidden] { font-size:1.1rem; line-height:1; }
+.tc-banner { padding:4px 16px; font-size:.82rem; }
+.tc-main { padding-top:14px; }
+.tc-review-bar { padding:8px 14px; margin-bottom:10px; }
+.tc-review-label { font-weight:700; margin-right:4px; }
+.tc-review-bar .tc-review-links { gap:4px 14px; font-size:.9rem; }
+.tc-map-intro { margin:12px 0 0; } .tc-map-intro summary { cursor:pointer; font-weight:600; }
+.tc-hero h1 { font-size:1.7rem; margin:.1em 0; }
+.tc-hero { padding:16px 20px; }
+@media (max-width: 640px) {
+  .tc-back-text { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .tc-back { padding:4px 10px; min-height:36px; min-width:44px; justify-content:center; }
+  .tc-top { padding:6px 12px; }
+  .tc-hero h1 { font-size:1.45rem; }
+}
+.tc-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+@media (max-width: 640px) {
+  .tc-nav { gap:2px 14px; font-size:.92rem; }
+  .tc-brand img { height:26px; }
+}

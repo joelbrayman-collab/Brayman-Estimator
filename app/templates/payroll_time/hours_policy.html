@@ -3,8 +3,9 @@
 {% block page_title %}Hours policy{% endblock %}
 {% block content %}
 {% include "accounting/_style.html" %}
-<section class="page-header"><div><h2 class="page-title">Hours policy</h2>
-  <p class="page-purpose">Your company's own rules for the work week and banked hours. Nothing is banked until you save this. A change takes effect from the date you choose; earlier weeks keep the rules they were worked under.</p></div>
+{# The top bar names the page (Joel, 24 Oct 2026: one clear title). #}
+<section class="page-header"><div>
+  <p class="page-purpose">Nothing is banked until you save this. A change takes effect from the date you choose; earlier weeks keep the rules they were worked under.</p></div>
   <a class="button button-secondary" href="{{ url_for('payroll_time.banked_hours_index') }}">Banked hours</a></section>
 <div class="form-panel" data-hours-policy-current>
   <h3>In use now</h3>

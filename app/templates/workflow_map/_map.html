@@ -39,10 +39,19 @@
     {% endif %}
   </header>
 
-  {# The connected stages, journey by journey: AiRIA's process orientation. #}
+  {# The connected stages, journey by journey: AiRIA's process orientation. A map with several journeys (the
+     Supplier map, 24 Oct 2026) shows a journey selector and only the selected journey's stages; the selected
+     journey always follows the current stage, so ?stage= links and Back / Next across journeys keep working. #}
+  {% set multi = wf.journeys|length > 1 %}
+  {% if multi %}
+  <div class="wf-journey-tabs" role="tablist" aria-label="Journeys" data-wf-journey-tabs>
+    {% for j in wf.journeys %}<a role="tab" class="wf-journey-tab" id="wf-tab-{{ j.key }}" href="{{ j.stages[0].href }}" data-wf-journey-tab="{{ j.key }}" data-wf-first="{{ j.stages[0].id }}"
+       aria-selected="{{ 'true' if j.current else 'false' }}" aria-controls="wf-jp-{{ j.key }}" tabindex="{{ '0' if j.current else '-1' }}">{% if j.letter %}<span class="wf-journey-letter" aria-hidden="true">{{ j.letter }}</span>{% endif %}<span class="wf-journey-tab-title">{{ j.title }}</span> <span class="wf-journey-tab-count">{{ j.stages|length }} stages</span></a>{% endfor %}
+  </div>
+  {% endif %}
   {% for j in wf.journeys %}
-  <nav class="wf-process{% if j.current %} is-current-journey{% endif %}" aria-label="{{ (j.letter ~ ' · ') if j.letter }}{{ j.title }}: stages" data-wf-journey="{{ j.key }}">
-    <p class="wf-journey-name{% if wf.journeys|length == 1 %} wf-visually-hidden{% endif %}">{% if j.letter %}<span class="wf-journey-letter">{{ j.letter }}</span>{% endif %}{{ j.title }}</p>
+  <nav class="wf-process{% if j.current %} is-current-journey{% endif %}" aria-label="{{ (j.letter ~ ' · ') if j.letter }}{{ j.title }}: stages" data-wf-journey="{{ j.key }}"{% if multi %} id="wf-jp-{{ j.key }}" role="tabpanel" aria-labelledby="wf-tab-{{ j.key }}"{% if not j.current %} hidden{% endif %}{% endif %}>
+    <p class="wf-journey-name{% if wf.journeys|length == 1 or multi %} wf-visually-hidden{% endif %}">{% if j.letter %}<span class="wf-journey-letter">{{ j.letter }}</span>{% endif %}{{ j.title }}</p>
     <ol class="wf-process-list">
       {% for s in j.stages %}
       <li class="wf-process-step{% if s.current %} is-current{% endif %}" data-wf-step="{{ s.id }}">
@@ -61,7 +70,7 @@
     {# The journey map: every stage as a card, with the return loop drawn beside them. #}
     <div class="wf-overview" id="wf-overview">
       {% for j in wf.journeys %}
-      <div class="wf-journey" data-wf-journey-map="{{ j.key }}">
+      <div class="wf-journey" data-wf-journey-map="{{ j.key }}"{% if multi and not j.current %} hidden{% endif %}>
         <h2 class="wf-journey-title">{% if j.letter %}<span class="wf-journey-letter">{{ j.letter }}</span>{% endif %}{{ j.title }}</h2>
         <p class="wf-journey-flow wf-visually-hidden">{{ j.flow }}</p>
         <div class="wf-journey-body">
@@ -91,7 +100,7 @@
     {# One page per stage; only the current one is shown. #}
     <div class="wf-pages" id="workflow-stage" tabindex="-1">
       {% for s in wf.stages %}
-      <article class="wf-page" id="wf-page-{{ s.id }}" data-wf-page="{{ s.id }}" data-wf-prev="{{ s.prev.id if s.prev }}" data-wf-next="{{ s.next.id if s.next }}" data-wf-position="{{ s.position }}" data-wf-label="{{ s.label }}" data-wf-href="{{ s.href }}" aria-labelledby="wf-h-{{ s.id }}"{% if not s.current %} hidden{% endif %}>
+      <article class="wf-page" id="wf-page-{{ s.id }}" data-wf-page="{{ s.id }}" data-wf-jkey="{{ s.journey }}" data-wf-prev="{{ s.prev.id if s.prev }}" data-wf-next="{{ s.next.id if s.next }}" data-wf-position="{{ s.position }}" data-wf-label="{{ s.label }}" data-wf-href="{{ s.href }}" aria-labelledby="wf-h-{{ s.id }}"{% if not s.current %} hidden{% endif %}>
         {{ ribbon(wf, s) }}
         <h2 id="wf-h-{{ s.id }}" tabindex="-1"><span class="wf-page-number" aria-hidden="true">{{ s.number }}</span> {{ s.label }} <span class="wf-page-title">— {{ s.title }}</span></h2>
         <p class="wf-description">{{ s.description }}</p>

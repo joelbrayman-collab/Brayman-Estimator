@@ -3,7 +3,6 @@
 {% block title %}{{ wf.title }} · owner review{% endblock %}
 {% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/workflow-map.css', v=wf.version) }}">{% endblock %}
 {% block content %}
-{% include "training/_review_bar.html" %}
 {{ workflow_map(wf) }}
 <details class="tc-map-intro tc-small" data-review-map="{{ map_key }}"><summary>How owner review works</summary><p>Each stage lists its lessons and acceptance tests. They open read-only and bring you back to the same stage here.</p></details>
 <script src="{{ url_for('static', filename='js/workflow-map.js', v=wf.version) }}" defer></script>

@@ -27,7 +27,7 @@
       <a href="{{ url_for('training.home') }}">My training</a>
       {% set _here = request.full_path[:-1] if request.full_path.endswith('?') else request.full_path %}<a href="{{ url_for('training.workflow_map') if request.endpoint in ('training.workflow_map', 'training.review_map') else url_for('training.workflow_map', back=_here) }}" data-workflow-map-link>Workflow map</a>
       <a href="{{ url_for('training.uat') }}">Acceptance tests</a>
-      {% if training_admin %}<a href="{{ url_for('training.review') }}" data-owner-review-link>Owner review</a>{% endif %}
+      {% if training_admin %}{% include "training/_review_bar.html" %}{% endif %}
       {% if pathway_current and pathway_roles|length > 1 %}
       <details class="tc-pathway" data-pathway-switch>
         <summary aria-label="Change training pathway">Pathway: {% for r, l in pathway_roles %}{% if r == pathway_current %}{{ l }}{% endif %}{% endfor %}</summary>

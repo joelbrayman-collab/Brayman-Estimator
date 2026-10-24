@@ -5,6 +5,7 @@
   var root = document.querySelector("[data-wf-map]");
   if (!root) return;
   var total = root.querySelectorAll("[data-wf-page]").length;
+  var tabs = root.querySelector("[data-wf-journey-tabs]");
 
   function page(id) { return root.querySelector('[data-wf-page="' + id + '"]'); }
   function current() { return root.getAttribute("data-wf-current"); }
@@ -42,6 +43,17 @@
     root.querySelectorAll("[data-wf-journey]").forEach(function (nav) {
       nav.classList.toggle("is-current-journey", !!nav.querySelector('[data-wf-step="' + id + '"]'));
     });
+    // Several journeys (24 Oct 2026): only the current stage's journey is shown; the selector follows it.
+    if (tabs) {
+      var jkey = target.getAttribute("data-wf-jkey");
+      root.querySelectorAll("[data-wf-journey]").forEach(function (nav) { nav.hidden = nav.getAttribute("data-wf-journey") !== jkey; });
+      root.querySelectorAll("[data-wf-journey-map]").forEach(function (m) { m.hidden = m.getAttribute("data-wf-journey-map") !== jkey; });
+      tabs.querySelectorAll("[data-wf-journey-tab]").forEach(function (t) {
+        var on = t.getAttribute("data-wf-journey-tab") === jkey;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+      });
+    }
     root.setAttribute("data-wf-current", id);
     setLink(root.querySelector("[data-wf-control-back]"), target.getAttribute("data-wf-prev"));
     setLink(root.querySelector("[data-wf-control-next]"), target.getAttribute("data-wf-next"));
@@ -64,7 +76,35 @@
     return true;
   }
 
+  // The journey selector: one click (or Enter) opens the journey at its first stage; the arrow keys, Home and
+  // End move between journeys (a tablist), without moving the stage page under the trainee's focus.
+  function selectJourney(tab, focusTab) {
+    if (!show(tab.getAttribute("data-wf-first"), { focus: false })) return false;
+    if (focusTab) tab.focus();
+    return true;
+  }
+  if (tabs) {
+    tabs.addEventListener("keydown", function (ev) {
+      var list = Array.prototype.slice.call(tabs.querySelectorAll("[data-wf-journey-tab]"));
+      var i = list.indexOf(ev.target.closest("[data-wf-journey-tab]"));
+      if (i < 0) return;
+      var n = ev.key === "ArrowRight" || ev.key === "ArrowDown" ? (i + 1) % list.length
+        : ev.key === "ArrowLeft" || ev.key === "ArrowUp" ? (i - 1 + list.length) % list.length
+        : ev.key === "Home" ? 0 : ev.key === "End" ? list.length - 1 : -1;
+      if (n < 0) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      selectJourney(list[n], true);
+    });
+  }
+
   root.addEventListener("click", function (ev) {
+    var tab = ev.target.closest("[data-wf-journey-tab]");
+    if (tab && root.contains(tab)) {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) return;
+      if (selectJourney(tab, false)) ev.preventDefault();
+      return;
+    }
     var a = ev.target.closest("[data-wf-goto]");
     if (a && root.contains(a)) {
       if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) return;

@@ -7,7 +7,7 @@
 {# Office tidy (Joel, 24 Oct 2026): the top bar names the page; no second page heading here. #}
 <section class="page-header">
     <div>
-        <p class="page-purpose">Everyone who can sign in to this company's office and Field. Add a person, deactivate a sign-in, and choose what each person can see.</p>
+        <details class="page-more" data-page-more><summary>More about this page</summary><div class="page-more-body"><p>Everyone who can sign in to this company's office and Field. Add a person, deactivate a sign-in, and choose what each person can see.</p></div></details>
     </div>
     <a class="button-primary" href="{{ url_for('people_access.new') }}">Add a person</a>
 </section>

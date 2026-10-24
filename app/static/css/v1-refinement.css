@@ -1341,3 +1341,15 @@ form.people-access-actions:not(.form-grid) > p { margin: 0; }
     /* Phones: Home's stacked actions stay full width, as before. */
     .home-intro { align-items: stretch; }
 }
+
+/* Action-first (Joel, 24 Oct 2026): pending work and small status badges on action links. */
+.time-review-pending { margin: 0; font-size: 0.98rem; }
+.link-badge { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: #f3eee4; color: var(--muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em; vertical-align: 1px; }
+.person-identity { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
+.person-identity h1 { flex-basis: 100%; }
+.person-identity .page-more { margin: 4px 0 0; }
+.person-identity .page-more[open] { flex-basis: 100%; }
+.page-heading > div:empty { display: none; }
+@media (max-width: 900px) {
+    .page-heading > div:last-child:not(:first-child) { width: 100%; justify-content: flex-start; }
+}

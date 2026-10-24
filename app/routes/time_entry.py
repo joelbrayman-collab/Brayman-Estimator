@@ -102,6 +102,7 @@ def review():
         rows=rows,
         totals=_view_totals(rows),
         company_time_project=get_company_time_project(organization.id),
+        qbt_connected=_qbt_connected(),
         projects=list_organization_projects(organization.id),
         workers=org_time_workers(organization.id),
         statuses=REVIEW_STATUSES,
@@ -114,6 +115,13 @@ def review():
             "to": date_to.isoformat() if date_to else "",
         },
     )
+
+
+def _qbt_connected() -> bool:
+    """Whether QuickBooks Time sending is switched on (read-only; the link says "not connected" when it is off)."""
+    from app.services.quickbooks_time import connection_status
+
+    return bool(connection_status().get("connected"))
 
 
 def _view_totals(rows):

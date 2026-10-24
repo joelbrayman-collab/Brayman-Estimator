@@ -848,3 +848,19 @@ input:focus-visible {
     .field-header .field-logout-btn { padding: 8px 6px; font-size: 13px; }
     .field-brand img { max-width: 80px; }
 }
+
+/* Action-first tidy (Joel, 24 Oct 2026): text and space only. Help and Print share a row; the date is one
+   line; panel headings are smaller so the day's work and buttons come up the screen. Touch targets stay 44 px. */
+.field-toolbar { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+.field-toolbar .contextual-help { flex: 1 1 12rem; margin: 0; }
+.field-toolbar .contextual-help[open] { flex-basis: 100%; order: 2; }
+.field-toolbar .field-actions { margin: 0; }
+.field-toolbar .field-actions .field-btn { margin: 0; }
+.field-today-orientation { margin: 0 0 10px; }
+.field-today-weekday, .field-today-date { display: inline; }
+.field-today-weekday { font-size: 1.2rem; }
+.field-today-date { margin-left: 6px; }
+.field-panel { margin-bottom: 12px; }
+.field-panel > h1 { font-size: 1.45rem; line-height: 1.2; margin: 0 0 8px; }
+.field-panel > h2 { font-size: 1.2rem; line-height: 1.25; margin: 0 0 8px; }
+.field-body .contextual-help { margin-bottom: 12px; }

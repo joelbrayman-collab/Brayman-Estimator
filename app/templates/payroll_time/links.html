@@ -57,6 +57,6 @@
         <button type="submit">Save</button></form>{% endif %}
       {% if link %}<div class="muted-copy">Linked to {{ link.qbt_jobcode_name or link.qbt_jobcode_id }} by {{ link.linked_by_name }}</div>{% else %}<div class="muted-copy">Not linked</div>{% endif %}
     </td></tr>{% endfor %}</tbody></table></div>
-  {% else %}<p class="muted-copy">Set up Shop / Company Work on Time review first.</p>{% endif %}
+  {% else %}<p class="muted-copy">Set up Shop / Company Work on Hours policy first.</p>{% endif %}
 </div>
 {% endblock %}

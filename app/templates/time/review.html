@@ -7,30 +7,20 @@
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.office_topic("time_review")) }}
 
-<div class="page-heading">
+{# Action-first (Joel, 24 Oct 2026): the top bar names the page; what needs review and the actions come first.
+   Shop / Company Work is an ordinary choice in the Project filter once set up (set up from Hours policy or
+   Shop / Company Work); the explanations are in Help. #}
+{% set pending = rows|selectattr('needs_approval')|list|length %}
+<div class="page-heading time-review-heading">
     <div>
-        <h1>{{ contractor_copy.TIME_REVIEW_HEADING }}</h1>
-        <p class="muted-copy">Submitted time is not approved labour until someone else reviews it.</p>
+        {% if pending %}<p class="time-review-pending" data-time-pending="{{ pending }}"><strong>{{ pending }} {{ "entry needs" if pending == 1 else "entries need" }} review</strong> in this view</p>{% endif %}
     </div>
-    <a class="button" href="{{ url_for('time_entry.new_entry', project_id=filters.project_id) }}">Record time</a>
+    <div>
+        <a class="button" href="{{ url_for('time_entry.new_entry', project_id=filters.project_id) }}">Record time</a>
+        <a class="button button-secondary" href="{{ url_for('payroll_time.quickbooks_time') }}" data-payroll-links data-qbt-link="{{ 'connected' if qbt_connected else 'off' }}">QuickBooks Time{% if not qbt_connected %} <span class="link-badge">not connected</span>{% endif %}</a>
+        <a class="button button-secondary" href="{{ url_for('payroll_time.banked_hours_index') }}">Banked hours</a>
+    </div>
 </div>
-
-<section class="panel panel-wide" data-company-time>
-    {% if company_time_project %}
-    <p class="muted-copy">Shop, yard, equipment and safety-meeting time is
-        <a href="{{ url_for('payroll_time.company_work') }}">Shop / Company Work</a>,
-        never a customer's job. It is approved here like any other time.</p>
-    {% else %}
-    <form method="post" action="{{ url_for('time_entry.setup_company_time') }}" class="form-actions">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <p class="muted-copy">Crew need somewhere to put shop, yard, equipment and safety-meeting time that is not a customer's job.</p>
-        <button type="submit">Set up Shop / Company Work</button>
-    </form>
-    {% endif %}
-    <p class="muted-copy" data-payroll-links>After approval:
-        <a href="{{ url_for('payroll_time.quickbooks_time') }}">QuickBooks Time transfers</a> ·
-        <a href="{{ url_for('payroll_time.banked_hours_index') }}">Banked hours</a></p>
-</section>
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <form method="get" class="form-grid filter-bar">

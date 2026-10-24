@@ -232,7 +232,8 @@ step("4 Ben approves the corrected entry; its whole history is kept", async () =
 
 step("5 Shop time goes on Shop / Company Work, never a customer's job", async () => {
   const pg = ben.pg;
-  await timeReview(pg);
+  // Office tidy (24 Oct 2026): the one-time set-up is on Hours policy (company setup), not Time review.
+  await go(pg, "/settings/hours-policy");
   await submit(pg, pg.getByRole("button", { name: "Set up Shop / Company Work" }));
   assert.match(await flash(pg), /Shop \/ Company Work is ready\./);
   const k = kevin.pg;

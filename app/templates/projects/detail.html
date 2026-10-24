@@ -52,7 +52,7 @@
     </nav>
     <details class="page-more" data-page-more>
         <summary>More about this page</summary>
-        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p></div>
+        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p><p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p><p class="muted-copy">Choose what is being built and who does each stage; CalibraytAI brings the right calculator or quote to each one.</p><p class="muted-copy">Send the proposal to the client from the proposal page. The client accepts it on their link (or the office records an acceptance given another way). An accepted proposal stays immutable; its contract is then generated on the Contract page, ready to send.</p><p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p></div>
     </details>
 </div>
 
@@ -490,7 +490,6 @@
             {% endif %}
         </div>
         <p>{{ hub.calibration_count }} stored calibration{{ "s" if hub.calibration_count != 1 else "" }} · {{ hub.measurement_count }} stored measurement{{ "s" if hub.measurement_count != 1 else "" }}.</p>
-        <p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p>
     </article>
 
     <article class="panel">
@@ -541,7 +540,6 @@
             <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
         </p>
         {% else %}
-        <p class="muted-copy">Choose what is being built and who does each stage; CalibraytAI brings the right calculator or quote to each one.</p>
         <p><a class="button" data-hub-guided-start href="{{ url_for('guided.workflow', project_id=project.id) }}">Start the guided estimate</a></p>
         {% endif %}
     </article>
@@ -676,7 +674,6 @@
             <p>Proposals created from this project’s estimates will appear here.</p>
         </div>
         {% endif %}
-        <p class="muted-copy">Send the proposal to the client from the proposal page. The client accepts it on their link (or the office records an acceptance given another way). An accepted proposal stays immutable; its contract is then generated on the Contract page, ready to send.</p>
     </article>
 </section>
 
@@ -1091,7 +1088,6 @@
             <a href="{{ url_for('calculators.concrete') }}">Calculators</a>
         </div>
         {% if project_calculations %}
-        <p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p>
         <table class="data-table">
             <thead><tr><th>Date</th><th>Calculator</th><th>Result</th><th>By</th></tr></thead>
             <tbody>

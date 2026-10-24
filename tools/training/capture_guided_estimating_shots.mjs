@@ -254,7 +254,11 @@ step("c13: missing cost, an allowance, Save & Exit and Resume", async () => {
   await press(pg, "button[data-nav-complete-next]");
   await shot(pg, "c13-missing");
   await allowance(pg, "16000");
-  await shot(pg, "c13-allowance", pg.locator("[data-allowance-zero]"));
+  // The page reloads with the panel closed: open it so the picture shows the approved allowance (amount, who,
+  // when, why), not a closed panel.
+  const box = pg.locator("[data-allowance-zero]");
+  if (!(await box.getAttribute("open"))) await box.locator("summary").click();
+  await shot(pg, "c13-allowance", pg.locator("[data-allowance-record]"));
   await press(pg, "button[data-nav-complete-next]");
   await openStage(pg, "windows_doors");
   await press(pg, "button[data-nav-save-exit]");

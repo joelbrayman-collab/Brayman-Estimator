@@ -100,6 +100,16 @@ async function go(pg, url) {
   await pg.waitForLoadState();
   return r;
 }
+// The first time someone opens Field it asks about schedule texts above My Work. The lessons picture My Work, so
+// the person answers Not now first (it never blocks Field; the texts lessons have their own pictures).
+async function fieldToday(pg) {
+  await go(pg, "/field/today");
+  const no = pg.locator("button[data-texts-setup-no]");
+  if (await no.count()) {
+    await submit(pg, no.first());
+    await go(pg, "/field/today");
+  }
+}
 async function submit(pg, locator) {
   await Promise.all([pg.waitForNavigation(), locator.click()]);
   await pg.waitForLoadState();
@@ -355,7 +365,7 @@ step("c03: Tyler opens the invitation on his phone, chooses a password and sees 
   await submit(p.pg, p.pg.locator("form button[type=submit]"));
   await shot(p.pg, "c03-password-set");
   await signIn(p, NEW_PERSON[1], NEW_PERSON[2]);
-  await go(p.pg, "/field/today");
+  await fieldToday(p.pg);
   await shot(p.pg, "c03-field-today");
   await go(p.pg, "/field/week");
   await shot(p.pg, "c03-field-week");
@@ -742,7 +752,7 @@ step("c08: Ben places the concrete order for today's work; Darcy confirms; Deliv
 // ================================================================== Module 11 (Field): Kevin's day
 step("c11: Kevin on Field: Today with the job and the delivery, confirm, capture, drawings, extra work, time", async () => {
   const k = await kevinPhone();
-  await go(k.pg, "/field/today");
+  await fieldToday(k.pg);
   const today = await k.pg.locator("body").innerText();
   assert.match(today, /Harbour Lane Pool Deck/);
   for (const m of ["$", "6800", "6,800", "612.50", "Unit cost", "Markup"]) assert.ok(!today.includes(m), `Kevin sees ${m}`);

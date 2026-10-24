@@ -98,7 +98,7 @@ def index():
                            summaries=contractor_summaries(org, limit=30))
 
 
-@wizards_bp.route("/<wizard_key>/start", methods=["POST"])
+@wizards_bp.route("/<wizard_key>/start", methods=["GET", "POST"])
 def start(wizard_key):
     wizard = require(wizard_key, SIDE_CONTRACTOR)
     if wizard is None:
@@ -108,7 +108,8 @@ def start(wizard_key):
 
     try:
         run = S.start_contractor_run(wizard.key, organization_id=org, actor=current_actor_display_name(),
-                                     user_id=current_user.id, project_id=request.form.get("project_id", type=int))
+                                     user_id=current_user.id,
+                                     project_id=request.values.get("project_id", type=int))
     except S.WizardError as exc:
         flash(str(exc), "error")
         return redirect(url_for("wizards.index"))

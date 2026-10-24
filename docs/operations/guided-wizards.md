@@ -7,7 +7,8 @@ One additive migration: `w2z9r4d7k1m6` (follows `g5e7c2a9d1b4`).
 
 One shared framework (`app/wizards/`) and four wizards over the existing pages and services. Home and the Supplier
 Hub's Requests page ask **What do you need to do?**; each activity offers **Start Guided Wizard** and **Continue
-Manually** on Home and on its own entry page (New Project form, Start New Estimate, the estimating workflow, the
+Manually** on Home and on its own entry page (Start is a link: it only opens, or resumes, the person's own
+wizard and writes no business record) (New Project form, Start New Estimate, the estimating workflow, the
 project page, PRO Desk, a supplier request, a PRO Desk quotation).
 
 | Framework piece | How |

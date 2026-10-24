@@ -499,7 +499,12 @@ def _completion(ctx):
     if open_punch:
         return StepView(TODO, f"{len(open_punch)} open punch list item(s)", items=items, actions=actions,
                         missing=["Complete the open punch list items."])
-    return StepView(DONE, "No open deficiencies", items=items, actions=actions)
+    walked = invitation is not None and invitation.status == "RESPONDED"
+    if not walked:
+        return StepView(TODO, "No open punch list item; the final walkthrough with the customer is not done yet",
+                        items=items, actions=actions,
+                        missing=["Walk the job with the customer (final walkthrough) and record any deficiencies."])
+    return StepView(DONE, "Walked with the customer; no open deficiencies", items=items, actions=actions)
 
 
 # ------------------------------------------------------------------------------------------------ 12 close

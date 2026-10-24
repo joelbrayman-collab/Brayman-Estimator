@@ -7,10 +7,7 @@
       <h3>{{ w.title }}</h3>
       <p>{{ w.short }}</p>
       <div class="wz-home-actions">
-        <form method="post" action="{{ start_url(w) }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit" class="wz-primary" data-start-wizard="{{ w.key }}">Start Guided Wizard</button>
-        </form>
+        <a class="wz-primary" href="{{ start_url(w)|trim }}" data-start-wizard="{{ w.key }}">Start Guided Wizard</a>
         <a class="wz-secondary" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}">Continue Manually</a>
       </div>
     </article>

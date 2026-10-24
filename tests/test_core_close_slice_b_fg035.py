@@ -789,6 +789,7 @@ ALLOWED_PUNCH_LIST_PATHS = {
     "app/services/project_operating_lifecycle.py",
     "app/__init__.py",
     "app/presentation/contractor_copy.py",
+    "app/wizards/manage_project.py",  # Manage a Project wizard: reads open items through the service (24 Oct 2026)
 }
 
 

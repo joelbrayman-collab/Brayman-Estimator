@@ -74,11 +74,11 @@ def wizard_index(supplier_id):
                            wizards=supplier_wizards(), summaries=supplier_summaries(supplier, limit=30))
 
 
-@supplier_portal_bp.route("/<int:supplier_id>/wizards/start", methods=["POST"])
+@supplier_portal_bp.route("/<int:supplier_id>/wizards/start", methods=["GET", "POST"])
 def wizard_start(supplier_id):
     supplier = _supplier(supplier_id)
-    share_id = request.form.get("share_id", type=int)
-    quote_id = request.form.get("quote_id", type=int)
+    share_id = request.values.get("share_id", type=int)
+    quote_id = request.values.get("quote_id", type=int)
     try:
         if share_id:
             from app.services.supplier_hub import SupplierHubError, supplier_share

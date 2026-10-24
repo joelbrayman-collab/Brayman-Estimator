@@ -421,3 +421,17 @@ def test_after_a_result_the_next_untested_test_opens_and_continue_never_reopens_
         r = _post(kevin, f"/training/uat/{key}", data={"status": "PASS"})
     assert r.headers["Location"].endswith("/training/uat")
     assert continue_href() is None, "nothing left to continue: every test has a result"
+
+
+def test_shop_company_work_setup_is_taught_on_hours_policy_not_time_review():
+    """Office tidy (Joel, 24 Oct 2026): the one-time Set up Shop / Company Work moved from Time review to Hours
+    policy (Company / Getting started hours step). Lessons, acceptance tests and so the Tutor say so; keys unchanged."""
+    _, f05 = C.find_lesson("f05-company-time")
+    assert "Hours policy" in f05.steps[0].why and "Time review" not in f05.steps[0].why
+    case = C.find_uat("uat-f05-company-time")
+    assert "Hours policy" in case.start and "Time review" not in case.start
+    _, c04 = C.find_lesson("c04-shop-company-work")
+    setup = c04.steps[0]
+    assert "Hours policy" in setup.where and setup.endpoint == "payroll_time.hours_policy"
+    assert "Time review panel" not in setup.if_wrong
+    assert "Hours policy" in C.find_uat("uat-c04-shop").start

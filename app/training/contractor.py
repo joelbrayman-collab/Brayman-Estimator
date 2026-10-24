@@ -798,12 +798,14 @@ M04 = Module(
             why="Shop, yard, equipment and safety-meeting hours are paid and count for payroll, but are never charged "
                 "to a customer's job or shown as one.",
             steps=(
-                Step(title="Set it up (once)", app=O, where=f"{HUB} → Time → Review time",
+                Step(title="Set it up (once)", app=O, where="Company → Getting started → 15 Hours and banked time → "
+                                                           "Go there (Hours policy; or Accounting → Shop / Company Work)",
                      do="Press Set up Shop / Company Work",
                      expect="'Shop / Company Work is ready. Crew choose Shop / Company Work on My time; it is never "
                             "billed to a customer.' The Shop / Company Work page opens.",
-                     if_wrong="Already set up: the Time review panel links to Shop / Company Work instead.",
-                     endpoint="time_entry.review"),
+                     if_wrong="Already set up: Hours policy links to Shop / Company Work instead. Time review no longer "
+                              "has this button; once set up, Shop / Company Work is a choice in its Project filter.",
+                     endpoint="payroll_time.hours_policy"),
                 Step(title="Add a category", app=O, where="Accounting → Shop / Company Work",
                      do="Type a new category (for example Snow clearing at the yard) and press Add",
                      expect="'Category added.' Crew see it under Shop / Company Work on Field.",
@@ -1940,7 +1942,7 @@ UAT_CASES = (
        "Record 2 hours of time off with a reason; then correct one of his approved entries down by 1 hour.",
        "The ledger shows Time off taken -2.00 and a difference row from the correction; Kevin sees the same balance on "
        "Field. You cannot adjust your own hours.", TEAM),
-    _u("uat-c04-shop", "c04", "Shop / Company Work is never a customer job", "Time review → Set up Shop / Company Work",
+    _u("uat-c04-shop", "c04", "Shop / Company Work is never a customer job", "Hours policy (Company → Getting started → Hours and banked time) → Set up Shop / Company Work",
        "Approve a shop entry; look for Shop / Company Work in Projects, Clients, Cal (search 'shop') and New estimate.",
        "It is in none of them; its page is Accounting → Shop / Company Work with the hours by category.", TEAM),
     _u("uat-c04-check", "c04", "Check QuickBooks", "Company → Accounting → Check QuickBooks",

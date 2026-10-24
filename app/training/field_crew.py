@@ -655,7 +655,7 @@ M05 = Module(
                      do="Tap Shop / Company Work",
                      expect="Time for 'Shop / Company Work', with 'Shop / Company Work: paid company time, not a "
                             "customer's job, never billed to a customer. Choose the kind of work below.'",
-                     why="The office sets it up once (Set up Shop / Company Work). Until then the button is not there.",
+                     why="The office sets it up once (Set up Shop / Company Work, on Hours policy: Company → Getting started → Hours and banked time). Until then the button is not there.",
                      if_wrong="No Shop / Company Work button? Ask Ben to set it up.",
                      shot="f05-company-time.png", endpoint="field.my_time"),
                 Step(title="Pick the kind of work and send", app=F, where="Shop / Company Work → Work",
@@ -1046,7 +1046,8 @@ UAT_CASES = (
        "The entry says Approved and has no Fix and send again button. A failing result here goes on Ben's "
        "administrator dashboard."),
     _u("uat-f05-company-time", "f05", "Shop / Company Work",
-       "Office first: Ben presses Set up Shop / Company Work (Time review, once). Then Field → Today",
+       "Office first: Ben presses Set up Shop / Company Work (Hours policy: Company → Getting started → Hours and "
+       "banked time, once). Then Field → Today",
        "Tap Shop / Company Work, pick Equipment and vehicle upkeep, type 1.5, tap Send time.",
        "Time sent for approval; My time lists it as Company time; it is not on the customer's job and Today's "
        "job is unchanged."),

@@ -1289,11 +1289,12 @@ button.button-secondary {
 .page-more-body p { margin: 0 0 6px; }
 
 /* Home: Start New Estimate and + Start New Project side by side; Company Calendar directly below + Start New Project. */
-.home-actions { display: grid; grid-template-columns: auto auto auto; gap: 8px; align-items: stretch; }
+/* Company Calendar stays directly under + Start New Project (earlier owner placement; checked by the contractor walk). */
+.home-actions { display: grid; grid-template-columns: auto auto; gap: 8px; }
 .home-actions .home-start-estimate { grid-column: 1; grid-row: 1; }
 .home-actions .home-start { grid-column: 2; grid-row: 1; }
-.home-actions .home-calendar { grid-column: 3; grid-row: 1; display: inline-flex; align-items: center; }
-.home-actions .home-start-estimate, .home-actions .home-start, .home-actions .home-calendar { padding: 11px 16px 10px; }
+.home-actions .home-calendar { grid-column: 2; grid-row: 2; padding: 8px 14px; text-align: center; }
+.home-actions .home-start-estimate, .home-actions .home-start { padding: 11px 16px 10px; }
 .home-briefing { margin-top: 0; }
 
 /* Project hub: the job's number, client and current/closed on one line under the name. */

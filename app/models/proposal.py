@@ -14,14 +14,34 @@ from app.services.organizations import get_current_organization_id
 _PROVENANCE_NOTE = re.compile(
     r"^Approved contractor cost #\d+; quantity confirmed by |; rule [^;]*; quantity [^;]*; canonical "
     r"|^(?:Company labour rate|Project rate) [-0-9.]+ per hour"
-    r"|^Manual entry by .+: no CalibraytAI calculator covers this cost\.$",
+    r"|^Manual entry by .+: no CalibraytAI calculator covers this cost\.$"
+    r"|^Allowance approved by ",
+)
+# Joel's decision (24 Oct 2026): internal labour rates and internal costing notes never reach a customer document
+# (proposal page and PDF, the customer's proposal link, change orders). A note that talks about rates, wages, costs,
+# margin, markup, overhead or supplier/wholesale prices is the contractor's internal costing record: it stays on the
+# estimate line (and the internal cost estimate) and is left off everything the customer sees. Customer wording
+# ("Includes two coats of stain on the railing") is still shown.
+_INTERNAL_COSTING_NOTE = re.compile(
+    r"\b(?:labou?r\s+rates?|rates?|hourly|per\s+(?:man[-\s]?)?hours?|wages?|cost|costs|costing|costed|margins?"
+    r"|mark-?ups?|overheads?|profit|wholesale|net\s+price|supplier(?:'s)?\s+prices?|dealer\s+prices?"
+    r"|our\s+price|internal)\b"
+    r"|/\s*(?:hr|hrs|h|hour|man[-\s]?hours?)\b"
+    r"|\$\s*[0-9][0-9,]*(?:\.[0-9]+)?\s*(?:/|per\b|an?\s+hour\b)",
+    re.IGNORECASE,
 )
 
 
-def customer_line_note(note):
-    """The line note a customer may see: None for the platform's own provenance notes."""
+def is_internal_costing_note(note) -> bool:
+    """True for the platform's provenance notes and for any note carrying internal rates or costing."""
     text = (note or "").strip()
-    if not text or _PROVENANCE_NOTE.search(text):
+    return bool(text and (_PROVENANCE_NOTE.search(text) or _INTERNAL_COSTING_NOTE.search(text)))
+
+
+def customer_line_note(note):
+    """The line note a customer may see: None for provenance notes and internal costing notes."""
+    text = (note or "").strip()
+    if not text or is_internal_costing_note(text):
         return None
     return text
 

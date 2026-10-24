@@ -104,9 +104,11 @@ def _load() -> Tuple[Tuple[Module, ...], Tuple[UatCase, ...]]:
     from app.training.guided_estimating_lessons import attach as attach_guided  # contractor modules 13 and 14
     from app.training.site_plans_lesson import attach as attach_site_plans  # Site Plans: f04 lesson, c07 step
     from app.training.useful_calculators_lesson import attach  # Useful Calculators lesson in Field module 1
+    from app.training.wizards_lessons import attach as attach_wizards  # contractor module 15, supplier module 11
 
-    return attach_guided(*attach_site_plans(*attach(contractor.MODULES + field_crew.MODULES + supplier.MODULES,
-                                                    contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES)))
+    return attach_wizards(*attach_guided(*attach_site_plans(*attach(
+        contractor.MODULES + field_crew.MODULES + supplier.MODULES,
+        contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES))))
 
 
 _CACHE: Dict[str, object] = {}

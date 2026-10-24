@@ -641,3 +641,23 @@ def test_supplier_pro_desk_wizard_quick_quote_to_order_package(pro_desk):
     # The order package is the PRO Desk's own (no point-of-sale, inventory or rewards assumption).
     page = _sstate(store, sid, run_id, "pricing")[1]
     assert "No rewards or Pro Account points program" in page
+
+
+# ====================================================================================== training
+def test_wizard_training_adds_modules_without_touching_any_existing_key():
+    from app.training import contractor, content as C, supplier
+    from app.training.wizards_lessons import UAT_CASES
+
+    keys = [lesson.key for m in C.modules() for lesson in m.lessons]
+    assert len(keys) == len(set(keys))
+    for module in contractor.MODULES + supplier.MODULES:
+        for lesson in module.lessons:
+            assert lesson.key in keys
+    c15 = next(m for m in C.modules() if m.key == "c15")
+    s11 = next(m for m in C.modules() if m.key == "s11")
+    assert set(c15.roles) == {"OWNER", "OFFICE"} and s11.pathway == "SUPPLIER"
+    # The owner's lesson is the owner's only; the Field crew get none of it.
+    assert [l.key for _m, l in C.lessons_for("CONTRACTOR", "OWNER") if l.key == "c15-owner-decisions"]
+    assert not [l.key for _m, l in C.lessons_for("CONTRACTOR", "OFFICE") if l.key == "c15-owner-decisions"]
+    assert not any(l.key.startswith("c15") for _m, l in C.lessons_for("FIELD_CREW", "FIELD"))
+    assert {c.key for c in UAT_CASES} <= {c.key for c in C.uat_cases()}

@@ -6,7 +6,7 @@
     <p class="wz-eyebrow"><span>{{ wizard.title }}</span> · <span data-wizard-subject>{{ subject }}</span>{% if not run.is_active %} · <strong data-run-finished>{{ 'Finished' if run.status == 'COMPLETED' else 'Closed' }}</strong>{% endif %}</p>
     <div class="wz-progress-row">
       <div class="wz-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress.percent }}" aria-label="{{ progress.done }} of {{ progress.total }} steps done"><span style="width: {{ progress.percent }}%"></span></div>
-      <span class="wz-count" data-progress="{{ progress.done }}/{{ progress.total }}">Step {{ row.number }} of {{ rows|length }} · {{ progress.done }} done</span>
+      <span class="wz-count" data-progress="{{ progress.done }}/{{ progress.total }}">Step {{ row.number }} of {{ rows|length }} · {{ progress.done }} of {{ progress.total }} done</span>
     </div>
   </header>
 

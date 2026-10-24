@@ -1,0 +1,403 @@
+// Release evidence for the four Guided Workflow Wizards (Joel, 24 Oct 2026), in a real browser at desktop
+// (1280 x 900) and iPhone size (390 x 844, touch), against a local office built by the real migrations
+// (tests/wizards_page_server.py: synthetic owner Ben, Field-only crew Kevin, another company's owner, a customer,
+// two New Homes estimated stage by stage — one accepted with its work plan — and a synthetic store with its
+// price file and a rival store). Synthetic data only.
+//
+// Checks: Home asks "What do you need to do?" with Start Guided Wizard / Continue Manually above the fold; Start a
+// New Project end to end (Next refused without the required answers, automatic draft saving, Create the project
+// once — a second Create makes nothing — the drawings choice on the project's own page and Return to the wizard,
+// the role, Internal / Subcontracted / N/A on the guided scope page, review, continue into Guided Estimating);
+// Save & Exit and Resume from Home; Continue Manually and back; Guided Estimating on a costed project (approve the
+// costing and apply the company pricing from the wizard, back to the step, 15.0 % true gross margin); Manage a
+// Project on the accepted project (real schedule counts, the not-switched-on QuickBooks Time and texting status);
+// the Supplier Pro Desk wizard from Quick Quote through issue, the customer's answer and the order package; Ask
+// the Tutor answers in place; every wizard page on a phone without sideways scrolling; Kevin kept out; another
+// company and a rival store see nothing; no page error and no server error.
+// WIZARD_SHOTS=<dir> saves each wizard's screens (desktop and phone) there.
+// Run: EVIDENCE_REPO=$PWD EVIDENCE_EXECUTABLE=/path/to/chromium node --test tools/release/evidence_wizards.mjs
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { spawn } from "node:child_process";
+import test, { after, before } from "node:test";
+import { REPO, freePort, launch } from "./evidence_common.mjs";
+
+const PHONE = { width: 390, height: 844 };
+const DESK = { width: 1280, height: 900 };
+const SHOTS = process.env.WIZARD_SHOTS || "";
+const PREFIX = process.env.WIZARD_SHOT_PREFIX || "";
+let browser, server, base, facts;
+const serverErrors = [];
+const sessions = {};
+const W = {};
+
+before(async () => {
+  if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
+  const port = await freePort();
+  server = spawn(path.join(REPO, "venv/bin/python"), [path.join(REPO, "tests/wizards_page_server.py")], {
+    cwd: REPO, env: { ...process.env, WIZARDS_PAGE_PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"] });
+  let out = "";
+  server.stdout.on("data", (c) => (out += c)); server.stderr.on("data", (c) => (out += c));
+  await new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("office did not start\n" + out)), 300000);
+    const poll = () => {
+      if (out.includes(`READY ${port}`)) { clearTimeout(t); return resolve(); }
+      if (server.exitCode !== null) { clearTimeout(t); return reject(new Error("office exited\n" + out)); }
+      setTimeout(poll, 100);
+    };
+    poll();
+  });
+  facts = JSON.parse(out.split("FACTS ")[1].split("\n")[0]);
+  base = `http://127.0.0.1:${port}`;
+  browser = await launch();
+});
+after(async () => {
+  for (const s of Object.values(sessions)) await s.ctx.close().catch(() => {});
+  await browser?.close(); server?.kill();
+  console.log(`WIZARDS SERVER_ERRORS=${serverErrors.length}`);
+});
+
+let broken = "";
+function step(name, fn) {
+  test(name, async (t) => {
+    if (broken) { t.skip(`after "${broken}" failed`); return; }
+    try { await fn(t); } catch (e) { broken = name; throw e; }
+  });
+}
+async function person(key, viewport) {
+  const id = `${key}-${viewport.width}`;
+  if (sessions[id]) return sessions[id];
+  const phone = viewport.width < 500;
+  const ctx = await browser.newContext({ viewport, ...(phone ? { isMobile: true, hasTouch: true } : {}) });
+  ctx.setDefaultTimeout(15000);
+  const pg = await ctx.newPage();
+  const errors = [];
+  pg.on("pageerror", (e) => errors.push(`${pg.url()}: ${e}`));
+  pg.on("response", (r) => { if (r.status() >= 500) serverErrors.push(`${r.status()} ${r.url()}`); });
+  sessions[id] = { ctx, pg, errors };
+  const supplier = key === "store" || key === "rival";
+  const [email, password] = supplier ? facts[`${key}_login`] : facts.people[key];
+  await go(pg, supplier ? "/supplier/login" : "/login");
+  await pg.fill("input[name=email]", email);
+  await pg.fill("input[name=password]", password);
+  await submit(pg, pg.locator("form button[type=submit]").first());
+  assert.doesNotMatch(pg.url(), /\/login/, `${key} signs in`);
+  return sessions[id];
+}
+async function go(pg, url) {
+  const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`);
+  await pg.waitForLoadState();
+  return r;
+}
+async function submit(pg, locator) {
+  await Promise.all([pg.waitForNavigation(), locator.click()]);
+  await pg.waitForLoadState();
+}
+const pathOf = (pg) => new URL(pg.url()).pathname;
+async function noSideways(pg, label) {
+  const over = await pg.evaluate("document.documentElement.scrollWidth - window.innerWidth");
+  assert.ok(over <= 1, `${label}: page scrolls sideways by ${over}px`);
+}
+async function shot(pg, name) {
+  if (!SHOTS) return;
+  await pg.screenshot({ path: path.join(SHOTS, `${PREFIX}${name}.png`), fullPage: false });
+}
+async function flash(pg) {
+  return (await pg.locator(".flash-stack, .flash").allInnerTexts().catch(() => [])).join(" | ");
+}
+async function state(pg) {
+  return pg.locator("[data-wizard-step]").getAttribute("data-step-state");
+}
+async function stepUrl(run, key) { return `/wizards/run/${run}/step/${key}`; }
+async function next(pg) { await submit(pg, pg.locator("[data-wizard-next]")); }
+
+// ------------------------------------------------------------------ Home
+step("Home asks What do you need to do? with the three wizards above the fold, existing tools kept", async () => {
+  const { pg, errors } = await person("ben", DESK);
+  await go(pg, "/");
+  const section = pg.locator("[data-wizard-home]");
+  assert.match(await section.innerText(), /what do you need to do\?/i);
+  for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
+    const start = pg.locator(`[data-start-wizard="${key}"]`);
+    assert.equal(await start.count(), 1, key);
+    const box = await start.boundingBox();
+    assert.ok(box.y + box.height <= DESK.height, `${key}: Start Guided Wizard is above the fold`);
+    assert.equal(await pg.locator(`[data-continue-manually="${key}"]`).count(), 1, key);
+  }
+  for (const sel of ["a[data-home-start-estimate]", "a.home-start", "a.home-calendar"]) assert.equal(await pg.locator(sel).count(), 1, sel);
+  await shot(pg, "home-what-do-you-need-to-do-desktop");
+  const phone = await person("ben", PHONE);
+  await go(phone.pg, "/");
+  await noSideways(phone.pg, "home phone");
+  await shot(phone.pg, "home-what-do-you-need-to-do-phone");
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ Wizard 1
+step("Start a New Project: required answers, autosave, Create once, drawings, role, scope, review, continue", async () => {
+  const { pg, errors } = await person("ben", DESK);
+  await go(pg, "/");
+  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  W.run1 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
+  await shot(pg, "wizard1-customer-desktop");
+  await next(pg);  // refused: no customer or name yet
+  assert.match(await flash(pg), /Before you go on/);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
+  await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
+  await pg.fill("input[name=name]", "Browser Wizard Home (synthetic)");
+  await pg.locator("[data-autosave-status]").filter({ hasText: "Saved automatically" }).waitFor();
+  await next(pg);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "project_type");
+  await pg.locator('input[name=guided_project_type][value=NEW_HOME]').check();
+  assert.equal(await pg.inputValue("select[name=project_type]"), "New Build");
+  await next(pg);
+  await pg.fill("input[name=street]", "21 Synthetic Lane");
+  await pg.fill("input[name=municipality]", "Merrickville");
+  await pg.fill("input[name=province_state]", "Ontario");
+  await pg.fill("input[name=postal_zip]", "K0G 1N0");
+  await shot(pg, "wizard1-location-desktop");
+  await submit(pg, pg.locator("[data-create-project]"));
+  assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run1}/step/documents$`));
+  // Back to the location step: the project exists, Create is gone; a replayed Create makes nothing.
+  await go(pg, await stepUrl(W.run1, "location"));
+  assert.equal(await pg.locator("[data-create-project]").count(), 0);
+  assert.equal(await state(pg), "done");
+  const replay = await pg.evaluate(async (run) => {
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+    const body = new URLSearchParams({ csrf_token: token, wizard_run: String(run), name: "Browser Wizard Home (synthetic)",
+      client_id: "1", project_type: "New Build", pricing_posture: "Competitive", execution_risk: "Normal",
+      schedule_condition: "Normal", site_condition: "Normal", estimate_stage: "Preliminary", delivery_model: "Self-Perform" });
+    const r = await fetch("/projects/new", { method: "POST", body, redirect: "manual", credentials: "same-origin" });
+    return r.type;
+  }, W.run1);
+  assert.ok(replay);
+  await go(pg, "/projects/");
+  assert.equal(await pg.getByText("Browser Wizard Home (synthetic)", { exact: true }).count(), 1, "created once");
+  // Drawings: "This project needs no drawings" is the project's own choice; its page shows Return to the wizard.
+  await go(pg, await stepUrl(W.run1, "documents"));
+  await shot(pg, "wizard1-documents-desktop");
+  await submit(pg, pg.locator('[data-wizard-action="no-drawings"]'));
+  assert.equal(await pg.locator("[data-wizard-return]").count(), 1);
+  await submit(pg, pg.locator("[data-wizard-return] a"));
+  assert.equal(await state(pg), "done");
+  await next(pg);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "role");
+  await pg.locator('input[name=contractor_role][value=GENERAL_CONTRACTOR]').check();
+  await submit(pg, pg.locator("[data-save-role]"));
+  assert.equal(await state(pg), "done");
+  await next(pg); // construction scope
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /14 construction stages/);
+  await next(pg); // applicable stages
+  await next(pg); // Internal / Subcontracted / N/A
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "stages");
+  await submit(pg, pg.locator('[data-wizard-action="open-scope"]'));
+  assert.match(pathOf(pg), /\/guided\/scope$/);
+  const radios = pg.locator('input[type=radio][value=INTERNAL]:visible');
+  for (let i = 0; i < await radios.count(); i++) await radios.nth(i).check();
+  await submit(pg, pg.locator("[data-scope-save]"));
+  await submit(pg, pg.locator("[data-wizard-return] a"));
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "stages");
+  assert.equal(await state(pg), "done");
+  await shot(pg, "wizard1-stages-desktop");
+  await next(pg); // responsibility (optional)
+  await next(pg); // review
+  await pg.locator("input[name=confirmed]").check();
+  await submit(pg, pg.locator("[data-confirm]"));
+  assert.equal(await state(pg), "done");
+  await next(pg);
+  await shot(pg, "wizard1-continue-desktop");
+  await submit(pg, pg.locator("[data-continue-estimating]"));
+  assert.match(pathOf(pg), /\/wizards\/run\/\d+\/step\//);
+  assert.match(await pg.locator(".wz-eyebrow").innerText(), /Guided Estimating · Browser Wizard Home/);
+  assert.deepEqual(errors, []);
+});
+
+step("Start a New Project on a phone: compact, no sideways scroll, steps folded away", async () => {
+  const { pg, errors } = await person("ben", PHONE);
+  await go(pg, "/");
+  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  await noSideways(pg, "wizard 1 phone");
+  assert.equal(await pg.locator(".wz-steps-toggle[open]").count(), 0, "step list folded on a phone");
+  const nextBox = await pg.locator("[data-wizard-next]").boundingBox();
+  assert.ok(nextBox.width >= 120, "Next is a large tap target");
+  await shot(pg, "wizard1-customer-phone");
+  // Save & Exit, then Resume from Home where it stopped.
+  await pg.fill("input[name=name]", "Phone draft (synthetic)");
+  await submit(pg, pg.locator("[data-wizard-save-exit]"));
+  assert.equal(pathOf(pg), "/");
+  const resume = pg.locator('[data-resume-wizard="NEW_PROJECT"]');
+  assert.ok((await resume.count()) >= 1);
+  await submit(pg, resume.first());
+  assert.equal(await pg.inputValue("input[name=name]"), "Phone draft (synthetic)");
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ Wizard 2
+step("Guided Estimating on a costed project: approve costing and price it from the wizard (15.0 % margin)", async () => {
+  const { pg, errors } = await person("ben", DESK);
+  await go(pg, `/projects/${facts.projects.estimate}`);
+  await submit(pg, pg.locator('[data-start-wizard="GUIDED_ESTIMATING"]'));
+  W.run2 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  for (const key of ["scope", "internal", "select_quotes", "internal_cost"]) {
+    await go(pg, await stepUrl(W.run2, key));
+    assert.equal(await state(pg), "done", key);
+  }
+  await go(pg, await stepUrl(W.run2, "internal"));
+  await shot(pg, "wizard2-internal-desktop");
+  await go(pg, await stepUrl(W.run2, "pricing"));
+  await submit(pg, pg.locator('[data-wizard-action="approve-costing"]'));
+  assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run2}/step/pricing$`));
+  await submit(pg, pg.locator('[data-wizard-action="apply-pricing"]'));
+  assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run2}/step/pricing$`));
+  assert.equal(await state(pg), "done");
+  assert.match(await pg.locator("[data-step-items]").innerText(), /15\.0%/);
+  await shot(pg, "wizard2-pricing-desktop");
+  // Ask the Tutor answers on the step, without leaving it.
+  await pg.locator(".contextual-help summary").click();
+  await pg.fill(".contextual-help-question", "What should I do here?");
+  await pg.locator(".contextual-help-ask-btn").click();
+  await pg.locator(".contextual-help-answer:not([hidden])").waitFor();
+  assert.match(pathOf(pg), /\/step\/pricing$/);
+  const phone = await person("ben", PHONE);
+  await go(phone.pg, await stepUrl(W.run2, "pricing"));
+  await noSideways(phone.pg, "wizard 2 phone");
+  await shot(phone.pg, "wizard2-pricing-phone");
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ Wizard 3
+step("Manage a Project on the accepted project: real schedule counts and the actual status of features not on", async () => {
+  const { pg, errors } = await person("ben", DESK);
+  await go(pg, `/projects/${facts.projects.manage}`);
+  await submit(pg, pg.locator('[data-start-wizard="MANAGE_PROJECT"]'));
+  W.run3 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  await go(pg, await stepUrl(W.run3, "schedule"));
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /0 of 5 work items scheduled/);
+  await shot(pg, "wizard3-schedule-desktop");
+  await go(pg, await stepUrl(W.run3, "progress"));
+  assert.match(await pg.locator("[data-step-items]").innerText(), /QuickBooks Time[\s\S]*Not switched on/);
+  await go(pg, await stepUrl(W.run3, "close"));
+  assert.equal(await pg.locator('[data-wizard-action="close-project"]').count(), 1); // Ben is the owner
+  await shot(pg, "wizard3-close-desktop");
+  // Continue Manually opens the existing page, with the way back.
+  await go(pg, await stepUrl(W.run3, "schedule"));
+  await submit(pg, pg.locator("[data-continue-manually]"));
+  assert.equal(pathOf(pg), "/schedule");
+  await submit(pg, pg.locator("[data-wizard-return] a"));
+  assert.match(pathOf(pg), /\/step\/schedule$/);
+  const phone = await person("ben", PHONE);
+  await go(phone.pg, await stepUrl(W.run3, "schedule"));
+  await noSideways(phone.pg, "wizard 3 phone");
+  await shot(phone.pg, "wizard3-schedule-phone");
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ Wizard 4
+step("Supplier Pro Desk: Quick Quote, choose it, price, issue, the customer's answer, the order package", async () => {
+  const { pg, errors } = await person("store", DESK);
+  const sid = facts.store.supplier_id;
+  await go(pg, `/supplier/${sid}/`);
+  assert.match(await pg.locator("[data-wizard-home]").innerText(), /what do you need to do\?/i);
+  await submit(pg, pg.locator('[data-start-wizard="SUPPLIER_PRO_DESK"]'));
+  W.run4 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  await shot(pg, "wizard4-open-desktop");
+  await submit(pg, pg.locator('[data-wizard-action="quick-quote"]'));
+  assert.match(pathOf(pg), /\/pro-desk\/quick$/);
+  await pg.fill("input[name=customer_name]", "Pat Walk-in (synthetic)");
+  const q = facts.quick;
+  for (const [name, value] of Object.entries(q)) {
+    const field = pg.locator(`[name="${name}"]`).first();
+    if (!(await field.count())) continue;
+    const tag = await field.evaluate((el) => el.tagName);
+    if (tag === "SELECT") await field.selectOption(value); else await field.fill(value);
+  }
+  const standard = pg.locator('[name="assembly_id"]');
+  if (await standard.count()) {
+    const tag = await standard.first().evaluate((el) => el.tagName + ":" + (el.type || ""));
+    if (tag.startsWith("SELECT")) await standard.selectOption(String(facts.store.standard_id));
+    else await pg.locator(`[name="assembly_id"][value="${facts.store.standard_id}"]`).check();
+  }
+  const demo = pg.locator('[name="demo_synthetic"]');
+  if (await demo.count()) await demo.first().check().catch(() => {});
+  await submit(pg, pg.locator("[data-quick-submit]"));
+  assert.match(pathOf(pg), /\/pro-desk\/\d+$/, await flash(pg));
+  W.quote = Number(pathOf(pg).match(/\/pro-desk\/(\d+)$/)[1]);
+  await submit(pg, pg.locator("[data-wizard-return] a"));
+  await pg.locator(`input[name=record][value="quote:${W.quote}"]`).check();
+  await submit(pg, pg.locator("[data-use-record]"));
+  assert.equal(await state(pg), "done");
+  await go(pg, `/supplier/${sid}/wizards/run/${W.run4}/step/pricing`);
+  await shot(pg, "wizard4-pricing-desktop");
+  assert.match(await pg.locator(".wz-main").innerText(), /No rewards or Pro Account points program/);
+  // The quotation's own page does the work: leave out the trusses (quote to follow), issue, record the answer,
+  // prepare the order. Each wizard step follows.
+  const wiz = (key) => `/supplier/${sid}/wizards/run/${W.run4}/step/${key}`;
+  await go(pg, `/supplier/${sid}/pro-desk/${W.quote}`);
+  const trusses = pg.locator('tr[data-price-line^="CAL-OB-TRUSS"]:not([data-price-status="EXCLUDED"])');
+  for (let guard = 0; guard < 10 && await trusses.count(); guard++) {
+    const row = trusses.first();
+    await row.locator("details summary", { hasText: "Leave out" }).click();
+    await row.locator("input[name=exclude_reason]").fill("Truss quote to follow");
+    await submit(pg, row.locator("button", { hasText: "Leave out" }));
+  }
+  await go(pg, wiz("pricing"));
+  assert.equal(await state(pg), "done", await pg.locator("[data-step-missing]").innerText().catch(() => ""));
+  await go(pg, wiz("send"));
+  assert.equal(await state(pg), "todo");
+  await go(pg, `/supplier/${sid}/pro-desk/${W.quote}`);
+  await submit(pg, pg.locator("[data-issue]"));
+  await go(pg, wiz("send"));
+  assert.equal(await state(pg), "done");
+  await go(pg, wiz("responses"));
+  assert.equal(await state(pg), "waiting");
+  await go(pg, `/supplier/${sid}/pro-desk/${W.quote}`);
+  const accept = pg.locator("form[data-record-acceptance]");
+  await accept.locator("[name=method]").selectOption("in_person").catch(async () => accept.locator('[name=method][value=in_person]').check());
+  await accept.locator("[name=customer_name]").fill("Pat Walk-in");
+  await submit(pg, accept.locator("button[type=submit]"));
+  await go(pg, wiz("order"));
+  assert.equal(await state(pg), "todo");
+  await submit(pg, pg.locator('[data-wizard-action="order-ready"]'));
+  await go(pg, wiz("order"));
+  assert.equal(await state(pg), "done");
+  await go(pg, wiz("close"));
+  assert.equal(await state(pg), "done");
+  await shot(pg, "wizard4-close-desktop");
+  const phone = await person("store", PHONE);
+  await go(phone.pg, `/supplier/${sid}/wizards/run/${W.run4}/step/pricing`);
+  await noSideways(phone.pg, "wizard 4 phone");
+  await shot(phone.pg, "wizard4-pricing-phone");
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ roles and isolation
+step("Kevin (Field only) is kept out of every wizard page", async () => {
+  const { pg, errors } = await person("kevin", PHONE);
+  for (const url of ["/wizards/", `/wizards/run/${W.run1}/step/customer`, `/wizards/run/${W.run2}/step/pricing`]) {
+    await go(pg, url);
+    assert.equal(pathOf(pg), "/field/today", url);
+  }
+  assert.deepEqual(errors, []);
+});
+
+step("Another company and a rival store see none of the wizards", async () => {
+  const { pg, errors } = await person("other", DESK);
+  for (const run of [W.run1, W.run2, W.run3]) {
+    const r = await go(pg, `/wizards/run/${run}/step/project`);
+    assert.equal(r.status(), 404, `run ${run}`);
+  }
+  await go(pg, "/");
+  assert.equal(await pg.locator("[data-wizard-resume-list]").count(), 0);
+  const rival = await person("rival", DESK);
+  const sid = facts.store.supplier_id;
+  const r = await go(rival.pg, `/supplier/${sid}/wizards/run/${W.run4}/step/open`);
+  assert.equal(r.status(), 404);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(rival.errors, []);
+});
+
+step("No server error anywhere in the walk", async () => {
+  assert.deepEqual(serverErrors, []);
+});

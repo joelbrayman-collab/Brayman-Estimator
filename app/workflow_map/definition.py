@@ -33,7 +33,7 @@ from app.models.training import (
     ROLE_SUPPLIER_OWNER,
 )
 
-DEFINITION_VERSION = "2026-10-23.1"  # .1: Guided Estimating and the calculators' three choices (23 Oct 2026)
+DEFINITION_VERSION = "2026-10-24.1"  # .1: the guided workflow wizards (24 Oct 2026)
 
 # ------------------------------------------------------------------ vocabulary
 
@@ -253,6 +253,7 @@ D_TIME = _d("time_entry.review", "Open Time review")
 D_SCHEDULE_NEW = _d("schedule.new_item", "Open Schedule work")
 D_CONCRETE = _d("calculators.concrete", "Open Concrete calculator")
 D_START_ESTIMATE = _d("guided.start", "Open Start New Estimate")
+D_WIZARDS = _d("wizards.index", "Open the guided wizards (What do you need to do?)")
 D_ATTENTION = _d("company_attention.index", "Open Attention", REQ_COMPANY_MANAGEMENT)
 D_FIELD_TODAY = _field("field.today", "Open Field Today")
 
@@ -273,6 +274,7 @@ D_PD_PRICES = _sup("supplier_pro_desk.prices", "Open Price file")
 D_PD_SETTINGS = _sup("supplier_pro_desk.settings", "Open Quote settings")
 D_PD_STANDARDS = _sup("supplier_pro_desk.standards", "Open Standard buildings and product matches")
 D_PD_TIMING = _sup("supplier_pro_desk.timing", "Open Timing")
+D_SUP_WIZARD = _sup("supplier_portal.wizard_index", "Open the Supplier Pro Desk wizard")
 
 # A walk-in quotation's own page needs the quotation; the list is where it is opened.
 D_PD_A_QUOTE = _sup("supplier_pro_desk.index", "Open the quotation from Walk-in quotations")
@@ -326,6 +328,7 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
                     "the material takeoffs that the price is built from.",
         primary=D_PROJECTS,
         substeps=(
+            S("wizard-new-project", "Start a New Project with the guided wizard", D_WIZARDS, lesson="c15-new-project-wizard"),
             S("customer", "Add a customer", D_CLIENT_NEW, lesson="c06-clients"),
             S("project", "Start a project", D_PROJECT_NEW, lesson="c06-existing-jobs"),
             S("location", "Enter job-location information",
@@ -346,10 +349,10 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
               note="CalibraytAI's drawings are construction and sales drawings. Engineering and permit "
                    "drawings come from a designer or engineer."),
         ),
-        lessons=("c06-clients", "c06-project-hub", "c06-project-setup", "c06-existing-jobs", "c07-plans",
+        lessons=("c15-what-do-you-need", "c15-new-project-wizard", "c15-save-resume-manual", "c06-clients", "c06-project-hub", "c06-project-setup", "c06-existing-jobs", "c07-plans",
                  "c07-concrete-calculator", "c07-deck-takeoff", "c14-use-result-only", "c14-add-to-existing",
                  "c14-create-new-project", "c14-phone"),
-        uat=("uat-c06-project", "uat-c06-hub", "uat-c07-plan", "uat-c07-calculator", "uat-c14-use-only",
+        uat=("uat-c15-home", "uat-c15-required", "uat-c15-created-once", "uat-c15-save-resume", "uat-c15-manual", "uat-c06-project", "uat-c06-hub", "uat-c07-plan", "uat-c07-calculator", "uat-c14-use-only",
              "uat-c14-existing", "uat-c14-new-project"),
         roles=OFFICE_ROLES, project_statuses=("Lead",),
     ),
@@ -363,6 +366,7 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
                     "margin. Costing waits until each line says who supplies and who builds it.",
         primary=D_START_ESTIMATE,
         substeps=(
+            S("wizard-estimating", "Guided Estimating with the guided wizard", D_WIZARDS, lesson="c15-estimating-wizard"),
             S("guided-start", "Start New Estimate (project type and your role)", D_START_ESTIMATE,
               lesson="c13-start-new-estimate"),
             S("guided-scope", "Construction scope: Internal, Subcontracted or N/A for each stage",
@@ -384,10 +388,10 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("finalize", "Finalize the estimate (scope delivery and costing approval)",
               _project("scope_delivery.review", "Open Scope Delivery Review"), lesson="c09-scope-delivery-costing"),
         ),
-        lessons=("c13-start-new-estimate", "c13-scope", "c13-internal-stage", "c13-subcontracted-stage",
+        lessons=("c15-estimating-wizard", "c13-start-new-estimate", "c13-scope", "c13-internal-stage", "c13-subcontracted-stage",
                  "c13-missing-costs", "c13-internal-cost", "c13-pricing-proposal", "c08-concrete-request",
                  "c08-approve-quote", "c09-new-estimate", "c09-scope-delivery-costing", "c09-pricing"),
-        uat=("uat-c13-scope", "uat-c13-internal", "uat-c13-subcontract", "uat-c13-missing-cost", "uat-c13-internal-cost",
+        uat=("uat-c15-estimating", "uat-c13-scope", "uat-c13-internal", "uat-c13-subcontract", "uat-c13-missing-cost", "uat-c13-internal-cost",
              "uat-c13-proposal", "uat-c08-quote", "uat-c09-estimate", "uat-c09-block"),
         handoffs=(1, 2, 3, 4), roles=OFFICE_ROLES, project_statuses=("Estimating",),
         loops=(Loop("c-plan", "Price → Plan", "A quotation or takeoff shows the scope or quantities need to change.",
@@ -429,6 +433,7 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
                     "becomes an approved change order.",
         primary=_hub("Open the project page: Schedule", "hub-schedule"),
         substeps=(
+            S("wizard-manage", "Manage a Project with the guided wizard", D_WIZARDS, lesson="c15-manage-project-wizard"),
             S("company-calendar", "Company Calendar", D_CO_CAL, lesson="c05-calendars"),
             S("my-calendar", "My Calendar", D_MY_CAL, lesson="c05-appointments"),
             S("schedule", "Schedule project activities",
@@ -453,11 +458,11 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("progress", "Project progress", _hub("Open the project page: Build", "hub-build"),
               lesson="c11-office-review"),
         ),
-        lessons=("c05-appointments", "c05-field-schedule", "c11-schedule-crew", "c08-place-order", "c11-field-today",
+        lessons=("c15-manage-project-wizard", "c15-owner-decisions", "c05-appointments", "c05-field-schedule", "c11-schedule-crew", "c08-place-order", "c11-field-today",
                  "c11-capture", "c11-extra-work", "c11-field-time", "c11-office-review", "c11-change-order",
                  "c12-morning", "c12-field-day", "c04-invoices", "c07-field-drawings", "c04-approve-to-quickbooks-time",
                  "c04-failed-transfers", "c04-banked-hours", "c04-shop-company-work"),
-        uat=("uat-c05-appointments", "uat-c05-field-week", "uat-c08-order", "uat-c11-schedule", "uat-c11-field",
+        uat=("uat-c15-manage", "uat-c05-appointments", "uat-c05-field-week", "uat-c08-order", "uat-c11-schedule", "uat-c11-field",
              "uat-c11-delivery-field", "uat-c11-change-order", "uat-c12-day", "uat-c12-field-day",
              "uat-c04-qbt-approve", "uat-c04-qbt-failed", "uat-c04-banked", "uat-c04-shop"),
         handoffs=(5, 6, 7, 8), roles=OFFICE_ROLES, project_statuses=("Contracted", "Active"),
@@ -615,6 +620,7 @@ SUPPLIER_STAGES: Tuple[Stage, ...] = (
                     "contractor's customer, prices or margins.",
         primary=D_INBOX,
         substeps=(
+            S("wizard", "Supplier Pro Desk wizard: a contractor request step by step", D_SUP_WIZARD, lesson="s11-contractor-request"),
             S("authorized", "Contractor-authorized material requests", D_INBOX, lesson="s04-open-request"),
             S("inbox", "Supplier inbox (Requests)", D_INBOX, lesson="s03-store-page"),
             S("details", "Request details", D_A_REQUEST, lesson="s04-open-request"),
@@ -622,8 +628,8 @@ SUPPLIER_STAGES: Tuple[Stage, ...] = (
             S("concrete", "Concrete requests (kept separate)", D_INBOX, lesson="s04-concrete-quote"),
             S("dates", "Requested delivery dates", D_A_REQUEST, lesson="s04-open-request"),
         ),
-        lessons=("s03-store-page", "s04-open-request"),
-        uat=("uat-s03-needs-attention", "uat-s04-privacy"),
+        lessons=("s11-contractor-request", "s03-store-page", "s04-open-request"),
+        uat=("uat-s11-privacy", "uat-s03-needs-attention", "uat-s04-privacy"),
         handoffs=(1, 2), roles=SUPPLIER_DESK_ROLES,
     ),
     Stage(
@@ -716,11 +722,12 @@ SUPPLIER_STAGES: Tuple[Stage, ...] = (
                     "reach them and their consent to be contacted.",
         primary=D_PD_NEW,
         substeps=(
+            S("wizard", "Supplier Pro Desk wizard: a quotation step by step", D_SUP_WIZARD, lesson="s11-start-wizard"),
             S("create", "Create a supplier-owned walk-in customer", D_PD_NEW, lesson="s09-quick-quote"),
             S("consent", "Record contact details and consent", D_PD_NEW, lesson="s09-quick-quote"),
         ),
-        lessons=("s09-quick-quote",),
-        uat=("uat-s09-quick-quote",),
+        lessons=("s11-start-wizard", "s11-quote-to-order", "s09-quick-quote",),
+        uat=("uat-s11-quick", "uat-s09-quick-quote",),
         roles=SUPPLIER_ROLES,
     ),
     Stage(

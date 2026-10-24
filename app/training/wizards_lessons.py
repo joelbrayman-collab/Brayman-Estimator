@@ -1,0 +1,358 @@
+"""Training for the four Guided Workflow Wizards (Joel, 24 Oct 2026).
+
+Two new modules, kept apart from contractor.py and supplier.py so every existing lesson and acceptance-test key stays
+exactly as it is (saved progress and UAT history are keyed by them; nothing here renames or moves one). They are
+added when the Training Centre loads its content (app/training/content.py _load):
+
+- Contractor module 15, "What do you need to do? The guided wizards" — Start a New Project, Guided Estimating and
+  Manage a Project, Save & Exit / Resume, Continue Manually, Ask the Tutor; for the contractor owner and office
+  staff, with the owner's own lesson (closing a project, decisions only the owner or a System Administrator makes).
+  For Ben's onboarding it follows module 13 (Guided Estimating); for Kevin's Contractor Review the estimating
+  lesson is the same estimate as module 13, walked by the wizard.
+- Supplier module 11, "The Supplier Pro Desk wizard" — a contractor request and a Quick Quote, step by step, for
+  supplier owners, supplier administrators and PRO Desk staff.
+
+These lessons describe the wizards in the release that ships them; they go live on the training site with that
+release, never before. Every picture is a real screen captured by tools/training/capture_wizard_shots.mjs
+(app/static/training/shots/w-*.png, from the synthetic wizard walk).
+"""
+
+from __future__ import annotations
+
+from typing import Tuple
+
+from app.models.training import PATHWAY_CONTRACTOR, PATHWAY_SUPPLIER, ROLE_OWNER
+from app.training.content import ALL_SUPPLIER, APP_OFFICE, APP_SUPPLIER, OFFICE_ROLES, Lesson, Module, Step, UatCase
+
+O = APP_OFFICE
+SUP = APP_SUPPLIER
+HOME = "Lakeview Wizard Home (training)"
+CUSTOMER = "Jordan Avery (training)"
+INITIALS = (" On the training site everyone shares one training company: add your initials to the project name "
+            "(for example 'Lakeview Wizard Home (training) KF').")
+
+C15 = Module(
+    key="c15", pathway=PATHWAY_CONTRACTOR, number=15, title="What do you need to do? The guided wizards",
+    summary="Home asks What do you need to do? and offers three guided wizards — Start a New Project, Guided "
+            "Estimating and Manage a Project — each beside Continue Manually. The wizard walks the real pages one "
+            "step at a time and shows what each step still needs; nothing is entered twice and nothing is "
+            "approved for you. Ben: after module 13. Kevin's Contractor Review: the estimating lesson.",
+    roles=OFFICE_ROLES,
+    lessons=(
+        Lesson(
+            key="c15-what-do-you-need", title="Home: What do you need to do?",
+            what="Find the three guided wizards on Home, and the manual way beside each.",
+            why="One press takes you to the work. The wizard is a guide over the same pages you already know.",
+            steps=(
+                Step(title="The three wizards", app=O, where="Home",
+                     do="Read the What do you need to do? cards",
+                     expect="Start a New Project, Guided Estimating and Manage a Project, each with Start Guided "
+                            "Wizard and Continue Manually. Start New Estimate, + Start New Project and Company "
+                            "Calendar are still at the top.",
+                     if_wrong="Not on Home? Press Home at the top of the menu.",
+                     shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="main.dashboard"),
+                Step(title="On the iPhone", app=O, where="Home on your phone",
+                     do="Scroll to What do you need to do?",
+                     expect="The same cards, one under the other; nothing scrolls sideways.",
+                     if_wrong="Turn the phone upright and reload.",
+                     shot="w-home-what-do-you-need-to-do-phone.png", endpoint="main.dashboard"),
+                Step(title="Unfinished work", app=O, where="Home → Unfinished",
+                     do="Look under the cards for Unfinished",
+                     expect="Each wizard you left: Resume, how many steps are done, the next step and a link to "
+                            "the project.",
+                     if_wrong="Nothing listed? You have no wizard open. Start one.",
+                     shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="main.dashboard"),
+            ),
+            exercise="On the training site, open Home and find the three wizards and Continue Manually under each.",
+        ),
+        Lesson(
+            key="c15-new-project-wizard", title="Start a New Project, step by step",
+            what="Set up a new home with the wizard: customer, type, location, drawings, your role and the stages.",
+            why="The project is made once, exactly as the New Project form makes it, and every later step reads "
+                "the project's own records.",
+            steps=(
+                Step(title="Start the wizard", app=O, where="Home → Start a New Project",
+                     do="Press Start Guided Wizard",
+                     expect="Step 1 of 12, Customer and project, with the steps listed at the side.",
+                     if_wrong="Opened the New Project form instead? That was Continue Manually; go back to Home.",
+                     shot="w-wizard1-customer-desktop.png", endpoint="wizards.start"),
+                Step(title="Customer and project name", app=O, where="Step 1",
+                     do="Choose the customer, type the project name and press Next",
+                     enter=f"{CUSTOMER}; {HOME} <initials>",
+                     expect="Pressing Next with a box empty says what is still needed. Typing is saved by itself "
+                            "(Saved automatically).",
+                     if_wrong="Customer not in the list? Press Add a new customer, save it, then Return to the wizard.",
+                     shot="w-wizard1-customer-phone.png", endpoint="wizards.step"),
+                Step(title="Project type", app=O, where="Step 2",
+                     do="Choose New Home Construction and press Next",
+                     expect="The commercial project type is filled in as New Build; you can change it.",
+                     if_wrong="Next refused? Choose what is being built.",
+                     shot="w-wizard1-customer-desktop.png", endpoint="wizards.step"),
+                Step(title="Location, then Create the project", app=O, where="Step 3",
+                     do="Enter the civic address and press Create the project",
+                     enter="Street, municipality, province, postal code",
+                     expect="The project is created once and the wizard moves to Drawings and documents. Pressing "
+                            "Create again makes nothing new.",
+                     if_wrong="An error about the commercial gate? Open 'Permit class and commercial decision gate'.",
+                     shot="w-wizard1-location-desktop.png", endpoint="projects.create_project"),
+                Step(title="Drawings", app=O, where="Step 4",
+                     do="Press Upload a plan PDF (or This project needs no drawings)",
+                     expect="The plan upload page, with Return to the wizard at the top. Back in the wizard the step "
+                            "shows the drawing.",
+                     if_wrong="Lost? Press Return to the wizard at the top of any page.",
+                     shot="w-wizard1-documents-desktop.png", endpoint="plan_intelligence.upload_plan"),
+                Step(title="Your role and the stages", app=O, where="Steps 6 to 9",
+                     do="Choose General Contractor, then open the construction scope and choose Internal, "
+                        "Subcontracted or N/A for every stage",
+                     expect="'14 of 14 stages decided'. Nothing is chosen for you.",
+                     if_wrong="Next refused on step 9? The list names the stages still undecided.",
+                     shot="w-wizard1-stages-desktop.png", endpoint="guided.scope"),
+                Step(title="Review and continue", app=O, where="Steps 11 and 12",
+                     do="Tick the confirmation, then press Continue into Guided Estimating",
+                     expect="Guided Estimating opens on the same project.",
+                     if_wrong="Not ready to estimate? Press Save for later.",
+                     shot="w-wizard1-continue-desktop.png", endpoint="wizards.step"),
+            ),
+            exercise=f"Set up '{HOME} <initials>' for {CUSTOMER} with the wizard, as a New Home, General Contractor, "
+                     "with the fourteen stages decided." + INITIALS,
+        ),
+        Lesson(
+            key="c15-estimating-wizard", title="Guided Estimating with the wizard",
+            what="Walk the estimate stage by stage to the proposal with the wizard.",
+            why="The wizard shows, from the estimate itself, what is done and what is missing — the same Guided "
+                "Estimating you learned in module 13, in order.",
+            steps=(
+                Step(title="Internal stages", app=O, where="Guided Estimating → Calculators for internal work",
+                     do="Press Open <stage>, or the stage's calculator",
+                     expect="'0 of 5 internal stages complete' until each stage is completed on its own page.",
+                     if_wrong="Next refused? Complete each internal stage first.",
+                     shot="w-wizard2-internal-desktop.png", endpoint="guided.stage"),
+                Step(title="Subcontractor quotes", app=O, where="Steps 7 and 8",
+                     do="Open each subcontracted stage, request and record the quote, select it and use its cost",
+                     expect="Waiting for a quote never stops you: the step shows Waiting and you go on.",
+                     if_wrong="A quote shows but the stage is not done? Press Use this cost on the line.",
+                     shot="w-wizard2-internal-desktop.png", endpoint="guided.stage"),
+                Step(title="Complete the internal cost estimate", app=O, where="Step 11",
+                     do="Resolve every stage the step lists",
+                     expect="'Internal cost estimate complete' with the direct cost. It is never a customer document.",
+                     if_wrong="An allowance or no-cost decision is needed? See module 13.",
+                     shot="w-wizard2-pricing-desktop.png", endpoint="guided.internal_cost"),
+                Step(title="Approve the costing and price it", app=O, where="Step 12",
+                     do="Press Approve the costing, then Apply the company pricing policy",
+                     expect="Back on the same step: the selling price, the true gross margin and the customer total.",
+                     if_wrong="No Approve button? A stage is still unresolved (step 11).",
+                     shot="w-wizard2-pricing-phone.png", endpoint="guided.pricing"),
+                Step(title="Ask the Tutor", app=O, where="Any wizard step → Help",
+                     do="Open Help, type a question and press Ask",
+                     expect="The answer appears on the step; you stay where you are.",
+                     if_wrong="No answer? Read the step's own Help text above the question box.",
+                     shot="w-wizard2-pricing-desktop.png", endpoint="help.ask_help"),
+            ),
+            exercise="Open Guided Estimating with the wizard on your training project and take it to the pricing step.",
+        ),
+        Lesson(
+            key="c15-manage-project-wizard", title="Manage a Project with the wizard",
+            what="Follow an accepted project from the schedule to closing.",
+            why="Each step counts the real records (scheduled work, assignments, orders, deliveries, change orders, "
+                "punch list) and says plainly when something is not switched on.",
+            steps=(
+                Step(title="Milestones and schedule", app=O, where="Manage a Project → step 3",
+                     do="Press Schedule work for each work item",
+                     expect="'1 of 5 work items scheduled', counting up as you schedule.",
+                     if_wrong="'The work plan is not built'? Build it from the accepted estimate first.",
+                     shot="w-wizard3-schedule-desktop.png", endpoint="schedule.new_item"),
+                Step(title="People, texts and QuickBooks Time", app=O, where="Steps 4 and 9",
+                     do="Assign a person or crew to each scheduled item",
+                     expect="The steps also say whether schedule texts and QuickBooks Time are switched on.",
+                     if_wrong="Not switched on? That is the real status; tell the crew yourself.",
+                     shot="w-wizard3-schedule-phone.png", endpoint="schedule.company"),
+                Step(title="Orders, deliveries and changes", app=O, where="Steps 5 to 10",
+                     do="Open Supplier requests and orders from the step",
+                     expect="'2 of 3 requests ordered' style counts; only the office places an order.",
+                     if_wrong="Nothing to order? The step says no line is bought by you.",
+                     shot="w-wizard3-schedule-desktop.png", endpoint="supplier_office.project_requests"),
+            ),
+            exercise="On the training site, open Manage a Project on an accepted training project and schedule one "
+                     "work item.",
+        ),
+        Lesson(
+            key="c15-save-resume-manual", title="Save & Exit, Resume and Continue Manually",
+            what="Stop part way, come back later, or do a step on its own page.",
+            why="Your place and your typing are kept; the records are the same whichever way you work.",
+            steps=(
+                Step(title="Save & Exit", app=O, where="Any wizard step",
+                     do="Press Save & Exit",
+                     expect="Home, with the wizard under Unfinished.",
+                     if_wrong="Closed the browser instead? Your typing was saved automatically; Resume it.",
+                     shot="w-wizard1-customer-phone.png", endpoint="wizards.step"),
+                Step(title="Resume", app=O, where="Home → Unfinished",
+                     do="Press Resume <wizard>",
+                     expect="The step you left, with what you typed.",
+                     if_wrong="Not listed? Someone finished or stopped that wizard; start it again.",
+                     shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="wizards.resume"),
+                Step(title="Continue manually and come back", app=O, where="Any wizard step",
+                     do="Press Continue manually under the step, then Return to the wizard at the top of that page",
+                     expect="The step's own page, then the same step again, showing the change you made.",
+                     if_wrong="No Return to the wizard bar? Open the wizard from Home → Unfinished.",
+                     shot="w-wizard3-schedule-desktop.png", endpoint="wizards.manual"),
+            ),
+            exercise="Start a wizard, Save & Exit, Resume it from Home, then use Continue manually and come back.",
+        ),
+        Lesson(
+            key="c15-owner-decisions", title="For the owner: decisions the wizard leaves to you",
+            what="See which steps only the owner (or a System Administrator) can finish.",
+            why="The wizard never approves anything for anyone: the owner's decisions stay the owner's.",
+            steps=(
+                Step(title="Close the project", app=O, where="Manage a Project → Close the project",
+                     do="Press Close the project when the work is done",
+                     expect="The existing Close Project page. Office staff see 'Only the owner or a System "
+                            "Administrator can close a project' instead of the button.",
+                     if_wrong="Open punch list items? Close Project asks you to confirm them.",
+                     shot="w-wizard3-close-desktop.png", endpoint="projects.close_project"),
+                Step(title="No-cost decisions", app=O, where="Guided Estimating → a stage",
+                     do="Open the stage from the wizard to record a no-cost decision",
+                     expect="Only the owner or a System Administrator sees the form (module 13).",
+                     if_wrong="Not the owner? Approve an allowance with its reason instead.",
+                     shot="w-wizard2-internal-desktop.png", endpoint="guided.stage"),
+            ),
+            exercise="As the training owner, open the Close the project step of Manage a Project (do not close it).",
+            roles=(ROLE_OWNER,),
+        ),
+    ),
+)
+
+S11 = Module(
+    key="s11", pathway=PATHWAY_SUPPLIER, number=11, title="The Supplier Pro Desk wizard",
+    summary="The Supplier Hub asks What do you need to do? The Supplier Pro Desk wizard takes a contractor's "
+            "request, or a walk-in quotation from Quick Quote, through your prices, the quotation, the answer, "
+            "the order and the delivery — on your own pages, with only what the contractor shared with you.",
+    roles=ALL_SUPPLIER,
+    lessons=(
+        Lesson(
+            key="s11-start-wizard", title="Start the wizard and choose the work",
+            what="Open the wizard from Requests and choose a contractor request or a quotation.",
+            why="One place shows what each request or quotation still needs.",
+            steps=(
+                Step(title="What do you need to do?", app=SUP, where="Supplier Hub → Requests",
+                     do="Press Start Guided Wizard",
+                     expect="Step 1, Open a request or start a quotation, with Quick Quote, New quotation and "
+                            "Contractor requests.",
+                     if_wrong="Not on Requests? Press your store's name at the top.",
+                     shot="w-wizard4-open-desktop.png"),
+                Step(title="Quick Quote", app=SUP, where="Step 1 → Quick Quote",
+                     do="Press Quick Quote, fill the customer and building, press Price this building, then Return "
+                        "to the wizard",
+                     expect="The new quotation is listed in step 1; choose it and press Work on this.",
+                     if_wrong="Not listed? Only your own open quotations and requests are shown.",
+                     shot="w-wizard4-open-desktop.png"),
+            ),
+            exercise="On the supplier practice store, start the wizard and make a Quick Quote for a training customer.",
+        ),
+        Lesson(
+            key="s11-quote-to-order", title="Prices, quotation, answer and order",
+            what="Take the quotation to the order package with the wizard.",
+            why="Each step reads the quotation itself: nothing is priced, issued or accepted for you.",
+            steps=(
+                Step(title="Your prices and terms", app=SUP, where="Step 6",
+                     do="Open Price review and terms; price or leave out each line",
+                     expect="'N line(s) priced from your price file' and the total. No points or rewards are "
+                            "worked out in CalibraytAI.",
+                     if_wrong="'No current price'? Load your price file or leave the line out with a reason.",
+                     shot="w-wizard4-pricing-desktop.png"),
+                Step(title="On the iPhone", app=SUP, where="Step 6 on your phone",
+                     do="Open the same step on the phone",
+                     expect="Compact, nothing scrolls sideways.",
+                     if_wrong="Turn the phone upright and reload.",
+                     shot="w-wizard4-pricing-phone.png"),
+                Step(title="Issue, answer, order", app=SUP, where="Steps 8 to 12",
+                     do="Issue the quotation, record the customer's answer, then press Make the order package",
+                     expect="Each step turns Done; the last shows the lines in the order and anything not included.",
+                     if_wrong="Waiting? The customer has not answered yet; Save & Exit and come back.",
+                     shot="w-wizard4-close-desktop.png"),
+            ),
+            exercise="Take your Quick Quote to the order package with the wizard.",
+        ),
+        Lesson(
+            key="s11-contractor-request", title="A contractor's request with the wizard",
+            what="Quote a contractor's request and follow their order to delivery.",
+            why="You see only what the contractor shared, and only they place the order.",
+            steps=(
+                Step(title="Choose the request", app=SUP, where="Requests → a request → Start Guided Wizard",
+                     do="Press Start Guided Wizard on the request page",
+                     expect="The wizard on that request: the contractor, the project reference, the delivery town.",
+                     if_wrong="Another store's request is never shown to you.",
+                     shot="w-wizard4-open-desktop.png"),
+                Step(title="Order and delivery", app=SUP, where="Steps 10 to 12",
+                     do="When the contractor orders, press Confirm the order; mark it delivered when it is",
+                     expect="'Only the contractor places the order' until they do; then Confirm, then Delivered.",
+                     if_wrong="Delivery change waiting? Answer it on the request page.",
+                     shot="w-wizard4-close-desktop.png"),
+            ),
+            exercise="With a training contractor request, quote it and follow it with the wizard.",
+        ),
+    ),
+)
+
+MODULES: Tuple[Module, ...] = (C15, S11)
+
+
+def _c(key, title, start, action, expected):
+    return UatCase(key=key, pathway=PATHWAY_CONTRACTOR, module_key="c15", title=title, start=start, action=action,
+                   expected=expected, roles=OFFICE_ROLES)
+
+
+def _s(key, title, start, action, expected):
+    return UatCase(key=key, pathway=PATHWAY_SUPPLIER, module_key="s11", title=title, start=start, action=action,
+                   expected=expected, roles=ALL_SUPPLIER)
+
+
+UAT_CASES: Tuple[UatCase, ...] = (
+    _c("uat-c15-home", "What do you need to do? on Home", "Home",
+       "Find the three wizards; press Continue Manually under Start a New Project.",
+       "Three wizards, each with Start Guided Wizard and Continue Manually; Continue Manually opens the New Project "
+       "form; Start New Estimate, + Start New Project and Company Calendar are still there."),
+    _c("uat-c15-required", "Required answers hold Next", "Home → Start a New Project → Start Guided Wizard",
+       "Press Next with the customer empty; then fill it and press Next.",
+       "The first Next says what is still needed and stays; the second moves to step 2."),
+    _c("uat-c15-created-once", "The project is created once", "Start a New Project → step 3",
+       "Press Create the project, then go Back to step 3 and look for Create again.",
+       "One project in Projects; step 3 shows the project and no Create button."),
+    _c("uat-c15-save-resume", "Save & Exit and Resume", "Any wizard step",
+       "Type something, press Save & Exit, then Resume from Home.",
+       "Home lists the wizard under Unfinished; Resume opens the same step with what you typed."),
+    _c("uat-c15-manual", "Continue manually and come back", "Any wizard step",
+       "Press Continue manually, change something on that page, press Return to the wizard.",
+       "The same step shows your change."),
+    _c("uat-c15-estimating", "Guided Estimating prices like the manual path", "Guided Estimating → step 12",
+       "Approve the costing and apply the company pricing from the wizard.",
+       "Back on step 12 with the same selling price and true gross margin as Review Pricing & Prepare Proposal."),
+    _c("uat-c15-manage", "Manage a Project shows the real status", "Manage a Project on an accepted project",
+       "Open Milestones and schedule, schedule one work item, open it again; open Progress, costs and outstanding work.",
+       "The count goes up by one; QuickBooks Time and schedule texts show whether they are switched on."),
+    _s("uat-s11-quick", "Quick Quote to the order package", "Requests → Start Guided Wizard",
+       "Make a Quick Quote, choose it in step 1, price it, issue it, record the answer and make the order package.",
+       "Each step turns Done from the quotation itself; the last lists the order lines."),
+    _s("uat-s11-privacy", "Only your own requests and quotations", "Wizard step 1",
+       "Look at the requests and quotations offered.",
+       "Only your store's own; nothing of another store's and none of the contractor's costs."),
+)
+
+
+def attach(modules, uat_cases):
+    """c15 after the last contractor module and s11 after the last supplier module, their tests likewise.
+    Everything else is returned unchanged. Idempotent."""
+    out = list(modules)
+    keys = {m.key for m in out}
+    for module in MODULES:
+        if module.key in keys:
+            continue
+        last = max((i for i, m in enumerate(out) if m.pathway == module.pathway), default=len(out) - 1)
+        out.insert(last + 1, module)
+    cases = list(uat_cases)
+    present = {c.key for c in cases}
+    for case in UAT_CASES:
+        if case.key in present:
+            continue
+        last = max((i for i, c in enumerate(cases) if c.pathway == case.pathway), default=len(cases) - 1)
+        cases.insert(last + 1, case)
+    return tuple(out), tuple(cases)

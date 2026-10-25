@@ -165,10 +165,10 @@ def status_label(row: FieldMaterialRequest) -> str:
         return "Ordered" + (f", delivery {when:%a %b} {when.day}" if when else "")
     share = row.share
     if share is not None and share.status == SHARE_RETURNED:
-        return "Price returned — the office will order"
+        return "The supplier answered — the office will order"
     if share is not None and share.status in (SHARE_WITHDRAWN, SHARE_SUPERSEDED):
         return "Supplier request closed — ask the office"
-    return "Asked the supplier for a price"
+    return "Sent to the supplier"
 
 
 def _require_office_open(row: FieldMaterialRequest):

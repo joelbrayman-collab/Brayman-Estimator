@@ -991,7 +991,7 @@ UAT_CASES = (
     _u("uat-f01-sign-in", "f01", "Sign in on the iPhone and start Field Crew training",
        "Your iPhone, Safari, the training site → I work on a crew (Field)",
        "Sign in with your training email and password, then tap Start my Field Crew training.",
-       "Your Field Crew training opens with 8 modules. No contractor office or supplier lessons are listed."),
+       "Your Field Crew training opens with 9 modules. No contractor office or supplier lessons are listed."),
     _u("uat-f01-field-only", "f01", "Office pages stay closed",
        "Field → Today on your iPhone",
        "Type the office addresses /projects/ and /settings/people after the training site address.",

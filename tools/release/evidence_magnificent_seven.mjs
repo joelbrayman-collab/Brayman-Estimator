@@ -330,7 +330,7 @@ step("Need Materials from the phone appears on Ben's list; one click opens it; a
   await go(pg, "/operations/attention");
   assert.match(await pg.locator("[data-attention-page]").innerText(), /Waiting for a price from BMR Winchester/);
   await go(kevin.pg, "/field/requests");
-  assert.match(await kevin.pg.locator("[data-field-my-requests]").innerText(), /Asked the supplier for a price/);
+  assert.match(await kevin.pg.locator("[data-field-my-requests]").innerText(), /Sent to the supplier/);
   assert.deepEqual(errors, []);
 });
 

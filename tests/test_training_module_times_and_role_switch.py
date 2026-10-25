@@ -161,7 +161,7 @@ def test_an_office_trainee_takes_contractor_then_field_and_back_with_both_record
     assert trainee.track == C.PATHWAY_FIELD_CREW and trainee.role == "FIELD"
     home = _get(olivia, "/training").get_data(as_text=True)
     assert f'data-lesson="{field_lesson}"' in home and f'data-lesson="{office_lesson}"' not in home
-    assert "0 of 31 lessons done" in home
+    assert f"0 of {len(C.lessons_for(C.PATHWAY_FIELD_CREW, 'FIELD'))} lessons done" in home  # 35 with module 9
     assert _get(olivia, f"/training/lessons/{office_lesson}").status_code == 404  # not in this pathway now
     _do_lesson(olivia, field_lesson)
     assert _post(olivia, f"/training/uat/{field_case}",
@@ -189,7 +189,7 @@ def test_an_office_trainee_takes_contractor_then_field_and_back_with_both_record
     assert set(by_track) == {C.PATHWAY_CONTRACTOR, C.PATHWAY_FIELD_CREW}
     assert by_track[C.PATHWAY_CONTRACTOR][0] and not by_track[C.PATHWAY_FIELD_CREW][0]
     assert f"1/{total}" in by_track[C.PATHWAY_CONTRACTOR][1] and "1 pass · 0 fail" in by_track[C.PATHWAY_CONTRACTOR][1]
-    assert "1/31" in by_track[C.PATHWAY_FIELD_CREW][1] and "0 pass · 1 fail" in by_track[C.PATHWAY_FIELD_CREW][1]
+    assert f"1/{len(C.lessons_for(C.PATHWAY_FIELD_CREW, 'FIELD'))}" in by_track[C.PATHWAY_FIELD_CREW][1] and "0 pass · 1 fail" in by_track[C.PATHWAY_FIELD_CREW][1]
     crew = re.search(r'data-admin-crew-member="Olivia[^"]*" data-admin-other-track>(.*?)</article>', admin, re.S)
     assert crew and "Lessons: 1 of 31 done" in crew.group(1) and "synthetic: the button was greyed out" in crew.group(1)
     assert "Field Crew training" in admin and "synthetic: the button was greyed out" in admin  # outstanding issue

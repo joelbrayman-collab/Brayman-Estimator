@@ -1,7 +1,7 @@
 """Lesson and acceptance-test content for the Training & Acceptance Centre (Joel, 21 Oct 2026).
 
 The lessons live in three modules beside this one, one per group the Centre serves: contractor.py (12 modules,
-contractor owners and office staff), field_crew.py (8 modules, the Field crew on the iPhone; Joel, 22 Oct 2026)
+contractor owners and office staff), field_crew.py (8 modules, the Field crew on the iPhone; Joel, 22 Oct 2026; module 9, the quick actions, is in magnificent_seven_lessons.py)
 and supplier.py (10 modules, supplier owners and PRO Desk staff).
 Every step says, for someone who has never used CalibraytAI: what they are doing and why, which application
 to open, where to go, which button to press, what to enter, what they should see, what to do if something
@@ -105,10 +105,11 @@ def _load() -> Tuple[Tuple[Module, ...], Tuple[UatCase, ...]]:
     from app.training.site_plans_lesson import attach as attach_site_plans  # Site Plans: f04 lesson, c07 step
     from app.training.useful_calculators_lesson import attach  # Useful Calculators lesson in Field module 1
     from app.training.wizards_lessons import attach as attach_wizards  # contractor module 15, supplier module 11
+    from app.training.magnificent_seven_lessons import attach as attach_mag7  # contractor 16, Field Crew 9
 
-    return attach_wizards(*attach_guided(*attach_site_plans(*attach(
+    return attach_mag7(*attach_wizards(*attach_guided(*attach_site_plans(*attach(
         contractor.MODULES + field_crew.MODULES + supplier.MODULES,
-        contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES))))
+        contractor.UAT_CASES + field_crew.UAT_CASES + supplier.UAT_CASES)))))
 
 
 _CACHE: Dict[str, object] = {}

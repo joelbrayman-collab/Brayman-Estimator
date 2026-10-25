@@ -29,6 +29,7 @@ MODULE_TITLES = (
     "Photos, notes and progress updates",
     "Offline use, refresh and troubleshooting",
     "Complete working-day exercise and Field UAT",
+    "Field quick actions",  # module 9, the Magnificent Seven (25 Oct 2026)
 )
 # Never on a Field Crew page or lesson: money, the contractor's or the supplier's commercial words.
 MONEY = re.compile(r"\$\s?\d|\bprice|\bpricing|\bcost|margin|markup|estimate|invoice|\bquote|accounting", re.I)
@@ -103,7 +104,7 @@ def _field_lessons():
 
 def test_eight_practical_modules_every_step_complete_for_a_worker_on_a_phone(app):
     modules = C.modules_for(C.PATHWAY_FIELD_CREW, "FIELD")
-    assert [m.key for m in modules] == [f"f0{n}" for n in range(1, 9)]
+    assert [m.key for m in modules] == [f"f0{n}" for n in range(1, 10)]
     assert tuple(m.title for m in modules) == MODULE_TITLES
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
     for module, lesson in _field_lessons():
@@ -132,7 +133,8 @@ def test_every_field_crew_screenshot_exists_and_is_iphone_sized(app):
         width, height = struct.unpack(">II", head[16:24])
         assert width in (375, 390) and height in (812, 844), (name, width, height)  # pictured at iPhone size
     # The Field pictures come from the real Field pages (f..-*.png from tools/training/capture_field_crew_shots.mjs).
-    assert all(n.startswith("f0") or n == "c11-field-delivery.png" for n in named)
+    # m7-*.png: the Magnificent Seven release walk's real Field screens (tools/release/evidence_magnificent_seven.mjs).
+    assert all(n.startswith(("f0", "m7-")) or n == "c11-field-delivery.png" for n in named)
 
 
 def test_no_money_or_office_words_anywhere_in_the_field_crew_content():
@@ -174,7 +176,7 @@ def test_kevin_registers_straight_into_field_crew_and_sees_only_it(app):
     assert (t.pathway, t.role, t.track) == ("CONTRACTOR", "FIELD", "FIELD_CREW")
     home = _get(kevin, "/training").get_data(as_text=True)
     assert "Field Crew training · Field worker" in home
-    assert re.findall(r'data-module="([^"]+)"', home) == [f"f0{n}" for n in range(1, 9)]
+    assert re.findall(r'data-module="([^"]+)"', home) == [f"f0{n}" for n in range(1, 10)]
     assert 'href="/field/today" data-open-field' in home
     assert "Change my role" not in home
     for key in ("c01-welcome", "c09-new-estimate", "c11-field-today", "s09-quick-quote"):

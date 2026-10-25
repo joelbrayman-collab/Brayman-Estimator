@@ -569,7 +569,7 @@ def test_material_request_to_supplier_quote_order_and_worker_status(env):
     row = _fresh(FieldMaterialRequest, row.id)
     share = row.share
     assert row.status == "REQUESTED" and share.source_kind == "FIELD_REQUEST" and share.status == "SENT"
-    assert share.shared_json["lines"][0]["qty"] == "30" and "Asked the supplier for a price" in kevin.get("/field/requests")
+    assert share.shared_json["lines"][0]["qty"] == "30" and "Sent to the supplier" in kevin.get("/field/requests")
     # Sending again makes nothing new.
     assert "not approved yet (or was already sent)" in ben.flash_after(
         f"/operations/material-requests/{row.id}", {"action": "send", "account_id": str(account.id)})
@@ -585,7 +585,7 @@ def test_material_request_to_supplier_quote_order_and_worker_status(env):
         "minutes_reported": "5"})
     share = _fresh(SupplierRequestShare, share.id)
     assert share.status == "RETURNED"
-    assert "Price returned" in kevin.get("/field/requests")
+    assert "The supplier answered" in kevin.get("/field/requests")
     ben.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/record", data={})
     from app.services.deck_takeoff import storage
 

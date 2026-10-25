@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_the_two_modules_follow_module_12_and_no_existing_key_changed():
     contractor_modules = [m for m in C.modules() if m.pathway == C.PATHWAY_CONTRACTOR]
     # c15 (the guided wizards, 24 Oct 2026) follows them.
-    assert [m.key for m in contractor_modules][-4:] == ["c12", "c13", "c14", "c15"]
+    assert [m.key for m in contractor_modules][-5:] == ["c12", "c13", "c14", "c15", "c16"]  # c16: Magnificent Seven
     original = [lesson.key for m in contractor.MODULES for lesson in m.lessons]
     loaded = [lesson.key for m in contractor_modules for lesson in m.lessons]
     assert loaded[:len(original)] == original or set(original) <= set(loaded)

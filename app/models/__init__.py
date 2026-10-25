@@ -175,6 +175,21 @@ from app.models.guided_estimating import (
     GuidedEstimateStage,
 )
 from app.models.wizard import WizardRun, WizardRunEvent
+from app.models.field_operations import (  # the Magnificent Seven everyday operations (25 Oct 2026)
+    DailyJobSummary,
+    DeliveryConfirmation,
+    ExtraWorkReport,
+    FieldMaterialRequest,
+    FieldOperationEvent,
+    FieldReceipt,
+    OperationsReminder,
+    OperationsSettings,
+    QuickBooksOnlineConnection,
+    QuickBooksOnlineEvent,
+    QuickBooksOnlineLink,
+    QuickBooksOnlineTransfer,
+    ReminderPreference,
+)
 from app.models.appointment import (
     CalendarFeedKey,
     CompanyAppointment,

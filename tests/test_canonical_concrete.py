@@ -58,7 +58,7 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 ACTOR = "Joel Brayman"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "w2z9r4d7k1m6"  # guided workflow wizards follow g5e7c2a9d1b4
+GRAPH_HEAD = "m7s3r5q8b2c4"  # the Magnificent Seven follows the wizards (w2z9r4d7k1m6)
 PRIOR = "r8e9f0a1b2c3"
 
 

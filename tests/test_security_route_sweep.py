@@ -351,6 +351,22 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "site_plans.sign_out",
     "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
     "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
+    # The Magnificent Seven Field quick actions (25 Oct 2026), reviewed: each is limited to the person's own jobs
+    # (field_visible_project_ids) and their own records, shows no price, cost, wage or margin, and approves nothing
+    # (tests/test_magnificent_seven.py). Office review stays on /operations and /accounting.
+    "field.choose_job",
+    "field.receipt",
+    "field.receipt_register",
+    "field.receipt_view",
+    "field.materials",
+    "field.my_requests",
+    "field.extra_work_mine",
+    "field.extra_work_answer",
+    "field.deliveries",
+    "field.delivery_confirm",
+    "field.job_update",
+    "field.reminder_read",
+    "field.reminder_preference",
     "auth.change_password",
     "help.ask_help",
     "api_v1.me",

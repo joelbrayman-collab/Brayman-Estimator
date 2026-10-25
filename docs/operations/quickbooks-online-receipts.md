@@ -90,6 +90,9 @@ QuickBooks** (`/accounting/quickbooks-online/projects`, Suzanne or the owner).
 - **Renames and closures**: sparse updates (`Id`, `SyncToken`, `sparse: true`, `DisplayName`, `Active`) only;
   QuickBooks Time `PUT /jobcodes` with `name` / `active`. A closed project becomes **inactive**; nothing is deleted.
   No accounting field (balance, terms, tax, contact details…) is sent, and **no financial transaction is created**.
+- **A job moved to another customer** in CalibraytAI is not moved in QuickBooks (an accounting change): the project
+  shows Failed with the reason on the review screen and on WHAT NEEDS MY ATTENTION?; once the office moves it in
+  QuickBooks, Retry brings it in step.
 - Stored per project (`accounting_project_links`): QuickBooks Online customer and project Id + SyncToken, QuickBooks
   Time job code id, status (Off / Pending / Sent / Synced / Confirm the match / Failed) for each, last error, candidates,
   attempts, who confirmed and when. Every step is in the QuickBooks history (`quickbooks_online_events`, with the

@@ -744,6 +744,9 @@ def correct_project_client_page(id):
                 clients=clients,
                 client_in_company=client_in_company,
             ), 400
+        from app.services.accounting_project_sync import project_changed
+
+        project_changed(project, actor=current_user)  # QuickBooks: a new customer is noted, never moved silently
         flash("This project now uses the selected client.", "success")
         return redirect(url_for("projects.view_project", id=project.id))
     return render_template(

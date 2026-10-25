@@ -183,10 +183,12 @@ def _sync_qbo(project, link, actor):
     if link.qbo_status == PSYNC_NEEDS_CONFIRM:
         return  # an existing job waits for Suzanne or the owner
     try:
+        previous_customer = link.qbo_customer_id
         customer_id = _ensure_customer(qbo, conn, transport, project, link, actor)
         if customer_id is None:
             return
-        _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor)
+        _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor,
+                            previous_customer=previous_customer)
     except qbo.TransportError:
         link.qbo_status = PSYNC_SENT
         link.qbo_last_error = ("QuickBooks Online could not be reached, so it is not known whether it arrived. Retry is "
@@ -264,7 +266,7 @@ def _ensure_customer(qbo, conn, transport, project, link, actor):
     return link.qbo_customer_id
 
 
-def _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor):
+def _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor, *, previous_customer=None):
     from app.services.quickbooks_online import _save_link, customer_key
 
     org = project.organization_id
@@ -274,6 +276,14 @@ def _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor)
         row = _read_customer(qbo, conn, transport, link.qbo_project_id)
         if row is None:
             raise ProjectSyncError(f"QuickBooks no longer has project {link.qbo_project_id}. Check it in QuickBooks.")
+        parent = str((row.get("ParentRef") or {}).get("value") or "")
+        if previous_customer and previous_customer != customer_id and parent != customer_id:
+            # The job was moved to another customer in CalibraytAI. Moving a project between customers is an
+            # accounting change, so CalibraytAI does not make it; the office moves it in QuickBooks, then Retry.
+            link.qbo_customer_id = previous_customer
+            raise ProjectSyncError(f"The job's customer changed in CalibraytAI; in QuickBooks the project "
+                                   f"{link.qbo_project_id} is still under customer {parent or previous_customer}. "
+                                   "Move it in QuickBooks if that is right, then press Retry.")
     else:
         found = [r for r in _customer_query(qbo, conn, transport, name)]
         ours = [r for r in found if mark("P", project.id) in (r.get("Notes") or "")]

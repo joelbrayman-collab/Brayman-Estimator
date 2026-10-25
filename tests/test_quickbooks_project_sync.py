@@ -209,6 +209,37 @@ def test_renames_and_closures_sync_names_and_active_only_never_deleted(env):
     assert not any(c[1] in ("purchase", "bill", "invoice") for c in fake.calls if c[0] == "POST")
 
 
+def test_a_job_moved_to_another_customer_is_not_moved_in_quickbooks_silently(env):
+    app, facts = env
+    fake = facts["fake"]
+    _connect(app, facts)
+    _on(app)
+    from app.models import Client
+    from app.services.accounting_project_sync import sync_project
+
+    second = facts["second"]
+    sync_project(second)
+    link = _link(second)
+    old_parent = link.qbo_customer_id
+    other = Client(name="Riley Chen (synthetic)", organization_id=ORG)
+    db.session.add(other)
+    db.session.commit()
+    Person(app, "ben").post(f"/projects/{second.id}/client", data={"client_id": str(other.id)})
+    link = _link(second)
+    assert link.qbo_status == "FAILED" and "customer changed" in link.qbo_last_error
+    sub = fake.entities["Customer"][link.qbo_project_id]
+    assert sub["ParentRef"] == {"value": old_parent} and link.qbo_customer_id == old_parent
+    assert f"#project-{second.id}" in Person(app, "ben").get("/operations/attention")
+    # The office moves it in QuickBooks, then Retry: in step, nothing new made.
+    new_parent = fake.by_name("Customer", "Riley Chen (synthetic)")["Id"]
+    sub["ParentRef"] = {"value": new_parent}
+    count = len(fake.entities["Customer"])
+    Person(app, "suzanne").post("/accounting/quickbooks-online/projects", data={"action": "retry",
+                                                                                "link_id": str(link.id)})
+    link = _link(second)
+    assert link.qbo_status == "SYNCED" and link.qbo_customer_id == new_parent and len(fake.entities["Customer"]) == count
+
+
 def test_shop_is_one_fixed_job_code_for_every_shop_category(env):
     app, facts = env
     qbt = facts["qbt"]

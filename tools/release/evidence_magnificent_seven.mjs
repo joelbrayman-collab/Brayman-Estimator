@@ -30,7 +30,7 @@ const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
 const SHOTS = process.env.MAG7_SHOTS || "";
 const MONEY_ON_FIELD = [/\$\s?\d/, /\bprice\b/i, /\bcost\b/i, /margin/i, /markup/i, /\bwage/i, /labour rate/i];
-let browser, server, base, facts;
+let browser, server, base, facts, serverOut = "";
 const serverErrors = [];
 const sessions = {};
 const M = {};
@@ -41,7 +41,8 @@ before(async () => {
   server = spawn(path.join(REPO, "venv/bin/python"), [path.join(REPO, "tests/magnificent_seven_server.py")], {
     cwd: REPO, env: { ...process.env, MAG7_PAGE_PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"] });
   let out = "";
-  server.stdout.on("data", (c) => (out += c)); server.stderr.on("data", (c) => (out += c));
+  server.stdout.on("data", (c) => { out += c; serverOut += c; });
+  server.stderr.on("data", (c) => { out += c; serverOut += c; });
   await new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error("office did not start\n" + out)), 300000);
     const poll = () => {
@@ -59,6 +60,7 @@ after(async () => {
   for (const s of Object.values(sessions)) await s.ctx.close().catch(() => {});
   await browser?.close(); server?.kill();
   console.log(`MAGNIFICENT_SEVEN SERVER_ERRORS=${serverErrors.length}`);
+  if (process.env.MAG7_DEBUG) fs.writeFileSync(process.env.MAG7_DEBUG, serverOut);
 });
 
 let broken = "";
@@ -75,6 +77,9 @@ async function person(key, viewport) {
   const ctx = await browser.newContext({ viewport, serviceWorkers: "block",
     ...(phone ? { isMobile: true, hasTouch: true } : {}) });
   ctx.setDefaultTimeout(20000);
+  // Only the local office: web fonts and icon CDNs are not reachable here, and a dozen sessions' hanging tunnels
+  // to them exhaust the browser's proxy sockets (net::ERR_INSUFFICIENT_RESOURCES). The pages do not need them.
+  await ctx.route(/^https?:\/\/(?!127\.0\.0\.1[:/])/, (route) => route.abort("blockedbyclient"));
   const pg = await ctx.newPage();
   const errors = [];
   pg.on("pageerror", (e) => errors.push(`${pg.url()}: ${e}`));
@@ -502,10 +507,63 @@ step("End-of-day reminders: made once, shown on Field Today with Texts not switc
   assert.deepEqual(errors, []);
 });
 
+// ------------------------------------------------------------------ Projects into QuickBooks (approved item A)
+step("Projects into QuickBooks: Suzanne checks all projects, confirms the existing job once, nothing duplicated", async () => {
+  const { pg, errors } = await person("suzanne", DESK);
+  await go(pg, "/accounting/quickbooks-online/projects");
+  assert.equal(await pg.locator("[data-project-sync-state]").getAttribute("data-project-sync-state"), "on");
+  await submit(pg, pg.locator("[data-sync-all-projects]"));
+  assert.match(await flash(pg), /Checked \d+ projects: \d+ in step, [1-9]\d* to confirm/);
+  const second = pg.locator(`[data-project-link="${facts.second_id}"]`);
+  assert.equal(await second.getAttribute("data-qbo-status"), "SYNCED");
+  assert.equal(await second.getAttribute("data-qbt-status"), "SYNCED");
+  const harbour = pg.locator(`[data-project-link="${facts.project_id}"]`);
+  assert.equal(await harbour.getAttribute("data-qbo-status"), "NEEDS_CONFIRM");
+  await shot(pg, "qbo-projects-confirm-desktop");
+  const ben = await person("ben", DESK);
+  await go(ben.pg, "/operations/attention");
+  const item = ben.pg.locator(`a[href$="/accounting/quickbooks-online/projects#project-${facts.project_id}"]`).first();
+  assert.ok(await item.count(), "the job to confirm is on Ben's list");
+  // Confirm each existing record once (customer, then the project; QuickBooks Time made the job code).
+  for (let i = 0; i < 3; i++) {
+    const button = harbour.locator("[data-confirm-match]").first();
+    if (!(await button.count())) break;
+    await submit(pg, button);
+    assert.match(await flash(pg), /Match confirmed/);
+  }
+  assert.equal(await harbour.getAttribute("data-qbo-status"), "SYNCED");
+  assert.equal(await harbour.getAttribute("data-qbt-status"), "SYNCED");
+  await submit(pg, pg.locator("[data-sync-all-projects]"));
+  assert.match(await flash(pg), / 0 to confirm, 0 failed/);
+  await shot(pg, "qbo-projects-desktop");
+  await go(ben.pg, "/operations/attention");
+  assert.equal(await ben.pg.locator(`a[href$="#project-${facts.project_id}"]`).count(), 0);
+  assert.deepEqual(errors, []);
+});
+
+// ------------------------------------------------------------------ My Week (approved item B)
+step("My Week: Previous week, This week (Coming week on Sunday) and Next week move a week at a time", async () => {
+  const { pg, errors } = await person("kevin", PHONE);
+  await go(pg, "/field/week");
+  const label = await pg.locator("[data-week-this]").innerText();
+  assert.match(label, new Date().getDay() === 0 ? /Coming week/ : /This week/);
+  const start = await pg.locator("[data-week-window]").innerText();
+  await submit(pg, pg.locator("[data-week-next]"));
+  assert.match(pathOf(pg) + new URL(pg.url()).search, /\/field\/week\?start=\d{4}-\d{2}-\d{2}/);
+  assert.notEqual(await pg.locator("[data-week-window]").innerText(), start);
+  await submit(pg, pg.locator("[data-week-this]"));
+  assert.equal(await pg.locator("[data-week-window]").innerText(), start);
+  await noSideways(pg, "/field/week");
+  await shot(pg, "field-week-phone");
+  await noMoneyOnField(pg, "/field/week");
+  assert.deepEqual(errors, []);
+});
+
 // ------------------------------------------------------------------ Permissions and isolation
 step("Kevin is kept out of the office and accounting; Liam out of Kevin's receipt; another company sees nothing", async () => {
   const kevin = await person("kevin", DESK);
-  for (const url of ["/accounting/receipts", "/accounting/quickbooks-online", "/operations/attention",
+  for (const url of ["/accounting/receipts", "/accounting/quickbooks-online", "/accounting/quickbooks-online/projects",
+    "/operations/attention",
     "/operations/material-requests", "/"]) {
     await go(kevin.pg, url);
     assert.equal(pathOf(kevin.pg), "/field/today", `${url} sends Field-only crew to Field`);
@@ -535,7 +593,8 @@ step("Every new page on the iPhone without sideways scrolling; no page error, no
   const ben = await person("ben", PHONE);
   for (const url of ["/", "/operations/attention", "/operations/material-requests?show=all", M.materialUrl,
     "/operations/extra-work?show=all", M.extraUrl, "/operations/deliveries", M.deliveryUrl, "/operations/job-updates",
-    "/operations/reminders", "/accounting/quickbooks-online", `/projects/${facts.project_id}`]) {
+    "/operations/reminders", "/accounting/quickbooks-online", "/accounting/quickbooks-online/projects",
+    `/projects/${facts.project_id}`]) {
     await go(ben.pg, url);
     await noSideways(ben.pg, url);
   }

@@ -71,6 +71,13 @@ def main():
                "activity_id": facts["activity"].id, "element_id": facts["element"].id,
                "hand_entered_purchase": hand_entered["Id"]}
     application.config["MAG7_FAKE_QBO"] = fake
+    # Projects into QuickBooks (approved item A): on for the walk, against the test companies only. The walk's
+    # Suzanne presses "Check all projects now"; the Harbour Lane job already exists in the test QuickBooks Online
+    # company (a job entered by hand), so it waits for her confirmation.
+    from app.services.quickbooks_time_transport import FakeQuickBooksTimeTransport
+
+    application.config["QBO_PROJECT_SYNC_ENABLED"] = "1"
+    application.config["QBT_TEST_TRANSPORT"] = FakeQuickBooksTimeTransport()
     port = int(os.environ["MAG7_PAGE_PORT"])
     print("FACTS " + json.dumps(out), flush=True)
     print(f"READY {port}", flush=True)

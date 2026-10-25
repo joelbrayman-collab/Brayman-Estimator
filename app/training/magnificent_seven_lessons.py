@@ -157,6 +157,14 @@ C16 = Module(
                      expect="The vendor, date, amounts, the job and the receipt image attached; the memo starts "
                             "'CalibraytAI receipt R-…'.", if_wrong="Not there? Check the receipt's QuickBooks history.",
                      shot="m7-qbo-reconciliation-desktop.png", endpoint="accounting.quickbooks_online_reconciliation"),
+                Step(title="A job already in QuickBooks", app=O, where="Accounting → QuickBooks Online connection → "
+                     "Projects in QuickBooks (or the item on Home)",
+                     do="Read the job QuickBooks already has; if it is the same job, press This is the same customer / "
+                        "project / job code",
+                     expect="Matched once and used from then on (receipts too); nothing new is made in QuickBooks.",
+                     if_wrong="Not the same job? Leave it and tell the owner; rename one of them so the names differ, "
+                              "then Retry.",
+                     shot="m7-qbo-projects-confirm-desktop.png", endpoint="accounting.quickbooks_projects"),
             ),
             exercise="Review and approve the training receipt from Kevin for the pool deck.",
             roles=(ROLE_OWNER, ROLE_OFFICE),
@@ -177,6 +185,16 @@ C16 = Module(
                      expect="Reminders go out once a day between those times, on those days, in the company's time.",
                      if_wrong="Fields greyed out? Only the owner or a System Administrator changes them.",
                      shot="m7-reminders-desktop.png", endpoint="operations.reminders"),
+                Step(title="Projects in QuickBooks", app=O, where="Accounting → QuickBooks Online connection → "
+                     "Projects in QuickBooks",
+                     do="Read each job's QuickBooks Online customer and project and its QuickBooks Time job code",
+                     expect="A new or accepted job is made in QuickBooks once (the customer, the project under it, "
+                            "the job code); renames follow; a closed job is made inactive, never deleted. Shop / "
+                            "Company Work is one job code. CalibraytAI never changes accounting fields or makes a "
+                            "transaction there.",
+                     if_wrong="'Not switched on'? Project sync needs Joel's authorization (QBO_PROJECT_SYNC_ENABLED). "
+                              "Failed? Read the reason and press Retry; retry never makes a second copy.",
+                     shot="m7-qbo-projects-desktop.png", endpoint="accounting.quickbooks_projects"),
             ),
             exercise="As the training owner, open the QuickBooks Online page and the reminder settings (change nothing).",
             roles=(ROLE_OWNER,),
@@ -203,6 +221,12 @@ F09 = Module(
                      expect="It opens on the job you are on. If you are on more than one, choose the job first.",
                      if_wrong="Job not listed? You are not booked on it; ask the office.",
                      shot="m7-field-quick-actions-phone.png", endpoint="field.choose_job"),
+                Step(title="My Schedule on a Sunday", app=F, where="Field → This week",
+                     do="Open the week; use Previous week and Next week to move",
+                     expect="On a Sunday it opens on the coming Monday to Sunday (the button says Coming week), so "
+                            "tomorrow's work and deliveries are there. Other days it opens on this week.",
+                     if_wrong="Lost? Press This week (Coming week) to come back.",
+                     shot="m7-field-week-phone.png", endpoint="field.week"),
             ),
             exercise="Open Field Today on the training site and find the seven buttons.",
         ),
@@ -302,6 +326,14 @@ UAT_CASES: Tuple[UatCase, ...] = (
     _c("uat-c16-receipt-existing", "Receipt already in QuickBooks", "A receipt matching an expense entered by hand",
        "Approve it.", "'attached to the existing expense …'; no second expense in QuickBooks.",
        roles=(ROLE_OWNER, ROLE_OFFICE)),
+    _c("uat-c16-project-sync", "A new job into QuickBooks once", "Projects → New project (training company)",
+       "Create the job; open Projects in QuickBooks; press Check all projects now twice.",
+       "One customer and one project in QuickBooks Online and one job code in QuickBooks Time; the second check "
+       "makes nothing new. A job QuickBooks already had waits for This is the same project.",
+       roles=(ROLE_OWNER, ROLE_OFFICE)),
+    _f("uat-f09-sunday-week", "My Week on a Sunday", "Field → This week, on a Sunday",
+       "Open the week; press Next week, then Coming week.",
+       "It opens on the coming Monday to Sunday with tomorrow's work; Coming week brings you back."),
     _f("uat-f09-receipt-offline", "Receipt without a signal", "Field Today → Add Receipt",
        "Turn on Airplane Mode, take and save a receipt, then turn Airplane Mode off.",
        "'Saved on this phone' first, then 'Receipt R-… saved'; one receipt under My receipts."),

@@ -479,7 +479,7 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
                  "c12-morning", "c12-field-day", "c04-invoices", "c07-field-drawings", "c04-approve-to-quickbooks-time",
                  "c04-failed-transfers", "c04-banked-hours", "c04-shop-company-work"),
         uat=("uat-c16-attention", "uat-c16-materials", "uat-c16-extra-work", "uat-c16-delivery", "uat-c16-receipt",
-             "uat-c16-receipt-existing", "uat-c15-manage", "uat-c05-appointments", "uat-c05-field-week", "uat-c08-order", "uat-c11-schedule", "uat-c11-field",
+             "uat-c16-receipt-existing", "uat-c16-project-sync", "uat-c15-manage", "uat-c05-appointments", "uat-c05-field-week", "uat-c08-order", "uat-c11-schedule", "uat-c11-field",
              "uat-c11-delivery-field", "uat-c11-change-order", "uat-c12-day", "uat-c12-field-day",
              "uat-c04-qbt-approve", "uat-c04-qbt-failed", "uat-c04-banked", "uat-c04-shop"),
         handoffs=(5, 6, 7, 8), roles=OFFICE_ROLES, project_statuses=("Contracted", "Active"),
@@ -604,7 +604,7 @@ FIELD_STAGES: Tuple[Stage, ...] = (
         lessons=("f06-capture", "f06-voice-note", "f06-progress", "f05-extra-work", "f07-offline",
                  "f09-quick-actions", "f09-receipt", "f09-materials-extra", "f09-delivery-update"),
         uat=("uat-f06-capture", "uat-f05-extra-work", "uat-f07-offline", "uat-f09-receipt-offline",
-             "uat-f09-materials", "uat-f09-delivery", "uat-f09-job-update"),
+             "uat-f09-materials", "uat-f09-delivery", "uat-f09-job-update", "uat-f09-sunday-week"),
         roles=CONTRACTOR_ROLES,
     ),
     Stage(

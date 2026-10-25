@@ -348,7 +348,7 @@ def test_my_week_on_a_sunday_opens_on_the_coming_week_with_previous_this_and_nex
     _freeze(monkeypatch, sunday)
     kevin = Person(app, "kevin")
     page = kevin.get("/field/week")
-    assert "Mon 26 Oct – Sun 1 Nov" in page and "data-week-this>Next week</a>" in page
+    assert "Mon 26 Oct – Sun 1 Nov" in page and "data-week-this>Coming week</a>" in page
     assert 'href="/field/week?start=2026-10-19"' in page and 'href="/field/week?start=2026-11-02"' in page
     back = kevin.get("/field/week?start=2026-10-19")
     assert "Mon 19 Oct – Today" in back

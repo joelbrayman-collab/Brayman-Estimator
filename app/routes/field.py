@@ -329,7 +329,7 @@ def week():
         "field/week.html",
         week_nav={"prev": (start - timedelta(days=7)).isoformat(), "next": (start + timedelta(days=7)).isoformat(),
                   "is_default": start == default_start,
-                  "default_label": "Next week" if local_today().weekday() == 6 else "This week"},
+                  "default_label": "Coming week" if local_today().weekday() == 6 else "This week"},
         view=assemble_field_schedule(
             organization.id,
             worker_user_id=current_user.id,

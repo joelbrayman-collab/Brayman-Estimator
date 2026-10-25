@@ -866,8 +866,8 @@ def test_no_duplicate_labour_or_material_cost(env):
     assert ProjectDirectCostActual.query.count() == 0 and LabourTimeEntry.query.count() == 0
 
 
-def test_the_migration_adds_exactly_the_thirteen_tables(tmp_path):
-    """m7s3r5q8b2c4 is the release's only migration: thirteen new tables, nothing else. Every existing table, its
+def test_the_migration_adds_exactly_the_fourteen_tables(tmp_path):
+    """m7s3r5q8b2c4 is the release's only migration: fourteen new tables, nothing else. Every existing table, its
     columns, indexes and rows are unchanged. Downgrade refuses while a new table holds a row."""
     import sqlalchemy as sa
     from alembic import command
@@ -908,7 +908,7 @@ def test_the_migration_adds_exactly_the_thirteen_tables(tmp_path):
     inspector = sa.inspect(engine)
     after = {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)]
              for t in inspector.get_table_names()}
-    assert set(after) - set(before) == set(NEW_TABLES) and len(NEW_TABLES) == 13
+    assert set(after) - set(before) == set(NEW_TABLES) and len(NEW_TABLES) == 14
     for table in before:
         assert after[table] == before[table], table
         assert sorted(i["name"] for i in inspector.get_indexes(table)) == before_indexes[table], table

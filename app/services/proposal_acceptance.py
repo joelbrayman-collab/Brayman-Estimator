@@ -459,6 +459,9 @@ def _complete_acceptance(proposal, *, method, link, accepted_name, accepted_emai
             row.revoked_at = now
     _advance_stage(proposal, "Contracted", event="proposal accepted")
     db.session.commit()
+    from app.services.accounting_project_sync import project_changed
+
+    project_changed(proposal.estimate_version.estimate.project if proposal.estimate_version else None)
     _generate_contract(acceptance, actor=contract_actor)
     return acceptance
 

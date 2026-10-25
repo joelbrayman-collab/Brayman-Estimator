@@ -51,3 +51,14 @@ def status():
     click.echo(f"mode={act['mode']} ready={act['ready']}")
     for name, ok in act["items"]:
         click.echo(f"{name}={'yes' if ok else 'no'}")
+
+
+@quickbooks_online_cli.command("sync-projects")
+@with_appcontext
+def sync_projects():
+    """Bring every project's QuickBooks Online customer / project and QuickBooks Time job code in step (names and
+    active only; matches to confirm and failures are listed for the office). Off unless QBO_PROJECT_SYNC_ENABLED=1."""
+    from app.services.accounting_project_sync import sync_all
+
+    summary = sync_all()
+    click.echo(" ".join(f"{k}={v}" for k, v in sorted(summary.items())))

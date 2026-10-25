@@ -8,7 +8,12 @@
 {{ contextual_help(help_content.field_topic("week")) }}
 <section class="field-panel">
     <h1>{{ contractor_copy.FIELD_NAV_WEEK }}</h1>
-    <p class="field-muted">{{ view.window_label }}</p>
+    <p class="field-muted" data-week-window>{{ view.window_label }}</p>
+    <nav class="field-week-nav" aria-label="Choose the week" data-field-week-nav>
+        <a class="field-btn field-btn-secondary" href="{{ url_for('field.week', start=week_nav.prev) }}" data-week-prev>Previous week</a>
+        <a class="field-btn field-btn-{{ 'primary' if week_nav.is_default else 'secondary' }}" href="{{ url_for('field.week') }}" data-week-this>{{ week_nav.default_label }}</a>
+        <a class="field-btn field-btn-secondary" href="{{ url_for('field.week', start=week_nav.next) }}" data-week-next>Next week</a>
+    </nav>
     {% if not view.cards %}
     <p>{{ contractor_copy.FIELD_NO_WORK_WEEK }}</p>
     {% endif %}

@@ -517,6 +517,9 @@ def create_project():
                        user_id=getattr(current_user, "id", None))
 
             db.session.commit()
+            from app.services.accounting_project_sync import project_changed
+
+            project_changed(project, actor=current_user)  # QuickBooks customer, project and job code (when switched on)
             flash("Project created successfully with commercial decision context.", "success")
             if wizard_run is not None:
                 return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="documents"))

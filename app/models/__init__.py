@@ -176,6 +176,7 @@ from app.models.guided_estimating import (
 )
 from app.models.wizard import WizardRun, WizardRunEvent
 from app.models.field_operations import (  # the Magnificent Seven everyday operations (25 Oct 2026)
+    AccountingProjectLink,
     DailyJobSummary,
     DeliveryConfirmation,
     ExtraWorkReport,

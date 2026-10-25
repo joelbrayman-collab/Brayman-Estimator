@@ -317,10 +317,19 @@ def print_today():
 
 @field_bp.route("/week")
 def week():
+    from datetime import timedelta
+
+    from app.services.schedule import field_week_start
+
     organization = _organization()
-    start, end = calendar_week_bounds()
+    start = field_week_start(request.args.get("start"))
+    end = start + timedelta(days=6)
+    default_start = field_week_start()
     return render_template(
         "field/week.html",
+        week_nav={"prev": (start - timedelta(days=7)).isoformat(), "next": (start + timedelta(days=7)).isoformat(),
+                  "is_default": start == default_start,
+                  "default_label": "Next week" if local_today().weekday() == 6 else "This week"},
         view=assemble_field_schedule(
             organization.id,
             worker_user_id=current_user.id,

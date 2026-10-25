@@ -1,0 +1,7 @@
+{"Customer": {"Taxable": true, "Job": true, "BillWithParent": true, "ParentRef": {"value": "58"}, "Level": 1,
+  "Balance": 0, "BalanceWithJobs": 0, "CurrencyRef": {"value": "CAD", "name": "Canadian Dollar"},
+  "PreferredDeliveryMethod": "Print", "IsProject": false, "domain": "QBO", "sparse": false, "Id": "59", "SyncToken": "0",
+  "MetaData": {"CreateTime": "2026-10-25T09:12:33-07:00", "LastUpdatedTime": "2026-10-25T09:12:33-07:00"},
+  "FullyQualifiedName": "Morgan Ellis (synthetic):BC-2026-014 Harbour Lane Pool Deck (synthetic)",
+  "DisplayName": "BC-2026-014 Harbour Lane Pool Deck (synthetic)", "Active": true,
+  "Notes": "CalibraytAI project [CT-P1]"}, "time": "2026-10-25T09:12:33.106-07:00"}

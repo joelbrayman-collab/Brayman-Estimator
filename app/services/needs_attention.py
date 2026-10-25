@@ -295,6 +295,18 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
                                "QuickBooks Time", "Payroll", "Failed or needs a link", "", "/time/quickbooks-time",
                                "Fix and retry", urgency="today"))
 
+        # Projects in QuickBooks Online / QuickBooks Time: a match to confirm, a failure or an unknown outcome.
+        from app.services.accounting_project_sync import problems as project_sync_problems
+
+        for link in project_sync_problems(org):
+            states = {link.qbo_status, link.qbt_status}
+            what = ("QuickBooks: confirm the existing job" if "NEEDS_CONFIRM" in states else
+                    "QuickBooks project sync failed" if "FAILED" in states else "QuickBooks project sync not confirmed")
+            items.append(_item("quickbooks", what, _label(projects.get(link.project_id)),
+                               link.qbo_last_error or link.qbt_last_error or "", "",
+                               f"/accounting/quickbooks-online/projects#project-{link.project_id}",
+                               "Confirm or retry", urgency="today"))
+
     # ---- schedule conflicts, job updates, punch list, texts
     from app.services.schedule import list_schedule_conflicts
 

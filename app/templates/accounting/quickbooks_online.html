@@ -5,7 +5,8 @@
 {% include "operations/_style.html" %}
 <section class="page-header"><div><h2 class="page-title">QuickBooks Online</h2>
   <p class="page-purpose">Approved receipts go to QuickBooks Online as expenses with their original image, or are attached to the expense or bill already there. Nothing is entered twice.</p></div>
-  <a class="button button-secondary" href="{{ url_for('accounting.receipts_inbox') }}">Receipts Inbox</a></section>
+  <a class="button button-secondary" href="{{ url_for('accounting.receipts_inbox') }}">Receipts Inbox</a>
+  <a class="button button-secondary" href="{{ url_for('accounting.quickbooks_projects') }}" data-open-qbo-projects>Projects in QuickBooks</a></section>
 <div class="form-panel" data-qbo-connection="{{ 'connected' if qbo.connected else 'not-connected' }}">
   <h3>Connection</h3>
   <p><strong>{{ qbo.message }}</strong></p>

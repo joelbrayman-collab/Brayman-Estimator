@@ -4,7 +4,7 @@ Revision ID: m7s3r5q8b2c4
 Revises: w2z9r4d7k1m6
 Create Date: 2026-10-25
 
-Thirteen new tables (app/models/field_operations.py), nothing else. No existing table, column, index or row changes.
+Fourteen new tables (app/models/field_operations.py), nothing else. No existing table, column, index or row changes.
 
 - field_receipts: a Field capture classified as a receipt (project or Shop / Company expense), what the worker typed,
   what the office confirmed, the review status. The photo stays the existing Field capture original.
@@ -18,6 +18,8 @@ Thirteen new tables (app/models/field_operations.py), nothing else. No existing 
 - daily_job_summaries: the crew's three answers beside the verified facts they were prefilled from.
 - operations_settings, reminder_preferences, operations_reminders: end-of-day reminders.
 - field_operation_events: append-only history for the records above.
+- accounting_project_links: each project's QuickBooks Online customer and project (sub-customer, Job=true) and
+  QuickBooks Time job code: stable ids, SyncTokens, status, last error and candidates waiting for confirmation.
 
 Downgrade refuses while any of the new tables holds a row; recovery is then the pre-migration backup.
 """
@@ -34,7 +36,7 @@ NEW_TABLES = (
     "field_receipts", "quickbooks_online_connections", "quickbooks_online_transfers", "quickbooks_online_events",
     "quickbooks_online_links", "field_material_requests", "delivery_confirmations", "extra_work_reports",
     "daily_job_summaries", "operations_settings", "reminder_preferences", "operations_reminders",
-    "field_operation_events",
+    "field_operation_events", "accounting_project_links",
 )
 
 
@@ -71,11 +73,11 @@ def upgrade():
         sa.Column("approved_at", sa.DateTime(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.CheckConstraint("expense_scope IN ('PROJECT', 'COMPANY')", name="ck_field_receipts_scope"),
-        sa.CheckConstraint("existing_qbo_txn_type IS NULL OR existing_qbo_txn_type IN ('Purchase', 'Bill')", name="ck_field_receipts_existing_type"),
-        sa.CheckConstraint("status IN ('NEW', 'NEEDS_ATTENTION', 'REVIEWED', 'READY', 'SYNCED', 'SYNC_FAILED')", name="ck_field_receipts_status"),
         sa.UniqueConstraint("organization_id", "client_capture_uuid", name="uq_field_receipts_org_client_uuid"),
+        sa.CheckConstraint("status IN ('NEW', 'NEEDS_ATTENTION', 'REVIEWED', 'READY', 'SYNCED', 'SYNC_FAILED')", name="ck_field_receipts_status"),
         sa.CheckConstraint('(entered_amount IS NULL OR entered_amount >= 0) AND (subtotal IS NULL OR subtotal >= 0) AND (tax_amount IS NULL OR tax_amount >= 0) AND (total IS NULL OR total >= 0)', name="ck_field_receipts_amounts_nonnegative"),
+        sa.CheckConstraint("existing_qbo_txn_type IS NULL OR existing_qbo_txn_type IN ('Purchase', 'Bill')", name="ck_field_receipts_existing_type"),
+        sa.CheckConstraint("expense_scope IN ('PROJECT', 'COMPANY')", name="ck_field_receipts_scope"),
     )
     op.create_index("ix_field_receipts_org_status", "field_receipts", ["organization_id", "status"])
     op.create_index("ix_field_receipts_organization_id", "field_receipts", ["organization_id"])
@@ -116,9 +118,9 @@ def upgrade():
         sa.Column("settings_updated_at", sa.DateTime(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.CheckConstraint("environment IN ('sandbox', 'production')", name="ck_qbo_connections_environment"),
         sa.CheckConstraint("status IN ('NOT_CONNECTED', 'CONNECTED', 'NEEDS_RECONNECT', 'DISCONNECTED')", name="ck_qbo_connections_status"),
         sa.CheckConstraint("payment_type IS NULL OR payment_type IN ('Cash', 'Check', 'CreditCard')", name="ck_qbo_connections_payment_type"),
-        sa.CheckConstraint("environment IN ('sandbox', 'production')", name="ck_qbo_connections_environment"),
     )
     op.create_table(
         "quickbooks_online_transfers",
@@ -141,8 +143,8 @@ def upgrade():
         sa.Column("sent_at", sa.DateTime(), nullable=True),
         sa.Column("confirmed_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.CheckConstraint("status IN ('PENDING', 'SENT', 'CONFIRMED', 'FAILED', 'NEEDS_REVIEW')", name="ck_qbo_transfers_status"),
         sa.CheckConstraint("operation IS NULL OR operation IN ('CREATE_PURCHASE', 'ATTACH_EXISTING')", name="ck_qbo_transfers_operation"),
+        sa.CheckConstraint("status IN ('PENDING', 'SENT', 'CONFIRMED', 'FAILED', 'NEEDS_REVIEW')", name="ck_qbo_transfers_status"),
     )
     op.create_index("ix_qbo_transfers_org_status", "quickbooks_online_transfers", ["organization_id", "status"])
     op.create_index("ix_quickbooks_online_transfers_organization_id", "quickbooks_online_transfers", ["organization_id"])
@@ -152,6 +154,7 @@ def upgrade():
         sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False),
         sa.Column("transfer_id", sa.Integer(), sa.ForeignKey("quickbooks_online_transfers.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("receipt_id", sa.Integer(), sa.ForeignKey("field_receipts.id", ondelete="RESTRICT"), nullable=True),
+        sa.Column("project_id", sa.Integer(), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("kind", sa.String(length=30), nullable=False),
         sa.Column("message", sa.Text(), nullable=False),
         sa.Column("detail_json", sa.JSON(), nullable=True),
@@ -160,6 +163,7 @@ def upgrade():
         sa.Column("occurred_at", sa.DateTime(), nullable=False),
     )
     op.create_index("ix_qbo_events_org_id", "quickbooks_online_events", ["organization_id", "id"])
+    op.create_index("ix_quickbooks_online_events_project_id", "quickbooks_online_events", ["project_id"])
     op.create_index("ix_quickbooks_online_events_receipt_id", "quickbooks_online_events", ["receipt_id"])
     op.create_index("ix_quickbooks_online_events_transfer_id", "quickbooks_online_events", ["transfer_id"])
     op.create_table(
@@ -172,8 +176,8 @@ def upgrade():
         sa.Column("qbo_name", sa.String(length=200), nullable=True),
         sa.Column("linked_by_name", sa.String(length=150), nullable=False),
         sa.Column("linked_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("organization_id", "kind", "local_key", name="uq_qbo_links_org_kind_key"),
         sa.CheckConstraint("kind IN ('VENDOR', 'CUSTOMER')", name="ck_qbo_links_kind"),
+        sa.UniqueConstraint("organization_id", "kind", "local_key", name="uq_qbo_links_org_kind_key"),
     )
     op.create_index("ix_quickbooks_online_links_organization_id", "quickbooks_online_links", ["organization_id"])
     op.create_table(
@@ -203,9 +207,9 @@ def upgrade():
         sa.Column("supplier_request_id", sa.String(length=40), nullable=True),
         sa.Column("share_id", sa.Integer(), sa.ForeignKey("supplier_request_shares.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("organization_id", "client_request_uuid", name="uq_field_material_requests_org_uuid"),
         sa.CheckConstraint('quantity > 0 AND (approved_quantity IS NULL OR approved_quantity > 0)', name="ck_field_material_requests_quantity_positive"),
         sa.CheckConstraint("status IN ('SUBMITTED', 'APPROVED', 'DECLINED', 'REQUESTED', 'CANCELLED')", name="ck_field_material_requests_status"),
+        sa.UniqueConstraint("organization_id", "client_request_uuid", name="uq_field_material_requests_org_uuid"),
     )
     op.create_index("ix_field_material_requests_org_status", "field_material_requests", ["organization_id", "status"])
     op.create_index("ix_field_material_requests_organization_id", "field_material_requests", ["organization_id"])
@@ -231,9 +235,9 @@ def upgrade():
         sa.Column("resolution_note", sa.Text(), nullable=True),
         sa.Column("resolved_by_name", sa.String(length=150), nullable=True),
         sa.Column("resolved_at", sa.DateTime(), nullable=True),
+        sa.CheckConstraint("outcome IN ('RECEIVED', 'SHORT', 'DAMAGED')", name="ck_delivery_confirmations_outcome"),
         sa.CheckConstraint("exception_status IN ('NONE', 'OPEN', 'RESOLVED')", name="ck_delivery_confirmations_exception"),
         sa.UniqueConstraint("organization_id", "client_uuid", name="uq_delivery_confirmations_org_uuid"),
-        sa.CheckConstraint("outcome IN ('RECEIVED', 'SHORT', 'DAMAGED')", name="ck_delivery_confirmations_outcome"),
     )
     op.create_index("ix_delivery_confirmations_order_id", "delivery_confirmations", ["order_id"])
     op.create_index("ix_delivery_confirmations_org_exception", "delivery_confirmations", ["organization_id", "exception_status"])
@@ -289,8 +293,8 @@ def upgrade():
         sa.Column("resolved_by_name", sa.String(length=150), nullable=True),
         sa.Column("resolved_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("organization_id", "project_id", "work_date", "submitted_by_user_id", name="uq_daily_job_summaries_org_project_day_person"),
         sa.CheckConstraint("problem_status IN ('NONE', 'OPEN', 'RESOLVED')", name="ck_daily_job_summaries_problem"),
+        sa.UniqueConstraint("organization_id", "project_id", "work_date", "submitted_by_user_id", name="uq_daily_job_summaries_org_project_day_person"),
     )
     op.create_index("ix_daily_job_summaries_organization_id", "daily_job_summaries", ["organization_id"])
     op.create_index("ix_daily_job_summaries_project_id", "daily_job_summaries", ["project_id"])
@@ -333,8 +337,8 @@ def upgrade():
         sa.Column("text_message_id", sa.Integer(), sa.ForeignKey("text_messages.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("read_at", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("sms_status IN ('NOT_REQUESTED', 'NOT_SWITCHED_ON', 'NO_CONSENT', 'SENT', 'FAILED')", name="ck_operations_reminders_sms"),
         sa.UniqueConstraint("dedupe_key", name="uq_operations_reminders_dedupe_key"),
+        sa.CheckConstraint("sms_status IN ('NOT_REQUESTED', 'NOT_SWITCHED_ON', 'NO_CONSENT', 'SENT', 'FAILED')", name="ck_operations_reminders_sms"),
         sa.CheckConstraint("audience IN ('CREW', 'OWNER')", name="ck_operations_reminders_audience"),
     )
     op.create_index("ix_operations_reminders_org_user_date", "operations_reminders", ["organization_id", "user_id", "reminder_date"])
@@ -354,6 +358,36 @@ def upgrade():
     )
     op.create_index("ix_field_operation_events_project_id", "field_operation_events", ["project_id"])
     op.create_index("ix_field_operation_events_record", "field_operation_events", ["organization_id", "record_type", "record_id"])
+    op.create_table(
+        "accounting_project_links",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("organization_id", sa.String(length=50), sa.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("project_id", sa.Integer(), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False, unique=True),
+        sa.Column("qbo_status", sa.String(length=20), nullable=False),
+        sa.Column("qbo_customer_id", sa.String(length=40), nullable=True),
+        sa.Column("qbo_customer_sync_token", sa.String(length=20), nullable=True),
+        sa.Column("qbo_project_id", sa.String(length=40), nullable=True),
+        sa.Column("qbo_project_sync_token", sa.String(length=20), nullable=True),
+        sa.Column("qbo_synced_name", sa.String(length=200), nullable=True),
+        sa.Column("qbo_synced_active", sa.Boolean(), nullable=True),
+        sa.Column("qbo_last_error", sa.Text(), nullable=True),
+        sa.Column("qbo_candidates_json", sa.JSON(), nullable=True),
+        sa.Column("qbt_status", sa.String(length=20), nullable=False),
+        sa.Column("qbt_jobcode_id", sa.String(length=40), nullable=True),
+        sa.Column("qbt_synced_name", sa.String(length=200), nullable=True),
+        sa.Column("qbt_synced_active", sa.Boolean(), nullable=True),
+        sa.Column("qbt_last_error", sa.Text(), nullable=True),
+        sa.Column("qbt_candidates_json", sa.JSON(), nullable=True),
+        sa.Column("attempts", sa.Integer(), nullable=False),
+        sa.Column("confirmed_by_name", sa.String(length=150), nullable=True),
+        sa.Column("confirmed_at", sa.DateTime(), nullable=True),
+        sa.Column("last_synced_at", sa.DateTime(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.CheckConstraint("qbt_status IN ('OFF', 'PENDING', 'SENT', 'SYNCED', 'NEEDS_CONFIRM', 'FAILED')", name="ck_accounting_project_links_qbt"),
+        sa.CheckConstraint("qbo_status IN ('OFF', 'PENDING', 'SENT', 'SYNCED', 'NEEDS_CONFIRM', 'FAILED')", name="ck_accounting_project_links_qbo"),
+    )
+    op.create_index("ix_accounting_project_links_organization_id", "accounting_project_links", ["organization_id"])
 
 
 def downgrade():

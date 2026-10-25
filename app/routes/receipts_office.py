@@ -178,3 +178,39 @@ def quickbooks_callback():
 def quickbooks_online_reconciliation():
     org = _org()
     return render_template("accounting/qbo_reconciliation.html", rows=qbo.reconciliation(org))
+
+
+@accounting_bp.route("/quickbooks-online/projects", methods=["GET", "POST"])
+def quickbooks_projects():
+    """Projects in QuickBooks Online and QuickBooks Time: status, matches to confirm (once), retry, history."""
+    from app.models.field_operations import AccountingProjectLink
+    from app.services import accounting_project_sync as P
+
+    org = _org()
+    if request.method == "POST":
+        action = request.form.get("action")
+        try:
+            if action == "sync_all":
+                summary = P.sync_all(org, actor=current_user)
+                if summary.get("off"):
+                    raise P.ProjectSyncError("Project sync to QuickBooks is not switched on (QBO_PROJECT_SYNC_ENABLED).")
+                flash(f"Checked {summary['projects']} projects: {summary['synced']} in step, {summary['confirm']} to "
+                      f"confirm, {summary['failed']} failed, {summary['waiting']} waiting.", "success")
+            else:
+                link = db.session.get(AccountingProjectLink, request.form.get("link_id", type=int) or 0)
+                if link is None or link.organization_id != org:
+                    abort(404)
+                if action == "confirm":
+                    P.confirm_match(link, current_user, system=request.form.get("system", ""),
+                                    record_id=request.form.get("record_id", ""))
+                    flash("Match confirmed. It is used from now on; nothing new was made in QuickBooks.", "success")
+                elif action == "retry":
+                    P.retry(link, current_user)
+                    flash("Retried.", "success")
+                else:
+                    abort(400)
+        except (P.ProjectSyncError, qbo.QuickBooksOnlineError) as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        return redirect(url_for("accounting.quickbooks_projects"))
+    return render_template("accounting/qbo_projects.html", rows=P.rows(org), enabled=P.enabled(), qbo=qbo.status(org))

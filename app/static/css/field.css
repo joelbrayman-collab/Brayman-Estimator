@@ -743,6 +743,8 @@ input:focus-visible {
 .field-lines { width: 100%; border-collapse: collapse; }
 .field-lines td, .field-lines th { padding: 6px 4px; border-bottom: 1px solid #d9d4c7; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
 .field-lines input { width: 5.5rem; min-height: 44px; font: inherit; padding: 6px; border: 2px solid var(--black); border-radius: 8px; }
+.field-week-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 10px; }
+.field-week-nav .field-btn { margin: 0; min-height: 44px; padding: 8px 4px; font-size: 0.95rem; }
 .field-receipt-thumb { max-width: 100%; border: 2px solid var(--black); border-radius: 8px; }
 
 

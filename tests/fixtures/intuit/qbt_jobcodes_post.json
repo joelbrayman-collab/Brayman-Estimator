@@ -1,0 +1,6 @@
+{"results": {"jobcodes": {"1": {"_status_code": 200, "_status_message": "Created", "id": 17288279,
+  "parent_id": 0, "assigned_to_all": true, "billable": false, "active": true, "type": "regular",
+  "has_children": false, "billable_rate": 0, "short_code": "", "name": "BC-2026-014 Harbour Lane Pool Deck (synthetic)",
+  "last_modified": "2026-10-25T16:12:34+00:00", "created": "2026-10-25T16:12:34+00:00", "filtered_customfielditems": "",
+  "required_customfields": [], "locations": [], "geofence_config_id": null, "project_id": 0}}},
+ "supplemental_data": {}}

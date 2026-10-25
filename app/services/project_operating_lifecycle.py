@@ -238,6 +238,9 @@ def close_project(
         db.session.rollback()
         raise
     db.session.refresh(loaded)
+    from app.services.accounting_project_sync import project_changed
+
+    project_changed(loaded, actor=actor if hasattr(actor, "id") else None)  # inactive in QuickBooks, never deleted
     return loaded
 
 
@@ -286,4 +289,7 @@ def reopen_project(project, actor, *, organization_id=None):
     reopen_project_stage(loaded)
     db.session.commit()
     db.session.refresh(loaded)
+    from app.services.accounting_project_sync import project_changed
+
+    project_changed(loaded, actor=actor if hasattr(actor, "id") else None)  # active again in QuickBooks
     return loaded

@@ -191,7 +191,7 @@ def test_an_office_trainee_takes_contractor_then_field_and_back_with_both_record
     assert f"1/{total}" in by_track[C.PATHWAY_CONTRACTOR][1] and "1 pass · 0 fail" in by_track[C.PATHWAY_CONTRACTOR][1]
     assert f"1/{len(C.lessons_for(C.PATHWAY_FIELD_CREW, 'FIELD'))}" in by_track[C.PATHWAY_FIELD_CREW][1] and "0 pass · 1 fail" in by_track[C.PATHWAY_FIELD_CREW][1]
     crew = re.search(r'data-admin-crew-member="Olivia[^"]*" data-admin-other-track>(.*?)</article>', admin, re.S)
-    assert crew and "Lessons: 1 of 31 done" in crew.group(1) and "synthetic: the button was greyed out" in crew.group(1)
+    assert crew and f"Lessons: 1 of {len(C.lessons_for(C.PATHWAY_FIELD_CREW, 'FIELD'))} done" in crew.group(1) and "synthetic: the button was greyed out" in crew.group(1)
     assert "Field Crew training" in admin and "synthetic: the button was greyed out" in admin  # outstanding issue
 
 

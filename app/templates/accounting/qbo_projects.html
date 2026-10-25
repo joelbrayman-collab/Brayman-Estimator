@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Projects in QuickBooks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Projects in QuickBooks{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Projects in QuickBooks</h2>
+  <p class="page-purpose">Each project's customer and project in QuickBooks Online, and its job code in QuickBooks Time. CalibraytAI sends only names and active / inactive; it never changes accounting fields, deletes anything or makes a transaction.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.quickbooks_online') }}">QuickBooks Online connection</a></section>
+<div class="form-panel" data-project-sync-state="{{ 'on' if enabled else 'off' }}">
+  {% if not enabled %}<p><strong>Not switched on.</strong> Projects are not sent to QuickBooks until Joel authorizes it (QBO_PROJECT_SYNC_ENABLED=1 on the server, with the QuickBooks connections).</p>
+  {% else %}<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" name="action" value="sync_all" class="button-primary" data-sync-all-projects>Check all projects now</button></form>{% endif %}
+</div>
+<div class="form-panel">
+  <div class="acct-scroll"><table class="acct-table" data-qbo-projects>
+    <thead><tr><th>Project</th><th>QuickBooks Online</th><th>QuickBooks Time</th><th>What to do</th></tr></thead>
+    <tbody>{% for r in rows %}{% set l = r.link %}
+    <tr id="project-{{ r.project.id }}" data-project-link="{{ r.project.id }}" data-qbo-status="{{ l.qbo_status if l else 'OFF' }}" data-qbt-status="{{ l.qbt_status if l else 'OFF' }}">
+      <td data-label="Project"><a href="{{ url_for('projects.view_project', id=r.project.id) }}">{{ 'Shop / Company Work' if r.company else r.name }}</a>{% if r.project.operating_state != 'ACTIVE' %} <span class="ops-tag">closed</span>{% endif %}</td>
+      <td data-label="QuickBooks Online">{% if r.company %}—{% else %}{{ l.qbo_label if l else 'Not sent' }}{% if l and l.qbo_project_id %} · project {{ l.qbo_project_id }}{% endif %}{% if l and l.qbo_customer_id %} · customer {{ l.qbo_customer_id }}{% endif %}{% endif %}</td>
+      <td data-label="QuickBooks Time">{{ l.qbt_label if l else 'Not sent' }}{% if l and l.qbt_jobcode_id %} · job code {{ l.qbt_jobcode_id }}{% endif %}</td>
+      <td data-label="What to do">
+        {% if l and l.qbo_last_error %}<p class="muted-copy">{{ l.qbo_last_error }}</p>{% endif %}
+        {% if l and l.qbt_last_error %}<p class="muted-copy">{{ l.qbt_last_error }}</p>{% endif %}
+        {% for system, data in (('qbo', l.qbo_candidates_json if l else None), ('qbt', l.qbt_candidates_json if l else None)) if data %}
+          {% for c in data.candidates %}
+          <form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="link_id" value="{{ l.id }}"><input type="hidden" name="system" value="{{ system }}"><input type="hidden" name="record_id" value="{{ c.id }}">
+            <span>{{ c.name }} ({{ 'QuickBooks Time job code' if system == 'qbt' else ('project' if c.job else 'customer') }} {{ c.id }}{% if c.active == false %}, inactive{% endif %})</span>
+            <button type="submit" name="action" value="confirm" class="button button-secondary" data-confirm-match="{{ system }}-{{ c.id }}">This is the same {{ data.what }}</button></form>
+          {% endfor %}
+        {% endfor %}
+        {% if l and ('FAILED' in (l.qbo_status, l.qbt_status) or 'SENT' in (l.qbo_status, l.qbt_status)) and enabled %}
+        <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="link_id" value="{{ l.id }}"><button type="submit" name="action" value="retry" class="button button-secondary" data-retry-project="{{ r.project.id }}">Retry</button></form>
+        {% endif %}
+      </td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

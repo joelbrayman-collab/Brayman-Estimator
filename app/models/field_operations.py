@@ -260,6 +260,7 @@ class QuickBooksOnlineEvent(db.Model):
                             nullable=True, index=True)
     receipt_id = db.Column(db.Integer, db.ForeignKey("field_receipts.id", ondelete="RESTRICT"), nullable=True,
                            index=True)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=True, index=True)
     kind = db.Column(db.String(30), nullable=False)
     message = db.Column(db.Text, nullable=False)
     detail_json = db.Column(db.JSON, nullable=True)
@@ -288,6 +289,66 @@ class QuickBooksOnlineLink(db.Model):
     qbo_name = db.Column(db.String(200), nullable=True)
     linked_by_name = db.Column(db.String(150), nullable=False)
     linked_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+# ------------------------------------------------------------------------------- projects in QuickBooks (Joel, A)
+PSYNC_OFF = "OFF"  # sync not switched on, or never tried
+PSYNC_PENDING = "PENDING"  # waiting (not connected / settings missing), nothing sent
+PSYNC_SENT = "SENT"  # a create was sent and the answer was lost: the retry checks first
+PSYNC_SYNCED = "SYNCED"
+PSYNC_NEEDS_CONFIRM = "NEEDS_CONFIRM"  # an existing QuickBooks record has the same name: Suzanne or the owner confirms
+PSYNC_FAILED = "FAILED"
+PROJECT_SYNC_STATUSES = (PSYNC_OFF, PSYNC_PENDING, PSYNC_SENT, PSYNC_SYNCED, PSYNC_NEEDS_CONFIRM, PSYNC_FAILED)
+PROJECT_SYNC_LABELS = {PSYNC_OFF: "Not switched on", PSYNC_PENDING: "Waiting", PSYNC_SENT: "Sent — not confirmed yet",
+                       PSYNC_SYNCED: "In step", PSYNC_NEEDS_CONFIRM: "Confirm the match", PSYNC_FAILED: "Failed — retry"}
+
+
+class AccountingProjectLink(db.Model):
+    """One CalibraytAI project and its records in QuickBooks Online (the customer and the project, a sub-customer
+    with Job=true) and QuickBooks Time (the job code). CalibraytAI owns the operational project; QuickBooks owns the
+    accounting. Only names and Active are ever sent; no accounting field is overwritten, nothing is deleted."""
+
+    __tablename__ = "accounting_project_links"
+    __table_args__ = (
+        db.CheckConstraint(f"qbo_status IN ({_in(PROJECT_SYNC_STATUSES)})", name="ck_accounting_project_links_qbo"),
+        db.CheckConstraint(f"qbt_status IN ({_in(PROJECT_SYNC_STATUSES)})", name="ck_accounting_project_links_qbt"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+                                nullable=False, index=True)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False, unique=True)
+    qbo_status = db.Column(db.String(20), nullable=False, default=PSYNC_OFF)
+    qbo_customer_id = db.Column(db.String(40), nullable=True)
+    qbo_customer_sync_token = db.Column(db.String(20), nullable=True)
+    qbo_project_id = db.Column(db.String(40), nullable=True)
+    qbo_project_sync_token = db.Column(db.String(20), nullable=True)
+    qbo_synced_name = db.Column(db.String(200), nullable=True)
+    qbo_synced_active = db.Column(db.Boolean, nullable=True)
+    qbo_last_error = db.Column(db.Text, nullable=True)
+    qbo_candidates_json = db.Column(db.JSON, nullable=True)
+    qbt_status = db.Column(db.String(20), nullable=False, default=PSYNC_OFF)
+    qbt_jobcode_id = db.Column(db.String(40), nullable=True)
+    qbt_synced_name = db.Column(db.String(200), nullable=True)
+    qbt_synced_active = db.Column(db.Boolean, nullable=True)
+    qbt_last_error = db.Column(db.Text, nullable=True)
+    qbt_candidates_json = db.Column(db.JSON, nullable=True)
+    attempts = db.Column(db.Integer, nullable=False, default=0)
+    confirmed_by_name = db.Column(db.String(150), nullable=True)
+    confirmed_at = db.Column(db.DateTime, nullable=True)
+    last_synced_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    project = db.relationship("Project")
+
+    @property
+    def qbo_label(self):
+        return PROJECT_SYNC_LABELS.get(self.qbo_status, self.qbo_status)
+
+    @property
+    def qbt_label(self):
+        return PROJECT_SYNC_LABELS.get(self.qbt_status, self.qbt_status)
 
 
 # ------------------------------------------------------------------------------------------------ material requests
@@ -616,7 +677,7 @@ NEW_TABLES = (
     "field_receipts", "quickbooks_online_connections", "quickbooks_online_transfers", "quickbooks_online_events",
     "quickbooks_online_links", "field_material_requests", "delivery_confirmations", "extra_work_reports",
     "daily_job_summaries", "operations_settings", "reminder_preferences", "operations_reminders",
-    "field_operation_events",
+    "field_operation_events", "accounting_project_links",
 )
 
 ZERO = Decimal("0.00")

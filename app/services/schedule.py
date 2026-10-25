@@ -1462,6 +1462,23 @@ def calendar_week_bounds(today: Optional[date] = None) -> tuple[date, date]:
     return start, start + timedelta(days=6)
 
 
+def field_week_start(requested=None, today: Optional[date] = None) -> date:
+    """The Monday of the week Field My Week shows (Joel, 25 Oct 2026). A requested day (?start=YYYY-MM-DD) shows the
+    week it falls in. Without one: this week — except on a Sunday, when the week that starts tomorrow is shown
+    (on a Sunday the crew are looking ahead to Monday)."""
+    today = today or local_today()
+    if requested:
+        try:
+            day = requested if isinstance(requested, date) else date.fromisoformat(str(requested).strip())
+        except ValueError:
+            day = None
+        if day is not None:
+            return day - timedelta(days=day.weekday())
+    if today.weekday() == 6:
+        return today + timedelta(days=1)
+    return today - timedelta(days=today.weekday())
+
+
 def calendar_month_bounds(year: int, month: int) -> tuple[date, date]:
     last_day = calendar.monthrange(year, month)[1]
     return date(year, month, 1), date(year, month, last_day)

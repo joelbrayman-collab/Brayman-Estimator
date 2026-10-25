@@ -284,11 +284,45 @@ class FakeQuickBooksOnline:
             if self.by_name("Vendor", name):
                 return 400, _fault("Duplicate Name Exists Error", "6240", name), False
             return 200, {"Vendor": self.add("Vendor", DisplayName=name, Active=True)}, True
+        if method == "POST" and path == "customer":
+            return self._customer(body or {})
         if method == "POST" and path == "purchase":
             return self._purchase(body or {})
         if method == "POST" and path == "upload":
             return self._upload(raw or b"", ctype or "")
         return 400, _fault("Unsupported operation", "500", path), False
+
+    def _customer(self, body):
+        """Customer create, or a sparse update (Id + SyncToken + sparse=true): only the fields sent change."""
+        if body.get("Id"):
+            row = self.entities["Customer"].get(str(body["Id"]))
+            if row is None:
+                return 400, _fault("Object Not Found", "610", f"Customer {body['Id']}"), False
+            if str(body.get("SyncToken")) != row["SyncToken"]:
+                return 400, _fault("Stale Object Error", "5010", "You and someone else are editing the same thing"), False
+            name = body.get("DisplayName")
+            if name and name != row.get("DisplayName") and self.by_name("Customer", name):
+                return 400, _fault("Duplicate Name Exists Error", "6240", name), False
+            for key, value in body.items():
+                if key not in ("Id", "SyncToken", "sparse"):
+                    row[key] = deepcopy(value)
+            row["SyncToken"] = str(int(row["SyncToken"]) + 1)
+            return 200, {"Customer": deepcopy(row), "time": "2026-10-25"}, True
+        name = (body.get("DisplayName") or "").strip()
+        if not name:
+            return 400, _fault("Required param missing", "2020", "DisplayName"), False
+        if self.by_name("Customer", name) or self.by_name("Vendor", name):
+            return 400, _fault("Duplicate Name Exists Error", "6240", f"The name supplied already exists. : {name}"), False
+        if body.get("Job") and (body.get("ParentRef") or {}).get("value") not in self.entities["Customer"]:
+            return 400, _fault("Invalid Reference Id", "2500", "ParentRef"), False
+        fields = deepcopy(body)
+        fields.setdefault("Active", True)
+        if body.get("Job"):
+            parent = self.entities["Customer"][body["ParentRef"]["value"]]
+            fields["FullyQualifiedName"] = f"{parent['DisplayName']}:{name}"
+            fields["Level"] = int(parent.get("Level", 0)) + 1
+        row = self.add("Customer", **fields)
+        return 200, {"Customer": deepcopy(row), "time": "2026-10-25"}, True
 
     def _purchase(self, body):
         for field in ("PaymentType", "AccountRef", "Line"):
@@ -337,7 +371,10 @@ class FakeQuickBooksOnline:
         entity = match.group(1).capitalize()
         entity = {"Taxcode": "TaxCode"}.get(entity, entity)
         rows = list(self.entities.get(entity, {}).values())
-        for field, op, value in self._WHERE.findall(match.group(2) or ""):
+        where = match.group(2) or ""
+        if entity in ("Customer", "Vendor") and not re.search(r"Active\s+IN", where, re.I):
+            rows = [r for r in rows if r.get("Active", True)]  # QuickBooks lists active names unless asked
+        for field, op, value in self._WHERE.findall(where):
             value = value.replace("\\'", "'")
 
             def keep(row, field=field, op=op, value=value):

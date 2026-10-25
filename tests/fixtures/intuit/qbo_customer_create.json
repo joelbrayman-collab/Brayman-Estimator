@@ -1,0 +1,7 @@
+{"Customer": {"Taxable": true, "Job": false, "BillWithParent": false, "Balance": 0, "BalanceWithJobs": 0,
+  "CurrencyRef": {"value": "CAD", "name": "Canadian Dollar"}, "PreferredDeliveryMethod": "Print", "IsProject": false,
+  "domain": "QBO", "sparse": false, "Id": "58", "SyncToken": "0",
+  "MetaData": {"CreateTime": "2026-10-25T09:12:32-07:00", "LastUpdatedTime": "2026-10-25T09:12:32-07:00"},
+  "FullyQualifiedName": "Morgan Ellis (synthetic)", "DisplayName": "Morgan Ellis (synthetic)",
+  "PrintOnCheckName": "Morgan Ellis (synthetic)", "Active": true, "Notes": "Created by CalibraytAI [CT-C1]"},
+ "time": "2026-10-25T09:12:32.006-07:00"}

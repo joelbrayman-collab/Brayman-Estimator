@@ -103,7 +103,21 @@ class FakeQuickBooksTimeTransport:
         if method == "GET" and path == "users":
             return 200, {"results": {"users": {str(k): v for k, v in self.users.items()}}, "more": False}
         if method == "GET" and path == "jobcodes":
-            return 200, {"results": {"jobcodes": {str(k): v for k, v in self.jobcodes.items()}}, "more": False}
+            rows = dict(self.jobcodes)
+            p = params or {}
+            if p.get("ids"):
+                wanted = {int(x) for x in str(p["ids"]).split(",") if x.strip().isdigit()}
+                rows = {k: v for k, v in rows.items() if int(k) in wanted}
+            if p.get("name"):
+                rows = {k: v for k, v in rows.items() if v["name"] == p["name"]}
+            if p.get("active") in ("true", "false"):
+                rows = {k: v for k, v in rows.items() if bool(v.get("active")) == (p["active"] == "true")}
+            elif not p.get("ids"):  # QuickBooks Time lists active job codes unless asked (active=both)
+                if p.get("active") != "both":
+                    rows = {k: v for k, v in rows.items() if v.get("active")}
+            return 200, {"results": {"jobcodes": {str(k): v for k, v in rows.items()}}, "more": False}
+        if method in ("POST", "PUT") and path == "jobcodes":
+            return self._write_jobcodes(body, create=method == "POST")
         if method == "GET" and path == "timesheets":
             return 200, {"results": {"timesheets": {str(k): v for k, v in self._filter(params or {}).items()}},
                          "more": False}
@@ -122,6 +136,47 @@ class FakeQuickBooksTimeTransport:
                     out[str(i)] = {"_status_code": 404, "_status_message": "Not Found", "id": tid}
             return 200, {"results": {"timesheets": out}}
         return 404, {"error": {"code": 404, "message": "Not found"}}
+
+    def _write_jobcodes(self, body, *, create):
+        """POST/PUT /jobcodes with per-item _status_code, as documented (job codes are never deleted)."""
+        items = (body or {}).get("data") or []
+        out = {}
+        for i, item in enumerate(items, 1):
+            if self.fail_items:
+                code, message = self.fail_items.pop(0)
+                out[str(i)] = {"_status_code": code, "_status_message": message, "_status_extra": "Synthetic"}
+                continue
+            if create:
+                name = (item.get("name") or "").strip()
+                parent = int(item.get("parent_id") or 0)
+                if not name:
+                    out[str(i)] = {"_status_code": 417, "_status_message": "Expectation Failed",
+                                   "_status_extra": "name is required"}
+                    continue
+                if any(j["name"] == name and int(j.get("parent_id") or 0) == parent for j in self.jobcodes.values()):
+                    out[str(i)] = {"_status_code": 409, "_status_message": "Conflict",
+                                   "_status_extra": "A jobcode with that name already exists"}
+                    continue
+                jid = self._new_id()
+                row = {"id": jid, "name": name, "parent_id": parent, "type": item.get("type") or "regular",
+                       "active": True, "billable": bool(item.get("billable")),
+                       "assigned_to_all": bool(item.get("assigned_to_all")), "short_code": item.get("short_code", "")}
+                self.jobcodes[jid] = row
+                out[str(i)] = dict(row, _status_code=200, _status_message="Created")
+            else:
+                jid = int(item.get("id") or 0)
+                if jid not in self.jobcodes:
+                    out[str(i)] = {"_status_code": 404, "_status_message": "Not Found", "id": jid}
+                    continue
+                row = self.jobcodes[jid]
+                for key in ("name", "active", "short_code"):
+                    if key in item:
+                        row[key] = item[key]
+                out[str(i)] = dict(row, _status_code=200, _status_message="OK")
+        if self.lose_response_after_write > 0:
+            self.lose_response_after_write -= 1
+            raise TransportError("QuickBooks Time could not be reached (fake: answer lost after the write).")
+        return 200, {"results": {"jobcodes": out}}
 
     def _filter(self, params):
         rows = dict(self.timesheets)

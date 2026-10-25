@@ -7,6 +7,9 @@ Online payroll uses the same hours with no retyping. Hours only: no rate, wage o
 **Status: built and tested against a fake QuickBooks Time account. Switched off.** Nothing is sent to Intuit
 until Joel approves it and the two settings below are put in the server's environment.
 
+Projects' job codes (one per job, one Shop / Company Work) are made and kept in step by the project sync,
+`docs/operations/quickbooks-online-receipts.md` (off until `QBO_PROJECT_SYNC_ENABLED=1`).
+
 Plain instructions for Suzanne: `docs/operations/payroll-suzanne.md`. Crew and office screens:
 `docs/operations/field-time.md`.
 

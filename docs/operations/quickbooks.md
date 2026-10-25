@@ -5,6 +5,10 @@ They meet through files you download from CalibraytAI and import in QuickBooks, 
 from QuickBooks and upload back. CalibraytAI never asks for your QuickBooks password and never posts
 anything to QuickBooks by itself.
 
+> 25 Oct 2026: receipts from Field and projects (customer, project, QuickBooks Time job code) can also go to
+> QuickBooks Online through Intuit's API once Joel switches it on; see `quickbooks-online-receipts.md`. These files
+> are unchanged.
+
 Where: **Company → Accounting** (office people only; crew on Field never see it).
 
 ## Once, when you start

@@ -49,6 +49,23 @@ PICTURES = {
     "working_day": ["16-working-day-home-desktop", "16-working-day-time-review-desktop",
                     "16-working-day-field-week-phone", "16-working-day-time-sent-phone"],
 }
+EVERYDAY_SHOTS = ROOT / "app" / "static" / "training" / "shots"
+EVERYDAY_PICTURES = ["m7-field-quick-actions-phone.png", "m7-receipt-capture-phone.png", "m7-delivery-short-phone.png",
+                     "m7-job-update-phone.png", "m7-home-attention-desktop.png", "m7-receipts-inbox-desktop.png",
+                     "m7-qbo-projects-desktop.png"]
+EVERYDAY_TEXT = [
+    "<b>Morning:</b> open Home. <b>WHAT NEEDS MY ATTENTION?</b> lists what is waiting — time to approve, material "
+    "requests, extra work, short or damaged deliveries, receipts, QuickBooks items, job problems. Press an item: it "
+    "opens the screen where you deal with it, and it leaves the list when it is done.",
+    "<b>On site:</b> the crew use the seven buttons at the top of Field Today — My Hours, Add Receipt, Need Materials, "
+    "Extra Work, Confirm Delivery, Job Update, My Schedule. Nothing they send is approved until the office approves it, "
+    "and Field never shows money.",
+    "<b>Suzanne:</b> Accounting → Receipts Inbox: check each receipt against its photo and approve it for QuickBooks "
+    "Online (entered once, with the image). Projects in QuickBooks shows each job's customer, project and job code; "
+    "a job QuickBooks already had is matched once when she confirms it.",
+    "<b>End of day:</b> CalibraytAI reminds whoever still has hours or a job update to send, and gives you the counts "
+    "still waiting — in the app, and by text only once texting is switched on.",
+]
 DESKTOP_CROP = 1500  # pixels of a long desktop page kept from the top
 PHONE_CROP = 1500
 
@@ -117,6 +134,27 @@ def build(shots: Path, label: str, commit: str, out: Path) -> None:
         story.append(KeepTogether(head + flows[:1]))
         story.extend(flows[1:])
         story.append(PageBreak())
+    # After the first day: the everyday routine (Magnificent Seven, 25 Oct 2026), from the real screens of its own
+    # browser walk (tools/release/evidence_magnificent_seven.mjs; the same pictures the Training Centre uses).
+    story.append(Paragraph("Every day after that", h2))
+    for text in EVERYDAY_TEXT:
+        story.append(Paragraph(text, body))
+        story.append(Spacer(1, 4))
+    every_desk, every_phone = [], []
+    for name in EVERYDAY_PICTURES:
+        path = EVERYDAY_SHOTS / name
+        if not path.exists():
+            missing.append(path.name)
+            continue
+        (every_phone if name.endswith("-phone.png") else every_desk).append(path)
+    if every_phone:
+        cells = [_picture(p, 1.6 * inch, PHONE_CROP) for p in every_phone[:4]]
+        table = Table([cells], colWidths=[1.75 * inch] * len(cells))
+        table.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP")]))
+        story.append(table)
+    for path in every_desk:
+        story.append(PageBreak())
+        story.append(_picture(path, 6.8 * inch, DESKTOP_CROP))
     if missing:
         raise SystemExit("Missing screenshots: " + ", ".join(missing))
 

@@ -189,7 +189,11 @@ STEPS: List[Step] = [
          "day the week starts and the date it takes effect. Save hours policy. Nothing is banked until you do.",
          "payroll_time.hours_policy", _hours_policy),
     Step("working_day", "Run a complete working day", "Schedule, field time, deliveries and changes, end to end.",
-         "Check Home in the morning, follow the job on Field, approve time, answer deliveries. Mark done after a full day.",
+         "In the morning open Home: WHAT NEEDS MY ATTENTION? lists what is waiting (time, material requests, extra "
+         "work, deliveries, receipts, job problems); each item opens its own screen. The crew use the seven buttons at "
+         "the top of Field Today (My Hours, Add Receipt, Need Materials, Extra Work, Confirm Delivery, Job Update, My "
+         "Schedule). At the end of the day CalibraytAI reminds whoever still has hours or a job update to send (in the "
+         "app; by text only once texting is switched on). Approve time, answer deliveries. Mark done after a full day.",
          "main.dashboard"),
 ]
 STEP_BY_KEY = {s.key: s for s in STEPS}

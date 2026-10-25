@@ -63,6 +63,16 @@ def enabled() -> bool:
     return (value or os.environ.get(ENV_ENABLED, "")).strip() == "1"
 
 
+def jobcodes_from_qbo() -> bool:
+    """QBT_JOBCODES_FROM_QBO=1: the company's QuickBooks Time imports jobs from QuickBooks Online (Intuit's own
+    integration), so CalibraytAI links to the imported job code instead of making one. Default off (Joel's
+    instruction: CalibraytAI makes the job code); Shop / Company Work is always made here."""
+    value = ""
+    if has_app_context():
+        value = str(current_app.config.get("QBT_JOBCODES_FROM_QBO") or "")
+    return (value or os.environ.get("QBT_JOBCODES_FROM_QBO", "")).strip() == "1"
+
+
 def _salt(org: str) -> str:
     return hashlib.sha256(org.encode()).hexdigest()[:8]
 
@@ -307,15 +317,6 @@ def _ensure_qbo_project(qbo, conn, transport, project, link, customer_id, actor)
 
 
 # --------------------------------------------------------------------------------------------- QuickBooks Time
-def _qbt_request(transport, method, path, **kw):
-    from app.services.quickbooks_time_transport import TransportError
-
-    try:
-        return transport.request(method, path, **kw)
-    except TransportError:
-        raise
-
-
 def _jobcodes(payload) -> list:
     return list(((payload or {}).get("results") or {}).get("jobcodes", {}).values())
 
@@ -379,8 +380,10 @@ def _ensure_jobcode(transport, project, link, name, actor):
             rows = _jobcodes(payload)
             if rows:
                 return rows[0]
+    from_qbo = jobcodes_from_qbo() and not _is_company(project)
     code, payload = transport.request("GET", "jobcodes", params={"name": name, "active": "both"})
-    found = [r for r in _jobcodes(payload) if r.get("name") == name and int(r.get("parent_id") or 0) == 0]
+    found = [r for r in _jobcodes(payload)
+             if r.get("name") == name and (from_qbo or int(r.get("parent_id") or 0) == 0)]
     if found and link.qbt_status == PSYNC_SENT:
         _event(org, project.id, "JOBCODE_ADOPTED", f"Job code '{name}' arrived on the earlier try ({found[0]['id']}).",
                actor=actor)
@@ -393,6 +396,13 @@ def _ensure_jobcode(transport, project, link, name, actor):
         link.qbt_last_error = (f"QuickBooks Time already has a job code '{name}'. Confirm it is this job "
                                "(Accounting → QuickBooks projects).")
         _event(org, project.id, "JOBCODE_MATCH", link.qbt_last_error, actor=actor)
+        return None
+    if from_qbo:
+        # Intuit's QuickBooks Online ↔ QuickBooks Time integration imports customers and jobs as job codes; making
+        # one here as well would give two. Wait for the import, then the office confirms it once.
+        link.qbt_status = PSYNC_PENDING
+        link.qbt_last_error = ("Waiting for QuickBooks Time to bring in this job from QuickBooks Online "
+                               "(QBT_JOBCODES_FROM_QBO=1); checked again on the next sync.")
         return None
     link.qbt_status = PSYNC_SENT  # if the answer is lost, the retry looks for it by name first
     db.session.flush()

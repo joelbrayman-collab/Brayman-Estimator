@@ -225,6 +225,29 @@ def test_shop_is_one_fixed_job_code_for_every_shop_category(env):
     assert _link(facts["company"]).qbo_status == "OFF"  # Shop is never a customer in QuickBooks Online
 
 
+def test_when_quickbooks_time_imports_jobs_from_quickbooks_online_no_job_code_is_made(env):
+    """QBT_JOBCODES_FROM_QBO=1 (Intuit's own QBO → QBT import): wait for the imported job code, confirm it once."""
+    app, facts = env
+    fake, qbt = facts["fake"], facts["qbt"]
+    _connect(app, facts)
+    _on(app)
+    app.config["QBT_JOBCODES_FROM_QBO"] = "1"
+    from app.services.accounting_project_sync import sync_project
+
+    second = facts["second"]
+    sync_project(second)
+    link = _link(second)
+    assert link.qbo_status == "SYNCED" and link.qbt_status == "PENDING" and not qbt.jobcodes
+    parent = qbt.add_jobcode("Morgan Ellis (synthetic)")
+    imported = qbt.add_jobcode("BC-2026-015 Kemptville Garage (synthetic)", parent_id=parent)
+    sync_project(second)
+    link = _link(second)
+    assert link.qbt_status == "NEEDS_CONFIRM" and link.qbt_candidates_json["candidates"][0]["id"] == str(imported)
+    Person(app, "suzanne").post("/accounting/quickbooks-online/projects", data={
+        "action": "confirm", "link_id": str(link.id), "system": "qbt", "record_id": str(imported)})
+    assert _link(second).qbt_jobcode_id == str(imported) and len(qbt.jobcodes) == 2
+
+
 def test_failures_and_lost_answers_are_retried_without_a_second_copy(env):
     app, facts = env
     fake, qbt = facts["fake"], facts["qbt"]

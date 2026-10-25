@@ -515,6 +515,42 @@ GENERAL_HELP = GENERAL_HELP + (
      "to the Training Centre as <your name> at the top of the page to come back signed in as yourself."),
 )
 
+# Magnificent Seven everyday operations (Joel, 25 Oct 2026), with projects into QuickBooks and Sunday My Week.
+GENERAL_HELP = GENERAL_HELP + (
+    ("attention needs home waiting list everyday", "Home → WHAT NEEDS MY ATTENTION? lists what is waiting from the "
+     "real records: time to approve, material requests, extra work, deliveries short or damaged, receipts, "
+     "QuickBooks items and job problems. Press an item: it opens the screen where you deal with it, and it leaves the "
+     "list once it is done. See all opens the full list."),
+    ("quick actions buttons seven field today", "Field Today starts with seven buttons: My Hours, Add Receipt, Need "
+     "Materials, Extra Work, Confirm Delivery, Job Update and My Schedule. Each opens on the job you are on; if you "
+     "are on more than one, choose the job first."),
+    ("receipt receipts photo inbox", "Field → Add Receipt: choose the job (or Shop / Company Expense), take the photo "
+     "and save. No signal? It says Saved on this phone and sends itself later. Suzanne reviews it in Accounting → "
+     "Receipts Inbox and approves it for QuickBooks."),
+    ("quickbooks online synced sync connection reconnect", "Accounting → QuickBooks Online connection shows whether "
+     "QuickBooks is connected and switched on. A receipt is Synced only when QuickBooks confirms it; Retry never "
+     "enters it twice. Only the owner or a System Administrator connects QuickBooks."),
+    ("project projects customer job code jobcode quickbooks match confirm same", "Accounting → QuickBooks Online "
+     "connection → Projects in QuickBooks: each job's customer and project in QuickBooks Online and its job code in "
+     "QuickBooks Time. A job QuickBooks already had waits for This is the same project (matched once). Renames "
+     "follow; a closed job becomes inactive, never deleted."),
+    ("materials material request supplier order", "Field → Need Materials: what you need, how many, when. The office "
+     "approves it and sends it to the supplier; My requests shows where it is. Nothing is ordered until the office "
+     "orders it."),
+    ("delivery deliveries short damaged received confirm", "Field → Confirm Delivery: Received, Short or Damaged, "
+     "with the counts, a note and a photo. Short or damaged goes to the office's list; the order itself is never "
+     "changed from the phone."),
+    ("update updates summary daily three questions problem", "Field → Job Update: what got done, what is left, any "
+     "problem. CalibraytAI fills in what it already knows from the day. It is saved on the job; a problem goes to "
+     "the owner's list. Your hours are entered separately under My Hours."),
+    ("reminder reminders end day evening", "End-of-day reminders list what you still have to send today (hours, the "
+     "job update). They show on Field Today; by text only if you chose texts and texting is switched on (otherwise "
+     "it says Texts not switched on). The owner sets the time and working days on /operations/reminders."),
+    ("week sunday monday coming previous schedule", "Field → This week: on a Sunday it opens on the coming Monday to "
+     "Sunday (the button says Coming week) so tomorrow is there. Previous week and Next week move one week at a "
+     "time."),
+)
+
 _WHERE = {"where", "find", "menu", "button", "press", "click", "open", "locate"}
 _SEE = {"see", "expect", "result", "happen", "look", "appear"}
 _WRONG = {"wrong", "error", "problem", "stuck", "doesn't", "didn't", "work", "broken", "refused", "can't", "cannot"}

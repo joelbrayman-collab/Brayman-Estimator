@@ -3,6 +3,11 @@
 {% block field_page %}today{% endblock %}
 {% block content %}
 {% set nav_current = 'today' %}
+<nav class="field-quick-actions" aria-label="Quick actions" data-field-quick-actions>
+    {% for a in quick_actions %}
+    <a class="field-quick-action" href="{{ a.href }}" data-quick-action="{{ a.key }}">{{ a.label }}</a>
+    {% endfor %}
+</nav>
 {% include "field/_texts_setup.html" %}
 {% include "field/_field_nav.html" %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
@@ -17,11 +22,6 @@
 {% if returned_time_count %}
 <p class="field-time-returned" data-returned-time><a href="{{ url_for('field.my_time') }}">{{ returned_time_count }} time {{ 'entry was' if returned_time_count == 1 else 'entries were' }} returned to you. Fix and send again on My time.</a></p>
 {% endif %}
-<nav class="field-quick-actions" aria-label="Quick actions" data-field-quick-actions>
-    {% for a in quick_actions %}
-    <a class="field-quick-action" href="{{ a.href }}" data-quick-action="{{ a.key }}">{{ a.label }}</a>
-    {% endfor %}
-</nav>
 {% if reminder %}
 <section class="field-panel field-reminder" data-field-reminder="{{ reminder.reminder.id }}">
     <h2>Before you finish today</h2>

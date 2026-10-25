@@ -31,6 +31,13 @@ def _org():
     return get_current_organization_id()
 
 
+def _company_id(org):
+    from app.services.time_entry import get_company_time_project
+
+    company = get_company_time_project(org)
+    return company.id if company is not None else None
+
+
 def _receipt_or_404(receipt_id):
     row = R.receipt_for(_org(), receipt_id)
     if row is None:
@@ -46,7 +53,7 @@ def receipts_inbox():
     return render_template("accounting/receipts.html", rows=R.inbox(org, status=status, project_id=project_id),
                            counts=R.counts(org), status=status, labels=RECEIPT_STATUS_LABELS,
                            statuses=RECEIPT_STATUSES, project_id=project_id, projects=R.project_choices(org),
-                           qbo=qbo.status(org))
+                           qbo=qbo.status(org), company_id=_company_id(org))
 
 
 @accounting_bp.route("/receipts/<int:receipt_id>", methods=["GET", "POST"])
@@ -91,6 +98,7 @@ def receipt_detail(receipt_id):
     db.session.refresh(row)
     return render_template("accounting/receipt.html", receipt=row, transfer=row.qbo_transfer,
                            projects=R.project_choices(org), orders=R.purchase_order_choices(row),
+                           company_id=_company_id(org),
                            history=R.history(row), qbo_events=qbo.events(org, receipt_id=row.id),
                            qbo=qbo.status(org), blockers=R.approval_blockers(row),
                            outcome=qbo.outcome_message(row))

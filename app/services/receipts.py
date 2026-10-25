@@ -149,9 +149,15 @@ def project_receipts(organization_id: str, project_id: int) -> list:
 
 
 def project_choices(organization_id: str) -> list:
+    """The jobs a receipt can belong to, and Shop / Company Expense (the company-time project) last."""
     from app.services.shared_api import list_current_operating_projects
+    from app.services.time_entry import get_company_time_project
 
-    return list(list_current_operating_projects(organization_id))
+    rows = [p for p in list_current_operating_projects(organization_id) if not _is_company(p)]
+    company = get_company_time_project(organization_id)
+    if company is not None:
+        rows.append(company)
+    return rows
 
 
 def purchase_order_choices(receipt: FieldReceipt) -> list:

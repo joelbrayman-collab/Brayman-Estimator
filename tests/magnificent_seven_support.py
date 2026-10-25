@@ -104,15 +104,20 @@ def build(application, *, fake_qbo=True, today=None) -> dict:
                      status="In Progress", project_number="BC-2026-015")
     db.session.add(second)
     db.session.commit()
-    element = add_project_element(project_id=project.id, display_name="Deck framing", organization_id=ORG)
+    # The job's original work (from the accepted estimate in real life): not extra work.
+    element = add_project_element(project_id=project.id, display_name="Deck framing", organization_id=ORG,
+                                  scope_origin="ORIGINAL", actor_display_name="Ben Brayman (synthetic)")
     activity = add_project_activity(project_work_element_id=element.id, display_name="Frame the deck",
-                                    organization_id=ORG)
+                                    organization_id=ORG, scope_origin="ORIGINAL",
+                                    actor_display_name="Ben Brayman (synthetic)")
     item = create_schedule_item(project_id=project.id, project_work_element_id=element.id,
                                 scheduled_start=today - timedelta(days=1),
                                 scheduled_end=today + timedelta(days=2), organization_id=ORG)
     assign_user(item.id, worker_user_id=kevin.id, organization_id=ORG)
-    element2 = add_project_element(project_id=second.id, display_name="Garage slab", organization_id=ORG)
-    add_project_activity(project_work_element_id=element2.id, display_name="Form the slab", organization_id=ORG)
+    element2 = add_project_element(project_id=second.id, display_name="Garage slab", organization_id=ORG,
+                                   scope_origin="ORIGINAL", actor_display_name="Ben Brayman (synthetic)")
+    add_project_activity(project_work_element_id=element2.id, display_name="Form the slab", organization_id=ORG,
+                         scope_origin="ORIGINAL", actor_display_name="Ben Brayman (synthetic)")
     company = ensure_company_time_project(ORG, actor_display_name="Ben Brayman (synthetic)")
     # The plan was made last week (its history is dated then), so today's reminders see no schedule change.
     from app.models.schedule import WorkScheduleHistory

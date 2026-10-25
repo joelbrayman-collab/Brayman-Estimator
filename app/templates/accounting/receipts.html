@@ -15,7 +15,7 @@
 <form method="get" class="acct-actions">{% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
   <label for="rc-project">Job</label>
   <select id="rc-project" name="project_id" onchange="this.form.submit()"><option value="">All jobs and Shop / Company</option>
-    {% for p in projects %}<option value="{{ p.id }}"{% if project_id == p.id %} selected{% endif %}>{{ p.name }}</option>{% endfor %}</select>
+    {% for p in projects %}<option value="{{ p.id }}"{% if project_id == p.id %} selected{% endif %}>{{ 'Shop / Company Expense' if loop.last and p.id == company_id else p.name }}</option>{% endfor %}</select>
   <noscript><button type="submit">Show</button></noscript></form>
 {% if not qbo.mapping_complete and qbo.connected %}<p class="ops-note" data-qbo-mapping-missing>QuickBooks is connected but the accounts are not chosen yet: approved receipts wait until they are (QuickBooks Online page).</p>{% endif %}
 <div class="form-panel">

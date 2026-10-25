@@ -32,7 +32,7 @@
       <label for="r-tax">Tax (HST)</label><input id="r-tax" type="text" name="tax_amount" inputmode="decimal" value="{{ '%.2f'|format(receipt.tax_amount) if receipt.tax_amount is not none else '' }}">
       <label for="r-total">Total</label><input id="r-total" type="text" name="total" inputmode="decimal" value="{{ '%.2f'|format(receipt.total) if receipt.total is not none else ('%.2f'|format(receipt.entered_amount) if receipt.entered_amount is not none else '') }}">
       <label for="r-project">Job or company expense</label>
-      <select id="r-project" name="project_id">{% for p in projects %}<option value="{{ p.id }}"{% if p.id == receipt.project_id %} selected{% endif %}>{{ p.name }}</option>{% endfor %}</select>
+      <select id="r-project" name="project_id">{% for p in projects %}<option value="{{ p.id }}"{% if p.id == receipt.project_id %} selected{% endif %}>{{ 'Shop / Company Expense' if loop.last and p.id == company_id else p.name }}</option>{% endfor %}</select>
       <label for="r-po">Purchase order on this job (optional)</label>
       <select id="r-po" name="purchase_order_id"><option value="">None</option>{% for o in orders %}<option value="{{ o.id }}"{% if o.id == receipt.purchase_order_id %} selected{% endif %}>{{ o.number }} · {{ o.share.supplier.legal_name }}</option>{% endfor %}</select>
       <label for="r-txtype">Already in QuickBooks? (optional)</label>

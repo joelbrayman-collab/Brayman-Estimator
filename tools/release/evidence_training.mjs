@@ -407,14 +407,14 @@ test("one office trainee: Contractor, then Field (Change my role), then back; bo
   await shot(pg, "training-home-office-times");
   await changeRole(olivia, "FIELD");
   assert.equal(await pg.locator('[data-module^="c"]').count(), 0, "Field: only the Field Crew lessons");
-  assert.match(await pg.textContent("[data-progress]"), /^0 of 31 lessons done .*0 passed, 0 failed, 0 blocked/);
+  assert.match(await pg.textContent("[data-progress]"), /^0 of 35 lessons done .*0 passed, 0 failed, 0 blocked/);
   await finishFirstLesson(pg);
   await recordFirstTest(pg, "FAIL", "Synthetic: the Field button was greyed out");
-  assert.match(await pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/);
+  assert.match(await pg.textContent("[data-progress]"), /^1 of 35 lessons done .*0 passed, 1 failed/);
   await changeRole(olivia, "OFFICE");
   assert.equal(await pg.textContent("[data-progress]"), office, "the Contractor record is exactly as it was");
   await changeRole(olivia, "FIELD");
-  assert.match(await pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/, "and the Field record");
+  assert.match(await pg.textContent("[data-progress]"), /^1 of 35 lessons done .*0 passed, 1 failed/, "and the Field record");
   await changeRole(olivia, "OFFICE");
   const ben = sessions.ben.pg;
   await ben.goto(`${base}/training/admin`);
@@ -424,8 +424,8 @@ test("one office trainee: Contractor, then Field (Change my role), then back; bo
   const field = ben.locator('tr[data-admin-trainee^="Olivia"][data-admin-track="FIELD_CREW"]');
   assert.equal(await contractor.getAttribute("data-admin-current"), "");
   assert.match(await contractor.textContent(), /1 pass · 0 fail/);
-  assert.match(await field.textContent(), /1\/31[\s\S]*0 pass · 1 fail/);
-  assert.match(await ben.textContent('[data-admin-crew-member^="Olivia"]'), /Lessons: 1 of 31 done/);
+  assert.match(await field.textContent(), /1\/35[\s\S]*0 pass · 1 fail/);
+  assert.match(await ben.textContent('[data-admin-crew-member^="Olivia"]'), /Lessons: 1 of 35 done/);
   assert.ok(await ben.locator("[data-admin-module-times]").isVisible(), "Module times on the dashboard");
   await shot(ben, "training-admin-two-pathways");
 });
@@ -463,7 +463,7 @@ test("Change training pathway in the header: Office -> Field -> Office on deskto
   assert.match(await s.pg.textContent("header [data-pathway-switch] summary"), /Pathway: Field Crew/);
   assert.match(await s.pg.textContent("main"), /You are now on Field Crew training/);
   assert.equal(await s.pg.locator('[data-module^="c"]').count(), 0, "Field: only the Field Crew lessons");
-  assert.match(await s.pg.textContent("[data-progress]"), /^1 of 31 lessons done .*0 passed, 1 failed/, "the Field record is kept");
+  assert.match(await s.pg.textContent("[data-progress]"), /^1 of 35 lessons done .*0 passed, 1 failed/, "the Field record is kept");
   await noSideways(s.pg, "phone home on Field Crew");
   await switchPathway(s.pg, "OFFICE", "phone");
   assert.match(await s.pg.textContent("header [data-pathway-switch] summary"), /Pathway: Contractor \(office\)/);

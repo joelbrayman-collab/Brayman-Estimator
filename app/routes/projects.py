@@ -188,6 +188,29 @@ def hub_record_template_vars(project, organization_id: str) -> dict:
         "purchase_orders": project_purchase_orders(organization_id=organization_id, project_id=project.id),
         "project_calculations": _project_calculations(project.id, organization_id),
         "guided_summary": _guided_summary(project.id, organization_id),
+        "field_ops": _field_operations(project.id, organization_id),
+    }
+
+
+def _field_operations(project_id: int, organization_id: str) -> dict:
+    """The job's Receipts, material requests, extra work, deliveries and job updates from Field (Magnificent
+    Seven, 25 Oct 2026), and their history. Read only here; each row opens its working screen."""
+    from app.services import delivery_confirmations as D
+    from app.services import extra_work_reports as EW
+    from app.services import material_requests as M
+    from app.services import receipts as R
+    from app.services.daily_summaries import project_summaries
+    from app.services.field_operations import project_history
+
+    return {
+        "receipts": R.project_receipts(organization_id, project_id),
+        "materials": M.office_list(organization_id, project_id=project_id),
+        "material_label": M.status_label,
+        "extra_work": EW.office_list(organization_id, project_id=project_id),
+        "extra_label": EW.outcome_label,
+        "deliveries": D.recent(organization_id, project_id=project_id, limit=20),
+        "job_updates": project_summaries(organization_id, project_id, limit=15),
+        "history": project_history(organization_id, project_id, limit=40),
     }
 
 

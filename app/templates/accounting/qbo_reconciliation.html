@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Receipts in QuickBooks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Receipts in QuickBooks{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<div class="form-panel">
+  <h3>Confirmed by QuickBooks</h3>
+  <div class="acct-scroll"><table class="acct-table" data-qbo-reconciliation>
+    <thead><tr><th>Receipt</th><th>Supplier</th><th class="num">Total</th><th>How</th><th>QuickBooks</th><th>Attachment</th><th>Confirmed</th></tr></thead>
+    <tbody>{% for t in rows %}<tr data-reconciled="{{ t.receipt_id }}">
+      <td data-label="Receipt"><a href="{{ url_for('accounting.receipt_detail', receipt_id=t.receipt_id) }}">{{ t.receipt.number }}</a></td>
+      <td data-label="Supplier">{{ t.receipt.vendor_name }}</td>
+      <td data-label="Total" class="num">${{ '{:,.2f}'.format(t.receipt.total) }}</td>
+      <td data-label="How">{{ 'Attached to existing' if t.operation == 'ATTACH_EXISTING' else 'New expense' }}</td>
+      <td data-label="QuickBooks">{{ 'Expense' if t.qbo_txn_type == 'Purchase' else t.qbo_txn_type }} {{ t.qbo_txn_id }}</td>
+      <td data-label="Attachment">{{ t.qbo_attachable_id }}</td>
+      <td data-label="Confirmed">{{ t.confirmed_at|local_time("%b %d %H:%M") }}</td></tr>{% else %}<tr><td colspan="7" class="muted-copy">None yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

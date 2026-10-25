@@ -282,8 +282,11 @@ def field_settings_view():
             flash(str(exc), "error")
         return redirect(url_for("field.text_messages"))
     contact = contact_for(current_user)
+    from app.services.reminders import preference, sms_available
+
     return render_template("field/text_messages.html", contact=contact, wording=CONSENT_WORDING,
-                           history=consent_history(current_user.id, limit=5), nav_current="texts")
+                           history=consent_history(current_user.id, limit=5), nav_current="texts",
+                           reminder_pref=preference(org_id, current_user.id), texting_on=sms_available())
 
 
 def field_setup_answer_view():

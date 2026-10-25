@@ -1,0 +1,2 @@
+<h3>History</h3>
+<ul class="ops-history" data-history>{% for h in history %}<li>{{ h.occurred_at|local_time("%b %d %H:%M") }} · {{ h.actor_name }} · {{ h.event|replace('_',' ')|lower }}{% if h.detail %} — {{ h.detail }}{% endif %}</li>{% else %}<li class="muted-copy">Nothing yet.</li>{% endfor %}</ul>

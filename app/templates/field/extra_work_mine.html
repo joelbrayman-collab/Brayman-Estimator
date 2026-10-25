@@ -1,0 +1,26 @@
+{% extends "field/base.html" %}
+{% block title %}My extra work — CalibraytAI{% endblock %}
+{% block field_page %}extra-work-mine{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-extra-work-mine>
+    <h1>My extra work</h1>
+    {% if rows %}
+    <ul class="field-status-list">
+        {% for r in rows %}
+        <li data-extra-work-report="{{ r.id }}">{{ r.number }} · {{ r.project.name }} · {{ r.work_date.strftime('%a %b') }} {{ r.work_date.day }}<br>{{ r.description }}<br>
+            <span class="field-status-tag">{{ outcome(r) }}</span>
+            {% if r.status == 'CLARIFICATION_REQUESTED' %}
+            <p><strong>The office asks:</strong> {{ r.clarification_question }}</p>
+            <form method="post" action="{{ url_for('field.extra_work_answer', report_id=r.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <textarea name="answer" class="field-textarea" rows="2" required aria-label="Your answer"></textarea>
+                <button type="submit" class="field-btn field-btn-primary" data-answer-question>Send answer</button>
+            </form>
+            {% elif r.clarification_answer %}<p class="field-muted">You answered: {{ r.clarification_answer }}</p>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}<p class="field-muted">No extra work reported yet.</p>{% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

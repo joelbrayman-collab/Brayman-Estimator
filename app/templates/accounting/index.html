@@ -12,10 +12,17 @@
   <a class="button button-secondary" href="{{ url_for('accounting.reconcile_time') }}">Check time in QuickBooks</a>
 </section>
 
+<div class="form-panel" data-receipts-panel>
+  <h3>Receipts</h3>
+  <p class="muted-copy">Receipts photographed in Field wait here for review. Approved receipts go to QuickBooks Online with their image, once, through the QuickBooks Online connection.</p>
+  <p class="acct-actions"><a class="button-primary" href="{{ url_for('accounting.receipts_inbox') }}" data-open-receipts-inbox>Receipts Inbox</a>
+    <a class="button button-secondary" href="{{ url_for('accounting.quickbooks_online') }}">QuickBooks Online connection</a></p>
+</div>
+
 <div class="form-panel" data-qbo-status>
-  <h3>QuickBooks Online</h3>
+  <h3>QuickBooks Online files</h3>
   <p><strong>{{ qbo.message }}</strong></p>
-  <p class="muted-copy">CalibraytAI never asks for your QuickBooks password and never posts to QuickBooks on its own. You download a file here and import it in QuickBooks (gear icon → Import data).</p>
+  <p class="muted-copy">For invoices, bills, customers and suppliers: you download a file here and import it in QuickBooks (gear icon → Import data). CalibraytAI never asks for your QuickBooks password.</p>
 </div>
 
 <div class="form-panel" data-payroll-panel>

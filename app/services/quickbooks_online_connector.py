@@ -31,11 +31,9 @@ class QuickBooksNotConnected(RuntimeError):
 def status() -> dict:
     present = [name for name in REQUIRED_SETTINGS if os.environ.get(name)]
     enabled = os.environ.get("QBO_CONNECTION_ENABLED") == "1"
-    if enabled and len(present) == len(REQUIRED_SETTINGS):
-        # Even with the settings present, the token storage and sync are not built; never claim a connection.
-        message = "QuickBooks settings are present, but the direct connection is not built yet. Use the files below."
-    else:
-        message = "Not connected. Use the export files below; a direct connection needs Joel's approval first."
+    # Invoices, bills, customers and suppliers still go by file. Receipts have their own QuickBooks Online
+    # connection since 25 Oct 2026 (app/services/quickbooks_online.py, Accounting → QuickBooks Online).
+    message = "Invoices, bills, customers and suppliers go to QuickBooks by the files below."
     return {"connected": False, "enabled_flag": enabled, "settings_present": present,
             "settings_missing": [n for n in REQUIRED_SETTINGS if n not in present], "message": message}
 

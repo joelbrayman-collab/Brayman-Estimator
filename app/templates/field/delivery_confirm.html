@@ -1,0 +1,46 @@
+{% extends "field/base.html" %}
+{% block title %}{{ order.number }} — Confirm Delivery — CalibraytAI{% endblock %}
+{% block field_page %}delivery-confirm{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-delivery-confirm="{{ order.id }}">
+    <h1>{{ supplier }} · {{ order.number }}</h1>
+    <p><span class="field-status-tag">{{ state }}</span></p>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('field.delivery_confirm', project_id=project.id, order_id=order.id) }}" data-field-request-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="client_uuid" data-client-uuid>
+        <div class="field-choice" role="radiogroup" aria-label="What arrived">
+            <label><input type="radio" name="outcome" value="RECEIVED" required data-outcome="RECEIVED"><span>Received</span></label>
+            <label><input type="radio" name="outcome" value="SHORT" data-outcome="SHORT"><span>Short</span></label>
+            <label><input type="radio" name="outcome" value="DAMAGED" data-outcome="DAMAGED"><span>Damaged</span></label>
+        </div>
+        <table class="field-lines">
+            <thead><tr><th>Item</th><th>Still due</th><th>Arrived</th><th>Damaged</th></tr></thead>
+            <tbody>
+            {% for l in lines %}
+            <tr data-line="{{ l.number }}">
+                <td>{{ l.description }}</td>
+                <td>{{ l.outstanding|qty }} {{ l.unit }}</td>
+                <td><input name="received_{{ l.number }}" type="text" inputmode="decimal" placeholder="{{ l.outstanding|qty }}" aria-label="Arrived, line {{ l.number }}"></td>
+                <td><input name="damaged_{{ l.number }}" type="text" inputmode="decimal" placeholder="0" aria-label="Damaged, line {{ l.number }}"></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p class="field-muted">Received with the boxes left empty means everything still due arrived.</p>
+        <label class="field-label">Note (needed for Short or Damaged)
+            <textarea name="note" class="field-textarea" rows="2" maxlength="2000"></textarea>
+        </label>
+        <label class="field-btn field-btn-secondary field-file-btn">Add photos
+            <input name="photos" type="file" accept="image/*" capture="environment" hidden multiple>
+        </label>
+        <button type="submit" class="field-btn field-btn-primary" data-save-delivery>Save</button>
+    </form>
+</section>
+{% if history %}
+<section class="field-panel">
+    <h2>Already recorded</h2>
+    <ul class="field-status-list">{% for c in history %}<li>{{ c.outcome_label }} · {{ c.confirmed_by_name }} · {{ c.confirmed_at|local_time("%a %b %d %H:%M") }}{% if c.note %} · {{ c.note }}{% endif %}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+<a class="field-btn field-btn-ghost" href="{{ url_for('field.deliveries', project_id=project.id) }}">Back to deliveries</a>
+{% endblock %}

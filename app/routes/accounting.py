@@ -174,3 +174,7 @@ def reconcile_time():
             flash(str(exc), "error")
     return render_template("accounting/reconcile_time.html", result=result,
                            last=svc.last_time_reconciliation(_org()))
+
+
+# Receipts Inbox and the QuickBooks Online connection (Magnificent Seven, 25 Oct 2026), same office rule as above.
+from app.routes import receipts_office  # noqa: E402,F401

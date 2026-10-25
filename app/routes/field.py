@@ -64,7 +64,8 @@ from app.services.time_entry import (
     time_entry_presentation,
     worker_time_totals,
 )
-from app.services.work_scope import WorkScopeError, actor_name, create_extra_work
+from app import db
+from app.services.work_scope import WorkScopeError, actor_name, create_extra_work  # noqa: F401
 from app.services.work_structure import list_project_work_elements
 
 field_bp = Blueprint("field", __name__, url_prefix="/field")
@@ -239,7 +240,29 @@ def today():
         banked=_banked_card(organization.id),
         company_project=_active_company_project(organization.id),
         actor_name=current_user.display_name,
+        quick_actions=_quick_actions(organization, project),
+        reminder=_crew_reminder(organization.id),
     )
+
+
+def _quick_actions(organization, project):
+    from app.routes.field_operations import quick_actions
+
+    return quick_actions(organization, project)
+
+
+def _crew_reminder(organization_id):
+    """Today's end-of-day reminder, showing only what is still outstanding (Magnificent Seven)."""
+    from app.models.field_operations import AUDIENCE_CREW
+    from app.services.reminders import live_view
+
+    try:
+        return live_view(organization_id, current_user, AUDIENCE_CREW, local_today())
+    except Exception:  # a reminder must never break the crew's day
+        import logging
+
+        logging.getLogger(__name__).exception("field reminder could not be read")
+        return None
 
 
 def _banked_card(organization_id):
@@ -430,6 +453,10 @@ def project_confirm(project_id):
             return redirect(
                 url_for("field.time_entry", project_id=project.id), code=302
             )
+        quick = {"extra_work": "field.extra_work", "materials": "field.materials", "delivery": "field.deliveries",
+                 "job_update": "field.job_update"}
+        if nxt in quick:  # the Field quick actions (Magnificent Seven): confirm the job and open the action
+            return redirect(url_for(quick[nxt], project_id=project.id), code=302)
         return redirect(url_for("field.today"), code=302)
     operating = _confirmed_operating_project(organization)
     recent = _recent_cards(organization.id, project.id) if _project_is_active(project) else []
@@ -474,21 +501,20 @@ def extra_work(project_id):
     elif not is_active or not _is_confirmed_operating(organization, project.id):
         return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
     if request.method == "POST":
-        element_id = request.form.get("project_work_element_id") or None
+        # Magnificent Seven (25 Oct 2026): the same extra-work activity as before (work_scope.create_extra_work),
+        # with who asked for it, the date and photos kept on its report for the office's change order.
+        from app.services.extra_work_reports import report as report_extra_work
+        from app.services.field_operations import FieldOperationError
+
         try:
-            create_extra_work(
-                project_id=project.id,
-                description=request.form.get("description", ""),
-                project_work_element_id=int(element_id) if element_id else None,
-                new_element_name=request.form.get("new_element_name") or None,
-                created_by=actor_name(current_user),
-                actor_user_id=getattr(current_user, "id", None),
-            )
-            flash("Extra work recorded.", "success")
+            report_extra_work(project, current_user, request.form, request.files.getlist("photos"))
+            flash("Extra work recorded. The office reviews it; nothing is charged to the customer until a change "
+                  "order is approved.", "success")
             return redirect(url_for("field.today"), code=302)
-        except (WorkScopeError, ValueError) as exc:
+        except (FieldOperationError, WorkScopeError, ValueError) as exc:
+            db.session.rollback()
             flash(
-                str(exc) if isinstance(exc, WorkScopeError) else "Describe the extra work.",
+                str(exc) if isinstance(exc, (WorkScopeError, FieldOperationError)) else "Describe the extra work.",
                 "error",
             )
     elements = list_project_work_elements(project.id, organization_id=organization.id)
@@ -497,6 +523,7 @@ def extra_work(project_id):
         project=project,
         elements=elements,
         actor_name=current_user.display_name,
+        today=local_today().isoformat(),
     )
 
 
@@ -715,3 +742,7 @@ def text_messages_setup():
     from app.routes.sms_notifications import field_setup_answer_view
 
     return field_setup_answer_view()
+
+
+# The Magnificent Seven Field quick actions (25 Oct 2026) register their pages on field_bp.
+from app.routes import field_operations  # noqa: E402,F401

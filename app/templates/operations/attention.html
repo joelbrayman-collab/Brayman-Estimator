@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}What needs my attention? | Brayman Construction Platform{% endblock %}
+{% block page_title %}What needs my attention?{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/needs_attention.css', v='mag7-1') }}">
+<section class="na-home" data-attention-page>
+  <h2 class="na-title">WHAT NEEDS MY ATTENTION? <span class="na-count">{{ view.count }}</span></h2>
+  {% if view['items'] %}
+  {% set items = view['items'] %}{% include "operations/_attention_list.html" %}
+  {% else %}
+  <p class="na-empty" data-attention-empty>Nothing needs your attention right now.</p>
+  {% endif %}
+</section>
+{% endblock %}

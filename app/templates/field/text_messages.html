@@ -30,6 +30,17 @@
         </label>
         <button type="submit" class="field-btn field-btn-primary" data-field-texts-save>{{ "Save number" if contact and contact.sms_opt_in else "Turn on schedule texts" }}</button>
     </form>
+    {% if reminder_pref is defined %}
+    <h2 class="field-texts-subhead">End-of-day reminder</h2>
+    <p class="field-muted">At the end of a work day, Field Today lists what is still to do (hours, job update, tomorrow's changes). {% if not texting_on %}Texts not switched on: the reminder is in the app only.{% endif %}</p>
+    {% if contact and contact.sms_opt_in %}
+    <form method="post" action="{{ url_for('field.reminder_preference') }}" data-field-reminder-pref>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field-label field-texts-consent"><input type="checkbox" name="sms" value="1"{% if reminder_pref.sms %} checked{% endif %}><span>Also text me my end-of-day reminder (counts only, never job details)</span></label>
+        <button type="submit" class="field-btn field-btn-secondary">Save reminder choice</button>
+    </form>
+    {% endif %}
+    {% endif %}
     {% if history %}
     <h2 class="field-texts-subhead">Your changes</h2>
     <ul class="field-texts-history">

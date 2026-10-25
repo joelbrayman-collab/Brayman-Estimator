@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Job update {{ row.work_date }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Job update{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">{{ row.project.name }} · {{ row.work_date.strftime('%A %B %d') }}</h2>
+  <p class="page-purpose">Sent {{ row.submitted_at|local_time("%H:%M") }} by {{ row.submitted_by_name }}{% if row.revision > 1 %} (revised {{ row.revision - 1 }}×){% endif %}. Never sent to the customer.</p></div>
+  <a class="button button-secondary" href="{{ url_for('projects.view_project', id=row.project_id) }}#hub-field-operations">Open the project</a></section>
+<div class="ops-split">
+  <div class="form-panel" data-job-update-detail>{% include "operations/_job_update_body.html" %}</div>
+  <div class="form-panel">
+    {% if row.problem_status == 'OPEN' %}
+    <form method="post" class="ops-form" data-handle-problem><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="ju-note">What was done about the problem</label><input id="ju-note" type="text" name="note" maxlength="2000" required>
+      <p class="acct-actions"><button type="submit" class="button-primary">Mark handled</button></p></form>
+    {% elif row.problem_status == 'RESOLVED' %}<p>Handled by {{ row.resolved_by_name }}: {{ row.resolution_note }}</p>{% endif %}
+    {% include "operations/_history.html" %}
+  </div>
+</div>
+{% endblock %}

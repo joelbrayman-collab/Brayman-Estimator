@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Deliveries from the site | Brayman Construction Platform{% endblock %}
+{% block page_title %}Deliveries from the site{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<div class="form-panel">
+  <h3>Delivery problems to resolve</h3>
+  {% if open_rows %}
+  <ul data-delivery-exceptions>{% for c in open_rows %}<li><a href="{{ url_for('operations.delivery', confirmation_id=c.id) }}">{{ c.order.number }} · {{ c.order.share.supplier.legal_name }} · {{ c.outcome_label }}</a> — {{ c.project.name }}, {{ c.confirmed_by_name }}, {{ c.confirmed_at|local_time("%b %d %H:%M") }}</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy" data-delivery-exceptions-empty>No delivery problem open.</p>{% endif %}
+</div>
+<div class="form-panel">
+  <h3>Recorded on site</h3>
+  <div class="acct-scroll"><table class="acct-table">
+    <thead><tr><th>Order</th><th>Job</th><th>Outcome</th><th>By</th><th>When</th></tr></thead>
+    <tbody>{% for c in recent %}<tr><td data-label="Order"><a href="{{ url_for('operations.delivery', confirmation_id=c.id) }}">{{ c.order.number }}</a></td><td data-label="Job">{{ c.project.name }}</td><td data-label="Outcome">{{ c.outcome_label }}{% if c.exception_status == 'RESOLVED' %} (resolved){% endif %}</td><td data-label="By">{{ c.confirmed_by_name }}</td><td data-label="When">{{ c.confirmed_at|local_time("%b %d %H:%M") }}</td></tr>{% else %}<tr><td colspan="5" class="muted-copy">Nothing recorded yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

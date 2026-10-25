@@ -1,0 +1,28 @@
+{% extends "field/base.html" %}
+{% block title %}My requests — CalibraytAI{% endblock %}
+{% block field_page %}my-requests{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-my-requests>
+    <h1>My requests</h1>
+    <h2>Materials</h2>
+    {% if materials %}
+    <ul class="field-status-list">
+        {% for r in materials %}
+        <li data-material-request="{{ r.id }}">{{ r.number }} · {{ r.project.name }}<br>{{ r.quantity|qty }} {{ unit_label(r.unit) }} {{ r.description }}<br>
+            <span class="field-status-tag">{{ material_label(r) }}</span></li>
+        {% endfor %}
+    </ul>
+    {% else %}<p class="field-muted">No material requests yet.</p>{% endif %}
+    <h2>Extra work</h2>
+    {% if extra %}
+    <ul class="field-status-list">
+        {% for r in extra %}
+        <li data-extra-work-report="{{ r.id }}">{{ r.number }} · {{ r.project.name }}<br>{{ r.description[:120] }}<br>
+            <span class="field-status-tag">{{ extra_label(r) }}</span>
+            {% if r.status == 'CLARIFICATION_REQUESTED' %}<br><a href="{{ url_for('field.extra_work_mine') }}">Answer the office's question</a>{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% else %}<p class="field-muted">No extra work reported yet.</p>{% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

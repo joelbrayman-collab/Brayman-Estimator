@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ row.number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Material request {{ row.number }}{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">{{ row.number }} · {{ row.project.name }}</h2>
+  <p class="page-purpose"><span class="ops-tag" data-material-status>{{ label }}</span></p></div>
+  <a class="button button-secondary" href="{{ url_for('projects.view_project', id=row.project_id) }}">Open the project</a></section>
+<div class="ops-split">
+  <div class="form-panel">
+    <h3>Asked for</h3>
+    <p><strong>{{ row.quantity|qty }} {{ unit_label(row.unit) }} {{ row.description }}</strong>{% if row.material %} <span class="muted-copy">(catalogue: {{ row.material.display_name }})</span>{% endif %}</p>
+    <p>By {{ row.requested_by_name }} · {{ row.requested_at|local_time("%a %b %d %H:%M") }}{% if row.needed_by %} · needed by {{ row.needed_by.strftime('%A %B %d') }}{% endif %}</p>
+    {% if row.note %}<p class="ops-note">{{ row.note }}</p>{% endif %}
+    {% for o in photos %}<img class="ops-photo" alt="Photo from the site" src="{{ url_for('api_v1.field_event_original_display', project_id=row.project_id, event_id=row.field_event_id, original_id=o.id) }}">{% endfor %}
+    {% if row.status in ('SUBMITTED', 'APPROVED') %}
+    <form method="post" class="ops-form" data-material-review>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="mr-qty">Quantity to order</label>
+      <input id="mr-qty" type="text" name="approved_quantity" value="{{ row.order_quantity|qty }}" inputmode="decimal">
+      <label for="mr-unit">Unit</label>
+      <select id="mr-unit" name="approved_unit">{% for value, text in units %}<option value="{{ value }}"{% if value == row.order_unit %} selected{% endif %}>{{ text }}</option>{% endfor %}{% if row.order_unit not in units|map('first')|list %}<option value="{{ row.order_unit }}" selected>{{ row.order_unit }}</option>{% endif %}</select>
+      <label for="mr-cat">Catalogue item (so the supplier's price can be recorded and ordered)</label>
+      <select id="mr-cat" name="canonical_material_id"><option value="">{{ '— not in the catalogue —' if not row.material else row.material.display_name }}</option>{% for m in catalogue %}<option value="{{ m.id }}"{% if row.canonical_material_id == m.id %} selected{% endif %}>{{ m.display_name }} ({{ m.canonical_uom }})</option>{% endfor %}</select>
+      <label for="mr-note">Note for the supplier request (optional)</label>
+      <textarea id="mr-note" name="office_note" rows="2">{{ row.office_note or '' }}</textarea>
+      <p class="acct-actions"><button type="submit" name="action" value="correct" class="button button-secondary">Save quantity</button>
+        {% if row.status == 'SUBMITTED' %}<button type="submit" name="action" value="approve" class="button-primary" data-approve-request>Approve</button>{% endif %}</p>
+    </form>
+    <form method="post" class="ops-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="mr-decline">Decline (the worker sees the reason)</label>
+      <input id="mr-decline" type="text" name="decline_reason" maxlength="1000">
+      <p class="acct-actions"><button type="submit" name="action" value="decline" class="button button-secondary" data-decline-request>Decline</button></p>
+    </form>
+    {% endif %}
+  </div>
+  <div class="form-panel">
+    <h3>Supplier and order</h3>
+    {% if row.status == 'APPROVED' %}
+      {% if accounts %}
+      <form method="post" class="ops-form" data-send-to-supplier>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="mr-account">Supplier (your supplier accounts)</label>
+        <select id="mr-account" name="account_id">{% for a in accounts %}<option value="{{ a.id }}">{{ a.supplier.legal_name }}</option>{% endfor %}</select>
+        <p class="acct-actions"><button type="submit" name="action" value="send" class="button-primary">Send to the supplier for a price</button></p>
+        <p class="muted-copy">This makes the same supplier request as a takeoff: the supplier returns a price in the Supplier Hub, you approve the cost and place the purchase order on the job's supplier requests. Nothing is ordered until you do.</p>
+      </form>
+      {% else %}<p class="muted-copy">No supplier account yet. Add one on Company → Suppliers.</p>{% endif %}
+    {% elif row.share %}
+      <p>Supplier request <a href="{{ url_for('supplier_office.project_requests', project_id=row.project_id) }}#share-{{ row.share_id }}" data-open-supplier-request>{{ row.share.number }}</a> to {{ row.share.supplier.legal_name }}.</p>
+      {% if order %}<p>Purchase order {{ order.number }} · {{ order.status|title }}</p>{% endif %}
+    {% elif row.status == 'DECLINED' %}<p>Declined by {{ row.decided_by_name }}: {{ row.decline_reason }}</p>
+    {% else %}<p class="muted-copy">Approve the request first.</p>{% endif %}
+    <h3>History</h3>
+    <ul class="ops-history">{% for h in history %}<li>{{ h.occurred_at|local_time("%b %d %H:%M") }} · {{ h.actor_name }} · {{ h.event|replace('_',' ')|lower }}{% if h.detail %} — {{ h.detail }}{% endif %}</li>{% endfor %}</ul>
+  </div>
+</div>
+{% endblock %}

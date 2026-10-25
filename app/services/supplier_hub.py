@@ -45,6 +45,7 @@ from app.models.supplier_portal import (
     SHARE_WITHDRAWN,
     SOURCE_CONCRETE,
     SOURCE_DECK_FORM2,
+    SOURCE_FIELD_REQUEST,
     SOURCE_FRAMING_FORM2,
     ConcreteRequest,
     SupplierPurchaseOrder,
@@ -266,7 +267,8 @@ def send_material_request(*, project: Project, request_id: str, user, needed_by:
         raise SupplierHubError("Issue the supplier request first.")
     if int(manifest.get("response_form") or 1) != 2:
         raise SupplierHubError("Only the current supplier request form can be sent in CalibraytAI. Issue the request again.")
-    source_kind = SOURCE_FRAMING_FORM2 if manifest.get("kind") == "framing_supplier_request" else SOURCE_DECK_FORM2
+    source_kind = {"framing_supplier_request": SOURCE_FRAMING_FORM2,
+                   "field_material_request": SOURCE_FIELD_REQUEST}.get(manifest.get("kind"), SOURCE_DECK_FORM2)
     account = _account(project.organization_id, int(manifest["contractor_supplier_account_id"]))
     if not supplier_has_sign_in(account.supplier_id):
         raise SupplierHubError(f"{account.supplier.legal_name} has no supplier sign-in yet. Add a supplier user first.")
@@ -310,7 +312,9 @@ def send_material_request(*, project: Project, request_id: str, user, needed_by:
     )
     db.session.add(share)
     db.session.flush()
-    _supersede_open(project.organization_id, project.id, account.supplier_id, KIND_MATERIAL, keep_id=share.id, source_kind=source_kind)
+    if source_kind != SOURCE_FIELD_REQUEST:  # a jobsite request adds to what is open; it never replaces a request
+        _supersede_open(project.organization_id, project.id, account.supplier_id, KIND_MATERIAL, keep_id=share.id,
+                        source_kind=source_kind)
     _event(share, "SENT", "CONTRACTOR", share.sent_by_name)
     db.session.commit()
     return share

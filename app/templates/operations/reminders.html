@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}End-of-day reminders | Brayman Construction Platform{% endblock %}
+{% block page_title %}End-of-day reminders{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">End-of-day reminders</h2>
+  <p class="page-purpose">One reminder a day, only for real outstanding work. In the app always; by text only when texts are switched on and the person agreed.</p></div></section>
+<div class="form-panel" data-reminder-texting>
+  <p><strong>{% if sms_available %}Texts are switched on.{% else %}Texts not switched on.{% endif %}</strong>
+  {% if not sms_available %}Reminders are in the app only (Field Today and Home).{% endif %}</p>
+</div>
+{% if mine %}
+<div class="form-panel" data-my-reminder>
+  <h3>Today, still waiting for you</h3>
+  <ul>{% for i in mine['items'] %}<li><a href="{{ i.href }}">{{ i.text }}</a></li>{% endfor %}</ul>
+</div>
+{% endif %}
+<div class="ops-split">
+<div class="form-panel">
+  <h3>Company settings</h3>
+  <form method="post" class="ops-form" data-reminder-settings><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="settings">
+    <label><input type="checkbox" name="reminders_enabled" value="1"{% if settings.reminders_enabled %} checked{% endif %}{% if not can_edit %} disabled{% endif %}> Send end-of-day reminders</label>
+    <label><input type="checkbox" name="crew_reminders" value="1"{% if settings.crew_reminders %} checked{% endif %}{% if not can_edit %} disabled{% endif %}> To the crew</label>
+    <label><input type="checkbox" name="owner_summary" value="1"{% if settings.owner_summary %} checked{% endif %}{% if not can_edit %} disabled{% endif %}> A summary to the owner</label>
+    <label for="rm-time">Reminder time (company time)</label><input id="rm-time" type="text" name="reminder_time" value="{{ settings.reminder_time }}"{% if not can_edit %} disabled{% endif %}>
+    <label for="rm-latest">Never later than</label><input id="rm-latest" type="text" name="latest_time" value="{{ settings.latest_time }}"{% if not can_edit %} disabled{% endif %}>
+    <p><strong>Working days</strong><br>{% set days = (settings.working_days or '').split(',') %}{% for name in day_names %}<label style="display:inline-block;margin-right:10px;font-weight:400"><input type="checkbox" name="working_days" value="{{ loop.index0 }}"{% if loop.index0|string in days %} checked{% endif %}{% if not can_edit %} disabled{% endif %}> {{ name }}</label>{% endfor %}</p>
+    {% if can_edit %}<p class="acct-actions"><button type="submit" class="button-primary">Save settings</button></p>{% else %}<p class="muted-copy">Only the owner or a System Administrator changes these.</p>{% endif %}
+  </form>
+  <p class="muted-copy">Now: {{ window.clock }} · {{ 'reminder time' if window.open else ('a working day' if window.working_day else 'not a working day') }}.</p>
+  <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="send_now">
+    <button type="submit" class="button button-secondary" data-send-reminders-now>Make today's reminders now</button></form>
+</div>
+<div class="form-panel">
+  <h3>My reminder</h3>
+  <form method="post" class="ops-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="preference">
+    <label><input type="checkbox" name="sms" value="1"{% if pref.sms %} checked{% endif %}{% if not consent %} disabled{% endif %}> Also text me my end-of-day summary</label>
+    {% if not consent %}<p class="muted-copy">To get texts, save your mobile number and agree to texts first.</p>{% endif %}
+    <p class="acct-actions"><button type="submit" class="button button-secondary">Save my choice</button></p></form>
+  <h3>Reminders made</h3>
+  <div class="acct-scroll"><table class="acct-table" data-reminders>
+    <thead><tr><th>Day</th><th>For</th><th>What</th><th>Text</th></tr></thead>
+    <tbody>{% for r in recent %}<tr><td data-label="Day">{{ r.reminder_date.strftime('%b %d') }}</td><td data-label="For">{{ names.get(r.user_id, 'Person') }} ({{ 'crew' if r.audience == 'CREW' else 'owner' }})</td><td data-label="What">{{ r.body|replace('\n', '; ') }}</td><td data-label="Text">{{ r.sms_label }}</td></tr>{% else %}<tr><td colspan="4" class="muted-copy">None yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+</div>
+{% endblock %}

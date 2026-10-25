@@ -26,6 +26,7 @@
     </div>
 </section>
 
+{% if attention and not attention.hidden %}{% set attention_shown = 4 %}{% include "operations/_home_attention.html" %}{% endif %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
 {% set wizard_list = office_wizards() %}
 {% set summaries = office_wizard_summaries(6) %}

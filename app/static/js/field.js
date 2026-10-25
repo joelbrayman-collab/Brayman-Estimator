@@ -400,7 +400,7 @@
       item.className = "field-recent-item";
       var meta = document.createElement("p");
       meta.className = "field-recent-meta";
-      meta.textContent = "Unsent · " + formatWhen(capture.capture_started_at);
+      meta.textContent = (capture.kind === "receipt" ? "Unsent receipt · " : "Unsent · ") + formatWhen(capture.capture_started_at);
       item.appendChild(meta);
       var rows = originals.filter(function (row) {
         return row.client_capture_uuid === capture.client_capture_uuid;
@@ -709,9 +709,63 @@
         setStatus(text);
       });
     }
+    if (capture.kind === "receipt") {
+      return registerReceipt(capture);
+    }
     return deleteStore("pending_captures", capture.client_capture_uuid).then(function () {
       setFeedback(FIELD_COPY.saved, "saved");
       setStatus(FIELD_COPY.saved);
+    });
+  }
+
+  // Add Receipt (Magnificent Seven, 25 Oct 2026): the photo is an ordinary capture; once it has reached the
+  // office, the receipt itself is registered. Until then (and if that answer is lost) the capture stays on this
+  // phone and is retried like any other: the office answers the same receipt again, never a second one.
+  function registerReceipt(capture) {
+    var receipt = capture.receipt || {};
+    return requestOnce(function () {
+      return postJson("/field/receipts/register", {
+        client_capture_uuid: capture.client_capture_uuid,
+        supplier: receipt.supplier || "",
+        amount: receipt.amount || "",
+        note: receipt.note || "",
+      });
+    }).then(function (result) {
+      if (result.response.status === 401) {
+        window.location.href = "/login?next=" + encodeURIComponent(window.location.pathname);
+        throw new Error("Sign in required.");
+      }
+      if (result.response.status !== 201 && result.response.status !== 200) {
+        throw new Error(result.payload.error || "The receipt could not be saved.");
+      }
+      return deleteStore("pending_captures", capture.client_capture_uuid).then(function () {
+        var text = "Receipt " + (result.payload.number || "") + " saved. The office has it.";
+        setFeedback(text, "saved");
+        setStatus(text);
+        var list = document.querySelector("[data-field-my-receipts] .field-status-list");
+        if (list && result.payload.url) {
+          var item = document.createElement("li");
+          var link = document.createElement("a");
+          link.href = result.payload.url;
+          link.textContent = (result.payload.number || "Receipt") + " · just now";
+          item.appendChild(link);
+          item.appendChild(document.createElement("br"));
+          var tag = document.createElement("span");
+          tag.className = "field-status-tag";
+          tag.textContent = result.payload.status || "Sent to the office";
+          item.appendChild(tag);
+          list.insertBefore(item, list.firstChild);
+        }
+      });
+    }).catch(function (err) {
+      capture.state = "needs_retry";
+      capture.last_error = String((err && err.message) || "").slice(0, 200);
+      rememberPending(true);
+      return putStore("pending_captures", capture).then(function () {
+        var text = navigator.onLine ? (capture.last_error || FIELD_COPY.needsRetry) : FIELD_COPY.savedOnPhone;
+        setFeedback(text, navigator.onLine ? "needs_retry" : "saved_local");
+        setStatus(text);
+      });
     });
   }
 
@@ -796,8 +850,33 @@
       });
   }
 
+  function receiptMode() {
+    var root = document.querySelector(".field-capture");
+    return !!root && root.getAttribute("data-capture-kind") === "receipt";
+  }
+
   function saveNew(projectId) {
     var text = (document.getElementById("field-text").value || "").trim();
+    var receipt = null;
+    if (receiptMode()) {
+      var pick = document.getElementById("field-receipt-project");
+      projectId = pick ? pick.value : "";
+      if (!projectId) {
+        setFeedback("Choose the job, or Shop / Company Expense.");
+        return;
+      }
+      if (!photos.length) {
+        setFeedback("Take a photo of the receipt first.");
+        return;
+      }
+      rememberProject(projectId);
+      receipt = {
+        supplier: ((document.getElementById("field-receipt-supplier") || {}).value || "").trim(),
+        amount: ((document.getElementById("field-receipt-amount") || {}).value || "").trim(),
+        note: text,
+      };
+      text = "";
+    }
     if (!text && !recordedBlob && !photos.length) {
       setFeedback(FIELD_COPY.addBeforeSave);
       return;
@@ -855,6 +934,10 @@
       state: "draft_local",
       text: text || null,
     };
+    if (receipt) {
+      capture.kind = "receipt";
+      capture.receipt = receipt;
+    }
     normalizeImageOriginals(originals)
       .then(function () {
         return persistCapture(capture, originals);
@@ -869,6 +952,10 @@
       .then(function () {
         if (document.getElementById("field-feedback").getAttribute("data-state") === "saved") {
           document.getElementById("field-text").value = "";
+          ["field-receipt-supplier", "field-receipt-amount"].forEach(function (id) {
+            var node = document.getElementById(id);
+            if (node) node.value = "";
+          });
           discardAudio();
           photos = [];
           renderPhotos();
@@ -885,6 +972,17 @@
     var root = document.querySelector(".field-capture");
     if (!root) return;
     var projectId = root.getAttribute("data-project-id");
+    if (receiptMode()) {
+      bindFiles();
+      var saveReceipt = document.getElementById("field-save");
+      if (saveReceipt) {
+        saveReceipt.addEventListener("click", function () {
+          saveNew(projectId);
+        });
+      }
+      syncAllPending();
+      return;
+    }
     rememberProject(projectId);
     pendingForOtherProject(projectId).then(function (other) {
       if (!other.length) return;
@@ -997,9 +1095,33 @@
     }
   }
 
+  function initRequestForms() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-client-uuid]"), function (input) {
+      if (!input.value) {
+        try {
+          input.value = newUuid();
+        } catch (err) {
+          /* the server still accepts the form; only the repeat check is lost */
+        }
+      }
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("form[data-field-request-form]"), function (form) {
+      form.addEventListener("submit", function () {
+        var button = form.querySelector("button[type=submit]");
+        if (button) {
+          window.setTimeout(function () {
+            button.disabled = true;
+            button.textContent = "Sending…";
+          }, 0);
+        }
+      });
+    });
+  }
+
   function init() {
     bindLogout();
     initTimeForm();
+    initRequestForms();
     window.addEventListener("online", function () {
       syncAllPending();
     });

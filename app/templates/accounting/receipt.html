@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Receipt {{ receipt.number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Receipt {{ receipt.number }}{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header">
+  <div><h2 class="page-title">Receipt {{ receipt.number }}</h2>
+    <p class="page-purpose"><span class="ops-tag{% if receipt.status in ('NEEDS_ATTENTION','SYNC_FAILED') %} ops-tag-warn{% elif receipt.status == 'SYNCED' %} ops-tag-ok{% endif %}" data-receipt-status="{{ receipt.status }}">{{ receipt.status_label }}</span>
+      {% if transfer %}<span class="ops-tag" data-qbo-transfer-status="{{ transfer.status }}">QuickBooks: {{ transfer.status_label }}</span>{% endif %}</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.receipts_inbox') }}">Back to the inbox</a>
+</section>
+{% if receipt.attention_reason %}<p class="ops-note" role="alert" data-receipt-reason>{{ receipt.attention_reason }}</p>{% endif %}
+{% if outcome %}<p class="ops-note" data-qbo-outcome>{{ outcome }}</p>{% endif %}
+<div class="ops-split">
+  <div class="form-panel">
+    <h3>Original receipt</h3>
+    {% if receipt.image_original_id %}
+    <a href="{{ url_for('api_v1.field_event_original_content', project_id=receipt.project_id, event_id=receipt.field_event_id, original_id=receipt.image_original_id) }}" target="_blank" rel="noopener" data-open-original>
+      <img class="ops-photo" alt="Original receipt image" src="{{ url_for('api_v1.field_event_original_display', project_id=receipt.project_id, event_id=receipt.field_event_id, original_id=receipt.image_original_id) }}"></a>
+    <p class="muted-copy">Open the original (kept exactly as uploaded).</p>
+    {% endif %}
+    <p>From {{ receipt.submitted_by_name }} · {{ receipt.submitted_at|local_time("%a %b %d %H:%M") }}</p>
+    <p>Typed in Field: {{ receipt.entered_supplier or 'no supplier' }} · {{ '${:,.2f}'.format(receipt.entered_amount) if receipt.entered_amount is not none else 'no amount' }}{% if receipt.entered_note %} · “{{ receipt.entered_note }}”{% endif %}</p>
+  </div>
+  <div class="form-panel">
+    <h3>Check and correct</h3>
+    <form method="post" class="ops-form" data-receipt-review>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="r-vendor">Supplier</label><input id="r-vendor" type="text" name="vendor_name" value="{{ receipt.vendor_name or receipt.entered_supplier or '' }}" maxlength="160">
+      <label for="r-date">Receipt date</label><input id="r-date" type="date" name="receipt_date" value="{{ receipt.receipt_date.isoformat() if receipt.receipt_date else '' }}">
+      <label for="r-sub">Subtotal (before tax)</label><input id="r-sub" type="text" name="subtotal" inputmode="decimal" value="{{ '%.2f'|format(receipt.subtotal) if receipt.subtotal is not none else '' }}">
+      <label for="r-tax">Tax (HST)</label><input id="r-tax" type="text" name="tax_amount" inputmode="decimal" value="{{ '%.2f'|format(receipt.tax_amount) if receipt.tax_amount is not none else '' }}">
+      <label for="r-total">Total</label><input id="r-total" type="text" name="total" inputmode="decimal" value="{{ '%.2f'|format(receipt.total) if receipt.total is not none else ('%.2f'|format(receipt.entered_amount) if receipt.entered_amount is not none else '') }}">
+      <label for="r-project">Job or company expense</label>
+      <select id="r-project" name="project_id">{% for p in projects %}<option value="{{ p.id }}"{% if p.id == receipt.project_id %} selected{% endif %}>{{ p.name }}</option>{% endfor %}</select>
+      <label for="r-po">Purchase order on this job (optional)</label>
+      <select id="r-po" name="purchase_order_id"><option value="">None</option>{% for o in orders %}<option value="{{ o.id }}"{% if o.id == receipt.purchase_order_id %} selected{% endif %}>{{ o.number }} · {{ o.share.supplier.legal_name }}</option>{% endfor %}</select>
+      <label for="r-txtype">Already in QuickBooks? (optional)</label>
+      <select id="r-txtype" name="existing_qbo_txn_type"><option value="">No / not sure</option><option value="Purchase"{% if receipt.existing_qbo_txn_type == 'Purchase' %} selected{% endif %}>Yes, an Expense</option><option value="Bill"{% if receipt.existing_qbo_txn_type == 'Bill' %} selected{% endif %}>Yes, a Bill</option></select>
+      <label for="r-txid">Its QuickBooks number (in its web address)</label><input id="r-txid" type="text" name="existing_qbo_txn_id" value="{{ receipt.existing_qbo_txn_id or '' }}" inputmode="numeric" maxlength="40">
+      <p class="acct-actions"><button type="submit" name="action" value="review" class="button button-secondary" data-save-review>Save review</button>
+        {% if receipt.status in ('NEW','NEEDS_ATTENTION','REVIEWED','SYNC_FAILED') and not (transfer and transfer.qbo_txn_id) %}<button type="submit" name="action" value="approve" class="button-primary" data-approve-receipt{% if blockers %} disabled title="Save the review first"{% endif %}>Approve for QuickBooks</button>{% endif %}</p>
+      {% if blockers %}<p class="muted-copy">Before approving, confirm {{ blockers|join(', ') }}.</p>{% endif %}
+    </form>
+    <form method="post" class="ops-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="r-flag">Needs attention (why)</label><input id="r-flag" type="text" name="reason" maxlength="2000">
+      <p class="acct-actions"><button type="submit" name="action" value="flag" class="button button-secondary">Mark Needs Attention</button></p></form>
+  </div>
+</div>
+<div class="form-panel" data-qbo-panel>
+  <h3>QuickBooks Online</h3>
+  {% if not qbo.connected %}<p class="muted-copy">{{ qbo.message }}</p>{% endif %}
+  {% if transfer %}
+    <p>Sync id <code>{{ transfer.sync_id }}</code> · attempts {{ transfer.attempts }}{% if transfer.qbo_txn_id %} · {{ 'Expense' if transfer.qbo_txn_type == 'Purchase' else transfer.qbo_txn_type }} {{ transfer.qbo_txn_id }}{% endif %}{% if transfer.qbo_attachable_id %} · attachment {{ transfer.qbo_attachable_id }}{% endif %}</p>
+    {% if transfer.status == 'NEEDS_REVIEW' and transfer.match_json and transfer.match_json.candidates %}
+      <p>Already in QuickBooks for the same amount — which one is this receipt?</p>
+      <ul data-qbo-candidates>{% for c in transfer.match_json.candidates %}<li>
+        <form method="post" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="txn_type" value="{{ c.type }}"><input type="hidden" name="txn_id" value="{{ c.id }}">
+        {{ 'Expense' if c.type == 'Purchase' else c.type }} {{ c.id }} · {{ c.vendor or 'vendor' }} · {{ c.date }} · ${{ c.total }}{% if c.doc %} · {{ c.doc }}{% endif %}
+        <button type="submit" name="action" value="choose" class="button button-secondary" data-choose-candidate="{{ c.id }}">Attach to this one</button></form></li>{% endfor %}</ul>
+      <form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="reason" placeholder="Why it is a different purchase" maxlength="500" aria-label="Why it is a different purchase">
+        <button type="submit" name="action" value="create_anyway" class="button button-secondary" data-create-anyway>Enter as a new expense</button></form>
+    {% endif %}
+    {% if transfer.status == 'NEEDS_REVIEW' and receipt.attention_reason and 'vendor' in receipt.attention_reason %}
+      <form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="qbo_name" placeholder="QuickBooks vendor name" maxlength="200" aria-label="QuickBooks vendor name">
+        <button type="submit" name="action" value="link_vendor" class="button button-secondary" data-link-vendor>Use this QuickBooks vendor</button></form>
+    {% endif %}
+    {% if transfer.status == 'NEEDS_REVIEW' and receipt.attention_reason and 'customer' in receipt.attention_reason %}
+      <form method="post" class="acct-actions"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="qbo_name" placeholder="QuickBooks customer or project name" maxlength="200" aria-label="QuickBooks customer or project name">
+        <button type="submit" name="action" value="link_customer" class="button button-secondary" data-link-customer>Use this QuickBooks customer</button></form>
+    {% endif %}
+    {% if transfer.status in ('FAILED', 'SENT', 'NEEDS_REVIEW', 'PENDING') and receipt.approved_at %}
+      <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" name="action" value="retry" class="button-primary" data-retry-transfer>Retry</button></form>
+    {% endif %}
+    <h3>QuickBooks history</h3>
+    <ul class="ops-history" data-qbo-history>{% for e in qbo_events %}<li>{{ e.occurred_at|local_time("%b %d %H:%M") }} · {{ e.actor_name }} · {{ e.message }}</li>{% else %}<li class="muted-copy">Nothing sent yet.</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">Not approved yet. Approving queues it once for QuickBooks.</p>{% endif %}
+</div>
+<div class="form-panel">{% include "operations/_history.html" %}</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Material requests | Brayman Construction Platform{% endblock %}
+{% block page_title %}Material requests{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Material requests from the job site</h2></div>
+  <a class="button button-secondary" href="{{ url_for('operations.material_requests', show='all' if not show_all else None) }}">{{ 'Show open only' if show_all else 'Show all' }}</a></section>
+<div class="form-panel">
+  {% if rows %}
+  <form method="post" action="{{ url_for('operations.material_requests_send') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="acct-scroll"><table class="acct-table" data-material-requests>
+      <thead><tr><th></th><th>Request</th><th>Job</th><th>What</th><th>Needed by</th><th>From</th><th>Status</th></tr></thead>
+      <tbody>{% for r in rows %}
+        <tr data-material-request="{{ r.id }}">
+          <td data-label="Send">{% if r.status == 'APPROVED' %}<input type="checkbox" name="request_ids" value="{{ r.id }}" aria-label="Send {{ r.number }}">{% endif %}</td>
+          <td data-label="Request"><a href="{{ url_for('operations.material_request', request_id=r.id) }}">{{ r.number }}</a></td>
+          <td data-label="Job">{{ r.project.name }}</td>
+          <td data-label="What">{{ r.order_quantity|qty }} {{ unit_label(r.order_unit) }} {{ r.description }}</td>
+          <td data-label="Needed by">{{ r.needed_by.strftime('%a %b %d') if r.needed_by else '—' }}</td>
+          <td data-label="From">{{ r.requested_by_name }}</td>
+          <td data-label="Status">{{ label(r) }}</td>
+        </tr>{% endfor %}</tbody>
+    </table></div>
+    {% if accounts %}
+    <p class="acct-actions"><label for="send-account">Send the ticked approved requests (one job at a time) to</label>
+      <select id="send-account" name="account_id">{% for a in accounts %}<option value="{{ a.id }}">{{ a.supplier.legal_name }}</option>{% endfor %}</select>
+      <button type="submit" class="button-primary">Send to the supplier</button></p>
+    {% endif %}
+  </form>
+  {% else %}
+  <p class="muted-copy" data-material-requests-empty>No material request waiting for the office.</p>
+  {% endif %}
+</div>
+{% endblock %}

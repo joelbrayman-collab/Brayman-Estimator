@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Receipts Inbox | Brayman Construction Platform{% endblock %}
+{% block page_title %}Receipts Inbox{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header">
+  <div><h2 class="page-title">Receipts Inbox</h2>
+    <p class="page-purpose">Receipts photographed in Field. Check each one, approve it, and QuickBooks Online gets the expense and the original image.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.quickbooks_online') }}" data-qbo-link>QuickBooks Online: {{ 'connected' if qbo.connected else 'not connected' }}</a>
+</section>
+<nav class="acct-actions" aria-label="Receipt status" data-receipt-filters>
+  <a class="button{% if not status %}-primary{% else %} button-secondary{% endif %}" href="{{ url_for('accounting.receipts_inbox', project_id=project_id) }}">All</a>
+  {% for s in statuses %}<a class="button{% if status == s %}-primary{% else %} button-secondary{% endif %}" href="{{ url_for('accounting.receipts_inbox', status=s, project_id=project_id) }}" data-receipt-filter="{{ s }}">{{ labels[s] }} <b>{{ counts[s] }}</b></a>{% endfor %}
+</nav>
+<form method="get" class="acct-actions">{% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+  <label for="rc-project">Job</label>
+  <select id="rc-project" name="project_id" onchange="this.form.submit()"><option value="">All jobs and Shop / Company</option>
+    {% for p in projects %}<option value="{{ p.id }}"{% if project_id == p.id %} selected{% endif %}>{{ p.name }}</option>{% endfor %}</select>
+  <noscript><button type="submit">Show</button></noscript></form>
+{% if not qbo.mapping_complete and qbo.connected %}<p class="ops-note" data-qbo-mapping-missing>QuickBooks is connected but the accounts are not chosen yet: approved receipts wait until they are (QuickBooks Online page).</p>{% endif %}
+<div class="form-panel">
+  {% if rows %}
+  <div class="acct-scroll"><table class="acct-table" data-receipts>
+    <thead><tr><th>Receipt</th><th>Date</th><th>Supplier</th><th class="num">Amount</th><th>Job</th><th>From</th><th>Review</th><th>QuickBooks</th></tr></thead>
+    <tbody>{% for r in rows %}
+      <tr data-receipt="{{ r.id }}" data-receipt-status="{{ r.status }}">
+        <td data-label="Receipt"><a href="{{ url_for('accounting.receipt_detail', receipt_id=r.id) }}">{{ r.number }}</a></td>
+        <td data-label="Date">{{ r.receipt_date.strftime('%b %d') if r.receipt_date else r.submitted_at|local_time("%b %d") }}</td>
+        <td data-label="Supplier">{{ r.shown_supplier or '—' }}</td>
+        <td data-label="Amount" class="num">{{ '${:,.2f}'.format(r.shown_amount) if r.shown_amount is not none else '—' }}</td>
+        <td data-label="Job">{{ 'Shop / Company' if r.expense_scope == 'COMPANY' else r.project.name }}</td>
+        <td data-label="From">{{ r.submitted_by_name }}</td>
+        <td data-label="Review"><span class="ops-tag{% if r.status in ('NEEDS_ATTENTION','SYNC_FAILED') %} ops-tag-warn{% elif r.status == 'SYNCED' %} ops-tag-ok{% endif %}">{{ r.status_label }}</span></td>
+        <td data-label="QuickBooks">{{ r.qbo_transfer.status_label if r.qbo_transfer else '—' }}</td>
+      </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="muted-copy" data-receipts-empty>No receipts here.</p>{% endif %}
+</div>
+<p><a href="{{ url_for('accounting.quickbooks_online_reconciliation') }}">Receipts confirmed in QuickBooks (reconciliation)</a></p>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Extra work from the field | Brayman Construction Platform{% endblock %}
+{% block page_title %}Extra work from the field{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">Extra work reported by the crew</h2>
+  <p class="page-purpose">Nothing here is on the customer's bill until a change order is approved.</p></div>
+  <a class="button button-secondary" href="{{ url_for('operations.extra_work', show='all' if not show_all else None) }}">{{ 'Show open only' if show_all else 'Show all' }}</a></section>
+<div class="form-panel">
+  {% if rows %}
+  <div class="acct-scroll"><table class="acct-table" data-extra-work-reports>
+    <thead><tr><th>Report</th><th>Job</th><th>What</th><th>Asked for by</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>{% for r in rows %}<tr data-extra-work-report="{{ r.id }}">
+      <td data-label="Report"><a href="{{ url_for('operations.extra_work_report', report_id=r.id) }}">{{ r.number }}</a></td>
+      <td data-label="Job">{{ r.project.name }}</td><td data-label="What">{{ r.description[:120] }}</td>
+      <td data-label="Asked for by">{{ r.requested_by or '—' }}</td><td data-label="Date">{{ r.work_date.strftime('%b %d') }}</td>
+      <td data-label="Status">{{ outcome(r) }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="muted-copy" data-extra-work-empty>No extra work waiting for the office.</p>{% endif %}
+</div>
+{% endblock %}

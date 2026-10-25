@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ row.number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Extra work {{ row.number }}{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">{{ row.number }} · {{ row.project.name }}</h2>
+  <p class="page-purpose"><span class="ops-tag" data-extra-work-outcome>{{ outcome }}</span></p></div>
+  <a class="button button-secondary" href="{{ url_for('projects.view_project', id=row.project_id) }}">Open the project</a></section>
+<div class="ops-split">
+  <div class="form-panel">
+    <h3>From the field</h3>
+    <p class="ops-note">{{ row.description }}</p>
+    <p>Reported by {{ row.reported_by_name }} · {{ row.reported_at|local_time("%a %b %d %H:%M") }} · work date {{ row.work_date.strftime('%A %B %d') }}{% if row.requested_by %} · asked for by <strong>{{ row.requested_by }}</strong>{% endif %}</p>
+    {% for o in photos %}<img class="ops-photo" alt="Photo of the extra work" src="{{ url_for('api_v1.field_event_original_display', project_id=row.project_id, event_id=row.field_event_id, original_id=o.id) }}">{% endfor %}
+    {% if row.clarification_question %}<p><strong>Question:</strong> {{ row.clarification_question }} <span class="muted-copy">({{ row.clarification_asked_by_name }})</span></p>{% endif %}
+    {% if row.clarification_answer %}<p><strong>Answer:</strong> {{ row.clarification_answer }}</p>{% endif %}
+  </div>
+  <div class="form-panel">
+    <h3>Decide</h3>
+    {% if change_order %}
+      <p>Change order <a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}" data-open-change-order>{{ change_order.number }}</a> · {{ change_order.status }}. The customer approves it through the change order (and its signing); only an approved change order is billed.</p>
+    {% elif row.status in ('SUBMITTED', 'CLARIFICATION_REQUESTED', 'ANSWERED') %}
+      <p class="acct-actions"><a class="button-primary" data-prepare-change-order href="{{ url_for('project_controls.create_change_order_route', project_id=row.project_id, extra_work_activity_id=row.activity_id, next='hub') }}">Estimate it and prepare the change order</a></p>
+      <form method="post" class="ops-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="ew-q">Ask the crew a question</label><input id="ew-q" type="text" name="question" maxlength="2000">
+        <p class="acct-actions"><button type="submit" name="action" value="ask" class="button button-secondary" data-ask-crew>Ask</button></p></form>
+      <form method="post" class="ops-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="ew-n">Or record the outcome without a change order</label><input id="ew-n" type="text" name="note" maxlength="2000" placeholder="Why">
+        <p class="acct-actions"><button type="submit" name="action" value="not_extra" class="button button-secondary">Part of the original work</button>
+          <button type="submit" name="action" value="decline" class="button button-secondary">Declined — not doing it</button></p></form>
+    {% else %}
+      <p>{{ outcome }}{% if row.decided_by_name %} — {{ row.decided_by_name }}{% endif %}</p>
+    {% endif %}
+    {% include "operations/_history.html" %}
+  </div>
+</div>
+{% endblock %}

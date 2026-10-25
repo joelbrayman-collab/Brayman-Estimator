@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Job updates | Brayman Construction Platform{% endblock %}
+{% block page_title %}Job updates{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<div class="form-panel">
+  <div class="acct-scroll"><table class="acct-table" data-job-updates>
+    <thead><tr><th>Day</th><th>Job</th><th>From</th><th>Completed</th><th>Problems</th></tr></thead>
+    <tbody>{% for s in rows %}<tr data-job-update="{{ s.id }}"><td data-label="Day"><a href="{{ url_for('operations.job_update', summary_id=s.id) }}">{{ s.work_date.strftime('%a %b %d') }}</a></td><td data-label="Job">{{ s.project.name }}</td><td data-label="From">{{ s.submitted_by_name }}</td><td data-label="Completed">{{ (s.completed_text or '—')[:100] }}</td><td data-label="Problems">{% if s.problem_status == 'OPEN' %}<span class="ops-tag ops-tag-warn">Open</span> {% elif s.problem_status == 'RESOLVED' %}<span class="ops-tag ops-tag-ok">Handled</span> {% endif %}{{ (s.problems_text or '—')[:100] }}</td></tr>{% else %}<tr><td colspan="5" class="muted-copy">No job update yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

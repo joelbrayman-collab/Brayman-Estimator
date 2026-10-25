@@ -1,0 +1,24 @@
+/* WHAT NEEDS MY ATTENTION? (Magnificent Seven, 25 Oct 2026): compact, first on Home, one line per item on a
+   desktop and two on an iPhone; the whole row is the link to the working screen. Brand colours and type only. */
+.na-home { border: 2px solid var(--brand-gold, #c79a2b); border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; background: var(--surface, #fff); }
+.na-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.na-title { font-size: 1rem; letter-spacing: 0.04em; margin: 0; }
+.na-count { display: inline-block; min-width: 1.6em; padding: 0 6px; border-radius: 999px; background: var(--brand-gold, #c79a2b); color: #141414; text-align: center; font-size: 0.9rem; }
+.na-all { font-weight: 600; white-space: nowrap; }
+.na-list { list-style: none; margin: 6px 0 0; padding: 0; }
+.na-item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 4px 10px; border-top: 1px solid var(--border, #e3ded2); padding: 5px 0; }
+.na-item:first-child { border-top: 0; }
+.na-link { display: flex; flex-wrap: wrap; gap: 0 10px; min-width: 0; color: inherit; text-decoration: none; }
+.na-link:hover .na-what, .na-link:focus .na-what { text-decoration: underline; }
+.na-what { font-weight: 600; overflow-wrap: anywhere; }
+.na-meta { color: var(--muted, #555); font-size: 0.9rem; overflow-wrap: anywhere; }
+.na-urgency { font-size: 0.8rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.na-urgency-overdue { color: var(--danger, #b42318); }
+.na-urgency-today { color: #8a5a00; }
+.na-go { font-weight: 600; white-space: nowrap; font-size: 0.9rem; }
+.na-empty { margin: 4px 0 0; color: var(--muted, #555); }
+@media (max-width: 640px) {
+  .na-item { grid-template-columns: minmax(0, 1fr) auto; }
+  .na-go { display: none; }
+  .na-link { flex-direction: column; min-height: 44px; justify-content: center; }
+}

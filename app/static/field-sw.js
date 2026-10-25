@@ -26,6 +26,10 @@ function isFieldDocument(pathname) {
   if (/^\/field\/projects\/\d+\/capture$/.test(pathname)) {
     return true;
   }
+  // Add Receipt (25 Oct 2026): kept so a receipt can be photographed and kept on the phone without a signal.
+  if (pathname === "/field/receipt") {
+    return true;
+  }
   return false;
 }
 

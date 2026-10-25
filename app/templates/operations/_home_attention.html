@@ -1,0 +1,13 @@
+{# Home: WHAT NEEDS MY ATTENTION? — first and compact; the full list is one click away. #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/needs_attention.css', v='mag7-1') }}">
+<section class="na-home" data-needs-attention aria-labelledby="na-title">
+  <div class="na-head">
+    <h2 class="na-title" id="na-title">WHAT NEEDS MY ATTENTION? <span class="na-count" data-attention-count="{{ attention.count }}">{{ attention.count }}</span></h2>
+    {% if attention.count > attention_shown %}<a class="na-all" href="{{ url_for('operations.attention') }}" data-attention-all>Show all {{ attention.count }}</a>{% endif %}
+  </div>
+  {% if attention['items'] %}
+  {% set items = attention['items'][:attention_shown] %}{% include "operations/_attention_list.html" %}
+  {% else %}
+  <p class="na-empty" data-attention-empty>Nothing needs your attention right now.</p>
+  {% endif %}
+</section>

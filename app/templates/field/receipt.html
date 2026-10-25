@@ -1,0 +1,67 @@
+{% extends "field/base.html" %}
+{% block title %}Add Receipt — CalibraytAI{% endblock %}
+{% block field_page %}receipt{% endblock %}
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("receipt")) }}
+<section class="field-panel field-capture" data-capture-kind="receipt" data-project-id="{{ selected or '' }}">
+    <h1>Add Receipt</h1>
+    <label class="field-label" for="field-receipt-project">Job</label>
+    <select id="field-receipt-project" class="field-select" required>
+        <option value="">Choose the job…</option>
+        {% for p in jobs %}
+        <option value="{{ p.id }}"{% if selected == p.id %} selected{% endif %}>{{ p.name }}{% if p.project_number %} · {{ p.project_number }}{% endif %}</option>
+        {% endfor %}
+        {% if company_project %}
+        <option value="{{ company_project.id }}"{% if selected == company_project.id %} selected{% endif %} data-company-expense>Shop / Company Expense</option>
+        {% endif %}
+    </select>
+
+    <div class="field-actions">
+        <label class="field-btn field-btn-primary field-file-btn">
+            Take Photo of Receipt
+            <input id="field-take-photo" type="file" accept="image/*" capture="environment" hidden>
+        </label>
+        <label class="field-btn field-btn-secondary field-file-btn">
+            Choose Photo
+            <input id="field-choose-photo" type="file" accept="image/*" hidden>
+        </label>
+    </div>
+    <ul class="field-photo-list" id="field-photo-list"></ul>
+
+    <div class="field-row">
+        <label class="field-label">Supplier (optional)
+            <input id="field-receipt-supplier" class="field-input" type="text" maxlength="160" autocomplete="off" placeholder="BMR, Home Hardware…">
+        </label>
+        <label class="field-label">Amount (optional)
+            <input id="field-receipt-amount" class="field-input" type="text" inputmode="decimal" maxlength="14" placeholder="84.75">
+        </label>
+    </div>
+    <label class="field-label" for="field-text">Note (optional)</label>
+    <textarea id="field-text" class="field-textarea" rows="2" maxlength="2000" placeholder="What it was for"></textarea>
+
+    <button type="button" class="field-btn field-btn-primary field-save" id="field-save">Save Receipt</button>
+    <p class="field-feedback" id="field-feedback" aria-live="polite"></p>
+    <section class="field-panel" id="field-retry-panel" hidden>
+        <h2>{{ contractor_copy.FIELD_RETRY_HEADING }}</h2>
+        <p id="field-retry-count" class="field-muted"></p>
+        <ul class="field-recent" id="field-pending-list"></ul>
+    </section>
+</section>
+
+<section class="field-panel" data-field-my-receipts>
+    <h2>My receipts</h2>
+    {% if mine %}
+    <ul class="field-status-list">
+        {% for r in mine %}
+        <li><a href="{{ url_for('field.receipt_view', receipt_id=r.id) }}">{{ r.number }} · {{ r.submitted_at|local_time("%b %d %H:%M") }}{% if r.shown_supplier %} · {{ r.shown_supplier }}{% endif %}{% if r.shown_amount is not none %} · ${{ '{:,.2f}'.format(r.shown_amount) }}{% endif %}</a><br>
+            <span class="field-muted">{{ 'Shop / Company Expense' if r.expense_scope == 'COMPANY' else r.project.name }}</span>
+            <span class="field-status-tag" data-receipt-status="{{ r.status }}">{{ worker_label(r) }}</span></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="field-muted">No receipts yet.</p>
+    {% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

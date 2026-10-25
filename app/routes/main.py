@@ -21,4 +21,19 @@ def dashboard():
         today=today,
         viewer=current_user,
     )
-    return render_template("dashboard.html", view=view)
+    from app.services.needs_attention import assemble
+
+    try:
+        # Company Attention facts stay in the briefing below (no repeat); the full page lists everything.
+        attention = assemble(get_current_organization_id(), current_user, today=today, include_company_facts=False)
+    except Exception:  # Home must always open; the attention list is read again on the next visit
+        import logging
+
+        from flask import current_app
+
+        if current_app.testing:
+            raise
+
+        logging.getLogger(__name__).exception("needs attention could not be read")
+        attention = None
+    return render_template("dashboard.html", view=view, attention=attention)

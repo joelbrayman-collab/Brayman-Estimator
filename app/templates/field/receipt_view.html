@@ -1,0 +1,17 @@
+{% extends "field/base.html" %}
+{% block title %}Receipt {{ receipt.number }} — CalibraytAI{% endblock %}
+{% block field_page %}receipt-view{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-receipt="{{ receipt.id }}">
+    <h1>Receipt {{ receipt.number }}</h1>
+    <p><span class="field-status-tag" data-receipt-status="{{ receipt.status }}">{{ label }}</span></p>
+    <p>{{ 'Shop / Company Expense' if receipt.expense_scope == 'COMPANY' else receipt.project.name }}</p>
+    <p class="field-muted">Saved {{ receipt.submitted_at|local_time("%a %b %d, %H:%M") }}{% if receipt.entered_supplier %} · {{ receipt.entered_supplier }}{% endif %}{% if receipt.entered_amount is not none %} · ${{ '{:,.2f}'.format(receipt.entered_amount) }}{% endif %}</p>
+    {% if receipt.entered_note %}<p>{{ receipt.entered_note }}</p>{% endif %}
+    {% if receipt.image_original_id %}
+    <img class="field-receipt-thumb" alt="Receipt photo" src="{{ url_for('api_v1.field_event_original_display', project_id=receipt.project_id, event_id=receipt.field_event_id, original_id=receipt.image_original_id) }}">
+    {% endif %}
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.receipt') }}">Add another receipt</a>
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

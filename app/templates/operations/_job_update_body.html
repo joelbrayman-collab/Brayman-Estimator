@@ -1,0 +1,16 @@
+<p class="muted-copy">From CalibraytAI records (verified):</p>
+<ul class="ops-facts" data-verified-facts>
+  <li>Scheduled: {{ facts.scheduled_work|map(attribute='name')|join(', ') if facts.scheduled_work else 'nothing scheduled' }}</li>
+  <li>Crew: {{ facts.crew|join(', ') if facts.crew else 'no one assigned' }}</li>
+  <li>Time entered: {% if facts.time %}{% for t in facts.time %}{{ t.name }} {{ t.hours }} h ({{ t.status|lower }}){% if not loop.last %}, {% endif %}{% endfor %} — total {{ facts.time_total_hours }} h{% else %}none{% endif %}</li>
+  <li>Photos: {{ facts.photos }}; notes: {{ facts.notes }}</li>
+  {% for line in facts.note_lines or [] %}<li class="muted-copy">{{ line }}</li>{% endfor %}
+  {% for d in facts.deliveries_due or [] %}<li>Delivery due: {{ d.supplier }} {{ d.number }} ({{ d.status|lower }})</li>{% endfor %}
+  {% for d in facts.deliveries_confirmed or [] %}<li>Delivery recorded: {{ d.number }} {{ d.outcome|lower }} ({{ d.by }})</li>{% endfor %}
+  {% for r in facts.material_requests or [] %}<li>Material request {{ r.number }}: {{ r.what }} ({{ r.by }})</li>{% endfor %}
+  {% for r in facts.extra_work or [] %}<li>Extra work {{ r.number }}: {{ r.what }} ({{ r.by }})</li>{% endfor %}
+</ul>
+<p class="muted-copy">Reported by {{ row.submitted_by_name }} (observations, not checked):</p>
+<p><strong>Completed:</strong> {{ row.completed_text or '—' }}</p>
+<p><strong>Problems or delays:</strong> {{ row.problems_text or '—' }}</p>
+<p><strong>Needed tomorrow:</strong> {{ row.needs_text or '—' }}</p>

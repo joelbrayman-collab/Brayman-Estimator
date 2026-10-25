@@ -17,6 +17,24 @@
 {% if returned_time_count %}
 <p class="field-time-returned" data-returned-time><a href="{{ url_for('field.my_time') }}">{{ returned_time_count }} time {{ 'entry was' if returned_time_count == 1 else 'entries were' }} returned to you. Fix and send again on My time.</a></p>
 {% endif %}
+<nav class="field-quick-actions" aria-label="Quick actions" data-field-quick-actions>
+    {% for a in quick_actions %}
+    <a class="field-quick-action" href="{{ a.href }}" data-quick-action="{{ a.key }}">{{ a.label }}</a>
+    {% endfor %}
+</nav>
+{% if reminder %}
+<section class="field-panel field-reminder" data-field-reminder="{{ reminder.reminder.id }}">
+    <h2>Before you finish today</h2>
+    <ul class="field-reminder-list">
+        {% for item in reminder['items'] %}<li><a href="{{ item.href }}">{{ item.text }}</a></li>{% endfor %}
+    </ul>
+    <p class="field-muted" data-reminder-sms="{{ reminder.reminder.sms_status }}">{% if not reminder.texting_on %}Texts not switched on — this reminder is in the app only.{% else %}{{ reminder.sms_label }}{% endif %}</p>
+    <form method="post" action="{{ url_for('field.reminder_read', reminder_id=reminder.reminder.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="field-btn field-btn-ghost">Hide until tomorrow</button>
+    </form>
+</section>
+{% endif %}
 {% include "field/_banked_balance.html" %}
 <section class="field-panel">
     <h1>{{ my_work_heading }}</h1>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}QuickBooks Online | Brayman Construction Platform{% endblock %}
+{% block page_title %}QuickBooks Online{% endblock %}
+{% block content %}
+{% include "operations/_style.html" %}
+<section class="page-header"><div><h2 class="page-title">QuickBooks Online</h2>
+  <p class="page-purpose">Approved receipts go to QuickBooks Online as expenses with their original image, or are attached to the expense or bill already there. Nothing is entered twice.</p></div>
+  <a class="button button-secondary" href="{{ url_for('accounting.receipts_inbox') }}">Receipts Inbox</a></section>
+<div class="form-panel" data-qbo-connection="{{ 'connected' if qbo.connected else 'not-connected' }}">
+  <h3>Connection</h3>
+  <p><strong>{{ qbo.message }}</strong></p>
+  {% if qbo.connection and qbo.connection.connected_at %}<p class="muted-copy">Connected by {{ qbo.connection.connected_by_name }} on {{ qbo.connection.connected_at|local_time("%b %d %Y %H:%M") }} ({{ qbo.connection.environment }}, company {{ qbo.connection.realm_id }}).</p>{% endif %}
+  {% if can_connect %}
+    {% if qbo.connected %}
+    <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" name="action" value="disconnect" class="button button-secondary" data-qbo-disconnect>Disconnect</button></form>
+    {% elif qbo.can_connect %}
+    <form method="post" action="{{ url_for('accounting.quickbooks_online_connect') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="button-primary" data-qbo-connect>{{ 'Reconnect' if qbo.connection and qbo.connection.status == 'NEEDS_RECONNECT' else 'Connect to QuickBooks' }}</button></form>
+    <p class="muted-copy">You sign in on Intuit's own page and approve access. CalibraytAI never sees the QuickBooks password.</p>
+    {% endif %}
+  {% else %}<p class="muted-copy">Only the owner or a System Administrator connects QuickBooks.</p>{% endif %}
+  {% if qbo.activation.mode == 'off' %}
+  <h4>To switch it on (needs Joel's authorization)</h4>
+  <ul data-qbo-activation>{% for name, ok in qbo.activation['items'] %}<li>{{ name }}: {{ 'set' if ok else 'not set' }}</li>{% endfor %}</ul>
+  {% endif %}
+</div>
+<div class="form-panel" data-qbo-mapping>
+  <h3>Where receipts go in QuickBooks</h3>
+  {% if qbo.mapping_missing %}<p class="ops-note">Still to choose: {{ qbo.mapping_missing|join('; ') }}. Approved receipts wait until these are chosen.</p>{% endif %}
+  {% set c = qbo.connection %}
+  <form method="post" class="ops-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="mapping">
+    {% macro pick(name, label, rows, current) %}
+      <label for="m-{{ name }}">{{ label }}</label>
+      <select id="m-{{ name }}" name="{{ name }}"{% if not rows %} disabled{% endif %}><option value="">—</option>
+        {% for r in rows %}<option value="{{ r.Id }}"{% if current and r.Id|string == current %} selected{% endif %}>{{ r.FullyQualifiedName or r.Name }}{% if r.AccountType %} ({{ r.AccountType }}){% endif %}</option>{% endfor %}</select>
+    {% endmacro %}
+    {{ pick('expense_account_id', 'Expense account for receipts', lists.accounts, c.expense_account_id if c else None) }}
+    {{ pick('payment_account_id', 'Paid from (bank or credit card account)', lists.accounts, c.payment_account_id if c else None) }}
+    <label for="m-pt">How they were paid</label>
+    <select id="m-pt" name="payment_type"><option value="">—</option>{% for p in payment_types %}<option value="{{ p }}"{% if c and c.payment_type == p %} selected{% endif %}>{{ {'Cash':'Cash or debit','Check':'Cheque','CreditCard':'Credit card'}[p] }}</option>{% endfor %}</select>
+    {{ pick('tax_code_id', 'Tax code for receipts with HST', lists.tax_codes, c.tax_code_id if c else None) }}
+    {{ pick('no_tax_code_id', 'Tax code for receipts without tax', lists.tax_codes, c.no_tax_code_id if c else None) }}
+    {{ pick('class_id', 'Class (optional)', lists.classes, c.class_id if c else None) }}
+    <label><input type="checkbox" name="allow_vendor_create" value="1"{% if c and c.allow_vendor_create %} checked{% endif %}> Create a vendor in QuickBooks when the supplier is not there (off: Suzanne chooses the vendor)</label>
+    <input type="hidden" name="auto_send" value="0">
+    <label><input type="checkbox" name="auto_send" value="1"{% if not c or c.auto_send %} checked{% endif %}> Send each receipt as soon as it is approved</label>
+    <p class="acct-actions"><button type="submit" class="button-primary"{% if not qbo.connected %} disabled{% endif %}>Save</button></p>
+  </form>
+</div>
+<div class="form-panel">
+  <h3>Transfers</h3>
+  <p data-qbo-counts>Pending {{ counts.PENDING }} · Sent, not confirmed {{ counts.SENT }} · Confirmed {{ counts.CONFIRMED }} · Failed {{ counts.FAILED }} · Needs review {{ counts.NEEDS_REVIEW }}</p>
+  <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" name="action" value="send_waiting" class="button button-secondary"{% if not qbo.connected %} disabled{% endif %}>Send waiting receipts now</button></form>
+  <p><a href="{{ url_for('accounting.quickbooks_online_reconciliation') }}">Reconciliation</a></p>
+  <h3>History</h3>
+  <ul class="ops-history">{% for e in events %}<li>{{ e.occurred_at|local_time("%b %d %H:%M") }} · {{ e.actor_name }} · {{ e.message }}</li>{% else %}<li class="muted-copy">Nothing yet.</li>{% endfor %}</ul>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "field/base.html" %}
+{% block title %}Job Update — CalibraytAI{% endblock %}
+{% block field_page %}job-update{% endblock %}
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("job_update")) }}
+<section class="field-panel" data-field-job-update="{{ project.id }}">
+    <h1>Job Update · {{ day.strftime('%a %b') }} {{ day.day }}</h1>
+    <p class="field-project-name">{{ project.name }}</p>
+    <p class="field-fact-source">From CalibraytAI records</p>
+    <ul class="field-facts" data-job-facts>
+        <li>Scheduled: {% if facts.scheduled_work %}{{ facts.scheduled_work|map(attribute='name')|join(', ') }}{% else %}nothing scheduled{% endif %}</li>
+        <li>Crew: {% if facts.crew %}{{ facts.crew|join(', ') }}{% else %}no one assigned{% endif %}</li>
+        <li data-fact-time>Time entered: {% if facts.time %}{% for t in facts.time %}{{ t.name }} {{ t.hours }} h ({{ t.status|lower }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none yet{% endif %}</li>
+        <li data-fact-photos>Photos today: {{ facts.photos }}{% if facts.notes %} · notes: {{ facts.notes }}{% endif %}</li>
+        {% for d in facts.deliveries_due %}<li>Delivery due: {{ d.supplier }} {{ d.number }}</li>{% endfor %}
+        {% for d in facts.deliveries_confirmed %}<li>Delivery recorded: {{ d.number }} {{ d.outcome|lower }} ({{ d.by }})</li>{% endfor %}
+        {% for r in facts.material_requests %}<li>Material request {{ r.number }}: {{ r.what }}</li>{% endfor %}
+        {% for r in facts.extra_work %}<li>Extra work {{ r.number }}: {{ r.what }}</li>{% endfor %}
+    </ul>
+    {% if existing %}<p class="field-muted" data-job-update-saved>You sent today's update at {{ existing.submitted_at|local_time("%H:%M") }}. Saving again replaces your answers (the earlier ones are kept in the history).</p>{% endif %}
+    <form method="post" action="{{ url_for('field.job_update', project_id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field-label">What was completed today?
+            <textarea name="completed_text" class="field-textarea" rows="3" maxlength="4000">{{ existing.completed_text if existing and existing.completed_text else '' }}</textarea>
+        </label>
+        <label class="field-label">Any problems or delays?
+            <textarea name="problems_text" class="field-textarea" rows="2" maxlength="4000">{{ existing.problems_text if existing and existing.problems_text else '' }}</textarea>
+        </label>
+        <label class="field-label">Anything needed tomorrow?
+            <textarea name="needs_text" class="field-textarea" rows="2" maxlength="4000">{{ existing.needs_text if existing and existing.needs_text else '' }}</textarea>
+        </label>
+        <button type="submit" class="field-btn field-btn-primary" data-save-job-update>Save Job Update</button>
+    </form>
+    <p class="field-muted">Kept on the job for the office. Never sent to the customer. Hours are entered on My Hours, not here.</p>
+</section>
+<a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+{% endblock %}

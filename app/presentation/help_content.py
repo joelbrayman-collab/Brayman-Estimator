@@ -588,9 +588,50 @@ FIELD_EXTRA_WORK = HelpTopic(
     surface=SURFACE_FIELD,
 )
 
+# The Magnificent Seven quick actions (25 Oct 2026). Plain words only: no prices, wages or office names.
+FIELD_RECEIPT = HelpTopic(
+    key="receipt",
+    title="Add Receipt",
+    what="Add Receipt keeps a photo of a store receipt for the office, on the job or as a Shop / Company Expense.",
+    do="Choose the job, take a photo of the whole receipt, add the supplier and amount if you know them, then "
+       "Save Receipt. No signal? It stays on this phone and sends itself when you are back online.",
+    next="The office checks it. My receipts shows where each one is.",
+    surface=SURFACE_FIELD,
+)
+FIELD_MATERIALS = HelpTopic(
+    key="materials",
+    title="Need Materials",
+    what="Need Materials asks the office for material for this job.",
+    do="Pick the material from the list or type it, enter how many and the unit, and when you need it. Add a note "
+       "or photo if it helps, then Send to the office.",
+    next="The office approves it and asks the supplier. The status shows under My requests.",
+    surface=SURFACE_FIELD,
+)
+FIELD_DELIVERY = HelpTopic(
+    key="delivery",
+    title="Confirm Delivery",
+    what="Confirm Delivery records what actually arrived on site for an order.",
+    do="Choose the order, then Received, Short or Damaged. Count what arrived on each line, add a note and photos "
+       "for anything missing or damaged, and save.",
+    next="Anything short or damaged goes to the office to sort out with the supplier.",
+    surface=SURFACE_FIELD,
+)
+FIELD_JOB_UPDATE = HelpTopic(
+    key="job_update",
+    title="Job Update",
+    what="Job Update is the day's short record for this job. What CalibraytAI already knows is filled in.",
+    do="Check the facts, then answer: what was completed, any problems or delays, anything needed tomorrow. Save.",
+    next="It is kept on the job for the office. Problems go to the office's list.",
+    surface=SURFACE_FIELD,
+)
+
 FIELD_TOPICS: dict[str, HelpTopic] = {
     topic.key: topic
     for topic in (
+        FIELD_RECEIPT,
+        FIELD_MATERIALS,
+        FIELD_DELIVERY,
+        FIELD_JOB_UPDATE,
         FIELD_TODAY,
         FIELD_WEEK,
         FIELD_MONTH,

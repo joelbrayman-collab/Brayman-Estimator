@@ -1,0 +1,30 @@
+{% extends "field/base.html" %}
+{% block title %}Confirm Delivery — CalibraytAI{% endblock %}
+{% block field_page %}deliveries{% endblock %}
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("delivery")) }}
+<section class="field-panel" data-field-deliveries-page="{{ project.id }}">
+    <h1>Confirm Delivery</h1>
+    <p class="field-project-name">{{ project.name }}</p>
+    {% if rows %}
+    <ul class="field-status-list">
+        {% for r in rows %}
+        <li data-field-order="{{ r.order.id }}"><a class="field-btn" href="{{ url_for('field.delivery_confirm', project_id=project.id, order_id=r.order.id) }}">{{ r.supplier }} · {{ r.order.number }}{% if r.when %} · {{ r.when.strftime('%a %b') }} {{ r.when.day }}{% endif %}</a>
+            <span class="field-muted">{{ r.lines }} line{{ '' if r.lines == 1 else 's' }}</span> <span class="field-status-tag">{{ r.state }}</span></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No open order for this job. Deliveries show here once the office has ordered.</p>
+    {% endif %}
+</section>
+{% if recent %}
+<section class="field-panel">
+    <h2>Recorded here</h2>
+    <ul class="field-status-list">
+        {% for c in recent %}<li>{{ c.order.number }} · {{ c.outcome_label }} · {{ c.confirmed_by_name }} · {{ c.confirmed_at|local_time("%a %b %d %H:%M") }}{% if c.exception_status == 'OPEN' %} <span class="field-status-tag">With the office</span>{% elif c.exception_status == 'RESOLVED' %} <span class="field-status-tag">Sorted out</span>{% endif %}</li>{% endfor %}
+    </ul>
+</section>
+{% endif %}
+<a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+{% endblock %}

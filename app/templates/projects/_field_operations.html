@@ -1,0 +1,44 @@
+{# Project Hub: what Field sent for this job (Magnificent Seven, 25 Oct 2026). Each row opens its working screen. #}
+<article class="panel panel-wide" id="hub-field-operations" data-hub-field-operations>
+    <div class="panel-header">
+        <h2>From the field</h2>
+        <a href="{{ url_for('operations.job_updates', project_id=project.id) }}">Job updates</a>
+    </div>
+    <h3 id="hub-receipts">Receipts</h3>
+    {% if field_ops.receipts %}
+    <table class="data-table" data-hub-receipts>
+        <thead><tr><th>Receipt</th><th>Date</th><th>Supplier</th><th>Amount</th><th>Uploaded by</th><th>Review</th><th>QuickBooks</th></tr></thead>
+        <tbody>{% for r in field_ops.receipts %}
+            <tr data-hub-receipt="{{ r.id }}">
+                <td><a href="{{ url_for('accounting.receipt_detail', receipt_id=r.id) }}">{{ r.number }}</a>{% if r.image_original_id %} · <a href="{{ url_for('api_v1.field_event_original_display', project_id=r.project_id, event_id=r.field_event_id, original_id=r.image_original_id) }}" target="_blank" rel="noopener">image</a>{% endif %}</td>
+                <td>{{ r.receipt_date.isoformat() if r.receipt_date else r.submitted_at|local_time("%Y-%m-%d") }}</td>
+                <td>{{ r.shown_supplier or '—' }}</td>
+                <td>{{ "${:,.2f}".format(r.shown_amount) if r.shown_amount is not none else '—' }}</td>
+                <td>{{ r.submitted_by_name }}</td>
+                <td>{{ r.status_label }}</td>
+                <td>{{ r.qbo_transfer.status_label if r.qbo_transfer else '—' }}</td>
+            </tr>{% endfor %}</tbody>
+    </table>
+    {% else %}<p class="muted-copy">No receipts for this job yet. Crews add them in Field → Add Receipt.</p>{% endif %}
+    <h3>Material requests</h3>
+    {% if field_ops.materials %}
+    <ul data-hub-material-requests>{% for r in field_ops.materials %}<li><a href="{{ url_for('operations.material_request', request_id=r.id) }}">{{ r.number }}</a> · {{ r.order_quantity|qty }} {{ unit_label(r.order_unit) }} {{ r.description }} · {{ r.requested_by_name }} · {{ field_ops.material_label(r) }}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">None.</p>{% endif %}
+    <h3>Extra work reported</h3>
+    {% if field_ops.extra_work %}
+    <ul data-hub-extra-work>{% for r in field_ops.extra_work %}<li><a href="{{ url_for('operations.extra_work_report', report_id=r.id) }}">{{ r.number }}</a> · {{ r.description[:100] }}{% if r.requested_by %} · asked for by {{ r.requested_by }}{% endif %} · {{ field_ops.extra_label(r) }}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">None.</p>{% endif %}
+    <h3>Deliveries recorded on site</h3>
+    {% if field_ops.deliveries %}
+    <ul data-hub-deliveries>{% for c in field_ops.deliveries %}<li><a href="{{ url_for('operations.delivery', confirmation_id=c.id) }}">{{ c.order.number }}</a> · {{ c.outcome_label }} · {{ c.confirmed_by_name }} · {{ c.confirmed_at|local_time("%Y-%m-%d %H:%M") }}{% if c.exception_status == 'OPEN' %} · open problem{% elif c.exception_status == 'RESOLVED' %} · resolved{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">None.</p>{% endif %}
+    <h3>Job updates</h3>
+    {% if field_ops.job_updates %}
+    <ul data-hub-job-updates>{% for s in field_ops.job_updates %}<li><a href="{{ url_for('operations.job_update', summary_id=s.id) }}">{{ s.work_date.isoformat() }}</a> · {{ s.submitted_by_name }}: {{ (s.completed_text or '—')[:90] }}{% if s.problems_text %} · problem: {{ s.problems_text[:90] }}{% endif %}{% if s.problem_status == 'OPEN' %} · <strong>open</strong>{% elif s.problem_status == 'RESOLVED' %} · handled{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="muted-copy">None yet. Crews send them in Field → Job Update.</p>{% endif %}
+    {% if field_ops.history %}
+    <details><summary>History ({{ field_ops.history|length }})</summary>
+        <ul class="muted-copy" data-hub-field-history>{% for h in field_ops.history %}<li>{{ h.occurred_at|local_time("%Y-%m-%d %H:%M") }} · {{ h.actor_name }} · {{ h.record_type|replace('_',' ')|lower }} {{ h.event|replace('_',' ')|lower }}{% if h.detail %} — {{ h.detail[:160] }}{% endif %}</li>{% endfor %}</ul>
+    </details>
+    {% endif %}
+</article>

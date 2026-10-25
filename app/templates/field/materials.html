@@ -1,0 +1,88 @@
+{% extends "field/base.html" %}
+{% block title %}Need Materials — CalibraytAI<script>
+(function () {
+  var pick = document.getElementById("mr-material"), unit = document.getElementById("mr-unit");
+  if (!pick || !unit) return;
+  pick.addEventListener("change", function () {
+    var opt = pick.options[pick.selectedIndex];
+    var uom = opt ? opt.getAttribute("data-uom") : "";
+    if (uom) unit.value = uom;
+  });
+})();
+</script>
+{% endblock %}
+{% block field_page %}materials<script>
+(function () {
+  var pick = document.getElementById("mr-material"), unit = document.getElementById("mr-unit");
+  if (!pick || !unit) return;
+  pick.addEventListener("change", function () {
+    var opt = pick.options[pick.selectedIndex];
+    var uom = opt ? opt.getAttribute("data-uom") : "";
+    if (uom) unit.value = uom;
+  });
+})();
+</script>
+{% endblock %}
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("materials")) }}
+<section class="field-panel" data-field-materials="{{ project.id }}">
+    <h1>Need Materials</h1>
+    <p class="field-project-name">{{ project.name }}</p>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('field.materials', project_id=project.id) }}" data-field-request-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="client_request_uuid" data-client-uuid>
+        <label class="field-label" for="mr-material">Material from the list</label>
+        <select id="mr-material" name="canonical_material_id" class="field-select">
+            <option value="">— or type it below —</option>
+            {% for m in catalogue %}<option value="{{ m.id }}" data-uom="{{ m.canonical_uom }}">{{ m.display_name }}</option>{% endfor %}
+        </select>
+        <label class="field-label" for="mr-description">What you need</label>
+        <input id="mr-description" name="description" class="field-input" type="text" maxlength="300" placeholder="e.g. 3 in deck screws, 5 lb box">
+        <div class="field-row">
+            <label class="field-label">How many
+                <input name="quantity" class="field-input" type="text" inputmode="decimal" required placeholder="10">
+            </label>
+            <label class="field-label">Unit
+                <select name="unit" class="field-select" required id="mr-unit">
+                    {% for value, label in units %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                </select>
+            </label>
+        </div>
+        <label class="field-label">Needed by
+            <input name="needed_by" class="field-input" type="date" min="{{ today }}">
+        </label>
+        <label class="field-label">Note (optional)
+            <textarea name="note" class="field-textarea" rows="2" maxlength="2000"></textarea>
+        </label>
+        <label class="field-btn field-btn-secondary field-file-btn">Add a photo (optional)
+            <input name="photos" type="file" accept="image/*" capture="environment" hidden multiple>
+        </label>
+        <button type="submit" class="field-btn field-btn-primary" data-send-request>Send to the office</button>
+    </form>
+</section>
+{% if mine %}
+<section class="field-panel">
+    <h2>My requests for this job</h2>
+    <ul class="field-status-list">
+        {% for r in mine %}
+        <li data-material-request="{{ r.id }}">{{ r.number }} · {{ r.quantity|qty }} {{ unit_label(r.unit) }} {{ r.description }}{% if r.needed_by %} · by {{ r.needed_by.strftime('%a %b') }} {{ r.needed_by.day }}{% endif %}<br>
+            <span class="field-status-tag">{{ status_label(r) }}</span></li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+<a class="field-btn field-btn-ghost" href="{{ url_for('field.my_requests') }}">All my requests</a>
+<a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+<script>
+(function () {
+  var pick = document.getElementById("mr-material"), unit = document.getElementById("mr-unit");
+  if (!pick || !unit) return;
+  pick.addEventListener("change", function () {
+    var opt = pick.options[pick.selectedIndex];
+    var uom = opt ? opt.getAttribute("data-uom") : "";
+    if (uom) unit.value = uom;
+  });
+})();
+</script>
+{% endblock %}

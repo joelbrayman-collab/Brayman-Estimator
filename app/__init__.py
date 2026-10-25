@@ -647,6 +647,14 @@ def create_app(config=None):
     app.register_blueprint(sms_notifications_bp)
     app.cli.add_command(sms_cli)
     start_sweeper(app)
+    # The Magnificent Seven everyday operations (25 Oct 2026): office working screens, end-of-day reminders and
+    # QuickBooks Online receipt transfers ("flask reminders send-due", "flask quickbooks-online send-waiting").
+    from app.routes.operations import operations_bp
+    from app.cli.operations import quickbooks_online_cli, reminders_cli
+
+    app.register_blueprint(operations_bp)
+    app.cli.add_command(reminders_cli)
+    app.cli.add_command(quickbooks_online_cli)
 
     @app.route("/field-sw.js")
     def field_service_worker():

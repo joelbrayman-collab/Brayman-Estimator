@@ -1,0 +1,23 @@
+{% extends "field/base.html" %}
+{% block title %}{{ title }} — CalibraytAI{% endblock %}
+{% block field_page %}choose-job{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-choose-job="{{ request.view_args.action }}">
+    <h1>{{ title }}: which job?</h1>
+    {% if projects %}
+    <ul class="field-status-list">
+        {% for p in projects %}
+        <li>
+            <form method="post" action="{{ url_for('field.project_confirm', project_id=p.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="field-btn{% if current_id == p.id %} field-btn-primary{% endif %}" name="next" value="{{ request.view_args.action }}" data-choose-project="{{ p.id }}">{{ p.name }}{% if p.project_number %} · {{ p.project_number }}{% endif %}</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>{{ contractor_copy.FIELD_NO_PROJECTS }}</p>
+    {% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

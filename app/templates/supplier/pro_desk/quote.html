@@ -121,7 +121,7 @@
         <tbody>{% for r in p.rows %}
         <tr data-price-line="{{ r.code }}" data-price-status="{{ r.price_status }}">
             <td><strong>{{ r.item }}</strong><span class="pd-basis">{{ r.qty if r.qty is not none else "—" }} {{ r.uom }}</span></td>
-            <td>{% if r.sku %}{{ r.sku }} · {{ r.product_description }}<span class="pd-basis">{{ r.factor }} {{ r.sales_unit }} per {{ r.uom }}{% if r.discount_rule %} · {{ r.discount_rule }}{% endif %}{% if r.availability %} · {{ r.availability|replace("_", " ")|lower }}{% endif %}{% if r.substitution %} · substitution{% endif %}</span>{% elif r.reason %}<span class="muted-copy">Left out: {{ r.reason }}</span>{% else %}—{% endif %}
+            <td>{% if r.sku %}{{ r.sku }} · {{ r.product_description }}<span class="pd-basis">{{ r.factor }} {{ r.sales_unit }} per {{ r.uom }}{% if r.discount_rule %} · {{ r.discount_rule }}{% endif %}{% if r.price_status == "PRICED" %} · <span data-availability="{{ r.availability or 'NOT_CONFIRMED' }}">{{ r.availability|availability_label }}</span>{% endif %}{% if r.substitution %} · substitution{% endif %}</span>{% elif r.reason %}<span class="muted-copy">Left out: {{ r.reason }}</span>{% else %}—{% endif %}
             {% if draft and r.price_status not in ("BY_DESIGN",) %}
                 {% if r.matches|length > 1 %}<form method="post" action="{{ url_for('supplier_pro_desk.line', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="code" value="{{ r.code }}"><select name="product_id" aria-label="Product for {{ r.item }}">{% for m in r.matches %}<option value="{{ m.product_id }}" {{ "selected" if m.product_id == r.product_id }}>{{ m.sku }} · {{ m.description }}</option>{% endfor %}</select><button class="button-quiet" type="submit">Use</button></form>{% endif %}
                 {% if r.qty is not none %}<details><summary class="muted-copy">Match a product</summary>
@@ -199,6 +199,14 @@
         {% else %}<form method="post" action="{{ url_for('supplier_pro_desk.order_ready', supplier_id=supplier.id, quote_id=q.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p><button type="submit" class="button" data-order-ready="true">Prepare the order for entry</button></p></form>{% endif %}
         <p class="muted-copy">For entry into {{ brand_for(supplier).name }}'s own sales system. CalibraytAI does not connect to it, place the order or take payment.</p>
     {% else %}<p class="muted-copy">Available once the customer accepts.</p>{% endif %}
+    {% set ful = requested_fulfilment(q) %}
+    <h3 class="pd-group">Pickup or delivery</h3>
+    <p data-fulfilment="{{ ful.method if ful else 'NOT_RECORDED' }}">Customer asked for: <strong>{{ ful.label if ful else "Pickup or delivery not recorded" }}</strong>{% if ful %} <span class="muted-copy">(recorded by {{ ful.recorded_by }})</span>{% endif %} · Arranged in the store's own system; CalibraytAI does not track the pickup or the delivery.</p>
+    {% if q.status in ("DRAFT", "ISSUED", "ACCEPTED") %}
+    <form method="post" action="{{ url_for('supplier_pro_desk.fulfilment', supplier_id=supplier.id, quote_id=q.id) }}" class="pd-inline" data-fulfilment-form="true"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <select name="fulfilment" aria-label="Pickup or delivery"><option value="" {{ "selected" if not ful }}>Not recorded</option><option value="PICKUP" {{ "selected" if ful and ful.method == "PICKUP" }}>Pickup at the store</option><option value="DELIVERY" {{ "selected" if ful and ful.method == "DELIVERY" }}>Delivery</option></select>
+        <button type="submit" class="button-quiet">Record</button></form>
+    {% endif %}
 </section>
 
 <section class="form-panel" data-quote-history="true">

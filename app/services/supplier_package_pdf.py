@@ -116,7 +116,9 @@ def generate_supplier_package_pdf(package) -> BytesIO:
                 else ""
             )
             price = f"{line.price_currency} {line.price_amount} {line.requirement_uom} {captured}".strip()
-        avail = line.availability_status or "—"
+        from app.presentation.availability import availability_label
+
+        avail = availability_label(line.availability_status)
         pick = "—"
         if line.sales_qty is not None:
             pick = f"{line.sales_qty} {line.sales_uom or ''}".strip()

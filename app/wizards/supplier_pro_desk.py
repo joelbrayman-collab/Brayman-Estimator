@@ -11,7 +11,9 @@ Two kinds of transaction, one wizard:
 
 Every record is read through the supplier-scoped Supplier Hub and PRO Desk services (another supplier's request
 or quotation is Not found). Prices are the supplier's own price file; availability is shown only where the
-supplier's price file carries it. No point-of-sale, inventory or rewards system is assumed: CalibraytAI has no
+supplier's price file carries it, otherwise "Availability not confirmed" (decision 3, 24 Oct 2026). Pickup and
+delivery are arranged in the store's own system (decision 2): the wizard keeps what was asked for and the real
+order status, and shows a delivery as done only when it is marked delivered in CalibraytAI. No point-of-sale, inventory or rewards system is assumed: CalibraytAI has no
 configured rewards or Pro Account points program, so the wizard has no points step.
 """
 
@@ -234,25 +236,30 @@ def _quantities(ctx):
 
 # ------------------------------------------------------------------------------------------------ 5 availability
 def _availability(ctx):
+    """Decision 3 (24 Oct 2026): availability only from the supplier's own data; otherwise exactly
+    "Availability not confirmed". No quantity is ever shown and no stock is implied."""
+    from app.presentation.availability import AVAILABILITY_NOT_CONFIRMED, availability_confirmed, availability_label
+
     blocked = _need_record(ctx)
     if blocked:
         return blocked
     if is_request(ctx):
-        return StepView(NOT_NEEDED, "Availability is not part of the contractor request form",
+        return StepView(NOT_NEEDED, f"{AVAILABILITY_NOT_CONFIRMED} — the contractor request form does not ask for it",
                         note="Tell the contractor in the quote notes if something is a special order.")
     rows = [r for r in _priced(ctx)["rows"] if r.get("price_status") == "PRICED"]
-    known = [r for r in rows if (r.get("availability") or "UNKNOWN") != "UNKNOWN"]
-    labels = {"IN_STOCK": "in stock", "LIMITED": "limited", "SPECIAL_ORDER": "special order"}
-    items = [Item(f"{r.get('sku')} {r.get('product_description', '')}", INFO if r["availability"] == "IN_STOCK" else TODO,
-                  labels.get(r["availability"], r["availability"].lower())) for r in known]
+    known = [r for r in rows if availability_confirmed(r.get("availability"))]
+    items = [Item(f"{r.get('sku')} {r.get('product_description', '')}".strip(),
+                  INFO if availability_confirmed(r.get("availability")) else TODO,
+                  availability_label(r.get("availability"))) for r in rows]
     if not known:
-        return StepView(INFO, "Your price file does not carry availability",
-                        note="Check stock in your own system. Add an availability column to the price file to show it here.",
+        return StepView(INFO, AVAILABILITY_NOT_CONFIRMED, items=items,
+                        note="Your price file gives no availability for these products. Check stock in your own "
+                             "system; an availability column in the price file shows it here.",
                         actions=[Action("Price file", url_for("supplier_pro_desk.prices", supplier_id=_sid(ctx)),
                                         key="prices")])
-    short = sum(1 for r in known if r["availability"] != "IN_STOCK")
-    return StepView(INFO, f"{len(known)} of {len(rows)} priced lines have availability; {short} not in stock",
-                    items=items)
+    return StepView(INFO, f"{len(known)} of {len(rows)} priced lines have availability from your price file",
+                    items=items, note="As your price file states it, not live inventory. Every other line: "
+                                      + AVAILABILITY_NOT_CONFIRMED + ".")
 
 
 # ------------------------------------------------------------------------------------------------ 6 pricing & terms
@@ -414,6 +421,37 @@ def _convert(ctx):
 
 
 # ------------------------------------------------------------------------------------------------ 11 delivery / pickup
+# Decision 2 (24 Oct 2026): fulfilment stays in the store's own systems. The wizard shows what was asked for (pickup
+# or delivery), the order's real status, and "Arranged in the store's own system". It never shows a pickup or a
+# delivery as done unless a delivery is actually recorded in CalibraytAI ("marked delivered", with its date and side).
+def _arranged(status: str) -> str:
+    from app.services.supplier_pro_desk import FULFILMENT_ARRANGED
+
+    return f"{FULFILMENT_ARRANGED} · {status}"
+
+
+def _recorded_delivery(order):
+    """The recorded "marked delivered" (date and side), or None. Status alone is not a confirmation."""
+    from app.services.supplier_hub import order_closure
+
+    closure = order_closure(order) if order is not None and order.status == "DELIVERED" else None
+    if closure and closure.get("day") and closure.get("side"):
+        return closure
+    return None
+
+
+def _requested_items(ctx, order=None):
+    if is_request(ctx):
+        shared = ctx.share.shared_json or {}
+        where = order.delivery_address if order is not None else (shared.get("delivery_town") or "the job site")
+        return [Item("Requested", INFO, f"Delivery to the job site ({where})")]
+    from app.services.supplier_pro_desk import FULFILMENT_NOT_RECORDED, requested_fulfilment
+
+    chosen = requested_fulfilment(current_quote(ctx))
+    return [Item("Requested", INFO if chosen else TODO,
+                 f"{chosen['label']} (recorded by {chosen['recorded_by']})" if chosen else FULFILMENT_NOT_RECORDED)]
+
+
 def _delivery(ctx):
     blocked = _need_record(ctx)
     if blocked:
@@ -422,26 +460,58 @@ def _delivery(ctx):
         from app.services.supplier_hub import current_schedule, pending_change
 
         order = _order(ctx)
+        items = _requested_items(ctx, order)
         if order is None or order.status in ("PLACED", "PROBLEM"):
-            return StepView(WAITING, "After the order is confirmed")
+            return StepView(WAITING, _arranged("after the order is confirmed"), items=items)
         if order.status == "CANCELLED":
-            return StepView(NOT_NEEDED, "Order cancelled")
+            return StepView(NOT_NEEDED, _arranged("order cancelled"), items=items)
         schedule = current_schedule(order)
         change = pending_change(order)
         when = schedule["date"].strftime("%b %d, %Y") if schedule.get("date") else "date not set"
         if order.status == "DELIVERED":
-            return StepView(DONE, f"Delivered ({when})")
+            recorded = _recorded_delivery(order)
+            if recorded:
+                return StepView(DONE, _arranged(f"marked delivered {recorded['day']:%b %d, %Y} "
+                                                f"by {recorded.get('by') or ''} ({recorded['side'].lower()})"),
+                                items=items)
+            return StepView(INFO, _arranged("no delivery confirmation is recorded in CalibraytAI"), items=items)
+        items.append(Item("Agreed delivery", INFO, when))
         if change is not None and change.requested_by_side == "CONTRACTOR":
-            return StepView(TODO, f"Delivery {when}: the contractor asked to change it",
+            return StepView(TODO, _arranged(f"delivery {when}: the contractor asked to change it"), items=items,
                             actions=[Action("Answer the delivery change", _request_page(ctx), primary=True,
                                             key="answer-change")], missing=["Answer the contractor's delivery change."])
-        return StepView(WAITING, f"Delivery booked for {when}" + (" (your change is waiting)" if change else ""),
+        return StepView(WAITING, _arranged(f"delivery booked for {when}, not marked delivered"
+                                           + (" (your change is waiting)" if change else "")), items=items,
                         actions=[Action("Deliveries", url_for("supplier_portal.supplier_deliveries", supplier_id=_sid(ctx)),
                                         key="deliveries")])
+    from app.services.supplier_pro_desk import requested_fulfilment
+
     q = current_quote(ctx)
-    return StepView(NOT_NEEDED if not q.order_ready_at else INFO,
-                    "Pickup or delivery is arranged in your own sales system",
-                    note="CalibraytAI gives you the order package; it does not track walk-in pickups or deliveries.")
+    chosen = requested_fulfilment(q)
+    status = ("order package ready; the pickup or delivery is not tracked in CalibraytAI" if q.order_ready_at
+              else "after the order package is made")
+    form = {}
+    if q.status in ("DRAFT", "ISSUED", "ACCEPTED"):
+        form = {"form": "supplier_fulfilment.html", "form_ctx": {"current": chosen["method"] if chosen else ""}}
+    return StepView(INFO if q.order_ready_at else NOT_NEEDED, _arranged(status), items=_requested_items(ctx),
+                    note="CalibraytAI keeps the order package and what the customer asked for; the pickup or delivery "
+                         "itself is arranged and completed in your own system.", **form)
+
+
+def _save_fulfilment(ctx, form):
+    from app.services.supplier_pro_desk import FULFILMENT_NOT_RECORDED, ProDeskError, record_fulfilment, requested_fulfilment
+    from app.wizards.service import WizardError
+
+    if is_request(ctx) or ctx.quote is None:
+        raise WizardError("A contractor's order is always a delivery to the job site.")
+    q = current_quote(ctx)
+    try:
+        changed = record_fulfilment(q, method=form.get("fulfilment", ""), user=ctx.user)
+    except ProDeskError as exc:
+        raise WizardError(str(exc)) from exc
+    chosen = requested_fulfilment(q)
+    label = chosen["label"] if chosen else FULFILMENT_NOT_RECORDED
+    return f"Recorded: {label}." if changed else f"Unchanged: {label}."
 
 
 # ------------------------------------------------------------------------------------------------ 12 fulfilment & close
@@ -453,16 +523,26 @@ def _close(ctx):
         from app.services.supplier_hub import order_closure
 
         order = _order(ctx)
-        closure = order_closure(order)
-        if closure is not None:
-            text = (f"delivered {closure['day']:%b %d}" if closure.get("day") else closure["kind"].lower())
-            return StepView(DONE, f"Order {order.number} {text}; the request and order history are kept",
-                            items=[Item("Recorded by", INFO, f"{closure.get('by') or ''} ({(closure.get('side') or '').lower()})")])
+        items = _requested_items(ctx, order)
+        if order is not None and order.status == "CANCELLED":
+            closure = order_closure(order) or {}
+            return StepView(DONE, f"Order {order.number} cancelled; the request and order history are kept",
+                            items=items + [Item("Cancelled by", INFO, closure.get("by") or "")])
+        recorded = _recorded_delivery(order)
+        if recorded:
+            return StepView(DONE, _arranged(f"order {order.number} marked delivered {recorded['day']:%b %d}; "
+                                            "the request and order history are kept"),
+                            items=items + [Item("Recorded by", INFO, f"{recorded.get('by') or ''} "
+                                                                     f"({recorded['side'].lower()})")])
+        if order is not None and order.status == "DELIVERED":
+            return StepView(INFO, _arranged(f"order {order.number}: no delivery confirmation is recorded"),
+                            items=items)
         if order is not None and order.status == "CONFIRMED":
-            return StepView(TODO, "Mark the order delivered when it is", missing=["Mark the order delivered."],
+            return StepView(TODO, _arranged("confirmed, not marked delivered"), items=items,
+                            missing=["Mark the order delivered when it is."],
                             actions=[Action("Mark delivered", _request_page(ctx), primary=True,
                                             key="mark-delivered")])
-        return StepView(WAITING, "After the order is confirmed and delivered")
+        return StepView(WAITING, _arranged("after the order is confirmed and delivered"), items=items)
     q = current_quote(ctx)
     from app.services.supplier_pro_desk import order_package
 
@@ -471,9 +551,14 @@ def _close(ctx):
     if not q.order_ready_at:
         return StepView(WAITING if q.status in ("ISSUED", "ACCEPTED") else TODO, "After the order package is made")
     package = order_package(q)
-    items = [Item(r.get("item", ""), TODO, "not included — follow up") for r in package["not_included"]]
-    return StepView(DONE, f"{len(package['lines'])} line(s) in the order; {len(package['not_included'])} not included",
-                    items=items, note="The quotation, its revisions and the customer's answer are kept.")
+    items = _requested_items(ctx)
+    items += [Item(r.get("item", ""), TODO, "not included — follow up") for r in package["not_included"]]
+    # A walk-in order is completed in the store's own system: never shown here as picked up or delivered.
+    return StepView(INFO, _arranged(f"order package ready ({len(package['lines'])} line(s); "
+                                    f"{len(package['not_included'])} not included) — pickup or delivery not "
+                                    "confirmed in CalibraytAI"),
+                    items=items, note="The quotation, its revisions, the customer's answer and the order package are "
+                                      "kept. Complete the sale, the pickup or the delivery in your own system.")
 
 
 STEPS = (
@@ -489,8 +574,11 @@ STEPS = (
          "Next, quantities and products.", _documents),
     Step("quantities", "Quantities and products", "Each line matched to one of your products.",
          "Match each line to your SKU. Nothing is filled in for you.", "Next, availability.", _quantities),
-    Step("availability", "Availability", "Whether the products are in stock, where your price file says so.",
-         "Check what is short and say so on the quote.", "Next, your prices and terms.", _availability,
+    Step("availability", "Availability",
+         "Availability only as your own price file states it; every other product reads “Availability not "
+         "confirmed”. CalibraytAI holds no stock figures.",
+         "Check availability in your own system and say so on the quote.", "Next, your prices and terms.",
+         _availability,
          required=False),
     Step("pricing", "Your pricing and customer terms", "Your own price file, discounts, delivery and tax.",
          "Price every line (or leave it out with a reason) and set delivery and discount.",
@@ -507,10 +595,16 @@ STEPS = (
     Step("order", "Convert to an order", "An accepted quotation becomes an order.",
          "Confirm the contractor's order with a date, or make the order package for your sales system.",
          "Next, pickup or delivery.", _convert),
-    Step("delivery", "Pickup or delivery", "When the materials go out.",
-         "Keep the delivery date; answer any delivery change.", "Last, fulfilment.", _delivery),
-    Step("close", "Fulfilment and history", "What was delivered, what is outstanding, and the kept history.",
-         "Mark the order delivered; follow up anything not included.", "The transaction is closed and kept.", _close),
+    Step("delivery", "Pickup or delivery",
+         "What the customer asked for (pickup or delivery) and the order's real status. Arranged in the store's own "
+         "system.",
+         "Record pickup or delivery for a walk-in quotation; keep a contractor's delivery date and answer any change.",
+         "Last, fulfilment.", _delivery, handle=_save_fulfilment),
+    Step("close", "Fulfilment and history",
+         "What is recorded as delivered, what is outstanding, and the kept history. A pickup or delivery is complete "
+         "only when it is marked delivered in CalibraytAI; a walk-in order is completed in your own system.",
+         "Mark a contractor's order delivered when it is; follow up anything not included.",
+         "The transaction is closed and kept.", _close),
 )
 
 

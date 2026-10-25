@@ -12,6 +12,11 @@ added when the Training Centre loads its content (app/training/content.py _load)
 - Supplier module 11, "The Supplier Pro Desk wizard" — a contractor request and a Quick Quote, step by step, for
   supplier owners, supplier administrators and PRO Desk staff.
 
+Joel's decisions of 24 Oct 2026 are taught here: the optional Project Lead (Start a New Project step 10, Manage a
+Project step 4; it gives no access), availability only from the supplier's own price file (otherwise "Availability
+not confirmed"), and pickup or delivery "Arranged in the store's own system", never shown as done without a recorded
+delivery.
+
 These lessons describe the wizards in the release that ships them; they go live on the training site with that
 release, never before. Every picture is a real screen captured by tools/training/capture_wizard_shots.mjs
 (app/static/training/shots/w-*.png, from the synthetic wizard walk).
@@ -107,6 +112,15 @@ C15 = Module(
                      expect="'14 of 14 stages decided'. Nothing is chosen for you.",
                      if_wrong="Next refused on step 9? The list names the stages still undecided.",
                      shot="w-wizard1-stages-desktop.png", endpoint="guided.scope"),
+                Step(title="Project Lead and first dates", app=O, where="Step 10",
+                     do="Choose the Project Lead from your company's people and press Save Project Lead (optional); "
+                        "add a site visit or meeting if you have one",
+                     enter="Project Lead: Ben (or the person who looks after the job)",
+                     expect="'Project Lead: <name>'. The Project Lead is a name on the project only: it gives no "
+                            "access and does not assign scheduled work or appointments. Unassigned is fine.",
+                     if_wrong="Person not in the list? Only active people of your company are offered "
+                              "(People & Access).",
+                     shot="w-wizard1-lead-desktop.png", endpoint="wizards.step"),
                 Step(title="Review and continue", app=O, where="Steps 11 and 12",
                      do="Tick the confirmation, then press Continue into Guided Estimating",
                      expect="Guided Estimating opens on the same project.",
@@ -114,7 +128,7 @@ C15 = Module(
                      shot="w-wizard1-continue-desktop.png", endpoint="wizards.step"),
             ),
             exercise=f"Set up '{HOME} <initials>' for {CUSTOMER} with the wizard, as a New Home, General Contractor, "
-                     "with the fourteen stages decided." + INITIALS,
+                     "with the fourteen stages decided and yourself as Project Lead." + INITIALS,
         ),
         Lesson(
             key="c15-estimating-wizard", title="Guided Estimating with the wizard",
@@ -161,6 +175,20 @@ C15 = Module(
                      expect="'1 of 5 work items scheduled', counting up as you schedule.",
                      if_wrong="'The work plan is not built'? Build it from the accepted estimate first.",
                      shot="w-wizard3-schedule-desktop.png", endpoint="schedule.new_item"),
+                Step(title="Project Lead and people", app=O, where="Step 4",
+                     do="Check the Project Lead (change it with Save Project Lead), then assign a person or crew to "
+                        "each scheduled item",
+                     expect="The Project Lead is listed first; it never counts as an assignment and gives no access. "
+                            "The same Project Lead shows on the Project Hub and on the project's card in the "
+                            "Company Calendar.",
+                     if_wrong="'0 of N scheduled items assigned'? Open each item and assign a person or crew.",
+                     shot="w-wizard3-people-desktop.png", endpoint="wizards.step"),
+                Step(title="The Project Lead on the Project Hub", app=O, where="The project's page → Project",
+                     do="Read Project Lead beside the client; press Change to choose someone else or Unassigned",
+                     expect="The Project Lead's name (or Unassigned). The same name is on the project's card in "
+                            "the Company Calendar.",
+                     if_wrong="No Change link? Open the project from Projects.",
+                     shot="w-hub-project-lead-desktop.png", endpoint="projects.view_project"),
                 Step(title="People, texts and QuickBooks Time", app=O, where="Steps 4 and 9",
                      do="Assign a person or crew to each scheduled item",
                      expect="The steps also say whether schedule texts and QuickBooks Time are switched on.",
@@ -253,6 +281,14 @@ S11 = Module(
             what="Take the quotation to the order package with the wizard.",
             why="Each step reads the quotation itself: nothing is priced, issued or accepted for you.",
             steps=(
+                Step(title="Availability", app=SUP, where="Step 5",
+                     do="Read the Availability step",
+                     expect="Only what your own price file says (for example 'In stock (supplier-reported)'); every "
+                            "other product reads 'Availability not confirmed'. CalibraytAI never shows a quantity "
+                            "on hand.",
+                     if_wrong="Everything 'Availability not confirmed'? Your price file has no availability column; "
+                              "check stock in your own system.",
+                     shot="w-wizard4-availability-desktop.png"),
                 Step(title="Your prices and terms", app=SUP, where="Step 6",
                      do="Open Price review and terms; price or leave out each line",
                      expect="'N line(s) priced from your price file' and the total. No points or rewards are "
@@ -264,11 +300,18 @@ S11 = Module(
                      expect="Compact, nothing scrolls sideways.",
                      if_wrong="Turn the phone upright and reload.",
                      shot="w-wizard4-pricing-phone.png"),
-                Step(title="Issue, answer, order", app=SUP, where="Steps 8 to 12",
+                Step(title="Issue, answer, order", app=SUP, where="Steps 8 to 10",
                      do="Issue the quotation, record the customer's answer, then press Make the order package",
-                     expect="Each step turns Done; the last shows the lines in the order and anything not included.",
+                     expect="Each step turns Done when the quotation says so.",
                      if_wrong="Waiting? The customer has not answered yet; Save & Exit and come back.",
                      shot="w-wizard4-close-desktop.png"),
+                Step(title="Pickup or delivery", app=SUP, where="Steps 11 and 12",
+                     do="Record what the customer asked for (Pickup at the store or Delivery) and press Record",
+                     expect="'Arranged in the store's own system' with the real status: the order package is ready; "
+                            "the pickup or delivery is completed in your own system and is never shown as done here.",
+                     if_wrong="Not recorded? Choose pickup or delivery on the step, or on the quotation's order "
+                              "section.",
+                     shot="w-wizard4-delivery-desktop.png"),
             ),
             exercise="Take your Quick Quote to the order package with the wizard.",
         ),
@@ -284,7 +327,9 @@ S11 = Module(
                      shot="w-wizard4-open-desktop.png"),
                 Step(title="Order and delivery", app=SUP, where="Steps 10 to 12",
                      do="When the contractor orders, press Confirm the order; mark it delivered when it is",
-                     expect="'Only the contractor places the order' until they do; then Confirm, then Delivered.",
+                     expect="'Only the contractor places the order' until they do; then Confirm. A contractor's "
+                            "order is a delivery to the job site, arranged in the store's own system; it shows as "
+                            "delivered only after it is marked delivered (with the date).",
                      if_wrong="Delivery change waiting? Answer it on the request page.",
                      shot="w-wizard4-close-desktop.png"),
             ),
@@ -328,10 +373,13 @@ UAT_CASES: Tuple[UatCase, ...] = (
        "Back on step 12 with the same selling price and true gross margin as Review Pricing & Prepare Proposal."),
     _c("uat-c15-manage", "Manage a Project shows the real status", "Manage a Project on an accepted project",
        "Open Milestones and schedule, schedule one work item, open it again; open Progress, costs and outstanding work.",
-       "The count goes up by one; QuickBooks Time and schedule texts show whether they are switched on."),
+       "The count goes up by one; QuickBooks Time and schedule texts show whether they are switched on; the Project "
+       "Lead is shown on the people step and never counts as an assignment."),
     _s("uat-s11-quick", "Quick Quote to the order package", "Requests → Start Guided Wizard",
        "Make a Quick Quote, choose it in step 1, price it, issue it, record the answer and make the order package.",
-       "Each step turns Done from the quotation itself; the last lists the order lines."),
+       "Each step turns Done from the quotation itself; availability shows only from your price file (otherwise "
+       "'Availability not confirmed'); pickup or delivery reads 'Arranged in the store's own system' and is never "
+       "shown as done."),
     _s("uat-s11-privacy", "Only your own requests and quotations", "Wizard step 1",
        "Look at the requests and quotations offered.",
        "Only your store's own; nothing of another store's and none of the contractor's costs."),

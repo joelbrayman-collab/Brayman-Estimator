@@ -249,7 +249,7 @@
             <span class="muted-copy">{% if row.scheduled_start and row.scheduled_end %}{{ row.scheduled_start.isoformat() }} → {{ row.scheduled_end.isoformat() }}{% else %}{{ contractor_copy.SCHEDULE_UNSCHEDULED }}{% endif %} · {{ row.schedule_items|length }} work item{{ "s" if row.schedule_items|length != 1 }}</span>
             {% if project_conflicts %}<span class="cal-warning-count">{{ project_conflicts|length }} warning{{ "s" if project_conflicts|length != 1 }}</span>{% endif %}
         </summary>
-        <p><a href="{{ url_for('projects.view_project', id=row.project.id) }}#hub-schedule">Project</a></p>
+        <p><a href="{{ url_for('projects.view_project', id=row.project.id) }}#hub-schedule">Project</a> · <span class="muted-copy" data-calendar-project-lead>Project Lead: {{ project_lead_name(row.project) }}</span></p>
         <p class="muted-copy cal-bar-caption">When the work falls in this period</p>
         <div class="schedule-bar-track" aria-hidden="true">
             {% for bar in row.bars %}

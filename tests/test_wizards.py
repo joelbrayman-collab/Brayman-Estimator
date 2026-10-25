@@ -222,7 +222,10 @@ def test_return_to_accepts_a_wizard_step_and_nothing_else():
 
 
 # ====================================================================================== the one migration
-def test_the_migration_adds_exactly_the_two_wizard_tables_and_refuses_downgrade_with_rows(tmp_path):
+def test_the_migration_adds_exactly_the_two_wizard_tables_and_the_project_lead_column(tmp_path):
+    """w2z9r4d7k1m6 is the release's only migration: wizard_runs, wizard_run_events and the one nullable column
+    projects.project_lead_user_id (decision 1). Every existing table's other columns, indexes and rows are unchanged.
+    Downgrade refuses while a wizard table holds a row or any project has a Project Lead."""
     import sqlalchemy as sa
     from alembic import command
     from alembic.config import Config
@@ -230,6 +233,7 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_refuses_downgrade_
     from pathlib import Path
 
     from app import create_app
+    from app.models.project import Project as ProjectModel
     from app.models.wizard import WizardRun as Run, WizardRunEvent as Event
 
     root = Path(__file__).resolve().parents[1]
@@ -245,10 +249,24 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_refuses_downgrade_
     assert script.get_revision("w2z9r4d7k1m6").down_revision == "g5e7c2a9d1b4"
     command.upgrade(cfg, "g5e7c2a9d1b4")
     engine = sa.create_engine(uri)
+    # Existing records before the migration: a company, a user, a client and a project.
+    with engine.begin() as conn:
+        conn.execute(sa.text("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, "
+                             "updated_at) VALUES ('ORG-M', 'M', 'M', 'CAD', 1, '2026-10-24', '2026-10-24')"))
+        conn.execute(sa.text("INSERT INTO users (id, email, display_name, password_hash, is_active, created_at, updated_at) "
+                             "VALUES (7, 'lead@example.invalid', 'Lee Lead', 'x', 1, '2026-10-24', '2026-10-24')"))
+        conn.execute(sa.text("INSERT INTO clients (id, name, organization_id, created_at) "
+                             "VALUES (3, 'Synthetic Client', 'ORG-M', '2026-10-24')"))
+        conn.execute(sa.text("INSERT INTO projects (id, organization_id, name, status, client_id, created_at, "
+                             "operating_state, operating_state_changed_at, drawing_requirement) VALUES (5, 'ORG-M', "
+                             "'Existing Job (synthetic)', 'Lead', 3, '2026-10-24', 'ACTIVE', '2026-10-24', 'UNKNOWN')"))
     inspector = sa.inspect(engine)
-    before = {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)]
-              for t in inspector.get_table_names()}
-    before_indexes = {t: sorted(i["name"] for i in inspector.get_indexes(t)) for t in inspector.get_table_names()}
+    tables = inspector.get_table_names()
+    before = {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)] for t in tables}
+    before_indexes = {t: sorted(i["name"] for i in inspector.get_indexes(t)) for t in tables}
+    with engine.connect() as conn:
+        before_rows = {t: conn.execute(sa.text(f'SELECT * FROM "{t}" ORDER BY rowid')).fetchall() for t in tables
+                       if t != "alembic_version"}
     engine.dispose()
     command.upgrade(cfg, "w2z9r4d7k1m6")
     engine = sa.create_engine(uri)
@@ -257,13 +275,29 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_refuses_downgrade_
              for t in inspector.get_table_names()}
     assert set(after) - set(before) == {"wizard_runs", "wizard_run_events"}
     for table in before:
+        if table == "projects":
+            # Exactly one new column, nullable, at the end; every other column as it was.
+            assert after[table][:-1] == before[table]
+            assert after[table][-1] == ("project_lead_user_id", "INTEGER", True)
+            assert sorted(i["name"] for i in inspector.get_indexes(table)) == sorted(
+                before_indexes[table] + ["ix_projects_project_lead_user_id"])
+            fks = [fk for fk in inspector.get_foreign_keys(table) if fk["constrained_columns"] == ["project_lead_user_id"]]
+            assert len(fks) == 1 and fks[0]["referred_table"] == "users" and fks[0]["referred_columns"] == ["id"]
+            continue
         assert after[table] == before[table], table
         assert sorted(i["name"] for i in inspector.get_indexes(table)) == before_indexes[table], table
-    for model in (Run, Event):
+    for model in (Run, Event, ProjectModel):
         assert {c["name"] for c in inspector.get_columns(model.__tablename__)} == set(model.__table__.columns.keys())
+    with engine.connect() as conn:
+        for table, rows in before_rows.items():
+            if table == "projects":
+                columns = ", ".join(c[0] for c in before["projects"])
+                assert conn.execute(sa.text(f"SELECT {columns} FROM projects ORDER BY rowid")).fetchall() == rows
+                # The existing project starts unassigned.
+                assert conn.execute(sa.text("SELECT project_lead_user_id FROM projects")).fetchall() == [(None,)]
+            else:
+                assert conn.execute(sa.text(f'SELECT * FROM "{table}" ORDER BY rowid')).fetchall() == rows, table
     with engine.begin() as conn:
-        conn.execute(sa.text("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, updated_at) "
-                             "VALUES ('ORG-M', 'M', 'M', 'CAD', 1, '2026-10-24', '2026-10-24')"))
         conn.execute(sa.text("INSERT INTO wizard_runs (wizard_key, side, organization_id, actor_display_name, status, "
                              "created_at, updated_at) VALUES ('NEW_PROJECT', 'CONTRACTOR', 'ORG-M', 'Ben', 'ACTIVE', "
                              "'2026-10-24', '2026-10-24')"))
@@ -274,17 +308,27 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_refuses_downgrade_
                                      "actor_display_name, status, created_at, updated_at) VALUES ('SUPPLIER_PRO_DESK', "
                                      "'SUPPLIER', 'ORG-M', 1, 'Dana', 'ACTIVE', '2026-10-24', '2026-10-24')"))
     engine.dispose()
-    with pytest.raises(RuntimeError, match="Downgrade refused"):
+    with pytest.raises(RuntimeError, match="Downgrade refused: wizard_runs holds rows"):
         command.downgrade(cfg, "g5e7c2a9d1b4")
     engine = sa.create_engine(uri)
     with engine.begin() as conn:
         conn.execute(sa.text("DELETE FROM wizard_runs"))
+        conn.execute(sa.text("UPDATE projects SET project_lead_user_id = 7 WHERE id = 5"))
+    engine.dispose()
+    with pytest.raises(RuntimeError, match="Downgrade refused: a project has a Project Lead"):
+        command.downgrade(cfg, "g5e7c2a9d1b4")
+    engine = sa.create_engine(uri)
+    with engine.begin() as conn:
+        conn.execute(sa.text("UPDATE projects SET project_lead_user_id = NULL"))
     engine.dispose()
     command.downgrade(cfg, "g5e7c2a9d1b4")
     engine = sa.create_engine(uri)
     inspector = sa.inspect(engine)
     assert {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)]
             for t in inspector.get_table_names()} == before
+    assert sorted(i["name"] for i in inspector.get_indexes("projects")) == before_indexes["projects"]
+    with engine.connect() as conn:
+        assert conn.execute(sa.text("SELECT * FROM projects ORDER BY rowid")).fetchall() == before_rows["projects"]
     engine.dispose()
     ctx.pop()
 
@@ -620,7 +664,9 @@ def test_supplier_pro_desk_wizard_quick_quote_to_order_package(pro_desk):
     store.post(f"/supplier/{sid}/wizards/run/{run_id}/step/open", data={"wizard_action": "submit", "record": f"quote:{quote.id}"})
     assert db.session.get(WizardRun, run_id).supplier_quote_id == quote.id
     state, page = _sstate(store, sid, run_id, "availability")
-    assert "priced lines have availability; 0 not in stock" in page  # from the price file's availability column
+    # From the price file's availability column (decision 3): the supplier's own statement, never a quantity.
+    assert "priced lines have availability from your price file" in page
+    assert "In stock (supplier-reported)" in page
     for row in P.price_quote(quote)["rows"]:
         if row["code"].startswith("CAL-OB-TRUSS"):
             store.post(f"/supplier/{sid}/pro-desk/{quote.id}/line", data={"code": row["code"], "exclude_reason": "Truss quote to follow"})
@@ -636,8 +682,10 @@ def test_supplier_pro_desk_wizard_quick_quote_to_order_package(pro_desk):
     assert state == "todo" and 'data-wizard-action="order-ready"' in page
     store.post(f"/supplier/{sid}/pro-desk/{quote.id}/order-ready")
     assert _sstate(store, sid, run_id, "order")[0] == "done"
-    assert "own sales system" in _sstate(store, sid, run_id, "delivery")[1]
-    assert _sstate(store, sid, run_id, "close")[0] == "done"
+    assert "Arranged in the store&#39;s own system" in _sstate(store, sid, run_id, "delivery")[1]
+    # Decision 2: a walk-in order is completed in the store's own system; never shown as picked up or delivered.
+    state, page = _sstate(store, sid, run_id, "close")
+    assert state == "info" and "pickup or delivery not confirmed in CalibraytAI" in page
     # The order package is the PRO Desk's own (no point-of-sale, inventory or rewards assumption).
     page = _sstate(store, sid, run_id, "pricing")[1]
     assert "No rewards or Pro Account points program" in page

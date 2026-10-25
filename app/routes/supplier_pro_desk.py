@@ -218,6 +218,7 @@ def quote(supplier_id, quote_id):
         summary=T.summary(priced["takeoff"]), sketches=P.active_sketches(q), events=P.quote_events(q),
         products=P.supplier_products_for(supplier.id), settings=P.settings_for(supplier.id),
         frozen=q.issued_json or {}, today=local_today(), draft=q.status == QUOTE_DRAFT,
+        requested_fulfilment=P.requested_fulfilment,
         credential=request.args.get("link"), statuses={"DRAFT": "Draft", "ISSUED": "Issued", "ACCEPTED": "Accepted",
                                                        "DECLINED": "Declined", "CANCELLED": "Replaced by a revision"})
 
@@ -337,6 +338,20 @@ def commercials(supplier_id, quote_id):
     except P.ProDeskError as exc:
         flash(str(exc), "error")
     return _back(supplier, q, "#quotation")
+
+
+@supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/<int:quote_id>/fulfilment", methods=["POST"])
+def fulfilment(supplier_id, quote_id):
+    """Pickup or delivery, as the customer asked (decision 2, 24 Oct 2026). Arranged in the store's own system."""
+    supplier = _supplier(supplier_id)
+    q = _quote(supplier, quote_id)
+    try:
+        if P.record_fulfilment(q, method=request.form.get("fulfilment", ""), user=current_user):
+            chosen = P.requested_fulfilment(q)
+            flash(f"Recorded: {chosen['label'] if chosen else P.FULFILMENT_NOT_RECORDED}.", "success")
+    except P.ProDeskError as exc:
+        flash(str(exc), "error")
+    return _back(supplier, q, "#order")
 
 
 @supplier_pro_desk_bp.route("/<int:supplier_id>/pro-desk/<int:quote_id>/issue", methods=["POST"])

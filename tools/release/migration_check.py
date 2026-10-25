@@ -49,8 +49,12 @@ def _connect_ro(path: str) -> sqlite3.Connection:
     return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
 
 
-def snapshot(path: str) -> dict:
-    """Schema and content fingerprint of every table and index (except alembic_version)."""
+def snapshot(path: str, columns_of: dict | None = None) -> dict:
+    """Schema and content fingerprint of every table and index (except alembic_version).
+
+    ``columns_of`` {table: [column, ...]} (24 Oct 2026, a declared altered table that gained a column): that
+    table's rows are fingerprinted over exactly those earlier columns, and ``added`` counts the rows where any
+    column not in that list holds a value (an added column must start empty in every existing row)."""
     con = _connect_ro(path)
     try:
         schema = {
@@ -60,11 +64,21 @@ def snapshot(path: str) -> dict:
             )
         }
         tables = sorted(name for kind, name in schema if kind == "table" and name != "alembic_version")
-        content = {}
+        content, columns, added = {}, {}, {}
         for table in tables:
+            columns[table] = [r[1] for r in con.execute(f'PRAGMA table_info("{table}")')]
+            keep = (columns_of or {}).get(table)
+            if keep is not None and set(keep) <= set(columns[table]):
+                select = ", ".join(f'"{c}"' for c in keep)
+                extra = [c for c in columns[table] if c not in keep]
+                added[table] = (extra, con.execute(
+                    f'SELECT COUNT(*) FROM "{table}" WHERE ' + " OR ".join(f'"{c}" IS NOT NULL' for c in extra)
+                ).fetchone()[0] if extra else 0)
+            else:
+                select = "*"
             digest = hashlib.sha256()
             count = 0
-            for row in con.execute(f'SELECT * FROM "{table}" ORDER BY rowid'):
+            for row in con.execute(f'SELECT {select} FROM "{table}" ORDER BY rowid'):
                 digest.update(repr(row).encode("utf-8"))
                 count += 1
             content[table] = (count, digest.hexdigest())
@@ -72,7 +86,13 @@ def snapshot(path: str) -> dict:
         integrity = con.execute("PRAGMA integrity_check").fetchone()[0]
     finally:
         con.close()
-    return {"schema": schema, "content": content, "revision": revision, "integrity": integrity}
+    return {"schema": schema, "content": content, "columns": columns, "added": added, "revision": revision,
+            "integrity": integrity}
+
+
+def snapshot_after(path: str, before: dict, altered_tables) -> dict:
+    """The database after the upgrade; a declared altered table is compared over its earlier columns."""
+    return snapshot(path, {t: before["columns"][t] for t in altered_tables if t in before.get("columns", {})})
 
 
 def upgrade(db_path: str, revision: str) -> None:
@@ -107,6 +127,18 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
     changed = [t for t, fp in before["content"].items() if after["content"].get(t) != fp]
     if changed:
         fail("existing records changed in: " + ", ".join(changed))
+    # A declared altered table may gain columns; it may never lose one, and a new column holds nothing yet.
+    added_columns = []
+    for table in altered_tables:
+        if table not in before.get("columns", {}):
+            continue
+        lost = [c for c in before["columns"][table] if c not in after.get("columns", {}).get(table, [])]
+        if lost:
+            fail(f"columns removed from {table}: " + ", ".join(lost))
+        extra, filled = after.get("added", {}).get(table, ([], 0))
+        if filled:
+            fail(f"new columns of {table} hold values in {filled} existing row(s)")
+        added_columns += [f"{table}.{c}" for c in extra]
     # A table the release declares as altered (e.g. a widened check constraint) may change its schema;
     # every one of its rows must still be identical (checked above with all the others).
     altered = [f"{k[0]} {k[1]}" for k, sql in before["schema"].items()
@@ -123,6 +155,8 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
     if not_empty:
         fail("new tables are not empty: " + ", ".join(not_empty))
     note = f"; schema altered as declared: {','.join(altered_tables)}" if altered_tables else ""
+    if added_columns:
+        note += f"; added empty columns: {','.join(added_columns)} (every existing row unchanged)"
     out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, schema and every row identical{note}")
     out("NEW_TABLES", ",".join(added) + " (empty)")
 
@@ -142,7 +176,7 @@ def rehearse(args) -> None:
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
-    compare(before, snapshot(db), args.new_tables, args.to_rev, args.altered_tables)
+    compare(before, snapshot_after(db, before, args.altered_tables), args.new_tables, args.to_rev, args.altered_tables)
     out("MIGRATION_REHEARSAL", "ok")
 
 
@@ -190,7 +224,7 @@ def apply(args) -> None:
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
-    after = snapshot(db)
+    after = snapshot_after(db, before, args.altered_tables)
     # Someone may have used the app during the minute of the release; compare against the moment
     # just before the upgrade, which is what the migration itself must not change.
     compare(before, after, args.new_tables, args.to_rev, args.altered_tables)

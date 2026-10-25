@@ -429,34 +429,47 @@ def _applicable(ctx):
                     note="An excluded stage is N/A with its reason; it shows on the proposal's exclusions.")
 
 
-# ------------------------------------------------------------------------------------------------ 10 responsibility & first dates
+# ------------------------------------------------------------------------------------------------ 10 project lead & first dates
 def _responsibility(ctx):
+    """The Project Lead (decision 1, 24 Oct 2026) and the first visits or meetings on the Company Calendar.
+
+    The Project Lead is the project's own field, kept apart from the appointments' own assignees."""
     blocked = _project_or_todo(ctx)
     if blocked:
         return blocked
+    from app import db
     from app.models.appointment import APPOINTMENT_STATUS_ACTIVE, APPOINTMENT_TYPE_LABELS, CompanyAppointment
     from app.models.user import User
+    from app.services.project_lead import lead_name
+    from app.wizards.lead import lead_form_ctx, lead_item
 
     rows = (CompanyAppointment.query.filter_by(organization_id=ctx.organization_id, project_id=ctx.project.id,
                                                status=APPOINTMENT_STATUS_ACTIVE)
             .order_by(CompanyAppointment.appointment_date.asc()).all())
-    items = []
+    items = [lead_item(ctx)]
     for appt in rows:
-        person = User.query.get(appt.assigned_user_id) if appt.assigned_user_id else None
+        person = db.session.get(User, appt.assigned_user_id) if appt.assigned_user_id else None
         items.append(Item(f"{appt.appointment_date:%b %d, %Y} — {appt.title}", DONE,
                           f"{APPOINTMENT_TYPE_LABELS.get(appt.appointment_type, appt.appointment_type)}; "
-                          f"responsible: {person.display_name if person else 'not assigned'}",
+                          f"with: {person.display_name if person else 'no one assigned'}",
                           url_for("schedule.edit_appointment", appointment_id=appt.id)))
     action = Action("Add a site visit or meeting to the Company Calendar",
                     url_for("schedule.new_appointment", project_id=ctx.project.id, scope="company"),
-                    primary=True, key="new-appointment",
-                    note="Choose the person responsible and the first date. Construction work is scheduled from "
-                         "the work plan once the customer accepts.")
-    if rows:
-        return StepView(DONE, f"{len(rows)} appointment{'s' if len(rows) != 1 else ''} on the Company Calendar",
-                        items=items, actions=[action])
-    return StepView(TODO, "No one is booked on this project yet", actions=[action],
-                    note="Optional. The construction schedule comes later, from the accepted estimate.")
+                    key="new-appointment",
+                    note="The first date and who goes. Construction work is scheduled from the work plan once the "
+                         "customer accepts.")
+    lead = lead_name(ctx.project)
+    dates = f"{len(rows)} appointment{'s' if len(rows) != 1 else ''} on the Company Calendar"
+    assigned = bool(ctx.project.project_lead_user_id)
+    return StepView(DONE if assigned else TODO, f"Project Lead: {lead} · {dates}", items=items, actions=[action],
+                    form="project_lead.html", form_ctx=lead_form_ctx(ctx),
+                    note="Optional. The Project Lead gives no access; appointments keep their own assignees.")
+
+
+def _save_responsibility(ctx, form):
+    from app.wizards.lead import save_lead
+
+    return save_lead(ctx, form, step="responsibility")
 
 
 # ------------------------------------------------------------------------------------------------ 9 review
@@ -599,15 +612,16 @@ STEPS = (
     Step("stages", "Internal, Subcontracted or N/A",
          "Who does each stage: your crew (Internal), a subcontractor, or not in this job (N/A).",
          "Choose for every stage on the construction scope. Nothing is preselected.",
-         "Next, who is responsible and the first dates.",
+         "Next, the Project Lead and the first dates.",
          _stages,
          manual=lambda ctx: ("Construction scope", url_for("guided.scope", project_id=ctx.project.id))
          if ctx.project else None),
-    Step("responsibility", "Responsibility and first dates",
-         "Who looks after the job at first, and the first visit or meeting on the Company Calendar.",
-         "Add a site visit, estimate consultation or customer meeting with the person responsible.",
+    Step("responsibility", "Project Lead and first dates",
+         "Who looks after the job (the Project Lead), and the first visit or meeting on the Company Calendar.",
+         "Choose the Project Lead from your company's people (optional), and add a site visit, estimate "
+         "consultation or customer meeting.",
          "Next, review and confirm the setup.",
-         _responsibility, required=False,
+         _responsibility, required=False, handle=_save_responsibility,
          manual=lambda ctx: ("Company Calendar", url_for("schedule.company"))),
     Step("review", "Review and confirm",
          "Everything the project has, and anything still missing.",

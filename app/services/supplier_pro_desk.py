@@ -1048,7 +1048,52 @@ def order_package(quote: SupplierQuote) -> Dict:
     return {"number": quote.number, "frozen": frozen, "lines": lines,
             "not_included": [r for r in frozen.get("rows", []) if r.get("price_status") != PRICED],
             "accepted_by": quote.accepted_by_name, "accepted_at": quote.accepted_at,
-            "method": quote.acceptance_method, "sha256": quote.issued_sha256}
+            "method": quote.acceptance_method, "sha256": quote.issued_sha256,
+            "fulfilment": requested_fulfilment(quote)}
+
+
+# ------------------------------------------------------------------ pickup or delivery (Joel, 24 Oct 2026, decision 2)
+# Fulfilment stays in the store's own systems. CalibraytAI keeps only what the customer asked for — pickup at the
+# store or delivery — with who recorded it and when, in the quotation's own record (spec_json["fulfilment"]; no new
+# column). It never tracks a pickup or a delivery for a walk-in quotation and never shows one as done.
+
+FULFILMENT_PICKUP = "PICKUP"
+FULFILMENT_DELIVERY = "DELIVERY"
+FULFILMENT_LABELS = {FULFILMENT_PICKUP: "Pickup at the store", FULFILMENT_DELIVERY: "Delivery"}
+FULFILMENT_ARRANGED = "Arranged in the store's own system"
+FULFILMENT_NOT_RECORDED = "Pickup or delivery not recorded"
+
+
+def requested_fulfilment(quote: SupplierQuote) -> Optional[Dict]:
+    raw = (quote.spec_json or {}).get("fulfilment") or {}
+    method = raw.get("method")
+    if method not in FULFILMENT_LABELS:
+        return None
+    return {"method": method, "label": FULFILMENT_LABELS[method], "recorded_by": raw.get("recorded_by") or "",
+            "recorded_at": raw.get("recorded_at") or ""}
+
+
+def record_fulfilment(quote: SupplierQuote, *, method: str, user) -> bool:
+    """Record what the customer asked for (pickup or delivery); '' clears it. Returns True when it changed."""
+    actor = _actor(user)
+    if quote.status in (QUOTE_CANCELLED, QUOTE_DECLINED):
+        raise ProDeskError("This quotation is closed.")
+    value = (method or "").strip().upper()
+    if value and value not in FULFILMENT_LABELS:
+        raise ProDeskError("Choose pickup at the store or delivery.")
+    meta = dict(quote.spec_json or {})
+    before = (meta.get("fulfilment") or {}).get("method")
+    if (before or "") == value:
+        return False
+    if value:
+        meta["fulfilment"] = {"method": value, "recorded_by": actor, "recorded_at": _now().isoformat(timespec="seconds")}
+    else:
+        meta.pop("fulfilment", None)
+    quote.spec_json = meta
+    quote.updated_at = _now()
+    _event(quote, "FULFILMENT_REQUESTED", actor, method=value or None)
+    db.session.commit()
+    return True
 
 
 def order_csv(quote: SupplierQuote) -> str:

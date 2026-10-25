@@ -1,0 +1,11 @@
+<div class="wz-fields">
+  <label>Customer asked for
+    <select name="fulfilment" data-fulfilment-select>
+      <option value="" {% if not f.current %}selected{% endif %}>Not recorded</option>
+      <option value="PICKUP" {% if f.current == "PICKUP" %}selected{% endif %}>Pickup at the store</option>
+      <option value="DELIVERY" {% if f.current == "DELIVERY" %}selected{% endif %}>Delivery</option>
+    </select>
+  </label>
+</div>
+<p class="wz-note">Arranged in the store's own system. CalibraytAI keeps what was asked for; it does not track the pickup or the delivery.</p>
+<button type="submit" class="wz-primary" data-save-fulfilment>Record</button>

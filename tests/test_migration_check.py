@@ -165,3 +165,34 @@ def test_a_declared_altered_table_may_change_its_schema_but_never_its_rows(tmp_p
             assert result.returncode == 1 and "existing schema changed: table canonical_materials" in values["FAIL"]
     assert _run("rehearse", "--db", str(tmp_path / "alt-True.db"), "--from", "pd1a2b3c4d5e", "--to", "pd1a2b3c4d5e",
                 "--new-tables", pd_new, "--altered-tables", "no_such_table").returncode == 1
+
+
+def test_a_declared_altered_table_may_gain_an_empty_column_with_every_row_unchanged(tmp_path):
+    # w2z9r4d7k1m6 (Guided Workflow Wizards, 24 Oct 2026) adds wizard_runs, wizard_run_events and the nullable
+    # projects.project_lead_user_id. Existing projects keep every value; the new column starts empty.
+    prior, head, new = "g5e7c2a9d1b4", "w2z9r4d7k1m6", "wizard_runs,wizard_run_events"
+    for declared, ok in (([], False), (["--altered-tables", "projects"], True)):
+        db_path = tmp_path / f"lead-{ok}.db"
+        app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
+        with app.app_context():
+            cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
+            cfg.set_main_option("script_location", str(ROOT / "migrations"))
+            cfg.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
+            command.upgrade(cfg, prior)
+        con = sqlite3.connect(db_path)
+        con.execute("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, updated_at) "
+                    "VALUES ('ORG-L', 'Synthetic Ltd.', 'Synthetic', 'CAD', 1, '2026-10-24', '2026-10-24')")
+        con.execute("INSERT INTO clients (id, name, organization_id, created_at) VALUES (1, 'C', 'ORG-L', '2026-10-24')")
+        con.execute("INSERT INTO projects (id, organization_id, name, status, client_id, created_at, operating_state, "
+                    "operating_state_changed_at, drawing_requirement) VALUES (1, 'ORG-L', 'Job (synthetic)', 'Lead', 1, "
+                    "'2026-10-24', 'ACTIVE', '2026-10-24', 'UNKNOWN')")
+        con.commit()
+        con.close()
+        result = _run("rehearse", "--db", str(db_path), "--from", prior, "--to", head, "--new-tables", new, *declared)
+        values = _values(result.stdout)
+        if ok:
+            assert result.returncode == 0 and values["MIGRATION_REHEARSAL"] == "ok", result.stdout + result.stderr
+            assert "added empty columns: projects.project_lead_user_id" in values["EXISTING_TABLES_UNCHANGED"]
+        else:
+            assert result.returncode == 1 and values["FAIL"] in ("existing records changed in: projects",
+                                                                 "existing schema changed: table projects")

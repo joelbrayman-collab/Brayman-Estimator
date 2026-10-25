@@ -246,6 +246,14 @@ def _register_office_auth(app: Flask) -> None:
     app.add_template_global(office_plan_link, "office_plan_link")
     app.add_template_global(field_plan_link, "field_plan_link")
 
+    from app.services.project_lead import lead_name as project_lead_name
+
+    app.add_template_global(project_lead_name, "project_lead_name")
+
+    from app.presentation.availability import availability_label
+
+    app.add_template_filter(availability_label, "availability_label")
+
     @app.context_processor
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}

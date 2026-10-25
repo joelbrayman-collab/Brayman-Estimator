@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Project Lead | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Project Lead{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ project.name }}</p>
+        <h1>Project Lead</h1>
+        <p class="muted-copy">Optional. The person who looks after this job, chosen from your company's people. It is a name on the project only: it gives no access, and it does not assign anyone to scheduled work or to appointments.</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+<form method="post" class="form-panel" action="{{ url_for('projects.edit_project_lead', id=project.id) }}" data-project-lead-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+    <p>Now: <strong data-project-lead>{{ project_lead_name(project) }}</strong></p>
+    <label>
+        Project Lead
+        <select name="project_lead_user_id" data-project-lead-select>
+            <option value="">Unassigned</option>
+            {% for person in people %}
+            <option value="{{ person.id }}" {% if project.project_lead_user_id == person.id %}selected{% endif %}>{{ person.label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <p class="muted-copy">Only active people of this company are listed (People &amp; Access).</p>
+    <p style="margin-top: 16px;">
+        <button type="submit" data-save-project-lead>Save Project Lead</button>
+    </p>
+</form>
+{% endblock %}

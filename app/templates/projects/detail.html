@@ -66,7 +66,8 @@
         <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
         <div><p class="eyebrow">Address</p><p>{{ job_address or "—" }}</p></div>
         <div><p class="eyebrow">Client</p><p>{{ project.client.name }} · <a href="{{ url_for('projects.correct_project_client_page', id=project.id) }}">Correct client</a></p></div>
-        <div><p class="eyebrow">Created</p><p>{{ project.created_at.strftime("%Y-%m-%d") }}</p></div>
+        <div data-hub-project-lead><p class="eyebrow">Project Lead</p><p><span data-project-lead>{{ project_lead_name(project) }}</span> · <a href="{{ url_for('projects.edit_project_lead', id=project.id) }}">{{ "Change" if project.project_lead_user_id else "Choose" }}</a></p></div>
+        <div><p class="eyebrow">Created</p><p>{{ project.created_at|local_time("%Y-%m-%d", zone_label=False) }}</p></div>
     </div>
     <p class="muted-copy" style="margin-top: 12px;"><a href="{{ url_for('workflow_map.contractor', project_id=project.id) }}#workflow-stage" data-project-workflow-link>Where this job is in the Workflow Guide</a></p>
     {% if project.description %}

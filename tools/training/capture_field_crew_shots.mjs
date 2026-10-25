@@ -36,7 +36,8 @@ const CREW = "Pool deck crew (training)";
 const WORK_ITEM = "Pool deck framing and decking (training)";
 const ACTIVITY = "Framing and decking (training)";
 const MONEY = [/\$\s?\d/, /\bprice/i, /\bcost/i, /margin/i, /markup/i, /invoice/i, /estimate/i];
-const day = (offset) => new Date(Date.now() + offset * 864e5).toISOString().slice(0, 10);
+// The office's calendar day (America/Toronto), not the UTC day: after 8 pm Toronto the UTC date is tomorrow.
+const day = (offset) => new Date(Date.now() + offset * 864e5).toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
 
 before(async () => {
   fs.mkdirSync(SHOTS, { recursive: true });

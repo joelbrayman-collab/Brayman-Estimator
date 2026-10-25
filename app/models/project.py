@@ -162,6 +162,14 @@ class Project(db.Model):
         default=DRAWING_REQUIREMENT_UNKNOWN,
         server_default=DRAWING_REQUIREMENT_UNKNOWN,
     )
+    # Project Lead (Joel, 24 Oct 2026): optional, one of the company's own active people. A label only: it grants
+    # no permission and is separate from crew assignments and appointment assignees (app/services/project_lead.py).
+    project_lead_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="SET NULL", name="fk_projects_project_lead_user_id_users"),
+        nullable=True,
+        index=True,
+    )
 
     organization = db.relationship("Organization", back_populates="projects")
     client = db.relationship("Client", back_populates="projects")
@@ -202,6 +210,7 @@ class Project(db.Model):
         "User",
         foreign_keys=[operating_state_changed_by_user_id],
     )
+    project_lead = db.relationship("User", foreign_keys=[project_lead_user_id])
     operating_state_events = db.relationship(
         "ProjectOperatingStateEvent",
         back_populates="project",

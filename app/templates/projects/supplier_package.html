@@ -174,8 +174,9 @@
                 {% else %}
                 <span class="muted-copy">No price evidence</span>
                 {% endif %}
-                {% if row.availability %}
-                <div>{{ contractor_copy.office_status_label(row.availability.status) }}</div>
+                {# Decision 3 (24 Oct 2026): only supplier-provided availability is shown; otherwise "Availability not confirmed". #}
+                <div data-availability>{{ row.availability|availability_label }}</div>
+                {% if row.availability and row.availability.status|availability_label != "Availability not confirmed" %}
                 <div class="muted-copy">Captured {{ row.availability.captured_at.strftime("%Y-%m-%d") }} · not live inventory</div>
                 {% endif %}
             </td>

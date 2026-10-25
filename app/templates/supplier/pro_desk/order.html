@@ -8,6 +8,7 @@
 {% if f.demo_synthetic or f.demo_prices %}<p class="pd-synthetic">Synthetic demonstration data — do not enter as a real order.</p>{% endif %}
 <section class="form-panel" data-order-sheet="true">
     <p><strong>{{ f.customer.name }}</strong>{% if f.customer.phone %} · {{ f.customer.phone }}{% endif %}{% if f.customer.address or f.customer.town %} · {{ f.customer.address }} {{ f.customer.town }}{% endif %}</p>
+    <p data-fulfilment="{{ package.fulfilment.method if package.fulfilment else 'NOT_RECORDED' }}">Customer asked for: <strong>{{ package.fulfilment.label if package.fulfilment else "Pickup or delivery not recorded" }}</strong> · Arranged in the store's own system.</p>
     <div class="pd-table-wrap"><table class="data-table pd-stack">
         <thead><tr><th>SKU</th><th>Description</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit price</th><th class="num">Discount</th><th class="num">Extended</th></tr></thead>
         <tbody>{% for r in package.lines %}<tr data-order-line="{{ r.sku }}"><td>{{ r.sku }}</td><td>{{ r.product_description }}<span class="pd-basis">{{ r.item }}{% if r.cut_list %} · cut list: {% for length, n in r.cut_list %}{{ n }} @ {{ length }}{{ ", " if not loop.last }}{% endfor %}{% endif %}</span></td>

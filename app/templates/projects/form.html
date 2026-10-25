@@ -58,6 +58,16 @@
                 <option>Archived</option>
             </select>
         </label>
+
+        <label>
+            Project Lead (optional)
+            <select name="project_lead_user_id" data-project-lead-select>
+                <option value="">Unassigned</option>
+                {% for person in project_lead_people or [] %}
+                <option value="{{ person.id }}">{{ person.label }}</option>
+                {% endfor %}
+            </select>
+        </label>
     </div>
 
     <fieldset class="plan-start" data-guided-start-fields>

@@ -211,16 +211,28 @@ def _assign(ctx):
         rows.append(Item(f"Subcontract: {stage.section_name}", DONE if quote else TODO,
                          quote.subcontractor.legal_name if quote and quote.subcontractor else "no subcontractor selected"))
     rows.append(_texting_status())
+    # The Project Lead (decision 1, 24 Oct 2026): the project's own field, shown first. It is not a crew
+    # assignment and never counts toward "assigned"; it grants no access.
+    from app.wizards.lead import lead_form_ctx, lead_item
+
+    rows.insert(0, lead_item(ctx))
     actions = [Action("Crews", url_for("organization_crew.index"), key="crews"),
                Action("Company Calendar", url_for("schedule.company"), key="calendar")]
+    lead = {"form": "project_lead.html", "form_ctx": lead_form_ctx(ctx)}
     items_total = len(_schedule_items(ctx))
     if not items_total:
         return StepView(TODO, "Schedule the work first (step 3)", items=rows, actions=actions,
-                        missing=["Schedule the work first (step 3)."])
+                        missing=["Schedule the work first (step 3)."], **lead)
     ok = assigned == items_total
     return StepView(DONE if ok else TODO, count_headline(assigned, items_total, "scheduled item", "assigned")
                     + (f" · {len(subs)} subcontracted stage(s)" if subs else ""), items=rows, actions=actions,
-                    missing=[] if ok else ["Assign a person or crew to each scheduled item (open the item)."])
+                    missing=[] if ok else ["Assign a person or crew to each scheduled item (open the item)."], **lead)
+
+
+def _save_lead(ctx, form):
+    from app.wizards.lead import save_lead
+
+    return save_lead(ctx, form, step="people")
 
 
 def _texting_status():
@@ -546,9 +558,11 @@ STEPS = (
          "Build the work plan, then schedule each work item. The Company Calendar shows them with appointments.",
          "Next, assign the people.", _schedule,
          manual=lambda ctx: ("Company Calendar", url_for("schedule.company"))),
-    Step("people", "Employees, crews and subcontractors", "Who does each scheduled item.",
-         "Open each scheduled item and assign a person or crew. Subcontracted stages show the selected subcontractor.",
-         "Next, the materials to buy.", _assign,
+    Step("people", "Project Lead, employees, crews and subcontractors",
+         "The Project Lead, and who does each scheduled item.",
+         "Choose the Project Lead (optional; it gives no access). Open each scheduled item and assign a person or "
+         "crew. Subcontracted stages show the selected subcontractor.",
+         "Next, the materials to buy.", _assign, handle=_save_lead,
          manual=lambda ctx: ("Company Calendar", url_for("schedule.company"))),
     Step("materials", "Material requirements and purchasing", "The accepted lines you buy yourself.",
          "Check who supplies each line, then send the material request to the supplier.",

@@ -41,7 +41,8 @@ const LINES = [
   ["Composite decking, supplied and installed (training)", "420", "sq ft", "12.00"],
   ["Concrete for the equipment pad, 2.5 m³ delivered by BMR (training)", "1", "ls", "612.50"],
 ];
-const day = (offset) => new Date(Date.now() + offset * 864e5).toISOString().slice(0, 10);
+// The office's calendar day (America/Toronto), not the UTC day: after 8 pm Toronto the UTC date is tomorrow.
+const day = (offset) => new Date(Date.now() + offset * 864e5).toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
 const dayUrl = (d, extra = "") => `/schedule?year=${d.slice(0, 4)}&month=${Number(d.slice(5, 7))}&day=${Number(d.slice(8))}${extra}`;
 
 before(async () => {

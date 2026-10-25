@@ -82,11 +82,9 @@
                 {% endif %}
             </td>
             <td>
-                {% if line.availability_status %}
-                {{ contractor_copy.office_status_label(line.availability_status) }}
+                <span data-availability>{{ line.availability_status|availability_label }}</span>
+                {% if line.availability_status|availability_label != "Availability not confirmed" %}
                 <div class="muted-copy">{{ line.availability_captured_at.strftime("%Y-%m-%d") if line.availability_captured_at else "" }} · not live inventory</div>
-                {% else %}
-                —
                 {% endif %}
             </td>
             <td>{{ contractor_copy.office_status_label(line.mapping_status) }}</td>

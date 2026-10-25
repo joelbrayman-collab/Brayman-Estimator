@@ -1,0 +1,10 @@
+<div class="wz-fields">
+  <label>Project Lead (optional)
+    <select name="project_lead_user_id" data-project-lead-select>
+      <option value="">Unassigned</option>
+      {% for person in f.people %}<option value="{{ person.id }}" {% if f.current == person.id %}selected{% endif %}>{{ person.label }}</option>{% endfor %}
+    </select>
+  </label>
+</div>
+<p class="wz-note">One of your company's people. A name on the project only: it gives no access, and it does not assign scheduled work or appointments.</p>
+<button type="submit" class="wz-primary" data-save-project-lead>Save Project Lead</button>

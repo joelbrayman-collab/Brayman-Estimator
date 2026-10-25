@@ -38,7 +38,8 @@ const LINES = [
 ];
 const COMPANY_APPT = "Site visit at Mill Pond Road (synthetic)";
 const PERSONAL_APPT = "Dentist (synthetic personal)";
-const day = (offset) => new Date(Date.now() + offset * 864e5).toISOString().slice(0, 10);
+// The office's calendar day (America/Toronto), not the UTC day: after 8 pm Toronto the UTC date is tomorrow.
+const day = (offset) => new Date(Date.now() + offset * 864e5).toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
 
 before(async () => {
   const port = await freePort();

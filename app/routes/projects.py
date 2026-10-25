@@ -415,6 +415,9 @@ def create_project():
     clients = customer_clients_only(Client.query.filter_by(organization_id=org_id), org_id).order_by(Client.name.asc()).all()
     options = _context_options()
     options.update(_guided_form_options(org_id))
+    from app.services.project_lead import ProjectLeadError, lead_choices, set_project_lead
+
+    options["project_lead_people"] = lead_choices(org_id)
 
     if request.method == "POST":
         wizard_run = _wizard_run_for_create(org_id)
@@ -458,6 +461,9 @@ def create_project():
             )
             db.session.add(project)
             db.session.flush()
+            if request.form.get("project_lead_user_id"):
+                set_project_lead(organization_id=org_id, project_id=project.id,
+                                 user_id=request.form.get("project_lead_user_id"), commit=False)
 
             created_by = form_actor("created_by")
             create_initial_commercial_context(
@@ -499,7 +505,7 @@ def create_project():
                 return follow_on
             return redirect(url_for("projects.project_setup", id=project.id))
 
-        except (CommercialContextValidationError, PermitFoundationError) as e:
+        except (CommercialContextValidationError, PermitFoundationError, ProjectLeadError) as e:
             db.session.rollback()
             flash(str(e), "error")
             return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
@@ -660,6 +666,31 @@ def edit_commercial_context(id):
         current_context=current_context,
         **options,
     )
+
+
+@projects_bp.route("/<int:id>/lead", methods=["GET", "POST"])
+def edit_project_lead(id):
+    """Project Lead (Joel, 24 Oct 2026): optional, one of the company's authorized people. Grants no permission."""
+    from app.services.project_lead import ProjectLeadError, lead_choices, set_project_lead
+    from app.services.return_path import from_request
+
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    people = lead_choices(org_id)
+    back = from_request()
+    if request.method == "POST":
+        try:
+            changed = set_project_lead(organization_id=org_id, project_id=project.id,
+                                       user_id=request.form.get("project_lead_user_id"))
+        except ProjectLeadError as exc:
+            flash(str(exc), "error")
+            return render_template("projects/project_lead.html", project=project, people=people,
+                                   return_to=back), 400
+        from app.services.project_lead import lead_name
+
+        flash(f"Project Lead: {lead_name(project)}." if changed else "The Project Lead is unchanged.", "success")
+        return redirect(back or url_for("projects.view_project", id=project.id))
+    return render_template("projects/project_lead.html", project=project, people=people, return_to=back)
 
 
 @projects_bp.route("/<int:id>/client", methods=["GET", "POST"])

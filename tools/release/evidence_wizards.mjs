@@ -11,7 +11,10 @@
 // Save & Exit and Resume from Home; Continue Manually and back; Guided Estimating on a costed project (approve the
 // costing and apply the company pricing from the wizard, back to the step, 15.0 % true gross margin); Manage a
 // Project on the accepted project (real schedule counts, the not-switched-on QuickBooks Time and texting status);
-// the Supplier Pro Desk wizard from Quick Quote through issue, the customer's answer and the order package; Ask
+// the Supplier Pro Desk wizard from Quick Quote through issue, the customer's answer and the order package; the
+// Project Lead (decision 1) set in Start a New Project and Manage a Project and shown on the Hub and the Company
+// Calendar, a Field-only lead still kept out; availability only from the price file, otherwise "Availability not
+// confirmed" (decision 3); pickup or delivery "Arranged in the store's own system" and never shown done (decision 2); Ask
 // the Tutor answers in place; every wizard page on a phone without sideways scrolling; Kevin kept out; another
 // company and a rival store see nothing; no page error and no server error.
 // WIZARD_SHOTS=<dir> saves each wizard's screens (desktop and phone) there.
@@ -201,7 +204,15 @@ step("Start a New Project: required answers, autosave, Create once, drawings, ro
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "stages");
   assert.equal(await state(pg), "done");
   await shot(pg, "wizard1-stages-desktop");
-  await next(pg); // responsibility (optional)
+  await next(pg); // Project Lead and first dates (optional): choose Ben as the Project Lead (decision 1)
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "responsibility");
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /Project Lead: Unassigned/);
+  assert.equal(await pg.locator("select[data-project-lead-select] option", { hasText: "Other Builder Owner" }).count(), 0);
+  await pg.selectOption("select[data-project-lead-select]", { label: "Ben Brayman (synthetic)" });
+  await submit(pg, pg.locator("[data-save-project-lead]"));
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /Project Lead: Ben Brayman \(synthetic\)/);
+  assert.equal(await state(pg), "done");
+  await shot(pg, "wizard1-lead-desktop");
   await next(pg); // review
   await pg.locator("input[name=confirmed]").check();
   await submit(pg, pg.locator("[data-confirm]"));
@@ -211,6 +222,11 @@ step("Start a New Project: required answers, autosave, Create once, drawings, ro
   await submit(pg, pg.locator("[data-continue-estimating]"));
   assert.match(pathOf(pg), /\/wizards\/run\/\d+\/step\//);
   assert.match(await pg.locator(".wz-eyebrow").innerText(), /Guided Estimating · Browser Wizard Home/);
+  // The Project Hub shows the Project Lead chosen in the wizard.
+  await go(pg, "/projects/");
+  const hubHref = await pg.locator('a[href^="/projects/"]', { hasText: "Browser Wizard Home (synthetic)" }).first().getAttribute("href");
+  await go(pg, hubHref.split("#")[0]);
+  assert.equal(await pg.locator("[data-hub-project-lead] [data-project-lead]").innerText(), "Ben Brayman (synthetic)");
   assert.deepEqual(errors, []);
 });
 
@@ -294,6 +310,35 @@ step("Manage a Project on the accepted project: real schedule counts and the act
   assert.deepEqual(errors, []);
 });
 
+step("Project Lead: set in Manage a Project, shown on the Hub and the Calendar; a Field-only lead gains nothing", async () => {
+  const { pg, errors } = await person("ben", DESK);
+  const pid = facts.projects.manage;
+  await go(pg, await stepUrl(W.run3, "people"));
+  assert.match(await pg.locator("[data-step-items]").innerText(), /Project Lead[\s\S]*Unassigned/);
+  // Kevin (Field-only crew) is authorized company personnel, so he may be the Project Lead.
+  await pg.selectOption("select[data-project-lead-select]", { label: "Kevin Field (synthetic crew) (Field crew)" });
+  await submit(pg, pg.locator("[data-save-project-lead]"));
+  assert.match(pathOf(pg), /\/step\/people$/);
+  assert.match(await pg.locator("[data-step-items]").innerText(), /Project Lead[\s\S]*Kevin Field \(synthetic crew\)/);
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /0 of \d+|Schedule the work first/); // never an assignment
+  await shot(pg, "wizard3-people-desktop");
+  await go(pg, `/projects/${pid}`);
+  assert.equal(await pg.locator("[data-hub-project-lead] [data-project-lead]").innerText(), "Kevin Field (synthetic crew)");
+  await shot(pg, "hub-project-lead-desktop");
+  await go(pg, `/schedule?project_id=${pid}`);
+  const card = pg.locator(`[data-project-card="${pid}"] [data-calendar-project-lead]`);
+  assert.equal(await card.count(), 1);
+  assert.equal((await card.textContent()).trim(), "Project Lead: Kevin Field (synthetic crew)");
+  // Being the Project Lead gives Kevin no office access: every office page still sends him to Field.
+  const kevin = await person("kevin", PHONE);
+  for (const url of [`/projects/${pid}`, `/projects/${pid}/lead`, "/schedule", `/wizards/run/${W.run3}/step/people`]) {
+    await go(kevin.pg, url);
+    assert.equal(pathOf(kevin.pg), "/field/today", url);
+  }
+  assert.deepEqual(errors, []);
+  assert.deepEqual(kevin.errors, []);
+});
+
 // ------------------------------------------------------------------ Wizard 4
 step("Supplier Pro Desk: Quick Quote, choose it, price, issue, the customer's answer, the order package", async () => {
   const { pg, errors } = await person("store", DESK);
@@ -363,12 +408,43 @@ step("Supplier Pro Desk: Quick Quote, choose it, price, issue, the customer's an
   await go(pg, wiz("order"));
   assert.equal(await state(pg), "done");
   await go(pg, wiz("close"));
-  assert.equal(await state(pg), "done");
+  // Decision 2: a walk-in order is completed in the store's own system, never shown done here.
+  assert.equal(await state(pg), "info");
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /Arranged in the store's own system[\s\S]*not confirmed in CalibraytAI/);
   await shot(pg, "wizard4-close-desktop");
   const phone = await person("store", PHONE);
   await go(phone.pg, `/supplier/${sid}/wizards/run/${W.run4}/step/pricing`);
   await noSideways(phone.pg, "wizard 4 phone");
   await shot(phone.pg, "wizard4-pricing-phone");
+  assert.deepEqual(errors, []);
+});
+
+step("Supplier Pro Desk: availability only from the price file; pickup or delivery arranged in the store's system", async () => {
+  const { pg, errors } = await person("store", DESK);
+  const sid = facts.store.supplier_id;
+  const wiz = (key) => `/supplier/${sid}/wizards/run/${W.run4}/step/${key}`;
+  await go(pg, wiz("availability"));
+  const items = await pg.locator("[data-step-items]").innerText();
+  assert.match(items, /In stock \(supplier-reported\)/); // the synthetic price file's own availability column
+  assert.doesNotMatch(items, /\d+\s*(on hand|in stock|available)/i); // never a quantity
+  await shot(pg, "wizard4-availability-desktop");
+  // The quotation page (where Quick Quote lands) words it the same way.
+  await go(pg, `/supplier/${sid}/pro-desk/${W.quote}`);
+  const marks = await pg.locator("[data-availability]").allInnerTexts();
+  assert.ok(marks.length > 0 && marks.every((t) => /^(In stock|Limited|Special order) \(supplier-reported\)$|^Availability not confirmed$/.test(t)), marks.join("|"));
+  // Pickup or delivery: what the customer asked for, recorded; the real status; never shown done.
+  await go(pg, wiz("delivery"));
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /Arranged in the store's own system/);
+  await pg.selectOption("select[data-fulfilment-select]", "PICKUP");
+  await submit(pg, pg.locator("[data-save-fulfilment]"));
+  assert.match(pathOf(pg), /\/step\/delivery$/);
+  assert.match(await pg.locator("[data-step-items]").innerText(), /Pickup at the store/);
+  assert.match(await pg.locator("[data-step-headline]").innerText(), /not tracked in CalibraytAI/);
+  await shot(pg, "wizard4-delivery-desktop");
+  await go(pg, `/supplier/${sid}/pro-desk/${W.quote}/order`);
+  assert.equal(await pg.locator('[data-fulfilment="PICKUP"]').count(), 1);
+  await go(pg, wiz("close"));
+  assert.equal(await state(pg), "info");
   assert.deepEqual(errors, []);
 });
 

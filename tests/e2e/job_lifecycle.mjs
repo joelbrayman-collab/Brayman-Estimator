@@ -456,9 +456,18 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(todayText, /My Work — Kevin/);
     assert.match(todayText, /Foundation — Labour — E2E lifecycle ready-mix 25 MPa\s+E2E Footing Crew/);
     assert.match(todayText, /12 Synthetic Concession/);
+    // My week runs Monday to Sunday, so on a Sunday tomorrow's delivery belongs to next week: it is
+    // then checked on that day in the month view (same delivery list) and must not be on this week.
+    const deliveryDay = inDays(1);
+    const deliveryLine = new RegExp(`Delivery Concrete · ${SUPPLIER} · .+ · 7:00–9:00 · Agreed`);
     await kevin.go("/field/week");
     await kevin.noSideways("Field Week");
-    assert.match(await kevin.main(), new RegExp(`Delivery Concrete · ${SUPPLIER} · .+ · 7:00–9:00 · Agreed`));
+    if (today.getDay() === 0) {
+      assert.doesNotMatch(await kevin.main(), deliveryLine);
+      await kevin.go(`/field/month?year=${deliveryDay.getFullYear()}&month=${deliveryDay.getMonth() + 1}&day=${deliveryDay.getDate()}`);
+      await kevin.noSideways("Field Month");
+    }
+    assert.match(await kevin.main(), deliveryLine);
     await kevin.go("/field/today");
     await kevin.submit(kevin.page.getByRole("link", { name: "Enter time" }).first());
     await kevin.noSideways("Field Time");

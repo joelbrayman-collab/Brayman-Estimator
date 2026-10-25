@@ -777,6 +777,17 @@ def test_no_punch_list_sign_off_sys_admin_or_migration():
     reopen_html = (
         REPO_ROOT / "app" / "templates" / "projects" / "reopen_confirm.html"
     ).read_text(encoding="utf-8")
+    # The one QuickBooks touch is the project sync hook (close: inactive, reopen: active again; Magnificent Seven,
+    # 25 Oct 2026). Lines naming it are set aside; nothing else in close or reopen may mention QuickBooks.
+    def _without_project_sync_hook(text):
+        return "\n".join(
+            line for line in text.splitlines()
+            if "project_changed" not in line and "accounting_project_sync" not in line
+        )
+
+    assert lifecycle.count("project_changed(loaded") == 2
+    lifecycle = _without_project_sync_hook(lifecycle)
+    routes = _without_project_sync_hook(routes)
     for blob in (lifecycle, routes, reopen_html):
         assert "Punch List" not in blob
     for blob in (lifecycle, routes, close_html, reopen_html):

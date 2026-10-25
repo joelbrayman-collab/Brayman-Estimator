@@ -808,7 +808,8 @@ def test_field_surfaces_show_address_directions_and_month_calendar(client, app):
     assert field_directions_url("48 Main Street, Ottawa, ON") in today_html
     assert field_directions_url("9 Other Road, Ottawa, ON") in today_html
     assert "Quiet Job" in today_html
-    week = client.get("/field/week")
+    # The week containing today: on a Sunday the default My Week is the coming week (Magnificent Seven, 25 Oct 2026).
+    week = client.get(f"/field/week?start={day.isoformat()}")
     week_html = week.get_data(as_text=True)
     assert week.status_code == 200
     assert "48 Main Street" in week_html

@@ -484,7 +484,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await kevin.go("/field/today");
     assert.match(await kevin.main(), /Recent observations[\s\S]*Footing forms checked before the pour/);
     // The customer asks Kevin for a step in the footing: extra work, recorded on site.
-    await kevin.submit(kevin.page.getByRole("link", { name: "Extra work" }));
+    await kevin.submit(kevin.page.getByRole("link", { name: "Extra work", exact: true }));
     await kevin.noSideways("Field Extra work");
     await kevin.page.fill("[name=description]", "Customer asked for a step in the footing (synthetic)");
     await kevin.page.selectOption("[name=project_work_element_id]", { label: "Foundation" });

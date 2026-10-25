@@ -790,6 +790,7 @@ ALLOWED_PUNCH_LIST_PATHS = {
     "app/__init__.py",
     "app/presentation/contractor_copy.py",
     "app/wizards/manage_project.py",  # Manage a Project wizard: reads open items through the service (24 Oct 2026)
+    "app/services/needs_attention.py",  # Needs My Attention: counts open punch items, read only (Magnificent Seven, 25 Oct 2026)
 }
 
 

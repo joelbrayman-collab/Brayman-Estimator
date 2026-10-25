@@ -477,14 +477,15 @@ def test_the_field_crew_lesson_and_test_and_the_contractor_note(app):
 
     field = [lesson for m in C.modules_for(C.PATHWAY_FIELD_CREW, "FIELD") for lesson in m.lessons]
     keys = [lesson.key for lesson in field]
-    assert len(keys) == 31 and keys.index("f04-site-plans") == keys.index("f04-drawings") + 1
+    assert len(keys) == 35  # 35: Field module 9 (Magnificent Seven, 25 Oct 2026)
+    assert keys.index("f04-site-plans") == keys.index("f04-drawings") + 1
     lesson = field[keys.index("f04-site-plans")]
     assert lesson.title == "Open plans on site"
     words = " ".join(s.title + " " + s.do + " " + s.expect for s in lesson.steps)
     for needed in ("Add to Home Screen", "Site Plans", "Save for offline", "Airplane Mode", "Sign out", "zoom"):
         assert needed in words, needed
     cases = C.uat_for(C.PATHWAY_FIELD_CREW, "FIELD")
-    assert len(cases) == 21 and "uat-f04-site-plans" in [c.key for c in cases]
+    assert len(cases) == 26 and "uat-f04-site-plans" in [c.key for c in cases]
     contractor = {l.key: l for m in C.modules_for(C.PATHWAY_CONTRACTOR, "OWNER") for l in m.lessons}
     assert all(step.title != "The Plans button" for step in contractor["c07-plans"].steps)  # release 8: removed
     for step in lesson.steps:

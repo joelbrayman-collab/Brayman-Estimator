@@ -344,3 +344,55 @@ def test_roles_stay_per_site(sites):
     assert response.status_code == 302
     assert client.get("/settings/people").status_code == 403
     assert client.get("/").status_code == 200
+
+
+# ------------------------------------------------------------------ Joel's one identity on Production (owner-setup)
+
+
+def test_owner_setup_makes_one_identity_the_owner_and_moves_its_supplier_login(tmp_path):
+    """As found on Production 26 Oct 2026: the owner is joel@braymanconstruction.ca, and the Gmail address is only a
+    Supplier Hub login. owner-setup lists first, then: the Supplier Hub login moves to another address, Gmail becomes
+    a member and Instance Owner, the previous owner stays as System Administrator. Passwords are untouched."""
+    from app.models.supplier_portal import SupplierUserMembership
+    from app.services.instance_authority import is_instance_owner, is_system_administrator
+    from app.services.supplier_catalogue import (
+        create_contractor_supplier_account,
+        create_supplier,
+        create_supplier_location,
+    )
+    from app.services.supplier_hub import add_supplier_user, principal_class
+
+    application = _app(tmp_path, "owner")  # OWNER (joel.owner@example.com) is the Instance Owner
+    gmail, moved_to = "joel.gmail@example.com", "joel.supplier@example.com"
+    with application.app_context():
+        supplier = create_supplier(code="SYN-STORE", legal_name="Synthetic Store")
+        location = create_supplier_location(supplier_id=supplier.id, code="SYN-1", display_name="Synthetic Store 1")
+        create_contractor_supplier_account(organization_id=ORG, supplier_id=supplier.id, supplier_location_id=location.id)
+        db.session.commit()
+        user, _ = add_supplier_user(organization_id=ORG, supplier=supplier, display_name="Joel Gmail (synthetic)",
+                                    email=gmail, actor_name="test")
+        from app.services.auth import hash_password
+        user.password_hash = hash_password("Synthetic-gmail-1")
+        db.session.commit()
+    runner = application.test_cli_runner()
+    refused = runner.invoke(args=["identity", "owner-setup", "--owner-email", gmail])
+    assert refused.exit_code != 0 and "give --supplier-to" in refused.output
+    dry = runner.invoke(args=["identity", "owner-setup", "--owner-email", gmail, "--supplier-to", moved_to]).output
+    assert "DRY RUN" in dry and "jo***@example.com -> jo***@example.com" in dry and "add as a member" in dry
+    with application.app_context():
+        assert SupplierUserMembership.query.filter_by(status="ACTIVE").count() == 1  # nothing changed yet
+    done = runner.invoke(args=["identity", "owner-setup", "--owner-email", gmail, "--supplier-to", moved_to, "--apply"])
+    assert done.exit_code == 0, done.output
+    with application.app_context():
+        owner = User.query.filter_by(email=gmail).one()
+        previous = User.query.filter_by(email=OWNER[0]).one()
+        assert is_instance_owner(owner, ORG) and not is_instance_owner(previous, ORG)
+        assert is_system_administrator(previous, ORG)
+        assert principal_class(owner) == "CONTRACTOR"
+        mover = User.query.filter_by(email=moved_to).one()
+        assert SupplierUserMembership.query.filter_by(user_id=mover.id, status="ACTIVE").count() == 1
+        assert SupplierUserMembership.query.filter_by(user_id=owner.id, status="REVOKED").count() == 1
+    assert _ok(application, gmail, "Synthetic-gmail-1")  # same password as before
+    owner_client, _ = _signin(application, gmail, "Synthetic-gmail-1")
+    assert owner_client.get("/settings/people").status_code == 200
+    assert _ok(application, OWNER[0], OWNER[1])

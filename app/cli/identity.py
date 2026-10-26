@@ -69,3 +69,72 @@ def reconcile_command(apply_changes):
             click.echo(f"  {_mask(user.email)} ({state}): created on Production with the password chosen here")
         else:
             click.echo(f"  {_mask(user.email)} ({state}): already on Production; signs in here with that password")
+
+
+@identity_cli.command("owner-setup")
+@click.option("--owner-email", required=True, help="The one identity that becomes Instance Owner here.")
+@click.option("--supplier-to", default="", help="Move the owner email's Supplier Hub login(s) to this address.")
+@click.option("--organization-id", default="ORG-001", show_default=True)
+@click.option("--apply", "apply_changes", is_flag=True, default=False, help="Make the changes (default: list only).")
+@with_appcontext
+def owner_setup_command(owner_email, supplier_to, organization_id, apply_changes):
+    """Joel's one identity (26 Oct 2026): make OWNER-EMAIL this company's Instance Owner, keep the previous owner as a
+    System Administrator, and move any Supplier Hub login on OWNER-EMAIL to SUPPLIER-TO (a sign-in cannot be both a
+    contractor and a supplier). Uses the existing authority services, so their history is recorded. No password is
+    read, changed or printed; a new supplier address gets a sign-in with no usable password (send it a link)."""
+    from app import db
+    from app.models.organization import Organization
+    from app.models.supplier_catalogue import Supplier
+    from app.models.supplier_portal import SupplierUserMembership
+    from app.models.user import User, UserMembership
+    from app.services.instance_authority import (
+        appoint_system_administrator,
+        is_instance_owner,
+        set_instance_owner,
+    )
+    from app.services.supplier_hub import add_supplier_user, revoke_supplier_user
+
+    org = db.session.get(Organization, organization_id)
+    if org is None:
+        raise click.ClickException(f"No company {organization_id} here.")
+    owner = User.query.filter(db.func.lower(User.email) == owner_email.strip().lower()).first()
+    if owner is None or not owner.is_active:
+        raise click.ClickException("OWNER-EMAIL is not an active sign-in here.")
+    previous = next((m for m in UserMembership.query.filter_by(organization_id=org.id, is_active=True)
+                     if is_instance_owner(m.user, org.id)), None)
+    supplier_rows = SupplierUserMembership.query.filter_by(user_id=owner.id, status="ACTIVE").all()
+    if supplier_rows and not supplier_to:
+        raise click.ClickException(f"{_mask(owner.email)} is a Supplier Hub login for {len(supplier_rows)} supplier(s); "
+                                   "give --supplier-to <address> to move it first.")
+    click.echo(f"{'APPLY' if apply_changes else 'DRY RUN (nothing changes)'} for {org.display_name}")
+    for row in supplier_rows:
+        supplier = db.session.get(Supplier, row.supplier_id)
+        click.echo(f"  move Supplier Hub login for {supplier.legal_name if supplier else row.supplier_id}: "
+                   f"{_mask(owner.email)} -> {_mask(supplier_to)}")
+    owner_membership = UserMembership.query.filter_by(user_id=owner.id, organization_id=org.id).first()
+    click.echo(f"  {_mask(owner.email)}: {'already a member' if owner_membership else 'add as a member'} of "
+               f"{org.display_name}; make Instance Owner")
+    if previous is not None and previous.user_id != owner.id:
+        click.echo(f"  previous owner {_mask(previous.user.email)}: stays active, appointed System Administrator")
+    if not apply_changes:
+        return
+    for row in supplier_rows:
+        supplier = db.session.get(Supplier, row.supplier_id)
+        add_supplier_user(organization_id=row.created_by_organization_id, supplier=supplier,
+                          display_name=f"{owner.display_name} (supplier)", email=supplier_to,
+                          actor_name="Joel's one identity (owner-setup)")
+        revoke_supplier_user(row)
+    if owner_membership is None:
+        owner_membership = UserMembership(user_id=owner.id, organization_id=org.id, is_active=True)
+        db.session.add(owner_membership)
+        db.session.commit()
+    elif not owner_membership.is_active:
+        owner_membership.is_active = True
+        db.session.commit()
+    actor = previous.user_id if previous is not None else owner.id
+    set_instance_owner(org.id, owner_membership.id, actor)
+    db.session.commit()
+    if previous is not None and previous.user_id != owner.id:
+        appoint_system_administrator(org.id, previous.id, owner.id)
+        db.session.commit()
+    click.echo("  done")

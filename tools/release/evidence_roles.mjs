@@ -288,12 +288,14 @@ test("People & Access on a 390 px phone: the owner adds a person (set-password e
   const person = ["Petra Newhire (synthetic)", "petra.newhire@example.invalid", "Synthetic-petra-pass-1"];
   await o.pg.fill("[name=display_name]", person[0]);
   await o.pg.fill("[name=email]", person[1]);
-  await Promise.all([o.pg.waitForURL(/\/settings\/people\/\d+$/), o.pg.locator("main form button[type=submit]").click()]);
-  await o.pg.waitForLoadState("load");
+  await Promise.all([o.pg.waitForLoadState("load"), o.pg.locator("main form button[type=submit]").click()]);
+  await o.pg.waitForSelector("[data-one-time-link]");
   assert.match(await flash(o.pg), /was added/);
   assert.match(await flash(o.pg), /link to choose a password was emailed/);
-  const personUrl = o.pg.url();
-  await noSideways(o.pg, "person page");
+  // Sign-in reliability (26 Oct 2026): the owner always gets the link to text, here on a phone.
+  assert.equal(await o.pg.locator('[data-one-time-link-emailed="yes"] [data-text-it]').count(), 1);
+  await noSideways(o.pg, "person page with the sign-in link");
+  const personUrl = new URL((await o.pg.locator('form[action$="/send-link"]').first().getAttribute("action")).replace(/\/send-link$/, ""), o.pg.url()).href;
   // The same email again is refused.
   await go(o.pg, "/settings/people/new");
   await o.pg.fill("[name=display_name]", "Duplicate (synthetic)");

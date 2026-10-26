@@ -6,7 +6,24 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
 from app.presentation import contractor_copy
-from app.services.auth import GENERIC_LOGIN_FAILURE, authenticate
+from app.services.auth import GENERIC_LOGIN_FAILURE, authenticate, sign_in
+
+SIGN_IN_MESSAGES = {
+    "locked": "Too many wrong passwords for this email. Wait 15 minutes, or use Forgot password.",
+    "no_access": "Your CalibraytAI email and password are right, but this site has not given you access. "
+                 "Ask the person who invited you.",
+    "unavailable": "CalibraytAI sign-in is not answering right now. Try again in a minute.",
+}
+
+
+def _no_access_here_message():
+    """Production (26 Oct 2026): an identity with no membership here, e.g. a Training Centre reviewer."""
+    from app.services.identity import training_site_url
+
+    site = training_site_url()
+    return ("Your CalibraytAI email and password are right, but they give no access to this site."
+            + (f" Reviewers and trainees: sign in to the Training Centre at {site} with the same email and password."
+               if site else " Ask the person who invited you."))
 from app.services.opening_v1 import opening_v1_config
 from app.services.password_reset import (
     BLOCK_PASSWORD_MISMATCH,
@@ -56,12 +73,20 @@ def login():
         return redirect(safe_next_url(request.args.get("next")))
 
     if request.method == "POST":
-        user = authenticate(
+        from app.services.identity import is_identity_provider
+        from app.services.supplier_hub import principal_class
+
+        user, outcome = sign_in(
             request.form.get("email", ""),
             request.form.get("password", ""),
+            client_ip=_client_ip(),
         )
+        if user is not None and is_identity_provider() and principal_class(user) is None:
+            user, message = None, _no_access_here_message()
+        else:
+            message = SIGN_IN_MESSAGES.get(outcome, GENERIC_LOGIN_FAILURE)
         if user is None:
-            flash(GENERIC_LOGIN_FAILURE, "error")
+            flash(message, "error")
             return render_template(
                 "auth/login.html",
                 opening_v1=opening_v1_config(url_for),
@@ -95,8 +120,20 @@ def _sign_in_url(portal):
 def forgot_password():
     portal = _recovery_portal()
     if request.method == "POST":
+        from app.services.identity import IdentityRefused, IdentityUnavailable, is_identity_client, local_only, remote_forgot
+
+        email = request.form.get("email", "")
+        if is_identity_client() and not local_only(email):
+            # One CalibraytAI identity (26 Oct 2026): Production sends the link; the new password works everywhere.
+            try:
+                remote_forgot(email, _client_ip())
+            except (IdentityUnavailable, IdentityRefused):
+                flash(SIGN_IN_MESSAGES["unavailable"], "error")
+                return render_template("auth/forgot.html", portal=portal, sign_in_url=_sign_in_url(portal),
+                                       email_ready=True)
+            return redirect(url_for("auth.forgot_password_sent", portal=portal or None))
         try:
-            request_password_reset(request.form.get("email", ""), client_ip=_client_ip())
+            request_password_reset(email, client_ip=_client_ip())
         except PasswordResetServiceError:
             pass
         return redirect(url_for("auth.forgot_password_sent", portal=portal or None))
@@ -112,16 +149,21 @@ def forgot_password_sent():
 
 
 def _email_ready() -> bool:
-    """Whether this site can email a reset link at all (says nothing about any account)."""
+    """Whether this site can email a reset link at all (says nothing about any account). A Training Centre
+    connected to CalibraytAI sign-in has Production send it (26 Oct 2026)."""
+    from app.services.identity import is_identity_client
     from app.services.transactional_email import email_delivery_configured
 
-    return email_delivery_configured()
+    return is_identity_client() or email_delivery_configured()
 
 
 @auth_bp.route("/reset-password/complete", methods=["GET"])
 def reset_password_complete():
     # A supplier's sign-in is the Supplier Hub's (21 Oct 2026); the query only chooses which sign-in link to show.
-    return render_template("auth/reset_complete.html", supplier=request.args.get("side") == "supplier")
+    from app.services.identity import training_site_url
+
+    return render_template("auth/reset_complete.html", supplier=request.args.get("side") == "supplier",
+                           training_url=training_site_url())
 
 
 @auth_bp.route("/reset-password", methods=["GET", "POST"])
@@ -200,17 +242,29 @@ def change_password():
         current = request.form.get("current_password") or ""
         new = request.form.get("password") or ""
         confirm = request.form.get("confirm_password") or ""
+        from app.services.identity import IdentityRefused, IdentityUnavailable, federated, remote_change_password
+
+        remote = federated(current_user.email)
         try:
-            if not verify_password(current_user.password_hash, current):
-                raise AuthServiceError("The current password is not correct.")
             if new != confirm:
                 raise AuthServiceError("The new password and confirmation do not match.")
             validate_new_password(new)
+            if remote:
+                # One CalibraytAI identity (26 Oct 2026): Production checks and sets it, so it works everywhere.
+                try:
+                    remote_change_password(current_user.email, current, new)
+                except IdentityRefused as exc:
+                    raise AuthServiceError(str(exc)) from exc
+                except IdentityUnavailable as exc:
+                    raise AuthServiceError(SIGN_IN_MESSAGES["unavailable"]) from exc
+            elif not verify_password(current_user.password_hash, current):
+                raise AuthServiceError("The current password is not correct.")
         except AuthServiceError as exc:
             error = str(exc)
         else:
             user = current_user._get_current_object()
-            user.password_hash = hash_password(new)
+            if not remote:
+                user.password_hash = hash_password(new)
             user.credentials_epoch = int(user.credentials_epoch or 0) + 1
             db.session.commit()
             logout_user()

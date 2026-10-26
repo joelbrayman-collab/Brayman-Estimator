@@ -77,7 +77,10 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
 # an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
 # gets 410 (tests/test_supplier_pro_desk.py). It shows one frozen quotation and records one answer.
 EXPECTED_EXEMPT_PREFIXES = {"sign.", "proposal_link.", "walkthrough.", "decision_tools.", "supplier_quote_link.",
-                            "training."}  # training.: own guard, 404 off the training site (21 Oct 2026)
+                            "training.",  # training.: own guard, 404 off the training site (21 Oct 2026)
+                            # identity_api.: server-to-server from the Training Centre; 404 unless IDENTITY_CLIENTS is
+                            # set, 401 without that site's credentials (tests/test_one_identity.py) (26 Oct 2026)
+                            "identity_api."}
 EXPECTED_SUPPLIER_EXEMPT = {"supplier_portal.login", "supplier_portal.logout"}
 
 # Frozen concrete set of endpoints the lists above exempt today. A new route under an

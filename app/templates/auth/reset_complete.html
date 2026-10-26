@@ -6,4 +6,8 @@
         <p class="login-secondary">
             <a class="login-primary-link button login-primary" href="{{ url_for('supplier_portal.login') if supplier else url_for('auth.login') }}">{{ contractor_copy.RETURN_TO_SIGN_IN }}</a>
         </p>
+        {% if training_url and not supplier %}
+        <p class="login-secondary" data-also-training>The same email and password also sign you in to the
+            <a class="login-secondary-link" href="{{ training_url }}/training/signin">CalibraytAI Training Centre</a>, if you have been given access there.</p>
+        {% endif %}
 {% endblock %}

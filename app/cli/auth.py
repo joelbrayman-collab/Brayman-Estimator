@@ -364,9 +364,20 @@ def issue_link_command(email):
     """Emergency access (26 Oct 2026): print a one-time set-password link for an existing, active sign-in. No email
     is sent; the link is printed here only. It works once and replaces the person's unused links."""
     from app.models.user import User
+    from app.services.identity import IdentityRefused, IdentityUnavailable, federated, provider_url, remote_issue_link
     from app.services.password_reset import PasswordResetServiceError, issue_link_without_email
     from app.services.transactional_email import link_base_url
 
+    if federated(email):
+        # One CalibraytAI identity (26 Oct 2026): the password lives on Production, so Production makes the link.
+        try:
+            answer = remote_issue_link(email, send_email=False)
+        except (IdentityRefused, IdentityUnavailable) as exc:
+            raise click.ClickException(str(exc))
+        click.echo(f"One-time CalibraytAI link (works once, expires {answer.get('expires_at')} UTC; sets the one "
+                   "password for every CalibraytAI site this person may use):")
+        click.echo(f"{provider_url()}{answer['link_path']}")
+        return
     user = User.query.filter(db.func.lower(User.email) == (email or "").strip().lower()).first()
     try:
         path, expires_at = issue_link_without_email(user)

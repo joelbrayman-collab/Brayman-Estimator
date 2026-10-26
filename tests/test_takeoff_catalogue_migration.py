@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "u1b2c3d4e5f6"
 NEXT = "v2c3d4e5f6a7"
-HEAD = "m7s3r5q8b2c4"
+HEAD = "e5d1v4r7y2k9"  # sign-in reliability (v1rel13) follows the Magnificent Seven (m7s3r5q8b2c4)
 PRIOR = "t0a1b2c3d4e5"
 WATCHED = (
     "canonical_materials",

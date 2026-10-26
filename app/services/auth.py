@@ -92,21 +92,47 @@ def verify_password(password_hash: str, password: str) -> bool:
     return check_password_hash(password_hash, password)
 
 
+SIGN_IN_OK = "ok"
+SIGN_IN_BAD = "bad"                  # wrong email or password (always the generic message)
+SIGN_IN_LOCKED = "locked"            # too many wrong passwords; try again later
+SIGN_IN_NO_ACCESS = "no_access"      # the password is right, but this site has given the person no access
+SIGN_IN_UNAVAILABLE = "unavailable"  # CalibraytAI sign-in (Production) could not be asked
+
+
+def sign_in(email: str, password: str, *, client_ip: str = "") -> tuple:
+    """(user or None, outcome). One CalibraytAI identity (26 Oct 2026): on the Training Centre a real person's
+    password is checked by Production (app/services/identity.py); practice personas and every other site check
+    locally. What the person may do here is always this site's own record."""
+    from app.services.identity import IdentityRefused, IdentityUnavailable, federated, remote_verify
+
+    try:
+        normalized = normalize_email(email)
+    except AuthServiceError:
+        return None, SIGN_IN_BAD
+    user = User.query.filter_by(email=normalized).first()
+    if federated(normalized):
+        try:
+            answer = remote_verify(normalized, password or "", client_ip)
+        except (IdentityUnavailable, IdentityRefused):
+            return None, SIGN_IN_UNAVAILABLE
+        if not answer.get("ok"):
+            return None, SIGN_IN_LOCKED if answer.get("locked") else SIGN_IN_BAD
+        if user is None or not user.is_active:
+            return None, SIGN_IN_NO_ACCESS
+        return user, SIGN_IN_OK
+    if user is None or not user.is_active:
+        return None, SIGN_IN_BAD
+    if not verify_password(user.password_hash, password or ""):
+        return None, SIGN_IN_BAD
+    return user, SIGN_IN_OK
+
+
 def authenticate(email: str, password: str) -> Optional[User]:
     """Return the active user for a correct password, else None.
 
     Always generic: does not disclose whether the email exists.
     """
-    try:
-        normalized = normalize_email(email)
-    except AuthServiceError:
-        return None
-    user = User.query.filter_by(email=normalized).first()
-    if user is None or not user.is_active:
-        return None
-    if not verify_password(user.password_hash, password or ""):
-        return None
-    return user
+    return sign_in(email, password)[0]
 
 
 def current_actor_display_name(*, fallback: str = "") -> str:

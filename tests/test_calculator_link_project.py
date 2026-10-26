@@ -122,6 +122,6 @@ def test_project_calculations_migration_follows_the_training_centre():
     cfg = Config(str(root / "migrations" / "alembic.ini")) if (root / "migrations" / "alembic.ini").exists() else Config()
     cfg.set_main_option("script_location", str(root / "migrations"))
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["m7s3r5q8b2c4"]  # release 8: time/payroll/SMS follows it
+    assert script.get_heads() == ["e5d1v4r7y2k9"]  # release 8: time/payroll/SMS follows it
     assert script.get_revision("u7b3d9f2a4c6").down_revision == "w7d3b9c1e5a8"
     assert script.get_revision("w7d3b9c1e5a8").down_revision == "t6a2c8e4f1b3"

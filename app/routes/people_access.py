@@ -105,6 +105,10 @@ def _send_link(user):
         org = db_session_get(Organization, _org())
         invitation = {"company_name": (getattr(org, "display_name", None) or getattr(org, "legal_name", None) or "Your company"),
                       "invited_by": getattr(current_user, "display_name", "") or ""}
+    from app.services.identity import federated
+
+    if federated(user.email):
+        return _send_link_via_identity(user, membership, invitation)
     try:
         outcome = send_set_password_link(user, client_ip=request.remote_addr, invitation=invitation)
     except PasswordResetServiceError as exc:
@@ -134,6 +138,64 @@ def _send_link(user):
     flash(LINK_NOT_EMAILED.format(email=user.email, reason=reason, name=user.display_name,
                                   expires=_expires_phrase(outcome)), "error")
     return link
+
+
+def _send_link_via_identity(user, membership, invitation):
+    """One CalibraytAI identity (26 Oct 2026): on the Training Centre a real person's password lives on Production.
+    A new person gets their one identity there (an existing identity is never changed: they already have their
+    email and password). Pressing Email a link asks Production for a new set-password link. Either way the owner
+    gets Production's link to Copy or Text, emailed or not."""
+    from app.services.identity import IdentityRefused, IdentityUnavailable, provider_url, remote_issue_link, remote_provision
+    from app.services.people_access import record_people_event
+
+    from app.models.organization import Organization
+
+    actor = getattr(current_user, "display_name", "") or "the owner"
+    org = db_session_get(Organization, _org())
+    company = (getattr(org, "display_name", None) or "the Training Centre") if org else "the Training Centre"
+    try:
+        if invitation is not None:
+            answer = remote_provision(user.email, user.display_name, invited_by=actor, company=company)
+            if answer.get("existing"):
+                if membership is not None:
+                    record_people_event(organization_id=_org(), membership=membership, action="INVITATION_SENT",
+                                        actor=current_user, detail="Already has a CalibraytAI sign-in; no link needed")
+                flash(f"{user.display_name} already has a CalibraytAI sign-in. They sign in here with the same email "
+                      "and password they already use. If they have forgotten it, press Email a link to choose a "
+                      "password.", "success")
+                return None
+        else:
+            answer = remote_issue_link(user.email, invited_by=actor, company=company)
+    except IdentityRefused as exc:
+        flash(str(exc), "error")
+        return None
+    except IdentityUnavailable:
+        flash("CalibraytAI sign-in is not answering right now, so no link was made. Try again in a minute.", "error")
+        return None
+    if not answer.get("link_path"):
+        flash(f"{user.display_name}'s CalibraytAI sign-in was created, but no link could be made just now. "
+              "Press Email a link to choose a password in a minute.", "error")
+        return None
+    emailed = bool(answer.get("emailed"))
+    if membership is not None:
+        record_people_event(organization_id=_org(), membership=membership,
+                            action="INVITATION_SENT" if invitation is not None else "PASSWORD_LINK_SENT",
+                            actor=current_user,
+                            detail=("Emailed by CalibraytAI sign-in; the same one-time link was also shown to "
+                                    f"{actor}") if emailed else
+                                   f"Not emailed ({answer.get('email_state')}); one-time link shown to {actor} to give in person")
+    from datetime import datetime
+
+    expires_at = datetime.fromisoformat(str(answer["expires_at"]).rstrip("Z")) if answer.get("expires_at") else None
+    if emailed:
+        flash(f"A link to choose a password was emailed to {user.email}. The same link is below, so you can text it "
+              "if the email does not arrive. It sets their one CalibraytAI password, for here and anywhere else they "
+              "have access.", "success")
+    else:
+        flash(f"The email to {user.email} was not sent ({answer.get('email_state')}). Give {user.display_name} the "
+              "one-time link below yourself.", "error")
+    return {"url": f"{provider_url()}{answer['link_path']}", "expires_at": expires_at, "email": user.email,
+            "name": user.display_name, "emailed": emailed, "place": "CalibraytAI"}
 
 
 def _confirm_to_sender(user, is_invitation, outcome):
@@ -194,12 +256,37 @@ def _email_rows(email, limit=5):
             .order_by(TransactionalMessage.created_at.desc(), TransactionalMessage.id.desc()).limit(limit).all())
 
 
+def _remote_email_history(email, check=False):
+    """A real person's sign-in emails on the Training Centre are sent by Production (one identity, 26 Oct 2026)."""
+    from datetime import datetime
+    from types import SimpleNamespace
+
+    from app.services.identity import IdentityRefused, IdentityUnavailable, remote_email_history
+
+    try:
+        answer = remote_email_history(email, check=check)
+    except (IdentityUnavailable, IdentityRefused):
+        return []
+    out = []
+    for e in answer.get("emails") or []:
+        at = datetime.fromisoformat(str(e["at"]).rstrip("Z")) if e.get("at") else None
+        state = SimpleNamespace(code=e.get("state"), label=e.get("label"), at=None, detail="",
+                                checkable=bool(e.get("checkable")))
+        sent = e.get("state") != "NOT_SENT"
+        out.append({"at": at, "kind": e.get("kind"), "sent": sent, "state": state, "captured": False,
+                    "reason": "" if sent else (e.get("label") or "").replace("Not sent: ", "")})
+    return out
+
+
 def email_history(email, limit=5):
     """The last emails to this person (transactional_messages): when, what kind, and what the mail service
     reported: Delivered, Bounced with its reason, Waiting, or Not sent with a plain reason (sign-in reliability,
     26 Oct 2026: accepted is never shown as delivered). Never a link: the table keeps no link, token or body."""
     from app.services.email_delivery import STATE_CAPTURED, STATE_NOT_SENT, state_of
+    from app.services.identity import federated
 
+    if federated(email):
+        return _remote_email_history(email)
     out = []
     for row in _email_rows(email, limit):
         state = state_of(row)
@@ -358,6 +445,12 @@ def check_email(membership_id):
     from app.services.email_delivery import check_waiting
 
     person = _person_or_404(membership_id)
+    from app.services.identity import federated
+
+    if federated(person.email):
+        _remote_email_history(person.email, check=True)
+        flash("Delivery checked with the mail service.", "success")
+        return redirect(url_for("people_access.detail", membership_id=membership_id) + "#email-history-heading")
     added, problem = check_waiting(_email_rows(person.email))
     if problem:
         flash(f"Could not ask the mail service: {problem}", "error")

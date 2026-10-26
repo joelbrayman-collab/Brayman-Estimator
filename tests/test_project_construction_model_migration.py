@@ -16,7 +16,7 @@ from app import create_app, db
 PRIOR = "s9f0a1b2c3d4"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "m7s3r5q8b2c4"  # the Magnificent Seven follows the wizards (w2z9r4d7k1m6)
+GRAPH_HEAD = "e5d1v4r7y2k9"  # sign-in reliability (v1rel13) follows the Magnificent Seven (m7s3r5q8b2c4)
 
 
 def _cfg(db_uri):

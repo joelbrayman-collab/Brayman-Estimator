@@ -332,3 +332,72 @@ def test_the_set_password_outcome_always_carries_the_link(app):
         staff = User.query.filter_by(email=STAFF[0]).one()
         outcome = send_set_password_link(staff, client_ip="127.0.0.1")
         assert outcome.delivered and outcome.path.startswith("/reset-password#") and outcome.message_id is not None
+
+
+# ------------------------------------------------------------------ the release's one migration
+
+
+def test_the_migration_adds_exactly_one_table(tmp_path):
+    """e5d1v4r7y2k9: transactional_delivery_events, nothing else. Every existing table, its columns, indexes and rows
+    are unchanged. Downgrade refuses while the table holds a row."""
+    from pathlib import Path
+
+    import sqlalchemy as sa
+    from alembic import command
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+
+    from app import create_app
+
+    root = Path(__file__).resolve().parents[1]
+    uri = f"sqlite:///{tmp_path}/m.db"
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": uri})
+    ctx = application.app_context()
+    ctx.push()
+    cfg = Config(str(root / "migrations" / "alembic.ini"))
+    cfg.set_main_option("script_location", str(root / "migrations"))
+    cfg.set_main_option("sqlalchemy.url", uri)
+    script = ScriptDirectory.from_config(cfg)
+    assert script.get_heads() == ["e5d1v4r7y2k9"]
+    assert script.get_revision("e5d1v4r7y2k9").down_revision == "m7s3r5q8b2c4"
+    command.upgrade(cfg, "m7s3r5q8b2c4")
+    engine = sa.create_engine(uri)
+    with engine.begin() as conn:
+        conn.execute(sa.text("INSERT INTO transactional_messages (template_id, to_email, from_email, provider, "
+                             "provider_message_id, status, created_at) VALUES ('PASSWORD_RESET', 'a@example.invalid', "
+                             "'b@example.invalid', 'postmark', 'pm-9', 'ACCEPTED', '2026-10-26')"))
+    inspector = sa.inspect(engine)
+    before = {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)]
+              for t in inspector.get_table_names()}
+    before_indexes = {t: sorted(i["name"] for i in inspector.get_indexes(t)) for t in before}
+    with engine.connect() as conn:
+        rows = {t: conn.execute(sa.text(f'SELECT * FROM "{t}" ORDER BY rowid')).fetchall() for t in before
+                if t != "alembic_version"}
+    engine.dispose()
+    command.upgrade(cfg, "e5d1v4r7y2k9")
+    engine = sa.create_engine(uri)
+    inspector = sa.inspect(engine)
+    after = {t: [(c["name"], str(c["type"]), c["nullable"]) for c in inspector.get_columns(t)]
+             for t in inspector.get_table_names()}
+    assert set(after) - set(before) == {"transactional_delivery_events"}
+    for table in before:
+        assert after[table] == before[table], table
+        assert sorted(i["name"] for i in inspector.get_indexes(table)) == before_indexes[table], table
+    assert {c["name"] for c in inspector.get_columns("transactional_delivery_events")} == \
+        set(db.metadata.tables["transactional_delivery_events"].columns.keys())
+    with engine.connect() as conn:
+        for table, kept in rows.items():
+            assert conn.execute(sa.text(f'SELECT * FROM "{table}" ORDER BY rowid')).fetchall() == kept, table
+    with engine.begin() as conn:
+        conn.execute(sa.text("INSERT INTO transactional_delivery_events (message_id, provider, event, source, event_key, "
+                             "received_at) VALUES (1, 'postmark', 'DELIVERED', 'CHECK', 'k1', '2026-10-26')"))
+    engine.dispose()
+    with pytest.raises(RuntimeError, match="Downgrade refused"):
+        command.downgrade(cfg, "m7s3r5q8b2c4")
+    engine = sa.create_engine(uri)
+    with engine.begin() as conn:
+        conn.execute(sa.text("DELETE FROM transactional_delivery_events"))
+    engine.dispose()
+    command.downgrade(cfg, "m7s3r5q8b2c4")
+    assert "transactional_delivery_events" not in sa.inspect(sa.create_engine(uri)).get_table_names()
+    ctx.pop()

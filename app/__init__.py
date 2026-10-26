@@ -336,6 +336,9 @@ def _register_office_auth(app: Flask) -> None:
             or endpoint.startswith("walkthrough.")
             or endpoint.startswith("decision_tools.")
             or endpoint.startswith("supplier_quote_link.")  # a supplier's customer approves a quotation (20 Oct 2026)
+            # One CalibraytAI identity (26 Oct 2026): server-to-server calls from the Training Centre. No sign-in
+            # session; every request must carry a known site's credentials (app/routes/identity_api.py).
+            or endpoint.startswith("identity_api.")
         ):
             return None
         # Training & Acceptance Centre (21 Oct 2026): only on the training site; the blueprint checks the
@@ -645,11 +648,13 @@ def create_app(config=None):
     # "flask sms" commands and the background sender (app/services/crew_notices.py).
     from app.routes.sms_notifications import sms_notifications_bp
     from app.routes.email_webhooks import email_webhooks_bp
+    from app.routes.identity_api import identity_api_bp
     from app.cli.sms import sms_cli
     from app.services.crew_notices import start_sweeper
 
     app.register_blueprint(sms_notifications_bp)
     app.register_blueprint(email_webhooks_bp)
+    app.register_blueprint(identity_api_bp)
     app.cli.add_command(sms_cli)
     start_sweeper(app)
     # The Magnificent Seven everyday operations (25 Oct 2026): office working screens, end-of-day reminders and
@@ -662,8 +667,10 @@ def create_app(config=None):
     app.cli.add_command(quickbooks_online_cli)
     # Sign-in reliability (26 Oct 2026): "flask email status" and "flask email test-delivery --to ...".
     from app.cli.email_delivery import email_cli
+    from app.cli.identity import identity_cli
 
     app.cli.add_command(email_cli)
+    app.cli.add_command(identity_cli)
 
     @app.route("/field-sw.js")
     def field_service_worker():

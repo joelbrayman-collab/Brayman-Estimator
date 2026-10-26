@@ -19,14 +19,15 @@
         <label>One-time link <input type="text" id="one-time-link" value="{{ one_time_link.url }}" readonly autocomplete="off" spellcheck="false"></label>
         <textarea id="one-time-message" class="visually-hidden" readonly tabindex="-1" aria-hidden="true">{{ _message }}</textarea>
         <div class="form-actions one-time-link-actions">
-            <a class="button button-primary" href="sms:&amp;body={{ _message|urlencode }}" data-text-it>Text it</a>
-            <button type="button" class="button" data-copy-target="one-time-message">Copy message</button>
+            <a class="button one-time-text-it" href="sms:&amp;body={{ _message|urlencode }}" data-text-it>Text it</a>
+            <button type="button" class="button button-secondary" data-copy-target="one-time-message">Copy message</button>
             <button type="button" class="button button-secondary" data-copy-target="one-time-link">Copy link</button>
         </div>
         <p class="muted-copy">Text it opens Messages with the message ready; choose {{ _first }} and send.</p>
     </div>
 </section>
-<style>.one-time-link-actions { display: flex; flex-wrap: wrap; gap: 8px; } .one-time-link-actions .button { min-height: 44px; }</style>
+<style>.one-time-link-actions { display: flex; flex-wrap: wrap; gap: 8px; } .one-time-link-actions .button { min-height: 44px; }
+.one-time-text-it { color: var(--black, #141414); text-decoration: none; display: inline-flex; align-items: center; font-weight: 700; }</style>
 <script>
 (function () {
   document.querySelectorAll('[data-copy-target]').forEach(function (btn) {

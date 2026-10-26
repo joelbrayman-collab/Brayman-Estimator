@@ -396,3 +396,26 @@ def test_owner_setup_makes_one_identity_the_owner_and_moves_its_supplier_login(t
     owner_client, _ = _signin(application, gmail, "Synthetic-gmail-1")
     assert owner_client.get("/settings/people").status_code == 200
     assert _ok(application, OWNER[0], OWNER[1])
+
+
+def test_owner_setup_on_training_creates_the_owner_who_then_signs_in_with_the_production_password(sites):
+    from app.services.instance_authority import is_instance_owner, is_system_administrator
+    from app.training import service as svc
+
+    production, training = sites  # BEN's identity exists on Production; not on the Training Centre
+    runner = training.test_cli_runner()
+    refused = runner.invoke(args=["identity", "owner-setup", "--owner-email", BEN[0]])
+    assert refused.exit_code != 0 and "--create" in refused.output
+    dry = runner.invoke(args=["identity", "owner-setup", "--owner-email", BEN[0], "--create", "Ben Both"]).output
+    assert "will be created" in dry and "DRY RUN" in dry
+    with training.app_context():
+        assert User.query.filter_by(email=BEN[0]).first() is None
+    done = runner.invoke(args=["identity", "owner-setup", "--owner-email", BEN[0], "--create", "Ben Both", "--apply"])
+    assert done.exit_code == 0, done.output
+    with training.app_context():
+        ben = User.query.filter_by(email=BEN[0]).one()
+        previous = User.query.filter_by(email=OWNER[0]).one()
+        assert is_instance_owner(ben, ORG) and is_system_administrator(previous, ORG)
+        assert svc.is_admin(ben) == ORG  # the Training Centre administrator
+    client, response = _signin(training, BEN[0], BEN[1])  # his one (Production) password
+    assert response.status_code == 302 and client.get("/settings/people").status_code == 200

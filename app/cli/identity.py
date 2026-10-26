@@ -75,9 +75,11 @@ def reconcile_command(apply_changes):
 @click.option("--owner-email", required=True, help="The one identity that becomes Instance Owner here.")
 @click.option("--supplier-to", default="", help="Move the owner email's Supplier Hub login(s) to this address.")
 @click.option("--organization-id", default="ORG-001", show_default=True)
+@click.option("--create", "create_name", default="", help="Create OWNER-EMAIL's sign-in here with this display name if it "
+              "does not exist (the Training Centre: the password stays the one CalibraytAI password on Production).")
 @click.option("--apply", "apply_changes", is_flag=True, default=False, help="Make the changes (default: list only).")
 @with_appcontext
-def owner_setup_command(owner_email, supplier_to, organization_id, apply_changes):
+def owner_setup_command(owner_email, supplier_to, organization_id, create_name, apply_changes):
     """Joel's one identity (26 Oct 2026): make OWNER-EMAIL this company's Instance Owner, keep the previous owner as a
     System Administrator, and move any Supplier Hub login on OWNER-EMAIL to SUPPLIER-TO (a sign-in cannot be both a
     contractor and a supplier). Uses the existing authority services, so their history is recorded. No password is
@@ -98,8 +100,22 @@ def owner_setup_command(owner_email, supplier_to, organization_id, apply_changes
     if org is None:
         raise click.ClickException(f"No company {organization_id} here.")
     owner = User.query.filter(db.func.lower(User.email) == owner_email.strip().lower()).first()
+    if owner is None and create_name:
+        click.echo(f"  {_mask(owner_email)}: no sign-in here yet; will be created as {create_name}")
+        if apply_changes:
+            import secrets
+
+            from app.services.auth import hash_password
+
+            owner = User(email=owner_email.strip().lower(), display_name=create_name[:150],
+                         password_hash=hash_password(secrets.token_urlsafe(32)), is_active=True)
+            db.session.add(owner)
+            db.session.commit()
+        else:
+            click.echo(f"{'DRY RUN (nothing changes)'} for {org.display_name}: then member and Instance Owner")
+            return
     if owner is None or not owner.is_active:
-        raise click.ClickException("OWNER-EMAIL is not an active sign-in here.")
+        raise click.ClickException("OWNER-EMAIL is not an active sign-in here (use --create \"Name\" to add it).")
     previous = next((m for m in UserMembership.query.filter_by(organization_id=org.id, is_active=True)
                      if is_instance_owner(m.user, org.id)), None)
     supplier_rows = SupplierUserMembership.query.filter_by(user_id=owner.id, status="ACTIVE").all()

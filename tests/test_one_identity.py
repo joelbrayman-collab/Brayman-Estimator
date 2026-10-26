@@ -18,6 +18,7 @@ from app import create_app, db
 from app.models.user import User, UserMembership
 from app.services.instance_authority import set_instance_owner
 from app.services.organizations import DEFAULT_ORGANIZATION_ID as ORG
+from tests.cli_helpers import cli_runner
 from tests.auth_fixtures import ensure_office_user
 
 pytestmark = pytest.mark.no_office_auth
@@ -298,7 +299,7 @@ def test_reconcile_lists_then_carries_a_training_only_password_to_production(sit
                                  display_name="Early Tester (synthetic)")
         ensure_office_user(email=BEN[0], password="Synthetic-ben-training-old", display_name=BEN[2])
         assert old.password_hash
-    runner = training.test_cli_runner()
+    runner = cli_runner(training)
     dry = runner.invoke(args=["identity", "reconcile"]).output
     assert "DRY RUN" in dry and "ea***@example.com (active here): only here" in dry
     assert "be***@example.com (active here): on both: Production's password wins" in dry
@@ -318,7 +319,7 @@ def test_reconcile_lists_then_carries_a_training_only_password_to_production(sit
 def test_emergency_link_on_training_comes_from_production_and_works_everywhere(sites):
     production, training = sites
     _add_on_training(training, BEN[2], BEN[0])
-    output = training.test_cli_runner().invoke(args=["auth", "issue-link", "--email", BEN[0]]).output
+    output = cli_runner(training).invoke(args=["auth", "issue-link", "--email", BEN[0]]).output
     link = re.search(r"(https://production\.example\.invalid/reset-password#\S+)", output).group(1)
     assert _captured(production, BEN[0]) == []  # no email
     _set_password(production, link.split("#", 1)[1], "Synthetic-ben-emergency-5")
@@ -327,7 +328,7 @@ def test_emergency_link_on_training_comes_from_production_and_works_everywhere(s
 
 def test_emergency_link_on_production_for_the_owner(sites):
     production, _training = sites
-    output = production.test_cli_runner().invoke(args=["auth", "issue-link", "--email", OWNER[0]]).output
+    output = cli_runner(production).invoke(args=["auth", "issue-link", "--email", OWNER[0]]).output
     link = re.search(r"(https://production\.example\.invalid/reset-password#\S+)", output).group(1)
     _set_password(production, link.split("#", 1)[1], "Synthetic-owner-recovered-6")
     assert _ok(production, OWNER[0], "Synthetic-owner-recovered-6")
@@ -374,7 +375,7 @@ def test_owner_setup_makes_one_identity_the_owner_and_moves_its_supplier_login(t
         from app.services.auth import hash_password
         user.password_hash = hash_password("Synthetic-gmail-1")
         db.session.commit()
-    runner = application.test_cli_runner()
+    runner = cli_runner(application)
     refused = runner.invoke(args=["identity", "owner-setup", "--owner-email", gmail])
     assert refused.exit_code != 0 and "give --supplier-to" in refused.output
     dry = runner.invoke(args=["identity", "owner-setup", "--owner-email", gmail, "--supplier-to", moved_to]).output
@@ -403,7 +404,7 @@ def test_owner_setup_on_training_creates_the_owner_who_then_signs_in_with_the_pr
     from app.training import service as svc
 
     production, training = sites  # BEN's identity exists on Production; not on the Training Centre
-    runner = training.test_cli_runner()
+    runner = cli_runner(training)
     refused = runner.invoke(args=["identity", "owner-setup", "--owner-email", BEN[0]])
     assert refused.exit_code != 0 and "--create" in refused.output
     dry = runner.invoke(args=["identity", "owner-setup", "--owner-email", BEN[0], "--create", "Ben Both"]).output

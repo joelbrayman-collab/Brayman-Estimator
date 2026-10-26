@@ -25,6 +25,7 @@ from app.models.password_reset import PasswordResetToken
 from app.models.transactional_message import TEMPLATE_ACCOUNT_INVITATION, TransactionalMessage
 from app.models.user import User, UserMembership
 from app.services.transactional_email import TransportResult
+from tests.cli_helpers import cli_runner
 from tests.auth_fixtures import login_office_user
 from tests.test_people_access_pages import NEW_PERSON, OWNER, _client, app  # noqa: F401
 
@@ -252,7 +253,7 @@ def test_issue_link_prints_a_working_one_time_link_and_sends_nothing(app):
     from tests.test_people_access_pages import STAFF
 
     app.config["PUBLIC_BASE_URL"] = "https://office.example.invalid"
-    runner = app.test_cli_runner()
+    runner = cli_runner(app)
     with app.app_context():
         before = TransactionalMessage.query.count()
     result = runner.invoke(args=["auth", "issue-link", "--email", STAFF[0].upper()])
@@ -276,7 +277,7 @@ def test_issue_link_refuses_a_deactivated_sign_in(app):
         user.is_active = False
         user_id = user.id
         db.session.commit()
-    result = app.test_cli_runner().invoke(args=["auth", "issue-link", "--email", STAFF[0]])
+    result = cli_runner(app).invoke(args=["auth", "issue-link", "--email", STAFF[0]])
     assert result.exit_code != 0 and "No active sign-in" in result.output
     with app.app_context():
         assert PasswordResetToken.query.filter_by(user_id=user_id).count() == 0
@@ -287,7 +288,7 @@ def test_test_delivery_reports_acceptance_and_delivery_separately(app):
     app.config["POSTMARK_SERVER_TOKEN"] = "synthetic-server-token"
     app.config["POSTMARK_URLOPEN"] = FakePostmark([{"Type": "Delivered", "ReceivedAt": "2026-10-26T15:02:03Z",
                                                     "Details": {"DeliveryMessage": "250 OK"}}])
-    result = app.test_cli_runner().invoke(args=["email", "test-delivery", "--to", "someone@icloud.example.invalid",
+    result = cli_runner(app).invoke(args=["email", "test-delivery", "--to", "someone@icloud.example.invalid",
                                                 "--wait", "0"])
     assert result.exit_code == 0, result.output
     assert "ACCEPTED=yes provider=postmark id=pm-1" in result.output and "DELIVERY=DELIVERED" in result.output
@@ -301,11 +302,11 @@ def test_test_delivery_waiting_and_not_sent_are_failures(app):
     _accepting(app)
     app.config["POSTMARK_SERVER_TOKEN"] = "synthetic-server-token"
     app.config["POSTMARK_URLOPEN"] = FakePostmark([])
-    waiting = app.test_cli_runner().invoke(args=["email", "test-delivery", "--to", "x@example.invalid", "--wait", "0"])
+    waiting = cli_runner(app).invoke(args=["email", "test-delivery", "--to", "x@example.invalid", "--wait", "0"])
     assert waiting.exit_code == 1 and "DELIVERY=WAITING" in waiting.output
     app.config.pop("TRANSACTIONAL_EMAIL_TRANSPORT")
     app.config["TRANSACTIONAL_UAT_ALLOWLIST"] = "joel@example.invalid"
-    held = app.test_cli_runner().invoke(args=["email", "test-delivery", "--to", "x@example.invalid", "--wait", "0"])
+    held = cli_runner(app).invoke(args=["email", "test-delivery", "--to", "x@example.invalid", "--wait", "0"])
     assert held.exit_code == 1 and "ACCEPTED=no (Not sent: this office only emails the test addresses" in held.output
 
 
@@ -313,7 +314,7 @@ def test_email_status_prints_names_never_secrets(app):
     app.config.update({"TRANSACTIONAL_EMAIL_PROVIDER": "postmark", "POSTMARK_SERVER_TOKEN": "synthetic-secret-token",
                        "TRANSACTIONAL_FROM_EMAIL": "signin@example.invalid",
                        "TRANSACTIONAL_UAT_ALLOWLIST": "joel@example.invalid,ben@example.invalid"})
-    output = app.test_cli_runner().invoke(args=["email", "status"]).output
+    output = cli_runner(app).invoke(args=["email", "status"]).output
     assert "PROVIDER=postmark" in output and "POSTMARK_SERVER_TOKEN=set" in output and "POSTMARK_WEBHOOK=not set" in output
     assert "2 address(es): jo***@example.invalid, be***@example.invalid" in output
     assert "synthetic-secret-token" not in output and "joel@" not in output

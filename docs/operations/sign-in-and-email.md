@@ -1,6 +1,35 @@
 # Sign-in and email (v1rel13, 26 Oct 2026)
 
-Joel's rule: **nobody's ability to get into CalibraytAI depends only on an email arriving.**
+Joel's rules: **one email address and one password for every CalibraytAI site a person may use**, and **nobody's
+ability to get in depends only on an email arriving.**
+
+## One identity (Production is the source of truth)
+
+Production (calibryatai.onrender.com) and the Training Centre (training.calibraytai.com) are separate copies of
+CalibraytAI with separate databases. Before v1rel13 each kept its own passwords, so a password set on one meant
+nothing on the other. Now:
+
+- **Production holds every real person's one password** (`app/services/identity.py`).
+- **The Training Centre asks Production** when a real person signs in, changes their password or uses Forgot
+  password (server to server, `/identity/api/*`, with a per-site secret). A new password works on both at once.
+- **What a person may do stays per site**: a Training Centre account (company, Field only, training
+  administrator) is the Training Centre's; a Production membership is Production's. A reviewer such as Kevin has an
+  identity on Production but no Production membership: Production politely refuses him and points to the Training
+  Centre.
+- **Adding a person on the Training Centre** creates their one identity on Production if they have none (an existing
+  identity is never changed: they just use the password they already have). The owner gets Production's one-time
+  link with Copy and Text it.
+- **Practice personas** ("… (training)", addresses ending in `.invalid`) are not people: they keep local passwords on
+  the Training Centre and never reach Production.
+- **Sessions**: an existing Training Centre session ends at its normal time after a password change made elsewhere;
+  every new sign-in uses the new password.
+
+Connecting the Training Centre (WHM Terminal, after v1rel13 is on both sites): `tools/hosting/training_identity.sh`
+`prepare` (makes the secret, shows the Render value once) → add `IDENTITY_CLIENTS` and `IDENTITY_TRAINING_SITE_URL`
+in Render → `connect` (switches over, lists how each person is matched; undoes itself if Production refuses) →
+`reconcile` (people who existed only on the Training Centre keep the password they chose there; where both sites
+had a password, Production's wins). `disconnect` is the break-glass back to local passwords (then set any password
+with `flask auth reset-password` on the Training Centre).
 
 ## How a person gets in
 
@@ -35,7 +64,13 @@ even before the webhook is set up).
 
 ## Settings
 
-Production (Render → calibryatai → Environment) and the Training Centre (`/opt/calibrayt/env` on HostPapa):
+| Setting | Where | Value |
+|---|---|---|
+| `IDENTITY_CLIENTS` | Production (Render) | `training=<secret>` from `training_identity.sh prepare` |
+| `IDENTITY_TRAINING_SITE_URL` | Production (Render) | `https://training.calibraytai.com` |
+| `IDENTITY_PROVIDER_URL`, `IDENTITY_CLIENT_ID`, `IDENTITY_CLIENT_SECRET` | Training Centre (`/opt/calibrayt/env`) | set by `training_identity.sh` |
+
+Email, on both sites: Production (Render → calibryatai → Environment) and the Training Centre (`/opt/calibrayt/env` on HostPapa):
 
 | Setting | Value |
 |---|---|
@@ -66,7 +101,8 @@ for the token at a hidden prompt, backs up the settings, shows the webhook crede
 
 ## Emergency access (the server's shell; no email)
 
-Prints a one-time set-password link for an existing, active sign-in; nothing is emailed:
+Prints a one-time set-password link for an existing, active sign-in; nothing is emailed. On the Training Centre,
+for a real person, the link comes from Production and sets the one password:
 
 - Production (Mac Terminal):
   `ssh srv-dar95mh42hec73df4rug@ssh.virginia.render.com 'cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=$(command -v python3); fi; $PY -m flask auth issue-link --email you@example.com'`

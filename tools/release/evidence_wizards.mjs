@@ -116,16 +116,16 @@ async function stepUrl(run, key) { return `/wizards/run/${run}/step/${key}`; }
 async function next(pg) { await submit(pg, pg.locator("[data-wizard-next]")); }
 
 // ------------------------------------------------------------------ Home
-step("Home asks What do you need to do? with the three wizards above the fold, existing tools kept", async () => {
+step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools kept", async () => {
   const { pg, errors } = await person("ben", DESK);
   await go(pg, "/");
   const section = pg.locator("[data-wizard-home]");
-  assert.match(await section.innerText(), /what do you need to do\?/i);
+  assert.match(await section.innerText(), /guided wizards/i);
   for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
     const start = pg.locator(`[data-start-wizard="${key}"]`);
     assert.equal(await start.count(), 1, key);
     const box = await start.boundingBox();
-    assert.ok(box.y + box.height <= DESK.height, `${key}: Start Guided Wizard is above the fold`);
+    assert.ok(box.y + box.height <= DESK.height, `${key}: Start is above the fold`);
     assert.equal(await pg.locator(`[data-continue-manually="${key}"]`).count(), 1, key);
   }
   for (const sel of ["a[data-home-start-estimate]", "a.home-start", "a.home-calendar"]) assert.equal(await pg.locator(sel).count(), 1, sel);

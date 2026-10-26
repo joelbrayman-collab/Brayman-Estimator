@@ -165,7 +165,7 @@ step("Home: WHAT NEEDS MY ATTENTION? first and compact, the wizards' Start butto
   assert.ok(aBox.y < wBox.y, "attention comes before the wizards");
   for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
     const box = await pg.locator(`[data-start-wizard="${key}"]`).boundingBox();
-    assert.ok(box.y + box.height <= DESK.height, `${key}: Start Guided Wizard is still above the fold`);
+    assert.ok(box.y + box.height <= DESK.height, `${key}: Start is still above the fold`);
   }
   await shot(pg, "home-attention-desktop");
   const phone = await person("ben", PHONE);

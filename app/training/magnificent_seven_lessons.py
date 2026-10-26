@@ -42,7 +42,7 @@ C16 = Module(
             steps=(
                 Step(title="The list", app=O, where="Home", do="Read WHAT NEEDS MY ATTENTION? at the top",
                      expect="Each line says what, the job or person, the status and the date; Overdue or Today in "
-                            "red or amber. What do you need to do? (the wizards) is still just below.",
+                            "red or amber. GUIDED WIZARDS is still just below.",
                      if_wrong="Empty? Nothing needs you: 'Nothing needs your attention right now.'",
                      shot="m7-home-attention-desktop.png", endpoint="main.dashboard"),
                 Step(title="On the iPhone", app=O, where="Home on your phone", do="Scroll to the top",

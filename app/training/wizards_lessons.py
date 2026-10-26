@@ -4,8 +4,8 @@ Two new modules, kept apart from contractor.py and supplier.py so every existing
 exactly as it is (saved progress and UAT history are keyed by them; nothing here renames or moves one). They are
 added when the Training Centre loads its content (app/training/content.py _load):
 
-- Contractor module 15, "What do you need to do? The guided wizards" — Start a New Project, Guided Estimating and
-  Manage a Project, Save & Exit / Resume, Continue Manually, Ask the Tutor; for the contractor owner and office
+- Contractor module 15, "Guided Wizards" — Start a New Project, Guided Estimating and
+  Manage a Project, Save & Exit / Resume, Continue manually, Ask the Tutor; for the contractor owner and office
   staff, with the owner's own lesson (closing a project, decisions only the owner or a System Administrator makes).
   For Ben's onboarding it follows module 13 (Guided Estimating); for Kevin's Contractor Review the estimating
   lesson is the same estimate as module 13, walked by the wizard.
@@ -37,38 +37,38 @@ INITIALS = (" On the training site everyone shares one training company: add you
             "(for example 'Lakeview Wizard Home (training) KF').")
 
 C15 = Module(
-    key="c15", pathway=PATHWAY_CONTRACTOR, number=15, title="What do you need to do? The guided wizards",
-    summary="Home asks What do you need to do? and offers three guided wizards — Start a New Project, Guided "
-            "Estimating and Manage a Project — each beside Continue Manually. The wizard walks the real pages one "
+    key="c15", pathway=PATHWAY_CONTRACTOR, number=15, title="Guided Wizards",
+    summary="Home's GUIDED WIZARDS panel offers three guided wizards — Start a New Project, Guided "
+            "Estimating and Manage a Project — each with Start → and Continue manually. The wizard walks the real pages one "
             "step at a time and shows what each step still needs; nothing is entered twice and nothing is "
             "approved for you. Ben: after module 13. Kevin's Contractor Review: the estimating lesson.",
     roles=OFFICE_ROLES,
     lessons=(
         Lesson(
-            key="c15-what-do-you-need", title="Home: What do you need to do?",
+            key="c15-what-do-you-need", title="Home: Guided Wizards",
             what="Find the three guided wizards on Home, and the manual way beside each.",
             why="One press takes you to the work. The wizard is a guide over the same pages you already know.",
             steps=(
                 Step(title="The three wizards", app=O, where="Home",
-                     do="Read the What do you need to do? cards",
-                     expect="Start a New Project, Guided Estimating and Manage a Project, each with Start Guided "
-                            "Wizard and Continue Manually. Start New Estimate, + Start New Project and Company "
+                     do="Read the dark-blue GUIDED WIZARDS panel",
+                     expect="Start a New Project, Guided Estimating and Manage a Project, each with a gold Start → "
+                            "and Continue manually; ? What are Wizards? explains them. Start New Estimate, + Start New Project and Company "
                             "Calendar are still at the top.",
                      if_wrong="Not on Home? Press Home at the top of the menu.",
                      shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="main.dashboard"),
                 Step(title="On the iPhone", app=O, where="Home on your phone",
-                     do="Scroll to What do you need to do?",
-                     expect="The same cards, one under the other; nothing scrolls sideways.",
+                     do="Scroll to GUIDED WIZARDS",
+                     expect="The same three wizards, one under the other; nothing scrolls sideways.",
                      if_wrong="Turn the phone upright and reload.",
                      shot="w-home-what-do-you-need-to-do-phone.png", endpoint="main.dashboard"),
                 Step(title="Unfinished work", app=O, where="Home → Unfinished",
-                     do="Look under the cards for Unfinished",
+                     do="Look under the three wizards for Unfinished",
                      expect="Each wizard you left: Resume, how many steps are done, the next step and a link to "
                             "the project.",
                      if_wrong="Nothing listed? You have no wizard open. Start one.",
                      shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="main.dashboard"),
             ),
-            exercise="On the training site, open Home and find the three wizards and Continue Manually under each.",
+            exercise="On the training site, open Home and find the three wizards, each with Start → and Continue manually.",
         ),
         Lesson(
             key="c15-new-project-wizard", title="Start a New Project, step by step",
@@ -77,9 +77,9 @@ C15 = Module(
                 "the project's own records.",
             steps=(
                 Step(title="Start the wizard", app=O, where="Home → Start a New Project",
-                     do="Press Start Guided Wizard",
+                     do="Press Start →",
                      expect="Step 1 of 12, Customer and project, with the steps listed at the side.",
-                     if_wrong="Opened the New Project form instead? That was Continue Manually; go back to Home.",
+                     if_wrong="Opened the New Project form instead? That was Continue manually; go back to Home.",
                      shot="w-wizard1-customer-desktop.png", endpoint="wizards.start"),
                 Step(title="Customer and project name", app=O, where="Step 1",
                      do="Choose the customer, type the project name and press Next",
@@ -204,7 +204,7 @@ C15 = Module(
                      "work item.",
         ),
         Lesson(
-            key="c15-save-resume-manual", title="Save & Exit, Resume and Continue Manually",
+            key="c15-save-resume-manual", title="Save & Exit, Resume and Continue manually",
             what="Stop part way, come back later, or do a step on its own page.",
             why="Your place and your typing are kept; the records are the same whichever way you work.",
             steps=(
@@ -352,11 +352,11 @@ def _s(key, title, start, action, expected):
 
 
 UAT_CASES: Tuple[UatCase, ...] = (
-    _c("uat-c15-home", "What do you need to do? on Home", "Home",
-       "Find the three wizards; press Continue Manually under Start a New Project.",
-       "Three wizards, each with Start Guided Wizard and Continue Manually; Continue Manually opens the New Project "
+    _c("uat-c15-home", "Guided Wizards on Home", "Home",
+       "Find the three wizards; press Continue manually under Start a New Project.",
+       "Three wizards, each with Start → and Continue manually; Continue manually opens the New Project "
        "form; Start New Estimate, + Start New Project and Company Calendar are still there."),
-    _c("uat-c15-required", "Required answers hold Next", "Home → Start a New Project → Start Guided Wizard",
+    _c("uat-c15-required", "Required answers hold Next", "Home → Start a New Project → Start →",
        "Press Next with the customer empty; then fill it and press Next.",
        "The first Next says what is still needed and stays; the second moves to step 2."),
     _c("uat-c15-created-once", "The project is created once", "Start a New Project → step 3",

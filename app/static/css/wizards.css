@@ -117,3 +117,76 @@
   .wz-entry-actions > *, .wz-home-actions > * { flex: 1 1 45%; }
   .wz-entry-actions button, .wz-home-actions button, .wz-entry-actions a, .wz-home-actions a { width: 100%; text-align: center; }
 }
+
+/* Home: GUIDED WIZARDS panel (Joel, 26 Oct 2026). Brand dark blue (#0b1b2e / #12263d, as the header plan button and
+   calculators), gold Start, quiet Continue manually. Layout follows the panel's own width: one compact row per card
+   (icon | what it does | Start over Continue manually), three across when there is room, stacked on a phone. Home only. */
+.wz-panel { container-type: inline-size; background: #0b1b2e; color: #fff; border-radius: var(--radius-md, 12px);
+  padding: 10px 12px 12px; margin: 4px 0 16px; }
+.wz-panel-head { display: flex; justify-content: space-between; align-items: center; gap: 4px 16px; flex-wrap: wrap; margin: 0 0 8px; }
+.wz-panel-head > div { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 12px; min-width: 0; }
+.wz-panel-title { margin: 0; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold, #c79a2b); }
+.wz-panel-sub { margin: 0; font-size: .9rem; color: #d7dde6; }
+.wz-panel-help { font-size: .88rem; }
+.wz-panel-help[open] { flex-basis: 100%; }
+.wz-panel-help summary { cursor: pointer; list-style: none; color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px; min-height: 28px; }
+.wz-panel-help summary::-webkit-details-marker { display: none; }
+.wz-panel-help summary:focus-visible { outline: 2px solid var(--gold, #c79a2b); outline-offset: 2px; border-radius: 6px; }
+.wz-panel-help-mark { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--gold, #c79a2b);
+  color: var(--gold, #c79a2b); font-weight: 700; font-size: .8rem; line-height: 1; }
+.wz-panel-help p { margin: 4px 0 2px; color: #d7dde6; line-height: 1.4; max-width: 70ch; }
+.wz-panel-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.wz-panel-card { background: #12263d; border: 1px solid #22395a; border-radius: var(--radius-md, 12px); padding: 8px 10px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+.wz-panel-card-top { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.wz-panel-icon { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; background: rgba(199, 154, 43, .16); display: grid; place-items: center; }
+.wz-panel-icon svg { width: 19px; height: 19px; fill: none; stroke: var(--gold, #c79a2b); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.wz-panel-card-text { min-width: 0; }
+.wz-panel-card h3 { margin: 0; font-size: 1rem; color: #fff; line-height: 1.25; }
+.wz-panel-card p { margin: 1px 0 0; font-size: .85rem; color: #c9d1dc; line-height: 1.3; }
+.wz-panel-actions { display: flex; flex-direction: column; align-items: stretch; gap: 0; text-align: center; }
+.wz-panel-start { padding: 8px 18px; min-height: 44px; line-height: 28px; color: #141414; white-space: nowrap; }
+.wz-panel-start:hover, .wz-panel-start:focus-visible { background: #d9ad3e; }
+.wz-panel-start:focus-visible, .wz-panel-manual:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.wz-panel-manual { color: #d7dde6; font-size: .82rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
+  padding: 2px; min-height: 32px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+.wz-panel-manual:hover { color: #fff; }
+.wz-panel .wz-resume { margin-top: 8px; color: var(--text, #1c1f24); }
+.wz-panel .wz-resume a { color: inherit; }
+/* three across: room for icon, words and the two actions side by side */
+@container (min-width: 960px) {
+  .wz-panel-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wz-panel-start { min-height: 38px; line-height: 22px; padding: 8px 16px; }
+  .wz-panel-manual { min-height: 24px; }
+}
+/* tablet: three across, the actions under the words */
+@container (min-width: 600px) and (max-width: 959.98px) {
+  .wz-panel-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wz-panel-card { grid-template-columns: 1fr; gap: 6px; }
+  .wz-panel-actions { flex-direction: row; justify-content: space-between; align-items: center; gap: 4px 8px; flex-wrap: wrap; }
+  .wz-panel-start { min-height: 40px; line-height: 24px; }
+}
+@container (min-width: 960px) {
+  .wz-panel-card { padding: 10px 12px; }
+  .wz-panel-grid { gap: 10px; }
+}
+/* phone: "What are Wizards?" beside the title; slimmer actions so each wizard's name stays on one line */
+@container (max-width: 599.98px) {
+  .wz-panel-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 10px; }
+  .wz-panel-head > div { display: contents; }
+  .wz-panel-title { grid-column: 1; grid-row: 1; }
+  .wz-panel-help { grid-column: 2; grid-row: 1; }
+  .wz-panel-help[open] { grid-column: 1 / -1; grid-row: 3; }
+  .wz-panel-sub { grid-column: 1 / -1; grid-row: 2; font-size: .85rem; }
+  .wz-panel-help summary { font-size: .82rem; }
+  .wz-panel-card { gap: 8px; padding: 8px; }
+  .wz-panel-card-top { gap: 8px; }
+  .wz-panel-icon { width: 28px; height: 28px; }
+  .wz-panel-icon svg { width: 17px; height: 17px; }
+  .wz-panel-card h3 { font-size: .95rem; }
+  .wz-panel-card p { font-size: .82rem; }
+  .wz-panel-start { padding: 8px 14px; }
+  .wz-panel-manual { font-size: .78rem; min-height: 30px; }
+}
+@container (min-width: 960px) { .wz-panel { padding: 12px 14px 14px; } }

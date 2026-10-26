@@ -435,8 +435,8 @@ def test_needs_my_attention_lifecycle_from_real_records(env):
     app, facts = env
     ben = Person(app, "ben")
     home = ben.get("/")
-    assert "WHAT NEEDS MY ATTENTION?" in home and "What do you need to do?" in home
-    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("What do you need to do?")
+    assert "WHAT NEEDS MY ATTENTION?" in home and "Guided Wizards" in home
+    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("Guided Wizards")
     kevin = Person(app, "kevin")
     # Kevin enters time: an approval item appears with a one-click link to the time page for Kevin.
     kevin.post(f"/field/projects/{facts['project'].id}/time", data={

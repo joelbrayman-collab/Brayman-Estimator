@@ -77,10 +77,17 @@ def _create_from_wizard(d, run_id, name="Wizard New Home (synthetic)"):
 def test_home_asks_what_do_you_need_to_do_and_keeps_every_existing_tool(env):
     _app, d, _ben = env
     home = d.get("/")
-    assert "What do you need to do?" in home
+    # Home presents them as one GUIDED WIZARDS panel (Joel, 26 Oct 2026): Start → (primary), Continue manually.
+    assert "Guided Wizards" in home and "Let CalibraytAI walk you through the job step by step." in home
+    assert "What are Wizards?" in home
     for title in ("Start a New Project", "Guided Estimating", "Manage a Project"):
         assert title in home
-    assert home.count("Start Guided Wizard") == 3 and home.count("Continue Manually") == 3
+    assert home.count("data-start-wizard=") == 3 and home.count(">Continue manually</a>") == 3
+    for line in ("Customer → plans → stages → estimating.", "Quantities → costs → pricing → proposal.",
+                 "Schedule → purchasing → changes → close."):
+        assert line in home
+    for key in ("NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"):
+        assert f'href="/wizards/{key}/start" data-start-wizard="{key}">Start<span class="visually-hidden">' in home
     # Nothing that was on Home before is gone: Start New Estimate, + Start New Project, Company Calendar.
     assert "data-home-start-estimate" in home and 'class="home-start"' in home and 'class="home-calendar"' in home
     # Continue Manually goes straight to the existing page.
@@ -203,7 +210,7 @@ def test_wizards_stay_inside_the_company_and_field_crew_are_kept_out(env):
     other.post("/projects/new", data={"wizard_run": str(run_id), "name": "Hijack", "client_id": customer_other.id},
                status=404)
     assert Project.query.filter_by(name="Hijack").count() == 0
-    assert "What do you need to do?" in other.get("/")
+    assert "Guided Wizards" in other.get("/")
     assert "Resume Start a New Project" not in other.get("/")
     kevin = _field_only_kevin(application, ben)
     for url in ("/wizards/", f"/wizards/run/{run_id}/step/customer"):

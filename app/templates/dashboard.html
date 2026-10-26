@@ -34,7 +34,7 @@
 {% set start_url = _start %}
 {% macro _manual(w) %}{{ w.manual_url() }}{% endmacro %}
 {% set manual_url = _manual %}
-{% include "wizards/_cards.html" %}
+{% include "wizards/_home_panel.html" %}
 
 {% set sms_failed = sms_schedule_attention() %}
 {% if sms_failed %}

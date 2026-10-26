@@ -1,0 +1,59 @@
+{# Home: GUIDED WIZARDS (Joel, 26 Oct 2026). Presentation only: the same wizards, the same Start and Continue manually
+   links (start_url / manual_url), the same data-* hooks and the same Unfinished list as wizards/_cards.html, which the
+   Supplier Hub and the wizards index still use. #}
+{% set _home_lines = {
+  "NEW_PROJECT": "Customer → plans → stages → estimating.",
+  "GUIDED_ESTIMATING": "Quantities → costs → pricing → proposal.",
+  "MANAGE_PROJECT": "Schedule → purchasing → changes → close.",
+} %}
+{% macro _icon(key) -%}
+{%- if key == "NEW_PROJECT" -%}
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M12 12.5v5M9.5 15h5"/></svg>
+{%- elif key == "GUIDED_ESTIMATING" -%}
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7"/><path d="M8.5 12h1M11.5 12h1M14.5 12h1M8.5 16h1M11.5 16h1M14.5 16h1"/></svg>
+{%- else -%}
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m8.5 14.5 2.5 2.5 4.5-4.5"/></svg>
+{%- endif -%}
+{%- endmacro %}
+<section class="wz-home wz-panel" data-wizard-home aria-labelledby="wz-home-title">
+  <div class="wz-panel-head">
+    <div>
+      <h2 id="wz-home-title" class="wz-panel-title">Guided Wizards</h2>
+      <p class="wz-panel-sub">Let CalibraytAI walk you through the job step by step.</p>
+    </div>
+    <details class="wz-panel-help" data-wizard-help>
+      <summary><span class="wz-panel-help-mark" aria-hidden="true">?</span> What are Wizards?</summary>
+      <p>A wizard takes you through the real CalibraytAI pages one step at a time, tells you what is still needed, and keeps your place: Save &amp; Exit and resume later from Home. Prefer to work on your own? Continue manually opens the same page directly.</p>
+    </details>
+  </div>
+  <div class="wz-panel-grid">
+    {% for w in wizard_list %}
+    <article class="wz-panel-card" data-wizard-card="{{ w.key }}">
+      <div class="wz-panel-card-top">
+        <span class="wz-panel-icon">{{ _icon(w.key) }}</span>
+        <div class="wz-panel-card-text">
+          <h3>{{ w.title }}</h3>
+          <p>{{ _home_lines.get(w.key, w.short) }}</p>
+        </div>
+      </div>
+      <div class="wz-panel-actions">
+        <a class="wz-primary wz-panel-start" href="{{ start_url(w)|trim }}" data-start-wizard="{{ w.key }}">Start<span class="visually-hidden"> {{ w.title }} wizard</span> <span aria-hidden="true">→</span></a>
+        <a class="wz-panel-manual" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}">Continue manually</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% if summaries %}
+  <div class="wz-resume" data-wizard-resume-list>
+    <h3>Unfinished</h3>
+    <ul>
+      {% for s in summaries %}
+      <li data-resume-run="{{ s.run.id }}">
+        <a class="wz-resume-link" href="{{ s.resume_url }}" data-resume-wizard="{{ s.wizard.key }}"><strong>Resume {{ s.wizard.title }}</strong> — {{ s.subject }}</a>
+        <span class="wz-resume-meta">{{ s.progress.done }} of {{ s.progress.total }} steps{% if s.next %} · next: <a href="{{ s.next_url }}" data-next-action>{{ s.next.step.title }}</a> ({{ s.next.view.headline }}){% endif %}{% if s.record_url %} · <a href="{{ s.record_url }}" data-open-record>open the record</a>{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>

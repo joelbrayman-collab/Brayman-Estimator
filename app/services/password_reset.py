@@ -314,14 +314,17 @@ class SetPasswordLinkOutcome:
     ``delivered`` is False when the email was not handed to the mail service: delivery not configured
     (FAILED_CONFIG), refused or errored (FAILED), held back by the UAT recipient allowlist
     (SKIPPED_ALLOWLIST), or only written to a file on a hosted server (LOCAL_CAPTURED with hosting on).
-    Then, and only then, ``path`` carries the one-time secret path so the owner's page can show it once
-    for the owner to give the person; it is the same token (same expiry, one use) the email carried.
+    True means the mail service accepted it, not that it arrived (app/services/email_delivery.py says that).
+    ``path`` is always the one-time secret path, the same token (same expiry, one use) the email carried, so
+    the owner's page can show it once whether or not the email went (sign-in reliability, Joel, 26 Oct 2026):
+    getting a person in never depends only on an email arriving. ``message_id`` is the email's row.
     """
 
     delivered: bool
     status: str
     expires_at: datetime
     path: Optional[str] = None
+    message_id: Optional[int] = None
 
 
 def _delivered(status: str) -> bool:
@@ -373,7 +376,7 @@ def send_set_password_link(user: User, *, client_ip: Optional[str] = None,
     status = getattr(issued.message, "status", "") or ""
     delivered = _delivered(status)
     return SetPasswordLinkOutcome(delivered=delivered, status=status, expires_at=issued.expires_at,
-                                  path=None if delivered else issued.path)
+                                  path=issued.path, message_id=getattr(issued.message, "id", None))
 
 
 def parse_reset_credential(credential: str) -> tuple:
@@ -489,3 +492,27 @@ def issue_reset_for_tests(user: User, *, client_ip: str = "127.0.0.1") -> Issued
         path=password_reset_path(lookup_key, secret),
         expires_at=token.expires_at,
     )
+
+
+EMERGENCY_ATTEMPT_MARKER = "emergency-cli"
+
+
+def issue_link_without_email(user: User) -> tuple:
+    """Emergency access (sign-in reliability, Joel, 26 Oct 2026): a one-time set-password link made on the server
+    by someone with the server's shell (WHM Terminal or Render Shell), printed there and nowhere else. No email
+    is sent. Same token table, expiry and one use as an emailed link; it replaces the person's unused links.
+    Returns (path, expires_at). Raises PasswordResetServiceError for an unknown or deactivated sign-in."""
+    if user is None or not user.is_active:
+        raise PasswordResetServiceError(BLOCK_TOKEN_INVALID)
+    now = datetime.utcnow()
+    _invalidate_unused_tokens(user.id, now=now)
+    lookup_key = _new_lookup_key()
+    secret = secrets.token_urlsafe(32)
+    token = PasswordResetToken(user_id=user.id, lookup_key=lookup_key, token_hash=hash_reset_secret(secret),
+                               created_at=now, expires_at=now + timedelta(seconds=_ttl_seconds()),
+                               requested_from_ip=EMERGENCY_ATTEMPT_MARKER)
+    db.session.add(token)
+    _record_attempt(client_ip=EMERGENCY_ATTEMPT_MARKER, email_key_hash=hash_email_key(user.email),
+                    lookup_key=lookup_key, outcome=OUTCOME_OK)
+    db.session.commit()
+    return password_reset_path(lookup_key, secret), token.expires_at

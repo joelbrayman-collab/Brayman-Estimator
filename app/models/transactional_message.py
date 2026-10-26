@@ -18,6 +18,8 @@ TEMPLATE_ACCOUNT_INVITATION = "ACCOUNT_INVITATION"  # People & Access invitation
 # People & Access (23 Oct 2026): a note to the person who pressed the button that their invitation or set-password
 # link was accepted by the mail service. Never carries the link or any part of its token.
 TEMPLATE_INVITATION_SENT_CONFIRMATION = "INVITATION_SENT_CONFIRMATION"
+# Sign-in reliability (26 Oct 2026): "flask email test-delivery" proves an inbox receives CalibraytAI's email.
+TEMPLATE_DELIVERY_TEST = "DELIVERY_TEST"
 TRANSACTIONAL_TEMPLATE_IDS = (
     TEMPLATE_PASSWORD_RESET,
     TEMPLATE_SIGNING_INVITATION,
@@ -28,6 +30,7 @@ TRANSACTIONAL_TEMPLATE_IDS = (
     TEMPLATE_SUPPLIER_QUOTE,
     TEMPLATE_ACCOUNT_INVITATION,
     TEMPLATE_INVITATION_SENT_CONFIRMATION,
+    TEMPLATE_DELIVERY_TEST,
 )
 
 STATUS_LOCAL_CAPTURED = "LOCAL_CAPTURED"

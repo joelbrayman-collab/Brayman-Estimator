@@ -90,6 +90,7 @@ from app.models.people_access_event import PeopleAccessEvent
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
 from app.models.transactional_message import TransactionalMessage
+from app.models.email_delivery import TransactionalDeliveryEvent  # sign-in reliability (26 Oct 2026)
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
 from app.models.build import (
     FieldCaptureDerivedCandidate,

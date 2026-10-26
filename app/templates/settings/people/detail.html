@@ -17,29 +17,7 @@
     <a href="{{ url_for('people_access.index') }}">Back to People &amp; Access</a>
 </div>
 
-{% if one_time_link %}
-<section class="form-panel people-one-time-link" aria-labelledby="one-time-link-heading" data-one-time-link>
-    <h2 id="one-time-link-heading">Give {{ person.display_name }} this link yourself</h2>
-    <p>The email to {{ one_time_link.email }} was not delivered. This link lets {{ person.display_name }} choose a password. It works once and expires {{ one_time_link.expires_at|local_time("%b %-d at %-I:%M %p") }}.</p>
-    <p class="muted-copy">It is shown only now, only to you. Give it to {{ person.display_name }} directly (in person or by text); anyone with it can set this password. Sending a new link replaces it.</p>
-    <div class="form-grid">
-        <label>One-time link <input type="text" id="one-time-link" value="{{ one_time_link.url }}" readonly autocomplete="off" spellcheck="false"></label>
-        <div class="form-actions"><button type="button" class="button" data-copy-target="one-time-link">Copy link</button></div>
-    </div>
-</section>
-<script>
-(function () {
-  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var field = document.getElementById(btn.getAttribute('data-copy-target'));
-      field.select();
-      if (navigator.clipboard) { navigator.clipboard.writeText(field.value); } else { document.execCommand('copy'); }
-      btn.textContent = 'Copied';
-    });
-  });
-})();
-</script>
-{% endif %}
+{% if one_time_link %}{% include "partials/one_time_link.html" %}{% endif %}
 
 <section class="form-panel" aria-labelledby="sign-in-heading">
     <h2 id="sign-in-heading">Sign-in</h2>
@@ -153,7 +131,14 @@
 {# Email history (Joel, 23 Oct 2026): the last 5 emails to this person, from transactional_messages. No links. #}
 <section class="form-panel" aria-labelledby="email-history-heading" data-person-email-history="{{ emails|length }}">
     <h2 id="email-history-heading">Email history</h2>
-    {% if emails %}<ul class="people-history">{% for e in emails %}<li data-email-history-row><strong>{{ e.at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ e.kind }} · {% if e.sent %}<span data-email-sent>Sent</span>{% else %}<span data-email-not-sent>Not sent</span> ({{ e.reason }}){% endif %}</li>{% endfor %}</ul>
+    {% if emails %}<ul class="people-history">{% for e in emails %}<li data-email-history-row data-email-state="{{ e.state.code }}"><strong>{{ e.at|local_time("%b %d, %Y %H:%M") }}</strong> · {{ e.kind }} · {% if e.sent %}<span data-email-sent>{{ e.state.label }}</span>{% if e.state.at %} ({{ e.state.at|local_time("%b %d %H:%M") }}){% endif %}{% if e.state.code == "DELIVERED" and e.state.detail %}<span class="muted-copy"> · {{ e.state.detail }}</span>{% endif %}{% else %}<span data-email-not-sent>Not sent</span> ({{ e.reason }}){% endif %}</li>{% endfor %}</ul>
+    {% if emails|selectattr("state.checkable")|list %}
+    <form method="post" action="{{ url_for('people_access.check_email', membership_id=person.membership_id) }}" data-check-email>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button button-secondary">Check delivery now</button>
+    </form>
+    {% endif %}
+    <p class="muted-copy">Delivered means the person's mail server accepted it. If it still is not in their inbox or junk folder, send a new link and text it to them.</p>
     {% else %}<p class="muted-copy">No emails to {{ person.display_name }} yet.</p>{% endif %}
 </section>
 

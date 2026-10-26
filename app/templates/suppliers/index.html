@@ -6,29 +6,7 @@
 <p class="muted-copy">Your supplier accounts and the store people who sign in to the Supplier Hub.</p>
 <details class="page-more" data-page-more><summary>More about this page</summary><div class="page-more-body"><p class="muted-copy">A supplier sees only the requests you send them. A concrete supplier can be its own supplier, kept apart from your material suppliers.</p></div></details></div></div>
 
-{% if one_time_link %}
-<section class="form-panel people-one-time-link" aria-labelledby="one-time-link-heading" data-one-time-link>
-    <h2 id="one-time-link-heading">Give {{ one_time_link.name }} this link yourself</h2>
-    <p>The email to {{ one_time_link.email }} was not delivered. This link lets {{ one_time_link.name }} choose a password for the Supplier Hub. It works once and expires {{ one_time_link.expires_at|local_time("%b %-d at %-I:%M %p") }}.</p>
-    <p class="muted-copy">It is shown only now, only to you. Give it to {{ one_time_link.name }} directly (in person or by text); anyone with it can set this password. Sending a new link replaces it.</p>
-    <div class="form-grid">
-        <label>One-time link <input type="text" id="one-time-link" value="{{ one_time_link.url }}" readonly autocomplete="off" spellcheck="false"></label>
-        <div class="form-actions"><button type="button" class="button" data-copy-target="one-time-link">Copy link</button></div>
-    </div>
-</section>
-<script>
-(function () {
-  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var field = document.getElementById(btn.getAttribute('data-copy-target'));
-      field.select();
-      if (navigator.clipboard) { navigator.clipboard.writeText(field.value); } else { document.execCommand('copy'); }
-      btn.textContent = 'Copied';
-    });
-  });
-})();
-</script>
-{% endif %}
+{% if one_time_link %}{% include "partials/one_time_link.html" %}{% endif %}
 
 <section class="form-panel" data-supplier-accounts="true">
     <h2>Supplier accounts</h2>

@@ -518,13 +518,15 @@ def test_owner_gets_a_one_time_link_when_the_invitation_email_is_not_delivered(a
         assert PasswordResetToken.query.filter_by(user_id=user.id, consumed_at=None).count() == 0
 
 
-def test_a_delivered_email_shows_no_link_to_the_owner(app):
+def test_a_delivered_email_still_shows_the_owner_the_link(app):
+    """Sign-in reliability (Joel, 26 Oct 2026): the owner always gets the link to text, emailed or not; it is the
+    same link the email carried (tests/test_signin_email_reliability.py)."""
     owner = _client(app, OWNER)
     response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
                           follow_redirects=True)
     html = response.get_data(as_text=True)
     assert "was emailed to" in html and "expires in 72 hours" in html
-    assert "data-one-time-link" not in html and "/reset-password" not in html
+    assert 'data-one-time-link-emailed="yes"' in html and "/reset-password#" in html
 
 
 def test_only_the_owner_side_ever_sees_the_link(app):
@@ -604,7 +606,7 @@ def test_the_confirmation_respects_the_allowlist_and_never_changes_the_invitatio
     response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
                           follow_redirects=True)
     html = response.get_data(as_text=True)
-    assert "was emailed to" in html and "data-one-time-link" not in html
+    assert "was emailed to" in html and 'data-one-time-link-emailed="yes"' in html
     assert _confirmations(app) == []
     with app.app_context():
         row = TransactionalMessage.query.filter_by(template_id="INVITATION_SENT_CONFIRMATION").one()
@@ -650,7 +652,7 @@ def test_the_training_site_sends_the_same_confirmation_when_its_mail_server_acce
     owner = _client(app, OWNER)
     response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]},
                           follow_redirects=True)
-    assert "data-one-time-link" not in response.get_data(as_text=True)
+    assert 'data-one-time-link-emailed="yes"' in response.get_data(as_text=True)
     assert [p.template_id for p in sent] == [TEMPLATE_ACCOUNT_INVITATION, "INVITATION_SENT_CONFIRMATION"]
     invitation, note = sent
     assert invitation.to_email == NEW_PERSON[1] and note.to_email == OWNER[0]

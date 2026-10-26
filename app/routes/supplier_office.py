@@ -178,8 +178,8 @@ def send_user_link(membership_id):
 
 
 def _after_link(user, supplier_id):
-    """Send the set-password link. When the email is not delivered, show the one-time link on this one
-    response only (never flashed, stored or logged), as People & Access does (defect 9)."""
+    """Send the set-password link and show the one-time link on this one response only (never flashed, stored
+    or logged), emailed or not, as People & Access does (defect 9; sign-in reliability, 26 Oct 2026)."""
     from datetime import datetime
 
     from app.services.password_reset import BLOCK_RATE_LIMITED, PasswordResetServiceError, send_set_password_link
@@ -193,14 +193,16 @@ def _after_link(user, supplier_id):
         return redirect(url_for("supplier_office.suppliers"))
     minutes = max(1, round((outcome.expires_at - datetime.utcnow()).total_seconds() / 60))
     expires = "an hour" if 50 <= minutes <= 70 else (f"{round(minutes / 60)} hours" if minutes > 70 else f"{minutes} minutes")
+    # Shown whether or not the email went (sign-in reliability, Joel, 26 Oct 2026): Copy or Text it.
     if outcome.delivered:
-        flash(f"A link to choose a password was emailed to {user.email}. It works once and expires in {expires}.",
-              "success")
-        return redirect(url_for("supplier_office.suppliers"))
-    flash(f"The email to {user.email} was not delivered (email delivery is not set up here). Give "
-          f"{user.display_name} the one-time link below yourself. It works once and expires in {expires}.", "error")
+        flash(f"A link to choose a password was emailed to {user.email}. It works once and expires in {expires}. "
+              "The same link is below, so you can text it if the email does not arrive.", "success")
+    else:
+        flash(f"The email to {user.email} was not delivered (email delivery is not set up here). Give "
+              f"{user.display_name} the one-time link below yourself. It works once and expires in {expires}.", "error")
     one_time = {"url": f"{link_base_url()}{outcome.path}", "name": user.display_name, "email": user.email,
-                "supplier_id": supplier_id, "expires_at": outcome.expires_at}
+                "supplier_id": supplier_id, "expires_at": outcome.expires_at, "emailed": outcome.delivered,
+                "place": "the Supplier Hub"}
     page = suppliers(one_time_link=one_time)
     return page, 200, {"Cache-Control": "no-store", "Pragma": "no-cache", "Referrer-Policy": "no-referrer"}
 

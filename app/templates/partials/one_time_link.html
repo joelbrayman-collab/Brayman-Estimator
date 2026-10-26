@@ -1,0 +1,43 @@
+{# The owner's way to get a person in without depending on email (sign-in reliability, Joel, 26 Oct 2026).
+   Always shown, once, after a set-password link is made: Copy link, Copy message, and Text it (opens Messages on
+   an iPhone or Mac with the message ready; no Twilio). The email still goes out when email works.
+   Needs one_time_link: url, name, email, expires_at, emailed (True when the mail service accepted the email),
+   and place ("CalibraytAI" or "the Supplier Hub"). #}
+{% set _first = (one_time_link.name or "").split(" ")[0] or "there" %}
+{% set _until = one_time_link.expires_at|local_time("%b %-d at %-I:%M %p") %}
+{% set _message = "Hi " ~ _first ~ ", here is your " ~ (one_time_link.place or "CalibraytAI") ~ " sign-in link. Tap it and choose your password. It works once, until " ~ _until ~ ":\n" ~ one_time_link.url %}
+<section class="form-panel people-one-time-link" aria-labelledby="one-time-link-heading" data-one-time-link data-one-time-link-emailed="{{ 'yes' if one_time_link.emailed else 'no' }}">
+    {% if one_time_link.emailed %}
+    <h2 id="one-time-link-heading">{{ one_time_link.name }}'s sign-in link</h2>
+    <p>It was emailed to {{ one_time_link.email }}. If it has not arrived in a few minutes, or you would rather not wait, copy it or text it to {{ _first }}. It is the same link: it works once and expires {{ _until }}.</p>
+    {% else %}
+    <h2 id="one-time-link-heading">Give {{ one_time_link.name }} this link yourself</h2>
+    <p>The email to {{ one_time_link.email }} was not delivered. This link lets {{ one_time_link.name }} choose a password{% if one_time_link.place and one_time_link.place != "CalibraytAI" %} for {{ one_time_link.place }}{% endif %}. It works once and expires {{ _until }}.</p>
+    {% endif %}
+    <p class="muted-copy">It is shown only now, only to you. Give it to {{ one_time_link.name }} directly (by text or in person); anyone with it can set this password. Sending a new link replaces it.</p>
+    <div class="form-grid">
+        <label>One-time link <input type="text" id="one-time-link" value="{{ one_time_link.url }}" readonly autocomplete="off" spellcheck="false"></label>
+        <textarea id="one-time-message" class="visually-hidden" readonly tabindex="-1" aria-hidden="true">{{ _message }}</textarea>
+        <div class="form-actions one-time-link-actions">
+            <a class="button button-primary" href="sms:&amp;body={{ _message|urlencode }}" data-text-it>Text it</a>
+            <button type="button" class="button" data-copy-target="one-time-message">Copy message</button>
+            <button type="button" class="button button-secondary" data-copy-target="one-time-link">Copy link</button>
+        </div>
+        <p class="muted-copy">Text it opens Messages with the message ready; choose {{ _first }} and send.</p>
+    </div>
+</section>
+<style>.one-time-link-actions { display: flex; flex-wrap: wrap; gap: 8px; } .one-time-link-actions .button { min-height: 44px; }</style>
+<script>
+(function () {
+  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var field = document.getElementById(btn.getAttribute('data-copy-target'));
+      var label = btn.textContent;
+      function done() { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = label; }, 2500); }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(field.value).then(done, function () { field.select(); document.execCommand('copy'); done(); });
+      } else { field.select(); document.execCommand('copy'); done(); }
+    });
+  });
+})();
+</script>

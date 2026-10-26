@@ -151,6 +151,16 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
             "If you were not expecting this, ignore this message."
         )
         return subject, body
+    if template_id == "DELIVERY_TEST":
+        code = str(variables.get("code") or "")
+        site = str(variables.get("site") or "CalibraytAI")
+        subject = f"CalibraytAI email test {code}"
+        body = (
+            f"This is a test from {site} to check that its sign-in emails reach this inbox.\n\n"
+            f"Test code: {code}\n\n"
+            "Nothing to do; you can delete it. It contains no link."
+        )
+        return subject, body
     if template_id == TEMPLATE_INVITATION_SENT_CONFIRMATION:
         # Built only from a name, an address, a kind and two times: there is no link variable to render.
         kind = "invitation" if variables.get("kind") == "invitation" else "set-password link"

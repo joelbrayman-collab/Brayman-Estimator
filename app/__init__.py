@@ -325,6 +325,9 @@ def _register_office_auth(app: Flask) -> None:
             # request must carry a valid X-Twilio-Signature (app/services/text_messages.py), else 403.
             "sms_notifications.twilio_status",
             "sms_notifications.twilio_inbound",
+            # Sign-in reliability, 26 Oct 2026: Postmark's delivery, bounce and spam-complaint reports. No sign-in;
+            # each request must carry the webhook's HTTP Basic credentials (app/services/email_delivery.py).
+            "email_webhooks.postmark",
         ):
             return None
         if endpoint is not None and (
@@ -641,10 +644,12 @@ def create_app(config=None):
     # Schedule-change text notices (Joel, 22 Oct 2026, mandatory V1): office, Field and Twilio pages, the
     # "flask sms" commands and the background sender (app/services/crew_notices.py).
     from app.routes.sms_notifications import sms_notifications_bp
+    from app.routes.email_webhooks import email_webhooks_bp
     from app.cli.sms import sms_cli
     from app.services.crew_notices import start_sweeper
 
     app.register_blueprint(sms_notifications_bp)
+    app.register_blueprint(email_webhooks_bp)
     app.cli.add_command(sms_cli)
     start_sweeper(app)
     # The Magnificent Seven everyday operations (25 Oct 2026): office working screens, end-of-day reminders and
@@ -655,6 +660,10 @@ def create_app(config=None):
     app.register_blueprint(operations_bp)
     app.cli.add_command(reminders_cli)
     app.cli.add_command(quickbooks_online_cli)
+    # Sign-in reliability (26 Oct 2026): "flask email status" and "flask email test-delivery --to ...".
+    from app.cli.email_delivery import email_cli
+
+    app.cli.add_command(email_cli)
 
     @app.route("/field-sw.js")
     def field_service_worker():

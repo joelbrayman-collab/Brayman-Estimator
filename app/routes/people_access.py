@@ -44,7 +44,9 @@ from app.services.people_access import (
 
 people_access_bp = Blueprint("people_access", __name__, url_prefix="/settings/people")
 
-LINK_SENT = "A link to choose a password was emailed to {email}. It works once and expires in {expires}."
+LINK_SENT = ("A link to choose a password was emailed to {email}. It works once and expires in {expires}. The same "
+             "link is below, so you can text it if the email does not arrive; Email history shows when the mail "
+             "service confirms delivery.")
 LINK_NOT_EMAILED = ("The email to {email} was not delivered ({reason}). Give {name} the one-time link shown "
                     "below yourself, in person or by text. It works once and expires in {expires}.")
 NOT_DELIVERED_REASONS = {
@@ -90,8 +92,9 @@ def _expires_phrase(outcome) -> str:
 
 
 def _send_link(user):
-    """Send the set-password link. Returns the link to show the owner once when the email was not
-    delivered (defect 9), else None. The link is never flashed, stored in the session or logged."""
+    """Send the set-password link. Returns the link to show the owner once, whether or not the email went
+    (sign-in reliability, Joel, 26 Oct 2026; defect 9), or None when no link was made. The link is never
+    flashed, stored in the session or logged."""
     from app.models.organization import Organization
     from app.models.user import UserMembership
     from app.services.people_access import record_people_event
@@ -111,12 +114,18 @@ def _send_link(user):
             flash("This sign-in is deactivated. Reactivate it before sending a link.", "error")
         return None
     action = "INVITATION_SENT" if invitation is not None else "PASSWORD_LINK_SENT"
+    from app.services.transactional_email import link_base_url
+
+    link = {"url": f"{link_base_url()}{outcome.path}", "expires_at": outcome.expires_at, "email": user.email,
+            "name": user.display_name, "emailed": outcome.delivered, "place": "CalibraytAI"}
     if outcome.delivered:
         if membership is not None:
-            record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user)
+            record_people_event(organization_id=_org(), membership=membership, action=action, actor=current_user,
+                                detail="Emailed; the same one-time link was also shown to "
+                                       f"{getattr(current_user, 'display_name', '') or 'the owner'}")
         _confirm_to_sender(user, invitation is not None, outcome)
         flash(LINK_SENT.format(email=user.email, expires=_expires_phrase(outcome)), "success")
-        return None
+        return link
     reason = NOT_DELIVERED_REASONS.get(outcome.status, "the email could not be sent")
     if membership is not None:
         actor = getattr(current_user, "display_name", "") or "the owner"
@@ -124,10 +133,7 @@ def _send_link(user):
                             detail=f"Not emailed ({outcome.status}); one-time link shown to {actor} to give in person")
     flash(LINK_NOT_EMAILED.format(email=user.email, reason=reason, name=user.display_name,
                                   expires=_expires_phrase(outcome)), "error")
-    from app.services.transactional_email import link_base_url
-
-    base = link_base_url()
-    return {"url": f"{base}{outcome.path}", "expires_at": outcome.expires_at, "email": user.email}
+    return link
 
 
 def _confirm_to_sender(user, is_invitation, outcome):
@@ -173,26 +179,33 @@ EMAIL_KINDS = {
     "SIGNING_COMPLETE": "Signed copy",
     "DELIVERY_SCHEDULE": "Delivery schedule",
     "SUPPLIER_QUOTE": "Quotation",
+    "DELIVERY_TEST": "Email test",
 }
 
 
-def email_history(email, limit=5):
-    """The last emails to this person (transactional_messages): when, what kind, Sent or Not sent with a plain
-    reason. Never a link: the table keeps no link, token or message body."""
+def _email_rows(email, limit=5):
     from app import db
     from app.models.transactional_message import TransactionalMessage
-    from app.services.password_reset import _delivered
 
     address = (email or "").strip().lower()
     if not address:
         return []
-    rows = (TransactionalMessage.query.filter(db.func.lower(TransactionalMessage.to_email) == address)
+    return (TransactionalMessage.query.filter(db.func.lower(TransactionalMessage.to_email) == address)
             .order_by(TransactionalMessage.created_at.desc(), TransactionalMessage.id.desc()).limit(limit).all())
+
+
+def email_history(email, limit=5):
+    """The last emails to this person (transactional_messages): when, what kind, and what the mail service
+    reported: Delivered, Bounced with its reason, Waiting, or Not sent with a plain reason (sign-in reliability,
+    26 Oct 2026: accepted is never shown as delivered). Never a link: the table keeps no link, token or body."""
+    from app.services.email_delivery import STATE_CAPTURED, STATE_NOT_SENT, state_of
+
     out = []
-    for row in rows:
-        sent = _delivered(row.status)
+    for row in _email_rows(email, limit):
+        state = state_of(row)
+        sent = state.code not in (STATE_NOT_SENT,)
         out.append({"at": row.created_at, "kind": EMAIL_KINDS.get(row.template_id, row.template_id.replace("_", " ").title()),
-                    "sent": sent,
+                    "sent": sent, "state": state, "captured": state.code == STATE_CAPTURED,
                     "reason": "" if sent else NOT_DELIVERED_REASONS.get(row.status, "the email could not be sent")})
     return out
 
@@ -289,7 +302,7 @@ def detail(membership_id):
 
 def _detail_page(membership_id, one_time_link=None):
     """The person's page. ``one_time_link`` is shown only in this one response, to the owner who just
-    sent it, when the email was not delivered; the response is never cached."""
+    made it (emailed or not); the response is never cached."""
     person = _person_or_404(membership_id)
     texts = _texts_of(membership_id)
     page = render_template(
@@ -337,6 +350,21 @@ def reactivate(membership_id):
         return f"{user.display_name} can sign in again with their password."
 
     return _act(membership_id, run)
+
+
+@people_access_bp.route("/<int:membership_id>/check-email", methods=["POST"])
+def check_email(membership_id):
+    """Ask the mail service what happened to this person's recent emails (sign-in reliability, 26 Oct 2026)."""
+    from app.services.email_delivery import check_waiting
+
+    person = _person_or_404(membership_id)
+    added, problem = check_waiting(_email_rows(person.email))
+    if problem:
+        flash(f"Could not ask the mail service: {problem}", "error")
+    else:
+        flash("Delivery checked with the mail service." if added else
+              "Delivery checked: nothing new from the mail service yet.", "success")
+    return redirect(url_for("people_access.detail", membership_id=membership_id) + "#email-history-heading")
 
 
 @people_access_bp.route("/<int:membership_id>/send-link", methods=["POST"])

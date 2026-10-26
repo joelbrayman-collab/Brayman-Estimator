@@ -2,7 +2,12 @@
 {% block auth_title %}{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}{% endblock %}
 {% block auth_body %}
         <h1>{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}</h1>
-        {% if email_ready %}<p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>{% endif %}
+        {% if email_ready %}<p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>
+        <div class="login-notice" role="note" data-no-email-fallback>
+            <p><strong>Nothing after a few minutes?</strong> Check your junk folder. Still nothing:
+            {% if portal == 'supplier' %}ask the contractor you work with for a sign-in link. They can text it to you from Company &rarr; Suppliers.
+            {% else %}ask your company's owner or administrator for a sign-in link. They can text it to you from People &amp; Access.{% endif %}</p>
+        </div>{% endif %}
         {% if not email_ready %}
         <div class="login-notice" role="status" data-no-email>
             <p><strong>This site cannot send email yet, so no email is on its way.</strong></p>

@@ -6,6 +6,8 @@ import getpass
 import os
 
 import click
+
+from app import db
 from flask.cli import with_appcontext
 
 from app.services.access_domains import (
@@ -353,3 +355,22 @@ def show_person_wage_command(organization_id, person_id, actor_user_id):
         raise click.ClickException(str(exc)) from exc
     click.echo(f"person_id: {person_id}")
     click.echo(f"hourly_wage: {wage}")
+
+
+@auth_cli.command("issue-link")
+@click.option("--email", required=True)
+@with_appcontext
+def issue_link_command(email):
+    """Emergency access (26 Oct 2026): print a one-time set-password link for an existing, active sign-in. No email
+    is sent; the link is printed here only. It works once and replaces the person's unused links."""
+    from app.models.user import User
+    from app.services.password_reset import PasswordResetServiceError, issue_link_without_email
+    from app.services.transactional_email import link_base_url
+
+    user = User.query.filter(db.func.lower(User.email) == (email or "").strip().lower()).first()
+    try:
+        path, expires_at = issue_link_without_email(user)
+    except PasswordResetServiceError:
+        raise click.ClickException("No active sign-in has that email address.")
+    click.echo(f"One-time link for {user.display_name} (works once, expires {expires_at:%Y-%m-%d %H:%M} UTC):")
+    click.echo(f"{link_base_url()}{path}")

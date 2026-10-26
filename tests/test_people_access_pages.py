@@ -186,13 +186,14 @@ def test_another_organization_is_never_visible_or_changeable(app):
 def test_owner_adds_a_person_who_gets_the_set_password_email_and_signs_in(app):
     owner = _client(app, OWNER)
     response = owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1].upper()})
-    assert response.status_code == 302
+    # Sign-in reliability (26 Oct 2026): the page with the link to text is shown, emailed or not.
+    assert response.status_code == 200 and 'data-one-time-link-emailed="yes"' in response.get_data(as_text=True)
     with app.app_context():
         user = User.query.filter_by(email=NEW_PERSON[1]).one()
         assert user.is_active and user.display_name == NEW_PERSON[0]
         membership = UserMembership.query.filter_by(user_id=user.id).one()
         assert membership.organization_id == ORG and membership.is_active
-        assert response.headers["Location"].endswith(f"/settings/people/{membership.id}")
+        assert f'/settings/people/{membership.id}/send-link' in response.get_data(as_text=True)  # that person's page
         message = TransactionalMessage.query.filter_by(to_email=NEW_PERSON[1]).one()
         assert message.template_id == TEMPLATE_ACCOUNT_INVITATION  # a proper invitation, 72 h (21 Oct 2026)
         assert message.status == STATUS_LOCAL_CAPTURED
@@ -230,7 +231,7 @@ def test_add_person_refuses_a_taken_email_or_missing_fields(app):
 def test_owner_sent_links_do_not_use_the_office_forgot_password_budget(app):
     owner = _client(app, OWNER)
     for n in range(6):
-        assert owner.post("/settings/people/new", data={"display_name": f"P{n}", "email": f"p{n}@example.invalid"}).status_code == 302
+        assert owner.post("/settings/people/new", data={"display_name": f"P{n}", "email": f"p{n}@example.invalid"}).status_code == 200
     with app.app_context():
         assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_ACCOUNT_INVITATION).count() == 6
         # plus one confirmation to the owner for each (23 Oct 2026), never counted against anyone's budget
@@ -397,8 +398,10 @@ def test_owner_marks_and_clears_field_only_from_people_and_access(app):
     owner = _client(app, OWNER)
     response = owner.post("/settings/people/new", data={"display_name": "Kevin Synthetic Crew",
                                                         "email": "kevin.crew@example.invalid", "field_only": "yes"})
-    assert response.status_code == 302, response.get_data(as_text=True)[:300]
-    membership_id = int(response.headers["Location"].rstrip("/").rsplit("/", 1)[1])
+    assert response.status_code == 200, response.get_data(as_text=True)[:300]
+    with app.app_context():
+        membership_id = UserMembership.query.join(User, User.id == UserMembership.user_id).filter(
+            User.email == "kevin.crew@example.invalid").one().id
 
     def marked():
         with app.app_context():
@@ -426,7 +429,10 @@ def test_invitation_activation_and_history_are_recorded(app):
     owner = _client(app, OWNER)
     response = owner.post("/settings/people/new", data={"display_name": "Kev Synthetic", "email": "kev.crew@example.invalid",
                                                         "field_only": "yes"})
-    membership_id = int(response.headers["Location"].rstrip("/").rsplit("/", 1)[1])
+    assert response.status_code == 200
+    with app.app_context():
+        membership_id = UserMembership.query.join(User, User.id == UserMembership.user_id).filter(
+            User.email == "kev.crew@example.invalid").one().id
     with app.app_context():
         message = TransactionalMessage.query.filter_by(to_email="kev.crew@example.invalid").one()
         assert message.template_id == TEMPLATE_ACCOUNT_INVITATION
@@ -549,7 +555,7 @@ def _confirmations(app):
 
 def test_the_sender_gets_a_confirmation_without_the_link_and_the_page_shows_email_history(app):
     owner = _client(app, OWNER)
-    assert owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]}).status_code == 302
+    assert owner.post("/settings/people/new", data={"display_name": NEW_PERSON[0], "email": NEW_PERSON[1]}).status_code == 200
     invitation = _captured(app, NEW_PERSON[1])
     assert len(invitation) == 1
     credential = re.search(r"/reset-password#([A-Za-z0-9_\-.]+)", invitation[0]).group(1)
@@ -574,7 +580,8 @@ def test_the_sender_gets_a_confirmation_without_the_link_and_the_page_shows_emai
     html = owner.get(f"/settings/people/{membership.id}").get_data(as_text=True)
     section = re.search(r'data-person-email-history="(\d+)">(.*?)</section>', html, re.S)
     assert section and int(section.group(1)) == 2
-    assert section.group(2).count("data-email-history-row") == 2 and "Sent" in section.group(2)
+    # Accepted is not delivered (26 Oct 2026): captured mail on this development office shows as kept here.
+    assert section.group(2).count("data-email-history-row") == 2 and section.group(2).count("data-email-sent") == 2
     assert "Invitation" in section.group(2)
     for forbidden in (credential, secret, lookup_key, "/reset-password"):
         assert forbidden not in section.group(2)

@@ -241,7 +241,7 @@ def test_only_the_owner_side_can_check_delivery(app):
 def test_forgot_password_says_what_to_do_when_nothing_arrives(app):
     _accepting(app)
     html = app.test_client().get("/forgot-password/sent").get_data(as_text=True)
-    assert "data-no-email-fallback" in html and "Check your junk folder" in html
+    assert "data-email-fallback" in html and "Check your junk folder" in html
     assert "ask your company's owner or administrator for a sign-in link" in html
 
 

@@ -3,7 +3,7 @@
 {% block auth_body %}
         <h1>{{ contractor_copy.FORGOT_PASSWORD_SENT_HEADING }}</h1>
         {% if email_ready %}<p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_SENT_BODY }}</p>
-        <div class="login-notice" role="note" data-no-email-fallback>
+        <div class="login-notice" role="note" data-email-fallback>
             <p><strong>Nothing after a few minutes?</strong> Check your junk folder. Still nothing:
             {% if portal == 'supplier' %}ask the contractor you work with for a sign-in link. They can text it to you from Company &rarr; Suppliers.
             {% else %}ask your company's owner or administrator for a sign-in link. They can text it to you from People &amp; Access.{% endif %}</p>

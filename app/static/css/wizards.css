@@ -154,20 +154,22 @@
 .wz-panel-manual:hover { color: #fff; }
 .wz-panel .wz-resume { margin-top: 8px; color: var(--text, #1c1f24); }
 .wz-panel .wz-resume a { color: inherit; }
-/* three across: room for icon, words and the two actions side by side */
-@container (min-width: 960px) {
+/* wide (a large desktop): three across, icon | words | Start over Continue manually */
+@container (min-width: 1100px) {
   .wz-panel-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .wz-panel-start { min-height: 38px; line-height: 22px; padding: 8px 16px; }
   .wz-panel-manual { min-height: 24px; }
 }
-/* tablet: three across, the actions under the words */
-@container (min-width: 600px) and (max-width: 959.98px) {
+/* laptop and tablet: three across, Start and Continue manually under the words */
+@container (min-width: 600px) and (max-width: 1099.98px) {
   .wz-panel-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .wz-panel-card { grid-template-columns: 1fr; gap: 6px; }
+  .wz-panel-head { margin-bottom: 6px; }
+  .wz-panel-card { grid-template-columns: 1fr; gap: 4px; padding: 8px 10px; }
   .wz-panel-actions { flex-direction: row; justify-content: space-between; align-items: center; gap: 4px 8px; flex-wrap: wrap; }
-  .wz-panel-start { min-height: 40px; line-height: 24px; }
+  .wz-panel-start { min-height: 38px; line-height: 22px; padding: 8px 16px; }
+  .wz-panel-manual { min-height: 32px; }
 }
-@container (min-width: 960px) {
+@container (min-width: 1100px) {
   .wz-panel-card { padding: 10px 12px; }
   .wz-panel-grid { gap: 10px; }
 }
@@ -189,4 +191,4 @@
   .wz-panel-start { padding: 8px 14px; }
   .wz-panel-manual { font-size: .78rem; min-height: 30px; }
 }
-@container (min-width: 960px) { .wz-panel { padding: 12px 14px 14px; } }
+@container (min-width: 1100px) { .wz-panel { padding: 12px 14px 14px; } }

@@ -129,6 +129,16 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "sms_notifications.twilio_status",  # Twilio delivery reports, signature-checked (22 Oct 2026), see above
     "sms_notifications.twilio_inbound",  # Twilio replies (STOP / START), signature-checked (22 Oct 2026)
     "email_webhooks.postmark",  # Postmark delivery reports, HTTP Basic credentials (26 Oct 2026), see above
+    # One CalibraytAI identity (26 Oct 2026): Production's server-to-server API for the Training Centre; 404 unless
+    # IDENTITY_CLIENTS is set, 401 without that site's credentials (tests/test_one_identity.py).
+    "identity_api.verify",
+    "identity_api.change_password",
+    "identity_api.forgot",
+    "identity_api.provision",
+    "identity_api.issue_link",
+    "identity_api.email_history",
+    "identity_api.import_identity",
+    "identity_api.lookup",
 }
 
 
@@ -298,6 +308,7 @@ EXPECTED_PEOPLE_ACCESS_ENDPOINTS = {
     "people_access.access",
     "people_access.administrator",
     "people_access.field_only",
+    "people_access.check_email",  # Check delivery now (sign-in reliability, 26 Oct 2026)
 }
 
 

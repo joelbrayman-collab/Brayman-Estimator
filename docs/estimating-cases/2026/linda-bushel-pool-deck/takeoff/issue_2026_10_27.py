@@ -1,7 +1,7 @@
 """27 Oct 2026 costing issue: the package for Ben.
 
-The three governed documents are populated from Approved Master Template Family V1 by
-issue_masters_2026_10_27.py (Masters 01, 02 and 03 through app/services/approved_masters.py). Their PDFs are
+The four governed documents are populated from Approved Master Template Family V1 by
+issue_masters_2026_10_27.py (Masters 01, 02, 03 and 08 through app/services/approved_masters.py). Their PDFs are
 exported with Microsoft Word for Mac "Save as PDF", the approved route in the FG-022 register. This script
 does not write any document: it packages the master outputs and the supplier originals unchanged.
 
@@ -26,6 +26,7 @@ GOVERNED = {
     "Linda Bushel - 01 Labour Calculation Detail": INTERNAL + "01-labour-calculation-detail",
     "Linda Bushel - 02 Internal Detailed Cost Breakdown": INTERNAL + "02-internal-detailed-cost-breakdown",
     "Linda Bushel - 03 Customer Facing Estimate": CUSTOMER + "03-customer-facing-estimate",
+    "Linda Bushel - 08 Customer Detailed Cost Estimate": CUSTOMER + "08-customer-detailed-cost-estimate",
 }
 RECORDS = {
     "INTERNAL RECORD/Supplier quote reconciliation (27 Oct 2026).md": "takeoff/2026-10-27-supplier-quote-reconciliation.md",

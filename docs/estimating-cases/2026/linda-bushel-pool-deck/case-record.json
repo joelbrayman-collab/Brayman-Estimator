@@ -246,9 +246,9 @@
     },
     "pricing_rule": {
       "method": "true gross margin",
-      "target": "0.15",
-      "formula": "selling price = direct cost / 0.85",
-      "source": "docs/pricing-policy.md (2026-08-25)"
+      "target": "0.125",
+      "formula": "selling price = direct cost / 0.875",
+      "source": "Ben, 27 Oct 2026: Linda Bushel project decision; organization standard 0.15 (docs/pricing-policy.md) unchanged"
     },
     "selling_price_issued": true,
     "files": [
@@ -259,7 +259,8 @@
       "estimates/internal/2026-10-27-linda-bushel-01-labour-calculation-detail.docx",
       "estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx",
       "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx",
-      "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
+      "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip",
+      "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx"
     ],
     "j1_rewritten": false,
     "labour_search_2026_10_27": "No governed deck production rate, Linda labour estimate, or Brayman deck labour history in the repository or the 27 Oct Production copy. Rate 65.00/man-hour APPROVED. Superseded 27 Oct: governed rate now 75.00.",
@@ -273,20 +274,30 @@
     },
     "price": {
       "direct_cost": "25652.58",
-      "gross_profit": "4526.93",
-      "selling_price_before_hst": "30179.51",
-      "hst": "3923.34",
-      "total": "34102.85",
-      "true_gross_margin": "15.00%"
+      "gross_profit": "3664.65",
+      "selling_price_before_hst": "29317.23",
+      "hst": "3811.24",
+      "total": "33128.47",
+      "true_gross_margin": "12.50%"
     },
     "governed_documents": {
       "route": "app/services/approved_masters.py via takeoff/issue_masters_2026_10_27.py",
       "pdf_route": "Microsoft Word for Mac Save as PDF",
       "01": "estimates/internal/2026-10-27-linda-bushel-01-labour-calculation-detail.docx",
       "02": "estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx",
-      "03": "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx"
+      "03": "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx",
+      "08": "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx"
     },
     "superseded": "superseded/2026-10-27-interim-writer/ (interim J1 writer output, withdrawn)",
-    "quote_status": "BMR/Darcy expires 2026-10-28, confirm/order promptly; Pro Post OT-2236 expired 2026-10-21, reconfirm before commitment"
+    "quote_status": "BMR/Darcy expires 2026-10-28, confirm/order promptly; Pro Post OT-2236 expired 2026-10-21, reconfirm before commitment",
+    "customer_detail": {
+      "master": "08 Customer Detailed Cost Estimate",
+      "method": "each direct-cost line / 0.875, rounded to the cent; residual on the last labour line",
+      "materials_and_foundation": "18602.94",
+      "labour": "10714.29",
+      "total": "29317.23",
+      "rounding_adjustment": "0.00",
+      "file": "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx"
+    }
   }
 }

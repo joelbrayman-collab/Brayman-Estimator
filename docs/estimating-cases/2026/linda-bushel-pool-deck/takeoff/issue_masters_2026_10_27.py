@@ -1,7 +1,7 @@
 """Linda Bushel documents from Approved Master Template Family V1 (27 Oct 2026).
 
-Master 01 Labour Calculation Detail, Master 02 Internal Detailed Cost Breakdown and Master 03 Customer
-Facing Estimate, populated through app/services/approved_masters.py (the only governed route). The data
+Master 01 Labour Calculation Detail, Master 02 Internal Detailed Cost Breakdown, Master 03 Customer
+Facing Estimate and Master 08 Customer Detailed Cost Estimate, populated through app/services/approved_masters.py (the only governed route). The data
 comes from price_2026_10_27.py; the format is the master's. Writes the DOCX files into the case and,
 when LibreOffice is available, a preview PDF beside each one for checking. The approved PDF route is
 Microsoft Word for Mac "Save as PDF" (FG-022 register); the released PDFs are exported there.
@@ -28,6 +28,7 @@ OUT = {
     AM.LABOUR_CALCULATION_DETAIL: CASE / "estimates/internal/2026-10-27-linda-bushel-01-labour-calculation-detail.docx",
     AM.INTERNAL_DETAILED_COST_BREAKDOWN: CASE / "estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx",
     AM.CUSTOMER_FACING_ESTIMATE: CASE / "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx",
+    AM.CUSTOMER_DETAILED_COST_ESTIMATE: CASE / "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx",
 }
 TOKENS = {"CLIENT": "Linda Bushel", "PROJECT": "Bushel Rear Deck (pool deck)",
           "SITE": "12 D'Arcy's Way, Kemptville, ON K0G 1J0", "DATE": "2026-10-27"}
@@ -47,7 +48,7 @@ def labour_detail():
         ("Total man-hours", str(P.PROPOSED_HOURS)),
         ("Direct labour rate", f"{F(rate)} per man-hour (Brayman rate from 27 Oct 2026)"),
         ("Direct labour", F(p["labour"])),
-        ("GM reference sell (15% true gross margin)", F(p["labour"] / keep)),
+        ("GM reference sell (12.5% true gross margin, Linda project decision)", F(p["labour"] / keep)),
         ("Crew and duration", f"Two-person crew, about {(Decimal(P.PROPOSED_HOURS) / 16).quantize(Decimal('0.1'))} working days"),
         ("Helical piles", "Supplied and installed by Pro Post Foundations (OT-2236); no pile installation in Brayman labour"),
         ("Basis", "Joel's estimating allowance (27 Oct 2026) from the J1 take-off and supplier quantities"),
@@ -60,6 +61,7 @@ def labour_detail():
 
 def internal_breakdown():
     p = _priced()
+    C = P.customer_lines()
     material = [
         ("Framing lumber — BMR estimate 237147/1", "$1,361.71", "Written quote; Darcy's price is Brayman's cost. EXPIRES 28 OCT 2026 — confirm/order promptly"),
         ("Structural hardware — BMR", "$389.35", "Written quote"),
@@ -81,14 +83,15 @@ def internal_breakdown():
         ("Materials and subcontract", F(P.BMR + P.VISTA + P.PRO_POST)),
         (f"Brayman labour ({P.PROPOSED_HOURS} man-hours × {F(P.LABOUR_RATE)})", F(p["labour"])),
         ("Total direct cost", F(p["direct"])),
-        ("Pricing method", "True gross margin 15% (not markup): selling price = direct cost ÷ 0.85"),
+        ("Pricing method", "True gross margin 12.5% for this project (Ben, 27 Oct 2026; not markup): selling price = direct cost ÷ 0.875. Organization standard 15% unchanged"),
         ("Gross profit", F(p["profit"])),
         ("Selling price before HST", F(p["selling"])),
         ("HST 13%", F(p["hst"])),
         ("Total including HST", F(p["total"])),
         ("Resulting true gross margin", f"{p['margin']}%"),
         ("Quote status", "BMR/Darcy pricing expires 28 Oct 2026 — confirm/order promptly. Pro Post OT-2236 expired 21 Oct — reconfirm before commitment"),
-        ("Status", "For Ben's review. Customer estimate not sent to Linda"),
+        ("Customer detail (Master 08)", f"Each line ÷ 0.875, rounded to the cent; materials and foundation {F(C['materials_total'])} + labour {F(C['labour_total'])} = {F(C['selling'])}; rounding adjustment {F(C['residual'])}"),
+        ("Status", "For Ben's review. Customer documents not sent to Linda"),
     ]
     return AM.populate(AM.INTERNAL_DETAILED_COST_BREAKDOWN, tokens=TOKENS, tables={
         ("Material / Package", "Direct Cost", "Status"): material,
@@ -132,8 +135,40 @@ def customer_estimate():
                                         ("Total including HST", F(p["total"]))]})
 
 
+MATERIAL_TEXT = {
+    "framing": ("Pressure-treated structural framing", "Built-up 2×10 beams, 2×8 joists, 6×6 posts, curved header, blocking and 2×12 stair stringers"),
+    "hardware": ("Structural hardware and connectors", "Galvanized joist and skewed hangers, post bases, carriage bolts and structural screws"),
+    "decking": ("Trex Select decking, Island Mist", "Composite decking for the upper deck, the lower deck and the stair treads and risers"),
+    "fascia": ("Trex fascia, Island Mist", "Fascia on the exposed deck and stair edges"),
+    "fasteners": ("Trex fasteners and fascia screws", "Hidden deck fasteners and colour-matched fascia screws"),
+    "vista": ("Vista 42 in aluminium railing and gate", "Textured black, standard pickets: upper deck sides and front, both sides of the stairs, lower deck; 42 in high, 48 in wide gate"),
+    "helical": ("Helical pile foundation — 11 piles, supply and installation", "Galvanized steel helical piles with brackets installed by a specialist foundation contractor, including mobilization and the engineer's report and compliance letter if the town requires it"),
+}
+
+
+def customer_detail():
+    p, C = _priced(), P.customer_lines()
+    rows = [(*MATERIAL_TEXT[key], F(value)) for key, value in C["materials"]]
+    rows.append(("Total materials and foundation", "", F(C["materials_total"])))
+    labour = [(task, str(hours), F(value)) for task, hours, value in C["labour"]]
+    labour.append(("Total labour", str(P.PROPOSED_HOURS), F(C["labour_total"])))
+    summary = [
+        ("Materials and foundation", F(C["materials_total"])),
+        (f"Labour ({P.PROPOSED_HOURS} hours, two-person crew)", F(C["labour_total"])),
+        ("Estimate subtotal", F(p["selling"])),
+        ("HST 13%", F(p["hst"])),
+        ("Total including HST", F(p["total"])),
+        ("Pricing", "Material and foundation prices are confirmed with our suppliers when the work is ordered. This estimate is valid for 7 days."),
+        ("Not included", "Town permit fee (billed at cost), electrical, plumbing, painting, grading and landscaping, a guard along the open pool edge, skirting, and pile extensions if deeper piles are needed (agreed with you first)"),
+    ]
+    return AM.populate(AM.CUSTOMER_DETAILED_COST_ESTIMATE, tokens=TOKENS, tables={
+        ("Material / Package", "Description", "Price"): rows,
+        ("Labour Task", "Hours", "Price"): labour,
+        ("Price Component", "Amount"): summary})
+
+
 BUILDERS = {AM.LABOUR_CALCULATION_DETAIL: labour_detail, AM.INTERNAL_DETAILED_COST_BREAKDOWN: internal_breakdown,
-            AM.CUSTOMER_FACING_ESTIMATE: customer_estimate}
+            AM.CUSTOMER_FACING_ESTIMATE: customer_estimate, AM.CUSTOMER_DETAILED_COST_ESTIMATE: customer_detail}
 
 
 def main(preview: bool = True) -> None:

@@ -40,7 +40,9 @@ LABOUR_TASKS = (
     ("Clean-up and final walk-through", "debris, offcuts, punch list", 4),
 )
 PROPOSED_HOURS = sum(hours for _task, _basis, hours in LABOUR_TASKS)
-MARGIN = Decimal("0.15")            # ORG-001-TRUE-GM-15: selling price = direct cost / (1 - 0.15)
+MARGIN = Decimal("0.125")           # Linda Bushel project decision (Ben, 27 Oct 2026): 12.5% TRUE gross margin,
+                                    # selling price = direct cost / (1 - 0.125). Project-specific; the organization
+                                    # standard ORG-001-TRUE-GM-15 (15%) is unchanged.
 HST = Decimal("0.13")               # Ontario HST, applied after the pre-tax selling price
 
 
@@ -61,6 +63,30 @@ def price(man_hours, delivery=Decimal("0")) -> dict:
     return {"man_hours": man_hours, "labour": labour, "delivery": delivery, "direct": direct, "selling": selling,
             "profit": profit, "margin": (profit / selling * 100).quantize(Decimal("0.01")), "hst": tax,
             "total": selling + tax}
+
+
+# Direct-cost components that make up BMR estimate 237147/1 (sum = BMR) and the Pro Post subtotal.
+BMR_LINES = (("framing", Decimal("1361.71")), ("hardware", Decimal("389.35")), ("decking", Decimal("4827.20")),
+             ("fascia", Decimal("1666.80")), ("fasteners", Decimal("431.03")))
+assert sum(v for _k, v in BMR_LINES) == BMR
+
+
+def customer_lines() -> dict:
+    """Linda's selling prices by component (Master 08). Every direct-cost line is divided by (1 - MARGIN) and
+    rounded to the cent; the rounding residual, if any, goes on the last labour line so the components add up
+    to the selling price exactly. The residual is recorded in the internal case record only."""
+    keep = Decimal(1) - MARGIN
+    materials = [(k, money(v / keep)) for k, v in BMR_LINES]
+    materials += [("vista", money(VISTA / keep)), ("helical", money(PRO_POST / keep))]
+    labour = [(task, hours, money(LABOUR_RATE * hours / keep)) for task, _basis, hours in LABOUR_TASKS]
+    selling = price(PROPOSED_HOURS)["selling"]
+    residual = selling - sum(v for _k, v in materials) - sum(v for _t, _h, v in labour)
+    task, hours, value = labour[-1]
+    labour[-1] = (task, hours, value + residual)
+    out = {"materials": materials, "labour": labour, "residual": residual, "selling": selling,
+           "materials_total": sum(v for _k, v in materials), "labour_total": sum(v for _t, _h, v in labour)}
+    assert out["materials_total"] + out["labour_total"] == selling
+    return out
 
 
 def main() -> None:

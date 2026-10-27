@@ -109,3 +109,13 @@ The earlier working figure of **$350 per helical pier** (Joel, before any writte
 The BMR quantities also differ from J1 in several places (stringers, upper joist stock, header stock, post count, hangers). Darcy's estimate says the customer verifies quantities and prices may vary with the final design; those lines are confirmed before ordering.
 
 BMR's prices are held only if the award is confirmed **by 28 Oct 2026**.
+
+## Decisions recorded later on 27 Oct 2026 (Joel, Ben)
+
+- **Vista is additional** to BMR's $8,676.09 (Joel confirmed). Darcy's quoted prices, including the Vista quote, are Brayman's cost; no discounts assumed.
+- **Foundation:** 11 Pro Post piles govern, supply and install ($3,750.00 incl. travel and engineer report). J1's 15 piers stay as historical evidence. OT-2236 expired 21 Oct: **reconfirm before commitment**.
+- **Labour:** 125 man-hours × $75 = $9,375.00 (Ben may adjust).
+- **Delivery, carrying, equipment:** $0.00 (no amount on any document). Permit fee excluded and billed at cost. Skirting excluded.
+- **Direct cost $25,652.58.** Linda's price at **12.5% true gross margin** (Ben, project decision; standard 15% unchanged): $25,652.58 ÷ 0.875 = **$29,317.23**; gross profit $3,664.65; HST $3,811.24; total **$33,128.47**.
+- **Customer detail (Master 08):** each direct-cost line ÷ 0.875, rounded to the cent. Materials and foundation $18,602.94 + labour $10,714.29 = $29,317.23. Rounding adjustment $0.00.
+- **BMR pricing expires 28 Oct 2026 — confirm/order promptly.**

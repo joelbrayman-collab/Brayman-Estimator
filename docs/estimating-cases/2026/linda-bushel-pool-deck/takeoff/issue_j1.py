@@ -81,6 +81,14 @@ RULE = HexColor("#D9D3C7")
 PALE = HexColor("#F7F5F1")
 
 
+def beside(feet: float) -> str:
+    """Left and right of the pool centre, standing at the stairs and looking at the pool."""
+    if abs(feet) < 0.05:
+        return "on centre"
+    word = "left" if feet < 0 else "right"
+    return f"{ftin(abs(feet))} {word}"
+
+
 def ftin(feet: float) -> str:
     sign = "-" if feet < 0 else ""
     feet = abs(feet)
@@ -391,12 +399,8 @@ def draw_frame(c: canvas.Canvas, number: int, title: str) -> None:
     c.drawString(28, 86, ISSUE_TITLE)
     c.setFont("Times-Roman", 12)
     c.drawString(28, 66, f"{CLIENT}   ·   {LOCATION}")
-    c.drawString(28, 46, f"Issue {ISSUE}    {ISSUE_DATE}    Preliminary    Not a permit approval    Not an engineering seal")
-    c.drawString(28, 26, "Field verify: pool size, grades, setbacks, pier bearing, stair rise and run, guard height.")
-    c.setFont("Times-Bold", 13)
-    c.drawRightString(PAGE_W - 28, 46, "Option A")
-    c.setFont("Times-Roman", 11)
-    c.drawRightString(PAGE_W - 28, 26, "Brayman document identity")
+    c.drawString(28, 46, f"{ISSUE_DATE}    Preliminary    Not a permit    Not an engineering seal")
+    c.drawString(28, 26, "Check on site: pool size, grades, setbacks, pier bearing, stair rise and run, guard height.")
 
 
 def section_label(c: canvas.Canvas, x: float, y: float, text: str) -> float:
@@ -446,31 +450,30 @@ def new_page(c: canvas.Canvas, number: int, title: str) -> None:
 
 
 def sheet_1(c: canvas.Canvas) -> None:
-    new_page(c, 1, "Cover, general notes, and geometry")
-    y = section_label(c, 28, PAGE_H - 84, "1  Cover, general notes, and approved geometry")
+    new_page(c, 1, "Cover and general notes")
+    y = section_label(c, 28, PAGE_H - 84, "1  Cover and general notes")
     y = body(
         c, 28, y,
-        "Issue J1, 1 Oct 2026. Joel selected 15 piers, 16 joist lines, 10 stringers, "
-        "a 5.00 in working stringer throat, a 12 in lower-deck walking surface, street number 12, "
-        "and helical piers in place of sonotubes and concrete. "
-        "It is a pricing and permit-review basis. It is not a North Grenville approval "
-        "and it is not a professional-engineering seal. The 5.00 in throat is not a certification. "
-        "Issue P1 and the capability-test sheets remain historical.",
+        "1 Oct 2026. Preliminary drawing for pricing and for the permit review. "
+        "Fifteen helical piers, sixteen joist lines, and ten stair stringers. "
+        "The 5.00 in stringer throat is a working figure, not a certification. "
+        "The lower-deck walking surface is 12 in. "
+        "This is not a town approval and not an engineering seal.",
         760,
     )
     y -= 6
     rows = [
-        ("Client on the documents", CLIENT),
+        ("Client", CLIENT),
         ("Project", "Freestanding pressure-treated deck and stairs at an above-ground pool"),
         ("Location", LOCATION),
-        ("Framing", "Option A: one straight main beam and two wing beams"),
-        ("Pool", "21 ft diameter, about 50 in high. Field verify."),
-        ("Upper deck", "18 ft wide. Clear depth 5 ft at the centreline. Three straight edges."),
+        ("Framing", "One straight main beam and two wing beams"),
+        ("Pool", "21 ft diameter, about 50 in high. Check on site."),
+        ("Upper deck", "18 ft wide. 5 ft clear at the centre. Three straight edges."),
         ("Pool edge", "Follows the pool curve. Left open. No attachment to the pool."),
-        ("Stair", "10 ft wide, centred. About 38 in between surfaces. Five risers about 7.6 in."),
+        ("Stair", "10 ft wide, centred. About 38 in between the two decks. Five risers about 7.6 in."),
         ("Lower deck", "10 ft wide by 3 ft deep, about 12 in above grade."),
-        ("Gate", "42 in clear, centred, outward, self-closing and self-latching."),
-        ("Piers", "15 helical piers. No sonotubes. No concrete. Product not specified."),
+        ("Gate", "42 in clear, centred, swings out, self-closing and self-latching."),
+        ("Piers", "15 helical piers. No sonotubes. No concrete. Product not chosen."),
     ]
     for label, value in rows:
         c.setFillColor(NAVY)
@@ -481,28 +484,30 @@ def sheet_1(c: canvas.Canvas) -> None:
         c.drawString(210, y, value)
         y -= 16
     y -= 8
-    y = section_label(c, 28, y, "Preliminary layout dimensions — not client measurements")
+    y = section_label(c, 28, y, "Layout sizes — not yet measured on site")
     y = body(
         c, 28, y,
-        "These dimensions place Option A. They are not client measurements. "
-        "The origin is the pool centre and +Y runs toward the stairs. "
-        "Front edge Y = 15.5 ft. Sides at X = ±9 ft. Main beam Y = 13 ft, from X = −6 ft to +6 ft. "
-        "Wing piers at X = ±9 ft, Y = 8.5 ft. Nine upper piers and six lower-deck piers. Issue J1.",
+        "These sizes have not been measured on site. "
+        "Left and right are from the pool centre, standing at the stairs and looking at the pool. "
+        "The front edge of the upper deck is 15 ft 6 in from the pool centre. Each side is 9 ft from the centre. "
+        "The main beam is 12 ft long and centred, 13 ft from the pool centre toward the stairs. "
+        "The wing piers are 9 ft left and 9 ft right, 8 ft 6 in from the pool centre toward the stairs. "
+        "Nine piers are under the upper deck and six are under the lower deck.",
         760,
     )
     y -= 4
     y = flag_box(
         c, 28, y, 1168,
         "LOWER-DECK WALKING SURFACE 12 in",
-        "The intended finished walking surface is 12 in above grade. "
-        "The dressed double 2x10, 2x8, and decking stack is 17.5 in. "
-        "Post cut length is reconciled to the field before construction. "
-        "Lower 6x6 posts are ordered uncut. This issue does not certify that cut.",
+        "The walking surface is 12 in above grade. "
+        "The double 2x10, 2x8, and decking dress out at 17.5 in. "
+        "Cut the posts on site. Order the lower 6x6 posts uncut. "
+        "This sheet does not certify that cut.",
     ) - 8
     y = flag_box(
         c, 28, y, 1168,
         "CODE AND PERMIT BASIS",
-        CODE_NOTE + " This note is not a statement that approval has been granted.",
+        CODE_NOTE + " This note does not mean the permit has been issued.",
     ) - 10
     c.setFillColor(NAVY)
     c.setFont("Times-Bold", 14)
@@ -511,7 +516,7 @@ def sheet_1(c: canvas.Canvas) -> None:
     c.setFillColor(black)
     c.setFont("Times-Roman", 13)
     index = [
-        "1  Cover, general notes, and approved geometry",
+        "1  Cover and general notes",
         "2  Dimensioned pier and foundation plan",
         "3  Post, beam, wing, joist, blocking, and header",
         "4  Decking, stair, guard, gate, and skirting",
@@ -696,7 +701,7 @@ def draw_pool_under(c, xy) -> None:
     c.setFont("Times-Bold", 14)
     c.drawCentredString(cx, cy + 10, "POOL")
     c.setFont("Times-Roman", 12)
-    c.drawCentredString(cx, cy - 8, "21 ft dia.  FIELD VERIFY")
+    c.drawCentredString(cx, cy - 8, "21 ft dia.  CHECK ON SITE")
 
 
 def sheet_plan(c, number, title, heading, notes, show_joists, show_guards, xmin, ymin) -> float:
@@ -715,7 +720,7 @@ def sheet_plan(c, number, title, heading, notes, show_joists, show_guards, xmin,
     c.restoreState()
     c.setFillColor(black)
     c.setFont("Times-Roman", 12)
-    c.drawString(28, FOOTER_TOP + 10, "Scale: 20 pt = 1 ft. Pool is at the top. Read the figured dimensions.")
+    c.drawString(28, FOOTER_TOP + 10, "Not a construction scale. Read the written dimensions. The pool is at the top of the sheet.")
     nx = 740
     y = PAGE_H - 108
     c.setFillColor(NAVY)
@@ -730,13 +735,13 @@ def sheet_plan(c, number, title, heading, notes, show_joists, show_guards, xmin,
 
 def sheet_2(c: canvas.Canvas) -> None:
     notes = [
-        "P1–P9 are the nine upper-deck piers. P10–P15 are the six lower-deck piers. Total 15. This is the CT-1 pier layout.",
-        "Each pier is a helical pier. Shaft, helix, length, and installation torque are not specified. Sonotubes and concrete are not in this issue. This sheet does not certify capacity.",
-        f"P6 clearance to the pool wall at the centreline is {ftin(Y_MAIN - R)}. P8 and P9 clearance to the pool centre is {ftin(math.hypot(9, 8.5) - R)} outside the wall.",
-        "No pier is inside the pool. Bearing, frost depth, and municipal pier rules are field and permit items. This sheet does not certify them.",
-        "Front beam piers are 6 ft apart. Main-beam piers are 6 ft apart. Each lower rim is two 5 ft bays. Spans are not checked against a span table on this issue.",
-        "Coordinate origin: pool centre. Front edge Y = 15'-6\". Main beam Y = 13'-0\". Wing piers Y = 8'-6\".",
-        f"Stair run used here is 4 treads × 11 in = {ftin(STAIR_RUN)}. Lower deck then runs from Y = {ftin(Y_LOWER_BACK)} to Y = {ftin(Y_LOWER_FRONT)}.",
+        "P1 to P9 are under the upper deck. P10 to P15 are under the lower deck. Fifteen piers.",
+        "Each pier is a helical pier. Shaft, helix, length, and installation torque are not chosen. No sonotubes and no concrete. This sheet does not set the pier capacity.",
+        f"At the centre, P6 is {ftin(Y_MAIN - R)} clear of the pool wall. P8 and P9 are {ftin(math.hypot(9, 8.5) - R)} outside the wall, measured from the pool centre.",
+        "No pier is inside the pool. Bearing, frost depth, and the town's pier rules are checked on site and at permit. This sheet does not set them.",
+        "Piers along the front beam are 6 ft apart. Piers along the main beam are 6 ft apart. Each side of the lower deck is two 5 ft spaces. Spans are not checked against a span table.",
+        "Left and right are from the pool centre, standing at the stairs and looking at the pool. Distances marked out are from the pool centre toward the stairs.",
+        f"The stair is four treads at 11 in, run {ftin(STAIR_RUN)}. The lower deck then runs from {ftin(Y_LOWER_BACK)} to {ftin(Y_LOWER_FRONT)} out from the pool centre.",
     ]
     y = sheet_plan(
         c, 2, "Pier and foundation plan",
@@ -746,27 +751,32 @@ def sheet_2(c: canvas.Canvas) -> None:
     y -= 8
     c.setFillColor(NAVY)
     c.setFont("Times-Bold", 13)
-    c.drawString(740, y, "Pier schedule")
-    y -= 16
+    c.drawString(740, y, "Pier locations")
+    y -= 14
     c.setFillColor(black)
+    c.setFont("Times-Roman", 9)
+    c.drawString(740, y, "Left and right: standing at the stairs, looking at the pool.")
+    y -= 12
+    c.drawString(740, y, "Out: from the pool centre toward the stairs.")
+    y -= 14
     c.setFont("Times-Roman", 10)
     items = upper_piers() + lower_piers()
     for i, (name, x, yv) in enumerate(items):
         col = 0 if i < 8 else 1
         row = i if i < 8 else i - 8
-        c.drawString(740 + col * 230, y - row * 13, f"{name}   X {ftin(x)}   Y {ftin(yv)}")
+        c.drawString(740 + col * 230, y - row * 13, f"{name}   {beside(x)}    {ftin(yv)} out")
 
 
 def sheet_3(c: canvas.Canvas) -> None:
     notes = [
-        "Grey lines are 2×8 joists. Brown lines are double 2×10 beams and the segmented 2×8 header.",
-        "Joists run perpendicular to the 18 ft front edge, at 16 in on centre maximum. The layout is symmetric about the centreline: joists at the rims and at ±8, 24, 40, 56, 72, 88, and 104 in. The closing space at each rim is 4 in. Sixteen joists.",
-        "The main beam is double 2×10, 12 ft long, Y = 13 ft, X = −6 ft to +6 ft. Wings are double 2×10 from the beam ends at P5 and P7 to the wing ends at P8 and P9. Length of each wing is 5.41 ft.",
-        "The front beam is double 2×10 along the 18 ft front edge, in three 6 ft pieces per ply, spliced over P2 and P3.",
-        f"Curved header: {SEGMENT_COUNT} straight 2×8 segments, each {CHORD:.3f} ft. Midpoint touches the pool arc. Ends stand off the pool by the sagitta, {SAGITTA * 12:.2f} in. No segment enters the pool. Field-cut to the real pool.",
-        "Joist lengths are measured to the recorded pool arc. Header joints stand off that arc by up to 1.04 in.",
-        "Blocking shown in the take-off: 22 pieces of 14.5 in clear in the 16 in bays at the front beam and the main beam, two short closers in the 4 in bays, and four wing blocks.",
-        "Lower-deck joists are 2×8 at 16 in on centre across the 10 ft width, spanning the 3 ft depth. Walking surface 12 in. Post cut length is a field item.",
+        "Grey lines are 2×8 joists. Brown lines are the double 2×10 beams and the curved 2×8 header.",
+        "Joists run square to the 18 ft front, at 16 in on centre maximum. They sit on both outside edges and at 8, 24, 40, 56, 72, 88, and 104 in each side of centre. The last space at each outside edge is 4 in. Sixteen joists.",
+        "The main beam is a double 2×10, 12 ft long and centred, 13 ft from the pool centre toward the stairs. Each wing is a double 2×10 from P5 to P8 and from P7 to P9. Each wing is 5.41 ft long.",
+        "The front beam is a double 2×10 along the 18 ft front edge, in three 6 ft pieces on each ply, spliced over P2 and P3.",
+        f"The header at the pool is {SEGMENT_COUNT} straight 2×8 pieces, each {CHORD:.3f} ft. The middle of each piece meets the pool wall. The joints sit {SAGITTA * 12:.2f} in off the wall. No piece goes into the pool. Cut the header to the real pool on site.",
+        "Joist lengths are measured to the pool wall used on this drawing. The header joints sit up to 1.04 in off that wall.",
+        "Blocking in the take-off: 22 pieces of 14.5 in clear in the 16 in spaces at the front beam and the main beam, two short closers in the 4 in spaces, and four wing blocks.",
+        "Lower-deck joists are 2×8 at 16 in on centre across the 10 ft width, spanning the 3 ft depth. Walking surface 12 in. Cut the posts on site.",
     ]
     sheet_plan(
         c, 3, "Framing plan",
@@ -777,14 +787,14 @@ def sheet_3(c: canvas.Canvas) -> None:
 
 def sheet_4(c: canvas.Canvas) -> None:
     notes = [
-        "Deck boards run parallel to the 18 ft front edge. Coverage used for the count is the dressed 5.5 in width, with no extra gap. A drainage gap was not specified. If a gap is required, the count changes.",
-        "Upper full-width band is the 5 ft from the pool tangent to the front edge: 10 rows at 5.5 in and one row ripped to 5.0 in. Eleven boards, 18 ft long.",
-        "Beside the curve, eleven rows each side follow the recorded arc. Piece lengths are in the take-off. A 0.60 in remainder at the side corners is a field fit, not an extra board.",
-        "Red lines are guard runs. The curved pool edge is open. There is no centre stair handrail.",
-        "Straight runs are counted as Veranda 37 in × 6 ft kits, one module per started 6 ft on each straight segment. Kits are not assumed to turn a corner or to be cut in half.",
-        "Stair guards and the gate are custom matches to Home Depot HDDR2022005 / SKU 1001900458. That is not confirmed as a BMR stock item.",
-        "Skirt is the lower deck only: vertical 1×6, tight, on the two sides and the front, including under the gate. Section 4 of the brief assigns that skirt. Upper-deck skirting is not quantified.",
-        "Gate opening is 42 in clear, centred on the 10 ft lower front. Guard returns each side are 3.25 ft.",
+        "Deck boards run parallel to the 18 ft front edge. The count uses the dressed 5.5 in face, with no extra gap. A drainage gap was not specified. If a gap is required, the count changes.",
+        "The full-width band is the 5 ft from the pool wall to the front edge: 10 rows at 5.5 in and one row ripped to 5.0 in. Eleven boards, 18 ft long.",
+        "Beside the curve, eleven rows each side follow the pool wall on this drawing. Piece lengths are in the take-off. A 0.60 in remainder at the side corners is fitted on site. It is not an extra board.",
+        "Red lines are the guard runs. The curved pool edge is open. There is no centre handrail on the stairs.",
+        "Straight runs are counted as Veranda 37 in by 6 ft kits, one kit for each started 6 ft on a straight run. A kit is not assumed to turn a corner or to be cut in half.",
+        "The stair guards and the gate are custom, matched to Home Depot HDDR2022005, SKU 1001900458. That number is not confirmed as a BMR stock item.",
+        "The skirt is the lower deck only: vertical 1×6, tight, on the two sides and the front, including under the gate. Upper-deck skirting is not in this count.",
+        "The gate opening is 42 in clear, centred on the 10 ft lower front. The guard each side of the gate is 3.25 ft.",
     ]
     sheet_plan(
         c, 4, "Decking, guards, gate, and skirt",
@@ -798,99 +808,243 @@ def sheet_4(c: canvas.Canvas) -> None:
     c.drawCentredString(x, y, "POOL EDGE OPEN")
 
 
+ELEV_PT = 32  # Near 7/16 in = 1 ft. Same scale horizontally and vertically.
+POST_IN = 5.5
+BEAM_W_IN = 3.0
+RAIL_IN = 37.0
+
+
+def _wood(c: canvas.Canvas, x: float, y: float, w: float, h: float, fill: str = "#F3E6D0") -> None:
+    if w < 0:
+        x, w = x + w, -w
+    if h < 0:
+        y, h = y + h, -h
+    c.setFillColor(HexColor(fill))
+    c.setStrokeColor(HexColor("#3E2A14"))
+    c.setLineWidth(0.7)
+    c.rect(x, y, max(w, 0.6), max(h, 0.6), fill=1, stroke=1)
+
+
+def _helical(c: canvas.Canvas, cx: float, grade_y: float) -> None:
+    """A short shaft so the pier is recognizable. The length is not a product."""
+    depth = 18 / 12 * ELEV_PT
+    c.setStrokeColor(HexColor("#4A4A4A"))
+    c.setFillColor(HexColor("#E6E6E6"))
+    c.setLineWidth(0.8)
+    c.rect(cx - 2.4, grade_y - depth, 4.8, depth, fill=1, stroke=1)
+    c.setLineWidth(1.0)
+    for frac in (0.32, 0.68):
+        yy = grade_y - depth * frac
+        c.line(cx - 8, yy + 3, cx + 8, yy - 3)
+    c.setFillColor(GOLD)
+    c.rect(cx - 7, grade_y, 14, 3.5, fill=1, stroke=1)
+
+
+def _post(c: canvas.Canvas, cx: float, y0: float, y1: float) -> None:
+    w = POST_IN / 12 * ELEV_PT
+    _wood(c, cx - w / 2, y0, w, y1 - y0, "#E4C89A")
+
+
+def _rail(c: canvas.Canvas, x0: float, x1: float, walk_y: float) -> None:
+    if x1 - x0 < 8:
+        return
+    h = RAIL_IN / 12 * ELEV_PT
+    post_w = 3.5 / 12 * ELEV_PT
+    c.setStrokeColor(HexColor("#2C2C2C"))
+    c.setFillColor(HexColor("#F4F4F4"))
+    c.setLineWidth(0.7)
+    c.rect(x0, walk_y, post_w, h, fill=1, stroke=1)
+    c.rect(x1 - post_w, walk_y, post_w, h, fill=1, stroke=1)
+    top = walk_y + h
+    bot = walk_y + 3.5 / 12 * ELEV_PT
+    c.setLineWidth(1.3)
+    c.line(x0, top, x1, top)
+    c.setLineWidth(0.9)
+    c.line(x0 + post_w, bot, x1 - post_w, bot)
+    c.setLineWidth(0.45)
+    step = 5.0 / 12 * ELEV_PT
+    x = x0 + post_w + step
+    while x < x1 - post_w - 1:
+        c.line(x, bot, x, top - 1.5)
+        x += step
+
+
+def _dim_v(c: canvas.Canvas, x: float, y0: float, y1: float, text: str, text_on_left: bool = False) -> None:
+    c.setStrokeColor(NAVY)
+    c.setFillColor(NAVY)
+    c.setLineWidth(0.6)
+    c.line(x, y0, x, y1)
+    c.line(x - 3, y0, x + 3, y0)
+    c.line(x - 3, y1, x + 3, y1)
+    c.setFont("Times-Bold", 8)
+    if text_on_left:
+        c.drawRightString(x - 4, (y0 + y1) / 2 - 3, text)
+    else:
+        c.drawString(x + 4, (y0 + y1) / 2 - 3, text)
+
+
 def sheet_5(c: canvas.Canvas) -> None:
     new_page(c, 5, "Front and side elevations")
-    y = section_label(c, 28, PAGE_H - 84, "5  Front and side elevations")
-    y = body(
-        c, 28, y,
-        "Horizontal scale 20 pt = 1 ft. Vertical scale 56 pt = 1 ft. Lower deck 12 in. Rise 38 in. Upper surface 50 in. Pool about 50 in. Guards are the 37 in kit.",
-        1160,
-    )
-    # Side elevation
-    c.setFont("Times-Bold", 14)
-    c.setFillColor(NAVY)
-    c.drawString(28, y - 4, "Side elevation — looking along the 18 ft edge, stair to the right")
-    ox, oy = 36, 168
-    hs, vs = 20, 56  # horizontal 20 pt/ft; vertical 56 pt/ft so the 37 in guard stays on the sheet
-
-    def SX(v):
-        return ox + (v - 4) * hs
-
-    def SY(inches):
-        return oy + inches / 12 * vs
-
-    # grade
-    c.setStrokeColor(HexColor("#6B5B45"))
-    c.setLineWidth(1.2)
-    c.line(SX(8), SY(0), SX(24), SY(0))
+    section_label(c, 28, PAGE_H - 84, "5  Front and side elevations")
     c.setFillColor(black)
+    c.setFont("Times-Roman", 11)
+    c.drawString(28, PAGE_H - 108, "Same scale on both views, about 7/16 in = 1 ft. Members are drawn. The rail is the 37 in kit, shown so the view can be read.")
+    c.drawString(28, PAGE_H - 122, "Helical shaft is drawn short. Length, helix, and torque are not chosen. No concrete. No attachment to the pool.")
+
+    grade_y = 248
+
+    def Y(inches: float) -> float:
+        return grade_y + inches / 12.0 * ELEV_PT
+
+    # Side elevation. Zero is 2 ft of pool, then the deck.
+    side_x = 58
+
+    def X(feet: float) -> float:
+        return side_x + feet * ELEV_PT
+
+    c.setFillColor(NAVY)
     c.setFont("Times-Bold", 12)
-    c.drawString(SX(8), SY(0) - 16, "GRADE — field verify")
-    # pool
+    c.drawString(side_x, Y(50 + RAIL_IN) + 18, "Side — along the 18 ft edge, stair to the right")
+
+    c.setStrokeColor(HexColor("#6B5B45"))
+    c.setLineWidth(1.1)
+    c.line(X(0), Y(0), X(14.2), Y(0))
+    c.setFillColor(HexColor("#6B5B45"))
+    c.setFont("Times-Roman", 8)
+    c.drawString(X(0), Y(0) - 12, "Grade — check on site")
+
     c.setFillColor(POOL)
     c.setStrokeColor(HexColor("#5E87A8"))
-    c.rect(SX(4), SY(0), (10.5 - 4) * hs, SY(50) - SY(0), fill=1, stroke=1)
-    c.setFillColor(NAVY)
-    c.setFont("Times-Bold", 14)
-    c.drawString(SX(4.2), SY(20), "POOL")
-    # upper deck slab line
-    c.setFillColor(DECK)
-    c.setStrokeColor(NAVY)
-    c.rect(SX(10.5), SY(50 - STACK_IN), (15.5 - 10.5) * hs, STACK_IN / 12 * vs, fill=1, stroke=1)
-    # stair
-    c.setStrokeColor(BEAM_C)
-    c.setLineWidth(1.5)
-    c.line(SX(15.5), SY(50), SX(Y_LOWER_BACK), SY(12))
-    # lower
-    c.setFillColor(DECK)
-    c.rect(SX(Y_LOWER_BACK), SY(0), LOWER_DEPTH * hs, SY(12) - SY(0), fill=1, stroke=1)
-    c.setFillColor(FLAG)
-    c.setFont("Times-Bold", 12)
-    c.drawString(SX(Y_LOWER_BACK) + 4, SY(16), "12 in WALKING SURFACE")
-    c.setFillColor(black)
-    c.setFont("Times-Bold", 12)
-    c.drawString(SX(11), SY(50) + 10, "UPPER 50 in")
-    c.drawString(SX(16.2), SY(30), "38 in")
-    c.setFont("Times-Roman", 12)
-    c.drawString(28, FOOTER_TOP + 8, "Upper thickness is the 17.5 in stack. Lower deck is the 12 in walking-surface basis. Post cut is a field item.")
-
-    # Front elevation
-    c.setFillColor(NAVY)
-    c.setFont("Times-Bold", 14)
-    c.drawString(620, y - 4, "Front elevation — standing at the lower-deck entrance")
-    fx, fy = 560, 168
-
-    def FX(v):
-        return fx + (v + 9) * hs
-
-    def FY(inches):
-        return fy + inches / 12 * vs
-
-    c.setStrokeColor(HexColor("#6B5B45"))
-    c.setLineWidth(1.2)
-    c.line(FX(-9), FY(0), FX(9), FY(0))
-    c.setFillColor(DECK)
-    c.setStrokeColor(NAVY)
     c.setLineWidth(1)
-    c.rect(FX(-9), FY(50 - STACK_IN), 18 * hs, STACK_IN / 12 * vs, fill=1, stroke=1)
-    c.setStrokeColor(FLAG)
-    c.setLineWidth(1.3)
-    for x1, x2 in ((-9, -5), (5, 9)):
-        c.line(FX(x1), FY(50), FX(x1), FY(50 + 37))
-        c.line(FX(x2), FY(50), FX(x2), FY(50 + 37))
-        c.line(FX(x1), FY(50 + 37), FX(x2), FY(50 + 37))
-    c.setFillColor(DECK)
+    c.rect(X(0), Y(0), 2 * ELEV_PT, Y(50) - Y(0), fill=1, stroke=1)
+    c.setFillColor(NAVY)
+    c.setFont("Times-Bold", 11)
+    c.drawString(X(0.15), Y(22), "POOL")
+    c.setFont("Times-Roman", 8)
+    c.drawString(X(0.15), Y(12), "about 50 in")
+
+    deck0, deck1 = 2.0, 7.0
+    main_at = deck0 + 2.5
+    joist_top = 50 - DECK_T
+    beam_top = joist_top - JOIST_D
+    _wood(c, X(deck0), Y(joist_top - JOIST_D), (deck1 - deck0) * ELEV_PT, JOIST_D / 12 * ELEV_PT, "#D7C4A3")
+    _wood(c, X(deck0), Y(50 - DECK_T), (deck1 - deck0) * ELEV_PT, DECK_T / 12 * ELEV_PT, "#C4A06A")
+    for station in (main_at, deck1):
+        _wood(
+            c,
+            X(station) - BEAM_W_IN / 24 * ELEV_PT,
+            Y(beam_top - BEAM_D),
+            BEAM_W_IN / 12 * ELEV_PT,
+            BEAM_D / 12 * ELEV_PT,
+            "#8A5A32",
+        )
+    _helical(c, X(main_at), grade_y)
+    _post(c, X(main_at), Y(0) + 3.5, Y(beam_top - BEAM_D))
+    _rail(c, X(deck0), X(deck1), Y(50))
+
+    # Stair: upper deck is the top landing. Five risers, four treads.
+    run_ft = N_TREADS * TREAD_IN / 12.0
+    rise = RISE_IN
+    slope = math.hypot(run_ft * 12, rise)
+    nx = -rise / slope * 11.25
+    nz = -(run_ft * 12) / slope * 11.25
+    ax, az = deck1, 50.0
+    bx, bz = deck1 + run_ft, 12.0
+    path = c.beginPath()
+    path.moveTo(X(ax), Y(az))
+    path.lineTo(X(bx), Y(bz))
+    path.lineTo(X(bx + nx / 12), Y(bz + nz))
+    path.lineTo(X(ax + nx / 12), Y(az + nz))
+    path.close()
+    c.setFillColor(HexColor("#A8744A"))
+    c.setStrokeColor(HexColor("#3E2A14"))
+    c.setLineWidth(0.8)
+    c.drawPath(path, fill=1, stroke=1)
+    x_ft = deck1
+    z_in = 50.0
+    for i in range(N_RISERS):
+        z_in -= RISER_IN
+        if i < N_TREADS:
+            x0 = x_ft
+            x_ft += TREAD_IN / 12.0
+            _wood(c, X(x0), Y(z_in), (TREAD_IN / 12.0) * ELEV_PT, 1.0 / 12 * ELEV_PT, "#C4A06A")
+    # Stair rail, 37 in above the nosings, vertical.
+    c.setStrokeColor(HexColor("#2C2C2C"))
+    c.setLineWidth(1.2)
+    c.line(X(deck1), Y(50 + RAIL_IN), X(deck1 + run_ft), Y(12 + RAIL_IN))
+    c.setLineWidth(0.45)
+    step_ft = 8 / 12
+    t = step_ft
+    while t < run_ft - 0.15:
+        xx = deck1 + t
+        zz = 50 - (t / run_ft) * rise
+        c.line(X(xx), Y(zz + 4), X(xx), Y(zz + RAIL_IN - 1))
+        t += step_ft
+
+    lower0 = deck1 + run_ft
+    lower1 = lower0 + LOWER_DEPTH
+    _wood(c, X(lower0), Y(LOWER_HEIGHT_IN - DECK_T), LOWER_DEPTH * ELEV_PT, DECK_T / 12 * ELEV_PT, "#C4A06A")
+    for station in (lower0 + 0.15, lower1 - 0.15):
+        _helical(c, X(station), grade_y)
+        _post(c, X(station), Y(0) + 3.5, Y(LOWER_HEIGHT_IN - DECK_T))
+    _rail(c, X(lower0), X(lower1), Y(LOWER_HEIGHT_IN))
+
+    _dim_v(c, X(0) - 4, Y(0), Y(50), "50 in", text_on_left=True)
+    c.setFillColor(NAVY)
+    c.setFont("Times-Bold", 8)
+    c.drawCentredString(X(deck1 + run_ft / 2), Y(50 - rise / 2 + 16), "38 in")
+    _dim_v(c, X(lower1) + 10, Y(0), Y(12), "12 in")
+    _dim_v(c, X(lower1) + 10, Y(12), Y(12 + RAIL_IN), "37 in")
+
+    c.setFillColor(black)
+    c.setFont("Times-Roman", 8)
+    c.drawString(X(main_at) - 20, Y(-22), "6×6 on a helical pier. Joist on a double 2×10.")
+    c.drawString(X(lower0), Y(-22), "Lower deck. Cut the post on site.")
+
+    # Front elevation, same grade and same scale.
+    front_centre = 848
+
+    def FX(feet: float) -> float:
+        return front_centre + feet * ELEV_PT
+
+    c.setFillColor(NAVY)
+    c.setFont("Times-Bold", 12)
+    c.drawString(FX(-9), Y(50 + RAIL_IN) + 18, "Front — standing at the lower entrance")
+    c.setStrokeColor(HexColor("#6B5B45"))
+    c.setLineWidth(1.1)
+    c.line(FX(-9.4), Y(0), FX(9.4), Y(0))
+
+    beam_y = Y(beam_top - BEAM_D)
+    _wood(c, FX(-9), beam_y, 18 * ELEV_PT, BEAM_D / 12 * ELEV_PT, "#8A5A32")
+    for x in JOISTS:
+        jw = 1.5 / 12 * ELEV_PT
+        _wood(c, FX(x) - jw / 2, Y(beam_top), jw, JOIST_D / 12 * ELEV_PT, "#D7C4A3")
+    _wood(c, FX(-9), Y(50 - DECK_T), 18 * ELEV_PT, DECK_T / 12 * ELEV_PT, "#C4A06A")
+    for x in (-9, 9):
+        _helical(c, FX(x), grade_y)
+        _post(c, FX(x), Y(0) + 3.5, beam_y)
+    _rail(c, FX(-9), FX(-5), Y(50))
+    _rail(c, FX(5), FX(9), Y(50))
+
+    _wood(c, FX(-5), Y(LOWER_HEIGHT_IN - DECK_T), 10 * ELEV_PT, DECK_T / 12 * ELEV_PT, "#C4A06A")
+    for x in (-5, 0, 5):
+        _helical(c, FX(x), grade_y)
+        _post(c, FX(x), Y(0) + 3.5, Y(LOWER_HEIGHT_IN - DECK_T))
+    gate = 42 / 12 / 2
+    _rail(c, FX(-5), FX(-gate), Y(LOWER_HEIGHT_IN))
+    _rail(c, FX(gate), FX(5), Y(LOWER_HEIGHT_IN))
     c.setStrokeColor(NAVY)
-    c.rect(FX(-5), FY(0), 10 * hs, 12 / 12 * vs, fill=1, stroke=1)
+    c.setLineWidth(1.2)
+    c.rect(FX(-gate), Y(0), (gate * 2) * ELEV_PT, Y(LOWER_HEIGHT_IN) - Y(0), fill=0, stroke=1)
+    c.setFillColor(NAVY)
+    c.setFont("Times-Bold", 8)
+    c.drawCentredString(FX(0), Y(4), "42 in gate")
+
     c.setFillColor(black)
-    c.setFont("Times-Bold", 12)
-    c.drawCentredString(FX(0), FY(12) + 14, "37 in guard each side of the gate")
-    c.setFillColor(black)
-    c.setFont("Times-Bold", 12)
-    c.drawCentredString(FX(0), FY(4), "GATE 42 in CLEAR")
-    c.drawCentredString(FX(0), FY(62), "UPPER DECK 18 ft AT 50 in")
-    c.setFont("Times-Roman", 12)
-    c.drawString(620, FOOTER_TOP + 8, "37 in kit height. The 1.2 m enclosure rule stays open.")
+    c.setFont("Times-Roman", 8)
+    c.drawString(FX(-9), Y(-22), "Joist ends on the front double 2×10. Outer posts shown. Posts behind the lower deck are on the plan.")
+    c.setFont("Times-Roman", 9)
+    c.drawString(28, FOOTER_TOP + 16, "Upper frame is 1 in decking, 7.25 in joist, and 9.25 in beam under a 50 in walking surface. The lower walking surface is 12 in. The 17.5 in stack does not fit there. Cut those posts on site.")
 
 
 def sheet_6(c: canvas.Canvas) -> None:
@@ -898,7 +1052,7 @@ def sheet_6(c: canvas.Canvas) -> None:
     y = section_label(c, 28, PAGE_H - 84, "6  Stair riser, tread, and stringer")
     y = body(
         c, 28, y,
-        "Five risers of about 7.6 in and treads of about 11 in, over about 38 in. This sheet uses four treads because the upper deck is the top landing. Field-adjust the rise and run. This sheet does not certify stair compliance.",
+        "Five risers of about 7.6 in and treads of about 11 in, over about 38 in. Four treads are drawn because the upper deck is the top landing. Adjust the rise and run on site. This sheet does not certify the stair.",
         1160,
     )
     # stair profile large
@@ -938,15 +1092,15 @@ def sheet_6(c: canvas.Canvas) -> None:
     c.drawString(700, PAGE_H - 160, "Stringer count")
     c.setFillColor(black)
     text = (
-        "Ten 2×12 stringers across the 10 ft width, at 16 in on centre maximum, with a 4 in closing space at each edge. "
-        f"Slope length {math.hypot(44, 38):.1f} in. Purchase 8 ft stock. "
-        "Working throat basis 5.00 in, calculated 4.997 in. This is not an engineering certification. "
-        "The plumb cuts are not detailed on this issue."
+        "Ten 2×12 stringers across the 10 ft width, at 16 in on centre maximum, with a 4 in space at each edge. "
+        f"Slope length {math.hypot(44, 38):.1f} in. Buy 8 ft stock. "
+        "Working throat 5.00 in. The calculated figure is 4.997 in. This is not an engineering certification. "
+        "The plumb cuts are not drawn on this sheet."
     )
     body(c, 700, PAGE_H - 186, text, 480)
     flag_box(
         c, 700, 420, 480,
-        "FIELD VERIFY RISE AND RUN",
+        "CHECK RISE AND RUN ON SITE",
         "Pool height, lower-deck height, and finished grade move the 38 in difference. "
         "Keep five equal risers only after the two surfaces are measured.",
     )
@@ -990,13 +1144,13 @@ def sheet_7(c: canvas.Canvas) -> None:
     for x, yy, text in labels:
         c.drawString(x, yy, text)
     c.setFont("Times-Roman", 13)
-    c.drawString(ox, oy - 20, "50 − 1 − 7.25 − 9.25 = 32.5 in to the underside of the beam.")
-    c.drawString(ox, oy - 38, "Bracket height is not recorded. Do not precut the posts. No concrete.")
+    c.drawString(ox, oy - 20, "If the bracket adds no height: 50 − 1 − 7.25 − 9.25 = 32.5 in under the beam.")
+    c.drawString(ox, oy - 38, "The bracket height is not known. Do not cut the posts in advance. No concrete.")
     flag_box(
         c, 28, 390, 560,
         "LOWER DECK 12 in",
-        "The intended walking surface is 12 in above grade. The dressed stack is 17.5 in. "
-        "Post cut length is a field reconciliation before construction. Lower 6×6 posts are ordered uncut.",
+        "The walking surface is 12 in above grade. Beam, joist, and decking dress out at 17.5 in. "
+        "Cut the posts on site before construction. Order the lower 6×6 posts uncut.",
     )
     c.setFillColor(NAVY)
     c.setFont("Times-Bold", 16)
@@ -1004,17 +1158,17 @@ def sheet_7(c: canvas.Canvas) -> None:
     c.setFillColor(black)
     c.setFont("Times-Roman", 13)
     lines = [
-        "These counts follow the drawn members. They are not a manufacturer’s specified system.",
+        "These counts match the members drawn. They are not a manufacturer's specified system.",
         "15 helical-pier brackets, one per pier. Confirm the pier does not already include the bracket.",
-        "15 post-to-beam connectors, one per post. Product not specified.",
-        "16 angled connectors where upper joists meet the segmented header.",
-        "10 stringer connectors at the upper rim.",
-        "Joists bear on top of the straight beams: two structural screws at each bearing.",
-        "Deck screws: two at each board crossing of a joist or stringer. Count is in the take-off.",
-        "Built-up beam stitch, pricing allowance only: two rows at 16 in on centre between posts.",
-        f"That stitch is {stitch_bolt_count()} bolts with nuts and washers. Diameter is not specified. It is not an engineered schedule.",
-        "Guard-post blocking is required by the brief and is not quantified. Pattern not issued.",
-        "Exterior-rated, corrosion-resistant, compatible with pressure-treated lumber.",
+        "15 post-to-beam connectors, one per post. Product not chosen.",
+        "16 angled connectors where the upper joists meet the curved header.",
+        "10 stringer connectors at the top of the stairs.",
+        "Joists sit on top of the straight beams: two structural screws at each bearing.",
+        "Deck screws: two at each board crossing of a joist or stringer. The count is in the take-off.",
+        "Beam stitch bolts, for pricing only: two rows at 16 in on centre between posts.",
+        f"That stitch is {stitch_bolt_count()} bolts with nuts and washers. The diameter is not chosen. It is not an engineered bolt layout.",
+        "Blocking for the guard posts is required and is not counted here. The pattern is not drawn.",
+        "Exterior-rated, corrosion-resistant, and compatible with pressure-treated lumber.",
     ]
     yy = PAGE_H - 168
     for line in lines:
@@ -1031,14 +1185,14 @@ def sheet_8(c: canvas.Canvas) -> None:
     items = [
         "Pool diameter and height. The 21 ft and 50 in figures are approximate.",
         "Finished grades, installed pool elevation, setbacks, and property limits.",
-        "Helical pier product, depth, torque, and bearing. The 48 in sonotube depth is not this issue. Capacity is not certified.",
-        "Structural separation from the pool. No attachment is specified. No clearance dimension was recorded. Header segments touch the arc at mid-span and stand off about 1.04 in at the joints.",
-        "Stair rise and run after the two deck surfaces are measured.",
-        "Guard height. The specified product is 37 in. A separate preservation note said about 42 in. The brief also estimates about 49 in from grade to the top of the lower rail and leaves the 1.2 m pool-enclosure rule for municipal confirmation. Those figures are not averaged.",
-        "Lower-deck walking surface is 12 in. Post cut length is reconciled in the field. The dressed stack is 17.5 in. Do not precut the lower posts.",
-        "Beam spans against the span table the municipality accepts. Not checked here.",
-        "Veranda panel rules: whether a 6 ft kit can be cut, and whether posts are included.",
-        "Delivery address is 12 D'Arcy's Way, Kemptville, ON K0G 1J0. The request has not been sent.",
+        "Helical pier product, depth, torque, and bearing. The old 48 in sonotube depth is not used. Capacity is not certified.",
+        "Keep the deck off the pool. No attachment is specified. No clearance dimension was measured. The header pieces meet the pool wall at mid-length and sit about 1.04 in off the wall at the joints.",
+        "Stair rise and run after both deck surfaces are measured.",
+        "Guard height. The rail product is 37 in. An earlier note said about 42 in. Another note puts about 49 in from grade to the top of the lower rail and leaves the 1.2 m pool-enclosure rule for the town to confirm. Those figures are not averaged.",
+        "The lower-deck walking surface is 12 in. Cut the posts on site. Beam, joist, and decking dress out at 17.5 in. Do not cut the lower posts in advance.",
+        "Beam spans against the span table the town accepts. Not checked here.",
+        "Veranda rails: whether a 6 ft kit can be cut, and whether the posts are already in the kit.",
+        "Delivery address is 12 D'Arcy's Way, Kemptville, ON K0G 1J0. The material request has not been sent.",
     ]
     for i, item in enumerate(items, start=1):
         y = body(c, 28, y, f"{i}.  {item}", 1168)
@@ -1046,14 +1200,14 @@ def sheet_8(c: canvas.Canvas) -> None:
     y -= 8
     y = flag_box(
         c, 28, y, 1168,
-        "WHAT THIS ISSUE DOES NOT DO",
-        "No permit approval. No engineering seal. No structural certification of the 5.00 in throat. "
-        "No Brayman cost, customer price, or gross margin. "
-        "The supplier package is a request for quotation. It has not been sent. Darcy’s quotation will govern.",
+        "WHAT THIS SET DOES NOT DO",
+        "No permit. No engineering seal. The 5.00 in stringer throat is not certified. "
+        "No Brayman cost, customer price, or margin. "
+        "The supplier paper is a request for a price. It has not been sent. Darcy's price will set the material cost.",
     ) - 16
     body(
         c, 28, y,
-        "Take-off and the Darcy request are in this same case folder. Contractor price, availability, substitution, and delivery timing are blank.",
+        "The take-off and the request to Darcy are with this set. Contractor price, availability, substitution, and delivery timing are blank.",
         1168,
     )
 
@@ -1100,8 +1254,8 @@ def stock_lines() -> list[dict]:
             "qty": "11 sticks for 15 post locations: 5 sticks hold the 9 upper posts; 6 sticks held uncut for the lower posts",
             "net": "Upper wood basis 9 × 32.5 in if the bracket height is zero and the pier head is at grade",
             "purchase": "11 pieces of 6×6 × 8 ft; 15 brackets unless included; 15 post-to-beam connectors",
-            "offcut": "A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not precut.",
-            "flag": "Lower post cut length is reconciled in the field before construction.",
+            "offcut": "A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not cut the posts in advance.",
+            "flag": "Cut the lower posts on site before construction.",
         },
         {
             "group": "Beams",
@@ -1149,7 +1303,7 @@ def stock_lines() -> list[dict]:
             ),
             "net": "See cut list. No board gap added.",
             "purchase": "See 5/4 cut list. 18 ft pieces use 20 ft stock.",
-            "offcut": "2 ft off each 20 ft upper board, plus bin-pack offcut on the shorter pieces.",
+            "offcut": "2 ft off each 20 ft upper board, plus leftover on the shorter pieces.",
             "flag": "Gap not specified. 0.60 in corner remainder is a field fit. Dressed width taken as 5.5 in.",
         },
         {
@@ -1169,7 +1323,7 @@ def stock_lines() -> list[dict]:
             "qty": f"{kit_count} straight kits covering {net_straight:.3f} ft of straight guard. 14 guard posts.",
             "net": f"{net_straight:.3f} ft straight, plus two sloped stair edges",
             "purchase": f"{kit_count} kits and 14 pieces of 4×4 × 8 ft",
-            "offcut": "Each straight segment starts a new kit. Short segments waste the unused portion of the 6 ft module. Posts are not precut because the below-deck length is not issued.",
+            "offcut": "Each straight run starts a new kit. A short run leaves the rest of the 6 ft kit unused. Posts are not cut in advance. The length below the deck is not known.",
             "flag": "Not confirmed as BMR stock. Kit may already include posts. 37 in is not redrawn to another height.",
         },
         {
@@ -1186,7 +1340,7 @@ def stock_lines() -> list[dict]:
             "group": "Fasteners",
             "description": "Exterior fasteners compatible with pressure-treated lumber. Beam stitch is a pricing allowance of two rows at 16 in on centre between posts.",
             "stock": "By the piece or by the box that covers the count",
-            "qty": "80 stitch bolts, 80 nuts, 160 washers; 16 header connectors; 10 stringer connectors; structural screws at the bearings; deck screws at the board crossings",
+            "qty": f"{stitch_bolt_count()} stitch bolts, nuts, and washers; 16 header connectors; 10 stringer connectors; structural screws at the bearings; deck screws at the board crossings",
             "net": "Counts are in the take-off tables",
             "purchase": "Quantities below. Box size is Darcy’s.",
             "offcut": "No extra percent.",
@@ -1260,35 +1414,35 @@ def write_takeoff(path: Path) -> None:
     bins = pack_decking()
     guards = guard_segments()
     lines = []
-    lines.append(f"# {CLIENT} pool deck — material take-off {ISSUE}")
+    lines.append(f"# {CLIENT} pool deck — material take-off")
     lines.append("")
-    lines.append(f"Issue: {ISSUE_TITLE}")
+    lines.append(ISSUE_TITLE)
     lines.append("")
     lines.append(f"Date: {ISSUE_DATE}")
     lines.append("")
-    lines.append("This take-off reconciles to `drawings/2026-10-01-j1-preliminary-11x17.pdf`.")
-    lines.append("Issue J1 uses 15 piers, 16 joist lines, and 10 stringers.")
-    lines.append("Issue P1 and the capability-test sheets remain historical.")
-    lines.append("It does not contain a Brayman cost, a customer price, or a gross margin.")
-    lines.append("No internal estimate and no customer estimate are part of this issue.")
-    lines.append("Waste is the offcut from the stated stock. No extra percentage is applied.")
-    lines.append("Offcuts are not deducted from the purchase count.")
+    lines.append("This take-off matches the preliminary drawing in this package.")
+    lines.append("Fifteen helical piers, sixteen joist lines, and ten stair stringers.")
+    lines.append("This sheet is quantities only. It is not a price.")
+    lines.append("Waste is the leftover on the stated stock. No extra percentage is added.")
+    lines.append("Leftover pieces are not deducted from the purchase count.")
     lines.append("")
-    lines.append("## Geometry used")
+    lines.append("## Layout sizes")
     lines.append("")
-    lines.append("| Item | Value | Source |")
+    lines.append("Left and right are from the pool centre, standing at the stairs and looking at the pool. Out is from the pool centre toward the stairs. These sizes have not been measured on site.")
+    lines.append("")
+    lines.append("| Item | Value | Where it comes from |")
     lines.append("|---|---|---|")
-    lines.append(f"| Pool radius | {R:.3f} ft | Recorded 21 ft diameter |")
-    lines.append(f"| Front edge | Y = {Y_FRONT:.3f} ft | Radius plus recorded 5 ft clear depth |")
-    lines.append(f"| Side edges | X = ±{HALF_W:.3f} ft | Recorded 18 ft width |")
-    lines.append(f"| Side intersection | Y = {Y_SIDE:.3f} ft | Circle at X = ±9 |")
-    lines.append(f"| Upper deck area | {DECK_AREA:.3f} sq ft | 18 ft rectangle {RECT_AREA:.3f} minus pool segment {SEGMENT_AREA:.3f} |")
-    lines.append(f"| Pool-edge arc | {ARC:.3f} ft | Recorded radius between the side intersections |")
-    lines.append(f"| Main beam | Y = {Y_MAIN:.3f} ft, X = ±{X_MAIN:.3f} ft | Preliminary Option A layout |")
-    lines.append("| Wing end piers | X = ±9.0 ft, Y = 8.5 ft | Preliminary Option A layout |")
-    lines.append(f"| Header segment | {SEGMENT_COUNT} × {CHORD:.3f} ft | Outside the pool; sagitta {SAGITTA * 12:.2f} in |")
-    lines.append(f"| Stair run | {STAIR_RUN:.3f} ft | 4 × 11 in; tread count is a landing assumption |")
-    lines.append(f"| Lower deck Y | {Y_LOWER_BACK:.3f} to {Y_LOWER_FRONT:.3f} ft | After the stair run; recorded 3 ft depth |")
+    lines.append(f"| Pool | {R * 2:.0f} ft diameter | About 21 ft. Check on site. |")
+    lines.append(f"| Front edge | {ftin(Y_FRONT)} out | Pool radius plus 5 ft clear |")
+    lines.append(f"| Side edges | {ftin(HALF_W)} left and right | 18 ft width |")
+    lines.append(f"| Where the sides meet the pool | {ftin(Y_SIDE)} out | 18 ft width meeting the pool wall |")
+    lines.append(f"| Upper deck area | {DECK_AREA:.3f} sq ft | 18 ft rectangle {RECT_AREA:.3f} minus the pool bite {SEGMENT_AREA:.3f} |")
+    lines.append(f"| Open pool edge | {ARC:.3f} ft | Along the pool between the two sides |")
+    lines.append(f"| Main beam | {ftin(Y_MAIN)} out, {ftin(X_MAIN)} left to {ftin(X_MAIN)} right | 12 ft beam, centred |")
+    lines.append("| Wing end piers | 9 ft left and 9 ft right, 8 ft 6 in out | Ends of the two wing beams |")
+    lines.append(f"| Header pieces | {SEGMENT_COUNT} × {CHORD:.3f} ft | Outside the pool. Joints sit {SAGITTA * 12:.2f} in off the wall. |")
+    lines.append(f"| Stair run | {ftin(STAIR_RUN)} | Four treads at 11 in. The upper deck is the top landing. |")
+    lines.append(f"| Lower deck | {ftin(Y_LOWER_BACK)} to {ftin(Y_LOWER_FRONT)} out | After the stair. 3 ft deep. |")
     lines.append("")
     lines.append("## Lower-deck height")
     lines.append("")
@@ -1296,7 +1450,7 @@ def write_takeoff(path: Path) -> None:
         f"Intended finished walking surface {LOWER_HEIGHT_IN:.0f} in. "
         f"Dressed stack {DECK_T:.2f} + {JOIST_D:.2f} + {BEAM_D:.2f} = {STACK_IN:.2f} in. "
         f"Difference {STACK_IN - LOWER_HEIGHT_IN:.2f} in. "
-        "Post cut length is a field reconciliation before construction. Lower posts are ordered uncut."
+        "Cut the posts on site before construction. Order the lower posts uncut."
     )
     lines.append("")
     lines.append("## Upper joist cut list")
@@ -1315,19 +1469,19 @@ def write_takeoff(path: Path) -> None:
         f"Purchased {len(sched['joist_sticks'])} × 12 ft = {len(sched['joist_sticks']) * 12} ft."
     )
     lines.append("")
-    lines.append("Joist positions from the centreline, with length to the pool arc:")
+    lines.append("Joist positions from the centre, standing at the stairs and looking at the pool, with the length to the pool wall:")
     lines.append("")
-    lines.append("| X | Length |")
+    lines.append("| From centre | Length |")
     lines.append("|---|---|")
     for x in JOISTS:
-        lines.append(f"| {x:+.3f} ft | {joist_length(x):.3f} ft |")
+        lines.append(f"| {beside(x)} | {joist_length(x):.3f} ft |")
     lines.append("")
     lines.append("## Other 2×8 × 12 ft sticks")
     lines.append("")
     lines.append("| Use | Sticks | Allocation |")
     lines.append("|---|---|---|")
     lines.append(f"| Segmented header | 2 | 4 segments of {CHORD:.3f} ft on each stick |")
-    lines.append("| Front and main-beam blocking | 3 | 22 pieces × 14.5 in, plus two 2.5 in closers |")
+    lines.append("| Front and main-beam blocking | 3 | 22 pieces at 14.5 in, plus two 2.5 in closers |")
     lines.append("| Wing blocking | 1 | 4 blocks along the wings |")
     lines.append("| Lower-deck joists | 3 | Nine 3 ft joists, three per stick after kerf |")
     lines.append(f"| Total 2×8 × 12 ft with the upper joists | {sched['two_by_eight_12']} | Offcuts not reused |")
@@ -1339,7 +1493,7 @@ def write_takeoff(path: Path) -> None:
         f"Offcut 2 ft each. One of those boards is ripped to {((Y_FRONT - R) * 12) % 5.5:.1f} in width."
     )
     lines.append("")
-    lines.append("Curve-side piece lengths, each bought twice (left and right), measured at the wide edge of the row:")
+    lines.append("Lengths beside the pool, bought once for each side, measured at the wide edge of the row:")
     lines.append("")
     for index, length in enumerate(boards["zone_b_one_side"], start=1):
         lines.append(f"- Row {index}: {length:.3f} ft each side")
@@ -1366,9 +1520,10 @@ def write_takeoff(path: Path) -> None:
     for name, length, kind in guards:
         kits = kits_for(length) if kind == "straight kit run" else 0
         kit_text = str(kits) if kits else "custom, not a 6 ft kit"
-        lines.append(f"| {name} | {length:.3f} | {kind} | {kit_text} |")
+        treatment = "straight run" if kind == "straight kit run" else "follows the stair"
+        lines.append(f"| {name} | {length:.3f} | {treatment} | {kit_text} |")
     lines.append("")
-    lines.append("## Fastener counts tied to the drawing")
+    lines.append("## Fasteners")
     lines.append("")
     lines.append("| Item | Count | Basis |")
     lines.append("|---|---|---|")
@@ -1378,19 +1533,19 @@ def write_takeoff(path: Path) -> None:
     lines.append("| Post-to-beam connectors | 15 | One per post |")
     lines.append("| Header connectors | 16 | One per upper joist |")
     lines.append("| Stringer connectors | 10 | One per stringer |")
-    lines.append(f"| Beam stitch bolts | {bolts} | Two rows at 16 in OC between posts; pricing allowance |")
+    lines.append(f"| Beam stitch bolts | {bolts} | Two rows at 16 in on centre between posts. Count for pricing only. Diameter not chosen. |")
     lines.append(f"| Nuts / washers | {bolts} / {bolts * 2} | For those bolts |")
     lines.append(f"| Structural screws | {screws['structural_screws']} | Two at each joist bearing on a beam or wing |")
     lines.append(f"| Deck screws | {screws['deck_screws']} | Two per board crossing. Upper full-width {screws['zone_a_screws']}, curve sides {screws['zone_b_screws']}, lower deck {screws['lower_screws']}, treads {screws['tread_screws']} |")
     lines.append("")
-    lines.append("Guard-post blocking, hinge count, bolt diameter, and connector brand are not quantified beyond the flags in the supplier request.")
+    lines.append("Blocking for the guard posts, the hinge count, the bolt diameter, and the connector brand are not counted. They stay open on the request to Darcy.")
     lines.append("")
     lines.append("## Helical piers")
     lines.append("")
     lines.append(
         f"{pier_count()} helical piers, one at each drawn location. "
-        "Sonotubes and concrete are not in this issue. "
-        "Shaft, helix, length, torque, and capacity are not specified and are not certified."
+        "No sonotubes and no concrete. "
+        "Shaft, helix, length, torque, and capacity are not chosen and are not certified."
     )
     lines.append("")
     lines.append("## Category waste")
@@ -1399,8 +1554,6 @@ def write_takeoff(path: Path) -> None:
     lines.append("|---|---|")
     for line in stock_lines():
         lines.append(f"| {line['group']} | {line['offcut']} |")
-    lines.append("")
-    lines.append("Calculation file: `takeoff/issue_j1.py`.")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -1414,37 +1567,37 @@ def write_supplier(path: Path) -> None:
     pack_count = Counter(stock for stock, _cuts in bins)
     straight_kits = sum(kits_for(length) for _n, length, kind in guard_segments() if kind == "straight kit run")
     rows = [
-        ("Piers", "Helical pier, one at each drawn location", "product not specified", str(pier_count()), "ea", "REQUESTED QUANTITY. Shaft, helix, length, and torque are SUPPLIER CONFIRMATION REQUIRED. Not a sonotube. No concrete."),
-        ("Piers", "Helical pier post bracket", "each", str(pier_count()), "ea", "REQUESTED QUANTITY unless the pier includes the bracket. SUPPLIER CONFIRMATION REQUIRED."),
-        ("Posts", "PT 6×6 × 8 ft", "8 ft", "11", "ea", "REQUESTED QUANTITY. 5 sticks for 9 upper posts; 6 uncut for lower posts"),
-        ("Posts", "Post-to-beam connector, PT compatible", "each", "15", "ea", "REQUESTED QUANTITY. SUPPLIER CONFIRMATION REQUIRED for the product"),
-        ("Beams", "PT 2×10 × 10 ft", "10 ft", "4", "ea", "REQUESTED QUANTITY. Lower beams used full"),
-        ("Beams", "PT 2×10 × 12 ft", "12 ft", "7", "ea", "REQUESTED QUANTITY. Front plies cut to 6 ft; main beam full; wings cut to 5.41 ft"),
-        ("Joists", "PT 2×8 × 12 ft", "12 ft", str(sched["two_by_eight_12"]), "ea", "Joists, header, blocking, lower joists"),
-        ("Stairs", "PT 2×12 × 8 ft stringer stock", "8 ft", "10", "ea", "Do not treat as a finished stringer cut"),
-        ("Decking", "PT 5/4×6 × 20 ft", "20 ft", str(len(boards["zone_a"])), "ea", "Cut to 18 ft. One row ripped to 5 in width"),
-        ("Decking", "PT 5/4×6 × 16 ft", "16 ft", str(pack_count.get(16.0, 0)), "ea", "See take-off cut list"),
-        ("Decking", "PT 5/4×6 × 12 ft", "12 ft", str(pack_count.get(12.0, 0)), "ea", "See take-off cut list"),
-        ("Decking", "PT 5/4×6 × 10 ft", "10 ft", str(pack_count.get(10.0, 0)), "ea", "Lower deck, treads, and curve-side pieces assigned to 10 ft"),
-        ("Decking", "PT 5/4×6 × 8 ft", "8 ft", str(pack_count.get(8.0, 0)), "ea", "Shorter curve-side pieces"),
-        ("Skirt", "PT 1×6 × 8 ft", "8 ft", "5", "ea", "Lower deck only. Tight. 12 in cuts"),
-        ("Rails", "Veranda 37 in × 6 ft kit, appearance HDDR2022005 / SKU 1001900458", "6 ft", str(straight_kits), "ea", "Home Depot identity. Not a confirmed BMR match"),
-        ("Rails", "PT 4×4 × 8 ft guard posts", "8 ft", "14", "ea", "Confirm the kit does not already include posts"),
-        ("Gate", "42 in clear self-closing, self-latching gate to match the rail", "custom", "1", "ea", "Hinge quantity not issued"),
-        ("Fasteners", "PT-compatible stitch bolts, nuts, washers", "pricing allowance", f"{stitch_bolt_count()} bolts / {stitch_bolt_count()} nuts / {stitch_bolt_count() * 2} washers", "ea", "REQUESTED QUANTITY. Diameter not specified. Not an engineered schedule"),
-        ("Fasteners", "Angled joist connector at the curved header", "each", "16", "ea", "Product not specified"),
-        ("Fasteners", "Stringer connector", "each", "10", "ea", "Product not specified"),
-        ("Fasteners", "Structural screws, PT compatible", "box covering the count", str(screws["structural_screws"]), "ea", "Two per joist bearing"),
-        ("Fasteners", "Deck screws, PT compatible", "box covering the count", str(screws["deck_screws"]), "ea", "Two per board crossing"),
+        ("Piers", "Helical pier, one at each drawn location", "product not chosen", str(pier_count()), "ea", "Please confirm shaft, helix, length, and torque. Not a sonotube. No concrete."),
+        ("Piers", "Helical pier post bracket", "each", str(pier_count()), "ea", "Please confirm, unless the pier already includes the bracket."),
+        ("Posts", "PT 6×6 × 8 ft", "8 ft", "11", "ea", "5 sticks for 9 upper posts. 6 sticks uncut for the lower posts."),
+        ("Posts", "Post-to-beam connector, PT compatible", "each", "15", "ea", "Please confirm the product."),
+        ("Beams", "PT 2×10 × 10 ft", "10 ft", "4", "ea", "Lower beams used full length."),
+        ("Beams", "PT 2×10 × 12 ft", "12 ft", "7", "ea", "Front pieces cut to 6 ft. Main beam used full. Wings cut to 5.41 ft."),
+        ("Joists", "PT 2×8 × 12 ft", "12 ft", str(sched["two_by_eight_12"]), "ea", "Joists, header, blocking, and lower joists."),
+        ("Stairs", "PT 2×12 × 8 ft stringer stock", "8 ft", "10", "ea", "Stock only. Not a finished stringer."),
+        ("Decking", "PT 5/4×6 × 20 ft", "20 ft", str(len(boards["zone_a"])), "ea", "Cut to 18 ft. One row ripped to 5 in width."),
+        ("Decking", "PT 5/4×6 × 16 ft", "16 ft", str(pack_count.get(16.0, 0)), "ea", "See the take-off cut list."),
+        ("Decking", "PT 5/4×6 × 12 ft", "12 ft", str(pack_count.get(12.0, 0)), "ea", "See the take-off cut list."),
+        ("Decking", "PT 5/4×6 × 10 ft", "10 ft", str(pack_count.get(10.0, 0)), "ea", "Lower deck, treads, and pieces beside the pool."),
+        ("Decking", "PT 5/4×6 × 8 ft", "8 ft", str(pack_count.get(8.0, 0)), "ea", "Shorter pieces beside the pool."),
+        ("Skirt", "PT 1×6 × 8 ft", "8 ft", "5", "ea", "Lower deck only. Tight fit. Cut to 12 in."),
+        ("Rails", "Veranda 37 in × 6 ft kit, look of HDDR2022005, SKU 1001900458", "6 ft", str(straight_kits), "ea", "Home Depot number. Not confirmed as a BMR item."),
+        ("Rails", "PT 4×4 × 8 ft guard posts", "8 ft", "14", "ea", "Please confirm the kit does not already include posts."),
+        ("Gate", "42 in clear self-closing, self-latching gate to match the rail", "custom", "1", "ea", "Hinge count not stated."),
+        ("Fasteners", "PT-compatible stitch bolts, nuts, washers", "diameter not chosen", f"{stitch_bolt_count()} bolts / {stitch_bolt_count()} nuts / {stitch_bolt_count() * 2} washers", "ea", "Count for pricing only. Not an engineered bolt layout."),
+        ("Fasteners", "Angled joist connector at the curved header", "each", "16", "ea", "Product not chosen."),
+        ("Fasteners", "Stringer connector", "each", "10", "ea", "Product not chosen."),
+        ("Fasteners", "Structural screws, PT compatible", "box covering the count", str(screws["structural_screws"]), "ea", "Two at each joist bearing."),
+        ("Fasteners", "Deck screws, PT compatible", "box covering the count", str(screws["deck_screws"]), "ea", "Two at each board crossing."),
     ]
     out = []
-    out.append(f"# BMR Winchester request for quotation — {CLIENT}")
+    out.append(f"# BMR Winchester request for a price — {CLIENT}")
     out.append("")
-    out.append(f"Issue: {ISSUE_TITLE}")
+    out.append(ISSUE_TITLE)
     out.append("")
     out.append(f"Date: {ISSUE_DATE}")
     out.append("")
-    out.append("Prepared for Darcy at BMR Winchester. Request for quotation. Not a quotation received. Awaiting send.")
+    out.append("Prepared for Darcy at BMR Winchester. This is a request for a price. It is not a quotation. It has not been sent.")
     out.append("")
     out.append("## Project")
     out.append("")
@@ -1452,16 +1605,14 @@ def write_supplier(path: Path) -> None:
     out.append("|---|---|")
     out.append(f"| Client | {CLIENT} |")
     out.append(f"| Delivery site | {LOCATION} |")
-    out.append("| Street number | 12 |")
     out.append(f"| Contractor | {OFFICE} |")
-    out.append("| Drawing | `drawings/2026-10-01-j1-preliminary-11x17.pdf` |")
-    out.append("| Take-off | `takeoff/2026-10-01-j1-material-takeoff.md` |")
+    out.append("| Drawing and take-off | In this package |")
     out.append("")
     out.append("Brown pressure-treated lumber. Freestanding deck. No attachment to the pool.")
-    out.append("Public website prices, if Darcy later compares one, are indicative only.")
-    out.append("No public BMR price was confirmed for this issue, so the public-price column is blank.")
-    out.append("A blank BMR SKU, public price, contractor price, availability, substitution, or delivery cell means SUPPLIER CONFIRMATION REQUIRED.")
-    out.append("Those blanks are not zeroes and they are not a quotation.")
+    out.append("A website price, if one is compared later, is a guide only.")
+    out.append("No BMR price has been confirmed, so the price columns are blank.")
+    out.append("A blank SKU, price, availability, substitution, or delivery cell means please confirm it.")
+    out.append("A blank is not zero, and it is not a quotation.")
     out.append("")
     out.append("## Request lines")
     out.append("")
@@ -1473,13 +1624,13 @@ def write_supplier(path: Path) -> None:
         cells = [group, desc, stock, qty, unit, "", "", "", "", "", "", flag]
         out.append("| " + " | ".join(cells) + " |")
     out.append("")
-    out.append("## Confirmations still open")
+    out.append("## Still to confirm")
     out.append("")
-    out.append("- Actual stock lengths at Winchester may replace the preferred lengths.")
-    out.append("- Veranda HDDR2022005 / SKU 1001900458 is a Home Depot identity, not a confirmed BMR SKU.")
-    out.append("- Lower-deck walking surface is 12 in. Post cut length is still a field item. The dressed stack is 17.5 in.")
-    out.append("- Helical pier shaft, helix, length, torque, and bracket are not specified. There is no concrete quantity.")
-    out.append("- Connector brand, bolt diameter, and gate hinges are not specified.")
+    out.append("- Stock lengths at Winchester may replace the lengths listed.")
+    out.append("- Veranda HDDR2022005, SKU 1001900458, is a Home Depot number, not a confirmed BMR item.")
+    out.append("- The lower-deck walking surface is 12 in. Cut the posts on site. Beam, joist, and decking dress out at 17.5 in.")
+    out.append("- Helical pier shaft, helix, length, torque, and bracket are not chosen. There is no concrete.")
+    out.append("- Connector brand, bolt diameter, and gate hinges are not chosen.")
     out.append("- Do not read a blank price as zero.")
     out.append("")
     path.write_text("\n".join(out), encoding="utf-8")

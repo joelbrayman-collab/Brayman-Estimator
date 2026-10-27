@@ -1,36 +1,36 @@
-# Linda Bushel pool deck — material take-off J1
+# Linda Bushel pool deck — material take-off
 
-Issue: Preliminary Construction and Supplier Pricing Basis - Subject to Permit Review and Field Verification
+Preliminary Construction and Supplier Pricing Basis - Subject to Permit Review and Field Verification
 
 Date: 2026-10-01
 
-This take-off reconciles to `drawings/2026-10-01-j1-preliminary-11x17.pdf`.
-Issue J1 uses 15 piers, 16 joist lines, and 10 stringers.
-Issue P1 and the capability-test sheets remain historical.
-It does not contain a Brayman cost, a customer price, or a gross margin.
-No internal estimate and no customer estimate are part of this issue.
-Waste is the offcut from the stated stock. No extra percentage is applied.
-Offcuts are not deducted from the purchase count.
+This take-off matches the preliminary drawing in this package.
+Fifteen helical piers, sixteen joist lines, and ten stair stringers.
+This sheet is quantities only. It is not a price.
+Waste is the leftover on the stated stock. No extra percentage is added.
+Leftover pieces are not deducted from the purchase count.
 
-## Geometry used
+## Layout sizes
 
-| Item | Value | Source |
+Left and right are from the pool centre, standing at the stairs and looking at the pool. Out is from the pool centre toward the stairs. These sizes have not been measured on site.
+
+| Item | Value | Where it comes from |
 |---|---|---|
-| Pool radius | 10.500 ft | Recorded 21 ft diameter |
-| Front edge | Y = 15.500 ft | Radius plus recorded 5 ft clear depth |
-| Side edges | X = ±9.000 ft | Recorded 18 ft width |
-| Side intersection | Y = 5.408 ft | Circle at X = ±9 |
-| Upper deck area | 116.801 sq ft | 18 ft rectangle 181.650 minus pool segment 64.849 |
-| Pool-edge arc | 21.624 ft | Recorded radius between the side intersections |
-| Main beam | Y = 13.000 ft, X = ±6.000 ft | Preliminary Option A layout |
-| Wing end piers | X = ±9.0 ft, Y = 8.5 ft | Preliminary Option A layout |
-| Header segment | 8 × 2.695 ft | Outside the pool; sagitta 1.04 in |
-| Stair run | 3.667 ft | 4 × 11 in; tread count is a landing assumption |
-| Lower deck Y | 19.167 to 22.167 ft | After the stair run; recorded 3 ft depth |
+| Pool | 21 ft diameter | About 21 ft. Check on site. |
+| Front edge | 15'-6" out | Pool radius plus 5 ft clear |
+| Side edges | 9'-0" left and right | 18 ft width |
+| Where the sides meet the pool | 5'-4 7/8" out | 18 ft width meeting the pool wall |
+| Upper deck area | 116.801 sq ft | 18 ft rectangle 181.650 minus the pool bite 64.849 |
+| Open pool edge | 21.624 ft | Along the pool between the two sides |
+| Main beam | 13'-0" out, 6'-0" left to 6'-0" right | 12 ft beam, centred |
+| Wing end piers | 9 ft left and 9 ft right, 8 ft 6 in out | Ends of the two wing beams |
+| Header pieces | 8 × 2.695 ft | Outside the pool. Joints sit 1.04 in off the wall. |
+| Stair run | 3'-8" | Four treads at 11 in. The upper deck is the top landing. |
+| Lower deck | 19'-2" to 22'-2" out | After the stair. 3 ft deep. |
 
 ## Lower-deck height
 
-Intended finished walking surface 12 in. Dressed stack 1.00 + 7.25 + 9.25 = 17.50 in. Difference 5.50 in. Post cut length is a field reconciliation before construction. Lower posts are ordered uncut.
+Intended finished walking surface 12 in. Dressed stack 1.00 + 7.25 + 9.25 = 17.50 in. Difference 5.50 in. Cut the posts on site before construction. Order the lower posts uncut.
 
 ## Upper joist cut list
 
@@ -52,33 +52,33 @@ Stock is 2×8 × 12 ft. A pair is accepted only when both cuts plus a 1/8 in ker
 
 Sixteen joists. Net lineal 112.766 ft. Purchased 11 × 12 ft = 132 ft.
 
-Joist positions from the centreline, with length to the pool arc:
+Joist positions from the centre, standing at the stairs and looking at the pool, with the length to the pool wall:
 
-| X | Length |
+| From centre | Length |
 |---|---|
-| -9.000 ft | 10.092 ft |
-| -8.667 ft | 9.572 ft |
-| -7.333 ft | 7.985 ft |
-| -6.000 ft | 6.883 ft |
-| -4.667 ft | 6.094 ft |
-| -3.333 ft | 5.543 ft |
-| -2.000 ft | 5.192 ft |
-| -0.667 ft | 5.021 ft |
-| +0.667 ft | 5.021 ft |
-| +2.000 ft | 5.192 ft |
-| +3.333 ft | 5.543 ft |
-| +4.667 ft | 6.094 ft |
-| +6.000 ft | 6.883 ft |
-| +7.333 ft | 7.985 ft |
-| +8.667 ft | 9.572 ft |
-| +9.000 ft | 10.092 ft |
+| 9'-0" left | 10.092 ft |
+| 8'-8" left | 9.572 ft |
+| 7'-4" left | 7.985 ft |
+| 6'-0" left | 6.883 ft |
+| 4'-8" left | 6.094 ft |
+| 3'-4" left | 5.543 ft |
+| 2'-0" left | 5.192 ft |
+| 0'-8" left | 5.021 ft |
+| 0'-8" right | 5.021 ft |
+| 2'-0" right | 5.192 ft |
+| 3'-4" right | 5.543 ft |
+| 4'-8" right | 6.094 ft |
+| 6'-0" right | 6.883 ft |
+| 7'-4" right | 7.985 ft |
+| 8'-8" right | 9.572 ft |
+| 9'-0" right | 10.092 ft |
 
 ## Other 2×8 × 12 ft sticks
 
 | Use | Sticks | Allocation |
 |---|---|---|
 | Segmented header | 2 | 4 segments of 2.695 ft on each stick |
-| Front and main-beam blocking | 3 | 22 pieces × 14.5 in, plus two 2.5 in closers |
+| Front and main-beam blocking | 3 | 22 pieces at 14.5 in, plus two 2.5 in closers |
 | Wing blocking | 1 | 4 blocks along the wings |
 | Lower-deck joists | 3 | Nine 3 ft joists, three per stick after kerf |
 | Total 2×8 × 12 ft with the upper joists | 20 | Offcuts not reused |
@@ -87,7 +87,7 @@ Joist positions from the centreline, with length to the pool arc:
 
 Upper full-width boards: 11 pieces at 18 ft, each cut from a 20 ft board. Offcut 2 ft each. One of those boards is ripped to 5.0 in width.
 
-Curve-side piece lengths, each bought twice (left and right), measured at the wide edge of the row:
+Lengths beside the pool, bought once for each side, measured at the wide edge of the row:
 
 - Row 1: 9.000 ft each side
 - Row 2: 5.932 ft each side
@@ -136,18 +136,18 @@ Separate from that pack: 11 pieces of 5/4×6 × 20 ft for the full-width upper r
 
 | Run | Length (ft) | Treatment | Kits |
 |---|---|---|---|
-| Upper left side | 10.092 | straight kit run | 2 |
-| Upper right side | 10.092 | straight kit run | 2 |
-| Upper front left of stair | 4.000 | straight kit run | 1 |
-| Upper front right of stair | 4.000 | straight kit run | 1 |
-| Lower left side | 3.000 | straight kit run | 1 |
-| Lower right side | 3.000 | straight kit run | 1 |
-| Lower front left of gate | 3.250 | straight kit run | 1 |
-| Lower front right of gate | 3.250 | straight kit run | 1 |
-| Stair left | 4.845 | custom sloped match | custom, not a 6 ft kit |
-| Stair right | 4.845 | custom sloped match | custom, not a 6 ft kit |
+| Upper left side | 10.092 | straight run | 2 |
+| Upper right side | 10.092 | straight run | 2 |
+| Upper front left of stair | 4.000 | straight run | 1 |
+| Upper front right of stair | 4.000 | straight run | 1 |
+| Lower left side | 3.000 | straight run | 1 |
+| Lower right side | 3.000 | straight run | 1 |
+| Lower front left of gate | 3.250 | straight run | 1 |
+| Lower front right of gate | 3.250 | straight run | 1 |
+| Stair left | 4.845 | follows the stair | custom, not a 6 ft kit |
+| Stair right | 4.845 | follows the stair | custom, not a 6 ft kit |
 
-## Fastener counts tied to the drawing
+## Fasteners
 
 | Item | Count | Basis |
 |---|---|---|
@@ -156,30 +156,28 @@ Separate from that pack: 11 pieces of 5/4×6 × 20 ft for the full-width upper r
 | Post-to-beam connectors | 15 | One per post |
 | Header connectors | 16 | One per upper joist |
 | Stringer connectors | 10 | One per stringer |
-| Beam stitch bolts | 76 | Two rows at 16 in OC between posts; pricing allowance |
+| Beam stitch bolts | 76 | Two rows at 16 in on centre between posts. Count for pricing only. Diameter not chosen. |
 | Nuts / washers | 76 / 152 | For those bolts |
 | Structural screws | 100 | Two at each joist bearing on a beam or wing |
 | Deck screws | 798 | Two per board crossing. Upper full-width 352, curve sides 160, lower deck 126, treads 160 |
 
-Guard-post blocking, hinge count, bolt diameter, and connector brand are not quantified beyond the flags in the supplier request.
+Blocking for the guard posts, the hinge count, the bolt diameter, and the connector brand are not counted. They stay open on the request to Darcy.
 
 ## Helical piers
 
-15 helical piers, one at each drawn location. Sonotubes and concrete are not in this issue. Shaft, helix, length, torque, and capacity are not specified and are not certified.
+15 helical piers, one at each drawn location. No sonotubes and no concrete. Shaft, helix, length, torque, and capacity are not chosen and are not certified.
 
 ## Category waste
 
 | Category | What the waste is |
 |---|---|
 | Helical piers | No waste percent. Shaft, helix, and length are not specified. |
-| Posts and brackets | A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not precut. |
+| Posts and brackets | A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not cut the posts in advance. |
 | Beams | Front offcut none on a 6 ft + 6 ft cut. Wing offcut about 1.18 ft × 2. Main and lower offcut none. |
 | Joists, header, blocking | Upper joist stock 132 ft against net 112.766 ft. Header, blocking, and lower offcuts are on the cut list below. Offcuts are not reused to reduce the purchase. |
 | Stringers | About 35 in left on each 8 ft piece after a 3 in end-cut allowance. Plumb-cut drawing is not included. |
-| Decking and treads | 2 ft off each 20 ft upper board, plus bin-pack offcut on the shorter pieces. |
+| Decking and treads | 2 ft off each 20 ft upper board, plus leftover on the shorter pieces. |
 | Skirting | Seven 12 in cuts per stick with 1/8 in kerf leaves about 11 in. Five sticks. |
-| Rails and guard posts | Each straight segment starts a new kit. Short segments waste the unused portion of the 6 ft module. Posts are not precut because the below-deck length is not issued. |
+| Rails and guard posts | Each straight run starts a new kit. A short run leaves the rest of the 6 ft kit unused. Posts are not cut in advance. The length below the deck is not known. |
 | Gate | None calculated. |
 | Fasteners | No extra percent. |
-
-Calculation file: `takeoff/issue_j1.py`.

@@ -152,6 +152,10 @@
       "generic_markdown_pdf_superseded": true,
       "platform_renderer": false,
       "interim_writer": "takeoff/branded_issue_pdf.py"
+    },
+    "job_language": {
+      "date": "2026-10-01",
+      "note": "Current J1 sheets, take-off, cost sheet, customer estimate, and supplier request use job language. Approved geometry, Option A, and earlier trial names are off those sheets. 29 Sep records were not rewritten."
     }
   },
   "issue_2026_10_01": {

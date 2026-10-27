@@ -82,3 +82,13 @@ Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-
 | `takeoff/branded_issue_pdf.py` | Interim PDF writer for the J1 narrative sheets. It uses the ORG-001 logo and the proposal colour fallbacks. It is not a second platform renderer. |
 
 The generic Markdown-to-PDF package written earlier on 1 Oct 2026 is superseded. The replacement PDFs use the governed Brayman identity. Historical 29 Sep records stay.
+
+The current J1 sheets, take-off, cost sheet, customer estimate, and supplier request were rewritten into job language. Words such as approved geometry, Option A, and the names of earlier trials are not on those sheets. The 29 Sep records still use the words they were written with.
+
+## 6 Oct 2026 — cost request for Ben
+
+Fillable PDF of every line that still needs a cost. The walking surface and the stair treads are Trex composite. Fascia is 44.184 ft on the exposed rim: upper sides 10.092 ft each, upper front returns 4 ft each, lower sides 3 ft each, and the lower front 10 ft. The open pool edge and the stair stringer faces have no fascia. Colour, product line, fascia width, and fascia stock length are not chosen. Framing stays pressure-treated. The boxes are empty. No price was added. Ben types the unit price, the line price, and a note, saves the PDF, and sends it back. The customer estimate and the internal cost stay unpriced until that return is in the case. The 1 Oct drawing still shows 5/4×6 boards and was not reissued.
+
+| Path | What it is |
+|------|------------|
+| `estimates/internal/2026-10-06-ben-items-that-need-a-cost.pdf` | Fillable request. Same file on the Desktop as `Linda-Bushel-items-that-need-a-cost.pdf`. |

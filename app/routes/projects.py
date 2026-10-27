@@ -796,7 +796,7 @@ def edit_project_location(id):
         try:
             establish_project_location_and_profile(
                 project.id,
-                location_payload_from_form(location_form),
+                location_payload_from_form(request.form),
                 request.form.get("permit_context_class"),
                 organization_id=org_id,
                 generated_by=request.form.get("updated_by", "Estimator").strip()

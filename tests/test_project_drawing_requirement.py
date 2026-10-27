@@ -379,8 +379,12 @@ def test_existing_projects_upgrade_to_unknown_and_plans_remain(tmp_path):
     with application.app_context():
         upgrade(revision="l2f3a4b5c6d7")
         ensure_default_organization()
-        client_row = Client(name="Legacy client", organization_id=DEFAULT_ORGANIZATION_ID)
-        db.session.add(client_row)
+        # The client row as the schema of that revision has it (raw SQL, like the project below: the Client model
+        # has since gained columns, e.g. the structured address of q4c7l2n8t3a6).
+        client_id = db.session.execute(
+            text("INSERT INTO clients (organization_id, name, created_at) VALUES (:org, 'Legacy client', :at)"),
+            {"org": DEFAULT_ORGANIZATION_ID, "at": datetime.utcnow().isoformat(sep=" ")},
+        ).lastrowid
         db.session.commit()
         created = datetime.utcnow().isoformat(sep=" ")
         db.session.execute(
@@ -397,7 +401,7 @@ def test_existing_projects_upgrade_to_unknown_and_plans_remain(tmp_path):
             ),
             {
                 "organization_id": DEFAULT_ORGANIZATION_ID,
-                "client_id": client_row.id,
+                "client_id": client_id,
                 "created_at": created,
             },
         )

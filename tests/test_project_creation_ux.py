@@ -431,3 +431,21 @@ def test_the_migration_adds_six_empty_customer_address_columns_and_changes_nothi
     with pytest.raises(RuntimeError, match="Downgrade refused"):
         command.downgrade(cfg, "e5d1v4r7y2k9")
     ctx.pop()
+
+
+def test_production_sequence_a_draft_already_holding_marc_never_survives_adding_linda(env):
+    """The exact Production record of 27 Oct 2026 (run 2): the step-1 draft was autosaved with Marc's id and no name
+    at 11:38:54, before Linda existed (11:48:51). The old wizard then sent the office to the Clients page, and
+    nothing ever replaced that draft, so step 1 showed Marc. Now the new customer replaces it, by exact id."""
+    application, d, _ben = env
+    marc = _marc()
+    run_id = _start(d, "NEW_PROJECT")
+    r = d.http.post(f"/wizards/run/{run_id}/step/customer/autosave",
+                    data={"customer_mode": "existing", "client_id": str(marc.id)})
+    assert r.status_code == 200 and _draft(run_id)["client_id"] == str(marc.id)  # the Production state
+    _post(d, run_id, "customer", **_new_customer(LINDA))
+    linda = Client.query.filter_by(organization_id=ORG, name=LINDA).one()
+    assert _draft(run_id)["client_id"] == str(linda.id) != str(marc.id)
+    assert _run(run_id).current_step == "project_type"
+    page = d.get(f"/wizards/run/{run_id}/step/customer")
+    assert _selected_customer(page) == linda.id

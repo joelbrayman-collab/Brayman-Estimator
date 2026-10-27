@@ -230,3 +230,57 @@ def test_a_column_only_migration_declares_new_tables_none_and_keeps_every_custom
     assert values["REVISION_AFTER"] == head
     gate = (ROOT / "tools" / "release" / "release_gate.sh").read_text()
     assert '--new-tables none is only for a migration that changes declared --altered-tables' in gate
+
+
+def test_the_clients_rehearsal_stops_on_a_changed_client_row_or_any_other_schema_change(tmp_path, capsys):
+    # The same comparison the gate and the live apply run, on q4c7l2n8t3a6: a changed customer value, a filled new
+    # column, an undeclared schema change or an added table each stop it.
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("migration_check_mod", SCRIPT)
+    mc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mc)
+    prior, head = "e5d1v4r7y2k9", "q4c7l2n8t3a6"
+
+    def prepared(name):
+        path = tmp_path / name
+        app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{path}"})
+        with app.app_context():
+            cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
+            cfg.set_main_option("script_location", str(ROOT / "migrations"))
+            cfg.set_main_option("sqlalchemy.url", f"sqlite:///{path}")
+            command.upgrade(cfg, prior)
+        con = sqlite3.connect(path)
+        con.execute("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, "
+                    "updated_at) VALUES ('ORG-C', 'Synthetic Ltd.', 'Synthetic', 'CAD', 1, '2026-10-27', '2026-10-27')")
+        con.execute("INSERT INTO clients (id, name, organization_id, address, created_at) VALUES (1, "
+                    "'Linda (synthetic)', 'ORG-C', '12 Synthetic Lane', '2026-10-27')")
+        con.commit()
+        con.close()
+        before = mc.snapshot(str(path))
+        mc.upgrade(str(path), head)
+        return path, before
+
+    def outcome(path, before, new_tables=()):
+        try:
+            mc.compare(before, mc.snapshot_after(str(path), before, ["clients"]), list(new_tables), head, ["clients"])
+        except SystemExit as stop:
+            return stop.code
+        return 0
+
+    path, before = prepared("ok.db")
+    assert outcome(path, before) == 0
+    for name, sql, expected in (
+        ("row.db", "UPDATE clients SET name = 'Marc (synthetic)' WHERE id = 1", "existing records changed in: clients"),
+        ("filled.db", "UPDATE clients SET city = 'Kemptville' WHERE id = 1", "new columns of clients hold values"),
+        ("schema.db", "ALTER TABLE projects ADD COLUMN surprise TEXT", "existing schema changed: table projects"),
+        ("table.db", "CREATE TABLE surprise (id INTEGER)", "new tables are ['surprise'], expected []"),
+    ):
+        path, before = prepared(name)
+        con = sqlite3.connect(path)
+        con.execute(sql)
+        con.commit()
+        con.close()
+        capsys.readouterr()
+        assert outcome(path, before) == 1, name
+        assert f"FAIL={expected}" in capsys.readouterr().out, name

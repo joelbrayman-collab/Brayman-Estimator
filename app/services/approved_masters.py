@@ -42,6 +42,7 @@ QUICKBOOKS_ESTIMATE_ENTRY = "QUICKBOOKS_ESTIMATE_ENTRY"
 ONTARIO_CONSTRUCTION_CONTRACT = "ONTARIO_CONSTRUCTION_CONTRACT"
 DOOR_WINDOW_SKYLIGHT_SCHEDULE = "DOOR_WINDOW_SKYLIGHT_SCHEDULE"
 CLIENT_CONSTRUCTION_PROPOSAL = "CLIENT_CONSTRUCTION_PROPOSAL"
+CUSTOMER_DETAILED_COST_ESTIMATE = "CUSTOMER_DETAILED_COST_ESTIMATE"
 
 PLACEHOLDER = "—"
 
@@ -56,7 +57,7 @@ class ApprovedMaster:
     classification: str
 
 
-# Identity from the FG-022 register (Joel approval 4 Sep 2026). Family 05 is also governed by
+# Identity from the FG-022 register (Joel approval 4 Sep 2026; Family 08 added 27 Oct 2026). Family 05 is also governed by
 # app/services/family_05_master.py with the same SHA-256.
 APPROVED_MASTERS = {
     m.document_type: m for m in (
@@ -81,6 +82,11 @@ APPROVED_MASTERS = {
         ApprovedMaster("07", CLIENT_CONSTRUCTION_PROPOSAL, "Client Construction Proposal",
                        "07_Brayman_Client_Construction_Proposal_MASTER_V1.docx",
                        "213ce5c93dcf09b1299d066dc29e8cd68cfad3178b4a149a5f4ecf39349ba498", "CUSTOMER-FACING"),
+        # Family 08 (Joel's explicit instruction, 27 Oct 2026): derived from Master 02's presentation with
+        # internal-only content removed; customer selling prices, never contractor cost or margin.
+        ApprovedMaster("08", CUSTOMER_DETAILED_COST_ESTIMATE, "Customer Detailed Cost Estimate",
+                       "08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.docx",
+                       "f9e7a27cf6924d55e7c92e53b5cb27dc77379ed421b7d982c79cbbb3588f100f", "CUSTOMER-FACING"),
     )
 }
 GOVERNED_DOCUMENT_TYPES = frozenset(APPROVED_MASTERS)

@@ -33,8 +33,8 @@ def _register_rows():
 
 def test_every_governed_document_type_resolves_to_its_registered_approved_master():
     register = _register_rows()
-    assert len(register) == 7
-    assert {m.family for m in AM.APPROVED_MASTERS.values()} == {"01", "02", "03", "04", "05", "06", "07"}
+    assert len(register) == 8
+    assert {m.family for m in AM.APPROVED_MASTERS.values()} == {"01", "02", "03", "04", "05", "06", "07", "08"}
     for document_type in AM.GOVERNED_DOCUMENT_TYPES:
         master = AM.master_for(document_type)
         assert register[master.filename] == master.sha256, document_type
@@ -115,6 +115,22 @@ def test_population_changes_only_the_designated_content_of_the_master(tmp_path, 
     with pytest.raises(AM.ApprovedMasterError) as raised:
         AM.populate(AM.CUSTOMER_FACING_ESTIMATE, directory=tmp_path, tokens={}, tables={("Invented", "Layout"): [("x", "y")]})
     assert raised.value.block_code == AM.BLOCK_TABLE_NOT_IN_MASTER
+
+
+def test_master_08_never_carries_internal_economics():
+    """Customer Detailed Cost Estimate: customer-facing, derived from Master 02 without its internal content."""
+    master = AM.master_for(AM.CUSTOMER_DETAILED_COST_ESTIMATE)
+    assert master.family == "08" and master.classification == "CUSTOMER-FACING"
+    directory = AM.master_dir()
+    data = AM.load_master_copy(AM.CUSTOMER_DETAILED_COST_ESTIMATE, directory)
+    source02 = AM.load_master_copy(AM.INTERNAL_DETAILED_COST_BREAKDOWN, directory)
+    assert AM.styles_sha256(data) == AM.styles_sha256(source02)
+    produced = Document(io.BytesIO(data))
+    words = " ".join([p.text for p in produced.paragraphs] + [c.text for t in produced.tables for r in t.rows for c in r.cells]
+                     + [c.text for s in produced.sections for t in s.header.tables for r in t.rows for c in r.cells]
+                     + [p.text for s in produced.sections for p in s.footer.paragraphs]).lower()
+    for internal in ("internal", "direct cost", "margin", "markup", "gross profit", "confidential", "status"):
+        assert internal not in words, internal
 
 
 def test_the_real_approved_masters_01_02_03_populate_with_their_own_styles_header_and_logo():

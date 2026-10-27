@@ -16,12 +16,12 @@ Status words: **priced** (written price, quantity matches J1), **variance** (wri
 
 | Requirement | J1 qty | Supplier qty | Supplier | SKU / product | Unit | Extension | Status / explanation |
 |---|---|---|---|---|---|---|---|
-| Upper joists, 2×8 | 11 × 12 ft (132 ft; net 112.766 ft for 16 joists) | 4 × 12 ft, 2 × 10 ft, 6 × 8 ft (116 ft) | BMR | 0749011 / 0749002 / 0748997 | 23.924 / 19.911 / 15.916 | 231.00 | **Variance.** Different stock lengths. J1's two outer joists are 10.092 ft and do not fit a 10 ft stick; the four 12 ft sticks are needed by J1's four paired sticks. Confirm the joist stock with Darcy against the cut list. |
+| Upper joists, 2×8 | 11 × 12 ft (132 ft; net 112.766 ft for 16 joists) | 4 × 12 ft, 2 × 10 ft, 6 × 8 ft (116 ft) | BMR | 0749011 / 0749002 / 0748997 | 23.924 / 19.911 / 15.916 | 231.00 | **Variance — short by about 2 joists.** J1's cut plan needs 7 × 12 ft (its two 10.092 ft outer joists and its five paired sticks). Cut to J1's lengths, the quoted 4 × 12, 2 × 10 and 6 × 8 ft give at most 14 of the 16 joists (BMR also quotes 14 skewed hangers). Confirm the joist stock with Darcy against the cut list. |
 | Curved header, 2×8 | 2 × 12 ft (8 pieces × 2.695 ft) | 3 × 8 ft | BMR | 0748997 | 15.916 | 47.75 | **Variance.** An 8 ft stick gives two 2.695 ft pieces, so 3 sticks give 6 of the 8 pieces. Confirm. |
 | Beams, 2-ply 2×10 | 7 × 12 ft + 4 × 10 ft | 7 × 12 ft + 4 × 10 ft | BMR | 0749066 / 0749057 | 39.576 / 32.751 | 408.03 | **Priced.** Matches J1. Beam layout depends on the foundation decision below. |
 | Lower-deck joists, 2×8 | 3 × 12 ft | 3 × 12 ft | BMR | 0749011 | 23.924 | 71.77 | **Priced.** Matches J1. |
-| Stair stringers, 2×12 | 10 × 8 ft (10 stringers) | 4 × 10 ft | BMR | 0749109 | 44.126 | 176.50 | **Variance.** A J1 stringer is about 61 in plus a 3 in end cut, so one 10 ft stick gives one stringer: 4 stringers, not 10. Confirm with Darcy and Ben. |
-| Posts, 6×6 | 11 × 8 ft (15 posts) | 7 × 8 ft | BMR | 0749190 | 38.338 | 268.37 | **Variance.** 7 sticks match an 11-post layout (two upper posts per stick), not J1's 15. See Foundation. |
+| Stair stringers, 2×12 | 10 × 8 ft (10 stringers) | 4 × 10 ft | BMR | 0749109 | 44.126 | 176.50 | **Variance.** J1 leaves about 35 in on each 8 ft piece after a 3 in end-cut allowance, so a stringer takes about 61 in; one 10 ft stick gives one stringer: 4 stringers, not 10. Confirm with Darcy and Ben. |
+| Posts, 6×6 | 11 × 8 ft (15 posts) | 7 × 8 ft | BMR | 0749190 | 38.338 | 268.37 | **Variance.** By J1's rules (two upper posts per stick, each lower post a full stick, ordered uncut) J1's 15 posts need 11 sticks and Pro Post's 11 posts (7 upper, 4 lower) need 8. BMR quotes 7: short for either. See Foundation. |
 | Blocking | 4 × 2×8 × 12 ft | 6 × 2×10 × 8 ft | BMR | 0749048 | 26.381 | 158.29 | **Substitution.** 2×10 blocking in place of 2×8. Confirm. |
 | Post-to-beam connector | 15 | 30 deck post ties | BMR | SDJT14-TZ | 2.291 | 68.73 | **Variance.** 30 ties (two per post would be 22 for 11 posts, 30 for 15). Confirm. |
 | Joist-to-header connector | 16 | 14 skewed hangers (7 L + 7 R) | BMR | SKH26L-TZ / SKH26R-TZ, printed "2×6" | 6.247 | 87.46 | **Variance.** Count 14 against 16, and the hanger is printed for 2×6 where the joists are 2×8. Confirm size and count. |
@@ -34,7 +34,7 @@ Status words: **priced** (written price, quantity matches J1), **variance** (wri
 
 | Requirement | J1 qty | Supplier qty | Supplier | SKU / product | Unit | Extension | Status / explanation |
 |---|---|---|---|---|---|---|---|
-| Upper deck boards | 11 × 20 ft + side pieces (part of 17 × 10 ft and 7 × 8 ft) | 11 × 20 ft + 11 × 12 ft | BMR | Trex Select Island Mist 1×6 | 188.48 / 113.28 | 3,319.36 | **Priced, stock re-planned.** Colour now chosen: Island Mist. |
+| Upper deck boards | 11 × 20 ft + side pieces (part of 17 × 10 ft and 7 × 8 ft) | 11 × 20 ft + 11 × 12 ft | BMR | Trex Select Island Mist 1×6 | 188.48 / 113.28 | 3,319.36 | **Priced, stock re-planned.** Darcy priced Island Mist; Linda has not yet confirmed the colour. |
 | Lower deck boards | in the 10 ft pack | 4 × 20 ft | BMR | Trex Select Island Mist 1×6×20 | 188.48 | 753.92 | **Priced, stock re-planned.** |
 | Stair treads (4 treads × 2 boards × 10 ft) | in the 10 ft pack | 4 × 20 ft | BMR | Trex Select Island Mist 1×6×20 | 188.48 | 753.92 | **Priced.** 4 × 20 ft = 8 × 10 ft = the 8 tread boards. |
 | All Trex boards, lineal | 446 ft (11×20 + 17×10 + 7×8) | 512 ft (19×20 + 11×12) | | | | 4,827.20 | Supplier lineal is 66 ft more than J1. |
@@ -48,7 +48,7 @@ Status words: **priced** (written price, quantity matches J1), **variance** (wri
 
 | Requirement | J1 qty | Supplier qty | Supplier | SKU / product | Unit | Extension (MSRP) | Status / explanation |
 |---|---|---|---|---|---|---|---|
-| Level guard | 10 Veranda 37 in × 6 ft kits | 7 rails (5 × 5 ft, 2 × 7 ft), 4 end, 4 corner, 2 mid posts, 2 + 5 picket packages, 4 level brackets | Vista via BMR | PB7453/7455/5468/5469/5470/7777/7779/7477 | MSRP | 2,560.72 | **Substitution.** Vista 42 in aluminium replaces the 37 in Veranda kit. Runs follow the J1 layout (sections 1–2, 4–8, 10–11). |
+| Level guard | 10 Veranda 37 in × 6 ft kits | 7 rails (5 × 5 ft, 2 × 7 ft), 4 end, 4 corner, 2 mid posts, 2 + 5 picket packages, 4 level brackets | Vista via BMR | PB7453/7455/5468/5469/5470/7777/7779/7477 | MSRP | 2,560.72 | **Substitution.** Vista 42 in aluminium replaces the 37 in Veranda kit. Runs follow the J1 layout (sections 1–2, 4–5, 7–8, 10–11; section 6 is the gate). |
 | Stair guard | 2 custom | 1 × 8 ft stair rail (cut to two 40.91 in), 2 top + 2 bottom stair posts, 2 stair picket packages | Vista via BMR | PB5484/5733/5735/7773 | MSRP | 655.93 | **Substitution.** Sections 3 and 9. |
 | Gate | 1, 42 in clear | 1 × 42 in high, 48 in gate | Vista via BMR | PB7517XB | 423.99 | 423.99 | **Substitution.** 48 in gate where J1 asked 42 in clear. Hinges and latch not listed separately: confirm included. |
 | Gate hinges and latch | latch 1, hinges open | — | — | — | — | — | **Not priced** unless the Vista gate includes them. |
@@ -71,9 +71,9 @@ Status words: **priced** (written price, quantity matches J1), **variance** (wri
 ### 15 piers in J1 against 11 piles from Pro Post
 
 - **J1 (1 Oct 2026):** 15 piers from Brayman's own CT-1 layout: 9 under the upper deck (front beam with piers 6 ft apart, a 12 ft main beam 13 ft out, two wing piers) and 6 under the lower deck. The J1 sheets say the pier product, capacity and beam spans were not checked or certified.
-- **Pro Post (6 Oct 2026):** 11 piles "based on our engineer's recommendation", marked on Brayman's A-01 general arrangement plan (29 Sep 2026, the same deck: 18 ft wide, 5 ft clear at centre, 10 ft stairs, 10 × 3 ft lower deck). 7 under the upper deck: two at the pool-side corners, two on a short beam near the pool, three along the front edge (corners and centre; the centre pile is the 10 in blade). 4 under the lower deck, one at each corner.
+- **Pro Post (6 Oct 2026):** 11 piles "based on our engineer's recommendation", marked on Brayman's A-01 general arrangement plan (29 Sep 2026, the same deck: 18 ft wide, 5 ft clear at centre, 10 ft stairs, 10 × 3 ft lower deck). 7 under the upper deck: two at the pool-side corners, two on a short beam near the pool, three along the front edge (corners and centre; the centre pile is marked in a different colour — the quotation does not say which pile takes the 10 in blade). 4 under the lower deck, one at each corner.
 - **Same deck, different framing.** The deck outline matches. The beam arrangement does not: Pro Post's front beam has 3 piles about 9 ft apart where J1 has 4 piers 6 ft apart, and Pro Post has no 12 ft main beam 13 ft out. The lower deck is carried on 4 piles where J1 has 6.
-- **The BMR list was not drawn for J1's 15.** BMR's 7 post sticks fit 11 posts, not 15.
+- **The BMR post count fits neither layout exactly.** By J1's cutting rules, 15 posts need 11 sticks and Pro Post's 11 posts need 8; BMR quotes 7. Confirm with Darcy once the foundation is chosen.
 
 **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.**
 

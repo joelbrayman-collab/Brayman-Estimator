@@ -18,7 +18,7 @@ Original, unchanged: `2026-10-26-darcy-bmr-estimate-237147-1.pdf` (SHA-256 `8cf8
 
 ## Lines (as printed)
 
-| Line | Group | Qty | SKU | Description | Unit price | Extension |
+| Line | Group ("Hardware" is this record's label; the PDF prints no group heading there) | Qty | SKU | Description | Unit price | Extension |
 |---|---|---|---|---|---|---|
 | 2 | Frame — joist upper | 2 EA | 0749011 | 2×8×12 Atika premium treated | 23.924 | 47.85 |
 | 3 | Frame — joist upper | 2 EA | 0749002 | 2×8×10 Atika premium treated | 19.911 | 39.82 |
@@ -31,7 +31,7 @@ Original, unchanged: `2026-10-26-darcy-bmr-estimate-237147-1.pdf` (SHA-256 `8cf8
 | 12 | 2-ply beams | 7 EA | 0749066 | 2×10×12 | 39.576 | 277.03 |
 | 13 | 2-ply beams | 4 EA | 0749057 | 2×10×10 | 32.751 | 131.00 |
 | 15 | Frame joist — lower | 3 EA | 0749011 | 2×8×12 | 23.924 | 71.77 |
-| 16 | (stringer stock) | 4 EA | 0749109 | 2×12×10 Atika premium treated | 44.126 | 176.50 |
+| 16 | Frame joist — lower (as printed; 2×12, used as stringer stock in the reconciliation) | 4 EA | 0749109 | 2×12×10 Atika premium treated | 44.126 | 176.50 |
 | 18 | Posts | 7 EA | 0749190 | 6×6×8 Atika premium treated | 38.338 | 268.37 |
 | 20 | Blocking | 6 EA | 0749048 | 2×10×8 Atika premium treated | 26.381 | 158.29 |
 | 22 | Hardware | 30 EA | SDJT14-TZ | Deck post tie G185 | 2.291 | 68.73 |

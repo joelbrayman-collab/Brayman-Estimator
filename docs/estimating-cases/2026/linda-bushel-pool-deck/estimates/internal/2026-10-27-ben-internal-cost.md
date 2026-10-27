@@ -25,9 +25,9 @@ Sources: BMR estimate 237147/1 (26 Oct, expires **28 Oct**), Vista quote 87915-1
 Confirm with Darcy before ordering (the estimate says the customer verifies quantities):
 
 - Stringers: 4 × 2×12 × 10 ft gives 4 stringers; J1 has 10.
-- Upper joist stock: J1's two 10.092 ft outer joists do not fit the 10 ft sticks quoted.
+- Upper joist stock: cut to J1's lengths, the quoted sticks give at most 14 of the 16 joists (J1 needs 7 × 12 ft; 4 are quoted).
 - Header: 3 × 2×8 × 8 ft gives 6 of the 8 header pieces.
-- Posts: 7 sticks fit 11 posts, not 15 (see the foundation decision).
+- Posts: 7 sticks quoted. By J1's cutting rules, 15 posts need 11 sticks and an 11-pile layout needs 8 (see the foundation decision).
 - Hangers: 14 skewed hangers printed "2×6" for 16 2×8 joists; 11 extra 2×8 hangers with no stated use.
 - Fascia: what the 1×8 (stairs) and 1×12 (other) pieces are for. J1 had 44.184 ft of rim fascia and no riser boards.
 - Nuts and washers: 75 / 150 against 100 bolts.

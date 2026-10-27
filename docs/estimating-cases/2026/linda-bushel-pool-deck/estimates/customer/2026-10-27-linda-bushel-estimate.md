@@ -6,7 +6,7 @@ Prepared for: Linda Bushel, 12 D'Arcy's Way, Kemptville, ON K0G 1J0
 
 Prepared by: Brayman Construction Inc., 411 St. John Street, Merrickville, ON K0G 1N0
 
-**Price: to be confirmed.** The materials and the foundation have been priced by our suppliers. Our final price follows once the installation is scheduled and the last supplier details are confirmed.
+**Price: to be confirmed.** Our suppliers have quoted the main materials and the foundation. Our final price follows once the last supplier prices, the foundation layout and the installation date are confirmed.
 
 ## Project
 
@@ -17,7 +17,7 @@ A new freestanding deck beside your above-ground pool: an upper deck at the pool
 **Foundation**
 
 - Galvanized steel helical piles, screwed into the ground by a specialist foundation contractor, with adjustable steel brackets. No concrete footings.
-- Pile size and locations set by the foundation contractor's engineer.
+- Pile size, number and locations to be confirmed with the foundation contractor before installation.
 
 **Structure**
 

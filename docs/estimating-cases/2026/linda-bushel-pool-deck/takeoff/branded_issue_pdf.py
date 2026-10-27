@@ -8,6 +8,7 @@ A later platform renderer replaces this script.
 
 from __future__ import annotations
 
+import re
 import shutil
 import zipfile
 from pathlib import Path
@@ -41,7 +42,9 @@ def _styles():
 
 
 def _clean(text: str) -> str:
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("`", "")
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("`", "")
+    # **bold** (27 Oct 2026 issue). The J1 sources contain no "**", so their PDFs are unchanged.
+    return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
 
 
 def _parse_table(lines, index, sheet_styles):

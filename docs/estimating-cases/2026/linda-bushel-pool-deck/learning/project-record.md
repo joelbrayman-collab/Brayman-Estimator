@@ -162,3 +162,18 @@ Later the same day, Joel relayed the client's decision to use helical piers inst
 The same day, the generic unbranded PDF package was superseded. The J1 drawing title block and the delivery PDFs use the ORG-001 logo and the proposal PDF colour fallbacks. Geometry was not moved. `takeoff/branded_issue_pdf.py` is an interim case writer, not a platform renderer.
 
 Joel then required the current package to be written in job language. Approved geometry, Option A, and the names of earlier drawing trials came off the sheets a field person, the customer, Darcy, or Ben would read. The 29 Sep records were not rewritten.
+
+## 27 Oct 2026 — written supplier prices and the current costing issue
+
+Three written supplier documents are now in the case, kept unchanged: BMR Winchester estimate 237147/1 (26 Oct, $8,676.09 before HST, expires 28 Oct), the Vista railing quotation 87915-165209 sent through BMR (26 Oct, $3,851.49 MSRP), and Pro Post Foundations estimate OT-2236 (6 Oct, $3,750.00 before HST including a $400 conditional engineer report; valid 15 days, lapsed 21 Oct). Ben forwarded the Pro Post email with its pile-location image on 27 Oct.
+
+What was learned:
+
+- The Vista railing is additional to BMR: BMR's priced lines make $8,676.09 alone and its Vista line has no amount. The Vista amount is MSRP; Brayman's price is not on any document.
+- Pro Post's engineer-based layout has 11 piles on the same deck outline (Brayman's A-01 plan), with a different beam arrangement from J1's 15. The quantity is a structural decision and is not resolved in this issue.
+- BMR's quantities differ from J1 in several places (stringers, joist and header stock, posts, hangers, fascia use). Darcy's estimate leaves quantity verification with Brayman.
+- Finish chosen: Trex Select Island Mist decking and fascia. Guard changed from the 37 in Veranda kit to Vista 42 in aluminium, textured black, standard picket, with a 48 in gate.
+- Joel's earlier working figure of $350 per pier is superseded by the written quotation and is not used.
+- Labour: no Linda hours exist in the case or in an approved Brayman assembly. The governed rate is $65 per man-hour and the governed margin is 15% true gross margin (pricing policy, 25 Aug 2026).
+
+Current issue: `takeoff/2026-10-27-supplier-quote-reconciliation.md`, `estimates/internal/2026-10-27-ben-internal-cost.md`, `estimates/customer/2026-10-27-linda-bushel-estimate.md`, PDFs from `takeoff/issue_2026_10_27.py`, package `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip`. Selling price not issued. Issue J1 stays as historical evidence.

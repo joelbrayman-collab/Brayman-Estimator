@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| Status | Issue J1, 1 Oct 2026, is the current preliminary package. Supplier quotation and selling price are not in the case. |
+| Status | 27 Oct 2026 costing issue is current: written BMR, Vista and Pro Post prices are in the case. Labour hours, Vista's payable price and the foundation quantity are open. Selling price not issued. Issue J1 (1 Oct) is historical. |
 | Date preserved | 2026-09-29 |
 | Client spelling on the located documents | **Linda Bushel** |
 | Location | 12 D'Arcy's Way, Kemptville, Ontario, K0G 1J0 |
@@ -92,3 +92,27 @@ Fillable PDF of every line that still needs a cost. The walking surface and the 
 | Path | What it is |
 |------|------------|
 | `estimates/internal/2026-10-06-ben-items-that-need-a-cost.pdf` | Fillable request. Same file on the Desktop as `Linda-Bushel-items-that-need-a-cost.pdf`. |
+
+## 27 Oct 2026 — written supplier prices, Ben's internal cost, Linda's estimate
+
+Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged; the Markdown records transcribe them and the originals govern.
+
+| Path | What it is |
+|------|------------|
+| `supplier/bmr-winchester/2026-10-26-darcy-bmr-estimate-237147-1.pdf` | BMR Winchester estimate 237147/1, Darcy, 26 Oct 2026. $8,676.09 before HST. Expires 28 Oct. |
+| `supplier/bmr-winchester/2026-10-26-darcy-bmr-estimate-237147-1.md` | Line record and arithmetic check. |
+| `supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.pdf` | Vista railing quote through BMR, 26 Oct 2026. $3,851.49 **MSRP**. |
+| `supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.md` | Bill of materials record. Additional to BMR; payable price to confirm with Darcy. |
+| `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-estimate.pdf` | Pro Post Foundations OT-2236, 6 Oct 2026: 11 helical piles, $3,750.00 before HST incl. $400 conditional engineer report. Validity lapsed 21 Oct. |
+| `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-pile-locations.png` | Pro Post pile locations on Brayman's A-01 plan. |
+| `supplier/pro-post-foundations/2026-10-06-pro-post-pile-head-options.png` | Pro Post pile-head options sheet. |
+| `supplier/pro-post-foundations/2026-10-05-a01-screenshot-attached-to-OT-2236-email.png` | Brayman A-01 general arrangement, as attached in the email thread. |
+| `supplier/pro-post-foundations/2026-10-27-forwarded-OT-2236-estimate.eml` | Ben's forward of the Pro Post email, 27 Oct 2026, with all attachments. |
+| `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236.md` | Record and arithmetic check. |
+| `takeoff/2026-10-27-supplier-quote-reconciliation.md` / `.pdf` | Every requirement: J1 quantity, supplier quantity, price, status. 15 piers (J1) against 11 piles (Pro Post). |
+| `estimates/internal/2026-10-27-ben-internal-cost.md` / `.pdf` | Internal cost for Ben. INTERNAL — NOT FOR CUSTOMER. Direct cost incomplete (labour, delivery, equipment, permit). |
+| `estimates/customer/2026-10-27-linda-bushel-estimate.md` / `.pdf` | Linda's estimate: scope, assumptions, exclusions. Price to be confirmed. No internal figures. |
+| `takeoff/issue_2026_10_27.py` | Writes the three PDFs and the package with the J1 interim writer (`branded_issue_pdf.build`; `**bold**` now rendered). |
+| `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: the three PDFs, the three supplier originals, the pile locations and the J1 drawing. |
+
+Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **LABOUR HOURS REQUIRED** ($65 per man-hour, governed). Delivery, carrying, equipment, permit fee, lower-deck skirt and gate hardware not priced. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.

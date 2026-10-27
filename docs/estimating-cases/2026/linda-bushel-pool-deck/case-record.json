@@ -1,7 +1,9 @@
 {
   "case_id": "2026-linda-bushel-pool-deck",
   "client_name_on_documents": "Linda Bushel",
-  "client_name_spellings_not_on_documents": ["Buschel"],
+  "client_name_spellings_not_on_documents": [
+    "Buschel"
+  ],
   "location": {
     "street_number": "12",
     "street": "D'Arcy's Way",
@@ -45,7 +47,7 @@
   ],
   "stages": {
     "estimated": null,
-    "supplier_quoted": null,
+    "supplier_quoted": "2026-10-27: BMR 237147/1, Vista 87915-165209 (MSRP), Pro Post OT-2236. See costing_2026_10_27.",
     "purchased": null,
     "installed": null,
     "returned": null,
@@ -95,7 +97,9 @@
     "client_approval_drawing",
     "priced_internal_estimate",
     "issued_selling_price",
-    "supplier_quote"
+    "labour_hours",
+    "vista_payable_price",
+    "foundation_quantity_decision"
   ],
   "governed_decisions_2026_10_01": {
     "date": "2026-10-01",
@@ -174,5 +178,90 @@
       "estimates/internal/2026-10-01-ben-internal-cost.md",
       "estimates/customer/2026-10-01-preliminary-customer-estimate.md"
     ]
+  },
+  "costing_2026_10_27": {
+    "date": "2026-10-27",
+    "supplier_documents": [
+      {
+        "supplier": "Winchester Building Supplies (BMR)",
+        "document": "Estimate 237147/1",
+        "date": "2026-10-26",
+        "expires": "2026-10-28",
+        "subtotal_before_hst": "8676.09",
+        "hst": "1127.89",
+        "total": "9803.98",
+        "original": "supplier/bmr-winchester/2026-10-26-darcy-bmr-estimate-237147-1.pdf",
+        "sha256": "8cf84f218484501184c530d0621ea74837d1d3b1bc95e5f56dcb049f9ceaa628",
+        "record": "supplier/bmr-winchester/2026-10-26-darcy-bmr-estimate-237147-1.md"
+      },
+      {
+        "supplier": "VISTA Railing Systems via BMR Winchester",
+        "document": "Quote 87915-165209",
+        "date": "2026-10-26",
+        "price_basis": "MSRP",
+        "total_msrp": "3851.49",
+        "relationship_to_bmr": "additional (BMR line 'See separate quote' has no amount)",
+        "payable_price": "not established - confirm with Darcy",
+        "original": "supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.pdf",
+        "sha256": "d5870b004346cd0551a62c071afa1a174fce8b94d8cd443095883e797deb2b27",
+        "record": "supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.md"
+      },
+      {
+        "supplier": "Pro Post Foundations - Ottawa (11339966 Canada Inc.)",
+        "document": "Estimate OT-2236",
+        "date": "2026-10-06",
+        "valid_until": "2026-10-21 (lapsed)",
+        "piles": 11,
+        "piles_detail": "10 x 2-3/8 in 8 in blade 7 ft at 295.00; 1 x 10 in blade at 315.00; flat bracket included",
+        "travel": "85.00",
+        "engineer_report": "400.00 conditional on the town",
+        "subtotal_before_hst": "3750.00",
+        "hst": "487.50",
+        "total": "4237.50",
+        "deposit": "2118.75",
+        "original": "supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-estimate.pdf",
+        "sha256": "342429b2d29fba54b452a74596d42c4522018ca1b6218db85fff812f74d5c081",
+        "record": "supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236.md",
+        "email": "supplier/pro-post-foundations/2026-10-27-forwarded-OT-2236-estimate.eml"
+      }
+    ],
+    "foundation": {
+      "j1_piers": 15,
+      "pro_post_piles": 11,
+      "status": "FOUNDATION QUANTITY CONFIRMATION REQUIRED",
+      "costed_on": "Pro Post written 11-pile quotation",
+      "superseded_working_figure": "350.00 per pier (Joel, before the written quotation; not used)"
+    },
+    "direct_cost_before_hst": {
+      "bmr": "8676.09",
+      "pro_post_piles_and_travel": "3350.00",
+      "firm_subtotal": "12026.09",
+      "vista_allowance_msrp": "3851.49",
+      "subtotal_with_railing_allowance": "15877.58",
+      "engineer_report_conditional": "400.00",
+      "labour": "LABOUR HOURS REQUIRED at 65.00 per man-hour",
+      "delivery_carrying": "PRICE REQUIRED",
+      "equipment": "PRICE REQUIRED",
+      "permit_fee": "PRICE REQUIRED",
+      "complete": false
+    },
+    "pricing_rule": {
+      "method": "true gross margin",
+      "target": "0.15",
+      "formula": "selling price = direct cost / 0.85",
+      "source": "docs/pricing-policy.md (2026-08-25)"
+    },
+    "selling_price_issued": false,
+    "files": [
+      "takeoff/2026-10-27-supplier-quote-reconciliation.md",
+      "takeoff/2026-10-27-supplier-quote-reconciliation.pdf",
+      "estimates/internal/2026-10-27-ben-internal-cost.md",
+      "estimates/internal/2026-10-27-ben-internal-cost.pdf",
+      "estimates/customer/2026-10-27-linda-bushel-estimate.md",
+      "estimates/customer/2026-10-27-linda-bushel-estimate.pdf",
+      "takeoff/issue_2026_10_27.py",
+      "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
+    ],
+    "j1_rewritten": false
   }
 }

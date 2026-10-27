@@ -40,7 +40,7 @@ LIVE_DB = "/opt/render/project/src/instance/brayman_estimator.db"
 TODAY = "20261027"
 
 # ------------------------------------------------------------------------------------------------ the approved plan
-# Joel's Step 2 decisions (27 Oct 2026): every project except P27; every customer except C22 (P27's); sign-ins
+# Joel's Step 2 decisions (27 Oct 2026) and his final decisions at 02:49: every project except P27; every customer except C22 (P27's); sign-ins
 # U2-U14; the two test organizations; and the shared test items listed. Each ID pinned to its exact label.
 REMOVE = {
     "projects": {
@@ -83,18 +83,19 @@ REMOVE = {
     "organizations": {"ORG-FG014-UAT": "FG-014 UAT Isolation Org", "ORG-002": "FG031B Isolation DEMO"},
     "organization_crews": {1: "FG035-UAT Concrete Crew", 2: "FG035-UAT Retire Proof Crew", 3: "FG035-UAT SCH-D Field Crew"},
     "assemblies": {1: "FG014-UAT-ASM", 2: "FG026-UAT-DOOR"},
-    "cost_items": {3: "MAT-FG009-UAT", 4: "FG014-UAT-MAT", 5: "FG014-UAT-LAB", 6: "FG014-UAT-EQP", 7: "FG014-UAT-SUB",
+    "cost_items": {1: "LAB-001", 2: "001", 3: "MAT-FG009-UAT", 4: "FG014-UAT-MAT", 5: "FG014-UAT-LAB", 6: "FG014-UAT-EQP", 7: "FG014-UAT-SUB",
                    8: "FG014-UAT-ALL", 9: "FG014-UAT-OTH", 10: "FG014-UAT-CROSS", 11: "MAT-FG032-UAT",
                    12: "MAT-M3-SCRATCH-20261008"},
     "work_types": {2: "FG035-UAT-TES-EXTRA"},
-    # Template 1 stays for now: P27's draft proposal PROP-2026-0006 uses it (Joel to decide).
-    "proposal_templates": {2: "FG-017 UAT Isolation Template",
+    # Joel 27 Oct 02:49: P27's UAT draft proposal PROP-2026-0006 goes, and all four UAT templates.
+    "proposals": {14: "PROP-2026-0006"},
+    "proposal_templates": {1: "FG-012 UAT Template", 2: "FG-017 UAT Isolation Template",
                            3: "FG024D-UAT SYNTHETIC TEMPLATE", 4: "FG033A-UAT Template"},
     "subcontractors": {1: "FG031B-HVAC", 2: "FG031B-HVAC-2", 3: "FG031B-INSTALL", 4: "FG031B-LABOUR", 5: "FG031B-ISSUED"},
     "suppliers": {1: "BMR-WINCHESTER-DEMO", 2: "YARD-M3-SCRATCH", 3: "SYN-DRW-20261014-2235"},
 }
 # Which column holds the pinned label for each seed table.
-LABEL = {"projects": "name", "clients": "name", "users": "email", "organizations": "display_name",
+LABEL = {"proposals": "proposal_number", "projects": "name", "clients": "name", "users": "email", "organizations": "display_name",
          "organization_crews": "name", "assemblies": "code", "cost_items": "code", "work_types": "code",
          "proposal_templates": "name", "subcontractors": "code", "suppliers": "code"}
 CLIENT_PIN = {1: "Michelle Steele", 47: "M3 scratch client"}  # every other removed customer must be labelled UAT/SYNTHETIC
@@ -115,9 +116,9 @@ PROTECT_ROWS = {
     "organizations": {"ORG-001": "Brayman Construction"},
     "projects": {27: "40x80 Thickened-Edge Concrete Slab"},
     "clients": {22: "Marc Bouliion"},
-    "cost_items": {1: "LAB-001", 2: "001"},  # undecided: protected until Joel decides
 }
 PROTECT_PROJECT_TREE = {27}
+APPROVED_FROM_PROTECTED_TREE = {"proposals": {14}}  # P27's UAT draft proposal (Joel, 27 Oct 02:49)
 # Whole tables that must come through untouched (configuration, legal, history, identity, audit).
 PROTECT_TABLES = {
     "alembic_version", "historical_cost_line_items", "historical_data_quality_flags",
@@ -179,6 +180,8 @@ SOFT = [("pricing_audit_events", "entity_type", "entity_id"), ("labour_audit_eve
         ("transactional_messages", "related_type", "related_id")]
 # Files: project folders, plus generated contracts named by storage key.
 FILE_PROJECT = [re.compile(r"^plan_uploads/(\d+)/"), re.compile(r"^deck_takeoff/[^/]+/(\d+)/")]
+FILE_EXTRA_QUARANTINE = {"mail_capture/20261017T140556354222-PASSWORD_RESET.txt":
+                         "captured password-reset email (Joel, 27 Oct 02:49)"}
 FILE_KEYED = [("generated_contracts/", "project_generated_contracts", "artifact_storage_key"),
               ("generated_contracts/", "project_contract_snapshots", "artifact_storage_key")]
 
@@ -309,8 +312,9 @@ def plan(con, files=None):
     # Protection checks.
     problems = []
     keep_tree = project_tree(con, pk, links, PROTECT_PROJECT_TREE)
+    allowed, _ = closure(con, pk, links, APPROVED_FROM_PROTECTED_TREE)
     for t, keys in keep_tree.items():
-        hit = keys & gone.get(t, set())
+        hit = (keys - allowed.get(t, set())) & gone.get(t, set())
         if hit:
             problems.append(f"P27's {t} rows {sorted(hit)[:10]} would be removed")
     for t, rows in PROTECT_ROWS.items():
@@ -364,6 +368,8 @@ def plan_files(con, gone, listing):
             why = ("keep", "referenced by a kept record")
         elif rel in keys_gone and why is None:
             why = ("quarantine", "generated contract of a removed project")
+        if why is None and rel in FILE_EXTRA_QUARANTINE:
+            why = ("quarantine", FILE_EXTRA_QUARANTINE[rel])
         if why is None:
             why = ("keep", "not owned by any removed record")
         out.append({"path": rel, "size": size, "action": why[0], "reason": why[1]})

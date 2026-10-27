@@ -228,21 +228,21 @@
     "foundation": {
       "j1_piers": 15,
       "pro_post_piles": 11,
-      "status": "FOUNDATION QUANTITY CONFIRMATION REQUIRED",
+      "status": "11 Pro Post piles govern (Joel, 27 Oct); J1 15-pier evidence kept, not governing",
       "costed_on": "Pro Post written 11-pile quotation",
       "superseded_working_figure": "350.00 per pier (Joel, before the written quotation; not used)"
     },
     "direct_cost_before_hst": {
       "bmr": "8676.09",
-      "vista_msrp_used_as_cost": "3851.49",
+      "vista_msrp_used_as_cost": "3851.49 additional to BMR (Joel confirmed 27 Oct); quoted price is Brayman's cost",
       "pro_post_incl_engineer_report": "3750.00",
       "subtotal_before_labour": "16277.58",
-      "labour": "9450.00 (126 man-hours x 75.00, proposed build-up for Joel's approval)",
+      "labour": "9375.00 (125 man-hours x 75.00, Joel's allowance for Ben's review)",
       "delivery_carrying": "0.00 unless Joel gives an amount",
       "equipment": "0.00",
       "permit_fee": "excluded from Linda's price",
       "complete": true,
-      "total_direct_cost": "25727.58"
+      "total_direct_cost": "25652.58"
     },
     "pricing_rule": {
       "method": "true gross margin",
@@ -263,20 +263,20 @@
     ],
     "j1_rewritten": false,
     "labour_search_2026_10_27": "No governed deck production rate, Linda labour estimate, or Brayman deck labour history in the repository or the 27 Oct Production copy. Rate 65.00/man-hour APPROVED. Superseded 27 Oct: governed rate now 75.00.",
-    "final_price_blocker": "cleared by the 126-hour build-up at 75.00; Joel approves or changes the hours",
+    "final_price_blocker": "cleared: Joel's final decisions 27 Oct (125 h, Vista additional, 11 Pro Post piles supply and install)",
     "price_tool": "takeoff/price_2026_10_27.py",
-    "customer_estimate": "Master 03 Customer Facing Estimate, priced; the unpriced draft and the interim-writer estimate are withdrawn",
+    "customer_estimate": "Master 03, priced, for review only; not sent to Linda",
     "pro_post_treatment": "SUPPLY AND INSTALL; no pile installation in Brayman labour (layout reduced 8 to 4 hours)",
     "labour_rate": {
       "rate": "75.00",
       "basis": "governed Brayman direct labour rate from 2026-10-27 (Joel); 65.00 kept for historical documents"
     },
     "price": {
-      "direct_cost": "25727.58",
-      "gross_profit": "4540.16",
-      "selling_price_before_hst": "30267.74",
-      "hst": "3934.81",
-      "total": "34202.55",
+      "direct_cost": "25652.58",
+      "gross_profit": "4526.93",
+      "selling_price_before_hst": "30179.51",
+      "hst": "3923.34",
+      "total": "34102.85",
       "true_gross_margin": "15.00%"
     },
     "governed_documents": {
@@ -286,6 +286,7 @@
       "02": "estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx",
       "03": "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx"
     },
-    "superseded": "superseded/2026-10-27-interim-writer/ (interim J1 writer output, withdrawn)"
+    "superseded": "superseded/2026-10-27-interim-writer/ (interim J1 writer output, withdrawn)",
+    "quote_status": "BMR/Darcy expires 2026-10-28, confirm/order promptly; Pro Post OT-2236 expired 2026-10-21, reconfirm before commitment"
   }
 }

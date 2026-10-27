@@ -50,7 +50,8 @@ def labour_detail():
         ("GM reference sell (15% true gross margin)", F(p["labour"] / keep)),
         ("Crew and duration", f"Two-person crew, about {(Decimal(P.PROPOSED_HOURS) / 16).quantize(Decimal('0.1'))} working days"),
         ("Helical piles", "Supplied and installed by Pro Post Foundations (OT-2236); no pile installation in Brayman labour"),
-        ("Basis", "Proposed build-up from the J1 take-off and supplier quantities; for Joel's approval"),
+        ("Basis", "Joel's estimating allowance (27 Oct 2026) from the J1 take-off and supplier quantities"),
+        ("For Ben", "Review each line; adjust the hours of any task from your experience and the price is recalculated"),
     ]
     return AM.populate(AM.LABOUR_CALCULATION_DETAIL, tokens=TOKENS, tables={
         ("Labour Task", "Basis / Scope", "Hours", "Direct labour", "GM reference sell"): rows,
@@ -60,15 +61,15 @@ def labour_detail():
 def internal_breakdown():
     p = _priced()
     material = [
-        ("Framing lumber — BMR estimate 237147/1", "$1,361.71", "Written quote. Stringer, joist, header and post counts to confirm with Darcy"),
-        ("Structural hardware — BMR", "$389.35", "Written quote. Hanger size and count to confirm"),
+        ("Framing lumber — BMR estimate 237147/1", "$1,361.71", "Written quote; Darcy's price is Brayman's cost. EXPIRES 28 OCT 2026 — confirm/order promptly"),
+        ("Structural hardware — BMR", "$389.35", "Written quote"),
         ("Trex Select Island Mist decking — BMR", "$4,827.20", "Written quote"),
-        ("Trex Island Mist fascia — BMR", "$1,666.80", "Written quote. Use of the 1×12 fascia to confirm"),
+        ("Trex Island Mist fascia — BMR", "$1,666.80", "Written quote"),
         ("Trex fasteners and fascia screw kit — BMR", "$431.03", "Written quote"),
-        ("Vista 42 in railing and gate — quote 87915-165209", F(P.VISTA), "Written quote at MSRP, additional to BMR. MSRP used as cost; BMR price to confirm with Darcy"),
-        ("Helical piles, 11 — Pro Post OT-2236, SUPPLY AND INSTALL", "$3,265.00", "Written quote. Installation included: no Brayman pile labour. 11 (Pro Post) vs 15 (J1) to confirm"),
+        ("Vista 42 in railing and gate — quote 87915-165209", F(P.VISTA), "Written quote, ADDITIONAL to BMR (Joel confirmed). Quoted price is Brayman's cost"),
+        ("Helical piles, 11 — Pro Post OT-2236, SUPPLY AND INSTALL", "$3,265.00", "Written quote; installation included, so no Brayman pile labour. 11 piles govern; J1 15-pier evidence kept. QUOTE EXPIRED 21 OCT — reconfirm before commitment"),
         ("Pro Post travel fee", "$85.00", "Written quote"),
-        ("Pro Post engineer report and compliance letter", "$400.00", "Written quote. Included; required if the town asks"),
+        ("Pro Post engineer report and compliance letter", "$400.00", "Written quote. Included as quoted; required if the town asks"),
         ("Delivery and carrying — BMR", "$0.00", "BMR: extra; no amount on any document. Absorbed"),
         ("Equipment", "$0.00", "None: Pro Post brings its own machine"),
         ("Town permit fee", "Excluded", "Not in the customer price; billed at cost"),
@@ -86,7 +87,8 @@ def internal_breakdown():
         ("HST 13%", F(p["hst"])),
         ("Total including HST", F(p["total"])),
         ("Resulting true gross margin", f"{p['margin']}%"),
-        ("Price holds", "BMR prices to 28 Oct 2026 unless the award is confirmed; Pro Post OT-2236 lapsed 21 Oct — reconfirm"),
+        ("Quote status", "BMR/Darcy pricing expires 28 Oct 2026 — confirm/order promptly. Pro Post OT-2236 expired 21 Oct — reconfirm before commitment"),
+        ("Status", "For Ben's review. Customer estimate not sent to Linda"),
     ]
     return AM.populate(AM.INTERNAL_DETAILED_COST_BREAKDOWN, tokens=TOKENS, tables={
         ("Material / Package", "Direct Cost", "Status"): material,

@@ -19,12 +19,12 @@ from pathlib import Path
 CASE = Path(__file__).resolve().parents[1]
 
 BMR = Decimal("8676.09")            # BMR Winchester estimate 237147/1, pre-HST
-VISTA = Decimal("3851.49")          # Vista 87915-165209, MSRP: used as cost until Darcy gives BMR's price
+VISTA = Decimal("3851.49")          # Vista 87915-165209: ADDITIONAL to BMR; quoted price is Brayman's cost (Joel, 27 Oct)
 PRO_POST = Decimal("3750.00")       # OT-2236 subtotal: 11 piles 3,265 + travel 85 + engineer report 400
 LABOUR_RATE = Decimal("75")         # Governed Brayman direct labour rate from 27 Oct 2026 (docs/pricing-policy.md).
 
-# Labour build-up from the J1 take-off and the supplier quantities (27 Oct 2026). Proposed, not a governed
-# production rate: Joel approves or changes each line. Two-person crew, 8-hour days.
+# Labour build-up from the J1 take-off and the supplier quantities (27 Oct 2026): Joel's 125 man-hour estimating
+# allowance for Ben's review (Ben may adjust any line). Not a governed production rate. Two-person crew, 8-hour days.
 LABOUR_TASKS = (
     ("Layout and mark the pile locations", "deck and stair lines; 11 pile locations marked for Pro Post (Pro Post supplies AND installs the piles: no pile labour here)", 4),
     ("Posts and beams", "11 posts cut on brackets; built-up 2×10 beams (7 × 12 ft + 4 × 10 ft), 3/8 in carriage bolts", 16),
@@ -33,7 +33,7 @@ LABOUR_TASKS = (
     ("Stairs", "10 ft wide, 4 treads, 5 risers; stringers cut and hung", 16),
     ("Trex decking", "about 147 sq ft (upper 116.8 + lower 30), every board scribed to the pool curve on the upper deck", 16),
     ("Stair treads and risers (Trex)", "8 tread boards, 5 riser boards 10 ft", 8),
-    ("Trex fascia", "about 44 ft of exposed rim, colour-matched screws", 6),
+    ("Trex fascia", "about 44 ft of exposed rim, colour-matched screws", 5),
     ("Railing blocking", "solid blocking under each Vista post base", 4),
     ("Vista railing and gate", "11 sections, 14 posts on base plates, pickets, 48 in gate", 16),
     ("Unload and carry materials", "BMR delivery to the back yard (carrying is extra from BMR)", 4),

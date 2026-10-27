@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| Status | 27 Oct 2026 costing issue is current: Masters 01, 02 and 03 populated with Linda's data. 126 man-hours at $75 (proposed, for Joel's approval). Selling price $30,267.74 + HST $3,934.81 = $34,202.55. Vista's payable price and the foundation quantity are open. Issue J1 (1 Oct) is historical. |
+| Status | 27 Oct 2026 costing issue is current: Masters 01, 02 and 03 populated with Linda's data. 125 man-hours at $75 (Joel's allowance; Ben may adjust). Selling price $30,179.51 + HST $3,923.34 = $34,102.85. For Ben's review; not sent to Linda. BMR expires 28 Oct; Pro Post quote expired 21 Oct, reconfirm. Issue J1 (1 Oct) is historical. |
 | Date preserved | 2026-09-29 |
 | Client spelling on the located documents | **Linda Bushel** |
 | Location | 12 D'Arcy's Way, Kemptville, Ontario, K0G 1J0 |
@@ -110,7 +110,7 @@ Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged;
 | `supplier/pro-post-foundations/2026-10-27-forwarded-OT-2236-estimate.eml` | Ben's forward of the Pro Post email, 27 Oct 2026, with all attachments. |
 | `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236.md` | Record and arithmetic check. |
 | `takeoff/2026-10-27-supplier-quote-reconciliation.md` | Internal record: every requirement, J1 quantity, supplier quantity, price, status. 15 piers (J1) against 11 piles (Pro Post). No approved master exists for it, so it stays a Markdown record. |
-| `takeoff/price_2026_10_27.py` | One calculation: BMR $8,676.09 + Vista $3,851.49 (MSRP used as cost) + Pro Post $3,750.00 supply and install + labour 126 man-hours × $75 = $25,727.58 direct; ÷ 0.85 = $30,267.74; HST 13% $3,934.81; total $34,202.55. |
+| `takeoff/price_2026_10_27.py` | One calculation: BMR $8,676.09 + Vista $3,851.49 (additional to BMR; Joel confirmed) + Pro Post $3,750.00 supply and install + labour 125 man-hours × $75 = $9,375.00; direct $25,652.58; ÷ 0.85 = $30,179.51; HST 13% $3,923.34; total $34,102.85. |
 | `takeoff/issue_masters_2026_10_27.py` | Populates Masters 01, 02 and 03 (Approved Master Template Family V1) through `app/services/approved_masters.py`. The only route for these documents. |
 | `estimates/internal/2026-10-27-linda-bushel-01-labour-calculation-detail.docx` / `.pdf` | Master 01 Labour Calculation Detail. Internal. |
 | `estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx` / `.pdf` | Master 02 Internal Detailed Cost Breakdown. Internal. Pro Post shown as SUPPLY AND INSTALL; no pile labour. |
@@ -120,6 +120,6 @@ Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged;
 | `superseded/2026-10-27-interim-writer/` | Withdrawn: the earlier 27 Oct internal cost, customer estimate and reconciliation PDFs laid out by the interim J1 writer. Not to be issued. |
 | `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: Masters 01, 02, 03 (DOCX and PDF), the reconciliation record, the supplier originals, the pile locations and the J1 drawing. |
 
-Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **Joel approves or changes the 126 man-hours** ($75 per man-hour, the governed Brayman rate from 27 Oct 2026). Pro Post supplies and installs the piles: no pile labour in Brayman's hours. Delivery and carrying $0 (no amount on any document), equipment none, permit fee excluded and billed at cost, skirting excluded. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.
+Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **125 man-hours is Joel's allowance; Ben may adjust it** ($75 per man-hour, the governed Brayman rate from 27 Oct 2026). Pro Post supplies and installs the piles: no pile labour in Brayman's hours. Delivery and carrying $0 (no amount on any document), equipment none, permit fee excluded and billed at cost, skirting excluded. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.
 
 `takeoff/branded_issue_pdf.py` is the interim J1 writer. It now refuses any issue other than the historical 1 Oct 2026 J1 issue (`tests/test_linda_case_interim_writer_retired.py`). Current documents come only from the approved masters (`docs/governance/approved-document-generation.md`).

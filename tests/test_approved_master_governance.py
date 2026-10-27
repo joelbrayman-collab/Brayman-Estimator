@@ -96,11 +96,11 @@ def test_population_changes_only_the_designated_content_of_the_master(tmp_path, 
                       tokens={"CLIENT": "Linda Bushel (synthetic)", "PROJECT": "Rear deck", "SITE": "1 Test Rd",
                               "DATE": "2026-10-27", "AMOUNT": "$1,130.00"},
                       tables={("Included Scope", "Description"): [("A", "a"), ("B", "b"), ("C", "c")]},
-                      bullets=["Only one exclusion."])
+                      bullets=["Only one exclusion.", "Closing note."])
     produced = Document(io.BytesIO(out))
     text = "\n".join(p.text for p in produced.paragraphs)
-    assert "Total including HST: $1,130.00" in text and "• Only one exclusion." in text
-    assert "Second standard item" not in text
+    assert "Total including HST: $1,130.00" in text and "• Only one exclusion." in text and text.endswith("• Closing note.")
+    assert "standard item" not in text
     scope = [t for t in produced.tables if t.rows[0].cells[0].text == "Included Scope"][0]
     assert [r.cells[0].text for r in scope.rows[1:]] == ["A", "B", "C"]
     assert produced.sections[0].footer.paragraphs[0].text == "Linda Bushel (synthetic) | 1 Test Rd | Customer-Facing Estimate | 2026-10-27"

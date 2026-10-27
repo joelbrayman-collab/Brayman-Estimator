@@ -210,20 +210,23 @@ def _fill_table(table, rows: Sequence[Sequence[str]]) -> None:
 
 
 def _fill_bullets(document, bullets: Sequence[str]) -> None:
-    """The master's bullet list (paragraphs starting with '•') takes the project's items, in its own style."""
+    """The master's bullet list takes the project's items. Items keep the formatting of the master's list
+    items; the master's closing bullet (the last one) keeps its own formatting and stays last."""
     existing = [p for p in document.paragraphs if p.text.startswith("•")]
-    if not existing:
+    if len(existing) < 2:
         raise ApprovedMasterError(BLOCK_TABLE_NOT_IN_MASTER, "the master has no bullet list")
-    template = existing[-1]._p
-    anchor = template
-    for _ in range(len(bullets) - len(existing)):
-        clone = copy.deepcopy(template)
+    items, closing = list(bullets[:-1]), bullets[-1]
+    body = existing[:-1]
+    anchor = body[-1]._p
+    for _ in range(len(items) - len(body)):
+        clone = copy.deepcopy(body[-1]._p)  # a copy of the master's own list item
         anchor.addnext(clone)
         anchor = clone
     current = [p for p in document.paragraphs if p.text.startswith("•")]
-    for paragraph in current[len(bullets):]:
+    for paragraph in current[len(items):-1]:
         paragraph._p.getparent().remove(paragraph._p)
-    for paragraph, text in zip([p for p in document.paragraphs if p.text.startswith("•")], bullets):
+    current = [p for p in document.paragraphs if p.text.startswith("•")]
+    for paragraph, text in zip(current, items + [closing]):
         runs = paragraph.runs
         runs[0].text = "• " + text
         for run in runs[1:]:

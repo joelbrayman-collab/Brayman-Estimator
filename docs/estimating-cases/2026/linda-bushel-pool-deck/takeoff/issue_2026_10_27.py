@@ -34,7 +34,7 @@ RECORDS = {
     "SUPPLIER/Vista rail quote 87915-165209 (26 Oct 2026, MSRP).pdf": "supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.pdf",
     "SUPPLIER/Pro Post OT-2236 (6 Oct 2026).pdf": "supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-estimate.pdf",
     "SUPPLIER/Pro Post OT-2236 pile locations.png": "supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-pile-locations.png",
-    "DRAWINGS/J1 preliminary 11x17 (1 Oct 2026, 15 piers).pdf": "drawings/2026-10-01-j1-preliminary-11x17.pdf",
+    "DRAWINGS/Linda Bushel - Construction Drawings J2 (27 Oct 2026).pdf": "drawings/2026-10-27-j2-construction-drawings-11x17.pdf",
 }
 ZIP = CASE / "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
 

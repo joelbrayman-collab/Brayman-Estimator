@@ -260,7 +260,8 @@
       "estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx",
       "estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx",
       "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip",
-      "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx"
+      "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx",
+      "drawings/2026-10-27-j2-construction-drawings-11x17.pdf"
     ],
     "j1_rewritten": false,
     "labour_search_2026_10_27": "No governed deck production rate, Linda labour estimate, or Brayman deck labour history in the repository or the 27 Oct Production copy. Rate 65.00/man-hour APPROVED. Superseded 27 Oct: governed rate now 75.00.",
@@ -298,6 +299,14 @@
       "total": "29317.23",
       "rounding_adjustment": "0.00",
       "file": "estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx"
+    },
+    "drawings": {
+      "issue": "J2",
+      "file": "drawings/2026-10-27-j2-construction-drawings-11x17.pdf",
+      "script": "takeoff/drawings_j2_2026_10_27.py",
+      "matches": "Masters 03 and 08: 11 Pro Post piles, Trex Select Island Mist, Vista 42 in and 48 in gate, no skirting, 11 stringers at 12 in",
+      "open_internal": "stringers: about 7 × 2×12×10 and 1 hanger more than BMR quoted, about $311, not in the price; beam spans confirmed at permit",
+      "j1": "kept as history, not issued to the customer"
     }
   }
 }

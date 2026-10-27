@@ -117,6 +117,7 @@ Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged;
 | `estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx` / `.pdf` | Master 03 Customer Facing Estimate. Scope, price, HST, total, exclusions. No internal cost or margin. |
 | `estimates/customer/2026-10-27-linda-bushel-08-customer-detailed-cost-estimate.docx` / `.pdf` | Master 08 Customer Detailed Cost Estimate: Linda's selling prices by material, foundation and labour task (125 hours). No supplier cost, internal rate or margin. |
 | `*.preview.pdf` beside them | LibreOffice preview only (Inter substituted for Aptos). Not issued. The issued PDFs are exported with Word for Mac "Save as PDF" (FG-022 register). |
+| `drawings/2026-10-27-j2-construction-drawings-11x17.pdf` | Issue J2, the customer drawing set (8 sheets) matching the estimate: 11 Pro Post piles, Trex, Vista, no skirting, 11 stringers. Written by `takeoff/drawings_j2_2026_10_27.py`. J1 stays as history. |
 | `takeoff/issue_2026_10_27.py` | Builds Ben's package from the master outputs and the supplier originals. Writes no document; stops if a Word-exported PDF is missing. |
 | `superseded/2026-10-27-interim-writer/` | Withdrawn: the earlier 27 Oct internal cost, customer estimate and reconciliation PDFs laid out by the interim J1 writer. Not to be issued. |
 | `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: Masters 01, 02, 03 (DOCX and PDF), the reconciliation record, the supplier originals, the pile locations and the J1 drawing. |

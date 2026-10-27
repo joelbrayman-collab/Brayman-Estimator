@@ -91,6 +91,7 @@ def internal_breakdown():
         ("Resulting true gross margin", f"{p['margin']}%"),
         ("Quote status", "BMR/Darcy pricing expires 28 Oct 2026 — confirm/order promptly. Pro Post OT-2236 expired 21 Oct — reconfirm before commitment"),
         ("Customer detail (Master 08)", f"Each line ÷ 0.875, rounded to the cent; materials and foundation {F(C['materials_total'])} + labour {F(C['labour_total'])} = {F(C['selling'])}; rounding adjustment {F(C['residual'])}"),
+        ("Open quantity (J2 drawings)", "J2 shows 11 stair stringers at 12 in on centre (Trex Select 1×6 treads: 12 in maximum). BMR quotes 4 × 2×12×10 and 10 stringer hangers: about 7 sticks and 1 hanger short, about $311 at BMR's prices. Not in the price; confirm with Ben and Darcy"),
         ("Status", "For Ben's review. Customer documents not sent to Linda"),
     ]
     return AM.populate(AM.INTERNAL_DETAILED_COST_BREAKDOWN, tokens=TOKENS, tables={
@@ -120,7 +121,7 @@ EXCLUSIONS = [
     "Pile extensions, if the foundation contractor must go deeper to reach the required resistance (agreed with you first).",
     "Owner to provide about 46 in of access for the pile machine and to point out private buried services.",
     "Owner-requested changes, concealed conditions and revisions to drawings/engineering after acceptance.",
-    "This estimate is valid for 7 days; supplier prices are time-limited.",
+    "This estimate is valid for 7 days.",
     "Project-specific inclusions are listed in the included-scope table.",
 ]
 
@@ -158,7 +159,7 @@ def customer_detail():
         ("Estimate subtotal", F(p["selling"])),
         ("HST 13%", F(p["hst"])),
         ("Total including HST", F(p["total"])),
-        ("Pricing", "Material and foundation prices are confirmed with our suppliers when the work is ordered. This estimate is valid for 7 days."),
+        ("Validity", "This estimate is valid for 7 days. Prices are confirmed when the work is ordered."),
         ("Not included", "Town permit fee (billed at cost), electrical, plumbing, painting, grading and landscaping, a guard along the open pool edge, skirting, and pile extensions if deeper piles are needed (agreed with you first)"),
     ]
     return AM.populate(AM.CUSTOMER_DETAILED_COST_ESTIMATE, tokens=TOKENS, tables={

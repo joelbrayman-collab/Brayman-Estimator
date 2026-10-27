@@ -1,13 +1,13 @@
 """Linda Bushel pool deck — direct cost and selling price, 27 Oct 2026.
 
 One calculation for Ben's internal sheet and Linda's estimate. Written supplier amounts are constants
-copied from the originals in supplier/ (see the .md records beside them). Brayman labour is the only
-input this repository cannot supply: no governed deck production rate, Linda labour estimate or
+copied from the originals in supplier/ (see the .md records beside them). Brayman labour has no governed
+production rate: no governed deck production rate, Linda labour estimate or
 historical Brayman deck labour exists (searched 27 Oct 2026; see the internal sheet). Joel supplies the
 man-hours; the rate and the margin are governed (docs/pricing-policy.md, ORG-001 records).
 
-    python price_2026_10_27.py                      # internal sheet with the labour table; no customer price
-    python price_2026_10_27.py --man-hours 100      # internal sheet, Linda's priced estimate, PDFs, package
+    python price_2026_10_27.py                      # priced at the proposed labour build-up
+    python price_2026_10_27.py --man-hours 100      # priced at a man-hour total Joel chooses instead
     python price_2026_10_27.py --man-hours 100 --delivery 325   # with a delivery/carrying amount
 """
 
@@ -25,10 +25,28 @@ BEGIN, END = "<!-- PRICE:BEGIN -->", "<!-- PRICE:END -->"
 BMR = Decimal("8676.09")            # BMR Winchester estimate 237147/1, pre-HST
 VISTA = Decimal("3851.49")          # Vista 87915-165209, MSRP: used as cost until Darcy gives BMR's price
 PRO_POST = Decimal("3750.00")       # OT-2236 subtotal: 11 piles 3,265 + travel 85 + engineer report 400
-LABOUR_RATE = Decimal("65")         # ORG-001 direct labour cost, $ per man-hour (APPROVED, 29 Aug 2026)
+LABOUR_RATE = Decimal("75")         # Ben's labour rate, $ per hour (Joel, 27 Oct 2026). The platform policy and
+                                    # the Production rate standard still say $65 until they are updated.
+
+# Labour build-up from the J1 take-off and the supplier quantities (27 Oct 2026). Proposed, not a governed
+# production rate: Joel approves or changes each line. Two-person crew, 8-hour days.
+LABOUR_TASKS = (
+    ("Layout, mark the pile locations, meet Pro Post on site", "11 pile locations; deck and stair lines", 8),
+    ("Posts and beams", "11 posts cut on brackets; built-up 2×10 beams (7 × 12 ft + 4 × 10 ft), 3/8 in carriage bolts", 16),
+    ("Upper-deck framing", "16 joists cut to the pool curve, 8-piece curved header with 14 skewed hangers, blocking", 24),
+    ("Lower-deck framing", "9 joists 3 ft, lower beam, blocking, lower posts cut on site", 8),
+    ("Stairs", "10 ft wide, 4 treads, 5 risers; stringers cut and hung", 16),
+    ("Trex decking", "about 147 sq ft (upper 116.8 + lower 30), every board scribed to the pool curve on the upper deck", 16),
+    ("Stair treads and risers (Trex)", "8 tread boards, 5 riser boards 10 ft", 8),
+    ("Trex fascia", "about 44 ft of exposed rim, colour-matched screws", 6),
+    ("Railing blocking", "solid blocking under each Vista post base", 4),
+    ("Vista railing and gate", "11 sections, 14 posts on base plates, pickets, 48 in gate", 16),
+    ("Unload and carry materials", "BMR delivery to the back yard (carrying is extra from BMR)", 4),
+    ("Clean-up and final walk-through", "debris, offcuts, punch list", 4),
+)
+PROPOSED_HOURS = sum(hours for _task, _basis, hours in LABOUR_TASKS)
 MARGIN = Decimal("0.15")            # ORG-001-TRUE-GM-15: selling price = direct cost / (1 - 0.15)
 HST = Decimal("0.13")               # Ontario HST, applied after the pre-tax selling price
-SCENARIOS = (80, 100, 120, 140)
 
 
 def money(value: Decimal) -> Decimal:
@@ -50,9 +68,19 @@ def price(man_hours, delivery=Decimal("0")) -> dict:
             "total": selling + tax}
 
 
+def labour_block() -> list:
+    rows = ["## Labour build-up (proposed for Joel's approval)", "",
+            "Built from the J1 take-off and the supplier quantities. No governed deck production rate exists, so each line is a proposed allowance for a two-person crew: approve it or change any line.", "",
+            "| Task | Quantity basis | Man-hours |", "|---|---|---|"]
+    rows += [f"| {task} | {basis} | {hours} |" for task, basis, hours in LABOUR_TASKS]
+    days = Decimal(PROPOSED_HOURS) / 16
+    rows += [f"| **Total** | Two-person crew, about {days.quantize(Decimal('0.1'))} working days | **{PROPOSED_HOURS}** |", ""]
+    return rows
+
+
 def internal_block(chosen) -> str:
     known = BMR + VISTA + PRO_POST
-    rows = [
+    rows = labour_block() + [
         "## Direct cost and selling price",
         "",
         "| Cost component | Cost (pre-HST) | Evidence / status |",
@@ -63,8 +91,8 @@ def internal_block(chosen) -> str:
     ]
     if chosen:
         rows += [
-            f"| Brayman labour | {fmt(chosen['labour'])} | {chosen['man_hours']} man-hours approved by Joel × $65 (governed rate) |",
-            f"| Delivery / carrying | {fmt(chosen['delivery'])} | {'Joel' if chosen['delivery'] else 'Not charged separately — absorbed (Joel)'} |",
+            f"| Brayman labour | {fmt(chosen['labour'])} | {chosen['man_hours']} man-hours × $75 (Ben's rate). Build-up below; Joel approves or changes it. |",
+            f"| Delivery / carrying | {fmt(chosen['delivery'])} | {'Joel' if chosen['delivery'] else 'BMR: delivery and carrying extra; no amount on any document. $0 (absorbed) until Darcy gives one'} |",
             "| Equipment | $0.00 | None: Pro Post brings its own machine; hand tools only |",
             "| Permit fee | $0.00 | Excluded from Linda's price (as in J1); billed at cost if Brayman pulls the permit |",
             f"| **TOTAL DIRECT COST** | **{fmt(chosen['direct'])}** | |",
@@ -79,26 +107,9 @@ def internal_block(chosen) -> str:
             f"| HST 13% | {fmt(chosen['hst'])} |",
             f"| **Linda estimate total** | **{fmt(chosen['total'])}** |",
             f"| Resulting true gross margin | {chosen['margin']}% |",
+            "",
+            f"Every 10 man-hours more or less changes the price before HST by {fmt(LABOUR_RATE * 10 / (Decimal(1) - MARGIN))}.",
         ]
-    else:
-        rows += [
-            f"| Brayman labour | **NOT SET** | **Need Joel to approve the total man-hours** (rate $65, governed). No governed deck production rate, Linda labour estimate or Brayman deck history exists. |",
-            "| Delivery / carrying | $0.00 unless Joel gives an amount | BMR: \"delivery extra, carrying extra\"; no amount on any document |",
-            "| Equipment | $0.00 | None: Pro Post brings its own machine |",
-            "| Permit fee | $0.00 | Excluded from Linda's price (as in J1) |",
-            f"| **Total direct cost before labour** | **{fmt(known)}** | All three written supplier amounts |",
-            "",
-            "Governed pricing: ORG-001-TRUE-GM-15, **true gross margin 15%** (not markup). Selling price = direct cost ÷ 0.85.",
-            "",
-            "Choose the man-hours (2-person crew; 8 h days: 80 h = 5 days, 100 h = 6¼ days, 120 h = 7½ days, 140 h = 8¾ days):",
-            "",
-            "| Man-hours | Labour | Total direct cost | Gross profit | Selling price before HST | HST 13% | Linda total |",
-            "|---|---|---|---|---|---|---|",
-        ]
-        for hours in SCENARIOS:
-            p = price(hours)
-            rows.append(f"| {hours} | {fmt(p['labour'])} | {fmt(p['direct'])} | {fmt(p['profit'])} | {fmt(p['selling'])} | {fmt(p['hst'])} | {fmt(p['total'])} |")
-        rows += ["", "Each man-hour adds $65.00 of cost and $76.47 to the price before HST ($86.41 with HST)."]
     return "\n".join(rows)
 
 
@@ -169,12 +180,12 @@ A new freestanding deck beside your above-ground pool: an upper deck at the pool
 
 - Town building-permit fee (Brayman can apply for the permit; the town's fee is billed at cost).
 - Changes to the pool, its equipment or its fence, other than reinstalling a removed panel.
-- A guard along the open pool edge, skirting, electrical work, lighting, landscaping or grading.
+- A guard along the open pool edge, skirting under either deck, electrical work, lighting, landscaping or grading.
 - Removal of an existing deck or structure.
 
 ## Validity
 
-Material and foundation prices come from our suppliers' current quotations and are held for a short time. This estimate is valid for 14 days. A signed agreement and deposit confirm the order.
+Material and foundation prices come from our suppliers' current quotations and are held for a short time. This estimate is valid for 7 days. A signed agreement and deposit confirm the order.
 """
 
 
@@ -189,10 +200,10 @@ def write(chosen) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--man-hours", type=int)
+    parser.add_argument("--man-hours", type=int, default=PROPOSED_HOURS)
     parser.add_argument("--delivery", type=Decimal, default=Decimal("0"))
     args = parser.parse_args()
-    chosen = price(args.man_hours, args.delivery) if args.man_hours else None
+    chosen = price(args.man_hours, args.delivery)
     write(chosen)
     print("internal sheet updated", "with" if chosen else "without", "a chosen labour figure")
     if chosen:

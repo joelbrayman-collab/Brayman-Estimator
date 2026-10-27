@@ -77,9 +77,11 @@ Searched 27 Oct 2026 for anything that can calculate Linda's labour:
 | `app/services/deck_framing_quantity.py` and the deck take-off engine | Member counts only; by design "does not invent a labour production rate". |
 | Production labour tasks and production-rate standards (27 Oct copy of the Production database) | 7 tasks, all UAT or concrete; 1 production rate, synthetic and withdrawn. No deck, framing, decking or railing rate. |
 | Production historical estimates (24) and their labour lines (120) | Slabs, ICF, a garage, a renovation, a concrete gate. No deck, stair or railing labour. |
-| Direct labour cost rate | **$65.00 per man-hour**, APPROVED (ORG-001, 29 Aug 2026; docs/pricing-policy.md). |
+| Direct labour cost rate | Platform policy and the Production rate standard: $65.00 per man-hour (29 Aug 2026). |
 
-**Result: no governed method gives Linda's labour hours.** The rate is governed; the hours are a decision for Joel. The table below prices the job at 80, 100, 120 and 140 man-hours so that one number finishes it.
+**Rate used: $75.00 per hour — Ben's labour rate, set by Joel on 27 Oct 2026.** The platform pricing policy (docs/pricing-policy.md) and the Production rate standard still say $65 and are updated separately; this case does not change them.
+
+**Hours: no governed method exists, so the hours are built up task by task from the take-off below** and proposed for Joel's approval. Change any line and the price follows.
 
 ## E. Delivery and carrying
 
@@ -97,6 +99,26 @@ $0.00. Pro Post brings its own installation machine; Brayman's work needs hand a
 | Town building-permit fee | Excluded from Linda's price, as in J1; billed at cost if Brayman applies. |
 
 <!-- PRICE:BEGIN -->
+## Labour build-up (proposed for Joel's approval)
+
+Built from the J1 take-off and the supplier quantities. No governed deck production rate exists, so each line is a proposed allowance for a two-person crew: approve it or change any line.
+
+| Task | Quantity basis | Man-hours |
+|---|---|---|
+| Layout, mark the pile locations, meet Pro Post on site | 11 pile locations; deck and stair lines | 8 |
+| Posts and beams | 11 posts cut on brackets; built-up 2×10 beams (7 × 12 ft + 4 × 10 ft), 3/8 in carriage bolts | 16 |
+| Upper-deck framing | 16 joists cut to the pool curve, 8-piece curved header with 14 skewed hangers, blocking | 24 |
+| Lower-deck framing | 9 joists 3 ft, lower beam, blocking, lower posts cut on site | 8 |
+| Stairs | 10 ft wide, 4 treads, 5 risers; stringers cut and hung | 16 |
+| Trex decking | about 147 sq ft (upper 116.8 + lower 30), every board scribed to the pool curve on the upper deck | 16 |
+| Stair treads and risers (Trex) | 8 tread boards, 5 riser boards 10 ft | 8 |
+| Trex fascia | about 44 ft of exposed rim, colour-matched screws | 6 |
+| Railing blocking | solid blocking under each Vista post base | 4 |
+| Vista railing and gate | 11 sections, 14 posts on base plates, pickets, 48 in gate | 16 |
+| Unload and carry materials | BMR delivery to the back yard (carrying is extra from BMR) | 4 |
+| Clean-up and final walk-through | debris, offcuts, punch list | 4 |
+| **Total** | Two-person crew, about 8.1 working days | **130** |
+
 ## Direct cost and selling price
 
 | Cost component | Cost (pre-HST) | Evidence / status |
@@ -104,24 +126,24 @@ $0.00. Pro Post brings its own installation machine; Brayman's work needs hand a
 | BMR materials | $8,676.09 | Written: estimate 237147/1, 26 Oct 2026 |
 | Vista railing and gate | $3,851.49 | Written: quote 87915-165209 at **MSRP**; additional to BMR. Used as Brayman's cost until Darcy gives BMR's price. Any discount lowers cost and raises margin; the price to Linda does not change. |
 | Pro Post helical foundation (11 piles, travel, engineer report) | $3,750.00 | Written: OT-2236. Includes the $400 report in full (conditional on the town). Pile count to confirm; reconfirm the lapsed quote. |
-| Brayman labour | **NOT SET** | **Need Joel to approve the total man-hours** (rate $65, governed). No governed deck production rate, Linda labour estimate or Brayman deck history exists. |
-| Delivery / carrying | $0.00 unless Joel gives an amount | BMR: "delivery extra, carrying extra"; no amount on any document |
-| Equipment | $0.00 | None: Pro Post brings its own machine |
-| Permit fee | $0.00 | Excluded from Linda's price (as in J1) |
-| **Total direct cost before labour** | **$16,277.58** | All three written supplier amounts |
+| Brayman labour | $9,750.00 | 130 man-hours × $75 (Ben's rate). Build-up below; Joel approves or changes it. |
+| Delivery / carrying | $0.00 | BMR: delivery and carrying extra; no amount on any document. $0 (absorbed) until Darcy gives one |
+| Equipment | $0.00 | None: Pro Post brings its own machine; hand tools only |
+| Permit fee | $0.00 | Excluded from Linda's price (as in J1); billed at cost if Brayman pulls the permit |
+| **TOTAL DIRECT COST** | **$26,027.58** | |
 
 Governed pricing: ORG-001-TRUE-GM-15, **true gross margin 15%** (not markup). Selling price = direct cost ÷ 0.85.
 
-Choose the man-hours (2-person crew; 8 h days: 80 h = 5 days, 100 h = 6¼ days, 120 h = 7½ days, 140 h = 8¾ days):
+| | Amount |
+|---|---|
+| Total direct cost | $26,027.58 |
+| Gross profit | $4,593.10 |
+| **Selling price before HST** | **$30,620.68** |
+| HST 13% | $3,980.69 |
+| **Linda estimate total** | **$34,601.37** |
+| Resulting true gross margin | 15.00% |
 
-| Man-hours | Labour | Total direct cost | Gross profit | Selling price before HST | HST 13% | Linda total |
-|---|---|---|---|---|---|---|
-| 80 | $5,200.00 | $21,477.58 | $3,790.16 | $25,267.74 | $3,284.81 | $28,552.55 |
-| 100 | $6,500.00 | $22,777.58 | $4,019.57 | $26,797.15 | $3,483.63 | $30,280.78 |
-| 120 | $7,800.00 | $24,077.58 | $4,248.98 | $28,326.56 | $3,682.45 | $32,009.01 |
-| 140 | $9,100.00 | $25,377.58 | $4,478.40 | $29,855.98 | $3,881.28 | $33,737.26 |
-
-Each man-hour adds $65.00 of cost and $76.47 to the price before HST ($86.41 with HST).
+Every 10 man-hours more or less changes the price before HST by $882.35.
 <!-- PRICE:END -->
 
 ## Dates

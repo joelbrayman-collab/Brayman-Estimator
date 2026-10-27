@@ -1,32 +1,34 @@
-"""27 Oct 2026 costing issue: PDFs of the supplier reconciliation, Ben's internal cost and Linda's estimate,
-and the package for Ben. Uses the same interim Brayman-branded writer as issue J1 (branded_issue_pdf.build).
-Supplier originals are copied into the package unchanged; nothing here regenerates them.
+"""27 Oct 2026 costing issue: the package for Ben.
+
+The three governed documents are populated from Approved Master Template Family V1 by
+issue_masters_2026_10_27.py (Masters 01, 02 and 03 through app/services/approved_masters.py). Their PDFs are
+exported with Microsoft Word for Mac "Save as PDF", the approved route in the FG-022 register. This script
+does not write any document: it packages the master outputs and the supplier originals unchanged.
+
+The package is not built from LibreOffice previews or from the retired interim writer. If a Word-exported PDF
+is missing, the script stops.
+
+The supplier reconciliation has no approved master; it travels as the internal case record (Markdown).
 
 Run from this folder:  python issue_2026_10_27.py
 """
 
 from __future__ import annotations
 
+import sys
 import zipfile
 from pathlib import Path
 
-from reportlab.lib.pagesizes import landscape, letter
-
-from branded_issue_pdf import CASE, build
-
-FOOTER = "27 Oct 2026"
-JOBS = [
-    ("takeoff/2026-10-27-supplier-quote-reconciliation.md", "takeoff/2026-10-27-supplier-quote-reconciliation.pdf",
-     "SUPPLIER QUOTE RECONCILIATION", "Internal. Not for the customer.", landscape(letter)),
-    ("estimates/internal/2026-10-27-ben-internal-cost.md", "estimates/internal/2026-10-27-ben-internal-cost.pdf",
-     "INTERNAL COST FOR BEN", "INTERNAL — NOT FOR CUSTOMER", letter),
-    ("estimates/customer/2026-10-27-linda-bushel-estimate.md", "estimates/customer/2026-10-27-linda-bushel-estimate.pdf",
-     "POOL DECK ESTIMATE", "Estimate for Linda Bushel.", letter),
-]
-PACKAGE = {
-    "Linda Bushel — Ben Internal Cost.pdf": "estimates/internal/2026-10-27-ben-internal-cost.pdf",
-    "Linda Bushel — Customer Estimate.pdf": "estimates/customer/2026-10-27-linda-bushel-estimate.pdf",
-    "Linda Bushel — Supplier Quote Reconciliation.pdf": "takeoff/2026-10-27-supplier-quote-reconciliation.pdf",
+CASE = Path(__file__).resolve().parents[1]
+INTERNAL = "estimates/internal/2026-10-27-linda-bushel-"
+CUSTOMER = "estimates/customer/2026-10-27-linda-bushel-"
+GOVERNED = {
+    "Linda Bushel - 01 Labour Calculation Detail": INTERNAL + "01-labour-calculation-detail",
+    "Linda Bushel - 02 Internal Detailed Cost Breakdown": INTERNAL + "02-internal-detailed-cost-breakdown",
+    "Linda Bushel - 03 Customer Facing Estimate": CUSTOMER + "03-customer-facing-estimate",
+}
+RECORDS = {
+    "INTERNAL RECORD/Supplier quote reconciliation (27 Oct 2026).md": "takeoff/2026-10-27-supplier-quote-reconciliation.md",
     "SUPPLIER/BMR estimate 237147-1 (26 Oct 2026).pdf": "supplier/bmr-winchester/2026-10-26-darcy-bmr-estimate-237147-1.pdf",
     "SUPPLIER/Vista rail quote 87915-165209 (26 Oct 2026, MSRP).pdf": "supplier/bmr-winchester/2026-10-26-vista-rail-quote-87915-165209.pdf",
     "SUPPLIER/Pro Post OT-2236 (6 Oct 2026).pdf": "supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236-estimate.pdf",
@@ -37,19 +39,22 @@ ZIP = CASE / "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
 
 
 def main() -> None:
-    for source, target, title, status, size in JOBS:
-        if not (CASE / source).exists():
-            print("skipped (not issued yet)", source)
-            continue
-        build(CASE / source, CASE / target, title, status, size, footer_date=FOOTER)
-        print("wrote", target)
+    entries = {}
+    missing = []
+    for name, stem in GOVERNED.items():
+        for suffix in (".docx", ".pdf"):
+            path = CASE / (stem + suffix)
+            (entries.__setitem__(name + suffix, path) if path.exists() else missing.append(stem + suffix))
+    for name, relative in RECORDS.items():
+        path = CASE / relative
+        (entries.__setitem__(name, path) if path.exists() else missing.append(relative))
+    if missing:
+        sys.exit("STOP: not packaged; missing " + ", ".join(missing))
     ZIP.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for name, relative in PACKAGE.items():
-            if not (CASE / relative).exists():
-                continue
-            archive.write(CASE / relative, Path("LINDA_BUSHEL_POOL_DECK_2026-10-27") / name)
-    print("package", ZIP.relative_to(CASE))
+        for name, path in entries.items():
+            archive.write(path, Path("LINDA_BUSHEL_POOL_DECK_2026-10-27") / name)
+    print("package", ZIP.relative_to(CASE), len(entries), "files")
 
 
 if __name__ == "__main__":

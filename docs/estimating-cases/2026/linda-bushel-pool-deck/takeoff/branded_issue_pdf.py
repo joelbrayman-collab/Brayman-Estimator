@@ -95,7 +95,23 @@ def _on_page(canvas, doc, document_title: str, status: str, footer_date: str = "
     canvas.restoreState()
 
 
+# Retired for current documents (Joel, 27 Oct 2026). This writer stays only to reproduce the historical J1
+# issue of 1 Oct 2026. Every current Labour Calculation Detail, Internal Detailed Cost Breakdown, Customer
+# Facing Estimate and the other FG-022 document types is populated from its approved master through
+# app/services/approved_masters.py. See docs/governance/approved-document-generation.md.
+HISTORICAL_ISSUE_DATES = frozenset({"1 Oct 2026"})
+
+
+class InterimWriterRetired(RuntimeError):
+    block_code = "ALTERNATE_WRITER_FOR_GOVERNED_DOCUMENT"
+
+
 def build(md_path: Path, pdf_path: Path, document_title: str, status: str, pagesize=letter, footer_date: str = "1 Oct 2026") -> None:
+    if footer_date not in HISTORICAL_ISSUE_DATES:
+        raise InterimWriterRetired(
+            f"The interim J1 writer reproduces the historical {sorted(HISTORICAL_ISSUE_DATES)} issue only. "
+            f"'{document_title}' dated {footer_date} must come from its approved master (app/services/approved_masters.py)."
+        )
     sheet_styles = _styles()
     lines = md_path.read_text(encoding="utf-8").splitlines()
     story = []

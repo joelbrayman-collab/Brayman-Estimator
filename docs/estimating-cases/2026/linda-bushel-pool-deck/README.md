@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| Status | 27 Oct 2026 costing issue is current: written BMR, Vista and Pro Post prices are in the case. Labour hours, Vista's payable price and the foundation quantity are open. Selling price not issued. Issue J1 (1 Oct) is historical. |
+| Status | 27 Oct 2026 costing issue is current: Masters 01, 02 and 03 populated with Linda's data. 126 man-hours at $75 (proposed, for Joel's approval). Selling price $30,267.74 + HST $3,934.81 = $34,202.55. Vista's payable price and the foundation quantity are open. Issue J1 (1 Oct) is historical. |
 | Date preserved | 2026-09-29 |
 | Client spelling on the located documents | **Linda Bushel** |
 | Location | 12 D'Arcy's Way, Kemptville, Ontario, K0G 1J0 |
@@ -93,7 +93,7 @@ Fillable PDF of every line that still needs a cost. The walking surface and the 
 |------|------------|
 | `estimates/internal/2026-10-06-ben-items-that-need-a-cost.pdf` | Fillable request. Same file on the Desktop as `Linda-Bushel-items-that-need-a-cost.pdf`. |
 
-## 27 Oct 2026 — written supplier prices, Ben's internal cost, Linda's estimate
+## 27 Oct 2026 — written supplier prices; Masters 01, 02 and 03
 
 Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged; the Markdown records transcribe them and the originals govern.
 
@@ -109,11 +109,17 @@ Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged;
 | `supplier/pro-post-foundations/2026-10-05-a01-screenshot-attached-to-OT-2236-email.png` | Brayman A-01 general arrangement, as attached in the email thread. |
 | `supplier/pro-post-foundations/2026-10-27-forwarded-OT-2236-estimate.eml` | Ben's forward of the Pro Post email, 27 Oct 2026, with all attachments. |
 | `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236.md` | Record and arithmetic check. |
-| `takeoff/2026-10-27-supplier-quote-reconciliation.md` / `.pdf` | Every requirement: J1 quantity, supplier quantity, price, status. 15 piers (J1) against 11 piles (Pro Post). |
-| `estimates/internal/2026-10-27-ben-internal-cost.md` / `.pdf` | Internal cost for Ben. INTERNAL — NOT FOR CUSTOMER. Direct cost incomplete (labour, delivery, equipment, permit). |
-| `takeoff/price_2026_10_27.py` | One calculation for the direct cost and Linda's price: BMR $8,676.09 + Vista $3,851.49 (MSRP used as cost) + Pro Post $3,750.00 + labour (man-hours × $65) ÷ 0.85, HST 13%. `--man-hours N` writes Linda's priced estimate and the PDFs. |
-| `estimates/customer/2026-10-27-linda-bushel-estimate.md` / `.pdf` | **Not issued yet.** Written by `price_2026_10_27.py` once Joel approves the labour man-hours. An unpriced draft from earlier on 27 Oct was withdrawn. |
-| `takeoff/issue_2026_10_27.py` | Writes the three PDFs and the package with the J1 interim writer (`branded_issue_pdf.build`; `**bold**` now rendered). |
-| `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: the three PDFs, the three supplier originals, the pile locations and the J1 drawing. |
+| `takeoff/2026-10-27-supplier-quote-reconciliation.md` | Internal record: every requirement, J1 quantity, supplier quantity, price, status. 15 piers (J1) against 11 piles (Pro Post). No approved master exists for it, so it stays a Markdown record. |
+| `takeoff/price_2026_10_27.py` | One calculation: BMR $8,676.09 + Vista $3,851.49 (MSRP used as cost) + Pro Post $3,750.00 supply and install + labour 126 man-hours × $75 = $25,727.58 direct; ÷ 0.85 = $30,267.74; HST 13% $3,934.81; total $34,202.55. |
+| `takeoff/issue_masters_2026_10_27.py` | Populates Masters 01, 02 and 03 (Approved Master Template Family V1) through `app/services/approved_masters.py`. The only route for these documents. |
+| `estimates/internal/2026-10-27-linda-bushel-01-labour-calculation-detail.docx` / `.pdf` | Master 01 Labour Calculation Detail. Internal. |
+| `estimates/internal/2026-10-27-linda-bushel-02-internal-detailed-cost-breakdown.docx` / `.pdf` | Master 02 Internal Detailed Cost Breakdown. Internal. Pro Post shown as SUPPLY AND INSTALL; no pile labour. |
+| `estimates/customer/2026-10-27-linda-bushel-03-customer-facing-estimate.docx` / `.pdf` | Master 03 Customer Facing Estimate. Scope, price, HST, total, exclusions. No internal cost or margin. |
+| `*.preview.pdf` beside them | LibreOffice preview only (Inter substituted for Aptos). Not issued. The issued PDFs are exported with Word for Mac "Save as PDF" (FG-022 register). |
+| `takeoff/issue_2026_10_27.py` | Builds Ben's package from the master outputs and the supplier originals. Writes no document; stops if a Word-exported PDF is missing. |
+| `superseded/2026-10-27-interim-writer/` | Withdrawn: the earlier 27 Oct internal cost, customer estimate and reconciliation PDFs laid out by the interim J1 writer. Not to be issued. |
+| `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: Masters 01, 02, 03 (DOCX and PDF), the reconciliation record, the supplier originals, the pile locations and the J1 drawing. |
 
-Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **FINAL PRICE BLOCKER: Joel approves the total labour man-hours** ($65 per man-hour, governed; the internal sheet prices 80 / 100 / 120 / 140). Delivery, carrying, equipment, permit fee, lower-deck skirt and gate hardware not priced. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.
+Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **Joel approves or changes the 126 man-hours** ($75 per man-hour, the governed Brayman rate from 27 Oct 2026). Pro Post supplies and installs the piles: no pile labour in Brayman's hours. Delivery and carrying $0 (no amount on any document), equipment none, permit fee excluded and billed at cost, skirting excluded. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.
+
+`takeoff/branded_issue_pdf.py` is the interim J1 writer. It now refuses any issue other than the historical 1 Oct 2026 J1 issue (`tests/test_linda_case_interim_writer_retired.py`). Current documents come only from the approved masters (`docs/governance/approved-document-generation.md`).

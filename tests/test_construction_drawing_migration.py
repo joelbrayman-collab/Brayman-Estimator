@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
-HEAD = "e5d1v4r7y2k9"  # sign-in reliability (v1rel13) follows the Magnificent Seven (m7s3r5q8b2c4)
+HEAD = "q4c7l2n8t3a6"  # customer structured address (Project Creation UX) follows sign-in reliability (e5d1v4r7y2k9)
 
 
 def _config(db_path):

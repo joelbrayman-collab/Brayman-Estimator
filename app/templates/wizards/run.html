@@ -3,4 +3,4 @@
 {% block page_title %}{{ wizard.title }}{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
 {% block breadcrumbs %}{% endblock %}
-{% block content %}{% include "wizards/_run.html" %}{% endblock %}
+{% block content %}{% include "wizards/_run_compact.html" if wizard.compact else "wizards/_run.html" %}{% endblock %}

@@ -36,6 +36,7 @@ EXPECT_REVISION=${MIGRATION_TO:-$REVISION}
 if [ -n "$MIGRATION_TO" ]; then
   grep -q "^MIGRATED .*-> $MIGRATION_TO\|^MIGRATED already at $MIGRATION_TO" "$STATUS" || stop "run release_migrate.sh --label $LABEL first (migration $REVISION -> $MIGRATION_TO)"
   NEWN=$(echo "$NEW_TABLES" | tr ',' '\n' | grep -c .)
+  [ "$NEW_TABLES" = "none" ] && NEWN=0  # a column-only migration (27 Oct 2026): no table added
   BROWS=$(echo "$BROWS" | awk -v n="$NEWN" '{split($1,a,"="); split($2,b,"="); printf "TABLES=%d ROWS=%d", a[2]+n, b[2]}')
 fi
 grep -q "^READY_FOR_PUSH commit=$SHA" "$STATUS" 2>/dev/null || stop "the release gate did not reach READY_FOR_PUSH for $SHA"

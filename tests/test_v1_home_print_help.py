@@ -68,7 +68,11 @@ def test_home_empty_briefing(client):
     html = client.get("/").get_data(as_text=True)
     assert contractor_copy.HOME_TODAY_EMPTY in html
     assert contractor_copy.HOME_COMING_EMPTY in html
-    assert contractor_copy.HOME_ATTENTION_OFFICE in html
+    # One Attention list on Home (Project Creation UX, 27 Oct 2026): the briefing is Today and Coming days only; the
+    # company facts its old third column repeated are in WHAT NEEDS MY ATTENTION? for the people who may see them.
+    assert 'aria-label="Today and coming days"' in html
+    assert contractor_copy.HOME_ATTENTION_OFFICE not in html
+    assert html.count("data-needs-attention") == 1 and html.count(contractor_copy.HOME_ATTENTION_HEADING) == 0
     assert "payroll" not in html.lower()
     assert "cash engine" not in html.lower()
 

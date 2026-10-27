@@ -19,7 +19,15 @@ class Client(db.Model):
     company = db.Column(db.String(150))
     email = db.Column(db.String(150))
     phone = db.Column(db.String(50))
+    # The one-line address every page reads (proposals, contracts, lists). Since 27 Oct 2026 it is composed from the
+    # structured fields below when they are filled; older customers keep the address exactly as it was typed.
     address = db.Column(db.String(255))
+    street_address = db.Column(db.String(255))
+    unit = db.Column(db.String(60))
+    city = db.Column(db.String(160))
+    province_state = db.Column(db.String(120))
+    postal_code = db.Column(db.String(20))
+    country = db.Column(db.String(120))
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 

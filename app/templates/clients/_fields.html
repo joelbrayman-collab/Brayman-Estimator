@@ -1,0 +1,59 @@
+{# The customer's fields (Project Creation UX, 27 Oct 2026): one compact form used by the Clients page and by the
+   Start a New Project wizard's "Add a new customer". Only the name is required; anything left empty is listed on
+   WHAT NEEDS MY ATTENTION? until it is filled in. ``v`` holds the values, ``prefix`` namespaces the inputs inside
+   the wizard (new_customer_*), ``legacy`` is a one-line address typed before the structured fields existed. #}
+{% set p = prefix or "" %}
+{% set country = v.get("country") or default_country %}
+<div class="cust-fields" data-customer-fields>
+  <div class="cust-row cust-row-2">
+    <label>Customer name <span class="cust-req">required</span>
+      <input type="text" name="{{ p }}name" value="{{ v.get('name', '') }}" maxlength="150" autocomplete="off" data-customer-name {% if name_required %}required{% endif %}></label>
+    <label>Company <span class="cust-opt">optional</span>
+      <input type="text" name="{{ p }}company" value="{{ v.get('company', '') }}" maxlength="150"></label>
+  </div>
+  <div class="cust-row cust-row-2">
+    <label>Email
+      <input type="email" name="{{ p }}email" value="{{ v.get('email', '') }}" maxlength="150" autocomplete="off" inputmode="email"></label>
+    <label>Phone
+      <input type="tel" name="{{ p }}phone" value="{{ v.get('phone', '') }}" maxlength="50" autocomplete="off" inputmode="tel"></label>
+  </div>
+  <p class="cust-hint">Don't have the email or phone yet? Leave them empty. CalibraytAI lists what is missing under <strong>What needs my attention</strong> until you add it.</p>
+
+  <fieldset class="cust-address" data-customer-address>
+    <legend>Customer's mailing address</legend>
+    {% if legacy %}
+    <p class="cust-legacy" data-customer-legacy-address>Address on record: <strong>{{ legacy }}</strong>. It stays as it is until you enter it in the fields below.</p>
+    <input type="hidden" name="{{ p }}address" value="{{ legacy }}">
+    {% endif %}
+    <div class="cust-row cust-row-street">
+      <label>Street address
+        <input type="text" name="{{ p }}street_address" value="{{ v.get('street_address', '') }}" maxlength="255" autocomplete="off" data-address-part="street_address"></label>
+      <label>Unit / suite
+        <input type="text" name="{{ p }}unit" value="{{ v.get('unit', '') }}" maxlength="60" autocomplete="off" data-address-part="unit"></label>
+    </div>
+    <div class="cust-row cust-row-4">
+      <label>City / town
+        <input type="text" name="{{ p }}city" value="{{ v.get('city', '') }}" maxlength="160" autocomplete="off" data-address-part="city"></label>
+      <label>Province / state
+        <select name="{{ p }}province_state" data-address-part="province_state" data-region-select>
+          <option value="">Choose</option>
+          {% for c, regions in regions.items() %}
+          <optgroup label="{{ c }}" data-country="{{ c }}">
+            {% for r in regions %}<option value="{{ r }}" {% if v.get('province_state') == r or (not v.get('province_state') and not v.get('street_address') and r == default_province and c == country) %}selected{% endif %}>{{ r }}</option>{% endfor %}
+          </optgroup>
+          {% endfor %}
+        </select></label>
+      <label>Postal code / ZIP
+        <input type="text" name="{{ p }}postal_code" value="{{ v.get('postal_code', '') }}" maxlength="20" autocomplete="off" data-address-part="postal_code"></label>
+      <label>Country
+        <select name="{{ p }}country" data-address-part="country" data-country-select>
+          {% for c in countries %}<option value="{{ c }}" {% if country == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+        </select></label>
+    </div>
+  </fieldset>
+
+  {% if show_notes %}
+  <label class="cust-notes">Notes
+    <textarea name="{{ p }}notes" rows="2" data-grow>{{ v.get('notes', '') }}</textarea></label>
+  {% endif %}
+</div>

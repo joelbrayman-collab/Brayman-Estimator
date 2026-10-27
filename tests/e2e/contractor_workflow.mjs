@@ -55,7 +55,8 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await office.ready;
     browser = await chromium.launch(exe ? { executablePath: exe, headless: true } : { channel: "chrome", headless: true });
 
-    // Home on a phone: Company Calendar sits immediately below Start New Project.
+    // Home (compact, Joel 27 Oct 2026): Company Calendar sits in the greeting row at the top, above Attention and the
+    // guided starts, which stay above the fold.
     const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
     await phone.goto(`${base}/login`);
     await phone.fill("#email", "office@example.com");
@@ -65,10 +66,10 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     for (const width of [390, 1280]) {
       await phone.setViewportSize({ width, height: 900 });
       await phone.waitForTimeout(500); // let the side menu finish its width change
-      const start = await phone.locator("a.home-start").boundingBox();
+      const start = await phone.locator('[data-start-wizard="NEW_PROJECT"]').boundingBox();
       const cal = await phone.locator("a.home-calendar").boundingBox();
-      assert.ok(cal.y >= start.y + start.height - 1 && cal.y - (start.y + start.height) <= 16, `calendar below start at ${width}px`);
-      assert.ok(Math.abs(cal.x - start.x) <= 1, `calendar aligned with start at ${width}px`);
+      assert.ok(cal.y + cal.height <= start.y && cal.y <= 200, `calendar at the top, above the starts at ${width}px`);
+      assert.ok(start.y + start.height <= 900, `Start a New Project above the fold at ${width}px`);
       const overflow = await phone.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth");
       assert.ok(overflow <= 1, `home scrolls sideways at ${width}px`);
     }

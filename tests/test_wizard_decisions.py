@@ -233,7 +233,7 @@ def test_start_a_new_project_sets_the_project_lead_in_its_lead_step(env):
     project = Project.query.filter_by(organization_id=ORG, name="Wizard Lead Home (synthetic)").one()
     state, page = _state(d, run_id, "responsibility")
     assert state == "todo" and "Project Lead: Unassigned" in page and 'name="project_lead_user_id"' in page
-    assert "Project Lead and first dates" in page and GONE[2] not in page and "Other Company Owner" not in page
+    assert "Who is leading it, and when?" in page and GONE[2] not in page and "Other Company Owner" not in page
     _step(d, run_id, "responsibility", action="submit", project_lead_user_id=str(p["kevin"].id))
     db.session.expire_all()
     assert db.session.get(Project, project.id).project_lead_user_id == p["kevin"].id

@@ -58,7 +58,7 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 ACTOR = "Joel Brayman"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "e5d1v4r7y2k9"  # sign-in reliability (v1rel13) follows the Magnificent Seven (m7s3r5q8b2c4)
+GRAPH_HEAD = "q4c7l2n8t3a6"  # customer structured address (Project Creation UX) follows sign-in reliability (e5d1v4r7y2k9)
 PRIOR = "r8e9f0a1b2c3"
 
 

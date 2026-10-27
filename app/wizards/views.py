@@ -99,12 +99,18 @@ def post_step(ctx, step_key, *, home_url):
             raise S.WizardError("This guided wizard is finished. Its records are kept; start it again from Home.")
         # A step's own form: the draft answers (saved by Save, Next and Save & Exit) or a small form that calls
         # an existing service (its own Submit button).
-        if action == "submit" or (step.draft and step.handle and action in ("save", "next", "save_exit")
-                                  and row["view"].form):
+        if action == "submit" or ((step.draft or step.continue_form) and step.handle
+                                  and action in ("save", "next", "save_exit") and row["view"].form):
             if step.handle is None:
                 raise S.WizardError("Nothing to save on this step.")
             result = step.handle(ctx, _form_values())
             message, target = (result if isinstance(result, tuple) else (result, None))
+            if target and action != "submit":
+                if message:
+                    flash(message, "success")
+                return redirect(target)
+            if action != "submit" and isinstance(result, tuple) and message:
+                flash(message, "success")  # an explicit (message, None): say what was done, then move on as usual
             if action == "submit":
                 if message:
                     flash(message, "success")

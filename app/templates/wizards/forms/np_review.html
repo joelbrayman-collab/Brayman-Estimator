@@ -1,0 +1,14 @@
+{# Start a New Project · Does this look right? The summary, what is still to add, and the two ways to finish. #}
+<dl class="np-review" data-project-summary>
+  {% for label, value in f.summary %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+</dl>
+{% if f.outstanding %}
+<div class="np-later" data-outstanding><strong>To add later</strong> — kept on the project and, for the customer, under What needs my attention:
+  <ul>{% for m in f.outstanding %}<li>{{ m }}</li>{% endfor %}</ul></div>
+{% endif %}
+<div class="np-finish">
+  {% if f.can_estimate %}
+  <button type="submit" name="wizard_action" value="next" class="wz-primary" formaction="{{ ctx.step_url(step.key, choice='estimate') }}" data-finish-estimate data-wizard-finish>Finish and start estimating →</button>
+  {% endif %}
+  <button type="submit" name="wizard_action" value="next" class="wz-secondary" formaction="{{ ctx.step_url(step.key, choice='later') }}" data-finish-later>Finish — estimate later</button>
+</div>

@@ -1,54 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}{% if client %}{{ client.name }}{% else %}New Client{% endif %} | Brayman Construction Platform{% endblock %}
+{% block title %}{% if client %}{{ client.name }}{% else %}New Customer{% endif %} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Client{% endblock %}
+{% block page_title %}Customer{% endblock %}
 
 {% block content %}
-<div class="page-heading">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css', v='pcux-1') }}">
+<div class="page-heading cust-heading">
     <div>
-        <p class="eyebrow">Clients</p>
-        <h1>{% if client %}{{ client.name }}{% else %}New Client{% endif %}</h1>
+        <p class="eyebrow">Customers</p>
+        <h1>{% if client %}{{ client.name }}{% else %}New customer{% endif %}</h1>
     </div>
 </div>
 
-<form method="post" class="form-panel">
+{% if client and missing %}
+<div class="cust-incomplete" role="status" data-customer-incomplete>
+    <strong>Customer information incomplete.</strong> Missing: {{ missing|join(", ") }}.
+</div>
+{% endif %}
+
+<form method="post" class="form-panel cust-form" data-customer-form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="form-grid">
-        <label>
-            Client name *
-            <input type="text" name="name" value="{{ form.name if form else '' }}" required>
-        </label>
-
-        <label>
-            Company
-            <input type="text" name="company" value="{{ form.company if form else '' }}">
-        </label>
-
-        <label>
-            Email
-            <input type="email" name="email" value="{{ form.email if form else '' }}">
-        </label>
-
-        <label>
-            Phone
-            <input type="text" name="phone" value="{{ form.phone if form else '' }}">
-        </label>
-    </div>
-
-    <label>
-        Address
-        <input type="text" name="address" value="{{ form.address if form else '' }}">
-    </label>
-
-    <label>
-        Notes
-        <textarea name="notes" rows="5">{{ form.notes if form else '' }}</textarea>
-    </label>
-
+    {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+    {% set legacy = form.get("address") if client and not form.get("street_address") and form.get("address") else "" %}
+    {% with v=form, prefix="", name_required=True, show_notes=True, legacy=legacy %}{% include "clients/_fields.html" %}{% endwith %}
     <div class="form-actions">
-        <button type="submit">Save Client</button>
-        <a href="{{ url_for('clients.list_clients') }}">Cancel</a>
+        <button type="submit">Save customer</button>
+        <a href="{{ return_to or url_for('clients.list_clients') }}">Cancel</a>
     </div>
 </form>
+<script src="{{ url_for('static', filename='js/customer-fields.js', v='pcux-1') }}"></script>
 {% endblock %}

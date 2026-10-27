@@ -1,15 +1,28 @@
-"""Wizard 1 — Start a New Project (brief §2).
+"""Wizard 1 — Start a New Project (brief §2; redesigned 27 Oct 2026, Project Creation UX).
 
-Steps 1 to 3 keep the answers in the run's draft until the project exists; "Create the project" posts them to the
-existing New Project form handler (projects.create_project), which creates the project, its commercial context and
-its location exactly as the manual form does, and claims the run once (a second press creates nothing). From then
-on every step reads and changes the project's own records through the existing pages and services.
+Seven focused tasks, in the order a contractor thinks about a new job:
+
+  1 Who is the customer?            choose one, or add a new customer right here (no detour to the Clients pages)
+  2 What are we building?           the project's name and the kind of job
+  3 Where is the job?               the job-site address ("Same as customer address"); Save & Continue creates it
+  4 What plans do we have?          upload a plan PDF here, record that none are needed, or add them later
+  5 What work are we responsible?   your role (it sets the construction stages)
+  6 Who is leading it, and when?    the Project Lead and the first site visit or meeting (optional)
+  7 Does this look right?           review, then start Guided Estimating now or later
+
+Who does each construction stage (Internal, Subcontracted or N/A) is decided in Guided Estimating, which already
+asks it as its own steps; the setup no longer asks it a second time.
+
+Steps 1 to 3 keep the answers in the run's draft until the project exists; Save & Continue on step 3 posts them to
+the existing New Project form handler (projects.create_project), which creates the project, its commercial context
+and its location exactly as the manual form does, and claims the run once (a second press creates nothing). A new
+customer is created by the existing customer rules (app/services/clients.py) and its exact id is kept in the run.
 No dimension, quantity or specification is ever filled in by the wizard.
 """
 
 from __future__ import annotations
 
-from flask import url_for
+from flask import request, url_for
 
 from app.models.wizard import WIZARD_GUIDED_ESTIMATING, WIZARD_NEW_PROJECT
 from app.wizards.framework import (
@@ -24,17 +37,22 @@ from app.wizards.framework import (
     Wizard,
 )
 
-CUSTOMER_FIELDS = ("client_id", "name", "project_number", "description")
-TYPE_FIELDS = ("guided_project_type", "project_type", "status")
-LOCATION_FIELDS = ("address", "street", "municipality", "province_state", "postal_zip", "country",
-                   "permit_context_class", "pricing_posture", "execution_risk", "schedule_condition",
+NEW_CUSTOMER_FIELDS = ("name", "company", "email", "phone", "street_address", "unit", "city", "province_state",
+                       "postal_code", "country")
+NEW_PREFIX = "new_customer_"
+CUSTOMER_FIELDS = ("client_id", "customer_mode") + tuple(NEW_PREFIX + f for f in NEW_CUSTOMER_FIELDS)
+PROJECT_FIELDS = ("name", "project_number", "description", "guided_project_type", "project_type", "status")
+LOCATION_FIELDS = ("same_as_customer", "address", "street", "municipality", "province_state", "postal_zip",
+                   "country", "permit_context_class", "pricing_posture", "execution_risk", "schedule_condition",
                    "site_condition", "estimate_stage", "delivery_model", "justification_reason")
-DRAFT_FIELDS = CUSTOMER_FIELDS + TYPE_FIELDS + LOCATION_FIELDS + ("contractor_role",)
+DRAFT_FIELDS = CUSTOMER_FIELDS + PROJECT_FIELDS + LOCATION_FIELDS + ("contractor_role",)
 # The manual form's own defaults (templates/projects/form.html), so the wizard and the form start the same way.
 FORM_DEFAULTS = {"status": "Lead", "project_type": "New Build", "pricing_posture": "Competitive",
                  "execution_risk": "Normal", "schedule_condition": "Normal", "site_condition": "Normal",
-                 "estimate_stage": "Preliminary", "delivery_model": "Self-Perform", "country": "Canada"}
+                 "estimate_stage": "Preliminary", "delivery_model": "Self-Perform", "country": "Canada",
+                 "province_state": "Ontario"}
 PROJECT_STATUSES = ("Lead", "Estimating")
+SAVING_ACTIONS = ("next", "save", "save_exit")
 
 
 def _clients(ctx):
@@ -43,6 +61,18 @@ def _clients(ctx):
 
     query = Client.query.filter_by(organization_id=ctx.organization_id)
     return customer_clients_only(query, ctx.organization_id).order_by(Client.name.asc()).all()
+
+
+def _chosen_client(ctx):
+    """The customer this run chose, by its exact id only (never a list position, default or ordering)."""
+    from app.models import Client
+
+    if ctx.project is not None:
+        return ctx.project.client
+    raw = str(ctx.draft.get("client_id") or "").strip()
+    if not raw.isdigit():
+        return None
+    return Client.query.filter_by(id=int(raw), organization_id=ctx.organization_id).first()
 
 
 def _value(ctx, key):
@@ -55,47 +85,102 @@ def _project_or_todo(ctx, headline="Create the project first (step 3)."):
     return None
 
 
+def _wizard_action(form) -> str:
+    """The button pressed (autosave sends none: it only keeps what was typed)."""
+    return (form.get("wizard_action") or "").strip()
+
+
 # ------------------------------------------------------------------------------------------------ 1 customer
 def _customer(ctx):
+    from app.services.clients import form_options, missing_information
+
     if ctx.project is not None:
         client = ctx.project.client
-        return StepView(DONE, f"Customer {client.name if client else '—'} · project {ctx.project.name}",
-                        items=[Item("Customer", DONE, client.name if client else "Not in this company"),
-                               Item("Project", DONE, ctx.project.name)],
+        missing = missing_information(client) if client is not None else []
+        return StepView(DONE, f"Customer: {client.name if client else '—'}"
+                        + (f" (still to add: {', '.join(missing).lower()})" if missing else ""),
                         actions=[Action("Correct the customer", url_for("projects.correct_project_client_page",
-                                                                        id=ctx.project.id), key="correct-client"),
-                                 Action("Open the project", url_for("projects.view_project", id=ctx.project.id),
-                                        key="open-project")],
-                        note="The project exists. Its name, customer and details are changed on the project's own pages.")
-    clients = _clients(ctx)
-    missing = []
-    chosen = next((c for c in clients if str(c.id) == str(ctx.draft.get("client_id"))), None)
-    if chosen is None:
-        missing.append("Choose the customer (or add a new customer first).")
-    if not (ctx.draft.get("name") or "").strip():
-        missing.append("Name the project.")
-    view = StepView(DONE if not missing else TODO,
-                    f"Customer {chosen.name} · project {ctx.draft.get('name')}" if not missing
-                    else "Who is the customer, and what is the job called?",
-                    missing=missing, form="new_project_customer.html",
-                    form_ctx={"clients": clients, "values": ctx.draft},
-                    actions=[Action("Add a new customer", url_for("clients.create_client"), key="add-client",
-                                    note="Opens the customer form. Come back here when it is saved.")])
-    return view
+                                                                        id=ctx.project.id), key="correct-client")],
+                        note="The project exists. Its customer is changed on the project's own pages.")
+    client = _chosen_client(ctx)
+    mode = ctx.draft.get("customer_mode") or ("existing" if client is not None or _clients(ctx) else "new")
+    values = {f: ctx.draft.get(NEW_PREFIX + f, "") for f in NEW_CUSTOMER_FIELDS}
+    form_ctx = {"clients": _clients(ctx), "chosen_id": client.id if client is not None else None, "mode": mode,
+                "new": values, **form_options()}
+    if client is None:
+        return StepView(TODO, "No customer chosen yet", missing=["Choose the customer, or add a new customer."],
+                        form="np_customer.html", form_ctx=form_ctx)
+    missing = missing_information(client)
+    return StepView(DONE, f"Customer: {client.name}"
+                    + (f" — still to add: {', '.join(missing).lower()}" if missing else ""),
+                    form="np_customer.html", form_ctx=form_ctx)
 
 
 def _save_customer(ctx, form):
-    from app.wizards.service import WizardError, save_draft
+    """Choose a customer, or create the new one (existing customer rules) and keep its exact id in the run."""
+    from app import db
+    from app.services import clients as C
+    from app.wizards.service import WizardError, has_event, record, save_draft
 
-    client_id = (form.get("client_id") or "").strip()
-    if client_id and not any(str(c.id) == client_id for c in _clients(ctx)):
-        raise WizardError("Choose a customer of this company.")
-    save_draft(ctx.run, {k: form.get(k, "") for k in CUSTOMER_FIELDS}, allowed=CUSTOMER_FIELDS, step="customer",
-               actor=ctx.actor, user_id=ctx.user_id, event="DRAFT_SAVED")
-    return "Saved."
+    if ctx.project is not None:
+        return "The project exists. Its customer is changed on the project's own pages."
+    mode = "new" if form.get("customer_mode") == "new" else "existing"
+    typed = {NEW_PREFIX + f: form.get(NEW_PREFIX + f, "") for f in NEW_CUSTOMER_FIELDS}
+    if mode == "existing":
+        client_id = (form.get("client_id") or "").strip()
+        if client_id and not any(str(c.id) == client_id for c in _clients(ctx)):
+            raise WizardError("Choose a customer of this company.")
+        save_draft(ctx.run, {"client_id": client_id, "customer_mode": "existing"}, allowed=CUSTOMER_FIELDS,
+                   step="customer", actor=ctx.actor, user_id=ctx.user_id,
+                   event="DRAFT_SAVED" if _wizard_action(form) else None)
+        return "Saved."
+    # A new customer. Autosave only keeps what was typed; the customer is created by Save & Continue (or Save).
+    if _wizard_action(form) not in SAVING_ACTIONS:
+        save_draft(ctx.run, {**typed, "customer_mode": "new"}, allowed=CUSTOMER_FIELDS, step="customer",
+                   actor=ctx.actor, user_id=ctx.user_id)
+        return "Saved."
+    values = {f: form.get(NEW_PREFIX + f, "") for f in NEW_CUSTOMER_FIELDS}
+    name = " ".join((values.get("name") or "").split())
+    if not name:
+        save_draft(ctx.run, {**typed, "customer_mode": "new"}, allowed=CUSTOMER_FIELDS, step="customer",
+                   actor=ctx.actor, user_id=ctx.user_id)
+        if _wizard_action(form) == "save_exit":
+            return "Saved."
+        raise WizardError("Enter the new customer's name (email, phone and address can be added later).")
+    # The same form sent twice (double press, or two windows): reuse the customer this run already created.
+    previous = has_event(ctx.run, "CUSTOMER_CREATED", "customer")
+    reused = None
+    if previous is not None and (previous.detail or "").startswith("Client "):
+        try:
+            prior_id = int(previous.detail.split(":", 1)[0].split()[1])
+        except (IndexError, ValueError):
+            prior_id = None
+        prior = next((c for c in _clients(ctx) if c.id == prior_id), None)
+        if prior is not None and prior.name.strip().lower() == name.lower():
+            reused = prior
+    if reused is None:
+        try:
+            client = C.create_client(ctx.organization_id, values, commit=False)
+        except C.ClientError as exc:
+            db.session.rollback()
+            save_draft(ctx.run, {**typed, "customer_mode": "new"}, allowed=CUSTOMER_FIELDS, step="customer",
+                       actor=ctx.actor, user_id=ctx.user_id)
+            raise WizardError(str(exc)) from exc
+        record(ctx.run, "CUSTOMER_CREATED", actor=ctx.actor, step="customer",
+               detail=f"Client {client.id}: {client.name}", user_id=ctx.user_id)
+    else:
+        client = reused
+    # Exactly this customer from now on; the typed fields are cleared so nothing is created twice.
+    cleared = {k: "" for k in typed}
+    save_draft(ctx.run, {**cleared, "client_id": str(client.id), "customer_mode": "existing"},
+               allowed=CUSTOMER_FIELDS, step="customer", actor=ctx.actor, user_id=ctx.user_id, event="DRAFT_SAVED")
+    missing = C.missing_information(client)
+    message = f"Customer {client.name} added" + (f" — still to add: {', '.join(missing).lower()} (listed under What "
+                                                 "needs my attention)." if missing else ".")
+    return message, None  # shown on the next task; the wizard moves straight on with this customer
 
 
-# ------------------------------------------------------------------------------------------------ 2 project type
+# ------------------------------------------------------------------------------------------------ 2 what are we building
 def _type_options():
     from app.models.guided_estimating import PROJECT_TYPE_LABELS
     from app.services.commercial_context import PROJECT_TYPES
@@ -108,57 +193,52 @@ def _type_options():
 def _project_type(ctx):
     from app.models.guided_estimating import PROJECT_TYPE_LABELS
 
-    guided_type = ctx.guided.project_type if ctx.guided is not None else ctx.draft.get("guided_project_type")
-    commercial = ctx.project.current_commercial_context if ctx.project is not None else None
     if ctx.project is not None:
-        items = [Item("What is being built", DONE if guided_type else TODO,
-                      PROJECT_TYPE_LABELS.get(guided_type, "Choose it in step 6")),
-                 Item("Commercial project type", DONE, commercial.project_type if commercial else "—")]
-        actions = [Action("Change the commercial project type", url_for("projects.edit_commercial_context",
-                                                                        id=ctx.project.id), key="edit-context")]
-        return StepView(DONE if guided_type else TODO,
-                        PROJECT_TYPE_LABELS.get(guided_type, "Project type not chosen yet"),
-                        items=items, actions=actions,
-                        missing=[] if guided_type else ["Choose what is being built."],
-                        form=None if ctx.guided is not None else "new_project_type.html",
-                        form_ctx={**_type_options(), "values": {**FORM_DEFAULTS, **ctx.draft}, "locked": True})
-    missing = [] if guided_type in PROJECT_TYPE_LABELS else ["Choose what is being built."]
-    return StepView(DONE if not missing else TODO,
-                    PROJECT_TYPE_LABELS.get(guided_type, "What is being built?"), missing=missing,
-                    form="new_project_type.html", form_ctx={**_type_options(),
-                                                            "values": {**FORM_DEFAULTS, **ctx.draft}, "locked": False})
+        guided_type = ctx.guided.project_type if ctx.guided is not None else ctx.draft.get("guided_project_type")
+        commercial = ctx.project.current_commercial_context
+        return StepView(DONE, f"{ctx.project.name} · {PROJECT_TYPE_LABELS.get(guided_type, 'type not chosen')}",
+                        items=[Item("Project", DONE, ctx.project.name),
+                               Item("What is being built", DONE if guided_type else TODO,
+                                    PROJECT_TYPE_LABELS.get(guided_type, "Chosen with your role (step 5)")),
+                               Item("Commercial project type", DONE, commercial.project_type if commercial else "—")],
+                        actions=[Action("Open the project", url_for("projects.view_project", id=ctx.project.id),
+                                        key="open-project"),
+                                 Action("Change the commercial project type",
+                                        url_for("projects.edit_commercial_context", id=ctx.project.id),
+                                        key="edit-context")])
+    guided_type = ctx.draft.get("guided_project_type")
+    missing = []
+    if not (ctx.draft.get("name") or "").strip():
+        missing.append("Name the project.")
+    if guided_type not in PROJECT_TYPE_LABELS:
+        missing.append("Choose what is being built.")
+    headline = (f"{ctx.draft.get('name')} · {PROJECT_TYPE_LABELS[guided_type]}" if not missing
+                else "Not named yet" if not (ctx.draft.get("name") or "").strip() else "Kind of job not chosen yet")
+    return StepView(DONE if not missing else TODO, headline, missing=missing, form="np_project.html",
+                    form_ctx={**_type_options(), "values": {**FORM_DEFAULTS, **ctx.draft}})
 
 
 def _save_type(ctx, form):
     from app.models.guided_estimating import PROJECT_TYPE_LABELS
     from app.wizards.service import WizardError, save_draft
 
+    if ctx.project is not None:
+        return "The project exists. Its name and type are changed on the project's own pages."
     value = (form.get("guided_project_type") or "").strip()
     if value and value not in PROJECT_TYPE_LABELS:
         raise WizardError("Choose what is being built.")
-    if ctx.project is not None:
-        # The project exists but its guided estimate does not yet: the type waits in the run for step 6.
-        run = ctx.run
-        draft = dict((run.draft_json or {}).get("fields") or {})
-        draft["guided_project_type"] = value
-        run.draft_json = {"fields": draft}
-        from app import db
-        from app.wizards.service import record
-
-        record(run, "DRAFT_SAVED", actor=ctx.actor, step="project_type", user_id=ctx.user_id)
-        db.session.commit()
-        return "Saved."
-    fields = {k: form.get(k, "") for k in TYPE_FIELDS}
+    fields = {k: form.get(k, "") for k in PROJECT_FIELDS}
     if fields.get("status") not in PROJECT_STATUSES:
         fields["status"] = "Lead"
-    save_draft(ctx.run, fields, allowed=TYPE_FIELDS, step="project_type", actor=ctx.actor, user_id=ctx.user_id,
-               event="DRAFT_SAVED")
+    save_draft(ctx.run, fields, allowed=PROJECT_FIELDS, step="project_type", actor=ctx.actor, user_id=ctx.user_id,
+               event="DRAFT_SAVED" if _wizard_action(form) else None)
     return "Saved."
 
 
-# ------------------------------------------------------------------------------------------------ 3 location
+# ------------------------------------------------------------------------------------------------ 3 where is the job
 def _location_options():
     from app.models.project import DEFAULT_PERMIT_CONTEXT_CLASS, PERMIT_CONTEXT_CLASSES
+    from app.services.clients import form_options
     from app.services.commercial_context import (
         DELIVERY_MODELS,
         ESTIMATE_STAGES,
@@ -171,53 +251,59 @@ def _location_options():
     return {"permit_context_classes": PERMIT_CONTEXT_CLASSES, "default_permit": DEFAULT_PERMIT_CONTEXT_CLASS,
             "pricing_postures": PRICING_POSTURES, "execution_risks": EXECUTION_RISKS,
             "schedule_conditions": SCHEDULE_CONDITIONS, "site_conditions": SITE_CONDITIONS,
-            "estimate_stages": ESTIMATE_STAGES, "delivery_models": DELIVERY_MODELS}
+            "estimate_stages": ESTIMATE_STAGES, "delivery_models": DELIVERY_MODELS, **form_options()}
 
 
 def _location(ctx):
     from app.models.project import LOCATION_COMPLETE
+    from app.services.clients import location_values
 
     if ctx.project is not None:
         location = ctx.project.location
         complete = location is not None and location.completeness == LOCATION_COMPLETE
         address = ", ".join(x for x in ((location.street, location.municipality, location.province_state)
                                         if location else ()) if x) or (ctx.project.address or "")
-        items = [Item("Job location", DONE if complete else TODO,
-                      address or "No address yet" if complete else (address or "Incomplete") + " — incomplete"),
-                 Item("Commercial decision gate", DONE, "Recorded with the project (versioned)")]
-        return StepView(DONE, "Project created" + ("" if complete else " — the job location is not complete yet"),
-                        items=items,
+        return StepView(DONE, ("Job site: " + address) if address else "Project created — no job address yet",
+                        items=[Item("Job location", DONE if complete else TODO,
+                                    "Complete" if complete else "Incomplete: street, city, province and country "
+                                                                "are needed for the permit report")],
                         actions=[Action("Review the job location", url_for("projects.edit_project_location",
                                                                            id=ctx.project.id), key="edit-location"),
                                  Action("Permit report", url_for("projects.view_permit_report", id=ctx.project.id),
                                         key="permit-report")],
-                        note="The project was created once. A second press of Create never makes another.")
+                        note="The project was created once. A second press never makes another.")
     missing = []
-    if not (ctx.draft.get("client_id") and ctx.draft.get("name")):
-        missing.append("Step 1: choose the customer and name the project.")
-    if not ctx.draft.get("guided_project_type"):
-        missing.append("Step 2: choose what is being built.")
-    missing.append("Create the project.")
+    if _chosen_client(ctx) is None:
+        missing.append("Step 1: choose the customer.")
+    if not (ctx.draft.get("name") and ctx.draft.get("guided_project_type")):
+        missing.append("Step 2: name the project and choose what is being built.")
+    ready = not missing
+    missing.append("Save & Continue creates the project.")
     values = {**FORM_DEFAULTS, **ctx.draft}
-    hidden = {k: values.get(k, "") for k in CUSTOMER_FIELDS + ("project_type", "status")}
-    return StepView(TODO, "Where is the job? Then create the project.", missing=missing,
-                    form="new_project_location.html",
-                    form_ctx={**_location_options(), "values": values, "hidden": hidden,
-                              "ready": len(missing) == 1, "create_url": url_for("projects.create_project"),
-                              "run_id": ctx.run.id})
+    hidden = {k: values.get(k, "") for k in ("client_id", "name", "project_number", "description", "project_type",
+                                              "status")}
+    client = _chosen_client(ctx)
+    return StepView(TODO, "Ready to create the project" if ready else "Steps 1 and 2 come first", missing=missing,
+                    form="np_location.html",
+                    form_ctx={**_location_options(), "values": values, "hidden": hidden, "ready": ready,
+                              "continue_url": url_for("projects.create_project") if ready else None,
+                              "customer_address": location_values(client),
+                              "customer_name": client.name if client is not None else ""})
 
 
 def _save_location(ctx, form):
     from app.wizards.service import save_draft
 
+    if ctx.project is not None:
+        return "The project exists. Its job location is changed on the project's own pages."
     save_draft(ctx.run, {k: form.get(k, "") for k in LOCATION_FIELDS}, allowed=LOCATION_FIELDS, step="location",
-               actor=ctx.actor, user_id=ctx.user_id, event="DRAFT_SAVED")
+               actor=ctx.actor, user_id=ctx.user_id, event="DRAFT_SAVED" if _wizard_action(form) else None)
     return "Saved."
 
 
-# ------------------------------------------------------------------------------------------------ 4 documents
+# ------------------------------------------------------------------------------------------------ 4 plans and information
 def _plan_facts(ctx):
-    from app.plan_intelligence.models import DrawingPackage, DrawingRevision, PlanMeasurement, PlanScaleCalibration, PlanSheet
+    from app.plan_intelligence.models import DrawingPackage, DrawingRevision, PlanMeasurement, PlanSheet
     from app.services.project_work_package import project_plans
 
     documents = project_plans(ctx.organization_id, ctx.project.id)
@@ -225,13 +311,17 @@ def _plan_facts(ctx):
               .join(DrawingPackage, DrawingRevision.package_id == DrawingPackage.id)
               .filter(DrawingPackage.project_id == ctx.project.id).all())
     ids = [s.id for s in sheets]
-    measurements = calibrations = 0
+    measurements = 0
     if ids:
         measurements = PlanMeasurement.query.filter(PlanMeasurement.sheet_id.in_(ids),
                                                     PlanMeasurement.status != "void").count()
-        calibrations = PlanScaleCalibration.query.filter(PlanScaleCalibration.sheet_id.in_(ids),
-                                                         PlanScaleCalibration.calibration_status != "void").count()
-    return {"documents": documents, "sheets": len(sheets), "measurements": measurements, "calibrations": calibrations}
+    return {"documents": documents, "sheets": len(sheets), "measurements": measurements}
+
+
+PLAN_REVIEW_CHOICES = {
+    "measured": "Measurements were taken on the drawings and checked.",
+    "manual": "Drawing measurements are not available or not reliable: quantities will be entered and confirmed by hand.",
+}
 
 
 def _documents(ctx):
@@ -243,91 +333,78 @@ def _documents(ctx):
         DRAWING_STATE_PRESENT,
         derive_drawing_state,
     )
+    from app.wizards.service import has_event
 
     facts = _plan_facts(ctx)
     state = derive_drawing_state(ctx.project.drawing_requirement, bool(facts["documents"]))
     pid = ctx.project.id
-    actions = [Action("Upload a plan PDF", url_for("plan_intelligence.upload_plan", project_id=pid), primary=True,
-                      key="upload-plan", note="CAD exports, plans, specifications: one PDF at a time."),
-               Action("Generate construction drawings", url_for("construction_drawings.index", project_id=pid),
+    reviewed = has_event(ctx.run, "CONFIRMED", "view_plan")
+    items = [Item(d.original_filename, DONE, "", url_for("plan_intelligence.view_plan", project_id=pid,
+                                                         document_id=d.id)) for d in facts["documents"]]
+    if reviewed:
+        items.append(Item("Your review of the drawings", DONE, reviewed.detail))
+    actions = [Action("Generate construction drawings", url_for("construction_drawings.index", project_id=pid),
                       key="generate-drawings"),
                Action("Site plans", url_for("site_plans.project", project_id=pid), key="site-plans")]
-    if state != DRAWING_STATE_PRESENT:
-        actions.append(Action("This project needs no drawings", url_for("projects.set_project_drawing_requirement_choice",
-                                                                        id=pid), method="post",
-                              fields={"drawing_requirement": "NOT_REQUIRED"}, key="no-drawings"))
-    items = [Item(d.original_filename, DONE, f"{d.page_count or ''} pages".strip() if getattr(d, "page_count", None) else "",
-                  url_for("plan_intelligence.view_plan", project_id=pid, document_id=d.id)) for d in facts["documents"]]
+    if facts["documents"]:
+        actions.insert(0, Action("Open the drawings", url_for("plan_intelligence.list_plans", project_id=pid),
+                                 key="view-plan"))
+    form_ctx = {"multipart": True, "has_drawings": bool(facts["documents"]), "measurements": facts["measurements"],
+                "not_required": state == DRAWING_STATE_NOT_REQUIRED, "reviewed": bool(reviewed)}
     if state == DRAWING_STATE_PRESENT:
         n = len(facts["documents"])
-        return StepView(DONE, f"{n} drawing{'s' if n != 1 else ''} on the project", items=items, actions=actions)
+        return StepView(DONE, f"{n} drawing{'s' if n != 1 else ''} on the project", items=items, actions=actions,
+                        form="np_plans.html", form_ctx=form_ctx)
     if state == DRAWING_STATE_NOT_REQUIRED:
-        return StepView(DONE, "Drawings are not required for this project (recorded).", actions=actions)
-    return StepView(TODO, "No drawing on the project yet", items=items, actions=actions,
-                    missing=["Upload the drawings, generate them, or record that this project needs none."])
+        return StepView(DONE, "No drawings needed for this project (recorded)", items=items, actions=actions,
+                        form="np_plans.html", form_ctx=form_ctx)
+    return StepView(TODO, "No drawings yet — add them now, or later from the project", items=items, actions=actions,
+                    form="np_plans.html", form_ctx=form_ctx)
 
 
-# ------------------------------------------------------------------------------------------------ 5 view plan
-def _has_drawings(ctx):
-    if ctx.project is None:
-        return True  # shown (not yet available) until the project exists
-    from app.services.project_work_package import project_plans
-
-    return bool(project_plans(ctx.organization_id, ctx.project.id))
-
-
-def _view_plan(ctx):
-    blocked = _project_or_todo(ctx)
-    if blocked:
-        return blocked
-    from app.services.project_plan_link import office_plan_link
-    from app.wizards.service import has_event
-
-    facts = _plan_facts(ctx)
-    link = office_plan_link(ctx.project)
-    confirmed = has_event(ctx.run, "CONFIRMED", "view_plan")
-    items = [Item("Drawings", DONE, f"{len(facts['documents'])} document(s), {facts['sheets']} sheet(s)"),
-             Item("Scale calibrations", DONE if facts["calibrations"] else TODO, str(facts["calibrations"])),
-             Item("Measurements taken on the drawings", DONE if facts["measurements"] else TODO,
-                  str(facts["measurements"]))]
-    actions = [Action("View the project plan", link["url"] if link else url_for("plan_intelligence.list_plans",
-                                                                              project_id=ctx.project.id),
-                      primary=True, key="view-plan"),
-               Action("Sheets and measuring", url_for("plan_intelligence.project_sheets", project_id=ctx.project.id),
-                      key="sheets")]
-    if confirmed:
-        items.append(Item("Your review", DONE, f"{confirmed.actor_display_name}: {confirmed.detail}"))
-        return StepView(DONE, "Drawings reviewed", items=items, actions=actions)
-    return StepView(TODO, "Review the drawings and say what can be measured from them", items=items, actions=actions,
-                    missing=["Confirm your review of the drawings."], form="new_project_plan_review.html",
-                    form_ctx={"measurements": facts["measurements"]},
-                    note="CalibraytAI does not read dimensions off a drawing by itself. Where a measurement is not "
-                         "on the drawing or cannot be read reliably, the quantity is entered and confirmed by a "
-                         "person at the estimating stage.")
-
-
-PLAN_REVIEW_CHOICES = {
-    "measured": "Measurements were taken on the drawings and checked.",
-    "manual": "Drawing measurements are not available or not reliable: quantities will be entered and confirmed by hand.",
-}
-
-
-def _confirm_plan(ctx, form):
+def _save_documents(ctx, form):
+    """Upload a plan PDF (the Plans page's own service), record that none are needed, or record the review."""
+    from app import db
     from app.wizards.service import WizardError, confirm
 
+    if ctx.project is None:
+        raise WizardError("Create the project first.")
+    messages = []
+    upload = request.files.get("plan_file") if request.files else None
+    if upload is not None and (upload.filename or "").strip():
+        from app.plan_intelligence.services import PlanIntelligenceServiceError, upload_plan_pdf
+
+        try:
+            document = upload_plan_pdf(ctx.project, upload, notes=(form.get("plan_notes") or "").strip())
+        except PlanIntelligenceServiceError as exc:
+            db.session.rollback()
+            raise WizardError(str(exc)) from exc
+        messages.append(f"{document.original_filename} added to the project.")
+    if form.get("drawings_choice") == "none":
+        from app.services.project_drawing_requirement import (
+            ProjectDrawingRequirementError,
+            set_project_drawing_requirement,
+        )
+
+        try:
+            set_project_drawing_requirement(organization_id=ctx.organization_id, project_id=ctx.project.id,
+                                            requirement="NOT_REQUIRED")
+        except ProjectDrawingRequirementError as exc:
+            raise WizardError(str(exc)) from exc
+        messages.append("Recorded: this project needs no drawings.")
     choice = form.get("plan_review") or ""
-    if choice not in PLAN_REVIEW_CHOICES:
-        raise WizardError("Choose what the drawings give you.")
-    if choice == "measured" and not _plan_facts(ctx)["measurements"]:
-        raise WizardError("No measurement has been taken on these drawings yet. Measure on a sheet first, or "
-                          "choose that quantities will be entered by hand.")
-    note = " ".join((form.get("plan_note") or "").split())[:300]
-    confirm(ctx.run, "view_plan", actor=ctx.actor, user_id=ctx.user_id,
-            detail=PLAN_REVIEW_CHOICES[choice] + (f" Note: {note}" if note else ""))
-    return "Your review of the drawings is recorded."
+    if choice in PLAN_REVIEW_CHOICES:
+        if choice == "measured" and not _plan_facts(ctx)["measurements"]:
+            raise WizardError("No measurement has been taken on these drawings yet. Measure on a sheet first, or "
+                              "choose that quantities will be entered by hand.")
+        note = " ".join((form.get("plan_note") or "").split())[:300]
+        confirm(ctx.run, "view_plan", actor=ctx.actor, user_id=ctx.user_id,
+                detail=PLAN_REVIEW_CHOICES[choice] + (f" Note: {note}" if note else ""))
+        messages.append("Your review of the drawings is recorded.")
+    return " ".join(messages) or "Saved."
 
 
-# ------------------------------------------------------------------------------------------------ 6 role & scope
+# ------------------------------------------------------------------------------------------------ 5 role
 def _role_scope(ctx):
     blocked = _project_or_todo(ctx)
     if blocked:
@@ -335,13 +412,15 @@ def _role_scope(ctx):
     from app.models.guided_estimating import CONTRACTOR_ROLE_LABELS, PROJECT_TYPE_LABELS
 
     if ctx.guided is not None:
-        return StepView(DONE, f"{ctx.guided.contractor_role_label} · {ctx.guided.project_type_label}",
-                        items=[Item("Your role", DONE, ctx.guided.contractor_role_label),
-                               Item("What is being built", DONE, ctx.guided.project_type_label),
-                               Item("Project description", INFO, (ctx.project.description or "—")[:200])],
-                        note="These chose the construction stages of the project's guided estimate.")
-    return StepView(TODO, "What is your role on this project?", missing=["Choose your role."],
-                    form="new_project_role.html",
+        top = ctx.guided.top_stages
+        return StepView(DONE, f"{ctx.guided.contractor_role_label} · {len(top)} construction stages for "
+                        f"{ctx.guided.project_type_label}",
+                        items=[Item(s.display_name, INFO, "") for s in top],
+                        actions=[Action("Add a stage the job needs", url_for("guided.scope", project_id=ctx.project.id)
+                                        + "#stages", key="open-scope")],
+                        note="Who does each stage — your crew, a subcontractor, or not in this job — is decided in "
+                             "Guided Estimating, the next wizard.")
+    return StepView(TODO, "Your role is not chosen yet", missing=["Choose your role."], form="np_role.html",
                     form_ctx={"roles": CONTRACTOR_ROLE_LABELS, "types": PROJECT_TYPE_LABELS,
                               "chosen_type": ctx.draft.get("guided_project_type", ""),
                               "chosen_role": ctx.draft.get("contractor_role", "")})
@@ -355,85 +434,23 @@ def _save_role(ctx, form):
         raise WizardError("Create the project first.")
     if ctx.guided is not None:
         return "Your role is already recorded."
+    role = (form.get("contractor_role") or "").strip()
+    if not role:
+        if _wizard_action(form) == "save_exit":
+            return "Saved."
+        raise WizardError("Choose your role on this project.")
     try:
         G.start_guided_estimate(organization_id=ctx.organization_id, project_id=ctx.project.id,
                                 project_type=form.get("guided_project_type") or ctx.draft.get("guided_project_type", ""),
-                                contractor_role=form.get("contractor_role", ""), actor=ctx.actor, user_id=ctx.user_id)
+                                contractor_role=role, actor=ctx.actor, user_id=ctx.user_id)
     except G.GuidedEstimatingError as exc:
         raise WizardError(str(exc)) from exc
     return "Your role and the project's construction stages are set."
 
 
-# ------------------------------------------------------------------------------------------------ 9 internal / subcontracted / N/A
-def _stages(ctx):
-    blocked = _project_or_todo(ctx)
-    if blocked:
-        return blocked
-    if ctx.guided is None:
-        return StepView(TODO, "Choose your role first (step 6).", missing=["Choose your role first (step 6)."])
-    from app.services import guided_estimating as G
-
-    rows = G.leaf_stages(ctx.guided)
-    undecided = [r for r in rows if r.responsibility is None]
-    items = [Item(r.section_name, DONE if r.responsibility else TODO,
-                  r.responsibility_label + (f" — {r.na_reason}" if r.na_reason else "")) for r in rows]
-    decided = len(rows) - len(undecided)
-    excluded = sum(1 for r in rows if r.responsibility == "NA")
-    action = Action("Choose Internal, Subcontracted or N/A for each stage",
-                    url_for("guided.scope", project_id=ctx.project.id), primary=True, key="open-scope")
-    headline = f"{decided} of {len(rows)} stages decided" + (f" ({excluded} excluded)" if excluded else "")
-    if undecided:
-        return StepView(TODO, headline, items=items, actions=[action],
-                        missing=[f"Decide {len(undecided)} more stage{'s' if len(undecided) != 1 else ''}: "
-                                 + ", ".join(r.section_name for r in undecided[:6])
-                                 + ("…" if len(undecided) > 6 else "")],
-                        note="Nothing is preselected. An exclusion (N/A) keeps its reason.")
-    return StepView(DONE, headline, items=items, actions=[action])
-
-
-# ------------------------------------------------------------------------------------------------ 7 construction scope
-def _construction_scope(ctx):
-    blocked = _project_or_todo(ctx)
-    if blocked:
-        return blocked
-    if ctx.guided is None:
-        return StepView(TODO, "Choose your role first (step 6).", missing=["Choose your role first (step 6)."])
-    top = ctx.guided.top_stages
-    added = sum(1 for s in top if s.is_custom)
-    items = [Item(s.display_name, INFO, (s.explanation or "")[:140]) for s in top]
-    return StepView(DONE, f"{len(top)} construction stages for {ctx.guided.project_type_label}"
-                    + (f" ({added} added by you)" if added else ""), items=items,
-                    actions=[Action("Add a stage the job needs", url_for("guided.scope", project_id=ctx.project.id)
-                                    + "#stages", key="open-scope")],
-                    note="The stages come from the project type. Add any stage this job needs that is not listed.")
-
-
-# ------------------------------------------------------------------------------------------------ 8 stages that apply
-def _applicable(ctx):
-    blocked = _project_or_todo(ctx)
-    if blocked:
-        return blocked
-    if ctx.guided is None:
-        return StepView(TODO, "Choose your role first (step 6).", missing=["Choose your role first (step 6)."])
-    from app.services import guided_estimating as G
-
-    rows = G.leaf_stages(ctx.guided)
-    excluded = [r for r in rows if r.responsibility == "NA"]
-    items = [Item(r.section_name, NOT_NEEDED if r.responsibility == "NA" else INFO,
-                  ("N/A — " + (r.na_reason or "no reason given")) if r.responsibility == "NA" else
-                  (r.responsibility_label if r.responsibility else "in the job (who does it: next step)")) for r in rows]
-    return StepView(INFO, f"{len(rows) - len(excluded)} stage(s) in the job, {len(excluded)} excluded",
-                    items=items, actions=[Action("Mark stages N/A (with the reason)",
-                                                 url_for("guided.scope", project_id=ctx.project.id),
-                                                 primary=True, key="open-scope")],
-                    note="An excluded stage is N/A with its reason; it shows on the proposal's exclusions.")
-
-
-# ------------------------------------------------------------------------------------------------ 10 project lead & first dates
+# ------------------------------------------------------------------------------------------------ 6 lead and first dates
 def _responsibility(ctx):
-    """The Project Lead (decision 1, 24 Oct 2026) and the first visits or meetings on the Company Calendar.
-
-    The Project Lead is the project's own field, kept apart from the appointments' own assignees."""
+    """The Project Lead (decision 1, 24 Oct 2026) and the first visits or meetings on the Company Calendar."""
     blocked = _project_or_todo(ctx)
     if blocked:
         return blocked
@@ -441,58 +458,57 @@ def _responsibility(ctx):
     from app.models.appointment import APPOINTMENT_STATUS_ACTIVE, APPOINTMENT_TYPE_LABELS, CompanyAppointment
     from app.models.user import User
     from app.services.project_lead import lead_name
-    from app.wizards.lead import lead_form_ctx, lead_item
+    from app.wizards.lead import lead_form_ctx
 
     rows = (CompanyAppointment.query.filter_by(organization_id=ctx.organization_id, project_id=ctx.project.id,
                                                status=APPOINTMENT_STATUS_ACTIVE)
             .order_by(CompanyAppointment.appointment_date.asc()).all())
-    items = [lead_item(ctx)]
+    items = []
     for appt in rows:
         person = db.session.get(User, appt.assigned_user_id) if appt.assigned_user_id else None
         items.append(Item(f"{appt.appointment_date:%b %d, %Y} — {appt.title}", DONE,
                           f"{APPOINTMENT_TYPE_LABELS.get(appt.appointment_type, appt.appointment_type)}; "
                           f"with: {person.display_name if person else 'no one assigned'}",
                           url_for("schedule.edit_appointment", appointment_id=appt.id)))
-    action = Action("Add a site visit or meeting to the Company Calendar",
-                    url_for("schedule.new_appointment", project_id=ctx.project.id, scope="company"),
-                    key="new-appointment",
-                    note="The first date and who goes. Construction work is scheduled from the work plan once the "
-                         "customer accepts.")
     lead = lead_name(ctx.project)
     dates = f"{len(rows)} appointment{'s' if len(rows) != 1 else ''} on the Company Calendar"
     assigned = bool(ctx.project.project_lead_user_id)
-    return StepView(DONE if assigned else TODO, f"Project Lead: {lead} · {dates}", items=items, actions=[action],
-                    form="project_lead.html", form_ctx=lead_form_ctx(ctx),
-                    note="Optional. The Project Lead gives no access; appointments keep their own assignees.")
+    return StepView(DONE if assigned else TODO, f"Project Lead: {lead} · {dates}", items=items,
+                    actions=[Action("Add a site visit or meeting to the Company Calendar",
+                                    url_for("schedule.new_appointment", project_id=ctx.project.id, scope="company"),
+                                    key="new-appointment")],
+                    form="np_lead.html", form_ctx=lead_form_ctx(ctx))
 
 
 def _save_responsibility(ctx, form):
     from app.wizards.lead import save_lead
 
+    if form.get("project_lead_user_id") is None:
+        return "Saved."
     return save_lead(ctx, form, step="responsibility")
 
 
-# ------------------------------------------------------------------------------------------------ 9 review
+# ------------------------------------------------------------------------------------------------ 7 review
 def outstanding(ctx):
-    """What is still missing on the project's setup, from the existing setup resolver and the steps."""
+    """What is still missing on the project's setup (listed on the review and kept on the project)."""
     out = []
     if ctx.project is None:
         return ["The project is not created yet."]
     from app.models.project import LOCATION_COMPLETE
+    from app.services.clients import missing_information
 
+    client = ctx.project.client
+    if client is not None:
+        missing = missing_information(client)
+        if missing:
+            out.append(f"Customer information: {', '.join(missing).lower()} (listed under What needs my attention).")
     location = ctx.project.location
     if location is None or location.completeness != LOCATION_COMPLETE:
         out.append("The job location is incomplete.")
     if _documents(ctx).state != DONE:
-        out.append("No drawings, and no record that none are needed.")
-    elif _has_drawings(ctx) and _view_plan(ctx).state != DONE:
-        out.append("The drawings are not reviewed yet.")
+        out.append("No drawings yet, and no record that none are needed.")
     if ctx.guided is None:
         out.append("Your role on the project is not chosen.")
-    else:
-        stages = _stages(ctx)
-        if stages.state != DONE:
-            out.append(stages.headline)
     return out
 
 
@@ -500,159 +516,127 @@ def _review(ctx):
     blocked = _project_or_todo(ctx)
     if blocked:
         return blocked
-    from app.services.project_setup import describe_setup
-    from app.services.start_project_walk import resolve_start_project_walk
+    from app.models.guided_estimating import PROJECT_TYPE_LABELS
+    from app.services.project_lead import lead_name
     from app.wizards.service import has_event
 
-    setup = describe_setup(resolve_start_project_walk(ctx.organization_id, ctx.project.id))
+    project = ctx.project
+    location = project.location
+    address = ", ".join(x for x in ((location.street, location.municipality, location.province_state)
+                                    if location else ()) if x) or (project.address or "—")
+    guided_type = ctx.guided.project_type if ctx.guided is not None else ctx.draft.get("guided_project_type")
+    facts = _plan_facts(ctx)
+    summary = [("Customer", project.client.name if project.client else "—"),
+               ("Project", project.name + (f" ({project.project_number})" if project.project_number else "")),
+               ("What is being built", PROJECT_TYPE_LABELS.get(guided_type, "—")),
+               ("Job site", address),
+               ("Drawings", f"{len(facts['documents'])} on the project" if facts["documents"] else
+                ("Not needed" if _documents(ctx).state == DONE else "None yet")),
+               ("Your role", ctx.guided.contractor_role_label if ctx.guided is not None else "Not chosen"),
+               ("Project Lead", lead_name(project))]
     missing = outstanding(ctx)
-    items = [Item(text, DONE) for text in setup.ready] + [Item(text, TODO) for text in missing]
     confirmed = has_event(ctx.run, "CONFIRMED", "review")
-    actions = [Action("Open the project", url_for("projects.view_project", id=ctx.project.id), key="open-project")]
-    if confirmed:
-        return StepView(DONE, f"Setup confirmed by {confirmed.actor_display_name}", items=items, actions=actions,
-                        note=("Still outstanding: " + "; ".join(missing)) if missing else "")
-    return StepView(TODO, "Check the setup and confirm it", items=items, actions=actions,
-                    missing=["Confirm the project setup."], form="confirm.html",
-                    form_ctx={"label": "Confirm the project setup", "outstanding": missing,
-                              "text": "I checked the customer, project type, location, drawings, role and stages."})
+    return StepView(DONE if confirmed else INFO,
+                    "Everything is in place" if not missing else f"{len(missing)} thing{'s' if len(missing) != 1 else ''}"
+                    " still to add later",
+                    items=[], form="np_review.html",  # the review form lists what is still to add, once
+                    form_ctx={"summary": summary, "outstanding": missing, "custom_finish": True,
+                              "can_estimate": ctx.guided is not None})
 
 
-def _confirm_review(ctx, form):
-    from app.wizards.service import WizardError, confirm
-
-    if not form.get("confirmed"):
-        raise WizardError("Tick the box to confirm the setup.")
-    missing = outstanding(ctx)
-    confirm(ctx.run, "review", actor=ctx.actor, user_id=ctx.user_id,
-            detail="Project setup confirmed." + (f" Outstanding: {'; '.join(missing)}" if missing else ""))
-    return "Project setup confirmed."
-
-
-# ------------------------------------------------------------------------------------------------ 10 continue
-def _continue(ctx):
-    blocked = _project_or_todo(ctx)
-    if blocked:
-        return blocked
-    return StepView(INFO, "Continue into Guided Estimating now, or save the project for later",
-                    form="new_project_continue.html", form_ctx={},
-                    actions=[Action("Open the project", url_for("projects.view_project", id=ctx.project.id),
-                                    key="open-project")])
-
-
-def _continue_handle(ctx, form):
+def _finish(ctx, form):
+    """Finish the setup: start Guided Estimating now, or keep the project for later."""
     from app.wizards import service as S
 
     if ctx.project is None:
         raise S.WizardError("Create the project first.")
-    if form.get("choice") == "estimate":
-        S.finish(ctx.run, actor=ctx.actor, user_id=ctx.user_id)
+    choice = form.get("choice") or request.args.get("choice") or ""
+    if choice not in ("estimate", "later"):
+        return "Saved."
+    missing = outstanding(ctx)
+    S.confirm(ctx.run, "review", actor=ctx.actor, user_id=ctx.user_id,
+              detail="Project setup confirmed." + (f" Outstanding: {'; '.join(missing)}" if missing else ""))
+    S.finish(ctx.run, actor=ctx.actor, user_id=ctx.user_id)
+    if choice == "estimate" and ctx.guided is not None:
         run = S.start_contractor_run(WIZARD_GUIDED_ESTIMATING, organization_id=ctx.organization_id,
                                      actor=ctx.actor, user_id=ctx.user_id, project_id=ctx.project.id)
         return "Project set up. Guided Estimating is next.", url_for("wizards.resume", run_id=run.id)
-    S.finish(ctx.run, actor=ctx.actor, user_id=ctx.user_id)
     return ("Project saved. Start Guided Estimating from Home or the project page when you are ready.",
             url_for("projects.view_project", id=ctx.project.id))
 
 
 STEPS = (
-    Step("customer", "Customer and project",
-         "Who the job is for and what it is called.",
-         "Choose the customer (add one first if they are new), name the project and describe it in a line.",
-         "Next, choose what is being built.",
+    Step("customer", "Who is the customer?",
+         "Choose the customer, or add a new one right here. Only the name is needed now.",
+         "Choose the customer from the list, or choose New customer and enter their name (email, phone and address "
+         "can be added later; CalibraytAI reminds you).",
+         "Next, what you are building.",
          _customer, handle=_save_customer, draft=True,
          manual=lambda ctx: ("New Project form", url_for("projects.create_project"))),
-    Step("project_type", "Project type",
-         "What is being built: a new home, a garage, an addition or renovation, a foundation, or another job.",
-         "Choose the type. It picks the construction stages for the estimate; the commercial project type is "
-         "pre-filled from it and can be changed.",
-         "Next, the job location and the basic commercial requirements.",
+    Step("project_type", "What are we building?",
+         "Name the job and choose the kind of work. The kind of work sets the construction stages for the estimate.",
+         "Name the project and choose what is being built.",
+         "Next, where the job is.",
          _project_type, handle=_save_type, draft=True,
          manual=lambda ctx: ("Project page", url_for("projects.view_project", id=ctx.project.id))
          if ctx.project else ("New Project form", url_for("projects.create_project"))),
-    Step("location", "Location and basic requirements",
-         "The job address (for permits and the contract) and the commercial decision gate kept with every estimate.",
-         "Enter the civic address, check the commercial choices, then press Create the project. It is created once.",
-         "Next, add the drawings, specifications and documents.",
+    Step("location", "Where is the job?",
+         "The job-site address, for the permit report and the contract. It can be the customer's address or "
+         "somewhere else. Save & Continue creates the project.",
+         "Enter the job-site address (or use the customer's), then Save & Continue. The project is created once.",
+         "Next, the plans and drawings.",
          _location, handle=_save_location, draft=True,
          manual=lambda ctx: ("Job location", url_for("projects.edit_project_location", id=ctx.project.id))
          if ctx.project else ("New Project form", url_for("projects.create_project"))),
-    Step("documents", "Drawings and documents",
-         "The plans everyone works from: CAD exports and plan PDFs, specifications and supporting documents.",
-         "Upload each PDF, generate construction drawings, or record that this job needs no drawings.",
-         "Next, review the drawings in View Plan.",
-         _documents,
+    Step("documents", "What plans and drawings do we have?",
+         "Add the plan PDFs you have now, record that this job needs none, or carry on and add them later.",
+         "Choose a PDF to add it, or choose No drawings needed. Nothing here stops you going on.",
+         "Next, your role on the job.",
+         _documents, required=False, handle=_save_documents, continue_form=True,
          manual=lambda ctx: ("Project plans", url_for("plan_intelligence.list_plans", project_id=ctx.project.id))
          if ctx.project else None),
-    Step("view_plan", "Review the drawings",
-         "Look through the drawings with View Plan before estimating.",
-         "Open the plan, check the sheets, measure where the drawing allows, and record what the drawings give you.",
-         "Next, your role on the project.",
-         _view_plan, applies=_has_drawings, handle=_confirm_plan,
-         manual=lambda ctx: ("Plan sheets", url_for("plan_intelligence.project_sheets", project_id=ctx.project.id))
-         if ctx.project else None),
-    Step("role", "Your role", "Whether you are the general contractor, do selected portions, or are a subcontractor "
-         "for a defined scope.",
-         "Choose your role. With the project type it sets the construction stages.",
-         "Next, the construction scope.",
-         _role_scope, handle=_save_role,
-         manual=lambda ctx: ("Start New Estimate", url_for("guided.start"))),
-    Step("construction_scope", "Construction scope", "The construction stages of this job, in building order.",
-         "Read the stages. Add any stage the job needs that is not listed.",
-         "Next, the stages that apply and the exclusions.",
-         _construction_scope,
+    Step("role", "What work are we responsible for?",
+         "Whether you are the general contractor, do selected portions, or are a subcontractor for a defined scope. "
+         "With the kind of job it sets the construction stages.",
+         "Choose your role.",
+         "Next, who leads the job and the first dates.",
+         _role_scope, handle=_save_role, continue_form=True,
          manual=lambda ctx: ("Construction scope", url_for("guided.scope", project_id=ctx.project.id))
          if ctx.project else None),
-    Step("applicable", "Stages that apply and exclusions", "Which stages are part of this job and which are not.",
-         "Mark a stage N/A (with the reason) if it is not in this job.",
-         "Next, who does each stage.",
-         _applicable,
-         manual=lambda ctx: ("Construction scope", url_for("guided.scope", project_id=ctx.project.id))
-         if ctx.project else None),
-    Step("stages", "Internal, Subcontracted or N/A",
-         "Who does each stage: your crew (Internal), a subcontractor, or not in this job (N/A).",
-         "Choose for every stage on the construction scope. Nothing is preselected.",
-         "Next, the Project Lead and the first dates.",
-         _stages,
-         manual=lambda ctx: ("Construction scope", url_for("guided.scope", project_id=ctx.project.id))
-         if ctx.project else None),
-    Step("responsibility", "Project Lead and first dates",
-         "Who looks after the job (the Project Lead), and the first visit or meeting on the Company Calendar.",
-         "Choose the Project Lead from your company's people (optional), and add a site visit, estimate "
-         "consultation or customer meeting.",
-         "Next, review and confirm the setup.",
-         _responsibility, required=False, handle=_save_responsibility,
+    Step("responsibility", "Who is leading it, and when?",
+         "Who looks after the job (the Project Lead) and the first site visit or meeting. Both are optional.",
+         "Choose the Project Lead (optional) and add the first visit or meeting if you have one.",
+         "Last, check the setup.",
+         _responsibility, required=False, handle=_save_responsibility, continue_form=True,
          manual=lambda ctx: ("Company Calendar", url_for("schedule.company"))),
-    Step("review", "Review and confirm",
-         "Everything the project has, and anything still missing.",
-         "Check the list. Confirm it; anything outstanding stays listed on the project.",
-         "Last, continue into Guided Estimating or save for later.",
-         _review, handle=_confirm_review,
-         manual=lambda ctx: ("Project setup", url_for("projects.project_setup", id=ctx.project.id))
-         if ctx.project else None),
-    Step("continue", "Continue",
-         "Start estimating now with Guided Estimating, or stop here and come back later.",
-         "Choose Continue into Guided Estimating, or Save for later.",
+    Step("review", "Does this look right?",
+         "Everything the project has, and anything still to add later.",
+         "Check the summary, then start Guided Estimating now or keep the project for later.",
          "Guided Estimating walks each stage with its calculator or quotation.",
-         _continue, handle=_continue_handle,
-         manual=lambda ctx: ("Project page", url_for("projects.view_project", id=ctx.project.id))
+         _review, required=False, handle=_finish, continue_form=True,
+         manual=lambda ctx: ("Project setup", url_for("projects.project_setup", id=ctx.project.id))
          if ctx.project else None),
 )
 
 
 def _subject(ctx):
     if ctx.project is not None:
-        return ctx.project.name
-    return ctx.draft.get("name") or "New project (not created yet)"
+        client = ctx.project.client
+        return ctx.project.name + (f" — {client.name}" if client is not None else "")
+    client = _chosen_client(ctx)
+    name = ctx.draft.get("name") or ""
+    if client is not None or name:
+        return " — ".join(x for x in (name or "New project", client.name if client is not None else "") if x)
+    return "New project (not created yet)"
 
 
 WIZARD = Wizard(
     key=WIZARD_NEW_PROJECT, side="CONTRACTOR", title="Start a New Project",
-    short="Customer, project type, location, drawings, your role and the construction stages — then estimating.",
+    short="Customer, what you are building, where, plans, your role and who leads it — then estimating.",
     audience="Contractors and office staff",
     steps=STEPS, manual_label="New Project form",
     manual_url=lambda ctx=None: url_for("projects.create_project"),
-    subject=_subject, finish_label="Finish",
+    subject=_subject, finish_label="Finish", compact=True,
 )
 
 _ = NOT_NEEDED

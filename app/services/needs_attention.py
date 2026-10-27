@@ -336,6 +336,9 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
         items.append(_item("tasks", f"{n} open punch list item{'s' if n != 1 else ''}", _label(project), "Open", "",
                            f"/projects/{pid}#hub-punch-list", "Open the punch list"))
 
+    # ---- customers with information still to add (Project Creation UX, 27 Oct 2026)
+    items.extend(incomplete_customers(org, projects))
+
     # ---- labour and schedule facts (Company Attention), for COMPANY_MANAGEMENT as on that page
     if include_company_facts is None:
         include_company_facts = membership_has_access_domain(viewer, org, ACCESS_DOMAIN_COMPANY_MANAGEMENT)
@@ -362,3 +365,38 @@ def _reminder_time(org) -> str:
     from app.services.reminders import settings_for
 
     return settings_for(org).reminder_time or "16:30"
+
+
+def incomplete_customers(org, projects=None, *, client_id=None) -> list:
+    """One item per customer whose email, phone or address is still missing (never two for the same customer).
+
+    Derived from the customer record itself, like every other item: the moment the information is saved the item
+    is gone. The customer may be saved without them (a contractor often gets the email or phone later); this keeps
+    the gap in front of the office instead of in someone's memory. A customer whose jobs are all closed is left out;
+    a customer with no job yet (just added) is included."""
+    from app.models import Client
+    from app.services.clients import missing_information
+    from app.services.time_entry import customer_clients_only
+
+    projects = projects if projects is not None else _projects(org)
+    by_client = defaultdict(list)
+    for p in projects.values():
+        if p.client_id:
+            by_client[p.client_id].append(p)
+    query = customer_clients_only(Client.query.filter_by(organization_id=org), org)
+    if client_id is not None:
+        query = query.filter(Client.id == client_id)
+    out = []
+    for client in query.order_by(Client.name.asc()).all():
+        missing = missing_information(client)
+        if not missing:
+            continue
+        theirs = by_client.get(client.id, [])
+        open_jobs = [p for p in theirs if (p.operating_state or "ACTIVE") != "CLOSED"]
+        if theirs and not open_jobs:
+            continue  # every job for this customer is closed: nothing left to chase
+        jobs = ", ".join(_label(p) for p in sorted(open_jobs, key=lambda x: x.id)[:2])
+        out.append(_item("customers", f"{client.name} — Customer information incomplete", jobs,
+                         "Missing: " + ", ".join(missing), "", f"/clients/{client.id}?return_to=/",
+                         "Complete information"))
+    return out

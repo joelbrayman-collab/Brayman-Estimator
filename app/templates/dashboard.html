@@ -8,40 +8,41 @@
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.office_topic("dashboard")) }}
 
-<section class="home-intro">
-    <div>
-        {% if view.first_name %}
-        <h2 class="home-greeting">Good morning, {{ view.first_name }}.</h2>
-        {% else %}
-        <h2 class="home-greeting">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
-        {% endif %}
-    </div>
-    <div class="home-actions">
-        <a class="home-start-estimate" data-home-start-estimate href="{{ url_for('guided.start') }}">{{ contractor_copy.HOME_START_ESTIMATE }}</a>
-        <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
-        <a class="home-calendar" href="{{ url_for('schedule.company') }}">
-            <i class="bi bi-calendar3" aria-hidden="true"></i>
-            <span>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</span>
-        </a>
-    </div>
-</section>
-
-{% if attention and not attention.hidden %}{% set attention_shown = 4 %}{% include "operations/_home_attention.html" %}{% endif %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home-compact.css', v='pcux-1') }}">
 {% set wizard_list = office_wizards() %}
 {% set summaries = office_wizard_summaries(6) %}
 {% macro _start(w) %}{{ url_for('wizards.start', wizard_key=w.key) }}{% endmacro %}
 {% set start_url = _start %}
 {% macro _manual(w) %}{{ w.manual_url() }}{% endmacro %}
 {% set manual_url = _manual %}
-{% include "wizards/_home_panel.html" %}
+{# Compact Home (Project Creation UX, 27 Oct 2026): one greeting row with the Company Calendar; WHAT NEEDS MY ATTENTION?
+   first (Magnificent Seven decision), then one band of guided starts, unfinished work one line each, Today and Coming
+   days. #}
+<section class="hc-top" data-home-top>
+    <div class="hc-hello">
+        {% if view.first_name %}
+        <h2 class="home-greeting">Good morning, {{ view.first_name }}.</h2>
+        {% else %}
+        <h2 class="home-greeting">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
+        {% endif %}
+        <span class="hc-date">{{ view.briefing.today_label }}</span>
+        <a class="home-calendar hc-calendar" href="{{ url_for('schedule.company') }}"><i class="bi bi-calendar3" aria-hidden="true"></i> <span>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</span></a>
+    </div>
+</section>
+
+{% if attention and not attention.hidden %}{% set attention_shown = 4 %}{% include "operations/_home_attention.html" %}{% endif %}
+{% include "wizards/_home_strip.html" %}
+{% include "wizards/_home_resume.html" %}
 
 {% set sms_failed = sms_schedule_attention() %}
 {% if sms_failed %}
 <p class="home-sms-attention" role="alert" data-home-sms-attention="{{ sms_failed }}"><a href="{{ url_for('sms_notifications.office_notices') }}">{{ sms_failed }} schedule text{{ '' if sms_failed == 1 else 's' }} to workers not delivered. Check and retry.</a></p>
 <style>.home-sms-attention { border-left: 4px solid var(--danger, #b42318); padding: 8px 12px; margin: 0 0 12px; overflow-wrap: anywhere; } .home-sms-attention a { color: var(--danger, #b42318); font-weight: 600; }</style>
 {% endif %}
-<section class="home-briefing" aria-label="Today, attention, and coming days">
+{# One Attention list (Project Creation UX, 27 Oct 2026): the Company Attention facts this column repeated are already in
+   WHAT NEEDS MY ATTENTION? above for the people who may see them. #}
+<section class="home-briefing hc-briefing" aria-label="Today and coming days">
     <div>
         <h2>{{ contractor_copy.HOME_TODAY }} <span class="home-briefing-count{% if view.briefing.today_empty %} is-zero{% endif %}">{{ view.briefing.today_work|length }}</span></h2>
         <p class="muted-copy">{{ view.briefing.today_label }}</p>
@@ -51,20 +52,6 @@
         <ul>
             {% for row in view.briefing.today_work %}
             <li><a href="{{ url_for('projects.view_project', id=row.project_id) }}">{{ row.label }}</a></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-    <div>
-        <h2>{{ contractor_copy.HOME_ATTENTION_HEADING }}{% if not view.briefing.attention_hidden %} <span class="home-briefing-count{% if view.briefing.attention_empty %} is-zero{% endif %}">{{ view.briefing.attention|length }}</span>{% endif %}</h2>
-        {% if view.briefing.attention_hidden %}
-        <p class="home-briefing-empty">{{ contractor_copy.HOME_ATTENTION_OFFICE }}</p>
-        {% elif view.briefing.attention_empty %}
-        <p class="home-briefing-empty">{{ contractor_copy.HOME_ATTENTION_EMPTY }}</p>
-        {% else %}
-        <ul>
-            {% for row in view.briefing.attention %}
-            <li><a href="{{ row.href }}">{{ row.project_name }} — {{ row.title }}</a></li>
             {% endfor %}
         </ul>
         {% endif %}

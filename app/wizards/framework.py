@@ -81,6 +81,9 @@ class Step:
     handle: Optional[Callable] = None      # (ctx, form) -> str (flash text); calls existing services only
     manual: Optional[Callable] = None      # (ctx) -> (label, url) the manual page for this step
     draft: bool = False       # the step's form is answers kept in the run (saved by Save, Next and autosave)
+    # The step's form is sent by Save & Continue (and Save / Save & Exit) through ``handle``, never autosaved: for
+    # steps that change real records (Project Creation UX, 27 Oct 2026). ``handle`` must be safe to repeat.
+    continue_form: bool = False
 
     def is_applicable(self, ctx) -> bool:
         return True if self.applies is None else bool(self.applies(ctx))
@@ -99,6 +102,9 @@ class Wizard:
     subject: Callable         # (ctx) -> str, what the run is about ("Avery New Home (synthetic)")
     finish_label: str = "Finish"
     after_finish: Optional[Callable] = None   # (ctx) -> url to go to when the person finishes
+    # Compact presentation (Project Creation UX, 27 Oct 2026): "Title · Step X of Y", a thin progress bar, the step
+    # list behind "View all steps", one task card, Back · Save & Exit · Save & Continue.
+    compact: bool = False
 
     def step(self, key: str) -> Optional[Step]:
         return next((s for s in self.steps if s.key == key), None)

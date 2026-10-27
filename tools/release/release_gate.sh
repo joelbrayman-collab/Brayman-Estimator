@@ -34,7 +34,7 @@
 # release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
 set -u
 usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=254; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""
+LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
@@ -58,6 +58,11 @@ done
 if [ -n "$MIGRATION_TO$NEW_TABLES" ]; then
   [[ "$MIGRATION_TO" =~ ^[0-9a-z]{12}$ ]] && [[ "$NEW_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
     || { echo "--migration-to <12-character revision> and --new-tables <t1,t2> go together"; exit 2; }
+  # --new-tables none (27 Oct 2026): a migration that only adds columns to declared --altered-tables; the rehearsal
+  # then requires that no table at all is added.
+  if [ "$NEW_TABLES" = "none" ] && [ -z "$ALTERED_TABLES" ]; then
+    echo "--new-tables none is only for a migration that changes declared --altered-tables"; exit 2
+  fi
 fi
 # --altered-tables <t1,...> (20 Oct 2026): existing tables whose schema the migration changes (e.g. a widened
 # check constraint). Every one of their rows must still be identical; any other schema change still stops.
@@ -166,7 +171,7 @@ sys.exit(0 if not skipped and clean("tests.test_contractor_workflow_e2e") and cl
 PYEOF
 status "NO_SKIPS; E2E_CONTRACTOR_WALK=passed in Google Chrome; CAL_TESTS=passed"
 ( cd tools/release && EVIDENCE_REPO="$DEST" node --test --test-reporter=tap --test-force-exit --test-concurrency=1 \
-    evidence_employment_v11.mjs evidence_trade_pages.mjs evidence_cal_find_it.mjs evidence_calendar.mjs evidence_pro_desk.mjs evidence_supplier_hub.mjs evidence_roles.mjs evidence_first_day.mjs evidence_training.mjs evidence_workflow_map.mjs evidence_training_signin.mjs evidence_field_crew.mjs evidence_field_time.mjs evidence_useful_calculators.mjs evidence_time_payroll.mjs evidence_sms_notifications.mjs evidence_site_plans.mjs evidence_guided_estimating.mjs evidence_wizards.mjs evidence_magnificent_seven.mjs evidence_identity.mjs ) > "$OUT-browser.txt" 2>&1
+    evidence_employment_v11.mjs evidence_trade_pages.mjs evidence_cal_find_it.mjs evidence_calendar.mjs evidence_pro_desk.mjs evidence_supplier_hub.mjs evidence_roles.mjs evidence_first_day.mjs evidence_training.mjs evidence_workflow_map.mjs evidence_training_signin.mjs evidence_field_crew.mjs evidence_field_time.mjs evidence_useful_calculators.mjs evidence_time_payroll.mjs evidence_sms_notifications.mjs evidence_site_plans.mjs evidence_guided_estimating.mjs evidence_wizards.mjs evidence_magnificent_seven.mjs evidence_identity.mjs evidence_project_creation.mjs ) > "$OUT-browser.txt" 2>&1
 BR_EXIT=$?
 grep -E '(tests|pass|fail) [0-9]+$|^not ok' "$OUT-browser.txt"
 [ "$BR_EXIT" -eq 0 ] && grep -qE "^(# |ℹ )pass $BROWSER_EXPECTED\$" "$OUT-browser.txt" && grep -qE '^(# |ℹ )fail 0$' "$OUT-browser.txt" \

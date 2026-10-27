@@ -192,3 +192,87 @@
   .wz-panel-manual { font-size: .78rem; min-height: 30px; }
 }
 @container (min-width: 1100px) { .wz-panel { padding: 12px 14px 14px; } }
+
+/* ===== Compact wizard (Project Creation UX, 27 Oct 2026): one task, Step X of Y, steps behind "View all steps". */
+.wzc { max-width: 920px; margin: 0 auto; display: grid; gap: 12px; }
+.wzc-head { display: grid; gap: 6px; }
+.wzc-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.wzc-where { margin: 0; font-size: .95rem; color: var(--muted, #555); }
+.wzc-where strong { color: var(--text, #222); }
+.wzc-bar { height: 6px; background: #ebe7dc; border-radius: 99px; overflow: hidden; }
+.wzc-bar span { display: block; height: 100%; background: var(--gold, #d6a21e); border-radius: 99px; }
+.wzc-subject { margin: 0; font-size: .9rem; color: var(--muted, #555); }
+.wzc-all { position: relative; }
+.wzc-all > summary { cursor: pointer; font-size: .88rem; color: var(--text, #222); text-decoration: underline; list-style: none; }
+.wzc-all > summary::-webkit-details-marker { display: none; }
+.wzc-all[open] .wzc-steps { position: absolute; right: 0; top: 1.8em; z-index: 30; min-width: 300px; background: #fff;
+  border: 1px solid var(--border, #ddd); border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 24, 40, .12); padding: 8px; margin: 0; }
+.wzc-steps { list-style: none; padding: 0; }
+.wzc-steps a { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 8px; text-decoration: none; color: inherit; font-size: .9rem; }
+.wzc-steps .is-current a { background: #fbf4df; font-weight: 600; }
+.wzc-card { background: #fff; border: 1px solid #e3e1da; border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 2px rgba(16, 24, 40, .04); display: grid; gap: 12px; }
+.wzc-title { font-size: 1.45rem; line-height: 1.25; margin: 0; }
+.wzc-explain { margin: -4px 0 0; color: #46505f; line-height: 1.45; }
+.wzc-status { margin: 0; font-size: .9rem; color: var(--muted, #555); }
+.wzc-form { display: grid; gap: 12px; }
+.wzc-items { margin: 0; }
+.wzc-note { margin: 0; font-size: .9rem; }
+.wzc-nav { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-top: 1px solid #efede7; padding-top: 14px; margin-top: 2px; }
+.wzc-nav .wzc-spacer { flex: 1 1 auto; }
+.wzc-nav button, .np-finish button { min-height: 44px; padding: 0 18px; font-weight: 600; }
+.wzc-actions { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: .9rem; padding: 0 4px; }
+.wzc-actions-label { color: var(--muted, #555); }
+.wzc-actions .wz-inline-form { display: inline; margin: 0; }
+.wzc-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: flex-start; font-size: .88rem; color: var(--muted, #555); padding: 0 4px; }
+.wzc-foot .wz-history { margin: 0; }
+
+/* Start a New Project task forms */
+.np-grid { display: grid; gap: 10px 14px; }
+.np-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.np-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.np-grid-street { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.np-field { display: grid; gap: 4px; font-weight: 600; font-size: .92rem; margin: 0; }
+.np-field input, .np-field select, .np-field textarea { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid #c5ccd6;
+  border-radius: 8px; font: inherit; font-weight: 400; box-sizing: border-box; background: #fff; }
+.np-field textarea { resize: vertical; min-height: 42px; }
+.np-field input[type=file] { padding: 7px; }
+.np-wide { grid-column: 1 / -1; }
+.np-hint { margin: 0; font-size: .86rem; color: #5a6473; font-weight: 400; }
+.np-mode { display: inline-flex; border: 1px solid #c5ccd6; border-radius: 10px; overflow: hidden; width: fit-content; }
+.np-mode-opt { display: flex; align-items: center; gap: 6px; padding: 9px 16px; cursor: pointer; font-weight: 600; margin: 0; }
+.np-mode-opt + .np-mode-opt { border-left: 1px solid #c5ccd6; }
+.np-mode-opt:has(input:checked) { background: #fbf4df; }
+.np-panel { display: grid; gap: 10px; }
+.np-panel[hidden] { display: none; }
+.np-cards { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.np-cards-wide { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.np-cards legend { font-weight: 600; font-size: .92rem; margin-bottom: 6px; padding: 0; }
+.np-card { display: flex; gap: 8px; align-items: center; border: 1px solid #d9dee6; border-radius: 10px; padding: 10px 12px; cursor: pointer; margin: 0; min-height: 44px; }
+.np-card:has(input:checked) { border-color: var(--gold, #d6a21e); background: #fbf4df; }
+.np-more { border-top: 1px dashed #e3e1da; padding-top: 8px; }
+.np-more > summary { cursor: pointer; font-size: .9rem; color: var(--muted, #555); }
+.np-more[open] > summary { margin-bottom: 8px; }
+.np-same { display: flex; gap: 8px; align-items: center; font-weight: 600; margin: 0; }
+.np-same .np-hint { font-weight: 400; }
+.np-copied { background: #f6f6f3 !important; }
+.np-upload { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 10px 14px; }
+.np-choices { border: 1px solid #e3e1da; border-radius: 10px; padding: 8px 12px 10px; margin: 0; display: grid; gap: 6px; }
+.np-choices legend { font-weight: 600; font-size: .92rem; padding: 0 4px; }
+.np-choice { display: flex; gap: 8px; align-items: flex-start; font-weight: 400; margin: 0; }
+.np-review { display: grid; gap: 0; margin: 0; }
+.np-review > div { display: grid; grid-template-columns: minmax(130px, 200px) 1fr; gap: 12px; padding: 7px 0; border-bottom: 1px solid #f0eee8; }
+.np-review dt { font-weight: 600; color: #46505f; }
+.np-review dd { margin: 0; }
+.np-later { background: #fff7e0; border: 1px solid #f0d58a; border-radius: 10px; padding: 8px 12px; font-size: .92rem; }
+.np-later ul { margin: 4px 0 0 18px; padding: 0; }
+.np-finish { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 760px) {
+  .wzc-card { padding: 14px; border-radius: 12px; }
+  .wzc-title { font-size: 1.25rem; }
+  .np-grid-2, .np-grid-3, .np-grid-street, .np-upload { grid-template-columns: minmax(0, 1fr); }
+  .wzc-nav .wzc-spacer { display: none; }
+  .wzc-nav button, .np-finish button { flex: 1 1 100%; }
+  .wzc-all[open] .wzc-steps { left: 0; right: auto; min-width: 0; width: calc(100vw - 32px); }
+  .np-review > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .np-mode { width: 100%; } .np-mode-opt { flex: 1 1 50%; justify-content: center; }
+}

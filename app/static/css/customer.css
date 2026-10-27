@@ -1,0 +1,25 @@
+/* Customer fields (Project Creation UX, 27 Oct 2026): compact columns on a desktop, stacked on a phone. */
+.cust-fields { display: grid; gap: 10px; }
+.cust-row { display: grid; gap: 10px 14px; }
+.cust-row-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cust-row-street { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); }
+.cust-row-4 { grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.2fr); }
+.cust-fields label { display: grid; gap: 4px; font-weight: 600; font-size: .92rem; margin: 0; }
+.cust-fields input, .cust-fields select, .cust-fields textarea {
+  width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid #c5ccd6; border-radius: 8px;
+  font: inherit; font-weight: 400; box-sizing: border-box; background: #fff;
+}
+.cust-fields textarea { min-height: 42px; resize: vertical; }
+.cust-req, .cust-opt { font-weight: 400; font-size: .78rem; color: #5a6473; margin-left: 4px; }
+.cust-hint { margin: 0; font-size: .85rem; color: #5a6473; }
+.cust-address { border: 1px solid #e3e7ee; border-radius: 10px; padding: 10px 12px 12px; margin: 2px 0 0; display: grid; gap: 10px; }
+.cust-address legend { font-weight: 700; font-size: .92rem; padding: 0 6px; }
+.cust-legacy { margin: 0; font-size: .88rem; background: #fff7e0; border: 1px solid #f0d58a; border-radius: 8px; padding: 8px 10px; }
+.cust-notes { display: grid; gap: 4px; }
+.cust-incomplete { background: #fff7e0; border: 1px solid #f0d58a; border-radius: 10px; padding: 10px 14px; margin: 0 0 12px; }
+.cust-form { max-width: 980px; }
+.cust-heading h1 { margin-bottom: 4px; }
+@media (max-width: 760px) {
+  .cust-row-2, .cust-row-street, .cust-row-4 { grid-template-columns: minmax(0, 1fr); }
+  .cust-fields input, .cust-fields select { min-height: 44px; }
+}

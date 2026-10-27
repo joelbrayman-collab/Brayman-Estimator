@@ -87,8 +87,18 @@ def _wizard_context():
         except Exception:  # noqa: BLE001 - the project page never fails because of the wizard bar
             return None
 
+    def customer_missing(client):
+        """What the customer record still lacks (email, phone, address), for the project page's notice."""
+        try:
+            from app.services.clients import missing_information
+
+            return missing_information(client) if client is not None else []
+        except Exception:  # noqa: BLE001 - the project page never fails because of the notice
+            return []
+
     return {"wizard_return": wizard_return, "office_wizards": contractor_wizards,
-            "office_wizard_summaries": office_wizard_summaries, "project_wizard_entry": project_wizard_entry}
+            "office_wizard_summaries": office_wizard_summaries, "project_wizard_entry": project_wizard_entry,
+            "customer_missing": customer_missing}
 
 
 @wizards_bp.route("/")

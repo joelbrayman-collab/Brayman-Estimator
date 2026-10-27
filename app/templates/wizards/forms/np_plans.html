@@ -1,0 +1,19 @@
+{# Start a New Project · What plans and drawings do we have? Upload here (the Plans page's own service). #}
+<div class="np-upload">
+  <label class="np-field">Add a plan PDF <span class="cust-opt">CAD export, plans or specifications — one PDF at a time</span>
+    <input type="file" name="plan_file" accept="application/pdf,.pdf" data-plan-file></label>
+  <label class="np-field">Note about this PDF <span class="cust-opt">optional</span>
+    <input type="text" name="plan_notes" maxlength="300"></label>
+</div>
+{% if not f.has_drawings and not f.not_required %}
+<label class="np-same"><input type="checkbox" name="drawings_choice" value="none" data-no-drawings> This job needs no drawings</label>
+<p class="np-hint">No drawings yet? Carry on — the project keeps "drawings to add" until you upload them.</p>
+{% endif %}
+{% if f.has_drawings and not f.reviewed %}
+<fieldset class="np-choices" data-plan-review>
+  <legend>After looking through the drawings <span class="cust-opt">optional</span></legend>
+  <label class="np-choice"><input type="radio" name="plan_review" value="measured" {% if not f.measurements %}disabled{% endif %}> Measurements were taken on the drawings and checked{% if not f.measurements %} (none taken yet){% endif %}</label>
+  <label class="np-choice"><input type="radio" name="plan_review" value="manual"> Measurements are missing or not reliable — quantities will be entered by hand</label>
+  <label class="np-field">Note <span class="cust-opt">optional</span><input type="text" name="plan_note" maxlength="300"></label>
+</fieldset>
+{% endif %}

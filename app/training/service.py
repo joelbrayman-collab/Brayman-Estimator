@@ -477,7 +477,8 @@ GENERAL_HELP = GENERAL_HELP + (
 
 # Guided Estimating (23 Oct 2026): the workflow, the stage rules and the calculators' three choices.
 GENERAL_HELP = GENERAL_HELP + (
-    ("guided estimate start new estimating workflow stages stage", "Guided Estimating: Home → Start New Estimate. "
+    ("guided estimate start new estimating workflow stages stage", "Guided Estimating: Home → Estimate a Project "
+     "(or Continue manually beneath it for Start New Estimate). "
      "Choose the project (or a new one), what is being built and your role. On Construction scope choose Internal, "
      "Subcontracted or N/A for every stage and press Finalize scope & build the workflow. Then open any stage, in any "
      "order: each one brings its calculator or its quote tools. Back, Save, Save & Exit and Complete & Next are at the "

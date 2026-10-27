@@ -1053,7 +1053,7 @@ M06 = Module(
             what="Add a project for work already under way, with its client.",
             why="Getting started step 10: schedule, Field and invoices work only on projects in CalibraytAI.",
             steps=(
-                Step(title="Start a project", app=O, where="Home → + Start New Project",
+                Step(title="Start a project", app=O, where="Projects → + Start New Project",
                      do="Type Project name, choose Client and Status",
                      enter="Project name: Ellis Front Steps (training, existing job) <initials>; Client: Morgan Ellis (training); Status: Active",
                      expect="New Project with Project Details, Structured project location, Permit context class and the "

@@ -196,3 +196,91 @@ def test_a_declared_altered_table_may_gain_an_empty_column_with_every_row_unchan
         else:
             assert result.returncode == 1 and values["FAIL"] in ("existing records changed in: projects",
                                                                  "existing schema changed: table projects")
+
+
+def test_a_column_only_migration_declares_new_tables_none_and_keeps_every_customer(tmp_path):
+    # q4c7l2n8t3a6 (Project Creation UX, 27 Oct 2026) adds six nullable address columns to clients and no table.
+    # "--new-tables none" means exactly that: any added table, or any changed client value, stops the rehearsal.
+    prior, head = "e5d1v4r7y2k9", "q4c7l2n8t3a6"
+    db_path = tmp_path / "clients.db"
+    app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
+    with app.app_context():
+        cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
+        cfg.set_main_option("script_location", str(ROOT / "migrations"))
+        cfg.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
+        command.upgrade(cfg, prior)
+    con = sqlite3.connect(db_path)
+    con.execute("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, updated_at) "
+                "VALUES ('ORG-C', 'Synthetic Ltd.', 'Synthetic', 'CAD', 1, '2026-10-27', '2026-10-27')")
+    con.execute("INSERT INTO clients (id, name, organization_id, address, created_at) VALUES (1, 'Linda (synthetic)', "
+                "'ORG-C', '12 Synthetic Lane, Kemptville ON', '2026-10-27')")
+    con.commit()
+    con.close()
+    import shutil
+
+    bare = tmp_path / "clients-undeclared.db"
+    shutil.copyfile(db_path, bare)  # a rehearsal upgrades the copy it is given
+    without = _run("rehearse", "--db", str(bare), "--from", prior, "--to", head, "--new-tables", "none")
+    assert without.returncode == 1 and "clients" in _values(without.stdout)["FAIL"], without.stdout
+    result = _run("rehearse", "--db", str(db_path), "--from", prior, "--to", head, "--new-tables", "none",
+                  "--altered-tables", "clients")
+    values = _values(result.stdout)
+    assert result.returncode == 0 and values["MIGRATION_REHEARSAL"] == "ok", result.stdout + result.stderr
+    assert "added empty columns: clients." in values["EXISTING_TABLES_UNCHANGED"]
+    assert values["REVISION_AFTER"] == head
+    gate = (ROOT / "tools" / "release" / "release_gate.sh").read_text()
+    assert '--new-tables none is only for a migration that changes declared --altered-tables' in gate
+
+
+def test_the_clients_rehearsal_stops_on_a_changed_client_row_or_any_other_schema_change(tmp_path, capsys):
+    # The same comparison the gate and the live apply run, on q4c7l2n8t3a6: a changed customer value, a filled new
+    # column, an undeclared schema change or an added table each stop it.
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("migration_check_mod", SCRIPT)
+    mc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mc)
+    prior, head = "e5d1v4r7y2k9", "q4c7l2n8t3a6"
+
+    def prepared(name):
+        path = tmp_path / name
+        app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{path}"})
+        with app.app_context():
+            cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
+            cfg.set_main_option("script_location", str(ROOT / "migrations"))
+            cfg.set_main_option("sqlalchemy.url", f"sqlite:///{path}")
+            command.upgrade(cfg, prior)
+        con = sqlite3.connect(path)
+        con.execute("INSERT INTO organizations (id, legal_name, display_name, currency, is_active, created_at, "
+                    "updated_at) VALUES ('ORG-C', 'Synthetic Ltd.', 'Synthetic', 'CAD', 1, '2026-10-27', '2026-10-27')")
+        con.execute("INSERT INTO clients (id, name, organization_id, address, created_at) VALUES (1, "
+                    "'Linda (synthetic)', 'ORG-C', '12 Synthetic Lane', '2026-10-27')")
+        con.commit()
+        con.close()
+        before = mc.snapshot(str(path))
+        mc.upgrade(str(path), head)
+        return path, before
+
+    def outcome(path, before, new_tables=()):
+        try:
+            mc.compare(before, mc.snapshot_after(str(path), before, ["clients"]), list(new_tables), head, ["clients"])
+        except SystemExit as stop:
+            return stop.code
+        return 0
+
+    path, before = prepared("ok.db")
+    assert outcome(path, before) == 0
+    for name, sql, expected in (
+        ("row.db", "UPDATE clients SET name = 'Marc (synthetic)' WHERE id = 1", "existing records changed in: clients"),
+        ("filled.db", "UPDATE clients SET city = 'Kemptville' WHERE id = 1", "new columns of clients hold values"),
+        ("schema.db", "ALTER TABLE projects ADD COLUMN surprise TEXT", "existing schema changed: table projects"),
+        ("table.db", "CREATE TABLE surprise (id INTEGER)", "new tables are ['surprise'], expected []"),
+    ):
+        path, before = prepared(name)
+        con = sqlite3.connect(path)
+        con.execute(sql)
+        con.commit()
+        con.close()
+        capsys.readouterr()
+        assert outcome(path, before) == 1, name
+        assert f"FAIL={expected}" in capsys.readouterr().out, name

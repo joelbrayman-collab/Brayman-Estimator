@@ -1,0 +1,39 @@
+/* Home, compact (Project Creation UX, 27 Oct 2026): one greeting row with the Company Calendar; one Attention list
+   first; one band of guided starts; unfinished work as one line each; Today and Coming days side by side. */
+.hc-top { display: grid; gap: 8px; margin: 0 0 12px; }
+.hc-hello { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+.hc-hello .home-greeting { margin: 0; font-size: 1.35rem; line-height: 1.2; }
+.hc-date { color: var(--muted, #666); font-size: .92rem; }
+.hc-wizards { margin: 0 0 12px; background: #0b1b2e; color: #fff; border-radius: 12px; padding: 10px 12px; display: grid; gap: 6px; }
+.hc-label { margin: 0; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold, #c79a2b); }
+.hc-wiz-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.hc-wiz { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.hc-start { min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; white-space: nowrap; color: #141414; font-weight: 700; text-decoration: none; }
+.hc-start:hover, .hc-start:focus-visible { background: #d9ad3e; }
+/* "Continue manually": a quiet link (the first one keeps the home-start hook, not the old button look). */
+.hc-wizards a.hc-manual, .hc-wizards a.home-start.hc-manual { all: unset; cursor: pointer; color: #d7dde6; font-size: .8rem;
+  font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; padding: 2px 2px; }
+.hc-wizards a.hc-manual:hover, .hc-wizards a.hc-manual:focus-visible { color: #fff; outline: 2px solid transparent; }
+.hc-wizards a.hc-manual:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+.hc-hello .hc-calendar { margin-left: auto; display: inline-flex; gap: 6px; align-items: center; min-height: 40px; padding: 0 12px;
+  border: 1px solid var(--border, #ddd); border-radius: 10px; text-decoration: none; font-weight: 600; white-space: nowrap;
+  background: var(--white, #fff); color: var(--text, #222); }
+.hc-help { font-size: .82rem; color: #d7dde6; }
+.hc-help summary { cursor: pointer; width: fit-content; }
+.hc-help p { margin: 4px 0 0; max-width: 75ch; }
+.hc-section-title { margin: 0 0 6px; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; }
+.hc-resume { margin: 0 0 12px; background: var(--white, #fff); border: 1px solid var(--border, #e3e1da); border-radius: 12px; padding: 10px 14px; }
+.hc-resume ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.hc-resume li { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; padding: 4px 0; border-top: 1px solid #f0eee8; }
+.hc-resume li:first-child { border-top: 0; }
+.hc-resume-go { font-weight: 700; }
+.hc-resume-what { font-weight: 600; }
+.hc-resume-meta { color: var(--muted, #666); font-size: .88rem; }
+.home-briefing.hc-briefing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 760px) {
+  .hc-wiz-row { flex-direction: column; align-items: stretch; }
+  .hc-wiz { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
+  .hc-start { flex: 1 1 auto; justify-content: center; }
+  .hc-hello .hc-calendar { margin-left: 0; }
+  .home-briefing.hc-briefing { grid-template-columns: minmax(0, 1fr); }
+}

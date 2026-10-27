@@ -447,6 +447,9 @@ def create_project():
         if wizard_run is not None and wizard_run.project_id:
             flash("This project is already created. Nothing new was made.", "success")
             return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="location"))
+        location_form = request.form
+        if wizard_run is not None:
+            location_form = _wizard_location_form(wizard_run, org_id)
         name = request.form.get("name", "").strip()
         client_id = request.form.get("client_id", type=int)
 
@@ -498,7 +501,7 @@ def create_project():
             )
             establish_project_location_and_profile(
                 project.id,
-                location_payload_from_form(request.form),
+                location_payload_from_form(location_form),
                 request.form.get("permit_context_class"),
                 organization_id=org_id,
                 generated_by=created_by,
@@ -557,6 +560,30 @@ def _wizard_run_for_create(org_id):
     if run.wizard_key != "NEW_PROJECT" or not run.is_active:
         abort(404)
     return run
+
+
+def _wizard_location_form(wizard_run, org_id):
+    """Start a New Project, "Where is the job?" (27 Oct 2026): keep what was typed in the run first (a refusal never
+    loses it), and fill an empty job address from the chosen customer when "Same as customer address" is ticked."""
+    from app.wizards.new_project import LOCATION_FIELDS
+    from app.wizards.service import WizardError, save_draft
+
+    try:
+        save_draft(wizard_run, {k: request.form.get(k, "") for k in LOCATION_FIELDS}, allowed=LOCATION_FIELDS,
+                   step="location", actor=current_actor_display_name() or "Signed-in user",
+                   user_id=getattr(current_user, "id", None))
+    except WizardError:
+        pass
+    values = {k: request.form.get(k, "") for k in ("street", "municipality", "province_state", "postal_zip",
+                                                   "country")}
+    if request.form.get("same_as_customer") and not (values["street"] or "").strip():
+        from app.services.clients import location_values
+
+        client = Client.query.filter_by(id=request.form.get("client_id", type=int), organization_id=org_id).first()
+        copied = location_values(client)
+        if copied.get("street"):
+            values.update({k: copied.get(k, "") for k in values})
+    return values
 
 
 def _wizard_create_failed(wizard_run):

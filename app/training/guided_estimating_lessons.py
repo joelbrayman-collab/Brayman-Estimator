@@ -47,8 +47,8 @@ M13 = Module(
             why="The project type and your role choose the construction stages; you never have to know which "
                 "calculator or page comes next.",
             steps=(
-                Step(title="Start New Estimate", app=O, where="Home",
-                     do="Press Start New Estimate (beside + Start New Project)",
+                Step(title="Start New Estimate", app=O, where="Home → GUIDED WIZARDS",
+                     do="Press Continue manually under Estimate a Project",
                      expect="Start New Estimate: Create a new project, Calculators, any unfinished estimates to resume "
                             "and your current projects.",
                      if_wrong="Not on Home? Press Home at the top of the menu.",
@@ -221,7 +221,8 @@ M13 = Module(
                 Step(title="Save & Exit, then Resume", app=O, where="Any stage → Save & Exit",
                      do="Press Save & Exit; on the project page press Resume estimating",
                      expect="You are back on the stage where you stopped.",
-                     if_wrong="Start New Estimate on Home also lists unfinished estimates to resume.",
+                     if_wrong="Start New Estimate (Home → Estimate a Project → Continue manually) also lists "
+                              "unfinished estimates to resume.",
                      shot="c13-resume.png", endpoint="projects.view_project"),
             ),
             exercise="On your Lakeview project try to complete HVAC with no cost, then approve a $16,000 allowance and "
@@ -379,7 +380,8 @@ def _u(key, module, title, start, action, expected):
 
 
 UAT_CASES = (
-    _u("uat-c13-scope", "c13", "New home: fourteen stages, nothing chosen for you", "Home → Start New Estimate",
+    _u("uat-c13-scope", "c13", "New home: fourteen stages, nothing chosen for you",
+       "Home → Estimate a Project → Continue manually (Start New Estimate)",
        "Create a new project as New Home Construction and General Contractor; try Finalize with stages undecided; "
        "then choose the fourteen responsibilities and finalize.",
        "No stage is pre-chosen; Finalize is refused while any is undecided; the workflow lists the fourteen stages "

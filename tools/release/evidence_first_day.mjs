@@ -381,12 +381,16 @@ step("10 customers: a client, then a project with the job address", async () => 
   await pg.fill("[name=name]", CLIENT.name);
   await pg.fill("[name=email]", CLIENT.email);
   await pg.fill("[name=phone]", CLIENT.phone);
-  await pg.fill("[name=address]", CLIENT.address);
+  // The customer's address in parts (Project Creation UX, 27 Oct 2026); the one-line address is composed from them.
+  await pg.fill("[name=street_address]", "27 Mill Pond Road");
+  await pg.fill("[name=city]", "Merrickville");
+  await pg.selectOption("[name=province_state]", "Ontario");
+  await pg.fill("[name=postal_code]", "K0G 1N0");
   await shot(pg, "10-customers", "client");
   await submit(pg, pg.getByRole("button", { name: "Save Client" }));
   assert.match(await flash(pg), /Client created/);
   await go(pg, "/");
-  await submit(pg, pg.getByRole("link", { name: /Start New Project/ }).first());
+  await submit(pg, pg.locator('a.home-start[data-continue-manually="NEW_PROJECT"]'));  // the New Project form
   await pg.fill("[name=name]", PROJECT);
   await pg.selectOption("[name=client_id]", { label: CLIENT.name });
   await pg.selectOption("[name=status]", "Estimating");

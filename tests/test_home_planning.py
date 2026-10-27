@@ -53,7 +53,10 @@ def client(app):
 
 
 def _project(name="Home V22 Oak Street"):
-    client_row = Client(name=f"{name} Client", organization_id=DEFAULT_ORGANIZATION_ID)
+    # Complete contact details, so the only Home content about this job is the schedule fact under test (a customer
+    # missing email, phone or address is its own Attention item since the Project Creation UX release).
+    client_row = Client(name=f"{name} Client", organization_id=DEFAULT_ORGANIZATION_ID,
+                        email="home.v22@example.invalid", phone="613-555-0100", address="1 Synthetic Road")
     db.session.add(client_row)
     db.session.flush()
     project = Project(
@@ -102,7 +105,9 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert response.status_code == 200
     html = response.get_data(as_text=True)
     assert contractor_copy.DASHBOARD_HEADING in html
-    assert contractor_copy.HOME_START_PROJECT in html
+    # One way to start a project on Home (Project Creation UX): the guided start, with Continue manually beside it.
+    assert 'data-start-wizard="NEW_PROJECT"' in html and "Start a New Project" in html
+    assert contractor_copy.HOME_START_PROJECT not in html
     assert 'href="/projects/new"' in html
     assert 'id="help-dashboard"' in html
     assert "home-month" not in html

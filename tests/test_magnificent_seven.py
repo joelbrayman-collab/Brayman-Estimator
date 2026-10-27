@@ -436,7 +436,9 @@ def test_needs_my_attention_lifecycle_from_real_records(env):
     ben = Person(app, "ben")
     home = ben.get("/")
     assert "WHAT NEEDS MY ATTENTION?" in home and "Guided Wizards" in home
-    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("Guided Wizards")
+    # Attention first (Magnificent Seven), kept in the compact Home (Joel, 27 Oct 2026): then the guided starts, then
+    # the Today / Coming days briefing.
+    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("Guided Wizards") < home.index("aria-label=\"Today and coming days\"")
     kevin = Person(app, "kevin")
     # Kevin enters time: an approval item appears with a one-click link to the time page for Kevin.
     kevin.post(f"/field/projects/{facts['project'].id}/time", data={
@@ -886,7 +888,7 @@ def test_the_migration_adds_exactly_the_fourteen_tables(tmp_path):
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["e5d1v4r7y2k9"]
+    assert script.get_heads() == ["q4c7l2n8t3a6"]
     assert script.get_revision("m7s3r5q8b2c4").down_revision == "w2z9r4d7k1m6"
     command.upgrade(cfg, "w2z9r4d7k1m6")
     engine = sa.create_engine(uri)

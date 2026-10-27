@@ -1,0 +1,38 @@
+{# Start a New Project · Who is the customer? Existing customer, or a new one entered here (no detour). #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css', v='pcux-1') }}">
+<div class="np-mode" role="radiogroup" aria-label="Customer">
+  <label class="np-mode-opt"><input type="radio" name="customer_mode" value="existing" data-customer-mode="existing" {% if f.mode != 'new' %}checked{% endif %} {% if not f.clients %}disabled{% endif %}> Existing customer</label>
+  <label class="np-mode-opt"><input type="radio" name="customer_mode" value="new" data-customer-mode="new" {% if f.mode == 'new' %}checked{% endif %}> New customer</label>
+</div>
+
+<div class="np-panel" data-customer-panel="existing" {% if f.mode == 'new' %}hidden{% endif %}>
+  <label class="np-field">Customer
+    <select name="client_id" data-field="client_id" data-customer-select>
+      <option value="" {% if not f.chosen_id %}selected{% endif %}>Choose the customer</option>
+      {% for c in f.clients %}<option value="{{ c.id }}" {% if f.chosen_id == c.id %}selected{% endif %}>{{ c.name }}{% if c.company %} — {{ c.company }}{% endif %}</option>{% endfor %}
+    </select>
+  </label>
+  {% if not f.clients %}<p class="np-hint">No customers yet. Choose New customer.</p>{% endif %}
+</div>
+
+<div class="np-panel" data-customer-panel="new" {% if f.mode != 'new' %}hidden{% endif %} data-new-customer>
+  {% with v=f.new, prefix="new_customer_", name_required=False, show_notes=False, legacy="", regions=f.regions, countries=f.countries, default_country=f.default_country, default_province=f.default_province %}{% include "clients/_fields.html" %}{% endwith %}
+  <p class="np-hint">Save &amp; Continue saves the customer and carries on with this project.</p>
+</div>
+<script src="{{ url_for('static', filename='js/customer-fields.js', v='pcux-1') }}"></script>
+<script>
+(function () {
+  var radios = document.querySelectorAll("[data-customer-mode]");
+  function show() {
+    var mode = (document.querySelector("[data-customer-mode]:checked") || {}).value || "existing";
+    document.querySelectorAll("[data-customer-panel]").forEach(function (p) {
+      var on = p.getAttribute("data-customer-panel") === mode;
+      p.hidden = !on;
+      p.querySelectorAll("input, select, textarea").forEach(function (el) { el.disabled = !on; });
+    });
+    if (mode === "new") { var n = document.querySelector("[data-new-customer] [data-customer-name]"); if (n) n.focus(); }
+  }
+  radios.forEach(function (r) { r.addEventListener("change", show); });
+  show();
+})();
+</script>

@@ -35,10 +35,14 @@ def test_calculators_are_collapsed_unless_a_calculator_is_open(client):
     assert 'href="/calculators/footing"' in active
 
 
-def test_home_shows_counts_and_the_calendar_under_start_new_project(client):
+def test_home_shows_counts_and_the_calendar_in_the_top_band(client):
+    # Joel, 27 Oct 2026 (compact Home): Today and Coming days keep their counts; the Company Calendar sits in the
+    # greeting row at the top, before Attention and the guided starts.
     page = client.get("/").get_data(as_text=True)
     assert page.count('class="home-briefing-count') >= 2
-    assert page.index('class="home-start"') < page.index('class="home-calendar"')
+    assert page.index("data-home-top") < page.index('class="home-calendar') < page.index("data-start-wizard")
+    if "data-needs-attention" in page:
+        assert page.index('class="home-calendar') < page.index("data-needs-attention") < page.index("data-start-wizard")
 
 
 def test_clients_register_is_a_card_with_labelled_cells(client, app):

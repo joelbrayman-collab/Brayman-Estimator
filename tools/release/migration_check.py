@@ -238,7 +238,9 @@ def main() -> None:
         p = sub.add_parser(name)
         p.add_argument("--from", dest="from_rev", required=True)
         p.add_argument("--to", dest="to_rev", required=True)
-        p.add_argument("--new-tables", required=True, type=lambda v: [t for t in v.split(",") if t])
+        # "none" (27 Oct 2026): the migration adds no table (only columns of declared --altered-tables).
+        p.add_argument("--new-tables", required=True,
+                       type=lambda v: [] if v == "none" else [t for t in v.split(",") if t])
         p.add_argument("--altered-tables", default=[], type=lambda v: [t for t in v.split(",") if t])
         if name == "rehearse":
             p.add_argument("--db", required=True)

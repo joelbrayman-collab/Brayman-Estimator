@@ -77,3 +77,10 @@ Report exact counts (passed, failed, skipped, errors, warnings), duration and th
 | Other calculator browser tests | 5 (intermittent) | Load from running two halves at once; pass when run alone | None needed; the complete run is sequential |
 | `test_system_administrator_authority_fg038::test_af_…` | 1 (local) | Compared a local office database with its PA-B checkpoint values | Compares the file before and after the test instead |
 | Two Python Playwright files on the Mac | 2 skips | `playwright` not installed; `importorskip` hid it | `requirements-dev.txt`; the files now import it directly, so a missing dependency fails |
+
+## Approved Master Template Family V1 (27 Oct 2026)
+
+`tests/test_approved_master_governance.py` reads the confidential approved masters 01–03 from the office
+Mac's default folder (`~/Documents/CalibAi/Approved Document Templates/Reusable Master Template Family V1/MASTER DOCX`).
+A machine without that folder (the cloud workspace) points `CALIBRAYTAI_APPROVED_MASTER_DIR` at a copy kept
+outside the repository. The copies are checked against the governed SHA-256 and never committed.

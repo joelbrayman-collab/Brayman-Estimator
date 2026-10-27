@@ -1,0 +1,122 @@
+{# Compact wizard step (Project Creation UX, 27 Oct 2026). One focused task: "Start a New Project · Step X of Y" with a
+   thin progress bar, the step list behind "View all steps", the task card, then Back · Save & Exit · Save & Continue.
+   Status still comes from the real records; every data-* hook of wizards/_run.html is kept. #}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{% set nav_form_id = "wz-nav-" ~ step.key %}
+{% set has_form = view.form and (step.draft or step.continue_form) %}
+<div class="wz wzc" data-wizard="{{ wizard.key }}" data-wizard-step="{{ step.key }}" data-step-state="{{ view.state }}" data-run="{{ run.id }}" data-compact-wizard>
+  <header class="wzc-head">
+    <div class="wzc-line">
+      <p class="wzc-where"><strong>{{ wizard.title }}</strong> · <span data-progress="{{ progress.done }}/{{ progress.total }}" data-step-number="{{ row.number }}">Step {{ row.number }} of {{ rows|length }}</span>{% if not run.is_active %} · <strong data-run-finished>{{ 'Finished' if run.status == 'COMPLETED' else 'Closed' }}</strong>{% endif %}</p>
+      <details class="wzc-all" data-view-all-steps>
+        <summary>View all steps</summary>
+        <ol class="wzc-steps">
+          {% for r in rows %}
+          <li class="wz-step-link s-{{ r.view.state }}{% if r.step.key == step.key %} is-current{% endif %}" data-step-link="{{ r.step.key }}" data-state="{{ r.view.state }}">
+            <a href="{{ ctx.step_url(r.step.key) }}"{% if r.step.key == step.key %} aria-current="step"{% endif %}><span class="wz-dot" aria-hidden="true"></span><span class="wz-step-name">{{ r.number }}. {{ r.step.title }}</span><span class="wz-step-state">{{ r.state_label }}</span></a>
+          </li>
+          {% endfor %}
+        </ol>
+      </details>
+    </div>
+    <div class="wzc-bar" role="progressbar" aria-valuemin="1" aria-valuemax="{{ rows|length }}" aria-valuenow="{{ row.number }}" aria-label="Step {{ row.number }} of {{ rows|length }}"><span style="width: {{ (100 * row.number / (rows|length or 1))|round|int }}%"></span></div>
+    {% if subject and 'not created yet' not in subject %}<p class="wzc-subject" data-wizard-subject>{{ subject }}</p>{% else %}<span data-wizard-subject hidden>{{ subject }}</span>{% endif %}
+  </header>
+
+  <form method="post" action="{{ ctx.step_url(step.key) }}" id="{{ nav_form_id }}" class="wz-nav-form wzc-card"
+        {% if view.form_ctx.get('multipart') %}enctype="multipart/form-data"{% endif %}
+        {% if step.draft and view.form and run.is_active %}data-autosave="{{ ctx.autosave_url(step.key) }}"{% endif %}>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h1 class="wzc-title">{{ step.title }}{% if not step.required %} <span class="wz-optional">optional</span>{% endif %}</h1>
+    <p class="wzc-explain">{{ step.what }}</p>
+    {% if view.headline %}<p class="wzc-status s-{{ view.state }}" data-step-headline><span class="wz-badge">{{ state_labels[view.state] }}</span> {{ view.headline }}</p>{% endif %}
+
+    {% if has_form %}
+    <div class="wzc-form" data-step-form {% if step.draft %}data-draft-form{% endif %}>
+      {% with f = view.form_ctx %}{% include "wizards/forms/" ~ view.form %}{% endwith %}
+      {% if step.draft %}<p class="wz-autosave" data-autosave-status aria-live="polite"></p>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if view.items %}
+    <ul class="wz-items wzc-items" data-step-items>
+      {% for item in view.items %}
+      <li class="s-{{ item.state }}" data-item-state="{{ item.state }}"><span class="wz-dot" aria-hidden="true"></span>
+        <span class="wz-item-label">{% if item.href %}<a href="{{ ctx.open_url(step.key, item.href) }}">{{ item.label }}</a>{% else %}{{ item.label }}{% endif %}</span>
+        {% if item.note %}<span class="wz-item-note">{{ item.note }}</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if view.note %}<p class="wz-note wzc-note">{{ view.note }}</p>{% endif %}
+
+
+    <div class="wz-nav wzc-nav">
+      {% if previous %}<button type="submit" name="wizard_action" value="back" class="wz-secondary" data-wizard-back formnovalidate>Back</button>{% endif %}
+      <span class="wzc-spacer"></span>
+      {% if run.is_active %}
+      <button type="submit" name="wizard_action" value="save_exit" class="wz-secondary" data-wizard-save-exit formnovalidate>Save &amp; Exit</button>
+      {% if view.form_ctx.get('custom_finish') %}
+      {# the step's own form carries its finishing buttons (Review: start estimating / estimate later) #}
+      {% elif view.form_ctx.get('continue_url') %}
+      <button type="submit" class="wz-primary" formaction="{{ view.form_ctx.continue_url }}" formmethod="post" name="wizard_run" value="{{ run.id }}" data-wizard-next data-create-project>Save &amp; Continue →</button>
+      {% elif following %}
+      <button type="submit" name="wizard_action" value="next" class="wz-primary" data-wizard-next>Save &amp; Continue →</button>
+      {% else %}
+      <button type="submit" name="wizard_action" value="finish" class="wz-primary" data-wizard-finish>{{ wizard.finish_label }}</button>
+      {% endif %}
+      {% elif following %}
+      <button type="submit" name="wizard_action" value="next" class="wz-secondary" data-wizard-next>Next</button>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if view.actions %}
+  <div class="wz-actions wzc-actions" data-step-actions>
+    <span class="wzc-actions-label">Also here:</span>
+    {% for a in view.actions %}
+      {% if a.method == 'post' %}
+      <form method="post" action="{{ a.href }}" class="wz-inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for k, v in a.fields.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        <button type="submit" class="wz-link" data-wizard-action="{{ a.key }}">{{ a.label }}</button>
+      </form>
+      {% else %}
+      <a class="wz-link" href="{{ ctx.open_url(step.key, a.href) if a.opens_page else a.href }}" data-wizard-action="{{ a.key }}">{{ a.label }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <footer class="wzc-foot">
+    {% if manual %}<a href="{{ ctx.manual_url(step.key) }}" data-continue-manually>Continue manually: {{ manual[0] }}</a>{% endif %}
+    <details class="wz-history"><summary>History</summary>
+      <ul>{% for e in history %}<li>{{ e.created_at|local_time("%Y-%m-%d %H:%M") }} — {{ e.actor_display_name }}: {{ e.event|replace('_', ' ')|lower }}{% if e.step %} ({{ e.step|replace('_', ' ') }}){% endif %}{% if e.detail %} — {{ e.detail }}{% endif %}</li>{% endfor %}</ul>
+      {% if run.is_active %}
+      <form method="post" action="{{ ctx.end_url() }}" class="wz-end">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="wz-link" data-wizard-end>Stop using the wizard for this (nothing is deleted)</button>
+      </form>
+      {% endif %}
+    </details>
+    {{ contextual_help(help_topic, ask_url=ctx.help_url()) }}
+  </footer>
+</div>
+<script>
+(function () {
+  var form = document.querySelector("form[data-autosave]");
+  if (!form || !window.fetch) return;
+  var status = form.querySelector("[data-autosave-status]");
+  var timer = null;
+  function save() {
+    var data = new FormData(form);
+    data.delete("wizard_action");
+    fetch(form.getAttribute("data-autosave"), {method: "POST", body: data, credentials: "same-origin",
+      headers: {"X-CSRFToken": (document.querySelector('meta[name="csrf-token"]') || {}).content || ""}})
+      .then(function (r) { return r.json(); })
+      .then(function (p) { if (status) status.textContent = p.saved ? "Saved automatically." : (p.reason || ""); })
+      .catch(function () { if (status) status.textContent = "Not saved automatically — press Save & Exit."; });
+  }
+  form.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(save, 900); });
+  form.addEventListener("change", function () { clearTimeout(timer); timer = setTimeout(save, 300); });
+})();
+</script>

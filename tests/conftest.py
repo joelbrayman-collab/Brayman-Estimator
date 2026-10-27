@@ -33,6 +33,9 @@ FAMILY_05_DEPENDENT_FILES = frozenset({
     "test_native_signing_sign_a_fg033.py", "test_native_signing_sign_b_fg033.py",
     "test_native_signing_sign_e_fg033.py", "test_security_contract_download.py",
     "test_signing_mail_b_fg034.py", "test_synthetic_ontario_contract_uat_fg024.py",
+    # Approved Master Template Family V1 (27 Oct 2026): the real-master contract test reads the same
+    # confidential folder (CALIBRAYTAI_APPROVED_MASTER_DIR on a machine without the office Mac's Documents).
+    "test_approved_master_governance.py",
 })
 _MASTER_STATE = {"status": None, "path": None, "failed": [], "other_failed": 0}
 

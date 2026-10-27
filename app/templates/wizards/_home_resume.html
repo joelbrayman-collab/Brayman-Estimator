@@ -1,0 +1,15 @@
+{# Home: unfinished guided work, one compact line each (Project Creation UX, 27 Oct 2026). #}
+{% if summaries %}
+<section class="hc-resume" data-wizard-resume-list aria-labelledby="hc-resume-title">
+  <h2 id="hc-resume-title" class="hc-section-title">Continue where you left off</h2>
+  <ul>
+    {% for s in summaries %}
+    <li data-resume-run="{{ s.run.id }}">
+      <a class="hc-resume-go" href="{{ s.resume_url }}" data-resume-wizard="{{ s.wizard.key }}">Resume {{ s.wizard.title }}</a>
+      <span class="hc-resume-what">{{ s.subject }}</span>
+      <span class="hc-resume-meta">{% if s.current %}Step {{ s.current.number }} of {{ s.progress.total }}: {{ s.current.step.title }}{% else %}{{ s.progress.done }} of {{ s.progress.total }} steps{% endif %}{% if s.record_url %} · <a href="{{ s.record_url }}" data-open-record>open the record</a>{% endif %}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

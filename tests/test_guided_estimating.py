@@ -244,7 +244,8 @@ def _set_aside_rest(d, project, stage):
 # ======================================================================================= the acceptance example
 def test_new_project_type_role_and_the_fourteen_stage_scope(env):
     application, d, _ben = env
-    assert "Start New Estimate" in d.get("/")
+    # Home (compact, 27 Oct 2026): Estimate a Project, with Continue manually opening Start New Estimate.
+    assert 'href="/estimating/start" data-continue-manually="GUIDED_ESTIMATING" data-home-start-estimate' in d.get("/")
     start = d.get("/estimating/start")
     assert "Create a new project" in start and "Estimate an existing project" in start
     client()
@@ -815,7 +816,7 @@ def test_the_migration_adds_exactly_the_guided_tables_and_columns(tmp_path):
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["e5d1v4r7y2k9"] and script.get_revision("g5e7c2a9d1b4").down_revision == "u7b3d9f2a4c6"
+    assert script.get_heads() == ["q4c7l2n8t3a6"] and script.get_revision("g5e7c2a9d1b4").down_revision == "u7b3d9f2a4c6"
     command.upgrade(cfg, "u7b3d9f2a4c6")
     engine = sa.create_engine(uri)
     with engine.begin() as conn:  # an existing linked result, made before this release (SQLite: no FK check here)

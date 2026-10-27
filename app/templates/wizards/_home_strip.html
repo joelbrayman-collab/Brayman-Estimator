@@ -1,0 +1,26 @@
+{# Home: the compact top row (Project Creation UX, 27 Oct 2026). One place to start each guided wizard — Start a New
+   Project, Estimate a Project, Manage a Project — each with its "Continue manually" link to the existing page, and the
+   Company Calendar. Replaces the large Guided Wizards panel and the separate + Start New Project / Start New
+   Estimate buttons, which repeated the same two starts. Every earlier entry point and data-* hook is kept. #}
+{% set _labels = {"NEW_PROJECT": "Start a New Project", "GUIDED_ESTIMATING": "Estimate a Project", "MANAGE_PROJECT": "Manage a Project"} %}
+<section class="wz-home hc-wizards" data-wizard-home aria-labelledby="hc-wizards-title">
+  <h2 id="hc-wizards-title" class="hc-label">Guided Wizards</h2>
+  <div class="hc-wiz-row">
+    {% for w in wizard_list %}
+    <div class="hc-wiz" data-wizard-card="{{ w.key }}">
+      <a class="wz-primary hc-start" href="{{ start_url(w)|trim }}" data-start-wizard="{{ w.key }}">{{ _labels.get(w.key, w.title) }}<span class="visually-hidden"> wizard</span></a>
+      {% if w.key == "NEW_PROJECT" %}
+      <a class="home-start hc-manual" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}">Continue manually</a>
+      {% elif w.key == "GUIDED_ESTIMATING" %}
+      <a class="hc-manual" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}" data-home-start-estimate>Continue manually</a>
+      {% else %}
+      <a class="hc-manual" href="{{ manual_url(w) }}" data-continue-manually="{{ w.key }}">Continue manually</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <details class="hc-help" data-wizard-help>
+    <summary>What are Wizards?</summary>
+    <p>A wizard takes you through the real CalibraytAI pages one task at a time, tells you what is still needed, and keeps your place: Save &amp; Exit and resume later from Home. Prefer to work on your own? Continue manually opens the same page directly.</p>
+  </details>
+</section>

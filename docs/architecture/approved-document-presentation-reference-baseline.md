@@ -139,3 +139,4 @@ This pin remains the **immutable source**. Do **not** treat derived masters as t
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [project-document-package.md](project-document-package.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
+- [governance/approved-document-generation.md](../governance/approved-document-generation.md) — permanent requirement (27 Oct 2026): governed document types are generated only from these masters

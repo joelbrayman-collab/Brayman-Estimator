@@ -1,0 +1,40 @@
+{# Start a New Project · What are we building? #}
+<div class="np-grid np-grid-2">
+  <label class="np-field">Project name
+    <input type="text" name="name" maxlength="180" value="{{ f['values'].get('name', '') }}" placeholder="e.g. Bushel rear deck" data-field="name"></label>
+  <label class="np-field">Project number <span class="cust-opt">optional</span>
+    <input type="text" name="project_number" maxlength="50" value="{{ f['values'].get('project_number', '') }}"></label>
+</div>
+<fieldset class="np-cards" data-project-types>
+  <legend>What is being built</legend>
+  {% for key, label in f.guided_types.items() %}
+  <label class="np-card"><input type="radio" name="guided_project_type" value="{{ key }}" data-commercial="{{ f.hints[key] }}" {% if f['values'].get('guided_project_type') == key %}checked{% endif %}><span>{{ label }}</span></label>
+  {% endfor %}
+</fieldset>
+<label class="np-field np-wide">Short description <span class="cust-opt">optional</span>
+  <textarea name="description" rows="1" data-grow placeholder="One line about the job">{{ f['values'].get('description', '') }}</textarea></label>
+<details class="np-more">
+  <summary>More details (pre-filled)</summary>
+  <div class="np-grid np-grid-2">
+    <label class="np-field">Commercial project type
+      <select name="project_type" data-commercial-type>
+        {% for opt in f.commercial_types %}<option value="{{ opt }}" {% if f['values'].get('project_type') == opt %}selected{% endif %}>{{ opt }}</option>{% endfor %}
+      </select></label>
+    <label class="np-field">Status
+      <select name="status">{% for s in f.statuses %}<option {% if f['values'].get('status') == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></label>
+  </div>
+</details>
+<script>
+(function () {
+  document.querySelectorAll('input[name="guided_project_type"]').forEach(function (r) {
+    r.addEventListener("change", function () {
+      var c = document.querySelector("[data-commercial-type]");
+      if (c && r.dataset.commercial) c.value = r.dataset.commercial;
+    });
+  });
+  document.querySelectorAll("textarea[data-grow]").forEach(function (el) {
+    var grow = function () { el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight + 2, 240) + "px"; };
+    el.addEventListener("input", grow); grow();
+  });
+})();
+</script>

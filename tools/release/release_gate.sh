@@ -110,7 +110,16 @@ MAIN=$(git ls-remote "$REPO_URL" refs/heads/main | cut -f1)
 [ "$MAIN" = "$MAIN_BASE" ] || stop "GitHub main is $MAIN, expected $MAIN_BASE"
 BR=$(git ls-remote "$REPO_URL" "refs/heads/$BRANCH" | cut -f1)
 [ "$BR" = "$SHA" ] || stop "$BRANCH is $BR, expected the candidate $SHA"
-LIVE=$(ssh "${SSH_OPTS[@]}" -n "$HOST" 'echo SHA=$RENDER_GIT_COMMIT' 2>/dev/null | tr -d '\r' | grep '^SHA=' | cut -d= -f2)
+# The live SHA over SSH (27 Oct 2026): up to three attempts, 10 s apart, and SSH's own error is kept in the log.
+# A single dropped SSH connection read as an empty SHA and stopped the pcux1 gate while the instance was on the
+# expected commit. The comparison itself is unchanged: anything but exactly --live-base still stops.
+LIVE=""
+for attempt in 1 2 3; do
+  LIVE=$(ssh "${SSH_OPTS[@]}" -n "$HOST" 'echo SHA=$RENDER_GIT_COMMIT' 2>"$OUT-live-ssh.txt" | tr -d '\r' | grep '^SHA=' | cut -d= -f2)
+  [ -n "$LIVE" ] && break
+  echo "live SHA attempt $attempt returned nothing; SSH said: $(tr '\n' ' ' < "$OUT-live-ssh.txt" | cut -c1-300)"
+  [ "$attempt" -lt 3 ] && sleep 10
+done
 [ "$LIVE" = "$LIVE_BASE" ] || stop "live instance runs '$LIVE', expected $LIVE_BASE"
 status "BASELINE github_main=$MAIN live=$LIVE $BRANCH=$BR to_release=$SHA"
 

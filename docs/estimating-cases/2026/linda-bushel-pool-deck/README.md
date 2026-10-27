@@ -111,8 +111,9 @@ Current issue. Issue J1 is not rewritten. Supplier originals are kept unchanged;
 | `supplier/pro-post-foundations/2026-10-06-pro-post-OT-2236.md` | Record and arithmetic check. |
 | `takeoff/2026-10-27-supplier-quote-reconciliation.md` / `.pdf` | Every requirement: J1 quantity, supplier quantity, price, status. 15 piers (J1) against 11 piles (Pro Post). |
 | `estimates/internal/2026-10-27-ben-internal-cost.md` / `.pdf` | Internal cost for Ben. INTERNAL — NOT FOR CUSTOMER. Direct cost incomplete (labour, delivery, equipment, permit). |
-| `estimates/customer/2026-10-27-linda-bushel-estimate.md` / `.pdf` | Linda's estimate: scope, assumptions, exclusions. Price to be confirmed. No internal figures. |
+| `takeoff/price_2026_10_27.py` | One calculation for the direct cost and Linda's price: BMR $8,676.09 + Vista $3,851.49 (MSRP used as cost) + Pro Post $3,750.00 + labour (man-hours × $65) ÷ 0.85, HST 13%. `--man-hours N` writes Linda's priced estimate and the PDFs. |
+| `estimates/customer/2026-10-27-linda-bushel-estimate.md` / `.pdf` | **Not issued yet.** Written by `price_2026_10_27.py` once Joel approves the labour man-hours. An unpriced draft from earlier on 27 Oct was withdrawn. |
 | `takeoff/issue_2026_10_27.py` | Writes the three PDFs and the package with the J1 interim writer (`branded_issue_pdf.build`; `**bold**` now rendered). |
 | `delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip` | Ben's package: the three PDFs, the three supplier originals, the pile locations and the J1 drawing. |
 
-Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **LABOUR HOURS REQUIRED** ($65 per man-hour, governed). Delivery, carrying, equipment, permit fee, lower-deck skirt and gate hardware not priced. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.
+Open: **FOUNDATION QUANTITY CONFIRMATION REQUIRED — J1 = 15; Pro Post engineered quotation = 11.** **CONFIRM WITH DARCY — Vista payable cost.** **FINAL PRICE BLOCKER: Joel approves the total labour man-hours** ($65 per man-hour, governed; the internal sheet prices 80 / 100 / 120 / 140). Delivery, carrying, equipment, permit fee, lower-deck skirt and gate hardware not priced. Pricing rule: 15% true gross margin, selling price = direct cost ÷ 0.85.

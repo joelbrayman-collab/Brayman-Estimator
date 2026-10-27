@@ -234,15 +234,13 @@
     },
     "direct_cost_before_hst": {
       "bmr": "8676.09",
-      "pro_post_piles_and_travel": "3350.00",
-      "firm_subtotal": "12026.09",
-      "vista_allowance_msrp": "3851.49",
-      "subtotal_with_railing_allowance": "15877.58",
-      "engineer_report_conditional": "400.00",
-      "labour": "LABOUR HOURS REQUIRED at 65.00 per man-hour",
-      "delivery_carrying": "PRICE REQUIRED",
-      "equipment": "PRICE REQUIRED",
-      "permit_fee": "PRICE REQUIRED",
+      "vista_msrp_used_as_cost": "3851.49",
+      "pro_post_incl_engineer_report": "3750.00",
+      "subtotal_before_labour": "16277.58",
+      "labour": "Joel to approve man-hours x 65.00",
+      "delivery_carrying": "0.00 unless Joel gives an amount",
+      "equipment": "0.00",
+      "permit_fee": "excluded from Linda's price",
       "complete": false
     },
     "pricing_rule": {
@@ -257,11 +255,14 @@
       "takeoff/2026-10-27-supplier-quote-reconciliation.pdf",
       "estimates/internal/2026-10-27-ben-internal-cost.md",
       "estimates/internal/2026-10-27-ben-internal-cost.pdf",
-      "estimates/customer/2026-10-27-linda-bushel-estimate.md",
-      "estimates/customer/2026-10-27-linda-bushel-estimate.pdf",
       "takeoff/issue_2026_10_27.py",
-      "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
+      "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip",
+      "takeoff/price_2026_10_27.py"
     ],
-    "j1_rewritten": false
+    "j1_rewritten": false,
+    "labour_search_2026_10_27": "No governed deck production rate, Linda labour estimate, or Brayman deck labour history in the repository or the 27 Oct Production copy. Rate 65.00/man-hour APPROVED.",
+    "final_price_blocker": "Joel approves the total labour man-hours",
+    "price_tool": "takeoff/price_2026_10_27.py",
+    "customer_estimate": "not issued; unpriced draft withdrawn 27 Oct"
   }
 }

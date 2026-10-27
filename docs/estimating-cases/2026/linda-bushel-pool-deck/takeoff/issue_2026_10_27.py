@@ -21,7 +21,7 @@ JOBS = [
     ("estimates/internal/2026-10-27-ben-internal-cost.md", "estimates/internal/2026-10-27-ben-internal-cost.pdf",
      "INTERNAL COST FOR BEN", "INTERNAL — NOT FOR CUSTOMER", letter),
     ("estimates/customer/2026-10-27-linda-bushel-estimate.md", "estimates/customer/2026-10-27-linda-bushel-estimate.pdf",
-     "POOL DECK ESTIMATE", "Estimate. Price to be confirmed.", letter),
+     "POOL DECK ESTIMATE", "Estimate for Linda Bushel.", letter),
 ]
 PACKAGE = {
     "Linda Bushel — Ben Internal Cost.pdf": "estimates/internal/2026-10-27-ben-internal-cost.pdf",
@@ -38,11 +38,16 @@ ZIP = CASE / "delivery/LINDA_BUSHEL_POOL_DECK_2026-10-27_BEN_PACKAGE.zip"
 
 def main() -> None:
     for source, target, title, status, size in JOBS:
+        if not (CASE / source).exists():
+            print("skipped (not issued yet)", source)
+            continue
         build(CASE / source, CASE / target, title, status, size, footer_date=FOOTER)
         print("wrote", target)
     ZIP.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(ZIP, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for name, relative in PACKAGE.items():
+            if not (CASE / relative).exists():
+                continue
             archive.write(CASE / relative, Path("LINDA_BUSHEL_POOL_DECK_2026-10-27") / name)
     print("package", ZIP.relative_to(CASE))
 

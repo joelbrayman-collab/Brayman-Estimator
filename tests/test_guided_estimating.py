@@ -244,7 +244,8 @@ def _set_aside_rest(d, project, stage):
 # ======================================================================================= the acceptance example
 def test_new_project_type_role_and_the_fourteen_stage_scope(env):
     application, d, _ben = env
-    assert "Start New Estimate" in d.get("/")
+    # Home (compact, 27 Oct 2026): Estimate a Project, with Continue manually opening Start New Estimate.
+    assert 'href="/estimating/start" data-continue-manually="GUIDED_ESTIMATING" data-home-start-estimate' in d.get("/")
     start = d.get("/estimating/start")
     assert "Create a new project" in start and "Estimate an existing project" in start
     client()

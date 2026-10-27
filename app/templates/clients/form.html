@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{% if client %}{{ client.name }}{% else %}New Customer{% endif %} | Brayman Construction Platform{% endblock %}
+{% block title %}{% if client %}{{ client.name }}{% else %}New Client{% endif %} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Customer{% endblock %}
+{% block page_title %}Client{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css', v='pcux-1') }}">
 <div class="page-heading cust-heading">
     <div>
         <p class="eyebrow">Customers</p>
-        <h1>{% if client %}{{ client.name }}{% else %}New customer{% endif %}</h1>
+        <h1>{% if client %}{{ client.name }}{% else %}New Client{% endif %}</h1>
     </div>
 </div>
 
@@ -25,7 +25,7 @@
     {% set legacy = form.get("address") if client and not form.get("street_address") and form.get("address") else "" %}
     {% with v=form, prefix="", name_required=True, show_notes=True, legacy=legacy %}{% include "clients/_fields.html" %}{% endwith %}
     <div class="form-actions">
-        <button type="submit">Save customer</button>
+        <button type="submit">Save Client</button>
         <a href="{{ return_to or url_for('clients.list_clients') }}">Cancel</a>
     </div>
 </form>

@@ -11,7 +11,7 @@
         <h1>{{ project.name }}</h1>
         <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
         <p class="hub-operating-identity">{{ operating_identity }}</p>
-        {% set _missing = customer_missing(project.client) %}
+        {% set _missing = customer_missing(project.client) if project.operating_state != "CLOSED" else [] %}
         {% if _missing %}
         <p class="hub-customer-incomplete" data-customer-incomplete>Customer information incomplete — missing {{ _missing|join(", ")|lower }}. <a href="{{ url_for('clients.edit_client', client_id=project.client.id, return_to='/projects/' ~ project.id) }}">Complete information</a></p>
         <style>.hub-customer-incomplete { margin: 4px 0 0; padding: 4px 10px; background: #fff7e0; border: 1px solid #f0d58a; border-radius: 8px; font-size: .9rem; display: inline-block; }</style>

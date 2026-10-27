@@ -198,6 +198,22 @@ Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED
 | Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
+### 08 — Customer Detailed Cost Estimate
+
+| Field | Value |
+|-------|--------|
+| Family | 08 Customer Detailed Cost Estimate |
+| Classification | **CUSTOMER-FACING** |
+| Master filename | `MASTER DOCX/08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.docx` |
+| Master DOCX SHA-256 | `f9e7a27cf6924d55e7c92e53b5cb27dc77379ed421b7d982c79cbbb3588f100f` |
+| Derived from | Master 02 `b187911a02b808d3dcad81aa718e4e89a330c8b97b4bcd274231c1beff461a93` (unchanged). Same styles, header logo, page setup, footer, tables and hierarchy. |
+| Changes from Master 02 | Title CUSTOMER DETAILED COST ESTIMATE; subtitle DETAILED ESTIMATE; header line CONFIDENTIAL - INTERNAL ONLY removed (as Master 03); columns Material / Package · Description · Price, Labour Task · Hours · Price, Price Component · Amount; section Price Summary; footer document name; closing note states what prices include; document thumbnail removed. |
+| Purpose | Detailed customer selling prices, optionally with labour tasks and hours. Never contractor acquisition cost, internal labour rate, gross profit, margin or markup. Master 02 stays the internal economics document. |
+| Verification PDF | `VERIFICATION PDF/08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.pdf` (Word for Mac export) |
+| Created | 2026-10-27 at Ben's request for the Linda Bushel job |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** (explicit instruction, 27 Oct 2026) |
+| Legal-content status | N/A |
+
 ## Audits
 
 **Zero-residue method:** Case-insensitive search of every XML/rels part in each derived DOCX, plus extracted PDF text, for Allen / Jacques / 3415 / Roger Stevens / North Gower / 116778 / 116,778 / 2026-08-31 / August 31 / Winchester / Vinylguard / Panda Insulation / Taylor Roofing / DSLO / Ben’s / K0A 2T0 / QU000035 and known source commercial totals. Result: **ZERO** user-visible hits.
@@ -214,4 +230,4 @@ Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED
 
 EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED → VISUALLY VERIFIED → JOEL APPROVED → APPROVED REUSABLE MASTER
 
-Families **01, 02, 03, 04, 06, and 07** are **JOEL APPROVED / APPROVED REUSABLE MASTER**. Family **05** is **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**. Family 05 legal status remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
+Families **01, 02, 03, 04, 06, 07 and 08** are **JOEL APPROVED / APPROVED REUSABLE MASTER** (08 added 27 Oct 2026). Family **05** is **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**. Family 05 legal status remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.

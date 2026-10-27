@@ -10,7 +10,7 @@
 
 ## Rule
 
-The seven approved masters are the templates for their document types, not visual references:
+The approved masters are the templates for their document types, not visual references:
 
 | Family | Document type | Constant |
 |---|---|---|
@@ -21,6 +21,11 @@ The seven approved masters are the templates for their document types, not visua
 | 05 | Ontario Construction Contract | `ONTARIO_CONSTRUCTION_CONTRACT` |
 | 06 | Door / Window / Skylight Schedule | `DOOR_WINDOW_SKYLIGHT_SCHEDULE` |
 | 07 | Client Construction Proposal | `CLIENT_CONSTRUCTION_PROPOSAL` |
+| 08 | Customer Detailed Cost Estimate (added 27 Oct 2026) | `CUSTOMER_DETAILED_COST_ESTIMATE` |
+
+Master 02 shows the contractor's actual costs and project economics. Master 08 shows detailed customer
+selling prices and, where wanted, labour tasks and hours; it never shows acquisition cost, the internal
+labour rate, gross profit, margin or markup.
 
 A document of one of these types is produced only by populating a byte copy of its master with
 `approved_masters.populate`:

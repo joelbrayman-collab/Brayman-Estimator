@@ -1172,11 +1172,20 @@ button.button-secondary {
 .home-wkd a { padding: 0 6px; border-radius: 999px; background: #f3efe7; border: 1px solid #d9d2c4; color: var(--text); font-weight: 600; text-decoration: none; white-space: nowrap; }
 .home-wkd a:hover, .home-wkd a:focus-visible { background: rgba(199, 154, 43, 0.18); }
 @media (min-width: 701px) {
-    /* 82 px rows on a 768 px tall screen leave room for the month heading, five weeks and the next heading. */
-    .cal-workspace .home-week, .cal-workspace .home-day { min-height: clamp(78px, calc((100vh - 266px) / 5), 100px); }
+    /* The month grid fits the screen (28 Oct 2026). --cal-avail is the height from the top of the month box to
+       the bottom of the screen, measured by calendar-months.js (whatever sits above it); without it, the 23 Oct
+       layout (box top at 181 px). The open month's weeks (5 or 6, --cal-open-weeks) share that height less its
+       heading and the next month's heading (a final week holding the 1st of the next month sits under it) and
+       each row's border: never under 64 px (the date and two entries) or over 100. */
+    .cal-workspace { --cal-avail-h: var(--cal-avail, calc(100vh - 186px)); }
+    .cal-workspace .home-week, .cal-workspace .home-day { min-height: clamp(64px, calc((var(--cal-avail-h) - 76px) / var(--cal-open-weeks, 5) - 1px), 100px); }
     .cal-workspace .home-day { padding-bottom: 6px; }
     .cal-workspace .home-bands { inset: 29px 0 6px; }
-    .home-month.is-scrolling .cal-month-scroll { max-height: clamp(360px, calc(100vh - 186px), 820px); }
+    .home-month.is-scrolling .cal-month-scroll { max-height: clamp(360px, var(--cal-avail-h, calc(100vh - 186px)), 820px); }
+    /* The project filter gives way (down to 140 px) before Text notices and Print wrap to a second row: a long
+       selected day ("Wednesday · September 30") no longer pushes them under. */
+    .cal-subbar .cal-project-filter { flex: 1 1 140px; min-width: 140px; max-width: 220px; }
+    .cal-subbar .cal-project-filter select { width: 100%; max-width: 100%; }
 }
 .cal-days { display: inline-flex; gap: 4px; padding: 3px; background: #eceae5; border-radius: 10px; }
 .cal-days[hidden] { display: none; }

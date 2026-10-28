@@ -76,7 +76,40 @@ def seed() -> dict:
          location="Synthetic Calendar Deck", assigned_user_id=str(office.id))
     appt(kevin, title="Kevin dentist", appointment_date=day(1).isoformat(), start_time="15:00", end_time="16:00",
          location="Synthetic Clinic", visibility="PERSONAL")
-    return {"monday": monday.isoformat(), "saturday": day(5).isoformat(), "empty_day": day(13).isoformat(), "kevin": list(KEVIN)}
+    busy = _seed_busy_months(appt, office, mine, crew, create_schedule_item, add_project_element, assign_crew, ORG)
+    return {"monday": monday.isoformat(), "saturday": day(5).isoformat(), "empty_day": day(13).isoformat(), "kevin": list(KEVIN),
+            "busy_months": busy}
+
+
+# Month fit, independent of today (28 Oct 2026): the month grid must fit a 1366 x 670 laptop screen whichever row is
+# busiest. Fixed months, so the check never depends on the day it runs: March 2027 (5 rows, its final row holds
+# April 1) and August 2027 (6 rows, its final row holds September 1). Each has a busy first, middle and final week:
+# four appointments every day and a crew job across the weekdays.
+BUSY_MONTHS = (
+    {"month": "2027-03", "rows": 5, "weeks": {"first": date(2027, 3, 1), "middle": date(2027, 3, 15), "final": date(2027, 3, 29)}},
+    {"month": "2027-08", "rows": 6, "weeks": {"first": date(2027, 7, 26), "middle": date(2027, 8, 9), "final": date(2027, 8, 30)}},
+)
+
+
+def _seed_busy_months(appt, office, project, crew, create_schedule_item, add_project_element, assign_crew, org):
+    out = []
+    for spec in BUSY_MONTHS:
+        weeks = {}
+        for name, monday in spec["weeks"].items():
+            element = add_project_element(project_id=project.id, display_name=f"Busy framing {monday.isoformat()}",
+                                          organization_id=org)
+            item = create_schedule_item(project_id=project.id, project_work_element_id=element.id,
+                                        scheduled_start=monday, scheduled_end=monday + timedelta(days=4),
+                                        organization_id=org)
+            assign_crew(item.id, crew_id=crew.id, organization_id=org)
+            for n in range(7):
+                when = monday + timedelta(days=n)
+                for start, end in (("08:00", "09:00"), ("10:00", "11:00"), ("13:00", "14:00"), ("15:00", "16:00")):
+                    appt(office, title=f"Busy {start} {when.isoformat()}", appointment_date=when.isoformat(),
+                         start_time=start, end_time=end, location="Synthetic site", assigned_user_id=str(office.id))
+            weeks[name] = monday.isoformat()
+        out.append({"month": spec["month"], "rows": spec["rows"], "weeks": weeks})
+    return out
 
 
 def main():

@@ -1,12 +1,45 @@
 # Session Handoff & Review Turnover Package — The Estimator
 
+## ★ CURRENT RESUME POINT — 28 Oct 2026 (read this first)
+
+This block is the one authoritative "where are we" for CalibraytAI. Everything below it in this file, and the older
+status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
+**historical records**: where they disagree with this block, this block wins.
+
+- **Canonical application source:** GitHub `main` (always fetch it first; this documentation commit itself moves the SHA).
+  What lives outside `main` on purpose, and why: [operations/source-of-truth.md](operations/source-of-truth.md).
+- **Turnover and its correction:** [operations/turnover-2026-10-28.md](operations/turnover-2026-10-28.md) — the
+  28 Oct turnover record, kept as written, with the independent audit's corrections marked **[Corrected]** and its
+  final section "Independent audit and corrective pass".
+- **Live:** Render `Calibryatai` (`srv-dar95mh42hec73df4rug`), branch `main`, auto-deploy off, running
+  `30d47b8` (deploy `dep-dbgeh86gekts73a54c60`, 27 Oct 2026). That release includes the 27 Oct Project Creation UX
+  (7-task Start a New Project, structured customer address, migration `q4c7l2n8t3a6`).
+- **In `main`, not yet released (no deploy authorized):** selected-work estimating (Approach B); the Project
+  Creation Step 4 plan-upload fix; the calendar month-fit fix; the Linda Bushel case record and Approved Masters
+  governance (Family 08); banked-hours completion; production cleanup tools (not rerun); the read-only Training
+  reviewer and email checks; the dark Brayman logo; the pinned website deploy script; the refined 18 Oct storybook
+  archive. `main` has **not** passed the Mac release gate as a whole; the next Live release must pass it on the
+  exact `main` commit.
+- **Approval-gated, outside `main`:** FG-041 supplier native signing, reconciled onto current `main` on branch
+  `reconcile/fg041-supplier-signing-on-main-2026-10-28` (migration `a4d5e6f7a8b9` now revises `q4c7l2n8t3a6`).
+  Not merged: consent wording **`CONSENT-SUPPLIER-V1-001` is not approved**, and its production migration is not
+  authorized. Both are Joel's decisions. The queued Native E-Signature UX task depends on this branch.
+- **Training & Acceptance Centre:** https://training.calibraytai.com (HostPapa, service `calibrayt-training`).
+  Running commit: **not yet read** (needs the read-only WHM Terminal command in source-of-truth.md §5; the installer default is `f3a01e1`, v1rel8). Render preview `calibraytai-training-preview` runs `5f575c4`
+  (branch `v1/training-centre-2026-10-21`); `url-register.md` lists it "to be suspended" — Joel's decision.
+- **Do not delete** the branches named in [operations/source-of-truth.md](operations/source-of-truth.md); preservation
+  tags `preserve/2026-10-28/*` are created by `tools/ops/create_preservation_tags.sh`.
+- **Queue (Joel, 28 Oct 2026):** 1) Compact Open a New Project workflow; 2) supplier pricing request template
+  (awaiting Joel's approval and repo-copy choice; uses the dark Brayman logo); 3) Native E-Signature UX (contractor ↔
+  client and contractor ↔ supplier, on top of FG-041).
+
 ## 0. Fresh chat resume — 2 Oct 2026
 
-**28 Oct 2026 — SELECTED-WORK ESTIMATING (APPROACH B): CANDIDATE, NOT DEPLOYED.** Branch `feature/selected-work-estimating-2026-10-28`, built on the Step-4 plan-upload fix (`fix/project-creation-step4-2026-10-28`). "Pick the work. Estimate the work. Everything else stays out of the way." New scopes start empty; the contractor chooses work (catalogue or named), Internal or Subcontracted per item (materials / installation split on request); no N/A, no stage template; one "Add work" everywhere; removal refused while work holds estimate data. Existing (legacy) estimates unchanged; legacy drafts offer an explicit "Switch this draft to selected work". No migration. See [architecture/selected-work-estimating.md](architecture/selected-work-estimating.md). Includes the calendar month-fit fix (`65982f0`, merged unchanged). Gate `BROWSER_EXPECTED` 279 (adds `evidence_selected_work.mjs`, 10 checks, and the calendar fix's 4). Production data (Paulusse & Bonokoski) untouched.
+**28 Oct 2026 — SELECTED-WORK ESTIMATING (APPROACH B): CANDIDATE, NOT DEPLOYED.** *(Status later on 28 Oct: merged into `main` by PR #8 (`f30c61de`); still not deployed. See the current resume point above.)* Branch `feature/selected-work-estimating-2026-10-28`, built on the Step-4 plan-upload fix (`fix/project-creation-step4-2026-10-28`). "Pick the work. Estimate the work. Everything else stays out of the way." New scopes start empty; the contractor chooses work (catalogue or named), Internal or Subcontracted per item (materials / installation split on request); no N/A, no stage template; one "Add work" everywhere; removal refused while work holds estimate data. Existing (legacy) estimates unchanged; legacy drafts offer an explicit "Switch this draft to selected work". No migration. See [architecture/selected-work-estimating.md](architecture/selected-work-estimating.md). Includes the calendar month-fit fix (`65982f0`, merged unchanged). Gate `BROWSER_EXPECTED` 279 (adds `evidence_selected_work.mjs`, 10 checks, and the calendar fix's 4). Production data (Paulusse & Bonokoski) untouched.
 
-**28 Oct 2026 — CALENDAR MONTH FIT (pre-existing defect, separate fix).** On 1366 × 670 the month box ran 32 px below the screen when the bar above it wrapped to a second row (a long selected-day label such as "Wednesday · October 28"): the box height assumed a fixed 186 px top. Fix: the box takes its measured top (`calendar-months.js`, `--cal-avail`), the open month's 5 or 6 weeks share that height (`--cal-open-weeks`, rows 64–100 px), and the project filter gives way before Text notices / Print wrap. Date-independent browser checks: busy first, middle and final weeks in a 5-row (Mar 2027) and a 6-row (Aug 2027) month at 1366 × 670 and 1440 × 800 (`evidence_calendar.mjs`, +4 checks). Branch `fix/calendar-month-fit-2026-10-28`.
+**28 Oct 2026 — CALENDAR MONTH FIT (pre-existing defect, separate fix).** *(Status later on 28 Oct: merged into `main` with PR #8; not deployed.)* On 1366 × 670 the month box ran 32 px below the screen when the bar above it wrapped to a second row (a long selected-day label such as "Wednesday · October 28"): the box height assumed a fixed 186 px top. Fix: the box takes its measured top (`calendar-months.js`, `--cal-avail`), the open month's 5 or 6 weeks share that height (`--cal-open-weeks`, rows 64–100 px), and the project filter gives way before Text notices / Print wrap. Date-independent browser checks: busy first, middle and final weeks in a 5-row (Mar 2027) and a 6-row (Aug 2027) month at 1366 × 670 and 1440 × 800 (`evidence_calendar.mjs`, +4 checks). Branch `fix/calendar-month-fit-2026-10-28`.
 
-**27 Oct 2026 — PROJECT CREATION UX CORRECTION: CANDIDATE, NOT DEPLOYED.** Joel's brief after the Linda Bushel finding (a new customer came back as Marc). Branch `ux/project-creation-2026-10-27` on live `5c6f3d7`. Start a New Project is 7 compact tasks with the new customer saved inside step 1 and selected by its exact id; structured customer address (migration `q4c7l2n8t3a6`, six nullable `clients` columns); email/phone/address optional with one Attention item per incomplete customer; compact Home. See [operations/project-creation-ux.md](operations/project-creation-ux.md). Gate: `--migration-to q4c7l2n8t3a6 --new-tables none --altered-tables clients`, `BROWSER_EXPECTED` 263. Waiting for Joel's deployment authorization. Production data (Linda Bushel, P27) untouched.
+**27 Oct 2026 — PROJECT CREATION UX CORRECTION: CANDIDATE, NOT DEPLOYED.** *(Status later: released to Live 27 Oct 2026 as `30d47b8`, deploy `dep-dbgeh86gekts73a54c60`.)* Joel's brief after the Linda Bushel finding (a new customer came back as Marc). Branch `ux/project-creation-2026-10-27` on live `5c6f3d7`. Start a New Project is 7 compact tasks with the new customer saved inside step 1 and selected by its exact id; structured customer address (migration `q4c7l2n8t3a6`, six nullable `clients` columns); email/phone/address optional with one Attention item per incomplete customer; compact Home. See [operations/project-creation-ux.md](operations/project-creation-ux.md). Gate: `--migration-to q4c7l2n8t3a6 --new-tables none --altered-tables clients`, `BROWSER_EXPECTED` 263. Waiting for Joel's deployment authorization. Production data (Linda Bushel, P27) untouched.
 
 **16 Oct 2026 (09:00) — CONTRACT SIGNING LIVE (`1fa39e8`, 08:49); EASTERN ONTARIO CORRECTION PREPARED.** Joel accepts contract signing (live walkthrough with Ben in UAT). Defect: contracts resolved only for Ottawa addresses; corrected so any Ontario municipality gets the Ontario contract (register §15.5b). Needs one more release. Storybook screenshot library in progress (docs/storybook).
 

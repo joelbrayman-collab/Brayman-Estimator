@@ -8,7 +8,9 @@
         <div class="home-dow">
             <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span class="is-weekend">Sat</span><span class="is-weekend">Sun</span>
         </div>
-        <div class="cal-month-scroll"{% if month_edges %} data-month-scroll="true" data-open-month="{{ '%04d-%02d'|format(calendar.year, calendar.month) }}" tabindex="0" aria-label="Months, scrollable"{% endif %}>
+        {# Rows share the height the open month needs, 5 or 6 weeks, whichever week is busiest (28 Oct 2026). #}
+        {% set open_weeks = namespace(n=0) %}{% for week in calendar.weeks %}{% for day in week.days if day.date.year == calendar.year and day.date.month == calendar.month %}{% if loop.first %}{% set open_weeks.n = open_weeks.n + 1 %}{% endif %}{% endfor %}{% endfor %}
+        <div class="cal-month-scroll"{% if month_edges %} data-month-scroll="true" data-open-weeks="{{ open_weeks.n }}" style="--cal-open-weeks: {{ open_weeks.n or 5 }};" data-open-month="{{ '%04d-%02d'|format(calendar.year, calendar.month) }}" tabindex="0" aria-label="Months, scrollable"{% endif %}>
         {% if month_edges %}<a class="cal-month-edge" data-month-earlier="true" href="{{ url_for('schedule.company', year=month_edges.earlier.year, month=month_edges.earlier.month, view=calendar_view or None, **calendar_keep) }}">‹ Earlier months</a>{% endif %}
         {% for week in calendar.weeks %}
         {% if month_edges and week.month_anchor %}<div class="cal-month-band" role="heading" aria-level="3" data-month-band="{{ week.month_anchor }}">{{ week.month_heading }}</div>{% endif %}

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED ON BRANCH `signing/supplier-native-signing` / NOT DEPLOYED / MIGRATION NOT APPLIED LIVE** |
+| Status | **RECONCILED ONTO CURRENT MAIN ON BRANCH `reconcile/fg041-supplier-signing-on-main-2026-10-28` (28 Oct 2026) / NOT MERGED / NOT DEPLOYED / MIGRATION NOT APPLIED LIVE / CONSENT `CONSENT-SUPPLIER-V1-001` NOT APPROVED** |
 | Directive | Joel, 20 Oct 2026: "Connect native signing...!" — supplier-side signing "is just as important as the contractor - client side" and "is just a connection of the engine we already built". |
 | Engine | [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) Native Signing (frozen artifact, request, participants, events, executed PDF). No new provider. |
 | Migration | `a4d5e6f7a8b9` (revises `q4c7l2n8t3a6` since the 28 Oct 2026 reconciliation onto main; originally `z3c4d5e6f7a8`, then `pd1a2b3c4d5e`). Authorized for the development branch by Joel 20 Oct 2026; production apply needs his separate authorization at release. |
@@ -58,3 +58,30 @@ button labels on the affected forms); purchase order, confirmation and delivery-
 
 `tests/test_supplier_native_signing.py` (10) and `tests/test_supplier_signing_migration.py` (4); existing supplier
 tests sign where the screens now require it; migration head pins moved to `a4d5e6f7a8b9`.
+
+
+## Reconciliation onto current main (28 Oct 2026)
+
+Turnover corrective pass, after the independent audit. Source: `signing/supplier-native-signing-on-prodesk`
+(`e424e14f`, `b0a747c9`, `c2a3be14`; preserved at `recovery/supplier-signing-preserved-2026-10-28`), cherry-picked
+with `-x` onto `main` `66c93062`.
+
+- **Migration:** `a4d5e6f7a8b9` now revises `q4c7l2n8t3a6` (the live head). One chain, one head. Release-gate flags:
+  `--migration-to a4d5e6f7a8b9 --new-tables none --altered-checks
+  ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role`.
+- **Conflicts resolved against newer main:** the Supplier Pro Desk wizard import stays at the end of
+  `supplier_portal.py` after the signed-document route; delivery history keeps main's local-time formatting and gains
+  the signed-change link; the store's order page keeps main's cancelled-order notice with FG-041's signing wording;
+  the office request page keeps main's cancelled/delivered statuses and adds the signing line;
+  `migration_check.py` keeps main's added-column checks (`--altered-tables`) and FG-041's `--altered-checks`; every
+  head pin in the test suite moves from `q4c7l2n8t3a6` to `a4d5e6f7a8b9`.
+- **Joined with main's later order lifecycle (cancel / delivered, 21 Oct 2026):** cancelling an order voids its
+  signing request if the store has not signed yet (an executed order keeps its record); withdrawing open delivery
+  changes on cancel or delivery voids their signing requests — they are never signed. Covered in
+  `tests/test_supplier_po_cancel_delivered.py`.
+- **Tests written after 20 Oct** that place, confirm or change orders now send the consent tick and typed name, as
+  every on-screen order, confirmation and change requires.
+- **Gate:** the consent wording `CONSENT-SUPPLIER-V1-001` is recorded in `app/services/supplier_signing.py` as a
+  production consent version created on first use. It is **not approved**. This branch is not merged into `main`,
+  because the next Live release from `main` would put that wording in front of real suppliers. Merge, migration
+  and release wait for Joel's approval of the wording and of the migration.

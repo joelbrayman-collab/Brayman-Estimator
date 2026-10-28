@@ -144,7 +144,7 @@ this branch is built on that fix and does not change it.
 | 5 | Project Creation keeps the role and hands over with no stages | `app/wizards/new_project.py`, `app/routes/projects.py` | `test_project_creation_hands_over_a_scope_with_no_stages`, `tests/test_wizards.py`, `tests/test_project_creation_ux.py` |
 | 6 | One "Add work" on the estimate page and the project page | `app/routes/estimates.py`, `app/templates/estimates/detail.html`, `app/routes/projects.py`, `app/templates/projects/detail.html` | `test_manual_estimate_add_work_governs_that_estimate_without_the_wizard`, browser manual journey |
 | 7 | Work-item pages offer Internal / Subcontracted only (no N/A) | `app/templates/guided/stage.html` | browser guided journey |
-| 8 | Browser evidence | `tools/release/evidence_selected_work.mjs` (new, 10 checks, in the release gate), `tools/release/evidence_guided_estimating.mjs` (rewritten for selected work, 19 checks) | `BROWSER_EXPECTED` 275 |
+| 8 | Browser evidence | `tools/release/evidence_selected_work.mjs` (new, 10 checks, in the release gate), `tools/release/evidence_guided_estimating.mjs` (rewritten for selected work, 19 checks) | `BROWSER_EXPECTED` 279 with the separate calendar month-fit fix (`65982f0`, +4) |
 
 No migration, no model change, no data rewritten.
 

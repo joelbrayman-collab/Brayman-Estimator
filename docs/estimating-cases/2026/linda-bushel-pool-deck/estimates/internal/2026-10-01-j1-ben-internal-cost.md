@@ -1,70 +1,71 @@
-# Linda Bushel — internal cost for Ben — issue J1
+# Linda Bushel — cost sheet for Ben
 
 Date: 2026-10-01
 
-INTERNAL / FOR BEN
+FOR BEN ONLY
 
 Not a customer document. Not sent. No dollar on this sheet is a supplier price. A blank is not zero.
 
-Quantities are issue J1. Joel's 1 Oct 2026 decisions are the geometry: 15 piers, 16 joist lines, 10 stringers, 5.00 in working throat, 12 in lower-deck walking surface, street number 12. The client has selected helical piers. Sonotubes and concrete are not in this issue.
+Quantities match the 1 Oct 2026 drawing: 15 helical piers, 16 joist lines, 10 stringers, a 5.00 in working throat, and a 12 in lower-deck walking surface. No sonotubes and no concrete.
 
-The 29 Sep sheet `costing/2026-09-29-ben-internal-cost.md` and `estimates/internal/2026-10-01-ben-internal-cost.md` stay as earlier records. Those earlier sheets still show the unresolved P1 counts.
-
-No labour hours, equipment list, or Darcy quotation is in the case. None was invented.
+No labour hours, equipment list, or Darcy price is on file. None was invented.
 
 ## Material
 
-| Item | J1 quantity | Material cost |
+| Item | Quantity | Material cost |
 |---|---|---|
-| Helical pier | 15 | PRICE REQUIRED |
-| Helical-pier bracket, unless included | 15 | PRICE REQUIRED |
-| PT 6×6 × 8 ft | 11 | PRICE REQUIRED |
-| Post-to-beam connector | 15 | PRICE REQUIRED |
-| PT 2×10 × 10 ft | 4 | PRICE REQUIRED |
-| PT 2×10 × 12 ft | 7 | PRICE REQUIRED |
-| PT 2×8 × 12 ft | 20 | PRICE REQUIRED |
-| PT 2×12 × 8 ft stringer stock | 10 | PRICE REQUIRED |
-| PT 5/4×6 × 20 ft | 11 | PRICE REQUIRED |
-| PT 5/4×6 × 10 ft | 17 | PRICE REQUIRED |
-| PT 5/4×6 × 8 ft | 7 | PRICE REQUIRED |
-| PT 1×6 × 8 ft skirt | 5 | PRICE REQUIRED |
-| Veranda 37 in × 6 ft appearance | 10 straight kits | PRICE REQUIRED |
-| Custom sloped stair guards | 2 | PRICE REQUIRED |
-| PT 4×4 × 8 ft guard posts | 14 | PRICE REQUIRED |
-| Gate, 42 in clear | 1 | PRICE REQUIRED |
-| Gate hinges and latch | Latch 1. Hinge count not issued | PRICE REQUIRED |
-| Stitch bolts / nuts / washers | 76 / 76 / 152 | PRICE REQUIRED |
-| Header connectors | 16 | PRICE REQUIRED |
-| Stringer connectors | 10 | PRICE REQUIRED |
-| Structural screws | 100 | PRICE REQUIRED |
-| Deck screws | 798 | PRICE REQUIRED |
+| Helical pier | 15 | Price required |
+| Helical-pier bracket, unless included | 15 | Price required |
+| PT 6×6 × 8 ft | 11 | Price required |
+| Post-to-beam connector | 15 | Price required |
+| PT 2×10 × 10 ft | 4 | Price required |
+| PT 2×10 × 12 ft | 7 | Price required |
+| PT 2×8 × 12 ft | 20 | Price required |
+| PT 2×12 × 8 ft stringer stock | 10 | Price required |
+| Trex composite deck board × 20 ft | 11 | Price required |
+| Trex composite deck board × 10 ft | 17 | Price required |
+| Trex composite deck board × 8 ft | 7 | Price required |
+| Trex fascia, exposed rim | 44.184 ft | Price required |
+| PT 1×6 × 8 ft skirt | 5 | Price required |
+| Veranda 37 in × 6 ft, matching the named look | 10 straight kits | Price required |
+| Custom stair guards | 2 | Price required |
+| PT 4×4 × 8 ft guard posts | 14 | Price required |
+| Gate, 42 in clear | 1 | Price required |
+| Gate hinges and latch | Latch 1. Hinge count not stated | Price required |
+| Stitch bolts / nuts / washers | 76 / 76 / 152 | Price required |
+| Header connectors | 16 | Price required |
+| Stringer connectors | 10 | Price required |
+| Structural screws | 100 | Price required |
+| Fasteners for the Trex boards. The Trex fastener is not chosen. | 798 | Price required |
 
-Material total: NOT CALCULATED.
+Material total: not calculated.
 
-The Veranda Home Depot identity is not a confirmed BMR SKU. Bolt diameter, saddle model, and connector brand are not specified.
+The Veranda Home Depot number is not a confirmed BMR item. Bolt diameter, post bracket, and connector brand are not chosen.
+
+The walking surface and the stair treads are Trex. Fascia is 44.184 ft: upper sides 10.092 ft each, upper front returns 4 ft each, lower sides 3 ft each, and the lower front 10 ft. The open pool edge and the stair stringer faces have no fascia. Colour, width, and stock length are not chosen.
 
 ## Labour
 
-PRICE REQUIRED. No governed hour allowance is on file for this deck. No dollar rate was applied.
+Price required. No labour hours are on file for this deck. No dollar rate was applied.
 
 ## Equipment
 
-PRICE REQUIRED. No equipment list or rate is on file.
+Price required. No equipment list or rate is on file.
 
 ## Other direct cost
 
-PRICE REQUIRED. Permit fees, disposal, and delivery are not priced. Delivery address for the request is 12 D'Arcy's Way, Kemptville, ON K0G 1J0.
+Price required. Permit fees, disposal, and delivery are not priced. Delivery address on the request is 12 D'Arcy's Way, Kemptville, ON K0G 1J0.
 
 ## Allowances
 
-The 76 stitch bolts are a pricing allowance, not an engineered schedule. They are not priced.
+The 76 stitch bolts are a count for pricing, not an engineered bolt layout. They are not priced.
 
-No percentage waste allowance was added. Offcut waste is the unused length on the J1 cut lists. Offcuts were not deducted from the purchase count. There is no concrete quantity. Helical pier length is not specified.
+No percentage waste was added. Waste is the unused length on the cut lists. Leftover pieces were not deducted from the purchase count. There is no concrete. Helical pier length is not chosen.
 
 ## Direct cost
 
-NOT CALCULATED. Material, labour, equipment, other direct cost, and allowances are not all priced.
+Not calculated. Material, labour, equipment, other direct cost, and allowances are not all priced.
 
-## Selling price / gross margin
+## Selling price and margin
 
-NOT CALCULATED. This sheet does not carry a customer price or a margin. Selling price stays unissued until Darcy's quotation is in the case.
+Not calculated. This sheet does not carry a customer price or a margin. The selling price stays unissued until Darcy's quotation is in.

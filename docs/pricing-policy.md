@@ -3,18 +3,18 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** (current reference rule) |
-| Updated | 2026-08-29 |
+| Updated | 2026-10-27 |
 | Authority | Joel-approved product policy — not invented by implementation |
 
 ## Purpose
 
 Record Brayman's **current** pricing terminology and formulas so estimates, internal breakdowns, customer-facing outputs, and QuickBooks exports reconcile consistently. Future changes to rates, margin methodology, category rules, contingency, or tax treatment are **governed pricing-policy changes** requiring explicit approval — not silent code or spreadsheet drift.
 
-## Current reference rule (2026-08-25)
+## Current reference rule (labour rate 2026-10-27; margin 2026-08-25)
 
 | Parameter | Value |
 |-----------|--------|
-| Labour direct cost reference | **$65 CAD per man-hour** |
+| Labour direct cost reference | **$75 CAD per man-hour** (Joel, 27 Oct 2026; was $65 from 25 Aug 2026) |
 | Current target gross margin | **15%** |
 
 ### Gross margin formula (not markup)
@@ -48,6 +48,13 @@ QuickBooks is not required for Project Gross Margin. Industry benchmarks are not
 ### Tax (HST)
 
 HST is **separate** from the pre-tax selling price. Apply HST after pre-tax selling price according to the applicable tax treatment for the output (internal vs customer-facing vs QuickBooks).
+
+### Labour rate history
+
+| Effective | Rate | Authority | Applies to |
+|---|---|---|---|
+| 2026-08-25 | $65 CAD / man-hour | Joel (FG-008 ORG-001 seed, v1) | Estimates priced before 27 Oct 2026. Historical documents and estimates keep $65. |
+| 2026-10-27 | **$75 CAD / man-hour** | Joel, 27 Oct 2026 ("Ben labour rate is now $75 per hour"; "current/future Brayman Construction labour rate = $75/hour") | Current and future estimates. Recorded in Production as an approved ORG-001 direct labour cost rate standard (v2) through the labour engine; v1 stays for history. |
 
 ## Placeholder and pending pricing
 

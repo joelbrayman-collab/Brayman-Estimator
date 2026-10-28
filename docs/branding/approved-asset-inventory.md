@@ -43,6 +43,9 @@ No checksum was recorded when these were made; the values below are first record
 | File | Used for | SHA-256 |
 |---|---|---|
 | `app/static/branding/brayman-construction-logo.png` | Brayman Construction brand profile: proposals, drawings, supplier estimates, project-controls PDFs, sign-in and page headers | `948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9` (first recorded 18 Oct 2026) |
+| `app/static/branding/brayman-construction-logo-dark.png` | Brayman Construction logo for dark backgrounds (white lettering, gold mark): navy document headers such as the supplier pricing request | `904667b4d0ea0d50ca69b77d731a9c918f16a6464ae579a0b7f38037a3332c44` (recorded 28 Oct 2026) |
+
+The dark Brayman logo is recovered byte-for-byte from commit `5ebbfdb1` (21 Jul 2026, Joel Brayman, branch `cursor/sidebar-navigation-refinement`, where it was the office sidebar mark); it had never reached `main`. Joel named it the approved dark logo on 28 Oct 2026 ("There are approved logos in repo that say 'dark' and they should be used") for the supplier pricing request. Preservation tag `preserve/2026-10-28/brayman-dark-logo-source`. 1692 × 736 px, transparent background; never recoloured, cropped or redrawn.
 
 ## Orphaned or duplicate assets (recorded, not deleted)
 

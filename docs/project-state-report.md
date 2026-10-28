@@ -1,5 +1,7 @@
 # Project State Report — The Estimator
 
+> **Historical record.** The current resume point is [session-handoff.md](session-handoff.md) → "★ CURRENT RESUME POINT" (28 Oct 2026). Where this document disagrees with it, this document is out of date.
+
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative milestone-level state |

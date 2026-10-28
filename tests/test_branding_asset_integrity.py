@@ -28,6 +28,8 @@ APPROVED = {
     "app/static/branding/calibraytai-app-icon-maskable-512.png": "2bedbfa356e82d89013d863e69e6ce7e37c19316802c302c177e89ea8b54fbb1",
     # Brayman Construction company logo (organization brand profile); first checksummed 18 Oct 2026.
     "app/static/branding/brayman-construction-logo.png": "948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9",
+    # Brayman logo for dark backgrounds, recovered from 5ebbfdb1 (Joel, 28 Oct 2026).
+    "app/static/branding/brayman-construction-logo-dark.png": "904667b4d0ea0d50ca69b77d731a9c918f16a6464ae579a0b7f38037a3332c44",
 }
 
 

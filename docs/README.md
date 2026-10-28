@@ -6,6 +6,15 @@
 | Updated | 2026-10-01 |
 | Product | The Estimator (Brayman Estimator) |
 
+## Current state — start here
+
+**[session-handoff.md](session-handoff.md) → "★ CURRENT RESUME POINT"** is the single authoritative resume point
+(28 Oct 2026). It links [operations/turnover-2026-10-28.md](operations/turnover-2026-10-28.md) (turnover record with
+the independent audit's corrections) and [operations/source-of-truth.md](operations/source-of-truth.md) (what lives
+where: `main`, deployment and publication branches, Live, Training). Where [project-state-report.md](project-state-report.md),
+[current-state.md](current-state.md) or [chat-workflow-log.md](chat-workflow-log.md) disagree with it, they are
+historical.
+
 ## Purpose
 
 This folder is the **system of record** for platform vision, architecture, governance, workflow, and session continuity. Chat history is not authoritative.

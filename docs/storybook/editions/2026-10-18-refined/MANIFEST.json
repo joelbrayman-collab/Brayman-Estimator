@@ -1,0 +1,41 @@
+{
+  "edition": "CalibraytAI Contractor Storybook \u2014 refined review edition",
+  "date": "2026-10-18",
+  "pages": 44,
+  "chapters": 14,
+  "publication_status": "NOT PUBLISHED \u2014 Vercel 403 permission error; previous live deployment unchanged",
+  "files": [
+    {
+      "filename": "CalibraytAI_Contractor_Storybook_Refined_2026-10-18.html.zip",
+      "bytes": 11918523,
+      "sha256": "032cfd391998c1a3a759a35d88a31fa6e69b7bf84bc4e7d25da364e2a8b799dc",
+      "original_filename": "CalibraytAI_Contractor_Storybook_Refined_2026-10-18.html",
+      "original_sha256": "330305a47fb7b7f107513cdfed3514a5a7a11868482552b806684d210d2fd225",
+      "original_bytes": 17902670
+    },
+    {
+      "filename": "CalibraytAI_Contractor_Storybook_Refined_2026-10-18.pdf.zip",
+      "bytes": 12430623,
+      "sha256": "4c9ede1c3b97c0e16530c0b508d0c1ba9a5a6ea48a379fea6f9c9775e10d762c",
+      "original_filename": "CalibraytAI_Contractor_Storybook_Refined_2026-10-18.pdf",
+      "original_sha256": "7a4d850cc474387000b5fdc239f3a288013939a5206543e46438cd897cd05edb",
+      "original_bytes": 12986059
+    },
+    {
+      "filename": "CalibraytAI_Storybook_Refined_Editable_Source_2026-10-18.zip",
+      "bytes": 9164471,
+      "sha256": "58015f4c6e828becb7b4dbd6af7630287a547b59d12db1683c09eb26106e4420",
+      "original_filename": "CalibraytAI_Storybook_Refined_Editable_Source_2026-10-18.zip",
+      "original_sha256": "58015f4c6e828becb7b4dbd6af7630287a547b59d12db1683c09eb26106e4420",
+      "original_bytes": 9164471
+    },
+    {
+      "filename": "CalibraytAI_Storybook_Refined_Vercel_2026-10-18.zip",
+      "bytes": 10729184,
+      "sha256": "f20f6e38b771be37c5f5268bcb5a6c317e3c243880045b2a71c61d1c52694628",
+      "original_filename": "CalibraytAI_Storybook_Refined_Vercel_2026-10-18.zip",
+      "original_sha256": "f20f6e38b771be37c5f5268bcb5a6c317e3c243880045b2a71c61d1c52694628",
+      "original_bytes": 10729184
+    }
+  ]
+}

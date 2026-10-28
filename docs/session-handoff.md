@@ -6,6 +6,23 @@ This block is the one authoritative "where are we" for CalibraytAI. Everything b
 status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
 **historical records**: where they disagree with this block, this block wins.
 
+- **Turnover/recovery workstream: CLOSED 28 Oct 2026 — TURNOVER SUBSTANTIALLY CORRECT — NO CURRENT WORK STRANDED —
+  RELEASE/OPERATIONS VERIFICATION DEFERRED.** No further turnover investigation unless new evidence of missing work
+  appears. Feature development continues from `main`.
+- **DEFERRED RELEASE / OPERATIONS VERIFICATION — NOT DONE; required before the next applicable production release
+  (not a blocker to feature development):**
+  1. **Preservation tags** `preserve/2026-10-28/*` — not created (tag push refused from the cloud workspace). Run
+     `tools/ops/create_preservation_tags.sh` from the office Mac. Until then the branches in
+     [operations/source-of-truth.md](operations/source-of-truth.md) are the only preservation and must not be deleted.
+     Required before any branch cleanup.
+  2. **HostPapa Training running commit** — not read. Read-only in WHM Terminal:
+     `sudo -u calibrayt git -C /opt/calibrayt/app log -1 --format='%H %ad %s'; systemctl is-active calibrayt-training`.
+     Required before the next Training release or any Training repoint.
+  3. **Mac release gate on the exact `main` commit** — not run on any 28 Oct `main` (`main` contains merged work that
+     has never passed the gate). Required before the next Live release; the gate must pass on the exact commit being
+     deployed.
+  Known intermittent: the Magnificent Seven "Add Receipt" browser check can fail on a given run (test-wait race,
+  also on `main`); a gate failure there needs a rerun and inspection, never a skip.
 - **Canonical application source:** GitHub `main` (always fetch it first; this documentation commit itself moves the SHA).
   What lives outside `main` on purpose, and why: [operations/source-of-truth.md](operations/source-of-truth.md).
 - **Turnover and its correction:** [operations/turnover-2026-10-28.md](operations/turnover-2026-10-28.md) — the
@@ -21,7 +38,8 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   archive. `main` has **not** passed the Mac release gate as a whole; the next Live release must pass it on the
   exact `main` commit.
 - **Approval-gated, outside `main`:** FG-041 supplier native signing, reconciled onto current `main` on branch
-  `reconcile/fg041-supplier-signing-on-main-2026-10-28` (migration `a4d5e6f7a8b9` now revises `q4c7l2n8t3a6`).
+  `reconcile/fg041-supplier-signing-on-main-2026-10-28` (draft PR #13, head `43694c53`; migration `a4d5e6f7a8b9` now
+  revises `q4c7l2n8t3a6`). **Do not merge PR #13** until the gates below are approved.
   Not merged: consent wording **`CONSENT-SUPPLIER-V1-001` is not approved**, and its production migration is not
   authorized. Both are Joel's decisions. The queued Native E-Signature UX task depends on this branch.
 - **Training & Acceptance Centre:** https://training.calibraytai.com (HostPapa, service `calibrayt-training`).
@@ -29,9 +47,12 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   (branch `v1/training-centre-2026-10-21`); `url-register.md` lists it "to be suspended" — Joel's decision.
 - **Do not delete** the branches named in [operations/source-of-truth.md](operations/source-of-truth.md); preservation
   tags `preserve/2026-10-28/*` are created by `tools/ops/create_preservation_tags.sh`.
-- **Queue (Joel, 28 Oct 2026):** 1) Compact Open a New Project workflow; 2) supplier pricing request template
-  (awaiting Joel's approval and repo-copy choice; uses the dark Brayman logo); 3) Native E-Signature UX (contractor ↔
-  client and contractor ↔ supplier, on top of FG-041).
+- **Queue (Joel, 28 Oct 2026):** 1) Compact Open a New Project workflow (from current `main`; no FG-041 in it);
+  2) supplier pricing request template — approved dark-logo layout; repo copy is a blank master generator (identical
+  layout, fields and calculations) filled by the workflow, including supplier contact details, when a supplier is
+  chosen; 3) Native E-Signature Workflow (contractor ↔ client and contractor ↔ supplier), using the reconciled FG-041
+  branch as the supplier-signing source and keeping PR #13's migration and `CONSENT-SUPPLIER-V1-001` gates unless
+  separately authorized.
 
 ## 0. Fresh chat resume — 2 Oct 2026
 

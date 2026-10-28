@@ -57,7 +57,7 @@ The authoritative AiRIA source is the Discovery-Search repository; these branche
 
 ## 7. Preservation tags
 
-Annotated tags `preserve/2026-10-28/*` mark the exact commits above (see the turnover record for names and SHAs). Tags and branches are both kept; neither is deleted.
+Annotated tags `preserve/2026-10-28/*` are to mark the exact commits above (names and SHAs in the turnover record). **Not yet created** — deferred to the office Mac (`tools/ops/create_preservation_tags.sh`); until then the branches are the only preservation. Tags and branches are both kept; neither is deleted.
 
 ## 8. Confidential documents
 

@@ -225,25 +225,51 @@ def test_project_lead_is_separate_from_crew_assignments_and_appointment_assignee
     _ = item
 
 
-def test_start_a_new_project_sets_the_project_lead_in_its_lead_step(env):
+def test_start_a_new_project_sets_the_project_lead_on_details(env):
     application, d, ben = env
     p = _people(application, ben)
     run_id = _start(d, "NEW_PROJECT")
+    # Before the project exists, Details offers the Project Lead with the role (optional, Unassigned by default).
+    page = d.get(f"/wizards/run/{run_id}/step/location")
+    assert 'name="project_lead_user_id"' in page and ">Unassigned<" in page
+    assert GONE[2] not in page and "Other Company Owner" not in page
     _create_from_wizard(d, run_id, name="Wizard Lead Home (synthetic)")
     project = Project.query.filter_by(organization_id=ORG, name="Wizard Lead Home (synthetic)").one()
-    state, page = _state(d, run_id, "responsibility")
-    assert state == "todo" and "Project Lead: Unassigned" in page and 'name="project_lead_user_id"' in page
-    assert "Who is leading it, and when?" in page and GONE[2] not in page and "Other Company Owner" not in page
-    _step(d, run_id, "responsibility", action="submit", project_lead_user_id=str(p["kevin"].id))
+    assert project.project_lead_user_id is None
+    # Once it exists, Details shows the lead and changes it on a real press.
+    state, page = _state(d, run_id, "location")
+    assert state == "done" and "Unassigned" in page and 'name="project_lead_user_id"' in page
+    _step(d, run_id, "location", action="submit", project_lead_user_id=str(p["kevin"].id))
     db.session.expire_all()
     assert db.session.get(Project, project.id).project_lead_user_id == p["kevin"].id
-    state, page = _state(d, run_id, "responsibility")
-    assert state == "done" and f"Project Lead: {KEVIN[2]}" in page
+    state, page = _state(d, run_id, "location")
+    assert state == "done" and KEVIN[2] in page
     assert "PROJECT_LEAD_SET" in _events(run_id)
+    # Autosave never changes it.
+    d.http.post(f"/wizards/run/{run_id}/step/location/autosave", data={"project_lead_user_id": ""})
+    db.session.expire_all()
+    assert db.session.get(Project, project.id).project_lead_user_id == p["kevin"].id
     # Optional: Next never needs it (cleared again, Next still moves on).
-    _step(d, run_id, "responsibility", action="submit", project_lead_user_id="")
-    _step(d, run_id, "responsibility")
-    assert _run(run_id).current_step == "review"
+    _step(d, run_id, "location", action="submit", project_lead_user_id="")
+    _step(d, run_id, "location")
+    assert _run(run_id).current_step == "documents"
+
+
+def test_start_a_new_project_sets_the_project_lead_chosen_before_creation(env):
+    application, d, ben = env
+    p = _people(application, ben)
+    run_id = _start(d, "NEW_PROJECT")
+    from tests.test_wizards import LOCATION
+
+    _step(d, run_id, "project_type", name="Lead first (synthetic)", guided_project_type="NEW_HOME",
+          project_type="New Build", status="Lead")
+    _step(d, run_id, "customer", customer_mode="existing", client_id=str(client().id))
+    _step(d, run_id, "location", action="save", contractor_role="GENERAL_CONTRACTOR",
+          project_lead_user_id=str(p["kevin"].id), **LOCATION)
+    fields = {k: v for k, v in _run(run_id).draft_json["fields"].items() if not k.startswith("new_customer_")}
+    d.post("/projects/new", data=dict(fields, wizard_run=str(run_id), plan_start="later"))
+    project = Project.query.filter_by(organization_id=ORG, name="Lead first (synthetic)").one()
+    assert project.project_lead_user_id == p["kevin"].id
 
 
 # ====================================================================================== 3 availability

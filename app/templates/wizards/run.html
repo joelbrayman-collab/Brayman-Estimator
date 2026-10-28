@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ wizard.title }}: {{ step.title }} | Brayman Construction Platform{% endblock %}
 {% block page_title %}{{ wizard.title }}{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css', v='cnp-1') }}">{% endblock %}
 {% block breadcrumbs %}{% endblock %}
+{# The compact wizard is a dialog: its messages are shown inside it, never behind the backdrop. #}
+{% block flashes %}{% if not wizard.compact %}{{ super() }}{% endif %}{% endblock %}
 {% block content %}{% include "wizards/_run_compact.html" if wizard.compact else "wizards/_run.html" %}{% endblock %}

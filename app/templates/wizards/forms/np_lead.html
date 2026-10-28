@@ -1,9 +1,0 @@
-{# Start a New Project · Who is leading it, and when? #}
-<div class="np-grid np-grid-2">
-  <label class="np-field">Project Lead <span class="cust-opt">optional</span>
-    <select name="project_lead_user_id" data-project-lead-select>
-      <option value="">Unassigned</option>
-      {% for person in f.people %}<option value="{{ person.id }}" {% if f.current == person.id %}selected{% endif %}>{{ person.label }}</option>{% endfor %}
-    </select></label>
-</div>
-<p class="np-hint">A name on the project only: it gives no access and does not assign scheduled work. The first visit or meeting goes on the Company Calendar (link below).</p>

@@ -22,7 +22,7 @@ from tests.test_wizards import COMMERCIAL_DEFAULTS, _start
 
 LINDA = "Linda Bushel (synthetic)"
 MARC = "Marc Bouliion (synthetic)"
-STEP_KEYS = ["customer", "project_type", "location", "documents", "role", "responsibility", "review"]
+STEP_KEYS = ["project_type", "customer", "location", "documents", "review"]
 
 
 def _run(run_id):
@@ -79,14 +79,14 @@ def test_linda_new_customer_is_carried_by_its_exact_id_with_no_detour_and_never_
     assert created.detail == f"Client {linda.id}: {LINDA}"
     # 7. No detour through the Clients pages: straight on to the next task (9. automatic progression).
     assert "/clients" not in response.headers["Location"]
-    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/step/project_type")
-    assert _run(run_id).current_step == "project_type"
-    page = d.get(f"/wizards/run/{run_id}/step/project_type")
-    assert "What are we building?" in page and LINDA in page and MARC not in page
+    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/step/location")
+    assert _run(run_id).current_step == "location"
+    page = d.get(f"/wizards/run/{run_id}/step/location")
+    assert "Details" in page and LINDA in page and MARC not in page
     # 8. Marc (or anyone else) is never the customer.
     assert _draft(run_id)["client_id"] != str(marc.id)
     # 10. Back keeps Linda selected.
-    _post(d, run_id, "project_type", action="back")
+    _post(d, run_id, "location", action="back")
     page = d.get(f"/wizards/run/{run_id}/step/customer")
     assert _selected_customer(page) == linda.id
     # The same form sent twice (double press) never makes a second Linda.
@@ -95,7 +95,7 @@ def test_linda_new_customer_is_carried_by_its_exact_id_with_no_detour_and_never_
     assert _draft(run_id)["client_id"] == str(linda.id)
     # 11. Forward keeps Linda.
     _post(d, run_id, "customer", customer_mode="existing", client_id=str(linda.id))
-    assert _run(run_id).current_step == "project_type" and _draft(run_id)["client_id"] == str(linda.id)
+    assert _run(run_id).current_step == "location" and _draft(run_id)["client_id"] == str(linda.id)
     # 12. Save & Exit keeps Linda.
     exit_response = _post(d, run_id, "project_type", action="save_exit", name="Bushel deck (synthetic)",
                           guided_project_type="OTHER", project_type="New Build", status="Lead")
@@ -119,9 +119,10 @@ def test_linda_new_customer_is_carried_by_its_exact_id_with_no_detour_and_never_
 
 
 def _create(d, run_id, **location):
-    """Save & Continue on "Where is the job?": the fields the step's form posts to the New Project handler."""
+    """Create Project & Continue on Details (step 3): the fields the step's form posts to the New Project handler."""
     fields = {k: v for k, v in _draft(run_id).items() if k in ("client_id", "name", "project_number", "description",
                                                              "project_type", "status")}
+    location.setdefault("contractor_role", "GENERAL_CONTRACTOR")  # Details: your role is chosen with the site
     fields.update(COMMERCIAL_DEFAULTS, permit_context_class="Other/unspecified", wizard_run=str(run_id),
                   plan_start="later", **location)
     return d.post("/projects/new", data=fields)
@@ -134,7 +135,7 @@ def test_choosing_an_existing_customer_and_nothing_is_created(env):
     run_id = _start(d, "NEW_PROJECT")
     count = Client.query.count()
     response = _post(d, run_id, "customer", customer_mode="existing", client_id=str(marc.id))
-    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/step/project_type")
+    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/step/location")
     assert _draft(run_id)["client_id"] == str(marc.id) and Client.query.count() == count
     # A customer of another company cannot be chosen.
     from tests.test_guided_estimating import _other_company
@@ -287,21 +288,33 @@ def test_the_clients_page_creates_with_only_a_name_and_lists_what_is_missing(env
 
 
 # ====================================================================================== structure and presentation
-def test_seven_focused_tasks_in_a_compact_page(env):
+def test_five_compact_steps_in_a_dialog(env):
     _app, d, _ben = env
     from app.wizards.new_project import WIZARD
 
     assert [s.key for s in WIZARD.steps] == STEP_KEYS
-    assert [s.title for s in WIZARD.steps] == [
-        "Who is the customer?", "What are we building?", "Where is the job?", "What plans and drawings do we have?",
-        "What is your role on this job?", "Who is leading it, and when?", "Does this look right?"]
+    assert [s.title for s in WIZARD.steps] == ["Project", "Customer", "Details", "Plans", "Review"]
     run_id = _start(d, "NEW_PROJECT")
-    page = d.get(f"/wizards/run/{run_id}/step/customer")
-    assert "data-compact-wizard" in page and "Start a New Project</strong> · <span" in page
-    assert "Step 1 of 7" in page and "View all steps" in page
+    page = d.get(f"/wizards/run/{run_id}/step/project_type")
+    assert "data-compact-wizard" in page and 'role="dialog"' in page and 'aria-modal="true"' in page
+    assert "Step 1 of 5" in page and "data-stepper" in page and 'aria-current="step"' in page
+    assert "data-modal-close" in page  # × is Save & Exit
     assert 'class="wz-steps"' not in page  # no permanent roadmap column
     assert "Save &amp; Continue →" in page and "Save &amp; Exit" in page
     assert "Come back here when it is saved" not in page and 'href="/clients/new"' not in page
+    # Messages are shown inside the dialog, never behind the backdrop.
+    _post(d, run_id, "project_type")
+    page = d.get(f"/wizards/run/{run_id}/step/project_type")
+    assert "data-wizard-flash" in page and page.index("data-wizard-flash") > page.index('role="dialog"')
+    # Details: the site, the settings, your role (required) and the Project Lead; Continue creates the project.
+    _post(d, run_id, "project_type", name="Dialog deck (synthetic)", guided_project_type="OTHER",
+          project_type="New Build", status="Lead")
+    _post(d, run_id, "customer", **_new_customer(LINDA))
+    page = d.get(f"/wizards/run/{run_id}/step/location")
+    for hook in ('name="street"', 'name="permit_context_class"', 'name="pricing_posture"', 'name="contractor_role"',
+                 'name="project_lead_user_id"', 'name="justification_reason"', 'name="address"', "data-create-project"):
+        assert hook in page, hook
+    assert "Create Project &amp; Continue" in page
     # The other wizards keep their existing presentation.
     est = _start(d, "GUIDED_ESTIMATING")
     assert "data-compact-wizard" not in d.get(f"/wizards/run/{est}/step/project")
@@ -322,7 +335,7 @@ def test_plans_step_uploads_here_and_never_blocks(env):
     assert 'enctype="multipart/form-data"' in page and 'name="plan_file"' in page
     # No drawings yet: Save & Continue still goes on (optional step); the review lists it to add later.
     _post(d, run_id, "documents")
-    assert _run(run_id).current_step == "role"
+    assert _run(run_id).current_step == "review"
     # A PDF chosen here is added through the Plans page's own service, and the step is done.
     from tests.test_plan_upload import _make_searchable_pdf_bytes
 
@@ -360,7 +373,7 @@ def test_plans_step_sent_twice_keeps_one_plan_and_says_what_is_happening(env):
         r = d.http.post(f"/wizards/run/{run_id}/step/documents",
                         data={"wizard_action": "next", "plan_file": (BytesIO(pdf), "deck-plan.pdf")},
                         content_type="multipart/form-data")
-        assert r.status_code == 302 and r.headers["Location"].endswith(f"/wizards/run/{run_id}/step/role")
+        assert r.status_code == 302 and r.headers["Location"].endswith(f"/wizards/run/{run_id}/step/review")
     assert [p.original_filename for p in project_plans(ORG, project.id)] == ["deck-plan.pdf"]
     assert any("already on the project" in m for m in d.flashes())
     # A different PDF is still added; a file that is not a PDF stays on Plans with the reason.
@@ -377,33 +390,45 @@ def test_plans_step_sent_twice_keeps_one_plan_and_says_what_is_happening(env):
     assert len(project_plans(ORG, project.id)) == 2
 
 
-def test_role_review_and_finish_into_guided_estimating(env):
+def test_review_sections_edit_and_finish_shows_project_created(env):
     _app, d, _ben = env
     run_id = _start(d, "NEW_PROJECT")
-    _post(d, run_id, "customer", **_new_customer(LINDA))
     _post(d, run_id, "project_type", name="Finish deck (synthetic)", guided_project_type="OTHER",
           project_type="New Build", status="Lead")
+    _post(d, run_id, "customer", **_new_customer(LINDA))
     _create(d, run_id, street="9 Done Rd", municipality="Kemptville", province_state="Ontario", postal_zip="",
             country="Canada")
     project = Project.query.filter_by(name="Finish deck (synthetic)").one()
-    _post(d, run_id, "documents", drawings_choice="none")
-    # The role is required: Save & Continue without one is refused.
-    _post(d, run_id, "role")
-    assert any("Choose your role" in m for m in d.flashes()) and _run(run_id).current_step == "role"
-    _post(d, run_id, "role", contractor_role="GENERAL_CONTRACTOR", guided_project_type="OTHER")
     from app.services import guided_estimating as G
 
     guided = G.get_guided(ORG, project.id)
     assert (guided.project_type, guided.contractor_role) == ("OTHER", "GENERAL_CONTRACTOR")
     assert all(s.responsibility is None for s in guided.stages)  # who does each stage is Guided Estimating's step
-    _post(d, run_id, "responsibility")  # optional
+    _post(d, run_id, "documents", drawings_choice="none")
     page = d.get(f"/wizards/run/{run_id}/step/review")
-    assert "Does this look right?" in page and LINDA in page and "9 Done Rd" in page
+    assert LINDA in page and "9 Done Rd" in page and "General Contractor" in page.replace("general contractor", "General Contractor")
+    for title in ("Project information", "Customer", "Site and project details", "Plans and documents"):
+        assert title in page
     assert "Customer information: email, phone, address" in page
-    response = d.post(f"/wizards/run/{run_id}/step/review?choice=estimate", data={"wizard_action": "next"})
+    # Edit goes back to the step; going back and forward keeps everything.
+    edit = re.search(r'href="([^"]+)" data-review-edit="location"', page).group(1)
+    assert edit.endswith(f"/wizards/run/{run_id}/step/location")
+    assert "9 Done Rd" in d.get(edit)
+    # Finish (pressed twice) finishes once and shows Project Created; nothing new is made.
+    for _ in range(2):
+        response = d.post(f"/wizards/run/{run_id}/step/review?choice=finish", data={"wizard_action": "next"})
     assert _run(run_id).status == "COMPLETED"
-    estimating = WizardRun.query.filter_by(wizard_key="GUIDED_ESTIMATING", project_id=project.id).one()
-    assert response.headers["Location"].endswith(f"/wizards/run/{estimating.id}")
+    assert WizardRunEvent.query.filter_by(run_id=run_id, event="CONFIRMED").count() == 1
+    assert Project.query.filter_by(name="Finish deck (synthetic)").count() == 1
+    created = d.get(f"/wizards/run/{run_id}/created")
+    assert "Project Created Successfully" in created and LINDA in created
+    assert created.index("data-open-project") < created.index("data-create-another")
+    # Create Another Project starts a fresh run.
+    another = d.post("/wizards/NEW_PROJECT/start")
+    new_id = int(re.search(r"/wizards/run/(\d+)", another.headers["Location"]).group(1))
+    assert new_id != run_id and _run(new_id).status == "ACTIVE"
+    # The completion page belongs to a finished run of this company only.
+    d.get(f"/wizards/run/{new_id}/created", status=404)
 
 
 # ====================================================================================== migration
@@ -487,6 +512,6 @@ def test_production_sequence_a_draft_already_holding_marc_never_survives_adding_
     _post(d, run_id, "customer", **_new_customer(LINDA))
     linda = Client.query.filter_by(organization_id=ORG, name=LINDA).one()
     assert _draft(run_id)["client_id"] == str(linda.id) != str(marc.id)
-    assert _run(run_id).current_step == "project_type"
+    assert _run(run_id).current_step == "location"
     page = d.get(f"/wizards/run/{run_id}/step/customer")
     assert _selected_customer(page) == linda.id

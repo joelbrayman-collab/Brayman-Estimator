@@ -160,3 +160,23 @@ def manual(run_id, step_key):
 @wizards_bp.route("/run/<int:run_id>/end", methods=["POST"])
 def end(run_id):
     return V.end_run(_ctx(run_id), home_url=_home())
+
+
+@wizards_bp.route("/run/<int:run_id>/created")
+def project_created(run_id):
+    """Start a New Project, Project Created (compact five steps, 28 Oct 2026): the completion page after Finish.
+    Open Project, Start Guided Estimating (when your role is recorded) and Create Another Project."""
+    from app.models.wizard import WIZARD_GUIDED_ESTIMATING, WIZARD_NEW_PROJECT
+
+    ctx = _ctx(run_id)
+    if ctx.run.wizard_key != WIZARD_NEW_PROJECT or ctx.project is None:
+        abort(404)
+    if ctx.run.is_active:
+        return redirect(ctx.step_url("review"))  # Finish has not been pressed yet
+    V.clear_return(ctx.run.id)
+    project = ctx.project
+    estimating = S.active_contractor_runs(ctx.organization_id, wizard_key=WIZARD_GUIDED_ESTIMATING,
+                                          project_id=project.id)
+    return render_template("wizards/project_created.html", run=ctx.run, project=project, guided=ctx.guided,
+                           estimating_run=estimating[0] if estimating else None,
+                           estimating_key=WIZARD_GUIDED_ESTIMATING, new_project_key=WIZARD_NEW_PROJECT)

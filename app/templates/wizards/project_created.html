@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{# Start a New Project · Project Created (Compact Open a New Project, 28 Oct 2026): the completion state after
+   Finish on Review — not a sixth step. Open Project is first; Create Another Project starts a fresh run. #}
+{% block title %}Project Created: {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Start a New Project{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css', v='cnp-1') }}">{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block flashes %}{% endblock %}
+{% block content %}
+<div class="wzc-overlay" data-modal-overlay>
+<div class="wz wzc wzc-modal" role="dialog" aria-modal="true" aria-labelledby="np-created-title" data-project-created data-run="{{ run.id }}" data-project-id="{{ project.id }}">
+  <header class="wzc-head">
+    <div class="wzc-titlebar">
+      <p class="wzc-dialog-title">Start a New Project</p>
+      <a class="wzc-close" href="{{ url_for('projects.view_project', id=project.id) }}" data-modal-close aria-label="Close and open the project">&times;</a>
+    </div>
+  </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<div class="flash-stack wzc-flash">{% for category, message in messages %}<div class="alert alert-{{ category }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  <section class="np-created">
+    <div class="np-created-icon" aria-hidden="true">&#10003;</div>
+    <h1 id="np-created-title" tabindex="-1">Project Created Successfully</h1>
+    <p class="np-hint">The project is set up. Everything is on the project's own pages.</p>
+    <dl class="np-review" data-created-summary>
+      <div><dt>Project name</dt><dd>{{ project.name }}</dd></div>
+      <div><dt>Project #</dt><dd>{{ project.project_number or '—' }}</dd></div>
+      <div><dt>Customer</dt><dd>{{ project.client.name if project.client else '—' }}</dd></div>
+      <div><dt>Status</dt><dd>{{ project.status }}</dd></div>
+      <div><dt>Your role</dt><dd>{{ guided.contractor_role_label if guided else 'Not chosen yet' }}</dd></div>
+    </dl>
+    <div class="np-created-actions">
+      <a class="wz-primary" href="{{ url_for('projects.view_project', id=project.id) }}" data-open-project>Open Project</a>
+      {% if estimating_run %}
+      <a class="wz-secondary" href="{{ url_for('wizards.resume', run_id=estimating_run.id) }}" data-start-estimating>Resume Guided Estimating</a>
+      {% elif guided %}
+      <form method="post" action="{{ url_for('wizards.start', wizard_key=estimating_key) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="project_id" value="{{ project.id }}">
+        <button type="submit" class="wz-secondary" data-start-estimating>Start Guided Estimating</button>
+      </form>
+      {% endif %}
+      <form method="post" action="{{ url_for('wizards.start', wizard_key=new_project_key) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="wz-secondary" data-create-another>Create Another Project</button>
+      </form>
+    </div>
+  </section>
+</div>
+</div>
+<script>
+(function () {
+  document.documentElement.classList.add("wzc-modal-open");
+  var dialog = document.querySelector("[data-project-created]");
+  var title = document.getElementById("np-created-title");
+  if (title) title.focus();
+  dialog.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var list = dialog.querySelectorAll("a[href], button:not([disabled])");
+    if (!list.length) return;
+    var first = list[0], last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { window.location.href = dialog.querySelector("[data-open-project]").href; }
+  });
+  dialog.querySelectorAll("form").forEach(function (f) {
+    f.addEventListener("submit", function (e) { if (f.dataset.sent) { e.preventDefault(); return; } f.dataset.sent = "1"; });
+  });
+})();
+</script>
+{% endblock %}

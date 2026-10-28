@@ -64,7 +64,7 @@ C15 = Module(
                 Step(title="Unfinished work", app=O, where="Home → Continue where you left off",
                      do="Look under the three wizards for Continue where you left off",
                      expect="One line for each wizard you left: Resume, what it is about, and the step you stopped on "
-                            "(for example 'Step 2 of 7: What are we building?').",
+                            "(for example 'Step 2 of 5: Customer').",
                      if_wrong="Nothing listed? You have no wizard open. Start one.",
                      shot="w-home-what-do-you-need-to-do-desktop.png", endpoint="main.dashboard"),
             ),
@@ -72,68 +72,62 @@ C15 = Module(
         ),
         Lesson(
             key="c15-new-project-wizard", title="Start a New Project, step by step",
-            what="Set up a new home with the wizard in seven short tasks: customer, what is being built, where, "
-                 "drawings, your role, who leads it, and a last look.",
-            why="The project is made once, exactly as the New Project form makes it, and every later step reads "
-                "the project's own records.",
+            what="Set up a new home with the wizard in five compact steps: Project, Customer, Details (the site, "
+                 "the settings, your role and the Project Lead), Plans and Review, then Project Created.",
+            why="The project is made once, on Details, exactly as the New Project form makes it, and every later "
+                "step reads the project's own records.",
             steps=(
                 Step(title="Start the wizard", app=O, where="Home → Start a New Project",
                      do="Press Start a New Project",
-                     expect="'Start a New Project · Step 1 of 7' with a thin progress bar, and one task: Who is the "
-                            "customer? View all steps opens the list of the seven tasks.",
+                     expect="A window over the page: 'Start a New Project', Step 1 of 5, and the five steps across "
+                            "the top (Project, Customer, Details, Plans, Review). × is Save & Exit: nothing is lost.",
                      if_wrong="Opened the New Project form instead? That was Continue manually; go back to Home.",
-                     shot="w-wizard1-customer-desktop.png", endpoint="wizards.start"),
-                Step(title="Who is the customer?", app=O, where="Step 1",
-                     do="Choose the customer and press Save & Continue",
-                     enter=CUSTOMER,
-                     expect="Nothing is chosen for you; Save & Continue with no customer says what is still needed.",
-                     if_wrong="A new customer? Choose New customer and type the name (email, phone and address can "
-                              "wait); Save & Continue saves the customer and goes straight on with that customer.",
-                     shot="w-wizard1-customer-phone.png", endpoint="wizards.step"),
-                Step(title="What are we building?", app=O, where="Step 2",
+                     shot="w-wizard1-project-desktop.png", endpoint="wizards.start"),
+                Step(title="Project", app=O, where="Step 1",
                      do="Type the project name, choose New Home Construction and press Save & Continue",
                      enter=f"{HOME} <initials>",
                      expect="Typing is saved by itself (Saved automatically). The commercial project type under More "
                             "details is filled in as New Build; you can change it.",
                      if_wrong="Refused? Name the project and choose what is being built.",
+                     shot="w-wizard1-project-desktop.png", endpoint="wizards.step"),
+                Step(title="Customer", app=O, where="Step 2",
+                     do="Choose the customer and press Save & Continue",
+                     enter=CUSTOMER,
+                     expect="Nothing is chosen for you; Save & Continue with no customer says what is still needed.",
+                     if_wrong="A new customer? Choose New customer and type the name (email, phone and address can "
+                              "wait); Save & Continue saves the customer and goes straight on with that customer.",
                      shot="w-wizard1-customer-desktop.png", endpoint="wizards.step"),
-                Step(title="Where is the job? (creates the project)", app=O, where="Step 3",
-                     do="Enter the job-site address (or tick Same as the customer's address) and press Save & Continue",
-                     enter="Street, city or town, province, postal code",
-                     expect="The project is created once and the wizard moves to the drawings. Going back shows the "
-                            "project; nothing is created twice.",
-                     if_wrong="An error about the commercial gate? Open 'Permit class and commercial decision gate'.",
+                Step(title="Details (creates the project)", app=O, where="Step 3",
+                     do="Enter the job-site address (or tick Same as the customer's address), check the pre-filled "
+                        "project settings, choose your role (General Contractor) and, if you like, the Project Lead, "
+                        "then press Create Project & Continue",
+                     enter="Street, city or town, province, postal code; Your role: General Contractor",
+                     expect="The project is created once and the wizard moves to Plans. Going back shows the "
+                            "project; nothing is created twice. The Project Lead is a name on the project only: it "
+                            "gives no access and assigns no work.",
+                     if_wrong="Held? Choose your role. An error about the commercial gate? Open 'Permit class and "
+                              "commercial decision gate'.",
                      shot="w-wizard1-location-desktop.png", endpoint="projects.create_project"),
-                Step(title="Drawings", app=O, where="Step 4 (optional)",
+                Step(title="Plans", app=O, where="Step 4 (optional)",
                      do="Choose the plan PDF (or tick This job needs no drawings) and press Save & Continue",
                      expect="The drawing is uploaded to the project right here; no drawings yet is fine and is listed "
-                            "on the last step as something to add later.",
+                            "on Review as something to add later.",
                      if_wrong="Lost? Continue manually opens the plan page, which shows Return to the wizard.",
                      shot="w-wizard1-documents-desktop.png", endpoint="wizards.step"),
-                Step(title="Your role", app=O, where="Step 5",
-                     do="Choose General Contractor and press Save & Continue",
-                     expect="The project's guided estimate starts. The construction stages (Internal, Subcontracted "
-                            "or N/A) are decided in Guided Estimating, not here.",
-                     if_wrong="Refused? Choose what work you are responsible for.",
-                     shot="w-wizard1-role-desktop.png", endpoint="wizards.step"),
-                Step(title="Who is leading it, and when?", app=O, where="Step 6 (optional)",
-                     do="Choose the Project Lead from your company's people and press Save & Continue; add a site "
-                        "visit or meeting if you have one",
-                     enter="Project Lead: Ben (or the person who looks after the job)",
-                     expect="'Project Lead: <name>'. The Project Lead is a name on the project only: it gives no "
-                            "access and does not assign scheduled work or appointments. Unassigned is fine.",
-                     if_wrong="Person not in the list? Only active people of your company are offered "
-                              "(People & Access).",
-                     shot="w-wizard1-lead-desktop.png", endpoint="wizards.step"),
-                Step(title="Does this look right?", app=O, where="Step 7",
-                     do="Read the summary, then press Finish and start estimating",
-                     expect="Guided Estimating opens on the same project. Anything still missing (an email, the "
-                            "drawings) is listed first, to add later.",
-                     if_wrong="Not ready to estimate? Press Finish — estimate later.",
+                Step(title="Review", app=O, where="Step 5",
+                     do="Check each section (Edit goes back to it), then press Finish",
+                     expect="Project Created: Open Project, Start Guided Estimating and Create Another Project. "
+                            "Anything still missing (an email, the drawings) is listed on Review, to add later.",
+                     if_wrong="Need a site visit? Add a site visit or meeting to the Company Calendar, under Review.",
                      shot="w-wizard1-continue-desktop.png", endpoint="wizards.step"),
+                Step(title="Project Created", app=O, where="After Finish",
+                     do="Press Start Guided Estimating (or Open Project)",
+                     expect="Guided Estimating opens on the same project.",
+                     if_wrong="Not ready to estimate? Press Open Project; start estimating from the project later.",
+                     shot="w-wizard1-created-desktop.png", endpoint="wizards.project_created"),
             ),
             exercise=f"Set up '{HOME} <initials>' for {CUSTOMER} with the wizard, as a New Home, General Contractor, "
-                     "with yourself as Project Lead, then Finish and start estimating." + INITIALS,
+                     "with yourself as Project Lead, then Finish and Start Guided Estimating." + INITIALS,
         ),
         Lesson(
             key="c15-estimating-wizard", title="Guided Estimating with the wizard",
@@ -215,9 +209,9 @@ C15 = Module(
             steps=(
                 Step(title="Save & Exit", app=O, where="Any wizard step",
                      do="Press Save & Exit",
-                     expect="Home, with the wizard under Continue where you left off.",
+                     expect="Home, with the wizard under Continue where you left off. The × at the top of Start a New Project (or Escape) does the same.",
                      if_wrong="Closed the browser instead? Your typing was saved automatically; Resume it.",
-                     shot="w-wizard1-customer-phone.png", endpoint="wizards.step"),
+                     shot="w-wizard1-project-phone.png", endpoint="wizards.step"),
                 Step(title="Resume", app=O, where="Home → Continue where you left off",
                      do="Press Resume <wizard>",
                      expect="The step you left, with what you typed.",
@@ -362,10 +356,10 @@ UAT_CASES: Tuple[UatCase, ...] = (
        "Three wizards, each with Continue manually beneath it; Continue manually opens the New Project "
        "form; Company Calendar is at the top beside the greeting."),
     _c("uat-c15-required", "Required answers hold Save & Continue", "Home → Start a New Project",
-       "Press Save & Continue with no customer chosen; then choose one and press Save & Continue.",
-       "The first press says what is still needed and stays; the second moves to step 2."),
+       "Press Save & Continue with no project name; then name it, choose what is being built and press Save & Continue.",
+       "The first press says what is still needed and stays; the second moves to step 2, Customer."),
     _c("uat-c15-created-once", "The project is created once", "Start a New Project → step 3",
-       "Press Save & Continue on Where is the job?, then go Back to step 3.",
+       "Press Create Project & Continue on Details, then go Back to step 3.",
        "One project in Projects; step 3 shows the project and does not create it again."),
     _c("uat-c15-save-resume", "Save & Exit and Resume", "Any wizard step",
        "Type something, press Save & Exit, then Resume from Home.",

@@ -1,39 +1,66 @@
-{# Start a New Project · Where is the job? The job site may differ from the customer's mailing address. #}
+{# Start a New Project · Step 3, Details (compact five steps, 28 Oct 2026): the job site (it may differ from the
+   customer's mailing address), the project settings, your role on the job and the Project Lead. Continue creates the
+   project, once. #}
 {% for k, v in f.hidden.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
 <input type="hidden" name="plan_start" value="later">
 {% set ca = f.customer_address or {} %}
-{% if ca.get('street') or ca.get('address') %}
-<label class="np-same" data-same-as-customer-label>
-  <input type="checkbox" name="same_as_customer" value="on" data-same-as-customer
-         data-street="{{ ca.get('street', '') }}" data-municipality="{{ ca.get('municipality', '') }}"
-         data-province="{{ ca.get('province_state', '') }}" data-postal="{{ ca.get('postal_zip', '') }}"
-         data-country="{{ ca.get('country', '') }}" data-address="{{ ca.get('address', '') }}"
-         {% if f['values'].get('same_as_customer') %}checked{% endif %}>
-  Same as {{ f.customer_name }}'s address <span class="np-hint">({{ ca.get('street') or ca.get('address') }})</span>
-</label>
-{% endif %}
-<div class="np-grid np-grid-street" data-job-address>
-  <label class="np-field">Job-site street address
-    <input type="text" name="street" value="{{ f['values'].get('street', '') }}" autocomplete="off" data-job="street"></label>
-  <label class="np-field">City / town
-    <input type="text" name="municipality" value="{{ f['values'].get('municipality', '') }}" autocomplete="off" data-job="municipality"></label>
-</div>
-<div class="np-grid np-grid-3">
-  <label class="np-field">Province / state
-    <select name="province_state" data-job="province_state">
-      <option value="">Choose</option>
-      {% for c, regions in f.regions.items() %}<optgroup label="{{ c }}">{% for r in regions %}<option value="{{ r }}" {% if f['values'].get('province_state') == r %}selected{% endif %}>{{ r }}</option>{% endfor %}</optgroup>{% endfor %}
-    </select></label>
-  <label class="np-field">Postal code / ZIP
-    <input type="text" name="postal_zip" value="{{ f['values'].get('postal_zip', '') }}" autocomplete="off" data-job="postal_zip"></label>
-  <label class="np-field">Country
-    <select name="country" data-job="country">{% for c in f.countries %}<option value="{{ c }}" {% if (f['values'].get('country') or 'Canada') == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></label>
-</div>
-<details class="np-more">
-  <summary>Rural lot or no civic address yet? · Permit class and commercial choices (pre-filled)</summary>
-  <label class="np-field np-wide">Address as written (lot, concession, directions)
-    <input type="text" name="address" value="{{ f['values'].get('address', '') }}" data-job="address"></label>
+<div class="np-cols">
+<div class="np-cols-left">
+<section class="np-sec" aria-labelledby="np-sec-site">
+  <h2 class="np-sec-title" id="np-sec-site">Site information</h2>
+  {% if ca.get('street') or ca.get('address') %}
+  <label class="np-same" data-same-as-customer-label>
+    <input type="checkbox" name="same_as_customer" value="on" data-same-as-customer
+           data-street="{{ ca.get('street', '') }}" data-municipality="{{ ca.get('municipality', '') }}"
+           data-province="{{ ca.get('province_state', '') }}" data-postal="{{ ca.get('postal_zip', '') }}"
+           data-country="{{ ca.get('country', '') }}" data-address="{{ ca.get('address', '') }}"
+           {% if f['values'].get('same_as_customer') %}checked{% endif %}>
+    Same as {{ f.customer_name }}'s address <span class="np-hint">({{ ca.get('street') or ca.get('address') }})</span>
+  </label>
+  {% endif %}
+  <div class="np-grid np-grid-street" data-job-address>
+    <label class="np-field">Job-site street address
+      <input type="text" name="street" value="{{ f['values'].get('street', '') }}" autocomplete="off" data-job="street"></label>
+    <label class="np-field">City / town
+      <input type="text" name="municipality" value="{{ f['values'].get('municipality', '') }}" autocomplete="off" data-job="municipality"></label>
+  </div>
   <div class="np-grid np-grid-3">
+    <label class="np-field">Province / state
+      <select name="province_state" data-job="province_state">
+        <option value="">Choose</option>
+        {% for c, regions in f.regions.items() %}<optgroup label="{{ c }}">{% for r in regions %}<option value="{{ r }}" {% if f['values'].get('province_state') == r %}selected{% endif %}>{{ r }}</option>{% endfor %}</optgroup>{% endfor %}
+      </select></label>
+    <label class="np-field">Postal code / ZIP
+      <input type="text" name="postal_zip" value="{{ f['values'].get('postal_zip', '') }}" autocomplete="off" data-job="postal_zip"></label>
+    <label class="np-field">Country
+      <select name="country" data-job="country">{% for c in f.countries %}<option value="{{ c }}" {% if (f['values'].get('country') or 'Canada') == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></label>
+  </div>
+  <details class="np-more">
+    <summary>Rural lot or no civic address yet?</summary>
+    <label class="np-field np-wide">Address as written (lot, concession, directions)
+      <input type="text" name="address" value="{{ f['values'].get('address', '') }}" data-job="address"></label>
+  </details>
+</section>
+<section class="np-sec np-sec-role" aria-labelledby="np-sec-role">
+  <h2 class="np-sec-title" id="np-sec-role">Your role and the Project Lead</h2>
+  <div class="np-role-row">
+    <label class="np-field">Your role on this job <span class="np-req" aria-hidden="true">*</span>
+      <select name="contractor_role" data-contractor-role required aria-required="true">
+        <option value="">Choose your role</option>
+        {% for key, label in f.roles.items() %}<option value="{{ key }}" {% if f['values'].get('contractor_role') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></label>
+    <label class="np-field">Project Lead <span class="cust-opt">optional</span>
+      <select name="project_lead_user_id" data-project-lead-select>
+        <option value="">Unassigned</option>
+        {% for person in f.lead_people %}<option value="{{ person.id }}" {% if f['values'].get('project_lead_user_id')|string == person.id|string %}selected{% endif %}>{{ person.label }}</option>{% endfor %}
+      </select></label>
+  </div>
+  <p class="np-hint">The Project Lead is a name on the project only: it gives no access and assigns no work.</p>
+</section>
+</div>
+<section class="np-sec" aria-labelledby="np-sec-settings">
+  <h2 class="np-sec-title" id="np-sec-settings">Project settings <span class="cust-opt">pre-filled</span></h2>
+  <div class="np-grid np-grid-2" data-project-settings>
     <label class="np-field">Permit context class
       <select name="permit_context_class">{% for opt in f.permit_context_classes %}<option value="{{ opt }}" {% if (f['values'].get('permit_context_class') or f.default_permit) == opt %}selected{% endif %}>{{ opt }}</option>{% endfor %}</select></label>
     {% for name, label, options in [('pricing_posture', 'Pricing posture', f.pricing_postures), ('execution_risk', 'Execution risk', f.execution_risks), ('schedule_condition', 'Schedule condition', f.schedule_conditions), ('site_condition', 'Site condition', f.site_conditions), ('estimate_stage', 'Estimate stage', f.estimate_stages), ('delivery_model', 'Delivery model', f.delivery_models)] %}
@@ -41,9 +68,10 @@
       <select name="{{ name }}">{% for opt in options %}<option value="{{ opt }}" {% if f['values'].get(name) == opt %}selected{% endif %}>{{ opt|delivery_model_label if name == 'delivery_model' else opt }}</option>{% endfor %}</select></label>
     {% endfor %}
   </div>
-  <label class="np-field np-wide">Justification (needed for an exceptional posture or risk)<textarea name="justification_reason" rows="1">{{ f['values'].get('justification_reason', '') }}</textarea></label>
-</details>
-{% if not f.ready %}<p class="np-hint" data-location-not-ready>Finish steps 1 and 2 first; then Save &amp; Continue creates the project.</p>{% endif %}
+  <label class="np-field np-wide">Justification <span class="cust-opt">needed for an exceptional posture or risk</span><textarea name="justification_reason" rows="1">{{ f['values'].get('justification_reason', '') }}</textarea></label>
+</section>
+</div>
+{% if not f.ready %}<p class="np-hint" data-location-not-ready>Finish steps 1 and 2 first; then Continue creates the project.</p>{% endif %}
 <script>
 (function () {
   var box = document.querySelector("[data-same-as-customer]");

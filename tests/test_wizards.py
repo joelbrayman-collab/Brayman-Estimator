@@ -61,14 +61,14 @@ LOCATION = {"street": "8 Synthetic Road", "municipality": "Merrickville", "provi
             **COMMERCIAL_DEFAULTS}
 
 
-def _create_from_wizard(d, run_id, name="Wizard New Home (synthetic)"):
-    """Steps 1–3 of Start a New Project, then Save & Continue on "Where is the job?" (the existing New Project
-    handler creates the project)."""
+def _create_from_wizard(d, run_id, name="Wizard New Home (synthetic)", role="GENERAL_CONTRACTOR"):
+    """Steps 1–3 of Start a New Project (Project, Customer, Details), then Create Project & Continue on Details (the
+    existing New Project handler creates the project and starts its guided estimate with the role chosen there)."""
     customer = client()
-    _step(d, run_id, "customer", customer_mode="existing", client_id=str(customer.id))
     _step(d, run_id, "project_type", name=name, description="Two-storey new home", guided_project_type="NEW_HOME",
           project_type="New Build", status="Lead")
-    _step(d, run_id, "location", action="save", **LOCATION)
+    _step(d, run_id, "customer", customer_mode="existing", client_id=str(customer.id))
+    _step(d, run_id, "location", action="save", contractor_role=role, **LOCATION)
     run = _run(run_id)
     fields = {k: v for k, v in run.draft_json["fields"].items() if not k.startswith("new_customer_")}
     fields.update(wizard_run=str(run_id), plan_start="later")
@@ -103,16 +103,31 @@ def test_start_a_new_project_end_to_end_creates_the_project_once(env):
     _app, d, ben = env
     run_id = _start(d, "NEW_PROJECT")
     assert _start(d, "NEW_PROJECT") == run_id  # a second Start resumes the unfinished one
-    page = d.get(f"/wizards/run/{run_id}/step/customer")
-    assert "Who is the customer?" in page and "Step 1 of 7" in page and "Start a New Project" in page
-    # Required information: Save & Continue is refused until the customer is chosen, then the name and kind of job.
-    _step(d, run_id, "customer")
-    assert _run(run_id).current_step == "customer"
-    assert any("Before you go on" in m and "Choose the customer" in m for m in d.flashes())
-    _step(d, run_id, "customer", customer_mode="existing", client_id=str(client().id))
+    page = d.get(f"/wizards/run/{run_id}/step/project_type")
+    assert "Step 1 of 5" in page and "Start a New Project" in page and 'role="dialog"' in page
+    # The five steps across the top, in order (Compact Open a New Project, 28 Oct 2026).
+    assert re.findall(r'data-step-link="(\w+)"', page) == ["project_type", "customer", "location", "documents",
+                                                          "review"]
+    # Required information: Save & Continue is refused until the project is named, then the customer is chosen.
     _step(d, run_id, "project_type")
     assert _run(run_id).current_step == "project_type"
     assert any("Before you go on" in m and "Name the project" in m for m in d.flashes())
+    _step(d, run_id, "project_type", name="Wizard New Home (synthetic)", guided_project_type="NEW_HOME",
+          project_type="New Build", status="Lead")
+    assert _run(run_id).current_step == "customer"
+    _step(d, run_id, "customer")
+    assert _run(run_id).current_step == "customer"
+    assert any("Before you go on" in m and "Choose the customer" in m for m in d.flashes())
+    # Details refuses to create the project without your role; everything typed is kept.
+    _step(d, run_id, "customer", customer_mode="existing", client_id=str(client().id))
+    assert _run(run_id).current_step == "location"
+    _step(d, run_id, "location", action="save", **LOCATION)
+    fields = {k: v for k, v in _run(run_id).draft_json["fields"].items() if not k.startswith("new_customer_")}
+    refused = d.post("/projects/new", data=dict(fields, wizard_run=str(run_id), plan_start="later"))
+    assert refused.headers["Location"].endswith(f"/wizards/run/{run_id}/step/location")
+    assert any("Choose your role" in m for m in d.flashes())
+    assert Project.query.filter_by(organization_id=ORG, name="Wizard New Home (synthetic)").count() == 0
+    assert _run(run_id).draft_json["fields"]["municipality"] == "Merrickville"
     response = _create_from_wizard(d, run_id)
     project = Project.query.filter_by(organization_id=ORG, name="Wizard New Home (synthetic)").one()
     assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/step/documents")
@@ -120,45 +135,48 @@ def test_start_a_new_project_end_to_end_creates_the_project_once(env):
     # The project is exactly what the New Project form makes: commercial context and structured location.
     assert project.current_commercial_context.project_type == "New Build"
     assert project.location.municipality == "Merrickville" and project.status == "Lead"
-    # Pressing Save & Continue again (or sending the form twice) makes nothing new.
+    # The role chosen on Details starts the project's one guided estimate, with the type chosen on Project.
+    guided = G.get_guided(ORG, project.id)
+    assert (guided.project_type, guided.contractor_role) == ("NEW_HOME", "GENERAL_CONTRACTOR")
+    # Since 28 Oct 2026 the scope is the selected work: no stage list is made here.
+    assert guided.stages == []
+    # Pressing Create Project & Continue again (or sending the form twice) makes nothing new.
     fields = {k: v for k, v in _run(run_id).draft_json["fields"].items() if not k.startswith("new_customer_")}
     again = d.post("/projects/new", data=dict(fields, wizard_run=str(run_id), plan_start="later"))
     assert again.headers["Location"].endswith(f"/wizards/run/{run_id}/step/location")
     assert Project.query.filter_by(organization_id=ORG, name="Wizard New Home (synthetic)").count() == 1
     assert "PROJECT_CREATED" in _events(run_id)
+    assert G.GuidedEstimate.query.filter_by(project_id=project.id).count() == 1
 
-    # Drawings: none yet; recording "no drawings needed" uses the existing project choice. Never blocking.
+    # Plans: none yet; recording "no drawings needed" uses the existing project choice. Never blocking.
     page = d.get(f"/wizards/run/{run_id}/step/documents")
     assert "No drawings yet" in page
     d.post(f"/projects/{project.id}/drawing-requirement", data={"drawing_requirement": "NOT_REQUIRED"})
     assert "No drawings needed for this project" in d.get(f"/wizards/run/{run_id}/step/documents")
     _step(d, run_id, "documents")
-    assert _run(run_id).current_step == "role"
-
-    # Role: starts the project's one guided estimate with the type chosen in step 2; nothing preselected.
-    _step(d, run_id, "role", contractor_role="GENERAL_CONTRACTOR")
-    guided = G.get_guided(ORG, project.id)
-    assert (guided.project_type, guided.contractor_role) == ("NEW_HOME", "GENERAL_CONTRACTOR")
-    # Since 28 Oct 2026 the scope is the selected work: no stage list is made here; the work is chosen in
-    # Guided Estimating (What work are we doing?).
-    assert guided.stages == []
-    role_page = d.get(f"/wizards/run/{run_id}/step/role")
-    assert "construction stages" not in role_page and "What work are we doing?" in role_page
-    # Who does each stage is Guided Estimating's own step; the setup no longer asks it a second time.
-    for retired in ("construction_scope", "applicable", "stages", "view_plan", "continue"):
-        assert f'data-step-link="{retired}"' not in page
-    # The Project Lead and first dates are optional: Save & Continue is allowed without them.
-    _step(d, run_id, "responsibility")
     assert _run(run_id).current_step == "review"
+    for retired in ("role", "responsibility", "construction_scope", "applicable", "stages", "view_plan", "continue"):
+        assert f'data-step-link="{retired}"' not in page
+    # Review: every section with Edit, then Finish (never "Create Project": it was created on Details).
     page = d.get(f"/wizards/run/{run_id}/step/review")
-    assert "Does this look right?" in page and "Wizard New Home (synthetic)" in page
-    # Finish into Guided Estimating: this run finishes, the estimating wizard opens on the project.
-    response = d.post(f"/wizards/run/{run_id}/step/review?choice=estimate", data={"wizard_action": "next"})
+    assert "Wizard New Home (synthetic)" in page and "Create Project" not in page.split("data-step-form")[1]
+    for key in ("project_type", "customer", "location", "documents"):
+        assert f'data-review-edit="{key}"' in page
+    assert "data-finish-project" in page
+    # Finish: this run finishes and Project Created is shown (Open Project, Start Guided Estimating, Create Another).
+    response = d.post(f"/wizards/run/{run_id}/step/review?choice=finish", data={"wizard_action": "next"})
     assert _run(run_id).status == "COMPLETED"
     assert "CONFIRMED" in _events(run_id)
-    estimating = WizardRun.query.filter_by(wizard_key="GUIDED_ESTIMATING", project_id=project.id).one()
-    assert response.headers["Location"].endswith(f"/wizards/run/{estimating.id}")
+    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/created")
+    created = d.get(f"/wizards/run/{run_id}/created")
+    assert "Project Created Successfully" in created and "Wizard New Home (synthetic)" in created
+    assert f'href="/projects/{project.id}" data-open-project' in created
+    assert "data-start-estimating" in created and "data-create-another" in created
     assert Project.query.filter_by(organization_id=ORG).count() == 1
+    # Start Guided Estimating from there opens the estimating wizard on the project.
+    started = d.post("/wizards/GUIDED_ESTIMATING/start", data={"project_id": str(project.id)})
+    estimating = WizardRun.query.filter_by(wizard_key="GUIDED_ESTIMATING", project_id=project.id).one()
+    assert started.headers["Location"].endswith(f"/wizards/run/{estimating.id}")
 
 
 def test_save_exit_resume_autosave_and_interruption_recovery(env):
@@ -180,11 +198,12 @@ def test_save_exit_resume_autosave_and_interruption_recovery(env):
     home = d2.get("/")
     assert "Resume Start a New Project" in home and "Interrupted job (synthetic)" in home
     assert d2.http.get(f"/wizards/run/{run_id}").headers["Location"].endswith(f"/wizards/run/{run_id}/step/project_type")
-    # Back works, and nothing is created until Save & Continue on "Where is the job?".
-    back = _step(d2, run_id, "project_type", action="back")
-    assert back.headers["Location"].endswith(f"/wizards/run/{run_id}/step/customer")
+    # Back works, and nothing is created until Create Project & Continue on Details.
+    back = _step(d2, run_id, "customer", action="back")
+    assert back.headers["Location"].endswith(f"/wizards/run/{run_id}/step/project_type")
     d2.get(f"/wizards/run/{run_id}/step/customer")
     assert _run(run_id).current_step == "customer"
+    assert 'value="Interrupted job (synthetic)"' in d2.get(f"/wizards/run/{run_id}/step/project_type")
     assert Project.query.filter_by(name="Interrupted job (synthetic)").count() == 0
 
 

@@ -460,6 +460,10 @@ def create_project():
         name = request.form.get("name", "").strip()
         client_id = request.form.get("client_id", type=int)
 
+        if wizard_run is not None and not (request.form.get("contractor_role") or "").strip():
+            # Start a New Project, Details (compact five steps, 28 Oct 2026): your role is chosen with the details.
+            flash("Choose your role on this job, then press Continue. Everything you typed is kept.", "error")
+            return _wizard_create_failed(wizard_run)
         if not name or not client_id:
             flash("Project name and client are required.", "error")
             return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
@@ -532,6 +536,14 @@ def create_project():
             project_changed(project, actor=current_user)  # QuickBooks customer, project and job code (when switched on)
             flash("Project created successfully with commercial decision context.", "success")
             if wizard_run is not None:
+                from app.wizards.new_project import start_estimate_after_create
+
+                problem = start_estimate_after_create(wizard_run, project,
+                                                      actor=created_by or current_actor_display_name(),
+                                                      user_id=getattr(current_user, "id", None))
+                if problem:
+                    flash(problem, "error")
+                    return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="location"))
                 return redirect(url_for("wizards.step", run_id=wizard_run.id, step_key="documents"))
             guided_next = _guided_after_create(project, org_id, options)
             follow_on = _plan_start_after_create(project, org_id)
@@ -570,7 +582,7 @@ def _wizard_run_for_create(org_id):
 
 
 def _wizard_location_form(wizard_run, org_id):
-    """Start a New Project, "Where is the job?" (27 Oct 2026): keep what was typed in the run first (a refusal never
+    """Start a New Project, Details (step 3; 27 Oct 2026): keep what was typed in the run first (a refusal never
     loses it), and fill an empty job address from the chosen customer when "Same as customer address" is ticked."""
     from app.wizards.new_project import LOCATION_FIELDS
     from app.wizards.service import WizardError, save_draft

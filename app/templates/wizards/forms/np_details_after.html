@@ -1,0 +1,22 @@
+{# Start a New Project · Step 3, Details, once the project exists: your role (if not recorded yet) and the Project
+   Lead. The site and settings are changed on the project's own pages (links below). #}
+{% if f.need_role and f.chosen_type and f.types.get(f.chosen_type) %}<input type="hidden" name="guided_project_type" value="{{ f.chosen_type }}">{% endif %}
+<div class="np-role-row">
+  {% if f.need_role %}
+  {% if not (f.chosen_type and f.types.get(f.chosen_type)) %}
+  <label class="np-field">What is being built
+    <select name="guided_project_type" required aria-required="true"><option value="">Choose</option>
+      {% for key, label in f.types.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label>
+  {% endif %}
+  <label class="np-field">Your role on this job <span class="np-req" aria-hidden="true">*</span>
+    <select name="contractor_role" data-contractor-role aria-required="true">
+      <option value="">Choose your role</option>
+      {% for key, label in f.roles.items() %}<option value="{{ key }}" {% if f.chosen_role == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select></label>
+  {% endif %}
+  <label class="np-field">Project Lead <span class="cust-opt">optional</span>
+    <select name="project_lead_user_id" data-project-lead-select>
+      <option value="">Unassigned</option>
+      {% for person in f.people %}<option value="{{ person.id }}" {% if f.current == person.id %}selected{% endif %}>{{ person.label }}</option>{% endfor %}
+    </select></label>
+</div>

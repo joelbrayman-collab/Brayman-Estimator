@@ -340,20 +340,20 @@ def test_project_creation_hands_over_a_scope_with_no_stages(env):
     from tests.test_project_creation_ux import _create, _new_customer, _post, _start
 
     run_id = _start(d, "NEW_PROJECT")
-    _post(d, run_id, "customer", **_new_customer("Handoff customer (synthetic)"))
     _post(d, run_id, "project_type", name="Handoff siding (synthetic)", guided_project_type="ADDITION_RENOVATION",
           project_type="Renovation", status="Lead")
-    _create(d, run_id, street="3 Handoff Rd", municipality="Kemptville", province_state="Ontario", postal_zip="",
-            country="Canada")
-    _post(d, run_id, "documents", drawings_choice="none")
-    page = d.get(f"/wizards/run/{run_id}/step/role")
+    _post(d, run_id, "customer", **_new_customer("Handoff customer (synthetic)"))
+    page = d.get(f"/wizards/run/{run_id}/step/location")
     assert "construction stages" not in page
-    _post(d, run_id, "role", contractor_role="GENERAL_CONTRACTOR", guided_project_type="ADDITION_RENOVATION")
+    _create(d, run_id, street="3 Handoff Rd", municipality="Kemptville", province_state="Ontario", postal_zip="",
+            country="Canada", contractor_role="GENERAL_CONTRACTOR")
     project = Project.query.filter_by(name="Handoff siding (synthetic)").one()
     guided = _scope(project)
     assert W.is_selected_work(guided) and guided.stages == []
-    _post(d, run_id, "responsibility")
-    response = d.post(f"/wizards/run/{run_id}/step/review?choice=estimate", data={"wizard_action": "next"})
+    _post(d, run_id, "documents", drawings_choice="none")
+    response = d.post(f"/wizards/run/{run_id}/step/review?choice=finish", data={"wizard_action": "next"})
+    assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/created")
+    response = d.post("/wizards/GUIDED_ESTIMATING/start", data={"project_id": str(project.id)})
     import re
 
     estimating = int(re.search(r"/wizards/run/(\d+)", response.headers["Location"]).group(1))

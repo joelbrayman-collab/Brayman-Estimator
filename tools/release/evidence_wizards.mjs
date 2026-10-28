@@ -5,9 +5,9 @@
 // price file and a rival store). Synthetic data only.
 //
 // Checks: Home asks "What do you need to do?" with Start Guided Wizard / Continue Manually above the fold; Start a
-// New Project end to end (Next refused without the required answers, automatic draft saving, Create the project
-// once — a second Create makes nothing — the drawings choice on the project's own page and Return to the wizard,
-// the role, Internal / Subcontracted / N/A on the guided scope page, review, continue into Guided Estimating);
+// New Project end to end in its dialog (Next refused without the required answers, automatic draft saving, your role
+// required on Details, Create the project once — a second Create makes nothing — the drawings choice, review with
+// Edit, Finish to Project Created, then Start Guided Estimating);
 // Save & Exit and Resume from Home; Continue Manually and back; Guided Estimating on a costed project (approve the
 // costing and apply the company pricing from the wizard, back to the step, 15.0 % true gross margin); Manage a
 // Project on the accepted project (real schedule counts, the not-switched-on QuickBooks Time and texting status);
@@ -141,36 +141,46 @@ step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools
 });
 
 // ------------------------------------------------------------------ Wizard 1
-step("Start a New Project: required answers, autosave, Create once, drawings, role, lead, review, continue", async () => {
-  // Seven compact tasks since the Project Creation UX release (Joel, 27 Oct 2026): the construction-stage choices
-  // moved to Guided Estimating, which already asks them.
+step("Start a New Project: required answers, autosave, Create once on Details, plans, review, Project Created", async () => {
+  // Five compact steps in a dialog since Compact Open a New Project (Joel, 28 Oct 2026): Project, Customer, Details
+  // (site, settings, your role and the Project Lead; Continue creates the project), Plans, Review, then Project Created.
   const { pg, errors } = await person("ben", DESK);
   await go(pg, "/");
   await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
   W.run1 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
-  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
-  assert.match(await pg.locator(".wzc-where").innerText(), /Step 1 of 7/);
-  await shot(pg, "wizard1-customer-desktop");
-  await next(pg);  // refused: no customer chosen yet
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "project_type");
+  assert.match(await pg.locator(".wzc-where").innerText(), /Step 1 of 5/);
+  assert.equal(await pg.locator('[role="dialog"][aria-modal="true"]').count(), 1);
+  await shot(pg, "wizard1-project-desktop");
+  await next(pg);  // refused: not named yet
   assert.match(await flash(pg), /Before you go on/);
-  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
-  await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
-  await next(pg);
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "project_type");
   await pg.fill("input[name=name]", "Browser Wizard Home (synthetic)");
   await pg.locator("[data-autosave-status]").filter({ hasText: "Saved automatically" }).waitFor();
   await pg.locator('input[name=guided_project_type][value=NEW_HOME]').check();
   assert.equal(await pg.inputValue("select[name=project_type]"), "New Build");
   await next(pg);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
+  await next(pg);  // refused: no customer chosen yet
+  assert.match(await flash(pg), /Before you go on/);
+  await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
+  await shot(pg, "wizard1-customer-desktop");
+  await next(pg);
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "location");
   await pg.fill("input[name=street]", "21 Synthetic Lane");
   await pg.fill("input[name=municipality]", "Merrickville");
   await pg.selectOption("select[name=province_state]", "Ontario");
   await pg.fill("input[name=postal_zip]", "K0G 1N0");
+  assert.equal(await pg.locator("select[data-project-lead-select] option", { hasText: "Other Builder Owner" }).count(), 0);
+  await pg.selectOption("select[data-project-lead-select]", { label: "Ben Brayman (synthetic)" });
+  // Your role is required: the browser holds Create Project & Continue until it is chosen.
+  await pg.locator("[data-create-project]").click();
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "location");
+  await pg.selectOption("select[data-contractor-role]", "GENERAL_CONTRACTOR");
   await shot(pg, "wizard1-location-desktop");
   await submit(pg, pg.locator("[data-create-project]"));
   assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run1}/step/documents$`));
-  // Back to the location step: the project exists, Create is gone; a replayed Create makes nothing.
+  // Back to Details: the project exists, Create is gone; a replayed Create makes nothing.
   await go(pg, await stepUrl(W.run1, "location"));
   assert.equal(await pg.locator("[data-create-project]").count(), 0);
   assert.equal(await state(pg), "done");
@@ -178,40 +188,31 @@ step("Start a New Project: required answers, autosave, Create once, drawings, ro
     const token = document.querySelector('meta[name="csrf-token"]').content;
     const body = new URLSearchParams({ csrf_token: token, wizard_run: String(run), name: "Browser Wizard Home (synthetic)",
       client_id: "1", project_type: "New Build", pricing_posture: "Competitive", execution_risk: "Normal",
-      schedule_condition: "Normal", site_condition: "Normal", estimate_stage: "Preliminary", delivery_model: "Self-Perform" });
+      schedule_condition: "Normal", site_condition: "Normal", estimate_stage: "Preliminary", delivery_model: "Self-Perform",
+      contractor_role: "GENERAL_CONTRACTOR" });
     const r = await fetch("/projects/new", { method: "POST", body, redirect: "manual", credentials: "same-origin" });
     return r.type;
   }, W.run1);
   assert.ok(replay);
   await go(pg, "/projects/");
   assert.equal(await pg.getByText("Browser Wizard Home (synthetic)", { exact: true }).count(), 1, "created once");
-  // Drawings: "This job needs no drawings" is the project's own choice, recorded by Save & Continue.
+  // Plans: "This job needs no drawings" is the project's own choice, recorded by Save & Continue.
   await go(pg, await stepUrl(W.run1, "documents"));
   await shot(pg, "wizard1-documents-desktop");
   await pg.locator("[data-no-drawings]").check();
   await next(pg);
-  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "role");
-  await go(pg, await stepUrl(W.run1, "documents"));
-  assert.equal(await state(pg), "done");
-  await next(pg);
-  await pg.locator('input[name=contractor_role][value=GENERAL_CONTRACTOR]').check();
-  await shot(pg, "wizard1-role-desktop");
-  await next(pg);
-  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "responsibility");
-  await go(pg, await stepUrl(W.run1, "role"));
-  assert.equal(await state(pg), "done");
-  await next(pg); // Who is leading it (optional): choose Ben as the Project Lead (decision 1)
-  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "responsibility");
-  assert.match(await pg.locator("[data-step-headline]").innerText(), /Project Lead: Unassigned/);
-  assert.equal(await pg.locator("select[data-project-lead-select] option", { hasText: "Other Builder Owner" }).count(), 0);
-  await pg.selectOption("select[data-project-lead-select]", { label: "Ben Brayman (synthetic)" });
-  await shot(pg, "wizard1-lead-desktop");
-  await next(pg); // review
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "review");
-  assert.match(await pg.locator("[data-project-summary]").innerText(), /Ben Brayman \(synthetic\)/);
-  assert.match(await pg.locator("[data-project-summary]").innerText(), /Jordan Avery \(synthetic\)/);
+  const summary = await pg.locator("[data-project-summary]").innerText();
+  assert.match(summary, /Ben Brayman \(synthetic\)/);
+  assert.match(summary, /Jordan Avery \(synthetic\)/);
+  assert.match(summary, /General Contractor/i);
+  assert.equal(await pg.locator("[data-review-edit]").count(), 5);
   await shot(pg, "wizard1-continue-desktop");
-  await submit(pg, pg.locator("[data-finish-estimate]"));
+  await submit(pg, pg.locator("[data-finish-project]"));
+  assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run1}/created$`));
+  assert.match(await pg.locator("#np-created-title").innerText(), /Project Created Successfully/);
+  await shot(pg, "wizard1-created-desktop");
+  await submit(pg, pg.locator("[data-start-estimating]"));
   assert.match(pathOf(pg), /\/wizards\/run\/\d+\/step\//);
   assert.match(await pg.locator(".wz-eyebrow").innerText(), /Guided Estimating · Browser Wizard Home/);
   // The Project Hub shows the Project Lead chosen in the wizard.
@@ -222,24 +223,26 @@ step("Start a New Project: required answers, autosave, Create once, drawings, ro
   assert.deepEqual(errors, []);
 });
 
-step("Start a New Project on a phone: compact, no sideways scroll, steps folded away", async () => {
+step("Start a New Project on a phone: compact, no sideways scroll, the steps across the top", async () => {
   const { pg, errors } = await person("ben", PHONE);
   await go(pg, "/");
   await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
   await noSideways(pg, "wizard 1 phone");
-  assert.equal(await pg.locator("[data-view-all-steps][open]").count(), 0, "step list folded on a phone");
+  assert.equal(await pg.locator("[data-stepper] li").count(), 5);
   const nextBox = await pg.locator("[data-wizard-next]").boundingBox();
   assert.ok(nextBox.width >= 120, "Save & Continue is a large tap target");
-  await shot(pg, "wizard1-customer-phone");
+  await shot(pg, "wizard1-project-phone");
   // Save & Exit, then Resume from Home where it stopped.
-  await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
-  await next(pg);
   await pg.fill("input[name=name]", "Phone draft (synthetic)");
+  await pg.locator('input[name=guided_project_type][value=NEW_HOME]').check();
+  await next(pg);
   await submit(pg, pg.locator("[data-wizard-save-exit]"));
   assert.equal(pathOf(pg), "/");
   const resume = pg.locator('[data-resume-wizard="NEW_PROJECT"]');
   assert.ok((await resume.count()) >= 1);
   await submit(pg, resume.first());
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "customer");
+  await submit(pg, pg.locator("[data-wizard-back]"));
   assert.equal(await pg.inputValue("input[name=name]"), "Phone draft (synthetic)");
   assert.deepEqual(errors, []);
 });
@@ -445,7 +448,7 @@ step("Supplier Pro Desk: availability only from the price file; pickup or delive
 // ------------------------------------------------------------------ roles and isolation
 step("Kevin (Field only) is kept out of every wizard page", async () => {
   const { pg, errors } = await person("kevin", PHONE);
-  for (const url of ["/wizards/", `/wizards/run/${W.run1}/step/customer`, `/wizards/run/${W.run2}/step/pricing`]) {
+  for (const url of ["/wizards/", `/wizards/run/${W.run1}/step/project_type`, `/wizards/run/${W.run2}/step/pricing`]) {
     await go(pg, url);
     assert.equal(pathOf(pg), "/field/today", url);
   }

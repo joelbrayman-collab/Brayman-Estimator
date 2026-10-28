@@ -1,35 +1,55 @@
-{# Compact wizard step (Project Creation UX, 27 Oct 2026). One focused task: "Start a New Project · Step X of Y" with a
-   thin progress bar, the step list behind "View all steps", the task card, then Back · Save & Exit · Save & Continue.
-   Status still comes from the real records; every data-* hook of wizards/_run.html is kept. #}
+{# Compact wizard step, shown as a dialog (Compact Open a New Project, 28 Oct 2026; first compact page 27 Oct 2026).
+   A dimmed backdrop, the title with × (Save & Exit: nothing typed is lost), the steps numbered across the top (done
+   steps ticked, the current one underlined in gold), one task card, then Back · Save & Exit · Save & Continue.
+   Status still comes from the real records; the data-* hooks of wizards/_run.html are kept. Escape is the same safe
+   close as ×. Tab stays inside the dialog. #}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {% set nav_form_id = "wz-nav-" ~ step.key %}
 {% set has_form = view.form and (step.draft or step.continue_form) %}
-<div class="wz wzc" data-wizard="{{ wizard.key }}" data-wizard-step="{{ step.key }}" data-step-state="{{ view.state }}" data-run="{{ run.id }}" data-compact-wizard>
+<div class="wzc-overlay" data-modal-overlay>
+<div class="wz wzc wzc-modal" role="dialog" aria-modal="true" aria-labelledby="wzc-dialog-title" aria-describedby="wzc-step-explain"
+     data-wizard="{{ wizard.key }}" data-wizard-step="{{ step.key }}" data-step-state="{{ view.state }}" data-run="{{ run.id }}" data-compact-wizard>
   <header class="wzc-head">
-    <div class="wzc-line">
-      <p class="wzc-where"><strong>{{ wizard.title }}</strong> · <span data-progress="{{ progress.done }}/{{ progress.total }}" data-step-number="{{ row.number }}">Step {{ row.number }} of {{ rows|length }}</span>{% if not run.is_active %} · <strong data-run-finished>{{ 'Finished' if run.status == 'COMPLETED' else 'Closed' }}</strong>{% endif %}</p>
-      <details class="wzc-all" data-view-all-steps>
-        <summary>View all steps</summary>
-        <ol class="wzc-steps">
-          {% for r in rows %}
-          <li class="wz-step-link s-{{ r.view.state }}{% if r.step.key == step.key %} is-current{% endif %}" data-step-link="{{ r.step.key }}" data-state="{{ r.view.state }}">
-            <a href="{{ ctx.step_url(r.step.key) }}"{% if r.step.key == step.key %} aria-current="step"{% endif %}><span class="wz-dot" aria-hidden="true"></span><span class="wz-step-name">{{ r.number }}. {{ r.step.title }}</span><span class="wz-step-state">{{ r.state_label }}</span></a>
-          </li>
-          {% endfor %}
-        </ol>
-      </details>
+    <div class="wzc-titlebar">
+      <h1 class="wzc-dialog-title" id="wzc-dialog-title" tabindex="-1">{{ wizard.title }}</h1>
+      <p class="wzc-where"><span data-progress="{{ progress.done }}/{{ progress.total }}" data-step-number="{{ row.number }}">Step {{ row.number }} of {{ rows|length }}</span>{% if subject and 'not created yet' not in subject %} · <span class="wzc-subject" data-wizard-subject>{{ subject }}</span>{% else %}<span data-wizard-subject hidden>{{ subject }}</span>{% endif %}{% if not run.is_active %} · <strong data-run-finished>{{ 'Finished' if run.status == 'COMPLETED' else 'Closed' }}</strong>{% endif %}</p>
+
+      {% if run.is_active %}
+      <button type="submit" form="{{ nav_form_id }}" name="wizard_action" value="save_exit" class="wzc-close" formnovalidate data-modal-close aria-label="Close (Save &amp; Exit — everything is kept)" title="Close — Save &amp; Exit">&times;</button>
+      {% else %}
+      <a class="wzc-close" href="{{ url_for('main.dashboard') }}" data-modal-close aria-label="Close">&times;</a>
+      {% endif %}
     </div>
-    <div class="wzc-bar" role="progressbar" aria-valuemin="1" aria-valuemax="{{ rows|length }}" aria-valuenow="{{ row.number }}" aria-label="Step {{ row.number }} of {{ rows|length }}"><span style="width: {{ (100 * row.number / (rows|length or 1))|round|int }}%"></span></div>
-    {% if subject and 'not created yet' not in subject %}<p class="wzc-subject" data-wizard-subject>{{ subject }}</p>{% else %}<span data-wizard-subject hidden>{{ subject }}</span>{% endif %}
+    <nav class="wzc-stepper-wrap" aria-label="Steps">
+      <ol class="wzc-stepper" data-stepper>
+        {% for r in rows %}
+        {% set is_current = r.step.key == step.key %}
+        {% set is_done = r.view.state in ('done', 'na') and not is_current %}
+        <li class="wz-step-link s-{{ r.view.state }}{% if is_current %} is-current{% endif %}{% if is_done %} is-done{% endif %}" data-step-link="{{ r.step.key }}" data-state="{{ r.view.state }}">
+          <a href="{{ ctx.step_url(r.step.key) }}"{% if is_current %} aria-current="step"{% endif %}>
+            <span class="wzc-num" aria-hidden="true">{% if is_done %}&#10003;{% else %}{{ r.number }}{% endif %}</span>
+            <span class="wzc-step-name">{{ r.step.title }}</span>
+            <span class="visually-hidden">— {{ r.state_label }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ol>
+    </nav>
   </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<div class="flash-stack wzc-flash" data-wizard-flash>{% for category, message in messages %}<div class="alert alert-{{ category }}" role="{{ 'alert' if category == 'error' else 'status' }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
 
   <form method="post" action="{{ ctx.step_url(step.key) }}" id="{{ nav_form_id }}" class="wz-nav-form wzc-card"
         {% if view.form_ctx.get('multipart') %}enctype="multipart/form-data"{% endif %}
         {% if step.draft and view.form and run.is_active %}data-autosave="{{ ctx.autosave_url(step.key) }}"{% endif %}>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <h1 class="wzc-title">{{ step.title }}{% if not step.required %} <span class="wz-optional">optional</span>{% endif %}</h1>
-    <p class="wzc-explain">{{ step.what }}</p>
-    {% if view.headline %}<p class="wzc-status s-{{ view.state }}" data-step-headline><span class="wz-badge">{{ state_labels[view.state] }}</span> {{ view.headline }}</p>{% endif %}
+    <div class="wzc-card-head">
+      <h2 class="wzc-title">{{ step.title }}{% if not step.required and not view.form_ctx.get('custom_finish') %} <span class="wz-optional">optional</span>{% endif %}</h2>
+      {% if view.headline %}<p class="wzc-status s-{{ view.state }}" data-step-headline><span class="wz-badge">{{ state_labels[view.state] }}</span> {{ view.headline }}</p>{% endif %}
+    </div>
+    <p class="wzc-explain" id="wzc-step-explain">{{ step.what }}</p>
 
     {% if has_form %}
     <div class="wzc-form" data-step-form {% if step.draft %}data-draft-form{% endif %}>
@@ -52,14 +72,15 @@
 
     <p class="wzc-submit-status" data-submit-status role="status" aria-live="polite" hidden></p>
     <div class="wz-nav wzc-nav">
-      {% if previous %}<button type="submit" name="wizard_action" value="back" class="wz-secondary" data-wizard-back formnovalidate>Back</button>{% endif %}
+      {% if previous %}<button type="submit" name="wizard_action" value="back" class="wz-secondary" data-wizard-back formnovalidate>← Back</button>{% endif %}
       <span class="wzc-spacer"></span>
       {% if run.is_active %}
       <button type="submit" name="wizard_action" value="save_exit" class="wz-secondary" data-wizard-save-exit formnovalidate>Save &amp; Exit</button>
       {% if view.form_ctx.get('custom_finish') %}
-      {# the step's own form carries its finishing buttons (Review: start estimating / estimate later) #}
+      {# Review: Finish (the project was created on Details; Finish shows Project Created) #}
+      {% if view.form_ctx.get('finish_url') %}<button type="submit" name="wizard_action" value="next" class="wz-primary" formaction="{{ view.form_ctx.finish_url }}" data-finish-project data-wizard-finish>Finish</button>{% endif %}
       {% elif view.form_ctx.get('continue_url') %}
-      <button type="submit" class="wz-primary" formaction="{{ view.form_ctx.continue_url }}" formmethod="post" name="wizard_run" value="{{ run.id }}" data-wizard-next data-create-project>Save &amp; Continue →</button>
+      <button type="submit" class="wz-primary" formaction="{{ view.form_ctx.continue_url }}" formmethod="post" name="wizard_run" value="{{ run.id }}" data-wizard-next data-create-project>Create Project &amp; Continue →</button>
       {% elif following %}
       <button type="submit" name="wizard_action" value="next" class="wz-primary" data-wizard-next>Save &amp; Continue →</button>
       {% else %}
@@ -102,6 +123,56 @@
     {{ contextual_help(help_topic, ask_url=ctx.help_url()) }}
   </footer>
 </div>
+</div>
+<script>
+/* The dialog (28 Oct 2026): Tab and Shift+Tab stay inside it; Escape is the same safe close as × (Save & Exit, every
+   answer kept), never while a list or the help panel has the key; the first field with a problem, or the first
+   field, takes the focus when the step opens. The page behind does not scroll. */
+(function () {
+  var dialog = document.querySelector(".wzc-modal");
+  if (!dialog) return;
+  document.documentElement.classList.add("wzc-modal-open");
+  var focusables = function () {
+    return Array.prototype.filter.call(dialog.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]):not([type=hidden]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'),
+      function (el) { return el.getClientRects().length > 0 && !el.closest("[hidden]"); });
+  };
+  // Focus that leaves the dialog (a click on the dimmed page, a script) comes back to it.
+  document.addEventListener("focusin", function (event) {
+    if (dialog.contains(event.target)) return;
+    // another dialog of the page (the sign-out warning) keeps its focus
+    if (event.target.closest && event.target.closest('[role="dialog"], [role="alertdialog"], dialog')) return;
+    var list = focusables();
+    if (list.length) list[0].focus();
+  });
+  dialog.addEventListener("keydown", function (event) {
+    if (event.key === "Tab") {
+      var list = focusables();
+      if (!list.length) return;
+      var first = list[0], last = list[list.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    var t = event.target;
+    if (t && (t.tagName === "SELECT" || (t.closest && t.closest("details[open]:not(.np-more)")))) return;
+    var close = dialog.querySelector("[data-modal-close]");
+    if (!close) return;
+    event.preventDefault();
+    if (close.tagName === "A") { window.location.href = close.href; return; }
+    var form = document.getElementById(close.getAttribute("form"));
+    if (form && form.requestSubmit) form.requestSubmit(close); else close.click();
+  });
+  if (!dialog.contains(document.activeElement) || document.activeElement === document.body) {
+    var narrow = window.matchMedia && window.matchMedia("(max-width: 700px)").matches;
+    var target = narrow ? dialog.querySelector(".wzc-dialog-title") : dialog.querySelector(".wzc-form [aria-invalid=true], .wzc-form input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([readonly]), .wzc-form select, .wzc-form textarea")
+      || dialog.querySelector("[data-wizard-next], [data-wizard-finish]") || dialog.querySelector(".wzc-dialog-title");
+    if (target) { try { target.focus({preventScroll: false}); } catch (e) { target.focus(); } }
+  }
+})();
+</script>
 <script>
 /* Save & Continue never looks dead (Production defect, 28 Oct 2026): the moment the step is sent, every button is
    held, the pressed one says what is happening ("Uploading plans…" when a PDF is chosen, otherwise "Saving…"), a

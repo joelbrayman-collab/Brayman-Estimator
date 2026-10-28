@@ -3,11 +3,12 @@
 // owner Ben and one existing customer, Marc Bouliion, with his slab project). Synthetic data only.
 //
 // The Linda Bushel Production failure, walked as Joel walked it: Home → Start a New Project → no customer selected →
-// New customer → Linda (no email or phone) → Save & Continue lands on "What are we building?" with Linda — never Marc,
+// Project → New customer → Linda (no email or phone) → Save & Continue lands on Details with Linda — never Marc,
 // never the Clients pages; Back and forward keep Linda; Save & Exit and Resume from Home keep Linda; "Same as customer
-// address" fills the job site; the project is created for Linda; plans (optional), role, lead (optional), review,
-// finish. Then Home lists "Linda Bushel — Customer information incomplete" once; Complete information returns to
-// Home and the item is gone. Also: the compact page (Step X of Y, View all steps collapsed, no permanent roadmap),
+// address" fills the job site; your role and the Project Lead on Details, where the project is created for Linda;
+// plans (optional); review with Edit; Finish to Project Created (Compact Open a New Project, 28 Oct 2026). Then Home lists "Linda Bushel — Customer information incomplete" once; Complete information returns to
+// Home and the item is gone. Also: the dialog (five numbered steps across the top, focus kept inside, × and Escape
+// are Save & Exit),
 // Home's one band of guided starts above the fold and one Attention list, every page on a phone without sideways
 // scrolling, no page error and no server error.
 // Step 4 with a real plan PDF on a desktop and a phone (Production defect, 28 Oct 2026): see below.
@@ -137,22 +138,37 @@ step("Home: one Attention list first, one band of guided starts above the fold, 
 });
 
 // ------------------------------------------------------------------ the Linda failure, walked
-step("Start a New Project: compact task page, no customer preselected", async () => {
+step("Start a New Project: a dialog with the five steps across the top; Project first", async () => {
   const { pg } = await person(DESK);
   await go(pg, "/");
   await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
   S.run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  assert.equal(await stepOf(pg), "project_type");
+  assert.equal(await pg.locator('[role="dialog"][aria-modal="true"]').count(), 1);
+  assert.equal(await pg.locator("#wzc-dialog-title").innerText(), "Start a New Project");
+  assert.match(await pg.locator(".wzc-where").innerText(), /Step 1 of 5/);
+  assert.equal(await pg.locator("h2.wzc-title").innerText(), "Project");
+  assert.deepEqual(await pg.locator("[data-stepper] .wzc-step-name").allInnerTexts(), ["Project", "Customer", "Details", "Plans", "Review"]);
+  assert.equal(await pg.locator("[data-stepper] [aria-current=step]").count(), 1);
+  // Focus starts in the dialog and Tab stays there.
+  assert.equal(await pg.evaluate(() => !!document.activeElement.closest(".wzc-modal")), true);
+  for (let i = 0; i < 40; i += 1) await pg.keyboard.press("Tab");
+  assert.equal(await pg.evaluate(() => !!document.activeElement.closest(".wzc-modal")), true, "Tab stays in the dialog");
+  await continueOn(pg);
+  assert.match(await flash(pg), /Before you go on.*Name the project/);
+  assert.equal(await stepOf(pg), "project_type");
+  // The message is shown inside the dialog, above the task.
+  assert.equal(await pg.locator(".wzc-modal [data-wizard-flash]").isVisible(), true);
+  await shot(pg, "wizard-project-desktop");
+  await pg.fill('[name="name"]', "Bushel rear deck (synthetic)");
+  await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
+  await continueOn(pg);
   assert.equal(await stepOf(pg), "customer");
-  assert.match(await pg.locator(".wzc-where").innerText(), /Start a New Project · Step 1 of 7/);
-  assert.equal(await pg.locator("h1.wzc-title").innerText(), "Who is the customer?");
-  assert.equal(await pg.locator(".wzc-steps").isVisible(), false, "the step list is folded away");
-  await pg.locator("[data-view-all-steps] summary").click();
-  assert.equal(await pg.locator("[data-step-link]").count(), 7);
-  await pg.locator("[data-view-all-steps] summary").click();
   assert.equal(await selectedCustomer(pg), "Choose the customer", "never the first customer in the list");
   await continueOn(pg);
   assert.match(await flash(pg), /Before you go on.*Choose the customer/);
   assert.equal(await stepOf(pg), "customer");
+  assert.equal(await pg.locator('[data-step-link="project_type"].is-done').count(), 1, "step 1 is ticked");
   await shot(pg, "wizard-customer-desktop");
 });
 
@@ -168,8 +184,8 @@ step("New customer Linda (no email or phone): Save & Continue goes straight on w
   await pg.fill('[name="new_customer_postal_code"]', "k0g1j0");
   await shot(pg, "wizard-new-customer-desktop");
   await continueOn(pg);
-  assert.equal(await stepOf(pg), "project_type", "automatic progression to the next task");
-  assert.equal(await pg.locator("h1.wzc-title").innerText(), "What are we building?");
+  assert.equal(await stepOf(pg), "location", "automatic progression to the next task");
+  assert.equal(await pg.locator("h2.wzc-title").innerText(), "Details");
   assert.match(await pg.locator(".wzc-subject").innerText(), new RegExp(LINDA.replace(/[()]/g, "\\$&")));
   assert.doesNotMatch(await pg.locator(".wzc-subject").innerText(), /Marc/);
   assert.ok(!visited.slice(before).some((p) => p.startsWith("/clients")), `no Clients detour: ${visited.slice(before)}`);
@@ -182,61 +198,85 @@ step("Back keeps Linda; forward keeps Linda", async () => {
   assert.equal(await stepOf(pg), "customer");
   assert.equal(await selectedCustomer(pg), LINDA);
   await continueOn(pg);
-  assert.equal(await stepOf(pg), "project_type");
+  assert.equal(await stepOf(pg), "location");
   assert.match(await pg.locator(".wzc-subject").innerText(), /Linda Bushel/);
 });
 
-step("Save & Exit keeps Linda; Resume from Home keeps Linda", async () => {
+step("Save & Exit (×) keeps everything; Resume from Home keeps Linda; Escape is the same safe close", async () => {
   const { pg } = await person(DESK);
-  await pg.fill('[name="name"]', "Bushel rear deck (synthetic)");
-  await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
-  await submit(pg, pg.locator("[data-wizard-save-exit]"));
+  await pg.fill('[data-job="street"]', "typed then closed");
+  await submit(pg, pg.locator("[data-modal-close]"));
   assert.equal(pathOf(pg), "/");
   const line = pg.locator(`[data-resume-run="${S.run}"]`);
-  assert.match(await line.innerText(), /Resume Start a New Project[\s\S]*Bushel rear deck \(synthetic\) — Linda Bushel \(synthetic\)[\s\S]*Step 2 of 7/);
+  assert.match(await line.innerText(), /Resume Start a New Project[\s\S]*Bushel rear deck \(synthetic\) — Linda Bushel \(synthetic\)[\s\S]*Step 3 of 5/);
   const box = await line.boundingBox();
   assert.ok(box.height <= 70, `the unfinished item is one compact line (height ${Math.round(box.height)})`);
   await shot(pg, "home-resume-desktop");
   await submit(pg, line.locator("[data-resume-wizard]"));
-  assert.equal(await stepOf(pg), "project_type");
-  assert.equal(await pg.inputValue('[name="name"]'), "Bushel rear deck (synthetic)");
-  await shot(pg, "wizard-project-desktop");
-  await continueOn(pg);
   assert.equal(await stepOf(pg), "location");
+  assert.equal(await pg.inputValue('[data-job="street"]'), "typed then closed");
+  await pg.fill('[data-job="street"]', "");
+  await pg.locator("h2.wzc-title").click();
+  await Promise.all([pg.waitForNavigation(), pg.keyboard.press("Escape")]);
+  assert.equal(pathOf(pg), "/", "Escape is Save & Exit");
+  await submit(pg, pg.locator(`[data-resume-run="${S.run}"] [data-resume-wizard]`));
+  assert.equal(await stepOf(pg), "location");
+  assert.equal(await pg.inputValue('[name="name"]'), "Bushel rear deck (synthetic)");
 });
 
-step("Where is the job? Same as customer address fills the job site; Save & Continue creates Linda's project", async () => {
+step("Details: Same as customer address fills the job site; your role is required; Create Project & Continue creates it once", async () => {
   const { pg } = await person(DESK);
   assert.match(await pg.locator("[data-same-as-customer-label]").innerText(), /Same as Linda Bushel \(synthetic\)'s address/);
   await pg.locator("[data-same-as-customer]").check();
   assert.equal(await pg.inputValue('[data-job="street"]'), "12 Synthetic Lane");
   assert.equal(await pg.inputValue('[data-job="municipality"]'), "Kemptville");
   assert.equal(await pg.inputValue('[data-job="postal_zip"]'), "K0G 1J0");
+  for (const name of ["permit_context_class", "pricing_posture", "execution_risk", "schedule_condition", "site_condition", "estimate_stage", "delivery_model", "contractor_role", "project_lead_user_id"]) {
+    assert.equal(await pg.locator(`[name="${name}"]`).isVisible(), true, name);
+  }
+  // Two columns at 1280: Site information beside Project settings.
+  const site = await pg.locator("#np-sec-site").boundingBox();
+  const settings = await pg.locator("#np-sec-settings").boundingBox();
+  assert.ok(Math.abs(site.y - settings.y) < 4 && settings.x > site.x + 200, "two columns");
+  await pg.locator("[data-create-project]").click();  // held by the browser: no role yet
+  assert.equal(await stepOf(pg), "location");
+  assert.equal(await pg.locator("[data-contractor-role]").evaluate((el) => el.validity.valueMissing), true);
+  await pg.selectOption("[data-contractor-role]", "GENERAL_CONTRACTOR");
   await shot(pg, "wizard-location-desktop");
-  await continueOn(pg);
+  await submit(pg, pg.locator("[data-create-project]"));
   assert.equal(await stepOf(pg), "documents", await flash(pg));
   assert.match(await pg.locator(".wzc-subject").innerText(), /Bushel rear deck \(synthetic\) — Linda Bushel \(synthetic\)/);
 });
 
-step("Plans are optional; role; lead optional; review shows Linda and what to add later; finish", async () => {
+step("Plans are optional; Review shows every section with Edit; Finish shows Project Created", async () => {
   const { pg } = await person(DESK);
   assert.equal(await pg.locator('input[name="plan_file"]').count(), 1);
   await shot(pg, "wizard-plans-desktop");
-  await continueOn(pg);
-  assert.equal(await stepOf(pg), "role");
-  await pg.locator('[name="contractor_role"][value="GENERAL_CONTRACTOR"]').check();
-  await shot(pg, "wizard-role-desktop");
-  await continueOn(pg);
-  assert.equal(await stepOf(pg), "responsibility", await flash(pg));
   await continueOn(pg);
   assert.equal(await stepOf(pg), "review");
   const summary = await pg.locator("[data-project-summary]").innerText();
   assert.match(summary, /Customer\s+Linda Bushel \(synthetic\)/);
   assert.match(summary, /Job site\s+12 Synthetic Lane, Kemptville, Ontario/);
+  assert.match(summary, /Your role\s+General Contractor/i);
   assert.doesNotMatch(summary, /Marc/);
+  assert.equal(await pg.locator("[data-review-edit]").count(), 5);
   assert.match(await pg.locator("[data-outstanding]").innerText(), /Customer information: email, phone/);
   await shot(pg, "wizard-review-desktop");
-  await submit(pg, pg.locator("[data-finish-later]"));
+  // Edit goes back to the step and nothing is lost.
+  await submit(pg, pg.locator('[data-review-edit="project_type"]'));
+  assert.equal(await stepOf(pg), "project_type");
+  await go(pg, `/wizards/run/${S.run}/step/review`);
+  // Finish once: the second press is held.
+  let posts = 0;
+  const watch = (r) => { if (r.method() === "POST") posts += 1; };
+  pg.on("request", watch);
+  await Promise.all([pg.waitForURL(new RegExp(`/wizards/run/${S.run}/created$`)), pg.locator("[data-finish-project]").dblclick()]);
+  pg.off("request", watch);
+  assert.equal(posts, 1, "Finish sent once");
+  assert.match(await pg.locator("#np-created-title").innerText(), /Project Created Successfully/);
+  assert.match(await pg.locator("[data-created-summary]").innerText(), /Bushel rear deck \(synthetic\)[\s\S]*Linda Bushel \(synthetic\)/);
+  await shot(pg, "wizard-created-desktop");
+  await submit(pg, pg.locator("[data-open-project]"));
   assert.match(pathOf(pg), /^\/projects\/\d+$/);
   S.project = pathOf(pg);
   const head = await pg.locator(".hub-heading-identity").innerText();
@@ -274,16 +314,17 @@ async function toPlans(pg, customer, job) {
   await go(pg, "/");
   await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
   const run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
-  await pg.locator('[data-customer-mode="new"]').check();
-  await pg.fill('[name="new_customer_name"]', customer);
-  await continueOn(pg);
-  assert.equal(await stepOf(pg), "project_type", await flash(pg));
   await pg.fill('[name="name"]', job);
   await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "customer", await flash(pg));
+  await pg.locator('[data-customer-mode="new"]').check();
+  await pg.fill('[name="new_customer_name"]', customer);
   await continueOn(pg);
   assert.equal(await stepOf(pg), "location", await flash(pg));
   await pg.fill('[data-job="street"]', "7 Upload Road");
   await pg.fill('[data-job="municipality"]', "Kemptville");
+  await pg.selectOption("[data-contractor-role]", "GENERAL_CONTRACTOR");
   await continueOn(pg);
   assert.equal(await stepOf(pg), "documents", await flash(pg));
   return run;
@@ -325,7 +366,7 @@ async function uploadAndContinue(pg, run, label) {
       window.__planBusy(JSON.stringify(state));
     }, 50), { once: true });
   });
-  const landed = pg.waitForURL(new RegExp(`/wizards/run/${run}/step/role$`), { timeout: 20000 });
+  const landed = pg.waitForURL(new RegExp(`/wizards/run/${run}/step/review$`), { timeout: 20000 });
   await pg.locator("[data-wizard-next]").click({ noWaitAfter: true });
   await landed;
   await pg.waitForLoadState();
@@ -340,7 +381,7 @@ async function uploadAndContinue(pg, run, label) {
   assert.match(busy.status, /Uploading deck-plan-synthetic\.pdf — keep this page open/);
   assert.equal(busy.secondSubmitsThrough, 0, `${label}: a second press sends nothing`);
   assert.equal(posts.length, 1, `${label}: Save & Continue sent the plan once (${posts.length} POSTs)`);
-  assert.equal(await stepOf(pg), "role");
+  assert.equal(await stepOf(pg), "review");
   assert.match(await flash(pg), /deck-plan-synthetic\.pdf added to the project/);
   await go(pg, `/wizards/run/${run}/step/documents`);
   assert.equal(await pg.locator("[data-step-items] li", { hasText: "deck-plan-synthetic.pdf" }).count(), 1, `${label}: one plan on the project`);
@@ -354,7 +395,7 @@ step("Step 4 on a desktop: a real plan PDF, Save & Continue says Uploading at on
   // Back to Step 4 with the same PDF chosen again and Save & Continue: still one plan, and it says so.
   await pg.setInputFiles('input[name="plan_file"]', { name: "deck-plan-synthetic.pdf", mimeType: "application/pdf", buffer: PLAN_PDF });
   await continueOn(pg);
-  assert.equal(await stepOf(pg), "role");
+  assert.equal(await stepOf(pg), "review");
   assert.match(await flash(pg), /already on the project \(not added again\)/);
   await go(pg, `/wizards/run/${run}/step/documents`);
   assert.equal(await pg.locator("[data-step-items] li", { hasText: "deck-plan-synthetic.pdf" }).count(), 1);
@@ -394,24 +435,28 @@ step("On a phone: every task page fits, buttons are full width, the customer for
   const { pg, errors } = await person(PHONE);
   await go(pg, "/");
   await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  assert.equal(await stepOf(pg), "project_type");
+  await noSideways(pg, "project phone");
+  await shot(pg, "wizard-project-phone", true);
+  const next = await pg.locator("[data-wizard-next]").boundingBox();
+  assert.ok(next.width >= PHONE.width - 80, `Save & Continue is full width (${Math.round(next.width)}px)`);
+  await pg.fill('[name="name"]', "Phone job (synthetic)");
+  await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
+  await continueOn(pg);
   assert.equal(await stepOf(pg), "customer");
   await noSideways(pg, "customer phone");
   await pg.locator('[data-customer-mode="new"]').check();
   await shot(pg, "wizard-customer-phone", true);
-  const next = await pg.locator("[data-wizard-next]").boundingBox();
-  assert.ok(next.width >= PHONE.width - 80, `Save & Continue is full width (${Math.round(next.width)}px)`);
   const name = await pg.locator('[name="new_customer_name"]').boundingBox();
   const email = await pg.locator('[name="new_customer_email"]').boundingBox();
   assert.ok(email.y > name.y + name.height - 1, "fields stack on a phone");
   await pg.fill('[name="new_customer_name"]', "Phone customer (synthetic)");
   await continueOn(pg);
-  assert.equal(await stepOf(pg), "project_type");
-  await noSideways(pg, "project phone");
-  await shot(pg, "wizard-project-phone", true);
-  await pg.fill('[name="name"]', "Phone job (synthetic)");
-  await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
-  await continueOn(pg);
+  assert.equal(await stepOf(pg), "location");
   await noSideways(pg, "location phone");
+  const site = await pg.locator("#np-sec-site").boundingBox();
+  const settings = await pg.locator("#np-sec-settings").boundingBox();
+  assert.ok(settings.y > site.y + site.height - 1, "the sections stack on a phone");
   await shot(pg, "wizard-location-phone", true);
   await go(pg, S.project);
   await noSideways(pg, "project page phone");

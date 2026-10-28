@@ -1,4 +1,4 @@
-{# Start a New Project · Who is the customer? Existing customer, or a new one entered here (no detour). #}
+{# Start a New Project · Step 2, Customer: existing customer, or a new one entered here (no detour). #}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css', v='pcux-1') }}">
 <div class="np-mode" role="radiogroup" aria-label="Customer">
   <label class="np-mode-opt"><input type="radio" name="customer_mode" value="existing" data-customer-mode="existing" {% if f.mode != 'new' %}checked{% endif %} {% if not f.clients %}disabled{% endif %}> Existing customer</label>

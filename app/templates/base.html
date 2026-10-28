@@ -82,6 +82,7 @@
         <main class="shell-workspace" id="main-content">
             {% set back_to_wizard = wizard_return() if wizard_return is defined else None %}
             {% include "partials/wizard_return.html" %}
+            {% block flashes %}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                 <div class="flash-stack">
@@ -91,6 +92,7 @@
                 </div>
                 {% endif %}
             {% endwith %}
+            {% endblock %}
 
             {% block breadcrumbs %}
                 {% include "partials/breadcrumbs.html" %}

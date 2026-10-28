@@ -219,6 +219,10 @@
 .wzc-note { margin: 0; font-size: .9rem; }
 .wzc-nav { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-top: 1px solid #efede7; padding-top: 14px; margin-top: 2px; }
 .wzc-nav .wzc-spacer { flex: 1 1 auto; }
+/* Save & Continue busy state (28 Oct 2026): what is happening, in words; held buttons look held. */
+.wzc-submit-status { margin: 0 0 8px; padding: 10px 12px; border-radius: 8px; background: #eef4fa; color: #1f3a5f; font-weight: 600; }
+.wzc-submit-status.is-error { background: #fbeeee; color: #8c2f2f; }
+.wz-nav-form[aria-busy="true"] .wzc-nav button[disabled] { opacity: 0.75; cursor: progress; }
 .wzc-nav button, .np-finish button { min-height: 44px; padding: 0 18px; font-weight: 600; }
 .wzc-actions { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: .9rem; padding: 0 4px; }
 .wzc-actions-label { color: var(--muted, #555); }

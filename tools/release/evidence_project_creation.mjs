@@ -10,6 +10,7 @@
 // Home and the item is gone. Also: the compact page (Step X of Y, View all steps collapsed, no permanent roadmap),
 // Home's one band of guided starts above the fold and one Attention list, every page on a phone without sideways
 // scrolling, no page error and no server error.
+// Step 4 with a real plan PDF on a desktop and a phone (Production defect, 28 Oct 2026): see below.
 // CREATION_SHOTS=<dir> saves the screens there.
 // Run: EVIDENCE_REPO=$PWD EVIDENCE_EXECUTABLE=/path/to/chromium node --test tools/release/evidence_project_creation.mjs
 import assert from "node:assert/strict";
@@ -259,6 +260,133 @@ step("Home lists Linda's missing information once; Complete information returns 
   await submit(pg, pg.locator("[data-customer-form] button[type=submit]"));
   assert.equal(pathOf(pg), "/");
   assert.equal(await pg.locator('[data-attention-kind="customers"]', { hasText: LINDA }).count(), 0);
+});
+
+// ------------------------------------------------------------------ Step 4 with a real plan PDF (Production, 28 Oct 2026)
+// Joel added a plan on Step 4 and pressed Save & Continue: nothing visibly happened while the PDF uploaded, so he
+// pressed again and the same PDF was sent twice. The walk above never chose a file. These steps upload a real PDF
+// through the real form to the real server (the POST is only held back 2 s so the in-between state can be seen),
+// then require: the pressed button says "Uploading plans…" at once, every button is held, a second press sends
+// nothing, Step 5 follows, the project has the plan once; a file that is not a PDF stays on Step 4 with the reason;
+// a PDF over the limit is stopped before anything is sent.
+const PLAN_PDF = fs.readFileSync(path.join(REPO, "tests/fixtures/e2e/synthetic-site-plan.pdf"));
+async function toPlans(pg, customer, job) {
+  await go(pg, "/");
+  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  const run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  await pg.locator('[data-customer-mode="new"]').check();
+  await pg.fill('[name="new_customer_name"]', customer);
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "project_type", await flash(pg));
+  await pg.fill('[name="name"]', job);
+  await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "location", await flash(pg));
+  await pg.fill('[data-job="street"]', "7 Upload Road");
+  await pg.fill('[data-job="municipality"]', "Kemptville");
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "documents", await flash(pg));
+  return run;
+}
+const exposed = new WeakSet();
+async function uploadAndContinue(pg, run, label) {
+  // What the page shows while the plan is on its way is read inside the page (a page with a form submission in
+  // flight cannot be read from outside without racing the next page) and handed back here.
+  let busy = null;
+  if (!exposed.has(pg)) { await pg.exposeFunction("__planBusy", (s) => { pg.__busy = JSON.parse(s); }); exposed.add(pg); }
+  pg.__busy = null;
+  const posts = [];
+  const watch = (r) => { if (r.method() === "POST" && /\/step\/documents$/.test(new URL(r.url()).pathname)) posts.push(r.url()); };
+  pg.on("request", watch);
+  await pg.route(`**/wizards/run/${run}/step/documents`, async (route) => {
+    if (route.request().method() === "POST") await new Promise((res) => setTimeout(res, 2000));
+    await route.continue();
+  });
+  await pg.setInputFiles('input[name="plan_file"]', { name: "deck-plan-synthetic.pdf", mimeType: "application/pdf", buffer: PLAN_PDF });
+  await pg.evaluate(() => {
+    const form = document.querySelector("form.wz-nav-form");
+    form.addEventListener("submit", () => setTimeout(() => {
+      const next = document.querySelector("[data-wizard-next]");
+      const state = {
+        formBusy: form.getAttribute("aria-busy"),
+        nextText: next.textContent.trim(),
+        allHeld: [...form.querySelectorAll("button[type=submit]")].every((b) => b.disabled),
+        status: document.querySelector("[data-submit-status]").textContent,
+        statusShown: !document.querySelector("[data-submit-status]").hidden,
+      };
+      // A second press, and a scripted second submit: the guard lets neither through.
+      let through = 0;
+      const count = (e) => { if (!e.defaultPrevented) through += 1; };
+      window.addEventListener("submit", count);
+      next.click();
+      try { form.requestSubmit(); } catch (e) { /* a held button may refuse */ }
+      window.removeEventListener("submit", count);
+      state.secondSubmitsThrough = through;
+      window.__planBusy(JSON.stringify(state));
+    }, 50), { once: true });
+  });
+  const landed = pg.waitForURL(new RegExp(`/wizards/run/${run}/step/role$`), { timeout: 20000 });
+  await pg.locator("[data-wizard-next]").click({ noWaitAfter: true });
+  await landed;
+  await pg.waitForLoadState();
+  await pg.unroute(`**/wizards/run/${run}/step/documents`);
+  pg.off("request", watch);
+  busy = pg.__busy;
+  assert.ok(busy, `${label}: the page reported its state while the plan was uploading`);
+  assert.equal(busy.formBusy, "true", `${label}: the step is marked busy`);
+  assert.equal(busy.nextText, "Uploading plans…", `${label}: the pressed button says what is happening`);
+  assert.equal(busy.allHeld, true, `${label}: every button is held`);
+  assert.equal(busy.statusShown, true);
+  assert.match(busy.status, /Uploading deck-plan-synthetic\.pdf — keep this page open/);
+  assert.equal(busy.secondSubmitsThrough, 0, `${label}: a second press sends nothing`);
+  assert.equal(posts.length, 1, `${label}: Save & Continue sent the plan once (${posts.length} POSTs)`);
+  assert.equal(await stepOf(pg), "role");
+  assert.match(await flash(pg), /deck-plan-synthetic\.pdf added to the project/);
+  await go(pg, `/wizards/run/${run}/step/documents`);
+  assert.equal(await pg.locator("[data-step-items] li", { hasText: "deck-plan-synthetic.pdf" }).count(), 1, `${label}: one plan on the project`);
+  assert.equal(await pg.getAttribute("[data-wizard-step]", "data-step-state"), "done");
+}
+
+step("Step 4 on a desktop: a real plan PDF, Save & Continue says Uploading at once, sends once, Step 5, one plan", async () => {
+  const { pg } = await person(DESK);
+  const run = await toPlans(pg, "Upload customer desk (synthetic)", "Upload deck desk (synthetic)");
+  await uploadAndContinue(pg, run, "desktop");
+  // Back to Step 4 with the same PDF chosen again and Save & Continue: still one plan, and it says so.
+  await pg.setInputFiles('input[name="plan_file"]', { name: "deck-plan-synthetic.pdf", mimeType: "application/pdf", buffer: PLAN_PDF });
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "role");
+  assert.match(await flash(pg), /already on the project \(not added again\)/);
+  await go(pg, `/wizards/run/${run}/step/documents`);
+  assert.equal(await pg.locator("[data-step-items] li", { hasText: "deck-plan-synthetic.pdf" }).count(), 1);
+  // A PDF over the upload limit is stopped here, with the reason; nothing is sent and the buttons stay usable.
+  const limit = Number(await pg.getAttribute('input[name="plan_file"]', "data-max-bytes"));
+  const big = Buffer.concat([PLAN_PDF, Buffer.alloc(limit + 1024 - PLAN_PDF.length, 32)]);
+  await pg.setInputFiles('input[name="plan_file"]', { name: "too-big-set.pdf", mimeType: "application/pdf", buffer: big });
+  let sent = 0;
+  const count = (r) => { if (r.method() === "POST") sent += 1; };
+  pg.on("request", count);
+  await pg.locator("[data-wizard-next]").click();
+  await pg.waitForTimeout(500);
+  pg.off("request", count);
+  assert.equal(sent, 0, "nothing sent for a PDF over the limit");
+  assert.equal(await stepOf(pg), "documents");
+  assert.match(await pg.locator("[data-submit-status]").innerText(), /too-big-set\.pdf is [\d.]+ MB\. The limit is \d+ MB/);
+  assert.equal(await pg.locator("[data-wizard-next]").isDisabled(), false);
+  await shot(pg, "wizard-plans-too-big-desktop");
+});
+
+step("Step 4 on a phone: a real plan PDF goes up once and Step 5 follows; a file that is not a PDF stays on Step 4", async () => {
+  const { pg } = await person(PHONE);
+  const run = await toPlans(pg, "Upload customer phone (synthetic)", "Upload deck phone (synthetic)");
+  await noSideways(pg, "plans phone");
+  await uploadAndContinue(pg, run, "phone");
+  await noSideways(pg, "plans phone after upload");
+  await pg.setInputFiles('input[name="plan_file"]', { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("not a pdf") });
+  await continueOn(pg);
+  assert.equal(await stepOf(pg), "documents", "a failed upload stays on Step 4");
+  assert.match(await flash(pg), /Only PDF files are allowed/);
+  assert.equal(await pg.locator("[data-wizard-next]").isDisabled(), false, "the buttons are usable again");
+  await shot(pg, "wizard-plans-not-pdf-phone", true);
 });
 
 // ------------------------------------------------------------------ phone

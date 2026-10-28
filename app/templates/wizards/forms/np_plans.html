@@ -1,7 +1,7 @@
 {# Start a New Project · What plans and drawings do we have? Upload here (the Plans page's own service). #}
 <div class="np-upload">
   <label class="np-field">Add a plan PDF <span class="cust-opt">CAD export, plans or specifications — one PDF at a time</span>
-    <input type="file" name="plan_file" accept="application/pdf,.pdf" data-plan-file></label>
+    <input type="file" name="plan_file" accept="application/pdf,.pdf" data-plan-file data-max-bytes="{{ config.get('PLAN_UPLOAD_MAX_BYTES', 26214400) }}"></label>
   <label class="np-field">Note about this PDF <span class="cust-opt">optional</span>
     <input type="text" name="plan_notes" maxlength="300"></label>
 </div>

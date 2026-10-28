@@ -362,6 +362,21 @@ def _documents(ctx):
                     form="np_plans.html", form_ctx=form_ctx)
 
 
+def _plan_already_on_project(ctx, upload):
+    """The project's plan with exactly these bytes, if there is one. Leaves the upload ready to read again."""
+    import hashlib
+
+    from app.plan_intelligence.models import PlanDocument
+
+    data = upload.stream.read()
+    upload.stream.seek(0)
+    if not data:
+        return None
+    digest = hashlib.sha256(data).hexdigest()
+    return (PlanDocument.query.filter_by(project_id=ctx.project.id, sha256_hex=digest, archived_at=None)
+            .order_by(PlanDocument.id).first())
+
+
 def _save_documents(ctx, form):
     """Upload a plan PDF (the Plans page's own service), record that none are needed, or record the review."""
     from app import db
@@ -374,12 +389,18 @@ def _save_documents(ctx, form):
     if upload is not None and (upload.filename or "").strip():
         from app.plan_intelligence.services import PlanIntelligenceServiceError, upload_plan_pdf
 
-        try:
-            document = upload_plan_pdf(ctx.project, upload, notes=(form.get("plan_notes") or "").strip())
-        except PlanIntelligenceServiceError as exc:
-            db.session.rollback()
-            raise WizardError(str(exc)) from exc
-        messages.append(f"{document.original_filename} added to the project.")
+        # The same PDF sent twice (a second Save & Continue while the first was still uploading, or Back and
+        # Save & Continue again with the file still chosen) is kept once (Production defect, 28 Oct 2026).
+        already = _plan_already_on_project(ctx, upload)
+        if already is not None:
+            messages.append(f"{already.original_filename} is already on the project (not added again).")
+        else:
+            try:
+                document = upload_plan_pdf(ctx.project, upload, notes=(form.get("plan_notes") or "").strip())
+            except PlanIntelligenceServiceError as exc:
+                db.session.rollback()
+                raise WizardError(str(exc)) from exc
+            messages.append(f"{document.original_filename} added to the project.")
     if form.get("drawings_choice") == "none":
         from app.services.project_drawing_requirement import (
             ProjectDrawingRequirementError,
@@ -401,7 +422,9 @@ def _save_documents(ctx, form):
         confirm(ctx.run, "view_plan", actor=ctx.actor, user_id=ctx.user_id,
                 detail=PLAN_REVIEW_CHOICES[choice] + (f" Note: {note}" if note else ""))
         messages.append("Your review of the drawings is recorded.")
-    return " ".join(messages) or "Saved."
+    text = " ".join(messages) or "Saved."
+    # A PDF sent with Save & Continue: say on Step 5 what happened to it (added, or already there).
+    return (text, None) if upload is not None and (upload.filename or "").strip() else text
 
 
 # ------------------------------------------------------------------------------------------------ 5 role

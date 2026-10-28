@@ -14,7 +14,8 @@
 {% include "field/_banked_balance.html" %}
 <section class="field-panel">
     <h1>Banked hours history</h1>
-    <p class="field-muted">Time off taken so far: {{ "%.2f"|format(summary.used_total) }} hours. Ask the office about time off or a correction.</p>
+    <p data-banked-totals>Earned {{ "%.2f"|format(summary.earned_total) }} · Used {{ "%.2f"|format(summary.used_total) }} · Remaining {{ "%.2f"|format(summary.balance) }} hours</p>
+    <p class="field-muted">Ask the office about time off or a correction.</p>
     {% if summary.rows %}
     <ul class="field-time-list" data-banked-ledger>
         {% for row in summary.rows %}

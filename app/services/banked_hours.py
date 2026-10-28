@@ -401,7 +401,11 @@ def worker_summary(organization_id: str, user_id: int, *, today: Optional[date] 
     used_total = (BankedHoursLedgerEntry.query.filter_by(organization_id=organization_id, user_id=user_id,
                                                          kind=BANKED_KIND_USED)
                   .with_entities(func.coalesce(func.sum(BankedHoursLedgerEntry.hours), 0)).scalar())
+    earned_total = (BankedHoursLedgerEntry.query.filter_by(organization_id=organization_id, user_id=user_id,
+                                                           kind=BANKED_KIND_EARNED)
+                    .with_entities(func.coalesce(func.sum(BankedHoursLedgerEntry.hours), 0)).scalar())
     return {"balance": balance(organization_id, user_id), "week": week, "policy": shown_policy,
+            "earned_total": _q(earned_total),
             "policy_in_force": policy, "policy_text": policy_summary(shown_policy),
             "used_total": _q(-Decimal(str(used_total or 0))), "rows": ledger(organization_id, user_id, limit=50),
             "kind_label": KIND_LABELS, "pending_policy": shown_policy is not None and policy is None}

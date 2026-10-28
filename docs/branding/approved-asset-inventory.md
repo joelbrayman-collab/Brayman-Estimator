@@ -43,6 +43,9 @@ No checksum was recorded when these were made; the values below are first record
 | File | Used for | SHA-256 |
 |---|---|---|
 | `app/static/branding/brayman-construction-logo.png` | Brayman Construction brand profile: proposals, drawings, supplier estimates, project-controls PDFs, sign-in and page headers | `948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9` (first recorded 18 Oct 2026) |
+| `app/static/branding/brayman-construction-logo-dark.png` | Brayman Construction logo for dark backgrounds (white lettering, gold mark): navy document headers such as the supplier pricing request | `904667b4d0ea0d50ca69b77d731a9c918f16a6464ae579a0b7f38037a3332c44` (recorded 28 Oct 2026) |
+
+The dark Brayman logo is recovered byte-for-byte from commit `5ebbfdb1` (21 Jul 2026, Joel Brayman, branch `cursor/sidebar-navigation-refinement`, where it was the office sidebar mark); it had never reached `main`. Joel named it the approved dark logo on 28 Oct 2026 ("There are approved logos in repo that say 'dark' and they should be used") for the supplier pricing request. Preservation tag `preserve/2026-10-28/brayman-dark-logo-source`. 1692 × 736 px, transparent background; never recoloured, cropped or redrawn.
 
 ## Orphaned or duplicate assets (recorded, not deleted)
 
@@ -62,3 +65,19 @@ Joel's approved master (a circular badge: graduation cap, tassel and the two lin
 | `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai-96.png` | `fb898b27be4990521614a0cd9db94ade15237d22470b645a231c4d14893dde74` |
 | `app/static/branding/ask_the_tutor/ask-the-tutor-calibraytai.png` | `08cc6c64e889bcd1b42374ec552e2d388ffa9c00a4febc19cd327688bba401f0` |
 | `docs/branding/ask_the_tutor/ask-the-tutor-master.png` | `f0e3131f47324316af3fe89de2b46141069b2fab205dcabb80ea441613161582` |
+
+## CaliSIGN — approved identity (28 Oct 2026)
+
+Joel approved the CaliSIGN identity sheet on 28 Oct 2026 ("approved. record, save file and use for the next task"). CaliSIGN is a named CalibraytAI capability ("CaliSIGN by CalibraytAI"), not a separate brand. Record: [calisign/README.md](calisign/README.md). The wordmark in the app is live text (IBM Plex Sans 700, `Cali` navy or white, `SIGN` gold); the PNG identifiers are for email and PDFs only.
+
+| File | Used for | SHA-256 |
+|---|---|---|
+| `app/static/branding/calisign/calisign-app-icon-128.png` | App icon 128 × 128 | `36bd7c3e0bbeb15b1ae70db3e66cf99b7065cbdd4ab47ebb6b9f8dfdbf6aeb9d` |
+| `app/static/branding/calisign/calisign-app-icon-512.png` | App icon (navy tile), large | `3ff48c4a54d9dd779e21b8b0fce7ac8a4d4c2b62c24558075e2d822041bbb526` |
+| `app/static/branding/calisign/calisign-icon-32.png` | Menu icon 32 × 32 | `e8b5a95ae40198dfd7f5c9527c458a48e2d3428b87c1d362cfe7cde46a9773ba` |
+| `app/static/branding/calisign/calisign-icon-64.png` | Navigation icon 64 × 64 | `f415f00dbf626eaea856db5690ecb2e502f79ebfec76ea3ea7db9851e1306930` |
+| `app/static/branding/calisign/calisign-identifier-dark@2x.png` | Primary identifier, dark backgrounds, where live text cannot be used (navy headers) | `017aa9736fe0a2e1c4be5ca3486715307883f0eaad9ce88ad20d632bd8975fe0` |
+| `app/static/branding/calisign/calisign-identifier-light@2x.png` | Primary identifier, light backgrounds, where live text cannot be used (email, PDF) | `00df1feac4924f47df0b96a5b22879f54a8be3062e34bec9deea68a694acb1d4` |
+| `app/static/branding/calisign/calisign-mark-dark.svg` | The CaliSIGN mark on dark backgrounds (office sidebar, navy headers) | `8f7cc5316454e18eb6595461aa3abbb5349d4315ebe945604ddd162e30455191` |
+| `app/static/branding/calisign/calisign-mark.svg` | The CaliSIGN mark on light backgrounds (buttons, signing screens, email, documents) | `13271c260bf54c126d0e7f07c9fdb44e88f8b1e196958138feb309e7aae8e13a` |
+| `docs/branding/calisign/calisign-approved-identity-sheet-2026-10-28.png` | The approved identity sheet (reference) | `0395c520f82d412cc9c3ecd73d6dfbe363a0e102640fecce17bea8910c94bc63` |

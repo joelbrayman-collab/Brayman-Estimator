@@ -6,6 +6,14 @@
 | Updated | 2026-09-04 |
 | Product | The Estimator / CalibraytAI |
 
+## Start here (current state)
+
+**Read [`docs/session-handoff.md`](docs/session-handoff.md) → "★ CURRENT RESUME POINT" first.** It is the one
+authoritative statement of what is canonical, what is live, what is gated and what is next, and it links the
+turnover record ([`docs/operations/turnover-2026-10-28.md`](docs/operations/turnover-2026-10-28.md)) and the
+source-of-truth map ([`docs/operations/source-of-truth.md`](docs/operations/source-of-truth.md)). Older status
+documents named below are historical where they disagree with it.
+
 ## Before you edit
 
 1. Read this file.

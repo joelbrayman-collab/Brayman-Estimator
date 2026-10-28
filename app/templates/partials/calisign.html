@@ -1,0 +1,7 @@
+{# CaliSIGN approved identity (Joel, 28 Oct 2026): docs/branding/calisign/README.md. Live text in IBM Plex Sans. #}
+{% macro calisign_mark(size=24, dark=False) -%}
+<img src="{{ url_for('static', filename='branding/calisign/calisign-mark-dark.svg' if dark else 'branding/calisign/calisign-mark.svg') }}" width="{{ size }}" height="{{ size }}" alt="" aria-hidden="true" class="calisign-mark">
+{%- endmacro %}
+{% macro calisign_identifier(size=34, dark=False, byline=True) -%}
+<span class="calisign-identifier{% if dark %} is-dark{% endif %}" style="--cs-size: {{ size }}px" role="img" aria-label="CaliSIGN by CalibraytAI">{{ calisign_mark((size * 1.75)|round|int, dark) }}<span class="calisign-words" aria-hidden="true"><span class="calisign-word"><span class="calisign-cali">Cali</span><span class="calisign-sign">SIGN</span></span>{% if byline %}<span class="calisign-by">BY CALIBRAYTAI</span>{% endif %}</span></span>
+{%- endmacro %}

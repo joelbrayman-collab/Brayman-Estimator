@@ -28,6 +28,18 @@ APPROVED = {
     "app/static/branding/calibraytai-app-icon-maskable-512.png": "2bedbfa356e82d89013d863e69e6ce7e37c19316802c302c177e89ea8b54fbb1",
     # Brayman Construction company logo (organization brand profile); first checksummed 18 Oct 2026.
     "app/static/branding/brayman-construction-logo.png": "948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9",
+    # Brayman logo for dark backgrounds, recovered from 5ebbfdb1 (Joel, 28 Oct 2026).
+    "app/static/branding/brayman-construction-logo-dark.png": "904667b4d0ea0d50ca69b77d731a9c918f16a6464ae579a0b7f38037a3332c44",
+    # CaliSIGN approved identity (Joel, 28 Oct 2026): docs/branding/calisign/README.md.
+    "app/static/branding/calisign/calisign-app-icon-128.png": "36bd7c3e0bbeb15b1ae70db3e66cf99b7065cbdd4ab47ebb6b9f8dfdbf6aeb9d",
+    "app/static/branding/calisign/calisign-app-icon-512.png": "3ff48c4a54d9dd779e21b8b0fce7ac8a4d4c2b62c24558075e2d822041bbb526",
+    "app/static/branding/calisign/calisign-icon-32.png": "e8b5a95ae40198dfd7f5c9527c458a48e2d3428b87c1d362cfe7cde46a9773ba",
+    "app/static/branding/calisign/calisign-icon-64.png": "f415f00dbf626eaea856db5690ecb2e502f79ebfec76ea3ea7db9851e1306930",
+    "app/static/branding/calisign/calisign-identifier-dark@2x.png": "017aa9736fe0a2e1c4be5ca3486715307883f0eaad9ce88ad20d632bd8975fe0",
+    "app/static/branding/calisign/calisign-identifier-light@2x.png": "00df1feac4924f47df0b96a5b22879f54a8be3062e34bec9deea68a694acb1d4",
+    "app/static/branding/calisign/calisign-mark-dark.svg": "8f7cc5316454e18eb6595461aa3abbb5349d4315ebe945604ddd162e30455191",
+    "app/static/branding/calisign/calisign-mark.svg": "13271c260bf54c126d0e7f07c9fdb44e88f8b1e196958138feb309e7aae8e13a",
+    "docs/branding/calisign/calisign-approved-identity-sheet-2026-10-28.png": "0395c520f82d412cc9c3ecd73d6dfbe363a0e102640fecce17bea8910c94bc63",
 }
 
 
@@ -52,4 +64,10 @@ def test_the_inventory_records_every_checksum():
 def test_no_unrecorded_image_in_the_branding_folder():
     folder = ROOT / "app" / "static" / "branding"
     present = {f"app/static/branding/{p.name}" for p in folder.iterdir() if p.is_file()}
+    assert present - set(APPROVED) == set()
+
+
+def test_no_unrecorded_file_in_the_calisign_folder():
+    folder = ROOT / "app" / "static" / "branding" / "calisign"
+    present = {f"app/static/branding/calisign/{p.name}" for p in folder.iterdir() if p.is_file()}
     assert present - set(APPROVED) == set()

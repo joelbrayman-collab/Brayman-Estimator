@@ -1,0 +1,8 @@
+/* CaliSIGN approved identity (Joel, 28 Oct 2026): docs/branding/calisign/README.md. */
+.calisign-identifier { display: inline-flex; align-items: center; gap: calc(var(--cs-size, 34px) * 0.35); font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 1; }
+.calisign-words { display: inline-flex; flex-direction: column; gap: calc(var(--cs-size, 34px) * 0.08); }
+.calisign-word { font-size: var(--cs-size, 34px); font-weight: 700; letter-spacing: -0.02em; }
+.calisign-cali, .calisign-by { color: #1f3a5f; }
+.calisign-sign { color: #c79a2b; }
+.calisign-by { font-size: max(9px, calc(var(--cs-size, 34px) * 0.24)); font-weight: 600; letter-spacing: 0.34em; padding-left: 0.2em; }
+.calisign-identifier.is-dark .calisign-cali, .calisign-identifier.is-dark .calisign-by { color: #ffffff; }

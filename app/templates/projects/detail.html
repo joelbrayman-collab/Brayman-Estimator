@@ -61,7 +61,7 @@
     </nav>
     <details class="page-more" data-page-more>
         <summary>More about this page</summary>
-        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p><p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p><p class="muted-copy">Choose what is being built and who does each stage; CalibraytAI brings the right calculator or quote to each one.</p><p class="muted-copy">Send the proposal to the client from the proposal page. The client accepts it on their link (or the office records an acceptance given another way). An accepted proposal stays immutable; its contract is then generated on the Contract page, ready to send.</p><p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p></div>
+        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p><p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p><p class="muted-copy">Choose the work and who does it; CalibraytAI brings the right calculator or quote to each one.</p><p class="muted-copy">Send the proposal to the client from the proposal page. The client accepts it on their link (or the office records an acceptance given another way). An accepted proposal stays immutable; its contract is then generated on the Contract page, ready to send.</p><p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p></div>
     </details>
 </div>
 
@@ -539,9 +539,22 @@
     <article class="panel panel-wide" id="hub-guided-estimate" data-hub-guided>
         <div class="panel-header">
             <h2>Guided estimate</h2>
-            {% if guided_summary %}<a href="{{ url_for('guided.workflow', project_id=project.id) }}">All stages</a>{% endif %}
+            {% if guided_summary and not guided_summary.selected %}<a href="{{ url_for('guided.workflow', project_id=project.id) }}">All stages</a>{% endif %}
+            {% if guided_summary and guided_summary.selected %}<a href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-hub-add-work>Add work</a>{% endif %}
         </div>
-        {% if guided_summary %}
+        {% if guided_summary and guided_summary.selected %}
+        {% set gs = guided_summary %}
+        {% if gs.names %}
+        <p class="muted-copy" data-hub-work>Estimating: {{ gs.names|join(', ') }} · {{ gs.done }} of {{ gs.included }} work item{{ '' if gs.included == 1 else 's' }} complete</p>
+        {% else %}
+        <p class="muted-copy" data-hub-work>No work chosen yet. <a href="{{ url_for('guided.scope', project_id=project.id) }}">What work are we doing?</a></p>
+        {% endif %}
+        <p>
+            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
+            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
+        </p>
+        {% elif guided_summary %}
         {% set gs = guided_summary %}
         <p class="muted-copy">{{ gs.guided.project_type_label }} · {{ gs.guided.contractor_role_label }} · {% if gs.guided.scope_status == 'FINALIZED' %}{{ gs.done }} of {{ gs.included }} stages complete{% else %}scope still a draft{% endif %}</p>
         <p>

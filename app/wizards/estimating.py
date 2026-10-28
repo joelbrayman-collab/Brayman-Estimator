@@ -35,9 +35,27 @@ def _g():
     return G
 
 
+def _W():
+    from app.services import selected_work as W
+
+    return W
+
+
+def _legacy(ctx):
+    """A scope started before 28 Oct 2026 keeps its stage list and its three stage steps."""
+    return ctx.guided is not None and not _W().is_selected_work(ctx.guided)
+
+
+def _selected(ctx):
+    return not _legacy(ctx)
+
+
 def _need_guided(ctx):
     if ctx.project is None:
         return StepView(TODO, "Choose the project first (step 1).", missing=["Choose the project first (step 1)."])
+    if _selected(ctx) and (ctx.guided is None or not _W().work_items(ctx.guided)):
+        return StepView(TODO, "Choose the work first (What work are we doing?).",
+                        missing=["Choose the work first (What work are we doing?)."])
     if ctx.guided is None:
         return StepView(TODO, "Confirm the project type and your role first (step 2).",
                         missing=["Confirm the project type and your role first (step 2)."])
@@ -48,6 +66,9 @@ def _need_scope(ctx):
     blocked = _need_guided(ctx)
     if blocked:
         return blocked
+    if ctx.guided.scope_status != "FINALIZED" and _selected(ctx):
+        return StepView(TODO, "Choose who does each piece of work first.",
+                        missing=["Choose who does each piece of work first."])
     if ctx.guided.scope_status != "FINALIZED":
         return StepView(TODO, "Finalize the construction scope first (step 4).",
                         missing=["Finalize the construction scope first (step 4)."])
@@ -111,7 +132,54 @@ def _choose_project(ctx, form):
     return "Project chosen."
 
 
-# ------------------------------------------------------------------------------------------------ 2 type & role
+# ------------------------------------------------------------------------------------------------ 2 the work
+def _work(ctx):
+    if ctx.project is None:
+        return StepView(TODO, "Choose the project first (step 1).", missing=["Choose the project first (step 1)."])
+    W = _W()
+    items = W.work_items(ctx.guided)
+    form_ctx = {"items": items, "catalogue": W.catalogue(), "chosen": {r.stage_key for r in items}}
+    rows = [Item(r.display_name, DONE, r.responsibility_label,
+                 url_for("guided.stage", project_id=ctx.project.id,
+                         stage_id=(r.children[0].id if r.is_split and r.children else r.id))) for r in items]
+    actions = [Action("Split materials and installation, or remove work",
+                      url_for("guided.scope", project_id=ctx.project.id), key="open-work")]
+    if not items:
+        return StepView(TODO, "What work are we doing?", missing=["Choose the work this estimate is for."],
+                        form="ge_work.html", form_ctx=form_ctx)
+    return StepView(DONE, "Estimating: " + ", ".join(r.display_name for r in items), items=rows, actions=actions,
+                    form="ge_work.html", form_ctx=form_ctx,
+                    note="Only this work is estimated. Anything you did not choose is not part of this estimate.")
+
+
+def _save_work(ctx, form):
+    W = _W()
+    from app.wizards.service import WizardError
+
+    if ctx.project is None:
+        raise WizardError("Choose the project first.")
+    keys = form.getlist("work") if hasattr(form, "getlist") else []
+    custom = (form.get("custom_name") or "").strip()
+    messages = []
+    try:
+        guided = W.ensure_scope(ctx.organization_id, ctx.project.id, actor=ctx.actor, user_id=ctx.user_id)
+        if keys or custom:
+            added = W.add_work(guided, keys=keys, custom_name=custom, actor=ctx.actor, user_id=ctx.user_id)
+            if added:
+                messages.append("Added: " + ", ".join(r.display_name for r in added) + ".")
+        for row in list(W.work_items(guided)):
+            value = (form.get(f"resp_{row.id}") or "").strip().upper()
+            if value and not row.is_split and value != row.responsibility:
+                W.set_responsibility(guided, row, value, actor=ctx.actor, user_id=ctx.user_id)
+                messages.append(f"{row.display_name}: {row.responsibility_label}.")
+    except (W.SelectedWorkError, _g().GuidedEstimatingError) as exc:
+        raise WizardError(str(exc)) from exc
+    if not W.work_items(guided):
+        raise WizardError("Choose the work this estimate is for.")
+    return " ".join(messages) or "Saved."
+
+
+# ------------------------------------------------------------------------------------------------ 2 type & role (legacy)
 def _type_role(ctx):
     if ctx.project is None:
         return StepView(TODO, "Choose the project first (step 1).", missing=["Choose the project first (step 1)."])
@@ -566,19 +634,26 @@ def _stage_manual(ctx):
 
 STEPS = (
     Step("project", "Select the project", "The existing project you are estimating.",
-         "Choose the project from this company's current projects.", "Next, confirm the project type and your role.",
+         "Choose the project from this company's current projects.", "Next, what work are we doing?",
          _select_project, handle=_choose_project, manual=lambda ctx: ("Start New Estimate", url_for("guided.start"))),
+    Step("work", "What work are we doing?",
+         "The work this estimate is for — only that work is estimated. Choose one or more, and who does each.",
+         "Choose the work (the headings only help you find it), then Internal or Subcontracted for each.",
+         "Next, the measurements and quantities of your crew's work, and quotations for subcontracted work.",
+         _work, handle=_save_work, continue_form=True, applies=_selected,
+         manual=lambda ctx: ("Work included in this project", url_for("guided.scope", project_id=ctx.project.id))
+         if ctx.project else None),
     Step("type_role", "Project type and your role", "What is being built and your role choose the construction stages.",
          "Confirm both. They are recorded once on the project's guided estimate.", "Next, review the stages.",
-         _type_role, handle=_start_guided, manual=_stage_manual),
+         _type_role, handle=_start_guided, manual=_stage_manual, applies=_legacy),
     Step("stages", "Review the construction stages", "The stages this kind of job normally has, in construction order.",
          "Read the list. Add a stage the job needs that is not listed.", "Next, decide who does each stage.",
-         _review_stages, manual=_stage_manual),
+         _review_stages, manual=_stage_manual, applies=_legacy),
     Step("scope", "Internal, Subcontracted or N/A", "Who does each stage: your crew, a subcontractor, or not in this job.",
          "Decide every stage (split a stage to decide its parts), then finalize the scope.",
          "Finalizing creates the project's estimate with one section per included stage.",
          _scope, manual=lambda ctx: ("Construction scope", url_for("guided.scope", project_id=ctx.project.id))
-         if ctx.project else None),
+         if ctx.project else None, applies=_legacy),
     Step("quantities", "Measurements and quantities", "The quantities each internal stage is priced from.",
          "Use the plan and its measurements; open each internal stage to calculate or enter its quantities.",
          "Next, finish each internal stage with its calculator, labour and costs.",
@@ -631,7 +706,7 @@ STEPS = (
 
 WIZARD = Wizard(
     key=WIZARD_GUIDED_ESTIMATING, side="CONTRACTOR", title="Guided Estimating",
-    short="Stage by stage: Internal or Subcontracted, calculators, quotes, costs, pricing, proposal, acceptance.",
+    short="Choose the work, then estimate it: quantities, calculators, quotes, costs, pricing, proposal, acceptance.",
     audience="Contractors and estimators",
     steps=STEPS, manual_label="Estimating workflow",
     manual_url=lambda ctx=None: (url_for("guided.workflow", project_id=ctx.project.id)

@@ -139,8 +139,11 @@ def test_start_a_new_project_end_to_end_creates_the_project_once(env):
     _step(d, run_id, "role", contractor_role="GENERAL_CONTRACTOR")
     guided = G.get_guided(ORG, project.id)
     assert (guided.project_type, guided.contractor_role) == ("NEW_HOME", "GENERAL_CONTRACTOR")
-    assert all(s.responsibility is None for s in guided.stages)
-    assert "14 construction stages" in d.get(f"/wizards/run/{run_id}/step/role")
+    # Since 28 Oct 2026 the scope is the selected work: no stage list is made here; the work is chosen in
+    # Guided Estimating (What work are we doing?).
+    assert guided.stages == []
+    role_page = d.get(f"/wizards/run/{run_id}/step/role")
+    assert "construction stages" not in role_page and "What work are we doing?" in role_page
     # Who does each stage is Guided Estimating's own step; the setup no longer asks it a second time.
     for retired in ("construction_scope", "applicable", "stages", "view_plan", "continue"):
         assert f'data-step-link="{retired}"' not in page

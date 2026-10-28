@@ -221,6 +221,68 @@ for (const [width, height] of [[1440, 800], [1366, 670]]) {
   });
 }
 
+// Month fit, independent of today (28 Oct 2026): the busiest week may be the first, a middle or the final row, in
+// a 5-row or a 6-row month; the whole month still fits the 1366 x 670 laptop page (1366 x 768 less the browser's
+// bars) and 1440 x 800, appointments stay readable with "+N more", and nothing scrolls sideways. Fixed months seeded
+// by tests/calendar_page_server.py (BUSY_MONTHS); the selected day is a Wednesday in the final week, the longest
+// day label, so the bar above the month is at its widest.
+const isoDays = (monday) => [...Array(7)].map((_, i) => { const d = new Date(`${monday}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + i); return d.toISOString().slice(0, 10); });
+for (const [width, height] of [[1366, 670], [1440, 800]]) {
+  for (const which of [0, 1]) {
+    test(`desktop ${width}x${height}: a ${which ? "6" : "5"}-row month with a busy first, middle and final week fits, readable`, async () => {
+      const spec = facts.busy_months[which];
+      const [y, m] = spec.month.split("-").map(Number);
+      const wednesday = isoDays(spec.weeks.final)[2];
+      const { ctx, pg, errors } = await signedIn(width, height);
+      await pg.goto(`${base}/schedule?year=${y}&month=${m}&day=${Number(wednesday.slice(8))}&view=month`);
+      if (Number(wednesday.slice(5, 7)) !== m) await pg.goto(`${base}/schedule?year=${y}&month=${m}&view=month`);
+      const box = await pg.locator("[data-month-scroll]").boundingBox();
+      assert.equal(await pg.locator("[data-month-scroll]").getAttribute("data-open-weeks"), String(spec.rows), "rows in the month");
+      const heading = await pg.locator(`[data-month-band="${spec.month}"]`).boundingBox();
+      assert.ok(heading.y >= box.y - 1 && heading.y <= box.y + 2, `month heading at the top ${JSON.stringify({ box, heading })}`);
+      // Every week of the month, the final one included, is on screen inside the month box.
+      const monthWeeks = await pg.locator(".home-week").evaluateAll((els, mm) => els.filter((w) => [...w.querySelectorAll(".home-day")]
+        .some((d) => (d.getAttribute("href") || "").includes(`year=${mm[0]}&month=${mm[1]}&`))).map((w) => w.getAttribute("data-week-start")), [y, m]);
+      assert.equal(monthWeeks.length, spec.rows, JSON.stringify(monthWeeks));
+      assert.equal(monthWeeks[monthWeeks.length - 1], spec.weeks.final, "the busy final week is the month's final row");
+      for (const start of monthWeeks) {
+        const row = await pg.locator(`.home-week[data-week-start="${start}"]`).first().boundingBox();
+        assert.ok(row.y >= box.y - 1, `${start} starts in the box`);
+        assert.ok(row.y + row.height <= box.y + box.height + 1, `${start} ends at ${row.y + row.height}, box ends ${box.y + box.height}`);
+        assert.ok(row.y + row.height <= height, `${start} ends at ${row.y + row.height} > ${height}`);
+        assert.ok(row.height >= 64, `${start} row ${row.height}px`);
+      }
+      assert.ok(box.y + box.height <= height, `month box ends at ${box.y + box.height} > ${height}`);
+      // Busy weeks stay usable: two entries a day, readable, then "+N more" that opens the day.
+      for (const [name, monday] of Object.entries(spec.weeks)) {
+        const week = pg.locator(`.home-week[data-week-start="${monday}"]`).first();
+        const bands = week.locator(".home-band");
+        assert.ok((await bands.count()) >= 2, `${name} week shows its entries`);
+        const band = await bands.first().boundingBox();
+        const rowBox = await week.boundingBox();
+        assert.ok(band.y + band.height <= rowBox.y + rowBox.height, `${name} week entries inside the row`);
+        const size = await bands.first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+        assert.ok(size >= 11, `${name} week entry text ${size}px`);
+        const more = week.locator("[data-more-day]").first();
+        assert.ok(await more.isVisible(), `${name} week shows +N more`);
+        const moreBox = await more.boundingBox();
+        assert.ok(moreBox.y + moreBox.height <= height, `${name} week +N more on screen`);
+      }
+      // The bar above the month stays on one row, so Print stays under New Appointment.
+      const appt = await pg.locator(".cal-new-appt").boundingBox();
+      const print = await pg.locator("[data-print-control] > summary").boundingBox();
+      assert.ok(print.y >= appt.y + appt.height && print.y - (appt.y + appt.height) < 16, JSON.stringify({ appt, print }));
+      await noSideways(pg, `${width} ${spec.month}`);
+      const more = pg.locator(`.home-week[data-week-start="${spec.weeks.final}"] [data-more-day]`).first();
+      const day = await more.getAttribute("data-more-day");
+      await Promise.all([pg.waitForURL(/view=day/), more.click()]);
+      assert.ok((await workspace(pg)).includes(`Busy 15:00 ${day}`), "+N more opens the day with everything");
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    });
+  }
+}
+
 test("desktop: a busy day shows two entries and +N more, which opens the day with everything", async () => {
   const { ctx, pg, errors } = await signedIn(1440, 800);
   await pg.goto(`${base}/schedule?${at(facts.monday)}&view=month`);

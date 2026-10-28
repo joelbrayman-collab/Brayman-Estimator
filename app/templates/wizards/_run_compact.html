@@ -50,6 +50,7 @@
     {% if view.note %}<p class="wz-note wzc-note">{{ view.note }}</p>{% endif %}
 
 
+    <p class="wzc-submit-status" data-submit-status role="status" aria-live="polite" hidden></p>
     <div class="wz-nav wzc-nav">
       {% if previous %}<button type="submit" name="wizard_action" value="back" class="wz-secondary" data-wizard-back formnovalidate>Back</button>{% endif %}
       <span class="wzc-spacer"></span>
@@ -102,6 +103,58 @@
   </footer>
 </div>
 <script>
+/* Save & Continue never looks dead (Production defect, 28 Oct 2026): the moment the step is sent, every button is
+   held, the pressed one says what is happening ("Uploading plans…" when a PDF is chosen, otherwise "Saving…"), a
+   second press sends nothing, and a PDF over the upload limit is stopped here with the reason. No invented
+   percentage: the browser's own page load shows the rest. Coming Back to the page releases the buttons. */
+(function () {
+  var form = document.querySelector("form.wz-nav-form");
+  if (!form) return;
+  var status = form.querySelector("[data-submit-status]");
+  var buttons = function () { return Array.prototype.slice.call(form.querySelectorAll("button[type=submit]")); };
+  function say(text, isError) {
+    if (!status) return;
+    status.textContent = text;
+    status.hidden = !text;
+    status.classList.toggle("is-error", !!isError);
+  }
+  function release() {
+    form.removeAttribute("data-submitting");
+    form.removeAttribute("aria-busy");
+    buttons().forEach(function (b) {
+      b.disabled = false;
+      b.removeAttribute("aria-disabled");
+      if (b.hasAttribute("data-label")) { b.textContent = b.getAttribute("data-label"); b.removeAttribute("data-label"); }
+    });
+    say("");
+  }
+  form.addEventListener("submit", function (event) {
+    if (form.hasAttribute("data-submitting")) { event.preventDefault(); return; }
+    var submitter = event.submitter || null;
+    var file = form.querySelector('input[type="file"]');
+    var chosen = file && file.files && file.files.length ? file.files[0] : null;
+    var limit = file ? parseInt(file.getAttribute("data-max-bytes") || "0", 10) : 0;
+    if (chosen && limit && chosen.size > limit) {
+      event.preventDefault();
+      say(chosen.name + " is " + (chosen.size / 1048576).toFixed(1) + " MB. The limit is " + Math.round(limit / 1048576) +
+          " MB. Choose a smaller PDF, or split the set and add each part.", true);
+      return;
+    }
+    var text = chosen ? "Uploading plans…" : "Saving…";
+    form.setAttribute("data-submitting", "1");
+    form.setAttribute("aria-busy", "true");
+    say(chosen ? "Uploading " + chosen.name + " — keep this page open." : "Saving…");
+    // Held after the browser has taken the pressed button's value for this submission.
+    setTimeout(function () {
+      buttons().forEach(function (b) {
+        b.disabled = true;
+        b.setAttribute("aria-disabled", "true");
+        if (b === submitter) { b.setAttribute("data-label", b.textContent); b.textContent = text; }
+      });
+    }, 0);
+  });
+  window.addEventListener("pageshow", function (event) { if (event.persisted) release(); });
+})();
 (function () {
   var form = document.querySelector("form[data-autosave]");
   if (!form || !window.fetch) return;

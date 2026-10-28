@@ -272,7 +272,18 @@ def get_stage(guided: GuidedEstimate, stage_id: int) -> GuidedEstimateStage:
 
 def spec_for(stage: GuidedEstimateStage) -> Optional[StageSpec]:
     key = stage.parent.stage_key if stage.parent is not None else stage.stage_key
-    return STAGES.get(key)
+    spec = STAGES.get(key)
+    if spec is None and key.startswith("work_"):
+        from app.services.selected_work import work_spec  # selected work (28 Oct 2026)
+
+        spec = work_spec(key)
+    return spec
+
+
+def _selected(guided) -> bool:
+    from app.services.selected_work import is_selected_work
+
+    return is_selected_work(guided)
 
 
 def part_for(stage: GuidedEstimateStage) -> Optional[Part]:
@@ -287,8 +298,12 @@ def part_for(stage: GuidedEstimateStage) -> Optional[Part]:
 
 # ---------------------------------------------------------------------------------------------- start
 def start_guided_estimate(*, organization_id: str, project_id: int, project_type: str, contractor_role: str,
-                          actor: str, user_id=None) -> GuidedEstimate:
-    """Begin (or return) the project's guided estimate. One per project: never a duplicate."""
+                          actor: str, user_id=None, legacy_stages: bool = False) -> GuidedEstimate:
+    """Begin (or return) the project's guided estimate (its scope). One per project: never a duplicate.
+
+    Since 28 Oct 2026 (Approach B) a new scope is the selected work: it starts with no work in it and the
+    contractor adds the work being done (``app/services/selected_work.py``). ``legacy_stages`` builds the earlier
+    project-type stage template; only fixtures for estimates made before then use it."""
     name = _actor(actor)
     project = get_project(organization_id, project_id)
     existing = get_guided(organization_id, project.id)
@@ -307,6 +322,13 @@ def start_guided_estimate(*, organization_id: str, project_id: int, project_type
                             actor_display_name=name, created_at=now, updated_at=now)
     db.session.add(guided)
     db.session.flush()
+    if not legacy_stages:
+        from app.services.selected_work import mark_selected_work
+
+        _event(guided, "STARTED", actor=name, to_value=project_type, detail=f"Role: {contractor_role}", user_id=user_id)
+        mark_selected_work(guided, actor=name, user_id=user_id)
+        db.session.commit()
+        return guided
     order = 0
     for key in TEMPLATES[project_type]:
         spec = STAGES[key]
@@ -393,10 +415,19 @@ def _require_not_committed(guided):
 
 
 # ---------------------------------------------------------------------------------------------- scope
+def scope_rows(guided) -> List[GuidedEstimateStage]:
+    """The top-level rows of the scope. In the selected-work model, removed work is not part of the estimate."""
+    if _selected(guided):
+        return [s for s in guided.top_stages if s.responsibility != RESP_NA]
+    return list(guided.top_stages)
+
+
 def leaf_stages(guided, *, include_na=True) -> List[GuidedEstimateStage]:
     """The stages and parts that are decided and estimated on their own, in construction order."""
     out = []
-    for stage in guided.top_stages:
+    if _selected(guided):
+        include_na = False
+    for stage in scope_rows(guided):
         rows = stage.children if stage.is_split else [stage]
         for row in rows:
             if include_na or row.responsibility != RESP_NA:
@@ -498,6 +529,9 @@ def change_responsibility(guided, stage, value, *, actor, reason="", user_id=Non
     value = (value or "").strip().upper() or None
     if value not in RESPONSIBILITIES:
         raise GuidedEstimatingError("Choose Internal, Subcontracted or N/A.")
+    if value == RESP_NA and _selected(guided):
+        raise GuidedEstimatingError("Choose Internal or Subcontracted. Work that is not being done is removed from "
+                                    "the Work page.")
     if stage.parent is None and stage.is_split:
         raise GuidedEstimatingError("This stage is decided part by part.")
     _change_responsibility(guided, stage, value, actor=name, reason=reason, user_id=user_id)
@@ -1197,7 +1231,7 @@ def workflow_view(guided) -> dict:
     rows = []
     counts = {s: 0 for s in STATUS_LABELS}
     outstanding = []
-    for stage in guided.top_stages:
+    for stage in scope_rows(guided):
         children = []
         if stage.is_split:
             for child in stage.children:
@@ -1231,7 +1265,7 @@ def workflow_view(guided) -> dict:
             "editable": version_is_editable(version), "accepted": accepted_proposal(guided),
             "resume": resume_stage(guided) if guided.scope_status == SCOPE_FINALIZED else None,
             "direct_cost": _money(sum((r["total"] for r in rows), Decimal("0"))),
-            "waiting_calculations": waiting_calculations(guided)}
+            "waiting_calculations": waiting_calculations(guided), "selected_work": _selected(guided)}
 
 
 def waiting_calculations(guided):
@@ -1247,10 +1281,12 @@ def waiting_calculations(guided):
 def guided_blockers(guided) -> List[str]:
     """Why the guided estimate is not ready for pricing and the proposal. Empty means every stage is resolved."""
     if guided.scope_status != SCOPE_FINALIZED:
+        if _selected(guided):
+            return ["Add the work this estimate is for."]
         return ["Finalize the construction scope (every stage Internal, Subcontracted or N/A)."]
     out = []
     version = current_version(guided)
-    for stage in guided.top_stages:
+    for stage in scope_rows(guided):
         status = effective_status(stage, version)
         if status in (STATUS_COMPLETE, STATUS_EXCLUDED):
             continue

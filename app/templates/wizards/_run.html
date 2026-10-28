@@ -50,7 +50,7 @@
       </div>
       {% endif %}
 
-      {% if view.form and not step.draft %}
+      {% if view.form and not step.draft and not step.continue_form %}
       <form method="post" action="{{ ctx.step_url(step.key) }}" class="wz-card wz-form" data-step-form>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="wizard_action" value="submit">
@@ -76,6 +76,11 @@
         <div class="wz-card wz-form" data-step-form data-draft-form>
           {% with f = view.form_ctx %}{% include "wizards/forms/" ~ view.form %}{% endwith %}
           <p class="wz-autosave" data-autosave-status aria-live="polite"></p>
+        </div>
+        {% elif step.continue_form and view.form and run.is_active %}
+        {# Sent by Save / Next / Save & Exit through the step's handle (never autosaved): it changes real records. #}
+        <div class="wz-card wz-form" data-step-form data-continue-form>
+          {% with f = view.form_ctx %}{% include "wizards/forms/" ~ view.form %}{% endwith %}
         </div>
         {% endif %}
         <p class="wz-next-text"><strong>Next:</strong> {{ step.next }}</p>

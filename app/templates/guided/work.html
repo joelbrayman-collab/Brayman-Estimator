@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{# Work included in this project (selected work, Joel 28 Oct 2026): the work chosen IS the estimate's scope.
+   Nothing else is listed, decided or counted. Every change goes through app/services/selected_work.py. #}
+{% block title %}Work — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Work included in this project{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+{% set locked = accepted is not none %}
+{% set rt = ("?return_to=" ~ return_to) if return_to else "" %}
+<div class="ge-wrap" data-work-page data-selected-work>
+  <p class="eyebrow">{{ project.name }}{% if project.client %} · {{ project.client.name }}{% endif %}</p>
+  {% if locked %}<p class="ge-warn">The customer accepted the proposal. Changes to the work now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>{% endif %}
+
+  {% if items %}
+  <section class="ge-card" id="work" data-progress="{{ progress[0] }}/{{ progress[1] }}">
+    <h2>{{ items|length }} work item{{ '' if items|length == 1 else 's' }}{% if progress[1] %} · {{ progress[0] }} of {{ progress[1] }} complete{% endif %}</h2>
+    <p class="ge-muted">Only this work is estimated. Choose who does each: your crew (Internal) or a subcontractor.</p>
+    <ul class="sw-list" data-work-list>
+      {% for row in items %}
+      <li class="sw-item" data-work-item="{{ row.stage_key }}" data-responsibility="{{ row.responsibility or 'MIXED' }}">
+        <div class="sw-head">
+          <a class="sw-name" href="{{ url_for('guided.stage', project_id=project.id, stage_id=row.id) if not row.is_split else url_for('guided.stage', project_id=project.id, stage_id=row.children[0].id) }}">{{ row.display_name }}</a>
+          <span class="ge-resp">{{ row.responsibility_label }}</span>
+        </div>
+        {% if not row.is_split %}
+        <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="sw-resp">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="responsibility"><input type="hidden" name="row_id" value="{{ row.id }}">
+          <span class="sw-label">Who is doing this work?</span>
+          <button type="submit" name="responsibility" value="INTERNAL" class="{{ 'ge-primary' if row.responsibility == 'INTERNAL' else 'ge-secondary' }}" {% if locked %}disabled{% endif %} data-set-internal="{{ row.stage_key }}" aria-pressed="{{ 'true' if row.responsibility == 'INTERNAL' else 'false' }}">Internal</button>
+          <button type="submit" name="responsibility" value="SUBCONTRACTED" class="{{ 'ge-primary' if row.responsibility == 'SUBCONTRACTED' else 'ge-secondary' }}" {% if locked %}disabled{% endif %} data-set-subcontracted="{{ row.stage_key }}" aria-pressed="{{ 'true' if row.responsibility == 'SUBCONTRACTED' else 'false' }}">Subcontracted</button>
+        </form>
+        {% else %}
+        <ul class="sw-parts" data-work-parts="{{ row.stage_key }}">
+          {% for part in row.children %}
+          <li data-work-part="{{ part.stage_key }}">
+            <a href="{{ url_for('guided.stage', project_id=project.id, stage_id=part.id) }}">{{ part.display_name }}</a>
+            <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="sw-resp">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="responsibility"><input type="hidden" name="row_id" value="{{ part.id }}">
+              <button type="submit" name="responsibility" value="INTERNAL" class="{{ 'ge-primary' if part.responsibility == 'INTERNAL' else 'ge-secondary' }}" {% if locked %}disabled{% endif %} aria-pressed="{{ 'true' if part.responsibility == 'INTERNAL' else 'false' }}">Internal</button>
+              <button type="submit" name="responsibility" value="SUBCONTRACTED" class="{{ 'ge-primary' if part.responsibility == 'SUBCONTRACTED' else 'ge-secondary' }}" {% if locked %}disabled{% endif %} aria-pressed="{{ 'true' if part.responsibility == 'SUBCONTRACTED' else 'false' }}">Subcontracted</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if not locked %}
+        <details class="sw-more">
+          <summary>More: split materials and installation, or remove</summary>
+          <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="split"><input type="hidden" name="row_id" value="{{ row.id }}">
+            {% if row.is_split %}
+            <button type="submit" name="split" value="0" class="ge-secondary" data-unsplit="{{ row.stage_key }}">Decide {{ row.display_name }} as a whole</button>
+            {% else %}
+            <button type="submit" name="split" value="1" class="ge-secondary" data-split="{{ row.stage_key }}">Decide materials and installation separately</button>
+            <span class="ge-muted">For example, your materials and a subcontractor's installation.</span>
+            {% endif %}
+          </form>
+          {% set held = removal[row.id] %}
+          {% if held %}
+          <p class="ge-muted" data-remove-blocked="{{ row.stage_key }}">{{ row.display_name }} has {{ held|join(', ') }}. Remove those from the estimate before removing the work; nothing is deleted without you.</p>
+          {% else %}
+          <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="remove"><input type="hidden" name="row_id" value="{{ row.id }}">
+            <label class="sw-confirm"><input type="checkbox" name="confirm" value="1" required data-remove-confirm="{{ row.stage_key }}"> {{ row.display_name }} is not part of this estimate</label>
+            <button type="submit" class="ge-secondary" data-remove-work="{{ row.stage_key }}">Remove</button>
+          </form>
+          {% endif %}
+        </details>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="ge-actions">
+      <a class="ge-primary" href="{{ url_for('guided.workflow', project_id=project.id) }}" data-open-workflow>Estimate this work</a>
+      {% if guided and guided.estimate %}<a class="ge-secondary" href="{{ url_for('estimates.view_estimate', id=guided.estimate.id) }}" data-open-estimate>Open the estimate</a>{% endif %}
+      {% if return_to %}<a class="ge-secondary" href="{{ return_to }}">Back</a>{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if not locked %}
+  <section class="ge-card" id="add-work" data-add-work>
+    <h2>{% if items %}Add work{% else %}What work are we doing?{% endif %}</h2>
+    <p class="ge-muted">Choose one or more. The headings only help you find the work; choosing work adds that work and nothing else.</p>
+    <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="add_work">
+      {% if estimate_id %}<input type="hidden" name="estimate_id" value="{{ estimate_id }}">{% endif %}
+      <label class="sw-search">Find work <input type="search" placeholder="Siding, windows, deck…" data-work-search autocomplete="off"></label>
+      {% for category in catalogue %}
+      <fieldset class="sw-category" data-work-category="{{ category.key }}">
+        <legend>{{ category.label }}</legend>
+        <div class="sw-choices">
+          {% for spec in category.items %}
+          <label class="sw-choice" data-work-choice="{{ spec.key }}" data-search-text="{{ (spec.name ~ ' ' ~ spec.explanation)|lower }}">
+            <input type="checkbox" name="work" value="{{ spec.key }}" {% if spec.key in chosen %}checked disabled{% endif %}>
+            <span><strong>{{ spec.name }}</strong>{% if spec.key in chosen %} <span class="ge-muted">(added)</span>{% endif %}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      {% endfor %}
+      <label class="sw-other">Other work, named <input type="text" name="custom_name" maxlength="120" placeholder="e.g. Septic system"></label>
+      <div class="ge-actions"><button type="submit" class="ge-primary" data-add-work-submit>Add work</button></div>
+    </form>
+  </section>
+  {% endif %}
+</div>
+<script>
+(function () {
+  var search = document.querySelector("[data-work-search]");
+  if (!search) return;
+  search.addEventListener("input", function () {
+    var q = search.value.trim().toLowerCase();
+    document.querySelectorAll("[data-work-choice]").forEach(function (el) {
+      el.hidden = q && el.getAttribute("data-search-text").indexOf(q) === -1;
+    });
+    document.querySelectorAll("[data-work-category]").forEach(function (fs) {
+      fs.hidden = q && !fs.querySelector("[data-work-choice]:not([hidden])");
+    });
+  });
+})();
+</script>
+{% endblock %}

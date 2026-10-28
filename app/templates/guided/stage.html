@@ -235,11 +235,11 @@
 
   {% if not accepted %}
   <details class="ge-card">
-    <summary>Change who does this {{ 'part' if stage.parent else 'stage' }}</summary>
+    <summary>Change who does this {{ 'part' if stage.parent else ('work' if selected_work else 'stage') }}</summary>
     <form method="post" action="{{ base }}responsibility" class="ge-form-row">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>Responsibility<select name="responsibility" required data-change-responsibility>
-        {% for key, label in [('INTERNAL','Internal'),('SUBCONTRACTED','Subcontracted'),('NA','N/A')] %}<option value="{{ key }}" {% if stage.responsibility == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        {% for key, label in ([('INTERNAL','Internal'),('SUBCONTRACTED','Subcontracted')] if selected_work else [('INTERNAL','Internal'),('SUBCONTRACTED','Subcontracted'),('NA','N/A')]) %}<option value="{{ key }}" {% if stage.responsibility == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
       </select></label>
       <label>Reason<input type="text" name="reason" maxlength="300"></label>
       <button class="ge-secondary" type="submit">Change</button>

@@ -49,6 +49,30 @@
     </div>
 </section>
 
+{% if work_panel %}
+<section class="form-panel" style="margin-bottom: 24px;" data-estimate-work>
+    {% if work_panel.legacy %}
+    <p class="eyebrow">Construction scope</p>
+    <p>This estimate uses the earlier list of construction stages. <a href="{{ url_for('guided.scope', project_id=estimate.project_id) }}">Open the construction scope</a> — you can switch it to selected work there.</p>
+    {% elif work_panel["items"] %}
+    <p class="eyebrow">What we are estimating</p>
+    <h2 data-estimating-what>{% for row in work_panel["items"] %}{{ row.display_name }}{{ ", " if not loop.last }}{% endfor %}</h2>
+    <p class="muted-copy">{{ work_panel.progress[0] }} of {{ work_panel.progress[1] }} work item{{ '' if work_panel.progress[1] == 1 else 's' }} complete</p>
+    <ul class="estimate-work-list">
+        {% for row in work_panel["items"] %}
+        <li data-estimate-work-item="{{ row.stage_key }}"><a href="{{ url_for('guided.stage', project_id=estimate.project_id, stage_id=(row.children[0].id if row.is_split and row.children else row.id)) }}">{{ row.display_name }}</a> — {{ row.responsibility_label }}</li>
+        {% endfor %}
+    </ul>
+    <p><a class="button" href="{{ url_for('guided.scope', project_id=estimate.project_id, estimate_id=estimate.id, return_to=request.path) }}#add-work" data-estimate-add-work>Add work</a>
+       <a class="button-link" href="{{ url_for('guided.workflow', project_id=estimate.project_id) }}">Estimate this work</a></p>
+    {% else %}
+    <p class="eyebrow">What we are estimating</p>
+    <p>No work chosen yet. Choose the work this estimate is for; only that work is estimated.</p>
+    <p><a class="button" href="{{ url_for('guided.scope', project_id=estimate.project_id, estimate_id=estimate.id, return_to=request.path) }}#add-work" data-estimate-add-work>Add work</a></p>
+    {% endif %}
+</section>
+{% endif %}
+
 {% if estimate.current_version %}
 <section class="form-panel version-current" style="margin-bottom: 24px;">
     <div class="page-heading" style="margin-bottom: 12px;">

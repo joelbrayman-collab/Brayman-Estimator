@@ -790,9 +790,11 @@ def test_existing_project_selection_starts_one_guided_estimate_only(env):
     d.post(f"/projects/{existing.id}/guided/start", data={"project_type": "NEW_HOME", "contractor_role": "SUBCONTRACTOR"})
     assert GuidedEstimate.query.filter_by(project_id=existing.id).count() == 1
     guided = G.get_guided(ORG, existing.id)
-    assert guided.project_type == "ADDITION_RENOVATION" and guided.top_stages[0].stage_key == "demolition"
-    d.scope(existing, {s.stage_key: "INTERNAL" for s in guided.top_stages}, action="finalize")
+    # Since 28 Oct 2026 a new scope is the selected work: nothing is listed until the work is chosen.
+    assert guided.project_type == "ADDITION_RENOVATION" and guided.top_stages == []
+    d.post(f"/projects/{existing.id}/guided/scope", data={"action": "add_work", "work": ["work_siding"]})
     guided = G.get_guided(ORG, existing.id)
+    assert [s.stage_key for s in guided.top_stages] == ["work_siding"]
     assert guided.estimate_id != estimate.id  # its own estimate; the existing one is untouched
     assert Project.query.filter_by(name=existing.name).count() == 1
 

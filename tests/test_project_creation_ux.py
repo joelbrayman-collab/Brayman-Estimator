@@ -294,7 +294,7 @@ def test_seven_focused_tasks_in_a_compact_page(env):
     assert [s.key for s in WIZARD.steps] == STEP_KEYS
     assert [s.title for s in WIZARD.steps] == [
         "Who is the customer?", "What are we building?", "Where is the job?", "What plans and drawings do we have?",
-        "What work are we responsible for?", "Who is leading it, and when?", "Does this look right?"]
+        "What is your role on this job?", "Who is leading it, and when?", "Does this look right?"]
     run_id = _start(d, "NEW_PROJECT")
     page = d.get(f"/wizards/run/{run_id}/step/customer")
     assert "data-compact-wizard" in page and "Start a New Project</strong> · <span" in page
@@ -334,6 +334,47 @@ def test_plans_step_uploads_here_and_never_blocks(env):
 
     assert [p.original_filename for p in project_plans(ORG, project.id)] == ["deck-plan.pdf"]
     assert 'data-step-state="done"' in d.get(f"/wizards/run/{run_id}/step/documents")
+
+
+def test_plans_step_sent_twice_keeps_one_plan_and_says_what_is_happening(env):
+    """Production, 28 Oct 2026: Save & Continue on Plans showed nothing while the PDF uploaded; a second press sent the
+    same PDF again. The page now says what is happening and holds its buttons; the same PDF sent twice is kept once,
+    and Step 5 follows both times."""
+    _app, d, _ben = env
+    from io import BytesIO
+
+    from app.services.project_work_package import project_plans
+    from tests.test_plan_upload import _make_searchable_pdf_bytes
+
+    run_id = _start(d, "NEW_PROJECT")
+    _post(d, run_id, "customer", **_new_customer(LINDA))
+    _post(d, run_id, "project_type", name="Twice deck (synthetic)", guided_project_type="OTHER",
+          project_type="New Build", status="Lead")
+    _create(d, run_id, street="2 Twice Rd", municipality="Kemptville", province_state="Ontario", postal_zip="",
+            country="Canada")
+    project = Project.query.filter_by(name="Twice deck (synthetic)").one()
+    page = d.get(f"/wizards/run/{run_id}/step/documents")
+    assert "data-submit-status" in page and 'data-max-bytes="' in page and "Uploading plans…" in page
+    pdf = _make_searchable_pdf_bytes("Deck plan sent twice (synthetic)")
+    for _ in range(2):
+        r = d.http.post(f"/wizards/run/{run_id}/step/documents",
+                        data={"wizard_action": "next", "plan_file": (BytesIO(pdf), "deck-plan.pdf")},
+                        content_type="multipart/form-data")
+        assert r.status_code == 302 and r.headers["Location"].endswith(f"/wizards/run/{run_id}/step/role")
+    assert [p.original_filename for p in project_plans(ORG, project.id)] == ["deck-plan.pdf"]
+    assert any("already on the project" in m for m in d.flashes())
+    # A different PDF is still added; a file that is not a PDF stays on Plans with the reason.
+    other = _make_searchable_pdf_bytes("Second sheet (synthetic)")
+    d.http.post(f"/wizards/run/{run_id}/step/documents",
+                data={"wizard_action": "next", "plan_file": (BytesIO(other), "sheet-2.pdf")},
+                content_type="multipart/form-data")
+    assert [p.original_filename for p in project_plans(ORG, project.id)] == ["deck-plan.pdf", "sheet-2.pdf"]
+    r = d.http.post(f"/wizards/run/{run_id}/step/documents",
+                    data={"wizard_action": "next", "plan_file": (BytesIO(b"not a pdf"), "notes.txt")},
+                    content_type="multipart/form-data")
+    assert r.headers["Location"].endswith(f"/wizards/run/{run_id}/step/documents")
+    assert any("Only PDF files are allowed" in m for m in d.flashes())
+    assert len(project_plans(ORG, project.id)) == 2
 
 
 def test_role_review_and_finish_into_guided_estimating(env):

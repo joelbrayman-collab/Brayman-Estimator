@@ -5,21 +5,24 @@
 {% block content %}
 <div class="ge-wrap" data-guided-workflow>
   {% from "wizards/_entry.html" import wizard_entry with context %}
-  {{ wizard_entry("GUIDED_ESTIMATING", "Guided Estimating wizard:", "the same stages, one step at a time.", url_for('wizards.start', wizard_key='GUIDED_ESTIMATING'), fields={"project_id": project.id}, manual_label="Continue Manually (this page)") }}
-  <p class="eyebrow">{{ project.name }} · {{ guided.project_type_label }} · {{ guided.contractor_role_label }}</p>
+  {{ wizard_entry("GUIDED_ESTIMATING", "Guided Estimating wizard:", "the same work, one step at a time." if view.selected_work else "the same stages, one step at a time.", url_for('wizards.start', wizard_key='GUIDED_ESTIMATING'), fields={"project_id": project.id}, manual_label="Continue Manually (this page)") }}
+  <p class="eyebrow">{{ project.name }}{% if not view.selected_work %} · {{ guided.project_type_label }} · {{ guided.contractor_role_label }}{% endif %}</p>
   {% if view.version %}<p class="ge-muted">Estimate {{ guided.estimate.estimate_number }} · {{ view.version.display_label }} ({{ view.version.status }}{% if view.version.is_locked %}, locked{% endif %})</p>{% endif %}
 
   <section class="ge-card" data-progress="{{ view.done }}/{{ view.included }}">
-    <h2>{{ view.done }} of {{ view.included }} stages complete</h2>
+    {% if view.selected_work %}<h2 data-estimating-what>Estimating: {% for row in view.rows %}{{ row.stage.display_name }}{{ ", " if not loop.last }}{% endfor %}</h2>
+    <p class="ge-muted">{{ view.done }} of {{ view.included }} work item{{ '' if view.included == 1 else 's' }} complete</p>
+    {% else %}<h2>{{ view.done }} of {{ view.included }} stages complete</h2>{% endif %}
     <div class="ge-progress" aria-label="Progress {{ view.percent }} percent"><span style="width: {{ view.percent }}%"></span></div>
     <p class="ge-muted" style="margin-top:8px;">
       {% for key, label in [('NOT_STARTED','Not Started'),('IN_PROGRESS','In Progress'),('WAITING_FOR_QUOTE','Waiting for Quote'),('NEEDS_REVIEW','Needs Review'),('COMPLETE','Complete'),('EXCLUDED','Excluded / N/A')] %}
-      <span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>
+      {% if not (view.selected_work and key == 'EXCLUDED') %}<span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>{% endif %}
       {% endfor %}
     </p>
     <div class="ge-actions">
       {% if view.resume %}<a class="ge-primary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
-      <a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>
+      {% if view.selected_work %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-add-work-link>Add work</a>
+      {% else %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>{% endif %}
       <a class="ge-secondary" data-internal-cost-link href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
       <a class="ge-secondary" data-pricing-link href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
       <a class="ge-secondary" href="{{ url_for('useful_calculators.index') }}">Calculators</a>
@@ -39,14 +42,16 @@
 
   {% if view.waiting_calculations %}
   <section class="ge-card ge-warn" data-waiting-calculations>
-    <h2>Calculations waiting for a stage</h2>
-    <p>Saved from a calculator. Choose the stage and send each one to the estimate review; nothing needs to be entered again.</p>
+    <h2>Calculations waiting for {{ 'a work item' if view.selected_work else 'a stage' }}</h2>
+    <p>Saved from a calculator. Choose the {{ 'work' if view.selected_work else 'stage' }} and send each one to the estimate review; nothing needs to be entered again.</p>
     <ul>{% for calc in view.waiting_calculations %}<li><a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-waiting-calculation="{{ calc.id }}">{{ calc.calculator_label }} — {{ calc.summary }}</a></li>{% endfor %}</ul>
   </section>
   {% endif %}
 
-  <h2>Stages, in construction order</h2>
-  <p class="ge-muted">Open any stage, in any order. A subcontractor's quote can take days: keep estimating the other stages while you wait.</p>
+  {% if view.selected_work %}<h2>Work</h2>
+  <p class="ge-muted">Open any work item, in any order. A subcontractor's quote can take days: keep estimating the other work while you wait.</p>
+  {% else %}<h2>Stages, in construction order</h2>
+  <p class="ge-muted">Open any stage, in any order. A subcontractor's quote can take days: keep estimating the other stages while you wait.</p>{% endif %}
   <ol class="ge-steps" data-stage-list>
     {% for row in view.rows %}
     <li data-stage="{{ row.stage.stage_key }}" data-status="{{ row.status }}">

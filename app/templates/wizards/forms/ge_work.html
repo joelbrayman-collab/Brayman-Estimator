@@ -1,0 +1,50 @@
+{# Guided Estimating · What work are we doing? (selected work, 28 Oct 2026). The same scope and the same service as
+   the manual Work page (app/services/selected_work.py): choose the work; Internal or Subcontracted for each. #}
+{% if f["items"] %}
+<fieldset class="wz-choices" data-work-list>
+  <legend>Work in this estimate — who is doing it?</legend>
+  {% for row in f["items"] %}
+  <div class="sw-item" data-work-item="{{ row.stage_key }}">
+    <strong>{{ row.display_name }}</strong>
+    {% if row.is_split %}
+    <span class="ge-resp">{{ row.responsibility_label }}: {% for part in row.children %}{{ part.display_name }} {{ part.responsibility_label }}{{ ", " if not loop.last }}{% endfor %}</span>
+    {% else %}
+    <label class="wz-choice"><input type="radio" name="resp_{{ row.id }}" value="INTERNAL" {% if row.responsibility == 'INTERNAL' %}checked{% endif %}> Internal (our crew)</label>
+    <label class="wz-choice"><input type="radio" name="resp_{{ row.id }}" value="SUBCONTRACTED" {% if row.responsibility == 'SUBCONTRACTED' %}checked{% endif %}> Subcontracted</label>
+    {% endif %}
+  </div>
+  {% endfor %}
+</fieldset>
+{% endif %}
+<fieldset class="wz-choices" data-add-work>
+  <legend>{% if f["items"] %}Add work{% else %}Choose the work — one or more{% endif %}</legend>
+  <label class="sw-search">Find work <input type="search" placeholder="Siding, windows, deck…" data-work-search autocomplete="off"></label>
+  {% for category in f["catalogue"] %}
+  <div class="sw-category" data-work-category="{{ category.key }}">
+    <p class="sw-category-label"><strong>{{ category.label }}</strong></p>
+    <div class="sw-choices">
+      {% for spec in category.items %}
+      <label class="sw-choice" data-work-choice="{{ spec.key }}" data-search-text="{{ (spec.name ~ ' ' ~ spec.explanation)|lower }}">
+        <input type="checkbox" name="work" value="{{ spec.key }}" {% if spec.key in f["chosen"] %}checked disabled{% endif %}> {{ spec.name }}{% if spec.key in f["chosen"] %} <span class="wz-optional">added</span>{% endif %}
+      </label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  <label class="sw-other">Other work, named <input type="text" name="custom_name" maxlength="120" placeholder="e.g. Septic system"></label>
+</fieldset>
+<script>
+(function () {
+  var search = document.querySelector("[data-work-search]");
+  if (!search) return;
+  search.addEventListener("input", function () {
+    var q = search.value.trim().toLowerCase();
+    document.querySelectorAll("[data-work-choice]").forEach(function (el) {
+      el.hidden = q && el.getAttribute("data-search-text").indexOf(q) === -1;
+    });
+    document.querySelectorAll("[data-work-category]").forEach(function (box) {
+      box.hidden = q && !box.querySelector("[data-work-choice]:not([hidden])");
+    });
+  });
+})();
+</script>

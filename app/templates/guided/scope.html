@@ -9,6 +9,18 @@
   <p class="ge-lede">For each stage choose who does the work. <strong>Internal</strong>: your own crew. <strong>Subcontracted</strong>: an outside contractor. <strong>N/A</strong>: not part of this project. Nothing is chosen for you; you can save a draft and come back.</p>
   {% if locked %}<p class="ge-warn">The customer accepted the proposal. Scope changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>{% endif %}
   {% if guided.scope_status == 'FINALIZED' %}<p class="ge-ok">The scope is finalized. <a href="{{ url_for('guided.workflow', project_id=project.id) }}">Open the estimating workflow</a>. Changes here are kept in the stage history.</p>{% endif %}
+  {% if not locked and can_convert %}
+  <section class="ge-card" data-convert-to-selected-work>
+    <h2>Switch this draft to selected work</h2>
+    <p>This estimate was started with the earlier list of every construction stage. Since 28 Oct 2026 an estimate is just the work you choose. Switching keeps the stages you marked <strong>Internal</strong> or <strong>Subcontracted</strong> as the work, with everything already entered; stages marked N/A or never decided leave the estimate. Every earlier decision stays in the history. Nothing changes unless you switch.</p>
+    <form method="post" class="ge-form-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="convert">
+      <label><input type="checkbox" name="confirm" value="1" required> Switch {{ project.name }} to selected work</label>
+      <button class="ge-secondary" type="submit" data-convert-draft>Switch to selected work</button>
+    </form>
+  </section>
+  {% endif %}
   {% if undecided %}<p class="ge-warn" data-undecided-count="{{ undecided|length }}">{{ undecided|length }} still to decide before the scope can be finalized.</p>{% endif %}
 
   <form method="post" id="stages">

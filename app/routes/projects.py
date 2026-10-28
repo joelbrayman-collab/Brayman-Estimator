@@ -218,13 +218,20 @@ def _guided_summary(project_id: int, organization_id: str):
     """The project's guided estimate, for the Project page (read only)."""
     from app.services.guided_estimating import get_guided, workflow_view
 
+    from app.services import selected_work as W
+
     guided = get_guided(organization_id, project_id)
     if guided is None:
         return None
+    if W.is_selected_work(guided):
+        items = W.work_items(guided)
+        done, total = W.progress(guided)
+        return {"guided": guided, "selected": True, "names": [row.display_name for row in items],
+                "done": done, "included": total}
     if guided.scope_status != "FINALIZED":
-        return {"guided": guided, "done": 0, "included": 0}
+        return {"guided": guided, "selected": False, "done": 0, "included": 0}
     view = workflow_view(guided)
-    return {"guided": guided, "done": view["done"], "included": view["included"]}
+    return {"guided": guided, "selected": False, "done": view["done"], "included": view["included"]}
 
 
 def _project_calculations(project_id: int, organization_id: str):
@@ -633,7 +640,14 @@ def _guided_after_create(project, org_id, options):
         db.session.rollback()
         flash(f"The project was saved. {exc} You can start the estimate from the project page.", "error")
     if guided is not None:
-        if record is not None:
+        from app.services import selected_work as W
+        if W.is_selected_work(guided):
+            if record is not None:
+                flash(f"Your {record.calculator_label} result is saved on the project. What work are we doing? "
+                      "Add the work it belongs to; the result then waits for that work's review.", "success")
+            else:
+                flash("Project saved. What work are we doing?", "success")
+        elif record is not None:
             flash(f"Your {record.calculator_label} result is saved on the project. Choose who does each stage and "
                   "finalize the scope; the result then waits for its stage's review.", "success")
         else:

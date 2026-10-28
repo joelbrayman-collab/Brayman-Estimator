@@ -215,9 +215,10 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.match(await contractCard.innerText(), /Contract status Generated — not signed/);
     assert.match(await contractCard.innerText(), /Contract amount 1552\.42/);
     const sendContract = page.locator('form[action*="/send-for-signature"]');
+    if (!(await sendContract.isVisible())) await page.locator("[data-calisign-send-open]").first().click();
     assert.equal(await sendContract.locator("[name=signer_name]").inputValue(), "E2E Lifecycle Client");
     await sendContract.locator("[name=signer_email]").fill("e2e.lifecycle.client@example.invalid");
-    await ben.submit(sendContract.getByRole("button", { name: "Send contract for signature" }));
+    await ben.submit(sendContract.getByRole("button", { name: "Send for E-Signature" }));
     assert.match(await ben.flash(), /Invitation issued/);
     const signLink = (await page.locator("[data-signing-invitation]").inputValue()).replace(/^https?:\/\/[^/]+/, base);
     await customer.go(signLink);
@@ -227,11 +228,11 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await customer.submit(customer.page.getByRole("button", { name: "Sign & Accept" }));
     assert.match(await customer.body(), /You have signed this document/);
     await ben.go(`/projects/${projectId}/contract`);
-    assert.match(await page.locator("[data-signing-overlay]").innerText(), /SIGNED/);
+    assert.match(await page.locator("[data-signing-overlay]").innerText(), /Awaiting Your Signature/);
     await ben.submit(page.getByRole("button", { name: "Countersign" }));
     assert.match(await ben.flash(), /Countersigned/);
     assert.match(await page.locator("[id^=contract-snapshot-]").first().innerText(), /Contract status Signed — executed/);
-    const signed = await ben.ctx.request.get(`${base}${await page.getByRole("link", { name: "Download signed contract" }).getAttribute("href")}`);
+    const signed = await ben.ctx.request.get(`${base}${await page.getByRole("link", { name: "Download Executed Copy" }).getAttribute("href")}`);
     assert.equal(signed.status(), 200);
     assert.equal((await signed.body()).subarray(0, 5).toString(), "%PDF-");
     // The Project page tells Ben the contract is signed.
@@ -393,7 +394,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     // Supplier Native Signing (FG-041): Ben signs the order; the store signs when it confirms.
     await order.locator("[name=sign_consent]").check();
     await order.locator("[name=signer_name]").fill("Ben Synthetic");
-    await ben.submit(order.getByRole("button", { name: "Sign and place order" }));
+    await ben.submit(order.getByRole("button", { name: "Sign & Send for E-Signature" }));
     const po = (await ben.flash()).match(/Purchase order (PO-\d{4}-\d{4}) signed and sent/)[1];
     assert.match(await page.locator("[data-po]").innerText(), /Waiting for the supplier to confirm/);
     // Dana confirms: the delivery is agreed.
@@ -402,7 +403,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     const confirm = dana.page.locator("[data-confirm-order]");
     await confirm.locator("[name=sign_consent]").check();
     await confirm.locator("[name=signer_name]").fill("Dana Synthetic");
-    await dana.submit(confirm.getByRole("button", { name: "Sign and confirm order" }));
+    await dana.submit(confirm.getByRole("button", { name: "Sign & Confirm Order" }));
     assert.match(await dana.flash(), new RegExp(`Order ${po} signed and confirmed`));
     await ben.go(`/projects/${projectId}/supplier-requests`);
     assert.match(await page.locator("[data-po]").innerText(), new RegExp(`agreed delivery ${iso(inDays(1))} 7:00–9:00\\. The order is agreed`));
@@ -436,13 +437,13 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     const padOrder = page.locator(`article[data-share="${padNo}"] [data-place-order]`);
     await padOrder.locator("[name=sign_consent]").check();
     await padOrder.locator("[name=signer_name]").fill("Ben Synthetic");
-    await ben.submit(padOrder.getByRole("button", { name: "Sign and place order" }));
+    await ben.submit(padOrder.getByRole("button", { name: "Sign & Send for E-Signature" }));
     const padPo = (await ben.flash()).match(/Purchase order (PO-\d{4}-\d{4}) signed and sent/)[1];
     await dana.go(padUrl);
     const padConfirm = dana.page.locator("[data-confirm-order]");
     await padConfirm.locator("[name=sign_consent]").check();
     await padConfirm.locator("[name=signer_name]").fill("Dana Synthetic");
-    await dana.submit(padConfirm.getByRole("button", { name: "Sign and confirm order" }));
+    await dana.submit(padConfirm.getByRole("button", { name: "Sign & Confirm Order" }));
     await ben.go(`/projects/${projectId}/supplier-requests`);
     const padCancel = page.locator(`article[data-share="${padNo}"] [data-cancel-order]`);
     await padCancel.locator("summary").click();
@@ -568,9 +569,10 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await page.locator('form[action$="/status"] select[name=status]').selectOption("Approved");
     await ben.submit(page.locator('form[action$="/status"] button[type=submit]'));
     const coSend = page.locator('form[action$="/send-for-signature"]');
+    if (!(await coSend.isVisible())) await page.locator("[data-calisign-send-open]").first().click();
     await coSend.locator("[name=signer_name]").fill("E2E Lifecycle Client");
     await coSend.locator("[name=signer_email]").fill("e2e.lifecycle.client@example.invalid");
-    await ben.submit(coSend.getByRole("button", { name: "Send for Signature" }));
+    await ben.submit(coSend.getByRole("button", { name: "Send for E-Signature" }));
     assert.match(await ben.flash(), /Invitation issued/);
     const coLink = (await page.locator("[data-signing-invitation]").inputValue()).replace(/^https?:\/\/[^/]+/, base);
     await customer.go(coLink);
@@ -582,7 +584,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.go(coUrl);
     await ben.submit(page.getByRole("button", { name: "Countersign" }));
     assert.match(await ben.flash(), /Countersigned/);
-    assert.match(await ben.main(), /CUSTOMER SIGNATURE\s+(SIGNED|EXECUTED)/i);
+    assert.match(await page.locator("[data-signing-overlay]").innerText(), /Executed/);
     await ben.go(hubUrl);
     let hub = await ben.main();
     assert.match(hub, /APPROVED\/INVOICED CO REVENUE DELTA\s+\$600\.00/i);

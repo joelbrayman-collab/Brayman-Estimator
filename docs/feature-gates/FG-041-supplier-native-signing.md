@@ -85,3 +85,11 @@ with `-x` onto `main` `66c93062`.
   production consent version created on first use. It is **not approved**. This branch is not merged into `main`,
   because the next Live release from `main` would put that wording in front of real suppliers. Merge, migration
   and release wait for Joel's approval of the wording and of the migration.
+
+## CaliSIGN presentation (28 Oct 2026)
+
+Branch `feature/calisign-native-esignature-2026-10-28`, stacked on this reconcile branch: the supplier signing above
+is unchanged in behaviour; it gains CaliSIGN wording (Sign & Send for E-Signature, Sign & Confirm Order, Sign &
+Accept), the adopt-signature preview, status chips and a CaliSIGN email to the store. Consent
+`CONSENT-SUPPLIER-V1-001` is still **not approved**; the migration is still **not applied live**.
+See `docs/operations/calisign-native-esignature.md`.

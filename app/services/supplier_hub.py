@@ -753,7 +753,8 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
     _notify_supplier(order, f"New purchase order {order.number}",
                      f"{order.placed_by_name} placed purchase order {order.number} (${total} before tax)"
                      + (f" for delivery {_when(order.delivery_date, order.delivery_window)}" if order.delivery_date else "")
-                     + ". Please confirm it in the Supplier Hub.")
+                     + ". Please confirm it in the Supplier Hub.",
+                     signing={"kind": "purchase order", "label": order.number})
     return order
 
 
@@ -1146,7 +1147,10 @@ def request_delivery_change(order, *, side: str, user, new_date, new_window: str
                f"Reason: {reason}." + (f" Note: {change.note}" if change.note else "")
                + " Please accept it, propose another time or decline.")
     subject = f"Delivery change requested: {order.number} → {_when(day, change.new_window)}"
-    (_notify_supplier if side == "CONTRACTOR" else _notify_contractor)(order, subject, message)
+    if side == "CONTRACTOR":
+        _notify_supplier(order, subject, message, signing={"kind": "delivery change for", "label": order.number})
+    else:
+        _notify_contractor(order, subject, message)
     return change
 
 
@@ -1225,20 +1229,30 @@ def withdraw_delivery_change(change, *, side: str, user):
     db.session.commit()
 
 
-def _send(users, subject: str, body: str, link: str, order) -> None:
-    """Email every recipient; also text those who entered a mobile number and agreed to texts."""
-    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE
+def _send(users, subject: str, body: str, link: str, order, signing: Optional[dict] = None) -> None:
+    """Email every recipient; also text those who entered a mobile number and agreed to texts.
+    CaliSIGN (28 Oct 2026): a document waiting for the recipient's signature goes as the CaliSIGN supplier
+    invitation (same recipients, same link, same text message)."""
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE, TEMPLATE_SIGNING_SUPPLIER_INVITATION
     from app.services.text_messages import send_text_to_user
     from app.services.transactional_email import send_transactional_message
 
+    template, variables = TEMPLATE_DELIVERY_SCHEDULE, {"subject": subject, "body": body, "link": link}
+    if signing:
+        from app.services import supplier_signing
+        from app.services.signing_mail import public_signing_url
+
+        template = TEMPLATE_SIGNING_SUPPLIER_INVITATION
+        variables = {"organization_name": supplier_signing._names(order)[0], "document_kind": signing["kind"],
+                     "document_label": signing["label"], "reason": body, "link": link,
+                     "asset_base": public_signing_url("/static/branding/")}
     seen = set()
     for user in users:
         if user is None or not user.is_active or user.id in seen:
             continue
         seen.add(user.id)
         try:
-            send_transactional_message(TEMPLATE_DELIVERY_SCHEDULE, user.email,
-                                       variables={"subject": subject, "body": body, "link": link},
+            send_transactional_message(template, user.email, variables=variables,
                                        related_type="supplier_purchase_order", related_id=order.id)
         except Exception:
             pass  # a notice never blocks the schedule record itself
@@ -1248,12 +1262,12 @@ def _send(users, subject: str, body: str, link: str, order) -> None:
             pass
 
 
-def _notify_supplier(order, subject: str, body: str) -> None:
+def _notify_supplier(order, subject: str, body: str, signing: Optional[dict] = None) -> None:
     from app.services.signing_mail import public_signing_url
 
     members = SupplierUserMembership.query.filter_by(supplier_id=order.supplier_id, status=MEMBERSHIP_ACTIVE).all()
     link = public_signing_url(f"/supplier/{order.supplier_id}/requests/{order.share_id}")
-    _send([m.user for m in members], subject, body, link, order)
+    _send([m.user for m in members], subject, body, link, order, signing=signing)
     from app.models.supplier_portal import SupplierNotificationNumber
     from app.services.text_messages import send_text
 

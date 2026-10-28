@@ -602,7 +602,7 @@ step("13 purchase order: concrete request to the supplier, the store quotes in t
   const confirm = store.pg.locator("[data-confirm-order]");
   await confirm.locator("[name=sign_consent]").check();
   await confirm.locator("[name=signer_name]").fill("Store Synthetic");
-  await submit(store.pg, store.pg.getByRole("button", { name: "Sign and confirm order" }));
+  await submit(store.pg, store.pg.getByRole("button", { name: "Sign & Confirm Order" }));
   await shot(store.pg, "13-purchase-order", "supplier-confirmed");
   await go(pg, `/projects/${W.projectId}/supplier-requests`);
   assert.match(await pg.locator("main").innerText(), /[Cc]onfirmed/);

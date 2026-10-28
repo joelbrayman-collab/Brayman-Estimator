@@ -166,7 +166,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
 
     # The order carries the site address; the supplier confirms it.
     order_page = supplier.get(f"/supplier/{account.supplier_id}/requests/{share.id}")
-    assert b"Arcy" in order_page.data and b"Sign and confirm order" in order_page.data
+    assert b"Arcy" in order_page.data and b"Sign &amp; Confirm Order" in order_page.data
     supplier.post(f"/supplier/{account.supplier_id}/orders/{order.id}/confirm",
                   data={**SIGN, "action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
     order = db.session.get(SupplierPurchaseOrder, order.id)
@@ -424,7 +424,7 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
                                 scheduled_end=agreed, organization_id=project.organization_id)
     order.schedule_item_id = item.id
     db.session.commit()
-    before = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count()
+    before = _supplier_notices(DARCY[1]).count()
 
     shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
 
@@ -433,7 +433,7 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     assert change.new_date == agreed + timedelta(days=2) and change.new_window == "7:00–9:00"
     assert "Foundation pour" in change.note and "+2 days" in change.note
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # not imposed
-    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 1
+    assert _supplier_notices(DARCY[1]).count() == before + 1
     # Joel, 19 Oct 2026 (release blocker): a second move while our first request is waiting replaces it.
     # The supplier is never left answering a date the work no longer has.
     shift_project_schedule(project.id, days=1, organization_id=project.organization_id)
@@ -443,7 +443,7 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     assert fresh.new_date == agreed + timedelta(days=3) and fresh.new_window == "7:00–9:00"
     assert "replaces the earlier request" in fresh.note and "+1 day" in fresh.note
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed  # still not imposed
-    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 2
+    assert _supplier_notices(DARCY[1]).count() == before + 2
     # The old request can no longer be accepted; the fresh one can, and then delivery and work agree.
     darcy.post(f"/supplier/{tomlinson.supplier_id}/delivery-changes/{change.id}/answer", data={**SIGN, "action": "accept"})
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
@@ -477,12 +477,12 @@ def test_moving_the_work_back_withdraws_the_waiting_request_and_tells_the_suppli
     project, tomlinson, darcy, order, item, agreed = _linked_pour(app, client)
     shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
     waiting = SupplierDeliveryChange.query.one()
-    before = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count()
+    before = _supplier_notices(DARCY[1]).count()
     shift_project_schedule(project.id, days=-2, organization_id=project.organization_id)  # back on the agreed day
     assert db.session.get(SupplierDeliveryChange, waiting.id).status == "WITHDRAWN"
     assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 0
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
-    assert TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=DARCY[1]).count() == before + 1
+    assert _supplier_notices(DARCY[1]).count() == before + 1
     assert SupplierRequestEvent.query.filter_by(event_type="DELIVERY_CHANGE_WITHDRAWN").count() == 1
 
 
@@ -510,7 +510,7 @@ def test_delivery_notices_email_the_right_people_and_texts_stay_not_sent_until_t
     project, tomlinson, darcy, darcy_user, order = _concrete_order(app, client)
     save_contact(darcy_user, mobile_phone="613-555-0101", opt_in=True)
     other = _give_sign_in(client, _bmr_account_of(project), name="BMR only", email="bmr.only@example.invalid")
-    sent = TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE)
+    sent = _supplier_notices()
     assert {m.to_email for m in sent} >= {DARCY[1], DEFAULT_OFFICE_EMAIL}  # order to Darcy, confirmation to Ben
     app.config["TESTING"] = False  # production behaviour without Twilio settings
     try:
@@ -521,7 +521,17 @@ def test_delivery_notices_email_the_right_people_and_texts_stay_not_sent_until_t
     texts = TextMessage.query.filter_by(to_phone="+16135550101").all()
     assert texts and all(t.status == "NOT_CONFIGURED" and t.error_code == "TWILIO_SETTINGS_MISSING" for t in texts)
     assert SupplierDeliveryChange.query.one().status == "PENDING"  # the change is recorded although no text went out
-    assert not TransactionalMessage.query.filter_by(template_id=TEMPLATE_DELIVERY_SCHEDULE, to_email=other.email).count()
+    assert not _supplier_notices(other.email).count()
+
+
+def _supplier_notices(to_email=None):
+    """Delivery notices, and (CaliSIGN, 28 Oct 2026) documents sent to the store for its signature: the same notice,
+    now as the CaliSIGN supplier invitation (a new order, a delivery change the store must sign)."""
+    from app.models.transactional_message import TEMPLATE_DELIVERY_SCHEDULE, TEMPLATE_SIGNING_SUPPLIER_INVITATION
+
+    query = TransactionalMessage.query.filter(TransactionalMessage.template_id.in_(
+        (TEMPLATE_DELIVERY_SCHEDULE, TEMPLATE_SIGNING_SUPPLIER_INVITATION)))
+    return query.filter_by(to_email=to_email) if to_email else query
 
 
 def _bmr_account_of(project):

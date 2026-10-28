@@ -25,16 +25,16 @@
         <tbody>{% for line in order.lines_json %}<tr><td data-label="No.">{{ line.number }}</td><td>{{ line.description }}</td><td data-label="SKU">{{ line.sku }}</td><td data-label="Qty">{{ line.quantity }}</td><td data-label="Unit">{{ line.unit }}</td><td data-label="Net unit cost">{{ line.net_unit_cost }}</td><td data-label="Total">{{ line.line_value }}</td></tr>{% endfor %}</tbody>
     </table></div>
     {% set osign = order_signing(order) %}
-    {% if osign %}{{ signing_line(osign, url_for('supplier_portal.signed_document', supplier_id=supplier.id, request_id=osign.id)) }}{% endif %}
+    {% if osign %}{{ signing_line(osign, url_for('supplier_portal.signed_document', supplier_id=supplier.id, request_id=osign.id), side='SUPPLIER') }}{% endif %}
     {% if order.status == "PLACED" %}
-    <form method="post" action="{{ url_for('supplier_portal.confirm', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid" data-confirm-order="true">
+    <form method="post" action="{{ url_for('supplier_portal.confirm', supplier_id=supplier.id, order_id=order.id) }}" class="form-grid" data-confirm-order="true" data-calisign-once>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Delivery date you can make <input type="date" name="expected_delivery" value="{{ order.delivery_date.isoformat() if order.delivery_date else '' }}"></label>
         <label>Time window <input type="text" name="delivery_window" value="{{ order.delivery_window or '' }}" placeholder="7:00–9:00"></label>
         <label>Note to the contractor <input type="text" name="note"></label>
         {{ sign_fields(order) }}
         <div class="form-actions">
-            <button type="submit" name="action" value="confirm" class="button is-primary">Sign and confirm order</button>
+            <button type="submit" name="action" value="confirm" class="button is-primary calisign-btn is-primary" data-calisign-confirm>Sign &amp; Confirm Order</button>
             <button type="submit" name="action" value="problem" class="button-secondary">Report a problem</button>
         </div>
     </form>

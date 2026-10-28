@@ -37,6 +37,7 @@ from app.models.transactional_message import (
     TEMPLATE_SIGNING_COMPLETE,
     TEMPLATE_SIGNING_INVITATION,
     TEMPLATE_SIGNING_RESEND,
+    TEMPLATE_SIGNING_SUPPLIER_INVITATION,
     TEMPLATE_SUPPLIER_QUOTE,
     TRANSACTIONAL_TEMPLATE_IDS,
     TransactionalMessage,
@@ -71,6 +72,7 @@ class TransportPayload:
     subject: str
     text_body: str
     variables: Mapping[str, Any]
+    html_body: Optional[str] = None  # CaliSIGN invitations (28 Oct 2026); the text body is always sent too
 
 
 @dataclass
@@ -213,14 +215,17 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         org = str(variables.get("organization_name") or "CalibraytAI")
         document = str(variables.get("document_label") or "a document")
         kind = str(variables.get("document_kind") or "document")
+        project = str(variables.get("project_name") or "").strip()
         expiry = str(variables.get("expires_display") or "").strip()
         expiry_line = f"This invitation expires {expiry}.\n" if expiry else ""
         subject = f"{org}: {kind} ready to Review & Sign"
         body = (
-            f"{org} has a {kind} ready for your signature: {document}.\n\n"
-            "Review & Sign\n"
+            f"{org} has a {kind} ready for your signature: {document}"
+            + (f" (project: {project})" if project else "") + ".\n\n"
+            "Review & Sign — open the secure link below to review the document and sign it electronically "
+            "(CaliSIGN by CalibraytAI). No CalibraytAI account is needed.\n"
             f"{expiry_line}"
-            f"{url}\n"
+            f"Review and Sign Document: {url}\n"
         )
         return subject, body
     if template_id == TEMPLATE_SIGNING_RESEND:
@@ -232,10 +237,24 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         expiry_line = f"This invitation expires {expiry}.\n" if expiry else ""
         subject = f"{org}: current {kind} signing link"
         body = (
-            f"{org} sent the current signing link for {document}.\n\n"
-            "Review & Sign using this current signing link.\n"
+            f"{org} sent the current signing link for {document}. Any earlier link no longer works.\n\n"
+            "Review & Sign using this current signing link. No CalibraytAI account is needed.\n"
             f"{expiry_line}"
-            f"{url}\n"
+            f"Review and Sign Document: {url}\n"
+        )
+        return subject, body
+    if template_id == TEMPLATE_SIGNING_SUPPLIER_INVITATION:
+        url = str(variables.get("link") or "")
+        org = str(variables.get("organization_name") or "The contractor")
+        document = str(variables.get("document_label") or "a purchase order")
+        kind = str(variables.get("document_kind") or "purchase order")
+        reason = str(variables.get("reason") or "").strip()
+        subject = f"{org}: {kind} {document} ready for your signature"
+        body = (
+            f"{org} sent {kind} {document} for your signature.\n"
+            + (f"{reason}\n" if reason else "") + "\n"
+            "Sign in to the Supplier Hub to review the document and sign it (CaliSIGN by CalibraytAI).\n"
+            f"Review and Sign Document: {url}\n"
         )
         return subject, body
     if template_id == TEMPLATE_SIGNING_COMPLETE:
@@ -250,6 +269,36 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         )
         return subject, body
     raise TransactionalEmailError("Unsupported transactional template.")
+
+
+# CaliSIGN (28 Oct 2026): the signing emails also go as HTML in the approved CaliSIGN treatment
+# (templates/emails/calisign_message.html). The plain-text body above is unchanged in meaning and always sent.
+_CALISIGN_HTML_TEMPLATES = None
+
+
+def _calisign_templates():
+    global _CALISIGN_HTML_TEMPLATES
+    if _CALISIGN_HTML_TEMPLATES is None:
+        from app.models.transactional_message import (
+            TEMPLATE_SIGNING_COMPLETE as _C,
+            TEMPLATE_SIGNING_INVITATION as _I,
+            TEMPLATE_SIGNING_RESEND as _R,
+            TEMPLATE_SIGNING_SUPPLIER_INVITATION as _S,
+        )
+
+        _CALISIGN_HTML_TEMPLATES = {_I, _R, _C, _S}
+    return _CALISIGN_HTML_TEMPLATES
+
+
+def _render_html(template_id: str, variables: Mapping[str, Any], subject: str) -> Optional[str]:
+    if template_id not in _calisign_templates():
+        return None
+    try:
+        from flask import render_template
+
+        return render_template("emails/calisign_message.html", template_id=template_id, v=variables, subject=subject)
+    except Exception:  # noqa: BLE001 - the text email still goes if the HTML cannot be made
+        return None
 
 
 class LocalCaptureTransport:
@@ -273,6 +322,9 @@ class LocalCaptureTransport:
         )
         with open(path, "w", encoding="utf-8") as handle:
             handle.write(content)
+        if payload.html_body:
+            with open(path[:-4] + ".html", "w", encoding="utf-8") as handle:
+                handle.write(payload.html_body)
         return TransportResult(
             status=STATUS_LOCAL_CAPTURED,
             provider=PROVIDER_LOCAL,
@@ -295,6 +347,8 @@ def postmark_request_payload(payload: TransportPayload) -> dict[str, str]:
         "Subject": payload.subject,
         "TextBody": payload.text_body,
     }
+    if payload.html_body:
+        body["HtmlBody"] = payload.html_body
     if payload.reply_to:
         body["ReplyTo"] = payload.reply_to
     return body
@@ -403,6 +457,8 @@ class SmtpTransport:
         message_id = make_msgid(domain=payload.from_email.rsplit("@", 1)[-1])
         message["Message-ID"] = message_id
         message.set_content(payload.text_body)
+        if payload.html_body:
+            message.add_alternative(payload.html_body, subtype="html")
         factory = current_app.config.get("SMTP_FACTORY") or smtplib.SMTP
         try:
             with factory(host, port, timeout=20) as client:
@@ -490,6 +546,7 @@ def send_transactional_message(
         subject=subject,
         text_body=text_body,
         variables=vars_map,
+        html_body=_render_html(template_id, vars_map, subject),
     )
     allowlist = _allowlist()
     provider_name = _config_str("TRANSACTIONAL_EMAIL_PROVIDER", PROVIDER_LOCAL).lower()

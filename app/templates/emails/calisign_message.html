@@ -1,0 +1,58 @@
+{# CaliSIGN email (Joel, 28 Oct 2026): the HTML version of the signing emails, in the approved CaliSIGN treatment
+   (docs/branding/calisign/README.md): white card, gold rule, the CaliSIGN identifier image, navy and gold only,
+   IBM Plex Sans with Helvetica/Arial fallbacks. Every word also goes in the plain-text version. Nothing here names a
+   synthetic person or company: every value comes from the signing request. #}
+{%- set org = v.organization_name or "The contractor" -%}
+{%- set kind = v.document_kind or "document" -%}
+{%- set document = v.document_label or "" -%}
+{%- set first = (v.signer_name or "").split(" ")[0] if v.signer_name else "" -%}
+{%- set url = v.invitation_url or v.link or "" -%}
+{%- set base = v.asset_base or "/static/branding/" -%}
+{%- set supplier = template_id == "SIGNING_SUPPLIER_INVITATION" -%}
+{%- set complete = template_id == "SIGNING_COMPLETE" -%}
+{%- set resend = template_id == "SIGNING_RESEND" -%}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>{{ subject }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f5f2;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f5f2;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #e2ddd4;border-radius:12px;font-family:'IBM Plex Sans','Helvetica Neue',Helvetica,Arial,sans-serif;color:#1c1f24;">
+<tr><td style="padding:18px 28px;border-bottom:3px solid #c79a2b;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+<td style="font-size:18px;font-weight:700;color:#1f3a5f;">{{ org }}</td>
+<td align="right"><img src="{{ base }}calisign/calisign-identifier-light@2x.png" width="150" alt="CaliSIGN by CalibraytAI" style="display:block;width:150px;height:auto;border:0;"></td>
+</tr></table>
+</td></tr>
+<tr><td style="padding:26px 28px 8px;">
+{% if complete %}
+<p style="margin:0 0 12px;font-size:22px;font-weight:700;">Signing is complete</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:1.55;">Signing is complete for {{ document }}. Contact {{ org }} if you need a copy of the completed document. This message does not include a new signing link.</p>
+{% else %}
+<p style="margin:0 0 12px;font-size:22px;font-weight:700;">{% if resend %}Your current signing link{% else %}Signature requested{% endif %}</p>
+<p style="margin:0 0 12px;font-size:15px;line-height:1.55;">{% if first %}Hi {{ first }},{% else %}Hello,{% endif %}</p>
+<p style="margin:0 0 16px;font-size:15px;line-height:1.55;">{% if supplier %}{{ org }} sent {{ kind }} {{ document }} for your signature.{% elif resend %}{{ org }} sent the current signing link for your {{ kind|lower }}. Any earlier link no longer works.{% else %}{{ org }} has sent you a {{ kind|lower }} to review and sign.{% endif %}{% if v.reason %} {{ v.reason }}{% endif %}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f2ee;border-radius:10px;margin:0 0 18px;">
+{% if v.project_name %}<tr><td style="padding:10px 14px 2px;width:110px;font-size:14px;color:#6b6f76;">Project</td><td style="padding:10px 14px 2px;font-size:14px;font-weight:600;">{{ v.project_name }}</td></tr>{% endif %}
+<tr><td style="padding:{{ '2px' if v.project_name else '10px' }} 14px 2px;width:110px;font-size:14px;color:#6b6f76;">Document</td><td style="padding:{{ '2px' if v.project_name else '10px' }} 14px 2px;font-size:14px;font-weight:600;">{{ kind }} {{ document }}</td></tr>
+{% if v.expires_display %}<tr><td style="padding:2px 14px 10px;font-size:14px;color:#6b6f76;">Link expires</td><td style="padding:2px 14px 10px;font-size:14px;font-weight:600;">{{ v.expires_display }}</td></tr>{% else %}<tr><td colspan="2" style="padding:0 0 8px;"></td></tr>{% endif %}
+</table>
+{% if url %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;"><tr><td align="center" style="border-radius:10px;background:#c79a2b;">
+<a href="{{ url }}" style="display:block;padding:14px 18px;font-size:16px;font-weight:700;color:#141414;text-decoration:none;border-radius:10px;">Review and Sign Document</a>
+</td></tr></table>
+{% endif %}
+<p style="margin:0 0 16px;font-size:13px;line-height:1.55;color:#6b6f76;">{% if supplier %}Sign in to the Supplier Hub with your usual sign-in to review and sign. The signed copy stays with the order for both sides.{% else %}This link is personal to you and opens without a CalibraytAI account. You review the exact document, agree to sign electronically, type your name and select Sign &amp; Accept.{% endif %} If you have questions, reply to this email or contact {{ org }}.</p>
+{% endif %}
+</td></tr>
+<tr><td style="padding:12px 28px;background:#f4f2ee;border-top:1px solid #e2ddd4;border-radius:0 0 12px 12px;font-size:12px;color:#6b6f76;">CaliSIGN by CalibraytAI — electronic signing built into {{ org }}'s project system.</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

@@ -86,7 +86,7 @@ def test_place_order_needs_the_contractors_signature_and_freezes_the_purchase_or
     store.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote", data={"price_per_m3": "210", "valid_until": delivery})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
     page = client.get(f"/projects/{project.id}/supplier-requests")
-    assert b"Sign and place order" in page.data and b'name="signer_name"' in page.data and b'name="sign_consent"' in page.data
+    assert b"Sign &amp; Send for E-Signature" in page.data and b'name="signer_name"' in page.data and b'name="sign_consent"' in page.data
 
     for missing in ({"signer_name": "Ben Contractor"}, {"sign_consent": "yes"}, {"sign_consent": "yes", "signer_name": " "}):
         refused = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
@@ -116,7 +116,7 @@ def test_the_store_signs_in_the_hub_to_confirm_and_both_sides_get_the_signed_cop
     project, tomlinson, store, share, delivery = _placed_concrete(app, client)
     order = SupplierPurchaseOrder.query.one()
     page = store.get(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}")
-    assert b"Sign and confirm order" in page.data and b"waiting to sign" in page.data and b"signed by Ben Contractor" in page.data
+    assert b"Sign &amp; Confirm Order" in page.data and b"waiting to sign" in page.data and b"signed by Ben Contractor" in page.data
 
     refused = store.post(f"/supplier/{tomlinson.supplier_id}/orders/{order.id}/confirm",
                          data={"action": "confirm", "expected_delivery": delivery}, follow_redirects=True)

@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/v1-refinement.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/supplier-hub.css') }}">
+    {# CaliSIGN (28 Oct 2026): signing panels and the typed-signature preview. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calisign.css', v='cs-2') }}">
+    <script src="{{ url_for('static', filename='js/calisign.js', v='cs-2') }}" defer></script>
     {% block head_extra %}{% endblock %}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>

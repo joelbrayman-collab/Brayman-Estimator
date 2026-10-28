@@ -45,3 +45,10 @@ the email header (gold rule, the contractor's own logo on the right); the office
 The concept images Joel shared on 28 Oct 2026 set the direction (document + signature, gold SIGN, BY CALIBRAYTAI,
 navy tiles); this identity reproduces that direction in the approved CalibraytAI colours and font. The concept
 images themselves are not assets.
+
+## In use (28 Oct 2026, native e-signature)
+
+The signing page, office panel, Supplier Hub signature box and emails use these assets and tokens only. The typed
+signature preview uses Dancing Script 600 (SIL Open Font License), served from
+`app/static/fonts/dancing-script/` with its licence; it renders the signer's own typed name and is not a brand
+asset. No other font, colour or mark was added.

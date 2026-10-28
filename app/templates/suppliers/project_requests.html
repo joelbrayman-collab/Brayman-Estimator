@@ -41,7 +41,7 @@
         <p data-po="{{ order.status }}"><strong>Purchase order {{ order.number }}</strong>{% if order.schedule_item_id %} <span class="muted-copy">(follows the project schedule: moving that work proposes a new delivery to the supplier)</span>{% endif %} — {{ "${:,.2f}".format(order.total) }} placed {{ order.placed_at.strftime("%B %d, %Y") }} by {{ order.placed_by_name }}.
         {% if order.status == "PLACED" %}Waiting for the supplier to confirm.{% elif order.status == "CONFIRMED" %}Confirmed by {{ order.supplier_responded_by_name }}{% if row.schedule and row.schedule.date %}; agreed delivery {{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% endif %}. The order is agreed.{% elif order.status == "PROBLEM" %}The supplier reported a problem: {{ order.supplier_note }}{% elif order.status == "CANCELLED" %}<strong data-po-cancelled="true">Cancelled</strong>{% if row.closure and row.closure.by %} by {{ row.closure.by }} on {{ row.closure.at.strftime("%B %d, %Y") }}{% endif %}{% if row.closure and row.closure.reason %}. Reason: {{ row.closure.reason }}{% endif %}.{% elif order.status == "DELIVERED" %}<strong data-po-delivered="{{ row.closure.day.isoformat() if row.closure and row.closure.day else '' }}">Delivered</strong>{% if row.closure and row.closure.day %} on {{ when(row.closure.day, None) }}{% endif %}{% if row.closure and row.closure.by %} (recorded by {{ row.closure.by }}){% endif %}{% if row.closure and row.closure.note %}. Note: {{ row.closure.note }}{% endif %}.{% endif %}</p>
         {% set osign = order_signing(order) %}
-        {% if osign %}{{ signing_line(osign, url_for('supplier_office.signed_document', project_id=project.id, request_id=osign.id)) }}{% endif %}
+        {% if osign %}{{ signing_line(osign, url_for('supplier_office.signed_document', project_id=project.id, request_id=osign.id), side='CONTRACTOR') }}{% endif %}
         {% if order.status in ("PLACED", "CONFIRMED", "PROBLEM") %}
         {{ delivery_panel(order, row.schedule, row.pending, row.changes, reasons, "CONTRACTOR", "supplier_office", {"project_id": project.id}, share.supplier.legal_name) }}
         <div class="order-actions" data-order-actions="{{ order.id }}">
@@ -71,7 +71,7 @@
         {% if row.blockers %}
         <p class="muted-copy" data-order-blocked="true">To place the order: {{ row.blockers|join(" ") }}</p>
         {% else %}
-        <form method="post" action="{{ url_for('supplier_office.order', project_id=project.id, share_id=share.id) }}" class="form-grid" data-place-order="{{ share.id }}">
+        <form method="post" action="{{ url_for('supplier_office.order', project_id=project.id, share_id=share.id) }}" class="form-grid" data-place-order="{{ share.id }}" data-calisign-once>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             {% set ns = namespace(t=0) %}{% for l in row.lines %}{% set ns.t = ns.t + (l.line_value|float) %}{% endfor %}
             <p>{{ row.lines|length }} line{{ "s" if row.lines|length != 1 }}, total ${{ "%.2f"|format(ns.t) }} before tax. The site address goes to the supplier with the order.</p>
@@ -83,7 +83,8 @@
             <label>Site contact <input type="text" name="site_contact"></label>
             <label>Notes for the supplier <input type="text" name="notes"></label>
             {{ sign_fields(share) }}
-            <div class="form-actions"><button type="submit" class="button is-primary">Sign and place order</button></div>
+            <p class="calisign-note" data-calisign-po-note>Signing places the purchase order and sends it to {{ share.supplier.legal_name if share.supplier is defined and share.supplier else "the store" }} to review and sign in the Supplier Hub (CaliSIGN).</p>
+            <div class="form-actions"><button type="submit" class="button is-primary calisign-btn is-primary" data-calisign-po-send>Sign &amp; Send for E-Signature</button></div>
         </form>
         {% endif %}
         {% endif %}

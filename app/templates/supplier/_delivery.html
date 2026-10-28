@@ -14,15 +14,15 @@
         <p><strong>Change requested by {{ pending.requested_by_name }}</strong> on {{ pending.requested_at|local_time("%b %d at %H:%M") }}:
             {{ when(pending.previous_date, pending.previous_window) }} → <strong>{{ when(pending.new_date, pending.new_window) }}</strong>. Reason: {{ pending.reason }}.{% if pending.note %} “{{ pending.note }}”{% endif %}</p>
         {% set csign = change_signing(pending) %}
-        {% if csign %}{{ signing_line(csign, url_for(ep ~ '.signed_document', request_id=csign.id, **kw)) }}{% endif %}
+        {% if csign %}{{ signing_line(csign, url_for(ep ~ '.signed_document', request_id=csign.id, **kw), side=my_side) }}{% endif %}
         {% if pending.requested_by_side != my_side %}
         <p class="muted-copy">The delivery above stands until you answer.</p>
-        <form method="post" action="{{ url_for(ep ~ '.answer_change', change_id=pending.id, **kw) }}" class="form-grid" data-answer-change="{{ pending.id }}">
+        <form method="post" action="{{ url_for(ep ~ '.answer_change', change_id=pending.id, **kw) }}" class="form-grid" data-answer-change="{{ pending.id }}" data-calisign-once>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label>Note (required to decline) <input type="text" name="note"></label>
             {{ sign_fields(order) }}
             <div class="form-actions">
-                <button type="submit" name="action" value="accept" class="button is-primary">Sign and accept {{ when(pending.new_date, pending.new_window) }}</button>
+                <button type="submit" name="action" value="accept" class="button is-primary">Sign &amp; Accept {{ when(pending.new_date, pending.new_window) }}</button>
                 <button type="submit" name="action" value="decline" class="button-secondary">Decline</button>
             </div>
             <p class="muted-copy">To accept, or to propose another time, tick the box and type your name: that is your signature on the change. Declining needs no signature.</p>
@@ -31,7 +31,7 @@
                     <label>Date <input type="date" name="counter_date"></label>
                     <label>Time window <input type="text" name="counter_window" placeholder="10:00–12:00"></label>
                     <label>Reason <select name="counter_reason">{% for r in reasons %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
-                    <div class="form-actions"><button type="submit" name="action" value="counter" class="button-secondary">Sign and propose this time</button></div>
+                    <div class="form-actions"><button type="submit" name="action" value="counter" class="button-secondary">Sign &amp; Propose This Time</button></div>
                 </div>
             </details>
         </form>
@@ -52,7 +52,7 @@
             <label>Reason * <select name="reason">{% for r in reasons %}<option value="{{ r }}">{{ r }}</option>{% endfor %}</select></label>
             <label>Note <input type="text" name="note" placeholder="Rain forecast Thursday"></label>
             {{ sign_fields(order) }}
-            <div class="form-actions"><button type="submit" class="button-secondary">Sign and send the change to {{ other_label }}</button></div>
+            <div class="form-actions"><button type="submit" class="button-secondary">Sign &amp; Send the Change to {{ other_label }}</button></div>
         </form>
         <p class="muted-copy">{{ other_label|capitalize }} is notified and must accept and sign. Until then the current delivery stands.</p>
     </details>

@@ -1,9 +1,14 @@
+/* CaliSIGN signing ceremony (FG-033; CaliSIGN treatment, Joel, 28 Oct 2026).
+   One responsive ceremony for the office computer and the phone. No device-specific forks.
+   Approved colours only: navy #1f3a5f and gold #c79a2b (docs/branding/calisign/README.md) and the app's neutrals. */
 :root {
     --gold: #c79a2b;
+    --navy: #1f3a5f;
     --black: #141414;
     --cream: #f4f2ee;
     --text: #1c1f24;
-    --muted: #3d4148;
+    --muted: #4b5563;
+    --border: #e2ddd4;
     --white: #ffffff;
     --danger: #8b1e1e;
     --ok: #1d5c38;
@@ -13,9 +18,7 @@
     --sign-pad-left: env(safe-area-inset-left, 0px);
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html,
 body {
@@ -30,100 +33,79 @@ body.sign-body {
     color: var(--text);
     font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 1.45;
-    padding: calc(16px + var(--sign-pad-top)) calc(16px + var(--sign-pad-right)) calc(28px + var(--sign-pad-bottom)) calc(16px + var(--sign-pad-left));
+    padding: calc(12px + var(--sign-pad-top)) calc(16px + var(--sign-pad-right)) calc(28px + var(--sign-pad-bottom)) calc(16px + var(--sign-pad-left));
 }
+
+.sign-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 28rem;
+    margin: 0 auto 12px;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-bottom: 3px solid var(--gold);
+    border-radius: 12px;
+}
+
+.sign-from { min-width: 0; }
+.sign-org { font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--navy); }
+.sign-from-line { margin: 0; font-size: 0.9rem; }
+.sign-brand { flex-shrink: 0; }
 
 .sign-main {
     max-width: 28rem;
     margin: 0 auto;
 }
 
-.sign-brand {
-    margin: 0 0 16px;
-}
-
-.sign-brand img {
-    display: block;
-    height: 44px;
-    width: auto;
-}
-
-.sign-org {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0 0 4px;
-}
-
-.sign-muted {
-    color: var(--muted);
-    margin: 0 0 12px;
-}
+.sign-muted { color: var(--muted); margin: 0 0 12px; }
+.sign-eyebrow { margin: 0 0 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
 .sign-panel {
     background: var(--white);
-    border: 2px solid var(--black);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .sign-banner {
     background: #fff3cd;
-    border: 2px solid var(--black);
+    border: 1px solid #e6c766;
     border-radius: 12px;
     padding: 12px 14px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     font-weight: 600;
 }
 
-.sign-ok {
-    color: var(--ok);
-    font-weight: 700;
-    font-size: 1.15rem;
-    margin: 0 0 8px;
-}
+.sign-ok { color: var(--ok); font-weight: 700; font-size: 1.1rem; margin: 0 0 8px; }
+.sign-who { font-weight: 600; }
+.sign-error { color: var(--danger); font-weight: 600; margin: 0 0 12px; }
+.sign-doc-title { font-size: 1.2rem; font-weight: 700; margin: 0 0 6px; color: var(--text); }
+.sign-hash { font-size: 0.8rem; word-break: break-all; color: var(--muted); }
+.sign-consent { white-space: pre-wrap; margin: 0 0 12px; font-size: 0.92rem; background: var(--cream); border-radius: 8px; padding: 10px 12px; }
 
-.sign-who {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0 8px;
-}
+/* The steps: 1 Review · 2 Consent · 3 Adopt · 4 Sign & Accept · 5 Confirmation. */
+.sign-steps { list-style: none; margin: 0 0 12px; padding: 10px 12px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; font-size: 0.72rem; font-weight: 600; color: var(--muted); text-align: center; }
+.sign-steps li { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sign-step-num { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #9aa0a8; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: var(--muted); background: var(--white); flex-shrink: 0; }
+.sign-steps li.is-current { color: var(--text); }
+.sign-steps li.is-current .sign-step-num { background: var(--gold); border-color: var(--gold); color: var(--black); }
+.sign-steps li.is-done .sign-step-num { background: #e8f3ec; border-color: var(--ok); color: var(--ok); }
+.sign-step-title { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 1.05rem; }
+.sign-step-title .sign-step-num { background: var(--navy); border-color: var(--navy); color: var(--white); }
 
-.sign-error {
-    color: var(--danger);
-    font-weight: 600;
-    margin: 0 0 12px;
-}
-
-.sign-doc-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 8px;
-}
-
-.sign-hash {
-    font-size: 0.8rem;
-    word-break: break-all;
-    color: var(--muted);
-}
-
-.sign-consent {
-    white-space: pre-wrap;
-    margin: 0 0 16px;
-}
-
-.sign-label {
-    display: block;
-    font-weight: 600;
-    margin: 12px 0 8px;
-}
+.sign-label { display: block; font-weight: 600; margin: 4px 0 6px; }
 
 .sign-check {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin: 12px 0 16px;
+    margin: 8px 0 4px;
     min-height: 44px;
+    font-weight: 600;
 }
 
 .sign-check input {
@@ -131,6 +113,7 @@ body.sign-body {
     height: 24px;
     min-width: 24px;
     margin-top: 2px;
+    accent-color: var(--navy);
 }
 
 .sign-input {
@@ -138,11 +121,14 @@ body.sign-body {
     width: 100%;
     min-height: 48px;
     padding: 12px 14px;
-    border: 2px solid var(--black);
+    border: 1px solid #9aa0a8;
     border-radius: 10px;
     font: inherit;
     font-size: 1.05rem;
+    margin-bottom: 10px;
 }
+
+.sign-input:focus-visible, .sign-btn:focus-visible, .sign-check input:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
 
 .sign-btn {
     display: flex;
@@ -151,9 +137,9 @@ body.sign-body {
     min-height: 48px;
     width: 100%;
     margin: 8px 0;
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-radius: 10px;
-    border: 2px solid var(--black);
+    border: 1px solid var(--border);
     font: inherit;
     font-weight: 700;
     text-decoration: none;
@@ -165,51 +151,73 @@ body.sign-body {
 
 .sign-btn-primary {
     background: var(--gold);
+    border-color: var(--gold);
     color: var(--black);
     min-height: 56px;
     font-size: 1.15rem;
 }
 
-.sign-btn-decline {
-    background: var(--white);
-    color: var(--danger);
-}
+.sign-btn-primary[disabled] { opacity: 0.75; cursor: progress; }
+.sign-btn-review { border-color: var(--navy); color: var(--navy); }
+.sign-btn-decline { background: transparent; border-color: transparent; color: var(--danger); font-weight: 600; min-height: 44px; }
+.sign-form-decline { margin-top: 0; }
+.sign-sha-label { margin: 12px 0 4px; font-weight: 600; }
+.sign-foot { margin: 4px 0 0; font-size: 0.82rem; color: var(--muted); text-align: center; }
+.sign-preview { margin-top: 4px; }
 
-.sign-form-decline {
-    margin-top: 8px;
-}
+/* The document viewer: the frozen PDF itself, never a substitute. Shown beside the panel on a desktop. */
+.sign-viewer { display: none; }
+.sign-viewer-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.sign-viewer-title { font-weight: 700; }
+.sign-viewer-open { color: var(--navy); font-weight: 600; }
+.sign-viewer-frame { display: block; width: 100%; height: 100%; min-height: 70vh; border: 0; background: #e9e7e2; }
 
-.sign-sha-label {
-    margin: 12px 0 4px;
-    font-weight: 600;
-}
+/* Confirmation. */
+.sign-done { text-align: center; padding: 22px 18px; }
+.sign-done-mark { width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%; background: #e8f3ec; color: var(--ok); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; }
+.sign-thanks { margin: 0 0 6px; }
+.sign-done-script { margin: 4px auto 12px; max-width: 22rem; text-align: center; }
+.sign-facts { margin: 0 0 12px; text-align: left; display: grid; gap: 6px; background: var(--cream); border-radius: 10px; padding: 10px 14px; }
+.sign-facts > div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 8px; }
+.sign-facts dt { color: var(--muted); font-weight: 600; }
+.sign-facts dd { margin: 0; overflow-wrap: anywhere; }
+.sign-pending { text-align: left; background: #fbf4df; border-radius: 10px; padding: 10px 12px; }
 
 /* One responsive ceremony. Desktop + iPhone / mobile. No device-specific forks. */
 
 @media (min-width: 768px) {
     body.sign-body {
-        padding: calc(32px + var(--sign-pad-top)) calc(40px + var(--sign-pad-right)) calc(40px + var(--sign-pad-bottom)) calc(40px + var(--sign-pad-left));
+        padding: calc(24px + var(--sign-pad-top)) calc(32px + var(--sign-pad-right)) calc(40px + var(--sign-pad-bottom)) calc(32px + var(--sign-pad-left));
     }
 
-    .sign-main {
+    .sign-main, .sign-top {
         max-width: 42rem;
     }
 
     .sign-panel {
-        padding: 24px 28px;
+        padding: 18px 22px;
     }
 
     .sign-doc-title {
-        font-size: 1.45rem;
-    }
-
-    .sign-org {
         font-size: 1.35rem;
     }
 
-    .sign-brand img {
-        height: 48px;
+    .sign-org {
+        font-size: 1.25rem;
     }
+
+    .sign-steps { font-size: 0.8rem; }
+}
+
+/* An office computer: the document and the signing panel side by side (DOCUMENT VIEWER | SIGNING PANEL). */
+@media (min-width: 1024px) {
+    .sign-top, .sign-main.has-viewer { max-width: 1240px; }
+    .sign-main.has-viewer { display: grid; grid-template-columns: minmax(0, 1fr) 26rem; gap: 20px; align-items: start; }
+    .sign-main.has-viewer > .sign-banner { grid-column: 1 / -1; margin-bottom: 0; }
+    .sign-viewer { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; position: sticky; top: 16px; height: calc(100vh - 140px); min-height: 520px; }
+    .sign-viewer-frame { flex: 1 1 auto; min-height: 0; }
+    .sign-side { min-width: 0; }
+    .sign-side .sign-btn-review { display: none; }
 }
 
 @media (max-width: 767px) {
@@ -218,4 +226,6 @@ body.sign-body {
     .sign-input {
         width: 100%;
     }
+    .sign-steps { padding: 8px 6px; }
+    .sign-facts > div { grid-template-columns: 1fr; gap: 0; }
 }

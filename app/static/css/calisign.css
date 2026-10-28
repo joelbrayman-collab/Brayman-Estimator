@@ -1,3 +1,12 @@
+/* The typed-signature script: Dancing Script 600 (SIL Open Font License, app/static/fonts/dancing-script/OFL.txt),
+   served by the app so the signature looks the same everywhere and no signing page loads a third-party font for it. */
+@font-face {
+    font-family: "CaliSIGN Script";
+    src: url("../fonts/dancing-script/dancing-script-latin-600-normal.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 /* CaliSIGN approved identity (Joel, 28 Oct 2026): docs/branding/calisign/README.md. */
 .calisign-identifier { display: inline-flex; align-items: center; gap: calc(var(--cs-size, 34px) * 0.35); font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 1; }
 .calisign-words { display: inline-flex; flex-direction: column; gap: calc(var(--cs-size, 34px) * 0.08); }
@@ -6,3 +15,70 @@
 .calisign-sign { color: #c79a2b; }
 .calisign-by { font-size: max(9px, calc(var(--cs-size, 34px) * 0.24)); font-weight: 600; letter-spacing: 0.34em; padding-left: 0.2em; }
 .calisign-identifier.is-dark .calisign-cali, .calisign-identifier.is-dark .calisign-by { color: #ffffff; }
+
+/* ===== CaliSIGN on business records and in the Supplier Hub (28 Oct 2026). Approved colours only:
+   navy #1f3a5f, gold #c79a2b, and the app's own neutrals (app.css). */
+.calisign-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.calisign-panel { background: #ffffff; border: 1px solid #e2ddd4; border-radius: 14px; padding: 16px 20px; margin: 0 0 20px; display: grid; gap: 12px; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.calisign-panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.calisign-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; border: 1px solid #e2ddd4; background: #f4f2ee; color: #1c1f24; }
+.calisign-chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #6b6f76; }
+.calisign-chip.is-waiting { background: #fbf4df; border-color: #ead7a2; }
+.calisign-chip.is-waiting::before { background: #c79a2b; }
+.calisign-chip.is-action { background: #1f3a5f; border-color: #1f3a5f; color: #ffffff; }
+.calisign-chip.is-action::before { background: #c79a2b; }
+.calisign-chip.is-done { background: #e8f3ec; border-color: #b9dbc5; color: #1d5c38; }
+.calisign-chip.is-done::before { background: #1d5c38; }
+.calisign-chip.is-closed { color: #6b6f76; }
+.calisign-ref { font-size: 0.85rem; color: #6b6f76; }
+.calisign-detail, .calisign-note { margin: 0; font-size: 0.9rem; color: #4b5563; }
+.calisign-note { font-size: 0.85rem; color: #6b6f76; }
+.calisign-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px 16px; margin: 0; }
+.calisign-facts > div { display: grid; gap: 2px; }
+.calisign-facts dt { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6f76; }
+.calisign-facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.calisign-facts.is-compact { background: #f4f2ee; border-radius: 10px; padding: 10px 12px; }
+.calisign-sub { display: block; font-weight: 400; font-size: 0.85rem; color: #6b6f76; }
+.calisign-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.calisign-actions:empty { display: none; }
+.calisign-actions form { margin: 0; }
+.calisign-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid #e2ddd4; background: #ffffff; color: #1c1f24; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.calisign-btn.is-primary { background: #c79a2b; border-color: #c79a2b; color: #141414; font-weight: 700; }
+.calisign-btn:hover { filter: brightness(0.97); }
+.calisign-btn:focus-visible, .calisign-send > summary:focus-visible { outline: 3px solid #1f3a5f; outline-offset: 2px; }
+.calisign-btn[disabled] { opacity: 0.7; cursor: progress; }
+.calisign-send > summary { list-style: none; width: fit-content; }
+.calisign-send > summary::-webkit-details-marker { display: none; }
+.calisign-send[open] > summary { display: none; }
+.calisign-send-card { display: grid; gap: 12px; border: 1px solid #e2ddd4; border-radius: 12px; padding: 14px 16px; background: #fbfaf8; }
+.calisign-send-title { margin: 0; font-size: 1rem; }
+.calisign-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; }
+.calisign-fields label, .calisign-copy, .calisign-void label { display: grid; gap: 4px; font-size: 0.88rem; font-weight: 600; }
+.calisign-fields input[type=text], .calisign-fields input[type=email], .calisign-fields input[type=number], .calisign-copy input, .calisign-void input[type=text] { min-height: 40px; padding: 6px 10px; border: 1px solid #c5ccd6; border-radius: 8px; font: inherit; font-weight: 400; }
+.calisign-check { display: flex !important; align-items: center; gap: 8px; grid-template-columns: none; }
+.calisign-req { color: #8b1e1e; }
+.calisign-history > summary, .calisign-void > summary { cursor: pointer; font-size: 0.88rem; color: #1c1f24; font-weight: 600; }
+.calisign-history ol { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; border-left: 2px solid #e2ddd4; }
+.calisign-history li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding-left: 12px; font-size: 0.88rem; position: relative; }
+.calisign-history li::before { content: ""; position: absolute; left: -5px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: #c79a2b; }
+.calisign-history li .calisign-sub { grid-column: 1 / -1; }
+.calisign-history time { color: #6b6f76; white-space: nowrap; }
+.calisign-void form { display: grid; gap: 8px; margin-top: 8px; max-width: 32rem; }
+
+/* The typed signature (FG-041 supplier documents and the ceremony): name in, the signature as it will appear. */
+.calisign-adopt { display: grid; gap: 10px; border: 1px solid #e2ddd4; border-radius: 12px; padding: 14px 16px; background: #ffffff; max-width: 44rem; grid-column: 1 / -1; }
+.calisign-adopt-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.calisign-adopt-title { margin: 0; font-size: 1rem; font-weight: 700; }
+.calisign-consent-text { margin: 0; font-size: 0.86rem; color: #4b5563; background: #f4f2ee; border-radius: 8px; padding: 10px 12px; }
+.calisign-consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; }
+.calisign-consent input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: #1f3a5f; flex-shrink: 0; }
+.calisign-name { display: grid; gap: 4px; font-weight: 600; }
+.calisign-name input { min-height: 44px; padding: 8px 12px; border: 1px solid #c5ccd6; border-radius: 8px; font: inherit; font-size: 1rem; font-weight: 400; }
+.calisign-preview { display: grid; gap: 4px; border: 1px dashed #c79a2b; border-radius: 10px; padding: 10px 14px 8px; background: #fbfaf8; }
+.calisign-preview-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b6f76; }
+.calisign-script { font-family: "CaliSIGN Script", "Snell Roundhand", "Brush Script MT", cursive; font-weight: 600; font-size: 2rem; line-height: 1.2; color: #1f3a5f; min-height: 2.4rem; border-bottom: 1px solid #6b6f76; overflow-wrap: anywhere; }
+.calisign-script.is-empty { color: #9aa0a8; font-size: 1.1rem; font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400; display: flex; align-items: flex-end; }
+.calisign-preview-hint { font-size: 0.8rem; color: #6b6f76; }
+
+/* Supplier document status line. */
+.signing-line.calisign-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }

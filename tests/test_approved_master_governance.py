@@ -175,6 +175,7 @@ NOT_GOVERNED = {
     "permit_report_pdf.py": "permit context report",
     "signing_executed_pdf.py": "signature certificate added to an executed document",
     "supplier_package_pdf.py": "supplier order package",
+    "supplier_signing_pdf.py": "supplier purchase order and delivery change frozen for signing (FG-041)",
     "supplier_quote_pdf.py": "supplier's quotation to a contractor",
 }
 

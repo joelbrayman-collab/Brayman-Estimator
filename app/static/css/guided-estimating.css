@@ -77,3 +77,25 @@
   .ge-actions, .ge-nav, .sidebar, header, nav, .ge-noprint { display: none !important; }
   .ge-card { box-shadow: none; break-inside: avoid; }
 }
+
+/* Selected work (28 Oct 2026): the Work page — the chosen work, who does it, and Add work. */
+.sw-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+.sw-item { border: 1px solid #e3ded4; border-radius: 10px; padding: 12px 14px; background: #fff; }
+.sw-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; }
+.sw-name { font-weight: 700; font-size: 1.05rem; }
+.sw-resp { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.sw-resp button { min-height: 44px; min-width: 120px; padding-inline: 12px; white-space: nowrap; }
+.sw-label { color: #555; margin-right: 4px; }
+.sw-parts { list-style: none; margin: 8px 0 0; padding: 0 0 0 12px; display: grid; gap: 6px; }
+.sw-more { margin-top: 8px; }
+.sw-more summary { cursor: pointer; color: #1f3a5f; }
+.sw-confirm { display: inline-flex; gap: 6px; align-items: center; }
+.sw-search { display: block; margin: 8px 0 12px; }
+.sw-search input { width: 100%; max-width: 420px; min-height: 44px; }
+.sw-category { border: 0; margin: 0 0 12px; padding: 0; }
+.sw-category legend { font-weight: 700; color: #1f3a5f; margin-bottom: 6px; }
+.sw-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
+.sw-choice { display: flex; gap: 8px; align-items: center; border: 1px solid #e3ded4; border-radius: 8px; padding: 8px 10px; min-height: 44px; background: #fff; }
+.sw-other { display: block; margin-top: 8px; }
+.sw-other input { width: 100%; max-width: 420px; min-height: 44px; }
+@media (max-width: 600px) { .sw-resp button { flex: 1 1 0; min-width: 0; font-size: .95rem; } .sw-label { flex-basis: 100%; } .sw-choices { grid-template-columns: 1fr; } }

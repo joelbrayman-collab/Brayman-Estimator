@@ -123,13 +123,25 @@ class Driver:
             return [m for _c, m in session.get("_flashes", [])]
 
     # -- project and scope
-    def new_project(self, name, project_type, role, *, carry=None, client_row=None):
+    def new_project(self, name, project_type, role, *, carry=None, client_row=None, legacy=True):
+        """A project and its scope. ``legacy`` (the default for the v1rel9 acceptance tests): the stage-template
+        scope every estimate had before 28 Oct 2026, made directly by the engine as a fixture for estimates that
+        already exist — the product starts every new scope as selected work (tests/test_selected_work.py)."""
         data = dict(COMMERCIAL, name=name, client_id=(client_row or client()).id, guided_project_type=project_type,
-                    contractor_role=role, start_guided="1")
+                    contractor_role=role)
+        if not legacy:
+            data["start_guided"] = "1"
         if carry:
             data["carry"] = carry
         response = self.post("/projects/new", data=data)
         project = Project.query.filter_by(organization_id=ORG, name=name).one()
+        if legacy:
+            from app.services.guided_estimating import get_guided, start_guided_estimate
+
+            if get_guided(ORG, project.id) is None:
+                start_guided_estimate(organization_id=ORG, project_id=project.id, project_type=project_type,
+                                      contractor_role=role, actor="Ben Brayman (synthetic)", legacy_stages=True)
+            return project, f"/projects/{project.id}/guided/scope"
         return project, response.headers["Location"]
 
     def scope(self, project, decisions, *, split=(), action="save", na_reasons=None, status=302):

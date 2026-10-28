@@ -366,7 +366,18 @@ def view_estimate(id):
         named_method_governs=named_method_governs,
         current_named_method_governs=named_method_governs(current_snapshot),
         current_pricing_snapshot=current_snapshot,
+        work_panel=_work_panel(estimate),
     )
+
+
+def _work_panel(estimate):
+    """The selected work this estimate is for, with Add work (28 Oct 2026). Read only; never fails the page."""
+    try:
+        from app.services.selected_work import estimate_panel
+
+        return estimate_panel(estimate)
+    except Exception:  # noqa: BLE001 - the panel is an addition to the page
+        return None
 
 
 @estimates_bp.route("/<int:id>/edit", methods=["GET", "POST"])

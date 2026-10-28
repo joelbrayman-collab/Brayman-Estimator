@@ -294,7 +294,7 @@ def test_seven_focused_tasks_in_a_compact_page(env):
     assert [s.key for s in WIZARD.steps] == STEP_KEYS
     assert [s.title for s in WIZARD.steps] == [
         "Who is the customer?", "What are we building?", "Where is the job?", "What plans and drawings do we have?",
-        "What work are we responsible for?", "Who is leading it, and when?", "Does this look right?"]
+        "What is your role on this job?", "Who is leading it, and when?", "Does this look right?"]
     run_id = _start(d, "NEW_PROJECT")
     page = d.get(f"/wizards/run/{run_id}/step/customer")
     assert "data-compact-wizard" in page and "Start a New Project</strong> · <span" in page

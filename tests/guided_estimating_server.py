@@ -65,6 +65,11 @@ def main():
             db.session.add(CostItem(code=code, name=name, category="Material", unit=unit, unit_cost=Decimal(cost),
                                     default_markup_percent=Decimal("0"), organization_id=ORG, is_active=True))
         db.session.commit()
+        if os.environ.get("GUIDED_PROPOSAL_TEMPLATE"):  # the selected-work walk goes on to the proposal
+            from app.services.proposals import create_proposal_template
+
+            create_proposal_template(name="Synthetic standard", organization_id=ORG, is_default=True)
+            db.session.commit()
     port = int(os.environ["GUIDED_PAGE_PORT"])
     print("FACTS " + json.dumps({"people": PEOPLE, "database_uri": uri}), flush=True)
     print(f"READY {port}", flush=True)

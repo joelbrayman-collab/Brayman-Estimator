@@ -3,9 +3,9 @@
 // migrations (tests/guided_estimating_server.py: synthetic owner Ben, Field-only crew Kevin, another company's
 // owner, a customer and the company costs). Synthetic data only.
 //
-// Checks: Start New Estimate from Home; New Project with project type and contractor role; the scope form with
-// Internal / Subcontracted / N/A and nothing pre-selected; the brief's 14 New Home choices and the generated
-// workflow; an internal stage through its calculator, the estimate review, labour hours and Complete & Next;
+// Checks: Start New Estimate from Home; New Project with project type and contractor role, then "What work are we
+// doing?" with nothing listed or decided (selected work, 28 Oct 2026: no stage template, no N/A); five chosen work
+// items, Internal by default and three changed to Subcontracted, and the workflow of exactly that work; an internal stage through its calculator, the estimate review, labour hours and Complete & Next;
 // a subcontracted stage with a recorded quote, Select and "Use this cost on the line"; Waiting for Quote while
 // other stages go on; a stage refused Complete with no cost; Save & Exit and Resume; the internal cost estimate
 // marked INTERNAL — NOT FOR CUSTOMER DISTRIBUTION; Review Pricing & Prepare Proposal blocked while costs are
@@ -25,15 +25,12 @@ import { REPO, freePort, launch } from "./evidence_common.mjs";
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
 const SHOTS = process.env.GUIDED_SHOTS || "";
+// The selected work, in catalogue order (the order the Work page lists it).
 const SCOPE = {
-  site_prep: "SUBCONTRACTED", excavation: "SUBCONTRACTED", footings_foundation: "INTERNAL", framing: "INTERNAL",
-  roofing: "SUBCONTRACTED", windows_doors: "INTERNAL", siding: "SUBCONTRACTED", electrical: "SUBCONTRACTED",
-  plumbing: "SUBCONTRACTED", hvac: "SUBCONTRACTED", insulation: "SUBCONTRACTED", drywall: "SUBCONTRACTED",
-  interior_finishes: "INTERNAL", final_cleanup: "INTERNAL",
+  work_windows: "INTERNAL", work_excavation: "SUBCONTRACTED", work_footings: "INTERNAL",
+  work_electrical: "SUBCONTRACTED", work_hvac: "SUBCONTRACTED",
 };
-const NAMES = ["Site preparation", "Excavation", "Footings & foundation", "Framing", "Roofing", "Windows & exterior doors",
-  "Siding & exterior finishes", "Electrical", "Plumbing", "HVAC", "Insulation", "Drywall", "Interior finishes",
-  "Final cleanup"];
+const NAMES = ["Windows", "Excavation", "Footings", "Electrical", "HVAC"];
 const PROJECT = "Avery New Home (synthetic)";
 let browser, server, base, facts;
 const serverErrors = [];
@@ -159,7 +156,7 @@ step("Home has Start New Estimate; it offers a new project, an existing project 
   assert.deepEqual(errors, []);
 });
 
-step("New Project asks what is being built and the contractor role, then opens the scope with nothing chosen", async () => {
+step("New Project asks what is being built and the contractor role, then asks what work we are doing (nothing listed)", async () => {
   const { pg, errors } = await person("ben", DESK);
   await submit(pg, pg.locator("a[data-new-project-estimate]"));
   assert.equal(pathOf(pg), "/projects/new");
@@ -176,43 +173,55 @@ step("New Project asks what is being built and the contractor role, then opens t
   await submit(pg, pg.locator("form.form-panel button[type=submit]"));
   assert.match(pathOf(pg), /^\/projects\/\d+\/guided\/scope$/);
   W.project = Number(pathOf(pg).split("/")[2]);
-  assert.equal(await pg.locator("[data-stage-row]").count(), 14);
-  assert.equal(await pg.locator('[data-stage-row] > fieldset.ge-choice input[type=radio]:checked').count(), 0, "nothing defaults");
-  for (const label of ["Internal", "Subcontracted", "N/A"]) {
-    assert.equal(await pg.locator(`[data-stage-row="framing"] > fieldset.ge-choice label:has-text("${label}")`).count(), 1);
-  }
-  await shot(pg, "guided-scope-form-desktop", pg.locator("[data-stage-row]"));
+  assert.match(await pg.locator("[data-add-work] h2").innerText(), /What work are we doing\?/);
+  assert.equal(await pg.locator("[data-work-item]").count(), 0, "no work is listed until it is chosen");
+  assert.equal(await pg.locator("[data-stage-row]").count(), 0, "no stage template");
+  const main = await pg.locator("main").innerText();
+  assert.doesNotMatch(main, /N\/A/, "no N/A anywhere");
+  assert.equal(await pg.locator("[data-add-work] input[name=work]:checked").count(), 0, "nothing defaults");
+  await shot(pg, "guided-work-choose-desktop", pg.locator("[data-add-work]"));
   assert.deepEqual(errors, []);
 });
 
-step("Scope: a draft may be saved undecided; finalizing needs every stage; the 14 New Home choices build the workflow", async () => {
+step("Work: choose five work items; each is Internal until changed; the workflow lists exactly that work", async () => {
   const { pg, errors } = await person("ben", DESK);
-  const keys = Object.keys(SCOPE);
-  for (const key of keys.slice(0, 5)) await pg.locator(`[data-stage-row="${key}"] > fieldset.ge-choice input[value="${SCOPE[key]}"]`).check();
-  await press(pg, "button[data-scope-save]");
-  assert.match(await flash(pg), /draft/);
-  await press(pg, "button[data-scope-finalize]");
-  assert.match(await flash(pg), /Decide every stage/);
-  for (const key of keys) await pg.locator(`[data-stage-row="${key}"] > fieldset.ge-choice input[value="${SCOPE[key]}"]`).check();
-  await press(pg, "button[data-scope-finalize]");
+  await pg.fill("[data-work-search]", "foot");
+  assert.equal(await pg.locator('[data-work-choice="work_siding"]').isVisible(), false, "search narrows the list");
+  await pg.fill("[data-work-search]", "");
+  for (const key of Object.keys(SCOPE)) await pg.locator(`[data-add-work] input[name=work][value="${key}"]`).check();
+  await press(pg, "button[data-add-work-submit]");
+  const listed = await pg.locator("[data-work-item]").evaluateAll((els) => els.map((e) => e.getAttribute("data-work-item")));
+  assert.deepEqual(listed, ["work_windows", "work_excavation", "work_footings", "work_electrical", "work_hvac"]);
+  for (const key of Object.keys(SCOPE)) assert.equal(await pg.locator(`[data-work-item="${key}"]`).getAttribute("data-responsibility"), "INTERNAL", key);
+  for (const [key, resp] of Object.entries(SCOPE)) {
+    if (resp === "SUBCONTRACTED") await press(pg, `button[data-set-subcontracted="${key}"]`);
+  }
+  for (const [key, resp] of Object.entries(SCOPE)) {
+    assert.equal(await pg.locator(`[data-work-item="${key}"]`).getAttribute("data-responsibility"), resp, key);
+  }
+  assert.equal(await pg.locator("#work").getAttribute("data-progress"), "0/5");
+  await shot(pg, "guided-work-list-desktop", pg.locator("[data-work-list]"));
+  await press(pg, "a[data-open-workflow]");
   assert.equal(pathOf(pg), `/projects/${W.project}/guided`);
-  assert.match(await pg.locator("[data-progress]").innerText(), /0 of 14 stages complete/);
+  assert.match(await pg.locator("[data-progress]").innerText(), /0 of 5 work items complete/);
+  assert.match(await pg.locator("[data-estimating-what]").innerText(), /Estimating: Windows, Excavation, Footings, Electrical, HVAC/);
   const names = await pg.locator("[data-stage-list] > li .ge-stage-head > a, [data-stage-list] > li .ge-stage-head > strong").allInnerTexts();
   assert.deepEqual(names.map((n) => n.trim()), NAMES);
   for (const [key, resp] of Object.entries(SCOPE)) {
-    const label = { INTERNAL: "Internal", SUBCONTRACTED: "Subcontracted", NA: "N/A" }[resp];
+    const label = { INTERNAL: "Internal", SUBCONTRACTED: "Subcontracted" }[resp];
     assert.match(await pg.locator(`[data-stage="${key}"] .ge-resp`).innerText(), new RegExp(`^${label}`), key);
   }
+  assert.doesNotMatch(await pg.locator("main").innerText(), /N\/A|Excluded/, "nothing excluded is shown");
   await shot(pg, "guided-workflow-stage-list-desktop");
   assert.deepEqual(errors, []);
 });
 
 // ------------------------------------------------------------------ an internal stage through its calculator
-step("Internal stage: Footings & foundation presents its calculators; the footing result goes to this stage", async () => {
+step("Internal work: Footings presents its calculator; the footing result goes to this work", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await openStage(pg, "footings_foundation");
+  await openStage(pg, "work_footings");
   const tools = await pg.locator("[data-internal-tools] a.ge-tool strong").allInnerTexts();
-  for (const t of ["Footing calculator", "ICF wall calculator", "Concrete slab calculator", "Labour hours"]) assert.ok(tools.includes(t), t);
+  for (const t of ["Footing calculator", "Labour hours"]) assert.ok(tools.includes(t), t);
   W.footingStage = Number(pathOf(pg).split("/").pop());
   await shot(pg, "guided-internal-stage-tools-desktop", pg.locator("[data-internal-tools]"));
   await submit(pg, pg.locator('a[data-tool="calculator:footing"]'));
@@ -239,7 +248,7 @@ step("Internal stage: the estimate review, then labour hours and Complete & Next
   await submit(pg, pg.locator("button[data-send-review]"));
   assert.match(pathOf(pg), /\/estimates\/\d+\/versions\/\d+\/calculations\/\d+$/);
   const form = pg.locator("form[action*='/confirm']").first();
-  assert.match(await form.locator("select[name=section_id] option:checked").innerText(), /Footings & foundation/);
+  assert.match(await form.locator("select[name=section_id] option:checked").innerText(), /Footings/);
   await form.locator("select[name=target]").selectOption({ label: "Ready-mix concrete 25 MPa (synthetic) (yd3)" });
   await submit(pg, form.locator("button[type=submit]"));
   assert.match(await flash(pg), /Quantity added to the estimate/);
@@ -249,29 +258,29 @@ step("Internal stage: the estimate review, then labour hours and Complete & Next
   await press(pg, "button[data-save-labour]");
   await press(pg, "button[data-confirm-routing]");
   await press(pg, "button[data-nav-complete-next]");
-  assert.match(await flash(pg), /Footings & foundation is complete/);
+  assert.match(await flash(pg), /Footings is complete/);
   await go(pg, `/projects/${W.project}/guided`);
-  assert.equal(await pg.locator('[data-stage="footings_foundation"]').getAttribute("data-status"), "COMPLETE");
+  assert.equal(await pg.locator('[data-stage="work_footings"]').getAttribute("data-status"), "COMPLETE");
   assert.deepEqual(errors, []);
 });
 
 // ------------------------------------------------------------------ subcontracted stages
 step("Subcontracted stage: Excavation waits for its quote while other stages go on (out of sequence)", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await openStage(pg, "excavation");
+  await openStage(pg, "work_excavation");
   await pg.fill("textarea[data-scope-description]", "Dig, backfill and haul away (synthetic)");
   await press(pg, "button[data-setup-subcontract]");
   await press(pg, "button[data-quote-requested]");
   assert.equal(await pg.locator("[data-guided-stage]").getAttribute("data-stage-status"), "WAITING_FOR_QUOTE");
   await go(pg, `/projects/${W.project}/guided`);
-  assert.equal(await pg.locator('[data-stage="excavation"]').getAttribute("data-status"), "WAITING_FOR_QUOTE");
-  assert.equal(await pg.locator('[data-stage="footings_foundation"]').getAttribute("data-status"), "COMPLETE");
+  assert.equal(await pg.locator('[data-stage="work_excavation"]').getAttribute("data-status"), "WAITING_FOR_QUOTE");
+  assert.equal(await pg.locator('[data-stage="work_footings"]').getAttribute("data-status"), "COMPLETE");
   assert.deepEqual(errors, []);
 });
 
 step("Subcontracted stage: record two quotes, select one, Use this cost on the line, then Complete & Next", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await openStage(pg, "electrical");
+  await openStage(pg, "work_electrical");
   await recordQuote(pg, { name: "Sparks Electric (synthetic)", code: "SPARKS", reference: "EL-9", amount: "24500" });
   assert.match(await flash(pg), /Quote recorded/);
   await recordQuote(pg, { name: "Bright Wire (synthetic)", code: "BRIGHT", reference: "EL-10", amount: "26100" });
@@ -290,7 +299,7 @@ step("Subcontracted stage: record two quotes, select one, Use this cost on the l
 
 step("Missing cost: HVAC cannot be completed without a cost, an approved allowance or a no-cost decision", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await openStage(pg, "hvac");
+  await openStage(pg, "work_hvac");
   await press(pg, "button[data-nav-complete-next]");
   assert.match(await flash(pg), /Not complete yet/);
   assert.equal(await pg.locator("[data-guided-stage]").getAttribute("data-stage-status"), "NOT_STARTED");
@@ -300,7 +309,7 @@ step("Missing cost: HVAC cannot be completed without a cost, an approved allowan
 
 step("Save & Exit goes to the project page; Resume estimating comes back to the same stage", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await openStage(pg, "windows_doors");
+  await openStage(pg, "work_windows");
   const here = pathOf(pg);
   await press(pg, "button[data-nav-save-exit]");
   assert.equal(pathOf(pg), `/projects/${W.project}`);
@@ -313,7 +322,7 @@ step("The internal cost estimate is marked INTERNAL — NOT FOR CUSTOMER DISTRIB
   const { pg, errors } = await person("ben", DESK);
   await go(pg, `/projects/${W.project}/guided/internal-cost`);
   assert.equal(await pg.locator("[data-internal-marking]").innerText(), "INTERNAL — NOT FOR CUSTOMER DISTRIBUTION");
-  assert.match(await pg.locator("[data-cost-stage='electrical']").innerText(), /Subcontract quote EL-9/);
+  assert.match(await pg.locator("[data-cost-stage='work_electrical']").innerText(), /Subcontract quote EL-9/);
   assert.match(await pg.locator("[data-cost-missing]").innerText(), /HVAC is Not Started/);
   await shot(pg, "guided-internal-cost-document-desktop");
   const [download] = await Promise.all([pg.waitForEvent("download").catch(() => null),
@@ -375,26 +384,27 @@ step("Independent calculator: Create New Project carries the result into the new
   assert.match(pathOf(pg), /\/guided\/scope$/);
   W.garage = Number(pathOf(pg).split("/")[2]);
   assert.match(await flash(pg), /Concrete result is saved on the project/);
-  assert.ok((await pg.locator("[data-stage-row]").allInnerTexts()).some((t) => /Garage door/.test(t)), "garage template");
-  for (const row of await pg.locator("[data-stage-row]").all()) {
-    await row.locator(":scope > fieldset.ge-choice input[value='INTERNAL']").check();
-  }
-  await press(pg, "button[data-scope-finalize]");
+  assert.equal(await pg.locator("[data-work-item]").count(), 0, "no garage template: the work is chosen");
+  await pg.locator('[data-add-work] input[name=work][value="work_concrete_slab"]').check();
+  await pg.locator('[data-add-work] input[name=work][value="work_garage_door"]').check();
+  await press(pg, "button[data-add-work-submit]");
+  assert.equal(await pg.locator("[data-work-item]").count(), 2);
+  await press(pg, "a[data-open-workflow]");
   assert.match(await pg.locator("[data-waiting-calculations]").innerText(), /Concrete/);
   await submit(pg, pg.locator("a[data-waiting-calculation]").first());
   assert.match(await pg.locator("[data-carried-inputs]").innerText(), /Length: 24/);
-  assert.match(await pg.locator("select[data-stage-select] option:checked").innerText(), /Footings & foundation/);
+  assert.match(await pg.locator("select[data-stage-select] option:checked").innerText(), /Concrete slab/);
   assert.deepEqual(errors, []);
 });
 
 // ------------------------------------------------------------------ phone
-step("iPhone: the scope, the workflow and a stage fit the screen with large choices", async () => {
+step("iPhone: the work, the workflow and a work item fit the screen with large choices", async () => {
   const { pg, errors } = await person("ben", PHONE);
   await go(pg, `/projects/${W.project}/guided/scope`);
-  await noSideways(pg, "scope");
-  const box = await pg.locator('[data-stage-row="framing"] > fieldset.ge-choice label').first().boundingBox();
-  assert.ok(box.height >= 44, `round choices are large enough to tap (${box.height}px)`);
-  await shot(pg, "guided-scope-form-phone", pg.locator('[data-stage-row="framing"]'));
+  await noSideways(pg, "work");
+  const box = await pg.locator('button[data-set-internal="work_windows"]').boundingBox();
+  assert.ok(box.height >= 44, `Internal / Subcontracted are large enough to tap (${box.height}px)`);
+  await shot(pg, "guided-work-phone", pg.locator('[data-work-item="work_windows"]'));
   await go(pg, `/projects/${W.project}/guided`);
   await noSideways(pg, "workflow");
   await shot(pg, "guided-workflow-phone");

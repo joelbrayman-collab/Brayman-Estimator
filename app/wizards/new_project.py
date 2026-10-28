@@ -6,11 +6,11 @@ Seven focused tasks, in the order a contractor thinks about a new job:
   2 What are we building?           the project's name and the kind of job
   3 Where is the job?               the job-site address ("Same as customer address"); Save & Continue creates it
   4 What plans do we have?          upload a plan PDF here, record that none are needed, or add them later
-  5 What work are we responsible?   your role (it sets the construction stages)
+  5 What is your role on this job?   your role (the work is chosen next, in Guided Estimating)
   6 Who is leading it, and when?    the Project Lead and the first site visit or meeting (optional)
   7 Does this look right?           review, then start Guided Estimating now or later
 
-Who does each construction stage (Internal, Subcontracted or N/A) is decided in Guided Estimating, which already
+The work being done and who does it (Internal or Subcontracted) are chosen in Guided Estimating, which already
 asks it as its own steps; the setup no longer asks it a second time.
 
 Steps 1 to 3 keep the answers in the run's draft until the project exists; Save & Continue on step 3 posts them to
@@ -435,14 +435,20 @@ def _role_scope(ctx):
     from app.models.guided_estimating import CONTRACTOR_ROLE_LABELS, PROJECT_TYPE_LABELS
 
     if ctx.guided is not None:
-        top = ctx.guided.top_stages
-        return StepView(DONE, f"{ctx.guided.contractor_role_label} · {len(top)} construction stages for "
-                        f"{ctx.guided.project_type_label}",
-                        items=[Item(s.display_name, INFO, "") for s in top],
-                        actions=[Action("Add a stage the job needs", url_for("guided.scope", project_id=ctx.project.id)
-                                        + "#stages", key="open-scope")],
-                        note="Who does each stage — your crew, a subcontractor, or not in this job — is decided in "
-                             "Guided Estimating, the next wizard.")
+        from app.services import selected_work as W
+
+        if not W.is_selected_work(ctx.guided):  # a project started before 28 Oct 2026 keeps its stage list
+            top = ctx.guided.top_stages
+            return StepView(DONE, f"{ctx.guided.contractor_role_label} · {len(top)} construction stages for "
+                            f"{ctx.guided.project_type_label}",
+                            items=[Item(s.display_name, INFO, "") for s in top],
+                            actions=[Action("Open the construction scope",
+                                            url_for("guided.scope", project_id=ctx.project.id), key="open-scope")])
+        work = W.work_items(ctx.guided)
+        return StepView(DONE, ctx.guided.contractor_role_label,
+                        items=[Item(s.display_name, INFO, "") for s in work],
+                        note="The work itself — what you are doing on this job — is chosen next, in Guided "
+                             "Estimating (What work are we doing?).")
     return StepView(TODO, "Your role is not chosen yet", missing=["Choose your role."], form="np_role.html",
                     form_ctx={"roles": CONTRACTOR_ROLE_LABELS, "types": PROJECT_TYPE_LABELS,
                               "chosen_type": ctx.draft.get("guided_project_type", ""),
@@ -468,7 +474,7 @@ def _save_role(ctx, form):
                                 contractor_role=role, actor=ctx.actor, user_id=ctx.user_id)
     except G.GuidedEstimatingError as exc:
         raise WizardError(str(exc)) from exc
-    return "Your role and the project's construction stages are set."
+    return "Your role is recorded. Next, what work are we doing — in Guided Estimating."
 
 
 # ------------------------------------------------------------------------------------------------ 6 lead and first dates
@@ -597,7 +603,7 @@ STEPS = (
          _customer, handle=_save_customer, draft=True,
          manual=lambda ctx: ("New Project form", url_for("projects.create_project"))),
     Step("project_type", "What are we building?",
-         "Name the job and choose the kind of work. The kind of work sets the construction stages for the estimate.",
+         "Name the job and choose the kind of project. The work itself is chosen when you estimate it.",
          "Name the project and choose what is being built.",
          "Next, where the job is.",
          _project_type, handle=_save_type, draft=True,
@@ -618,9 +624,9 @@ STEPS = (
          _documents, required=False, handle=_save_documents, continue_form=True,
          manual=lambda ctx: ("Project plans", url_for("plan_intelligence.list_plans", project_id=ctx.project.id))
          if ctx.project else None),
-    Step("role", "What work are we responsible for?",
+    Step("role", "What is your role on this job?",
          "Whether you are the general contractor, do selected portions, or are a subcontractor for a defined scope. "
-         "With the kind of job it sets the construction stages.",
+         "The work itself is chosen next, in Guided Estimating.",
          "Choose your role.",
          "Next, who leads the job and the first dates.",
          _role_scope, handle=_save_role, continue_form=True,

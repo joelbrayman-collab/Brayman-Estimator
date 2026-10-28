@@ -111,7 +111,10 @@ def start():
     for project in projects:
         guided = guided_by_project.get(project.id)
         progress = None
-        if guided is not None and guided.scope_status == SCOPE_FINALIZED:
+        from app.services import selected_work as W
+        if guided is not None and W.is_selected_work(guided):
+            progress = W.progress(guided) if W.work_items(guided) else None
+        elif guided is not None and guided.scope_status == SCOPE_FINALIZED:
             view = G.workflow_view(guided)
             progress = (view["done"], view["included"])
         rows.append({"project": project, "guided": guided, "progress": progress})
@@ -125,23 +128,25 @@ def begin(project_id):
     project, guided = _project_and_guided(project_id, required=False)
     if guided is None:
         try:
-            guided = G.start_guided_estimate(organization_id=_org(), project_id=project.id,
-                                             project_type=request.form.get("project_type", ""),
-                                             contractor_role=request.form.get("contractor_role", ""),
-                                             actor=_actor(), user_id=_uid())
+            from app.services import selected_work as W
+
+            guided = W.ensure_scope(_org(), project.id, actor=_actor(), user_id=_uid(),
+                                    project_type=request.form.get("project_type", ""),
+                                    contractor_role=request.form.get("contractor_role", ""))
         except G.GuidedEstimatingError as exc:
             flash(str(exc), "error")
             return redirect(url_for("guided.start"))
-        flash("Guided estimate started. Choose who does each stage.", "success")
+        flash("Estimate started. What work are we doing?", "success")
     return redirect(url_for("guided.scope", project_id=project.id))
 
 
 @guided_bp.route("/projects/<int:project_id>/guided")
 def workflow(project_id):
+    from app.services import selected_work as W
+
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        return render_template("guided/not_started.html", project=project, project_types=PROJECT_TYPE_LABELS,
-                               roles=CONTRACTOR_ROLE_LABELS)
+    if guided is None or (W.is_selected_work(guided) and not W.work_items(guided)):
+        return redirect(url_for("guided.scope", project_id=project.id))
     if guided.scope_status != SCOPE_FINALIZED and not guided.estimate_id:
         return redirect(url_for("guided.scope", project_id=project.id))
     view = G.workflow_view(guided)
@@ -163,11 +168,78 @@ def resume(project_id):
 
 
 # ---------------------------------------------------------------------------------------------- scope
+def _work_page(project, guided):
+    """Work included in this project (selected work, 28 Oct 2026): the one place work is added, decided and removed
+    outside the wizard. Every change goes through app/services/selected_work.py."""
+    from app.services import selected_work as W
+
+    here = url_for("guided.scope", project_id=project.id)
+    back = _safe_return(request.values.get("return_to", ""))
+    if request.method == "POST":
+        action = request.form.get("action", "")
+        try:
+            if action == "add_work":
+                guided = W.ensure_scope(_org(), project.id, actor=_actor(), user_id=_uid(),
+                                        estimate_id=request.form.get("estimate_id", type=int))
+                added = W.add_work(guided, keys=request.form.getlist("work"),
+                                   custom_name=request.form.get("custom_name", ""), actor=_actor(), user_id=_uid())
+                names = ", ".join(r.display_name for r in added)
+                flash(f"Added: {names}." if names else "That work is already in the estimate.", "success")
+            elif guided is None:
+                raise W.SelectedWorkError("Add the work first.")
+            elif action == "responsibility":
+                row = W.get_row(guided, request.form.get("row_id", type=int))
+                W.set_responsibility(guided, row, request.form.get("responsibility", ""), actor=_actor(),
+                                     user_id=_uid())
+                flash(f"{row.section_name}: {RESPONSIBILITY_LABELS.get(row.responsibility, '')}.", "success")
+            elif action == "split":
+                row = W.get_row(guided, request.form.get("row_id", type=int))
+                W.split_work(guided, row, request.form.get("split") == "1", actor=_actor(), user_id=_uid())
+                flash(f"{row.display_name}: " + ("materials and installation are decided separately."
+                                                  if row.is_split else "decided as a whole."), "success")
+            elif action == "remove":
+                row = W.get_row(guided, request.form.get("row_id", type=int))
+                W.remove_work(guided, row, actor=_actor(), confirmed=request.form.get("confirm") == "1",
+                              user_id=_uid())
+                flash(f"{row.display_name} is no longer part of this estimate. The change is in the history.",
+                      "success")
+            else:
+                abort(400)
+        except (W.SelectedWorkError, G.GuidedEstimatingError) as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        return redirect(here + (f"?return_to={back}" if back else "") + "#work")
+    items = W.work_items(guided)
+    return render_template("guided/work.html", project=project, guided=guided, items=items,
+                           catalogue=W.catalogue(), chosen={r.stage_key for r in items},
+                           progress=W.progress(guided) if guided is not None else (0, 0),
+                           accepted=G.accepted_proposal(guided) if guided is not None else None,
+                           removal={r.id: W.removal_check(r) for r in items}, return_to=back,
+                           estimate_id=request.args.get("estimate_id", type=int))
+
+
+def _safe_return(value):
+    value = (value or "").strip()
+    return value if value.startswith("/") and not value.startswith("//") else ""
+
+
 @guided_bp.route("/projects/<int:project_id>/guided/scope", methods=["GET", "POST"])
 def scope(project_id):
+    from app.services import selected_work as W
+
     project, guided = _project_and_guided(project_id)
-    if guided is None:
-        return redirect(url_for("guided.workflow", project_id=project.id))
+    if W.is_selected_work(guided):
+        return _work_page(project, guided)
+    if request.method == "POST" and request.form.get("action") == "convert":
+        try:
+            W.convert_legacy_draft(guided, actor=_actor(), confirmed=request.form.get("confirm") == "1",
+                                   user_id=_uid())
+            flash("This draft now uses selected work. The stages that were not chosen are no longer part of the "
+                  "estimate; every earlier decision is in the history.", "success")
+        except (W.SelectedWorkError, G.GuidedEstimatingError) as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        return redirect(url_for("guided.scope", project_id=project.id))
     if request.method == "POST":
         action = request.form.get("action", "save")
         try:
@@ -202,7 +274,8 @@ def scope(project_id):
         return redirect(url_for("guided.scope", project_id=project.id))
     return render_template("guided/scope.html", project=project, guided=guided,
                            undecided=G.undecided(guided), library=G.available_library_stages(guided),
-                           accepted=G.accepted_proposal(guided))
+                           accepted=G.accepted_proposal(guided),
+                           can_convert=guided.estimate_id is None or G.editable_version(guided) is not None)
 
 
 # ---------------------------------------------------------------------------------------------- one stage
@@ -271,7 +344,7 @@ def stage(project_id, stage_id):
         accepted=G.accepted_proposal(guided), basis_labels=G.BASIS_LABELS,
         can_zero_cost=G.can_authorize_zero_cost(current_user._get_current_object(), _org()),
         zero_cost_refused=G.ZERO_COST_REFUSED, allowance_event=G.allowance_record(row),
-        return_to=_stage_url(project, row),
+        return_to=_stage_url(project, row), selected_work=G._selected(guided),
         stage_section_id=(G.section_for(row, version).id if G.section_for(row, version) is not None else None))
 
 

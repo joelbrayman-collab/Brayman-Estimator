@@ -400,10 +400,12 @@ test("step 10: the office cancels a confirmed order with a reason; the supplier 
   const art = o.locator(`article#share-${facts.rival_share_id}`);
   await art.locator("[data-approve-quote] button").click();
   await o.waitForLoadState();
+  await sign(o.locator(`article#share-${facts.rival_share_id} [data-place-order]`), "Ben Synthetic");
   await o.locator(`article#share-${facts.rival_share_id} [data-place-order] button:has-text('Place order')`).click();
   await o.waitForLoadState();
   const rivalPo = (await flash(o)).match(/Purchase order (PO-\d{4}-\d{4})/)[1];
   await go(rp, rhub(`requests/${facts.rival_share_id}`));
+  await sign(rp.locator("[data-confirm-order]"), "Rival Store Synthetic");
   await rp.click("button[value=confirm]");
   await rp.waitForLoadState();
   await go(o, second);

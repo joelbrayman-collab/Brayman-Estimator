@@ -222,7 +222,7 @@ test("step 5: the office places the purchase order", async () => {
   await form.locator("[name=notes]").fill("Call Ben 30 minutes before arrival.");
   await sign(form, "Ben Synthetic");
   await screen(pg, "office-place-order");
-  await form.locator("button:has-text('order')").first().click();
+  await form.locator("[data-calisign-po-send]").click(); // CaliSIGN: "Sign & Send for E-Signature" places the order
   await pg.waitForLoadState();
   assert.match(await flash(pg), /It is agreed when they sign and confirm it/);
   const po = article(pg).locator("[data-po]");
@@ -401,7 +401,7 @@ test("step 10: the office cancels a confirmed order with a reason; the supplier 
   await art.locator("[data-approve-quote] button").click();
   await o.waitForLoadState();
   await sign(o.locator(`article#share-${facts.rival_share_id} [data-place-order]`), "Ben Synthetic");
-  await o.locator(`article#share-${facts.rival_share_id} [data-place-order] button:has-text('Place order')`).click();
+  await o.locator(`article#share-${facts.rival_share_id} [data-place-order] [data-calisign-po-send]`).click();
   await o.waitForLoadState();
   const rivalPo = (await flash(o)).match(/Purchase order (PO-\d{4}-\d{4})/)[1];
   await go(rp, rhub(`requests/${facts.rival_share_id}`));

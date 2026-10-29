@@ -102,13 +102,13 @@ Nothing here is deployed. Each item must be resolved or explicitly dispositioned
 
 | # | Item | Status |
 |---|---|---|
-| 1 | Supplier migration readiness (`a4d5e6f7a8b9` on `q4c7l2n8t3a6`) | **Verified 29 Oct 2026** on disposable databases (below); release-gate wiring corrected (`d7c3e389`). Production apply still needs Joel's authorization |
+| 1 | Supplier migration readiness (`a4d5e6f7a8b9` on `q4c7l2n8t3a6`) | **Verified 29 Oct 2026** (below); release-gate wiring corrected (`d7c3e389`) |
 | 2 | Supplier consent `CONSENT-SUPPLIER-V1-001` | **Complete** — approved 29 Oct 2026 |
-| 3 | Client Change Order production consent (PP-1 in the consent register) | Open — needs a governed solution and Joel's approval |
-| 4 | Trusted IP / proxy evidence (PP-2 in the consent register) | Open — technical hardening |
-| 5 | Migration rollback / recovery | Open — partly informed: schema downgrade works only while no supplier signing row exists (below) |
-| 6 | Final tests and the Mac release gate on the exact commit | Open |
-| 7 | Deployment order (merge #13, then #16; backup; migration; deploy; post-checks) | Open — Joel authorizes |
+| 3 | Client Change Order production consent (PP-1) | **Resolved** — `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001`, the contract consent with only the document named changed (consent register) |
+| 4 | Trusted IP / proxy evidence (PP-2) | **Resolved** — `app/services/client_ip.py`: Cloudflare's `CF-Connecting-IP` on Render; `X-Forwarded-For` never trusted (consent register, PP-2) |
+| 5 | Migration rollback / recovery | **Planned** — procedure below, with the old code proven on a migrated database |
+| 6 | Final tests and the Mac release gate on the exact commit | Open until the gate passes on the Mac |
+| 7 | Deployment order | **Planned** — sequence below; production deployment pending the gate |
 
 ## Supplier migration verification — 29 Oct 2026 (readiness item 1)
 
@@ -148,3 +148,39 @@ Disposable SQLite files only (production is SQLite on the Render instance); noth
   use, a downgrade is refused by design; the options are to keep the widened checks and redeploy older code (the
   older code runs with the wider checks), or restore the pre-migration backup (losing everything written since).
   Which to use, and any archival, is readiness item 5.
+
+## Release sequence (established mechanism, CaliSIGN release)
+
+Live before the release: `30d47b8` (deploy `dep-dbgeh86gekts73a54c60`), database revision `q4c7l2n8t3a6`. The
+candidate fast-forwards `main`; Render deploys `main` (auto-deploy off).
+
+1. **Mac release gate** (`tools/release/release_gate.sh`, Joel's Mac): clean clone at the candidate; complete
+   regression with no skip; release browser checks in Chrome (now including `evidence_calisign.mjs`); a fresh hosted
+   backup copied to the Mac and verified; the migration rehearsed on a copy of that backup in strict mode
+   (`--migration-to a4d5e6f7a8b9 --new-tables none --altered-checks ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role`);
+   stops at READY_FOR_PUSH.
+2. **Push and deploy** (Claude): `main` fast-forwarded to the candidate; Render deploy triggered for that commit.
+3. **Migration** (`release_migrate.sh`, Joel's Mac): waits until the instance runs the candidate; takes the instance's
+   own online pre-migration backup and copies it to the Mac; applies the migration with the same strict checks.
+4. **Post-release check** (`postrelease_check.sh`): live revision, rows, integrity, pages.
+
+**The window between 2 and 3.** The new code on the old schema cannot record a supplier signature: placing a
+supplier purchase order, or signing a delivery change, is refused (nothing is saved; the user sees an error).
+Everything else, including client contract and change-order signing, works. `release_migrate.sh` starts the moment
+the instance reports the new commit (it polls every 30 s), so the window is the few minutes of the deploy. Release at
+a quiet hour.
+
+## Recovery (incident procedure)
+
+Recovery points: the gate's fresh hosted backup (on the Mac) and the instance's pre-migration backup
+(`instance/backups/pre-migrate-<label>-<UTC>.db`, also copied to the Mac). Restoring a backup always needs Joel.
+
+| Situation | What to do | Why it is safe |
+|---|---|---|
+| The deploy fails or the new code misbehaves **before** the migration | Redeploy `30d47b8` (deploy `dep-dbgeh86gekts73a54c60`, same settings). Do not run the migration. | Nothing in the database changed. |
+| The migration stops (`MIGRATE` not ok) | Leave the app running; read `$OUT-migrate.txt`. If the revision is still `q4c7l2n8t3a6`, nothing changed: redeploy `30d47b8` and investigate. If the database is partly changed, Joel restores the pre-migration backup, then redeploy `30d47b8`. | SQLite migration DDL is not transactional; the backup was taken and verified immediately before. |
+| A problem **after** the migration, no supplier signing yet | Redeploy `30d47b8`. Keep the widened checks (no downgrade needed). | Verified 29 Oct 2026: the live code `30d47b8` signs-in, opens projects, supplier requests, deliveries and change orders, and sends, signs and countersigns a change order on a database at `a4d5e6f7a8b9`. |
+| A problem **after** supplier signing has started | Redeploy `30d47b8` and/or forward-fix. **Do not downgrade**: it refuses once supplier signing records exist, by design. The supplier records stay in the database untouched; the old code does not read them. | Same verification, run with a supplier signing record present. |
+| Catastrophic damage to the database | Joel restores the pre-migration backup and redeploys `30d47b8`. Everything written after the backup is lost, so this is the last resort. | Backup verified (integrity, revision, SHA-256) at the time it was taken. |
+
+No step deletes data automatically; there is no automated rollback.

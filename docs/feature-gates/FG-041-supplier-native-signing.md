@@ -49,7 +49,8 @@ button labels on the affected forms); purchase order, confirmation and delivery-
   added or changed. `tools/release/migration_check.py` now accepts `--altered-checks` naming exactly those constraints and
   proves every row, column, key and foreign key is unchanged:
   `--from q4c7l2n8t3a6 --to a4d5e6f7a8b9 --new-tables "" --altered-checks ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role`.
-- The release gate script must pass those arguments for this release (not yet wired; release-time task).
+- The release gate and `release_migrate.sh` carry `--altered-checks` (wired 29 Oct 2026, `d7c3e389`); migration verified on
+  disposable databases the same day — see `docs/operations/calisign-native-esignature.md`.
 - Production consent wording `CONSENT-SUPPLIER-V1-001`: **APPROVED by Joel, 29 Oct 2026**, exactly as written
   ([signing consent register](../governance/signing-consent-register.md)). Migration and release still need his authorization.
 - Signing custody: the 18 Oct finding (`SIGNING_ARTIFACT_ROOT` not set) applies here too; new supplier documents are

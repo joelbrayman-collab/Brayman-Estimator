@@ -102,10 +102,49 @@ Nothing here is deployed. Each item must be resolved or explicitly dispositioned
 
 | # | Item | Status |
 |---|---|---|
-| 1 | Supplier migration readiness (`a4d5e6f7a8b9` on `q4c7l2n8t3a6`; `migration_check.py --altered-checks`; release gate wiring) | **Next** |
+| 1 | Supplier migration readiness (`a4d5e6f7a8b9` on `q4c7l2n8t3a6`) | **Verified 29 Oct 2026** on disposable databases (below); release-gate wiring corrected (`d7c3e389`). Production apply still needs Joel's authorization |
 | 2 | Supplier consent `CONSENT-SUPPLIER-V1-001` | **Complete** — approved 29 Oct 2026 |
 | 3 | Client Change Order production consent (PP-1 in the consent register) | Open — needs a governed solution and Joel's approval |
 | 4 | Trusted IP / proxy evidence (PP-2 in the consent register) | Open — technical hardening |
-| 5 | Migration rollback / recovery | Open |
+| 5 | Migration rollback / recovery | Open — partly informed: schema downgrade works only while no supplier signing row exists (below) |
 | 6 | Final tests and the Mac release gate on the exact commit | Open |
 | 7 | Deployment order (merge #13, then #16; backup; migration; deploy; post-checks) | Open — Joel authorizes |
+
+## Supplier migration verification — 29 Oct 2026 (readiness item 1)
+
+Disposable SQLite files only (production is SQLite on the Render instance); nothing hosted was read or changed.
+
+- **Start:** `main` `817bf451`; PR #13 open/draft at `43694c53`; PR #16 open at `bba5a9bb`; migration
+  `a4d5e6f7a8b9` (down revision `q4c7l2n8t3a6`) is byte-identical to FG-041's commit `705d2ad2` and is the only
+  migration difference from `main`.
+- **Database:** built by Alembic from the migration history to `q4c7l2n8t3a6` (218 tables), then legitimate
+  pre-migration records through the app's own services: an executed client change-order signing, a signed contract
+  awaiting countersignature, a quoted and approved concrete request (135 rows; 2 signing requests, 4 participants,
+  12 events, 2 frozen and 1 executed artifact).
+- **Up:** succeeded. Exactly three check constraints changed:
+  `ck_signing_frozen_artifacts_document_family` and `ck_signing_requests_document_family` (+ `SUPPLIER_ORDER`,
+  `SUPPLIER_DELIVERY_CHANGE`), `ck_signing_participants_role` (+ `CONTRACTOR`, `SUPPLIER`). No table, column, type,
+  default, nullability, index, foreign key or other check changed; no row changed, deleted or inserted (row
+  fingerprint of all 218 tables identical: `fceef76e28b461b3` before, after up, after down). The three tables are
+  rebuilt, so SQLite stores their CREATE text with clauses in a different order; structure is identical.
+- **Constraints:** after up, the four new values are accepted and the old values still accepted; `PURCHASE_ORDER`,
+  `BYSTANDER`, lower-case variants and empty strings are still rejected. After down, the new values are rejected again.
+- **Down (no supplier rows):** succeeded; checks, structure and every row back to the baseline. Round trip
+  up → down → up: same structure and rows.
+- **Down with supplier rows:** after one real purchase order was placed (1 request, 1 frozen artifact, 2
+  participants, 4 events), the downgrade **refuses** ("Supplier signing records exist … Restore the pre-migration
+  backup instead.") and leaves the database at `a4d5e6f7a8b9`, unchanged.
+- **Code before migration:** the supplier-signing code on an unmigrated database cannot place an order (check
+  constraint refuses the supplier frozen artifact; the order is rolled back, nothing saved). Deploy and migration must
+  follow each other closely; this window belongs to readiness item 7 (deployment order).
+- **Checker:** `migration_check.py rehearse --new-tables none --altered-checks <the three>` → `MIGRATION_REHEARSAL=ok`,
+  three `ALTERED_CHECK` lines, "every row identical; schema identical except the named check constraints". Without
+  declaring them, or naming a different check, it fails. With `--altered-tables` it also passes but checks less
+  (any schema change of those tables, indexes included, would be accepted).
+- **Release gate (corrected `d7c3e389`):** before, the gate and `release_migrate.sh` could pass only
+  `--altered-tables`. Now both carry `--altered-checks`. Release arguments for this migration:
+  `--migration-to a4d5e6f7a8b9 --new-tables none --altered-checks ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role`.
+- **Rollback truth:** schema rollback is possible only before any supplier signing record exists. After real supplier
+  use, a downgrade is refused by design; the options are to keep the widened checks and redeploy older code (the
+  older code runs with the wider checks), or restore the pre-migration backup (losing everything written since).
+  Which to use, and any archival, is readiness item 5.

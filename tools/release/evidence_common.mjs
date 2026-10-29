@@ -12,9 +12,7 @@ export const chromium = pw.chromium;
 export function launch() {
   // The Mac uses Google Chrome. EVIDENCE_EXECUTABLE lets a workspace without Chrome use Chromium.
   const exe = process.env.EVIDENCE_EXECUTABLE;
-  // EVIDENCE_HEADFUL=1 runs a visible browser (under xvfb-run in a workspace), so the built-in PDF viewer draws pages.
-  const headless = process.env.EVIDENCE_HEADFUL !== "1";
-  return chromium.launch(exe ? { executablePath: exe, headless } : { channel: "chrome", headless });
+  return chromium.launch(exe ? { executablePath: exe, headless: true } : { channel: "chrome", headless: true });
 }
 export function freePort() {
   return new Promise((resolve, reject) => {

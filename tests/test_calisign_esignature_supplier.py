@@ -60,6 +60,21 @@ def test_06_the_store_receives_a_calisign_invitation_for_this_purchase_order(app
     assert "Awaiting Signature" in _chips(page)
 
 
+def test_06_the_supplier_email_names_the_contractor_project_reference_and_document(app):
+    from app.services.transactional_email import _render, _render_html
+
+    variables = {"organization_name": "Contractor Synthetic Inc.", "document_kind": "purchase order",
+                 "document_label": "PO-2026-0009", "project_name": "REF-SYN-7", "reason": "Please confirm.",
+                 "link": "http://localhost/supplier/1/requests/2", "asset_base": "http://localhost/static/branding/"}
+    with app.test_request_context():
+        subject, body = _render(INVITE, variables)
+        html = _render_html(INVITE, variables, subject)
+    assert "Contractor Synthetic Inc." in subject and "PO-2026-0009" in subject
+    assert "Project: REF-SYN-7" in body and "Review and Sign Document: http://localhost/supplier/1/requests/2" in body
+    for text in ("Review and Sign Document", "REF-SYN-7", "PO-2026-0009", "Supplier Hub", "CaliSIGN"):
+        assert text in html
+
+
 def test_20_28_the_store_signs_in_the_hub_and_both_sides_show_executed(app, client):
     project, tomlinson, store, share, delivery = _placed_concrete(app, client)
     order = SupplierPurchaseOrder.query.one()

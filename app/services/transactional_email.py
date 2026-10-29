@@ -250,8 +250,10 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         kind = str(variables.get("document_kind") or "purchase order")
         reason = str(variables.get("reason") or "").strip()
         subject = f"{org}: {kind} {document} ready for your signature"
+        project = str(variables.get("project_name") or "").strip()
         body = (
             f"{org} sent {kind} {document} for your signature.\n"
+            + (f"Project: {project}\n" if project else "")
             + (f"{reason}\n" if reason else "") + "\n"
             "Sign in to the Supplier Hub to review the document and sign it (CaliSIGN by CalibraytAI).\n"
             f"Review and Sign Document: {url}\n"

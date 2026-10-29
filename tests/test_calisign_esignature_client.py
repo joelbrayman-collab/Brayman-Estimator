@@ -5,8 +5,9 @@ Contract and Change Order records, the compact review-and-send, the CaliSIGN inv
 (review, consent, adopt signature, Sign & Accept, confirmation), countersignature, execution and download, and the
 status the source record shows from the real signing events. Synthetic data only; mail is captured locally.
 
-Brief test numbers covered here: 1, 2, 4, 5, 7–19, 21–31. The supplier numbers (3, 6, 20, 32, 33) are in
-tests/test_calisign_esignature_supplier.py; 34 is the existing signing suites, run unchanged.
+Test numbers follow the revised brief (735afe0c, section 30). Covered here: 1, 2, 4, 5, 7–20, 22–32. The supplier
+numbers (3, 6, 21, 29 supplier side, 33, 34) are in tests/test_calisign_esignature_supplier.py; 35 is the existing
+signing suites, run unchanged. Test names carry the original brief's numbers (4231671d, one fewer from 8 on).
 """
 
 from __future__ import annotations
@@ -165,6 +166,28 @@ def test_07_12_the_ceremony_shows_the_exact_frozen_document(app, client):
     assert served.status_code == 200 and served.mimetype == "application/pdf"
     assert served.data == S.retrieve_frozen_artifact_bytes(request.frozen_artifact)
     assert sha256_hex(served.data) == request.frozen_artifact.sha256
+
+
+# 8 (revised brief) ── sending freezes the exact document, and later edits do not reach it ─────────────────────
+def test_send_freezes_the_change_order_and_contract_exactly(app, client):
+    change_order, request, path = _sent_co(app, client)
+    frozen = S.retrieve_frozen_artifact_bytes(request.frozen_artifact)
+    assert frozen.startswith(b"%PDF") and sha256_hex(frozen) == request.frozen_artifact.sha256
+    events = _events(request.id)
+    assert events.index("REQUEST_CREATED") < events.index("SENT"), "frozen before the invitation goes out"
+    # The editable record is not the signing artifact: what the signer sees stays the frozen bytes.
+    served = app.test_client().get(f"{path}/document").data
+    assert served == frozen
+    project, contract_id = _contract("EST-CS-FREEZE")
+    sent = client.post(f"/projects/{project.id}/contract/{contract_id}/send-for-signature",
+                       data={"signer_name": "Pat Synthetic Owner", "signer_email": "pat.owner@example.invalid",
+                             "countersign_required": "yes", "expiry_days": "7"}, follow_redirects=True)
+    assert sent.status_code == 200
+    contract_request = SigningRequest.query.filter_by(document_family="CONTRACT", source_record_id=contract_id).one()
+    from app.services.contract_generation import retrieve_generated_contract_docx
+
+    generated = retrieve_generated_contract_docx(db.session.get(S.GeneratedProjectContract, contract_id).snapshot)
+    assert S.retrieve_frozen_artifact_bytes(contract_request.frozen_artifact) == generated
 
 
 # 8, 27 ── the invitation goes to the right person and is specific to this transaction ─────────────────────────
@@ -331,7 +354,7 @@ def test_26_28_the_source_record_status_follows_the_real_events(app, client):
                                    "SIGNED", "COUNTERSIGNED", "EXECUTED"]
     timeline = [row.label for row in C.timeline(db.session.get(SigningRequest, request.id))]
     assert len(timeline) == 8 and timeline[0] == "Request created" and timeline[-1] == C.EVENT_LABELS["EXECUTED"]
-    assert f"Signing history ({len(timeline)})" in page
+    assert f"View Signing Status ({len(timeline)} events)" in page
 
 
 # 29 ── resend ───────────────────────────────────────────────────────────────────────────────────────────────────

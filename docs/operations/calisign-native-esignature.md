@@ -34,7 +34,7 @@ delivery, then the next action only:
 - **Executed** → **Download Executed Copy**.
 - Voided, Expired, Declined are shown as they are recorded.
 
-*Signing history* lists the real signing events (created, approved, sent, opened, consent, signed, countersigned,
+*View Signing Status* lists the real signing events (created, approved, sent, opened, consent, signed, countersigned,
 executed, …) with who and when. Nothing is inferred: every label comes from `SigningRequest.status` and its
 `SigningEvent` rows (`app/services/calisign.py`).
 
@@ -62,7 +62,8 @@ Error pages say what happened and that nothing was signed: invalid link, expired
 ## What the store sees
 
 Stores sign in the Supplier Hub, signed in (FG-041). They get a CaliSIGN email (`SIGNING_SUPPLIER_INVITATION`)
-for a new purchase order and for a delivery change the contractor asks for, pointing them to the Hub. In the Hub
+for a new purchase order and for a delivery change the contractor asks for: the contractor, the project reference
+the store already has (never the job name), the document, and **Review and Sign Document** pointing to the Hub. In the Hub
 the "Adopt your signature" box shows the consent wording, the tick box (not ticked) and the typed name with its
 script preview; chips show Awaiting Your Signature / Awaiting Signature / Executed.
 
@@ -75,7 +76,7 @@ consent on record. **Client SMS invitations are future work** and need a consent
 ## Evidence
 
 - Focused tests: `tests/test_calisign_esignature_client.py`, `tests/test_calisign_esignature_supplier.py`
-  (brief items 1–33; 34 is the existing signing suites, unchanged in what they prove).
+  (revised brief items 1–34; 35 is the existing signing suites, unchanged in what they prove).
 - Browser walk: `tools/release/evidence_calisign.mjs` on `tests/calisign_page_server.py` (temporary database,
   synthetic data, mail captured locally). Contract and change order to Executed, purchase order and delivery change
   to Executed, at 1600, 1280×800 and 390 px.

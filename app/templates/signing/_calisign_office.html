@@ -99,7 +99,7 @@
 
     {% if view.timeline %}
     <details class="calisign-history" data-calisign-history>
-        <summary>Signing history ({{ view.timeline|length }})</summary>
+        <summary>View Signing Status ({{ view.timeline|length }} {{ "event" if view.timeline|length == 1 else "events" }})</summary>
         <ol>{% for row in view.timeline %}<li><span>{{ row.label }}</span><time>{{ row.at|local_time("%b %d, %Y %H:%M") }}</time>{% if row.who %}<span class="calisign-sub">{{ row.who }}</span>{% endif %}</li>{% endfor %}</ol>
     </details>
     {% endif %}

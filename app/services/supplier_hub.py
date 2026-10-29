@@ -1243,7 +1243,9 @@ def _send(users, subject: str, body: str, link: str, order, signing: Optional[di
         from app.services.signing_mail import public_signing_url
 
         template = TEMPLATE_SIGNING_SUPPLIER_INVITATION
-        variables = {"organization_name": supplier_signing._names(order)[0], "document_kind": signing["kind"],
+        buyer, _store, reference = supplier_signing._names(order)
+        # The project as the store already knows it: the reference shared with the request, never the job name.
+        variables = {"organization_name": buyer, "document_kind": signing["kind"], "project_name": reference,
                      "document_label": signing["label"], "reason": body, "link": link,
                      "asset_base": public_signing_url("/static/branding/")}
     seen = set()

@@ -345,6 +345,7 @@ test("supplier PO 2: the store's CaliSIGN email points to the Supplier Hub", asy
   const mail = captured("SIGNING_SUPPLIER_INVITATION", facts.store[0]);
   assert.match(mail.text, new RegExp(W.poNumber));
   assert.match(mail.text, /Supplier Hub/);
+  assert.match(mail.text, /Project: \S+/, "the store's email names the project reference it already knows");
   const { pg } = await storeLaptop();
   await showEmail(pg, mail, "supplier-po-email");
 });

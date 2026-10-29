@@ -1,0 +1,33 @@
+{# Native Signing on supplier documents (Joel, 20 Oct 2026). Shared by the office and the Supplier Hub.
+   CaliSIGN treatment (28 Oct 2026): the same consent wording, tick box and typed name, shown as "Adopt your
+   signature" with the signature as it will appear. Field names are unchanged. #}
+{% from "partials/calisign.html" import calisign_identifier %}
+{% macro sign_fields(order, prefix="") %}
+<div class="sign-box calisign-adopt" data-sign-box="true" data-calisign-adopt>
+    <div class="calisign-adopt-head">
+        <p class="calisign-adopt-title">Adopt your signature</p>
+        {{ calisign_identifier(14, byline=False) }}
+    </div>
+    <p class="muted-copy sign-consent-text calisign-consent-text">{{ supplier_consent_text(order) }}</p>
+    <label class="sign-consent calisign-consent"><input type="checkbox" name="sign_consent" value="yes"> I agree to sign electronically</label>
+    <label class="calisign-name">Your full name (your signature) <input type="text" name="signer_name" autocomplete="name" maxlength="150" data-calisign-name></label>
+    <div class="calisign-preview" aria-hidden="true">
+        <span class="calisign-preview-label">Signature preview</span>
+        <span class="calisign-script" data-calisign-preview data-empty="Type your full name above"></span>
+        <span class="calisign-preview-hint">This is how your name will appear as your electronic signature.</span>
+    </div>
+</div>
+{% endmacro %}
+{% macro signing_line(summary, url, side=None) %}
+{% if summary %}
+{% set cs = calisign_supplier_status(summary, our_side=side) if side else None %}
+<p class="signing-line calisign-line" data-signing="{{ summary.status }}">
+    {% if cs %}<span class="calisign-chip is-{{ cs.tone }}" data-calisign-status="{{ cs.label }}">{{ cs.label }}</span>{% endif %}
+    {% for s_key in ("CONTRACTOR", "SUPPLIER") %}{% set s = summary.sides.get(s_key) %}{% if s %}
+    <span>{{ s.company }}: {% if s.name %}<strong>signed by {{ s.name }}</strong> {{ s.at|local_time("%b %d, %Y %H:%M") }}{% elif summary.voided %}not signed{% else %}waiting to sign{% endif %}</span>{% if not loop.last %} · {% endif %}
+    {% endif %}{% endfor %}
+    {% if summary.voided %} · <em>no longer open for signing</em>{% endif %}
+    · <a href="{{ url }}" target="_blank" rel="noopener">{{ "Signed copy (PDF)" if summary.executed else "Document (PDF)" }}</a>
+</p>
+{% endif %}
+{% endmacro %}

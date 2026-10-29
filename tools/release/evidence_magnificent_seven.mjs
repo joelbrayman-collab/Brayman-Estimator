@@ -370,7 +370,7 @@ step("The supplier prices it in the Supplier Hub; Ben records, approves and orde
     { canonical_material_id: materialId, status: "APPROVED" }), 200);
   const orderDay = await pg.evaluate(() => new Date(Date.now() + 2 * 864e5).toISOString().slice(0, 10));
   assert.equal(await postForm(pg, `/projects/${facts.project_id}/supplier-requests/${M.shareId}/order`,
-    { delivery_date: orderDay, site_contact: "Kevin" }), 200);
+    { delivery_date: orderDay, site_contact: "Kevin", sign_consent: "yes", signer_name: "Ben Synthetic" }), 200);
   const kevin = await person("kevin", PHONE);
   await go(kevin.pg, "/field/requests");
   assert.match(await kevin.pg.locator("[data-field-my-requests]").innerText(), /Ordered/);

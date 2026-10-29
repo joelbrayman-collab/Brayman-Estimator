@@ -14,6 +14,7 @@ from flask_login import current_user, login_user, logout_user
 
 from app.models.supplier_portal import KIND_CONCRETE, KIND_MATERIAL
 from app.services.auth import authenticate
+from app.services.supplier_signing import signature_from_form, signing_template_helpers
 from app.services.supplier_hub import (
     CONCRETE_CHARGES,
     SupplierHubError,
@@ -175,8 +176,9 @@ def confirm(supplier_id, order_id):
             flash("Problem sent to the contractor. The order is on hold until they answer.", "success")
         else:
             confirm_order(order, user=current_user, expected_delivery=request.form.get("expected_delivery", ""),
-                          note=request.form.get("note", ""), delivery_window=request.form.get("delivery_window", ""))
-            flash(f"Order {order.number} confirmed.", "success")
+                          note=request.form.get("note", ""), delivery_window=request.form.get("delivery_window", ""),
+                          signature=signature_from_form(request.form, request))
+            flash(f"Order {order.number} signed and confirmed. Both sides can download the signed purchase order.", "success")
     except SupplierHubError as exc:
         flash(str(exc), "error")
     return redirect(url_for("supplier_portal.request_detail", supplier_id=supplier.id, share_id=order.share_id))
@@ -254,7 +256,7 @@ def _brand_helpers():
             "logo_url": url_for("supplier_portal.logo", supplier_id=supplier.id, v=brand.logo_sha256[:12])
             if brand and brand.logo_bytes else None,
         }
-    return {"brand_for": brand_for}
+    return {"brand_for": brand_for, **signing_template_helpers()}
 
 
 @supplier_portal_bp.route("/<int:supplier_id>/logo")
@@ -289,7 +291,7 @@ def request_change(supplier_id, order_id):
     try:
         request_delivery_change(order, side="SUPPLIER", user=current_user, new_date=request.form.get("new_date", ""),
                                 new_window=request.form.get("new_window", ""), reason=request.form.get("reason", ""),
-                                note=request.form.get("note", ""))
+                                note=request.form.get("note", ""), signature=signature_from_form(request.form, request))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -307,7 +309,8 @@ def answer_change(supplier_id, change_id):
         answer_delivery_change(change, side="SUPPLIER", user=current_user, action=request.form.get("action", ""),
                                note=request.form.get("note", ""), counter_date=request.form.get("counter_date", ""),
                                counter_window=request.form.get("counter_window", ""),
-                               counter_reason=request.form.get("counter_reason", "Other"))
+                               counter_reason=request.form.get("counter_reason", "Other"),
+                               signature=signature_from_form(request.form, request))
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
@@ -387,6 +390,21 @@ def remove_text_number(supplier_id, number_id):
         abort(404)
     flash("Number removed.", "success")
     return redirect(url_for("supplier_portal.account"))
+
+
+@supplier_portal_bp.route("/<int:supplier_id>/signed/<int:request_id>.pdf")
+def signed_document(supplier_id, request_id):
+    """The purchase order or delivery change for this store: the signed copy once both sides signed."""
+    from app.services.supplier_signing import document_for_supplier
+
+    supplier = _supplier(supplier_id)
+    found = document_for_supplier(supplier.id, request_id)
+    if found is None:
+        abort(404)
+    data, filename = found
+    return Response(data, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="{filename}"', "Cache-Control": "private, no-store",
+                             "X-Content-Type-Options": "nosniff"})
 
 
 import app.routes.supplier_wizards  # noqa: E402,F401 — registers the Supplier Pro Desk wizard pages

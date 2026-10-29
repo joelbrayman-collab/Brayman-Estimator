@@ -130,11 +130,17 @@ def _expires_display(request: SigningRequest) -> str:
 
 
 def _context_variables(request: SigningRequest, *, invitation_url: Optional[str] = None) -> dict:
+    project = db.session.get(Project, request.project_id)
+    signer = next((p for p in request.participants if p.role == ROLE_CUSTOMER), None)
     variables = {
         "organization_name": _organization_name(request.organization_id),
         "document_kind": _document_kind(request),
         "document_label": _document_label(request),
         "expires_display": _expires_display(request),
+        # CaliSIGN email (28 Oct 2026): the project and who it is for, and where the approved images are served.
+        "project_name": (project.name or "").strip() if project is not None else "",
+        "signer_name": (signer.invited_name or "").strip() if signer is not None else "",
+        "asset_base": public_signing_url("/static/branding/"),
     }
     if invitation_url:
         variables["invitation_url"] = invitation_url

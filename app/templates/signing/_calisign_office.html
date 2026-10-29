@@ -1,0 +1,118 @@
+{# CaliSIGN on the business record (Joel, 28 Oct 2026): the signing status, the next action and the real history of a
+   Contract or Change Order's signing request, on the record itself. The FG-033 engine does the work; this panel only
+   presents it with the approved CaliSIGN identity (docs/branding/calisign/README.md). Every action posts to the
+   existing signing_office routes. #}
+{% from "partials/calisign.html" import calisign_identifier, calisign_mark %}
+{% macro calisign_office_panel(overlay, family, source_id, send_url, document_label, document_kind, project, prefill=None, prefill_note="", invitation_url="", show_invitation=False, countersign_party="Brayman") %}
+{% set view = calisign_view(family, source_id) %}
+{% set fallback = calisign_client_prefill(project) %}
+{% set signer = prefill or fallback %}
+<section class="calisign-panel" data-calisign-panel="{{ family|lower }}" data-signing-overlay="true" data-signing-label="{{ overlay.hub_label }}" data-signing-status="{{ overlay.request_status or '' }}" aria-labelledby="calisign-title-{{ family|lower }}-{{ source_id }}">
+    <header class="calisign-panel-head">
+        <h2 class="calisign-visually-hidden" id="calisign-title-{{ family|lower }}-{{ source_id }}">Electronic signature (CaliSIGN)</h2>
+        {{ calisign_identifier(20, byline=False) }}
+        <span class="calisign-chip is-{{ view.tone }}" data-calisign-status="{{ view.label }}">{{ view.label }}</span>
+        {% if overlay.request_number %}<span class="calisign-ref">{{ overlay.request_number }}</span>{% endif %}
+    </header>
+    {% if view.detail %}<p class="calisign-detail">{{ view.detail }}</p>{% endif %}
+
+    {% if overlay.request_number %}
+    <dl class="calisign-facts">
+        <div><dt>Signer</dt><dd>{{ overlay.signer_name or "—" }}{% if overlay.signer_email %}<span class="calisign-sub">{{ overlay.signer_email }}</span>{% endif %}</dd></div>
+        <div><dt>Invitation expires</dt><dd>{% if overlay.expires_at %}{{ overlay.expires_at|local_time("%b %d, %Y %H:%M") }}{% else %}—{% endif %}</dd></div>
+        <div><dt>Countersignature</dt><dd>{{ "Required (" ~ countersign_party ~ ")" if overlay.countersign_required else "Not required" }}</dd></div>
+        <div><dt>Signed copy</dt><dd>{{ "Available" if overlay.executed_available else "Not yet" }}</dd></div>
+        {% if overlay.email_delivery_label %}<div><dt>Email</dt><dd data-signing-email-delivery="true">{{ overlay.email_delivery_label }}</dd></div>{% endif %}
+    </dl>
+    {% endif %}
+
+    {% if show_invitation and invitation_url %}
+    <label class="calisign-copy">Copy invitation link (for testing, or if the email does not arrive)
+        <input type="text" readonly data-signing-invitation="true" value="{{ invitation_url }}" onclick="this.select()"></label>
+    {% elif overlay.can_resend %}
+    <p class="calisign-note">The original link is not stored. Resend Invitation creates a new link and stops the old one.</p>
+    {% endif %}
+
+    <div class="calisign-actions">
+        {% if overlay.can_countersign %}
+        <form method="post" action="{{ url_for('signing_office.countersign', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="calisign-btn is-primary" data-calisign-countersign>{{ calisign_mark(18) }}Countersign &amp; Execute</button>
+        </form>
+        {% endif %}
+        {% if overlay.can_execute %}
+        <form method="post" action="{{ url_for('signing_office.execute', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="calisign-btn is-primary">Complete execution</button>
+        </form>
+        {% endif %}
+        {% if overlay.can_download_executed %}
+        <a class="calisign-btn is-primary" href="{{ url_for('signing_office.download_executed', request_id=overlay.request_id) }}" data-calisign-download>Download Executed Copy</a>
+        {% endif %}
+        {% if overlay.can_approve %}
+        <form method="post" action="{{ url_for('signing_office.approve', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="calisign-btn">Approve for Signature</button>
+        </form>
+        {% endif %}
+        {% if overlay.can_invite %}
+        <form method="post" action="{{ url_for('signing_office.invite', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="calisign-btn">Send invitation</button>
+        </form>
+        {% endif %}
+        {% if overlay.can_resend %}
+        <form method="post" action="{{ url_for('signing_office.resend', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="calisign-btn">Resend Invitation</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if overlay.can_send %}
+    <details class="calisign-send" data-calisign-send{% if signer %} open{% endif %}>
+        <summary class="calisign-btn is-primary" data-calisign-send-open>{{ calisign_mark(18) }}Send for E-Signature</summary>
+        <form method="post" action="{{ send_url }}" class="calisign-send-card" data-calisign-once data-calisign-send-form>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3 class="calisign-send-title">Review &amp; send</h3>
+            <dl class="calisign-facts is-compact">
+                <div><dt>Document</dt><dd>{{ document_label }}</dd></div>
+                <div><dt>Project</dt><dd>{{ project.name if project else "—" }}</dd></div>
+                <div><dt>Client</dt><dd>{{ project.client.name if project and project.client else "—" }}</dd></div>
+            </dl>
+            {% if prefill_note %}<p class="calisign-note" {{ prefill_note[0] }}="true">{{ prefill_note[1] }}</p>{% elif signer and signer.source == "client" %}<p class="calisign-note" data-signer-from-client="true">Filled in from the project's customer. Check it, then send.</p>{% endif %}
+            <div class="calisign-fields">
+                <label>Signer name <span class="calisign-req" aria-hidden="true">*</span>
+                    <input type="text" name="signer_name" required aria-required="true" autocomplete="name" value="{{ signer.name if signer else '' }}"></label>
+                <label>Signer email <span class="calisign-req" aria-hidden="true">*</span>
+                    <input type="email" name="signer_email" required aria-required="true" autocomplete="email" value="{{ signer.email if signer else '' }}"></label>
+                <label>Invitation valid for (days)
+                    <input type="number" name="expiry_days" value="7" min="1" max="30"></label>
+                <label class="calisign-check"><input type="checkbox" name="countersign_required" value="yes" checked>
+                    <span>{{ countersign_party }} countersigns after the client signs</span></label>
+            </div>
+            <p class="calisign-note">The signer receives a CaliSIGN email: “{{ document_kind|capitalize }} ready to Review &amp; Sign”, with a secure link to the frozen document. No CalibraytAI account is needed to sign.</p>
+            <button type="submit" class="calisign-btn is-primary" data-calisign-send-submit>{{ calisign_mark(18) }}Send for E-Signature</button>
+        </form>
+    </details>
+    {% endif %}
+
+    {% if view.timeline %}
+    <details class="calisign-history" data-calisign-history>
+        <summary>View Signing Status ({{ view.timeline|length }} {{ "event" if view.timeline|length == 1 else "events" }})</summary>
+        <ol>{% for row in view.timeline %}<li><span>{{ row.label }}</span><time>{{ row.at|local_time("%b %d, %Y %H:%M") }}</time>{% if row.who %}<span class="calisign-sub">{{ row.who }}</span>{% endif %}</li>{% endfor %}</ol>
+    </details>
+    {% endif %}
+
+    {% if overlay.can_void %}
+    <details class="calisign-void">
+        <summary>Void this signing request</summary>
+        <form method="post" action="{{ url_for('signing_office.void', request_id=overlay.request_id) }}" data-calisign-once>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Reason <span class="calisign-req" aria-hidden="true">*</span> <input type="text" name="void_reason" required maxlength="255"></label>
+            <button type="submit" class="calisign-btn">Void signing request</button>
+        </form>
+    </details>
+    {% endif %}
+</section>
+{% endmacro %}

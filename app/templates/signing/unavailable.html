@@ -3,12 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>{% if document_unavailable %}This document is not available{% else %}This link is not available{% endif %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css') }}">
+    <title>{% if document_unavailable %}This document is not available{% elif declined %}Declined{% else %}This link is not available{% endif %} · CaliSIGN</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/calisign/calisign-icon-32.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calisign.css', v='cs-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css', v='cs-1') }}">
 </head>
+{# CaliSIGN failure states (28 Oct 2026). Each fails safely: nothing is shown, signed or changed. #}
+{% from "partials/calisign.html" import calisign_identifier %}
 <body class="sign-body" data-sign-page="unavailable" data-sign-code="{{ code }}">
+    <header class="sign-top"><div class="sign-from"><p class="sign-org">Electronic signature</p></div><div class="sign-brand">{{ calisign_identifier(20) }}</div></header>
     <main class="sign-main">
-        <section class="sign-panel">
+        <section class="sign-panel sign-unavailable">
             {% if document_unavailable %}
             <h1 class="sign-doc-title">This document is not available.</h1>
             <p class="sign-muted" data-sign-document-unavailable="true">We could not open this document, so nothing was shown. Nothing has been signed or changed. Please contact the person who sent you this link.</p>
@@ -20,9 +26,20 @@
             <p class="sign-error">Too many tries. Please wait and try again later.</p>
             {% elif declined %}
             <p class="sign-muted">This invitation was declined. No signature was recorded.</p>
+            {% elif code == "TOKEN_EXPIRED" %}
+            <p class="sign-muted" data-sign-reason="expired">This signing link has expired. Nothing was signed. Ask the sender for a new link.</p>
+            {% elif code == "TOKEN_CONSUMED" %}
+            <p class="sign-muted" data-sign-reason="already-signed">This document has already been signed with this link, so it cannot be signed again. Ask the sender if you need a copy.</p>
+            {% elif code == "REQUEST_TERMINAL" %}
+            <p class="sign-muted" data-sign-reason="closed">This signing request is no longer open (it was withdrawn, expired or declined). Nothing was signed.</p>
+            {% elif code == "CONTRACT_PDF_NOT_AVAILABLE" %}
+            <p class="sign-muted" data-sign-reason="conversion">The document could not be prepared for signing, so nothing was shown or signed. Please contact the person who sent you this link.</p>
+            {% elif code == "REQUEST_NOT_SENT" %}
+            <p class="sign-muted" data-sign-reason="not-open">This document is not open for signing. Nothing was signed.</p>
             {% else %}
-            <p class="sign-muted">This link is invalid, expired, or already used.</p>
+            <p class="sign-muted" data-sign-reason="invalid">This link is invalid, expired, or already used.</p>
             {% endif %}
+            <p class="sign-foot">CaliSIGN by CalibraytAI · secure signing links stop working once they are used, replaced or expired.</p>
         </section>
     </main>
 </body>

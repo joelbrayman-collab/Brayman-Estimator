@@ -3,106 +3,193 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Sign — {{ organization.display_name if organization else "CalibraytAI" }}</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
+    <title>{% if completed %}Signed{% else %}Review and Sign{% endif %} — {{ organization.display_name if organization else "CalibraytAI" }} · CaliSIGN</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/calisign/calisign-icon-32.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calisign.css', v='cs-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css', v='cs-1') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="sign-body" data-sign-page="ceremony" data-sign-status="{{ signing_request.status }}" data-sign-family="{{ family_label|lower|replace(' ', '-') }}" data-sign-responsive="one-ceremony">
-    <main class="sign-main" id="main-content">
-        <div class="sign-brand">
-            <img
-                src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}"
-                alt="CalibraytAI"
-                width="120"
-                height="44"
-            >
+{# CaliSIGN signing ceremony (FG-033 SIGN-B/E; CaliSIGN treatment 28 Oct 2026). One responsive page for the office
+   computer and the phone: the frozen document beside the signing panel on a desktop, stacked on a phone.
+   1 Review Document · 2 Consent to Sign · 3 Adopt Signature · 4 Sign & Accept · 5 Confirmation. One POST signs. #}
+{% from "partials/calisign.html" import calisign_identifier %}
+{% set org_name = organization.display_name if organization else "The contractor" %}
+<body class="sign-body{% if completed %} is-complete{% endif %}" data-sign-page="ceremony" data-sign-status="{{ signing_request.status }}" data-sign-family="{{ family_label|lower|replace(' ', '-') }}" data-sign-responsive="one-ceremony">
+    <header class="sign-top">
+        <div class="sign-from">
+            <p class="sign-org">{{ org_name }}</p>
+            <p class="sign-muted sign-from-line">{{ project.name if project else "Project" }}</p>
         </div>
+        <div class="sign-brand">{{ calisign_identifier(20) }}</div>
+    </header>
+
+    <main class="sign-main{% if not completed and has_frozen_pdf %} has-viewer{% endif %}" id="main-content">
         {% if is_synthetic %}
         <div class="sign-banner" role="status">
             This is a test page. It is not a real customer agreement.
         </div>
         {% endif %}
-        <section class="sign-panel">
-            <p class="sign-org">{{ organization.display_name if organization else "Organization" }}</p>
-            <p class="sign-muted">{{ project.name if project else "Project" }}</p>
-            <h1 class="sign-doc-title">{{ document_title }}</h1>
-            <p class="sign-muted">{{ family_label }}</p>
-        </section>
 
         {% if completed %}
-        <section class="sign-panel" data-sign-complete="true">
+        <section class="sign-panel sign-done" data-sign-complete="true" aria-labelledby="sign-done-title">
+            <div class="sign-done-mark" aria-hidden="true">&#10003;</div>
+            <h1 class="sign-doc-title" id="sign-done-title">Document Signed Successfully</h1>
             {% if executed %}
             <p class="sign-ok">This document is complete.</p>
             {% else %}
             <p class="sign-ok">You have signed this document.</p>
-            {% if signing_request.countersign_required %}
-            <p class="sign-muted">{{ organization.display_name if organization else "The contractor" }} still needs to countersign.</p>
-            {% endif %}
             {% endif %}
             {% if customer_signer_name %}
-            <p class="sign-who">Signed by {{ customer_signer_name }}</p>
-            {% if customer_signed_on %}
-            <p class="sign-muted">on {{ customer_signed_on }}</p>
+            <p class="sign-thanks">Thank you, {{ customer_signer_name }}. Your electronic signature has been applied.</p>
+            <p class="calisign-script sign-done-script" aria-label="Signature: {{ customer_signer_name }}">{{ customer_signer_name }}</p>
             {% endif %}
-            {% endif %}
-            {% if executed and countersigner_name %}
-            <p class="sign-who">Countersigned by {{ countersigner_name }}</p>
-            {% if countersigned_on %}
-            <p class="sign-muted">on {{ countersigned_on }}</p>
-            {% endif %}
+            <dl class="sign-facts">
+                <div><dt>Document</dt><dd>{{ document_title }} <span class="sign-muted">({{ family_label }})</span></dd></div>
+                <div><dt>Project</dt><dd>{{ project.name if project else "—" }}</dd></div>
+                {% if customer_signer_name %}<div><dt>Signed</dt><dd><span class="sign-who">Signed by {{ customer_signer_name }}</span>{% if participant.signed_at %}<span class="sign-muted"> on {{ participant.signed_at|local_time("%B %d, %Y at %H:%M") }}</span>{% elif customer_signed_on %}<span class="sign-muted"> on {{ customer_signed_on }}</span>{% endif %}</dd></div>{% endif %}
+                {% if executed and countersigner_name %}<div><dt>Countersigned</dt><dd><span class="sign-who">Countersigned by {{ countersigner_name }}</span>{% if countersigned_on %}<span class="sign-muted"> on {{ countersigned_on }}</span>{% endif %}</dd></div>{% endif %}
+            </dl>
+            {% if not executed and signing_request.countersign_required %}
+            <p class="sign-muted sign-pending" data-sign-pending-countersign="true">{{ org_name }} still needs to countersign. Signed is not yet executed: you can download the completed document from this link once every signature is in place.</p>
             {% endif %}
             {% if executed %}
-            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}">Download the completed document</a>
+            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}" data-sign-download="true">Download the completed document</a>
             <p class="sign-muted">Names are on the last page. The original form lines stay blank.</p>
             {% elif has_frozen_pdf %}
             <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
             {% endif %}
         </section>
         {% else %}
-        <section class="sign-panel">
-            {% if has_frozen_pdf %}
-            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
-            {% else %}
-            <p class="sign-muted">A document copy is not available to review in this step.</p>
-            {% endif %}
+        {% if has_frozen_pdf %}
+        <section class="sign-viewer" aria-label="The document to sign">
+            <div class="sign-viewer-bar">
+                <span class="sign-viewer-title">{{ document_title }}</span>
+                <a class="sign-viewer-open" href="{{ url_for('sign.document', credential=credential) }}" target="_blank" rel="noopener">Open in a new tab</a>
+            </div>
+            <iframe class="sign-viewer-frame" src="{{ url_for('sign.document', credential=credential) }}#view=FitH" title="{{ document_title }} — the document you are asked to sign"></iframe>
         </section>
-        <section class="sign-panel">
-            <h2 class="sign-doc-title">Please read this before you sign</h2>
-            <p class="sign-consent">{{ consent.body_text }}</p>
-            {% if error_code == "CONSENT_NOT_ACCEPTED" %}
-            <p class="sign-error">Please check the box before signing.</p>
-            {% endif %}
-            {% if error_code == "CONFIRMED_NAME_REQUIRED" %}
-            <p class="sign-error">Please type your name.</p>
-            {% endif %}
-            <form method="post" action="{{ url_for('sign.sign_accept', credential=credential) }}" class="sign-form">
+        {% endif %}
+
+        <div class="sign-side">
+            <section class="sign-panel sign-summary">
+                <p class="sign-eyebrow">{{ family_label }} for your signature</p>
+                <h1 class="sign-doc-title">{{ document_title }}</h1>
+                <p class="sign-muted">Sent by {{ org_name }} for {{ project.name if project else "the project" }}.</p>
+            </section>
+
+            <ol class="sign-steps" aria-label="Signing steps" data-sign-steps>
+                <li data-step="review" class="is-current"><span class="sign-step-num">1</span>Review Document</li>
+                <li data-step="consent"><span class="sign-step-num">2</span>Consent to Sign</li>
+                <li data-step="adopt"><span class="sign-step-num">3</span>Adopt Signature</li>
+                <li data-step="sign"><span class="sign-step-num">4</span>Sign &amp; Accept</li>
+                <li data-step="done"><span class="sign-step-num">5</span>Confirmation</li>
+            </ol>
+
+            <section class="sign-panel" aria-labelledby="sign-step-review">
+                <h2 class="sign-step-title" id="sign-step-review"><span class="sign-step-num" aria-hidden="true">1</span>Review the document</h2>
+                {% if has_frozen_pdf %}
+                <p class="sign-muted">This is the exact document you are signing. Read it before you continue.</p>
+                <a class="sign-btn sign-btn-review" href="{{ url_for('sign.document', credential=credential) }}" target="_blank" rel="noopener" data-sign-review>Review the document</a>
+                {% else %}
+                <p class="sign-muted">A document copy is not available to review in this step.</p>
+                {% endif %}
+            </section>
+
+            <form method="post" action="{{ url_for('sign.sign_accept', credential=credential) }}" class="sign-form" data-sign-form>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <label class="sign-check">
-                    <input type="checkbox" name="consent_accepted" value="yes" required>
-                    <span>I have read the document and I agree to sign.</span>
-                </label>
-                <label class="sign-label" for="confirmed_signer_name">Type your name</label>
-                <input
-                    class="sign-input"
-                    id="confirmed_signer_name"
-                    name="confirmed_signer_name"
-                    type="text"
-                    autocomplete="name"
-                    required
-                    value="{{ participant.invited_name }}"
-                >
-                <button class="sign-btn sign-btn-primary" type="submit">Sign &amp; Accept</button>
+                <section class="sign-panel" aria-labelledby="sign-step-consent">
+                    <h2 class="sign-step-title" id="sign-step-consent"><span class="sign-step-num" aria-hidden="true">2</span>Please read this before you sign</h2>
+                    <p class="sign-consent">{{ consent.body_text }}</p>
+                    {% if error_code == "CONSENT_NOT_ACCEPTED" %}
+                    <p class="sign-error" role="alert">Please check the box before signing.</p>
+                    {% endif %}
+                    <label class="sign-check">
+                        <input type="checkbox" name="consent_accepted" value="yes" required data-sign-consent>
+                        <span>I have read the document and I agree to sign.</span>
+                    </label>
+                </section>
+
+                <section class="sign-panel" aria-labelledby="sign-step-adopt" data-calisign-adopt>
+                    <h2 class="sign-step-title" id="sign-step-adopt"><span class="sign-step-num" aria-hidden="true">3</span>Adopt your signature</h2>
+                    {% if error_code == "CONFIRMED_NAME_REQUIRED" %}
+                    <p class="sign-error" role="alert">Please type your name.</p>
+                    {% endif %}
+                    <label class="sign-label" for="confirmed_signer_name">Full name</label>
+                    <input
+                        class="sign-input"
+                        id="confirmed_signer_name"
+                        name="confirmed_signer_name"
+                        type="text"
+                        autocomplete="name"
+                        required
+                        value="{{ participant.invited_name }}"
+                        data-calisign-name
+                        aria-describedby="sign-preview-hint"
+                    >
+                    <div class="calisign-preview sign-preview">
+                        <span class="calisign-preview-label">Signature preview</span>
+                        <span class="calisign-script" data-calisign-preview data-empty="Type your full name above" aria-hidden="true">{{ participant.invited_name }}</span>
+                        <span class="calisign-preview-hint" id="sign-preview-hint">This is how your name will appear as your electronic signature.</span>
+                    </div>
+                </section>
+
+                <section class="sign-panel sign-final" aria-labelledby="sign-step-sign">
+                    <h2 class="sign-step-title" id="sign-step-sign"><span class="sign-step-num" aria-hidden="true">4</span>Sign &amp; Accept</h2>
+                    <p class="sign-muted">Selecting Sign &amp; Accept signs this {{ family_label|lower }} with the name above. {% if signing_request.countersign_required %}{{ org_name }} countersigns after you.{% endif %}</p>
+                    <button class="sign-btn sign-btn-primary" type="submit" data-sign-submit>Sign &amp; Accept</button>
+                </section>
             </form>
             <form method="post" action="{{ url_for('sign.decline', credential=credential) }}" class="sign-form sign-form-decline">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="sign-btn sign-btn-decline" type="submit">Decline</button>
             </form>
-        </section>
+            <p class="sign-foot">Secure CaliSIGN link from {{ org_name }}. No CalibraytAI account is needed.</p>
+        </div>
         {% endif %}
     </main>
+    {% if not completed %}
+    <script>
+    /* The steps follow what the signer has done; one press signs (the server refuses a second signature anyway). */
+    (function () {
+      var steps = document.querySelector("[data-sign-steps]");
+      var form = document.querySelector("[data-sign-form]");
+      if (!steps || !form) return;
+      var consent = form.querySelector("[data-sign-consent]");
+      var name = form.querySelector("[data-calisign-name]");
+      var review = document.querySelector("[data-sign-review]");
+      var preview = form.querySelector("[data-calisign-preview]");
+      var viewer = document.querySelector(".sign-viewer");
+      var reviewed = !!(viewer && viewer.offsetParent !== null);
+      function mark() {
+        var done = { review: reviewed, consent: consent && consent.checked, adopt: name && name.value.trim() !== "" };
+        var current = !done.review ? "review" : !done.consent ? "consent" : !done.adopt ? "adopt" : "sign";
+        steps.querySelectorAll("li").forEach(function (li) {
+          var key = li.getAttribute("data-step");
+          li.classList.toggle("is-done", !!done[key]);
+          li.classList.toggle("is-current", key === current);
+          if (key === current) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+        });
+      }
+      if (review) review.addEventListener("click", function () { reviewed = true; mark(); });
+      if (consent) consent.addEventListener("change", mark);
+      if (name) name.addEventListener("input", function () {
+        if (preview) { var v = name.value.trim(); preview.textContent = v || preview.getAttribute("data-empty"); preview.classList.toggle("is-empty", !v); }
+        mark();
+      });
+      form.addEventListener("submit", function (event) {
+        if (form.dataset.sent) { event.preventDefault(); return; }
+        if (form.checkValidity && !form.checkValidity()) return;
+        form.dataset.sent = "1";
+        var button = form.querySelector("[data-sign-submit]");
+        setTimeout(function () { if (button) { button.disabled = true; button.textContent = "Signing…"; } }, 0);
+      });
+      window.addEventListener("pageshow", function (event) { if (event.persisted) { delete form.dataset.sent; var b = form.querySelector("[data-sign-submit]"); if (b) { b.disabled = false; b.textContent = "Sign & Accept"; } } });
+      mark();
+    })();
+    </script>
+    {% endif %}
 </body>
 </html>

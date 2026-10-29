@@ -100,9 +100,9 @@ def test_approved_co_exposes_send_for_signature(app, client):
     draft = create_change_order(project=project, title="FG033-UAT SYNTHETIC SIGN-D DRAFT")
     approved_page = _html(client.get(f"/project-controls/change-orders/{approved.id}"))
     draft_page = _html(client.get(f"/project-controls/change-orders/{draft.id}"))
-    assert "Send for Signature" in approved_page
+    assert "Send for E-Signature" in approved_page
     assert 'data-signing-label="UNSIGNED"' in approved_page
-    assert "Send for Signature" not in draft_page
+    assert "Send for E-Signature" not in draft_page
     assert 'data-signing-label="UNSIGNED"' in draft_page
     overlay = overlay_for_change_order(approved.id, DEFAULT_ORGANIZATION_ID)
     assert overlay.can_send is True
@@ -222,7 +222,7 @@ def test_e2e_countersign_hub_and_executed_bytes(app, client):
     )
     completed_html = _html(completed)
     assert "EXECUTED" in completed_html
-    assert "Download executed PDF" in completed_html
+    assert "Download Executed Copy" in completed_html
     executed_row = db.session.get(SigningRequest, row.id)
     assert executed_row.status == STATUS_EXECUTED
     downloaded = client.get(f"/signing-requests/{row.id}/executed")
@@ -547,7 +547,7 @@ def test_customer_mobile_ceremony_markup_copy_and_states(app, client):
     assert "Sign &amp; Accept" in html
     assert "sign-btn-primary" in html
     assert html.find("Review the document") < html.find("Please read this before you sign")
-    assert html.find("Please read this before you sign") < html.find("Sign &amp; Accept")
+    assert html.find("Please read this before you sign") < html.find("data-sign-submit")  # the Sign & Accept button (the steps list names it earlier)
     assert b"SHA-256" not in ceremony.data
     css = client.get("/static/css/signing.css").data.decode("utf-8")
     assert "overflow-x: hidden" in css

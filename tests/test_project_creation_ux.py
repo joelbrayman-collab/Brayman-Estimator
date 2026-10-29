@@ -429,7 +429,7 @@ def test_the_migration_adds_six_empty_customer_address_columns_and_changes_nothi
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["q4c7l2n8t3a6"]
+    assert script.get_heads() == ["a4d5e6f7a8b9"]
     assert script.get_revision("q4c7l2n8t3a6").down_revision == "e5d1v4r7y2k9"
     command.upgrade(cfg, "e5d1v4r7y2k9")
     engine = sa.create_engine(uri)

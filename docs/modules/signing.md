@@ -105,3 +105,15 @@ Private bytes: `instance/signing_artifacts/` (gitignored).
 - PRODUCTION contract send **BLOCK** without ACTIVE PRODUCTION package
 - Additive Alembic **`e0f1a2b3c4d5`** (parent `d9e0f1a2b3c4`)
 - MAIL-B / AUTH-D Native Signing invitation/resend/complete through the FG-034 engine **IMPLEMENTED / PASS** (local/fake; SENT ≠ delivered; copyable URL retained; Postmark HTTP adapter activated; live Postmark **DEFERRED**)
+
+## CaliSIGN treatment (28 Oct 2026)
+
+- The same engine, presented as **CaliSIGN by CalibraytAI** (approved identity, `docs/branding/calisign/README.md`).
+- Source-record panel on Contract and Change Order: status from real events (Not sent for signature / Awaiting
+  Signature / Viewed / Awaiting Your Signature / Executed / Voided / Expired / Declined), compact Review & send,
+  Resend Invitation, Countersign & Execute, Download Executed Copy, signing history.
+- Ceremony: frozen PDF beside the panel on desktop; five steps; consent unticked; typed name with a script preview
+  (stored name independent of rendering); Sign & Accept once; Document Signed Successfully; SIGNED ≠ EXECUTED.
+- HTML CaliSIGN emails beside the text versions; supplier invitation `SIGNING_SUPPLIER_INVITATION` (Hub link).
+- No migration; no engine, token, freeze, hash or consent change. Details: `docs/operations/calisign-native-esignature.md`.
+- **NOT DEPLOYED.**

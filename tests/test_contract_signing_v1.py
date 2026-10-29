@@ -131,7 +131,7 @@ def test_office_page_sends_and_another_project_cannot_reach_the_contract(client,
     project, contract_id = _contract("EST-SIGN-5")
     other = _ottawa_project(name="Other signing project", address="200 Test Civic Street, Ottawa")
     page = client.get(f"/projects/{project.id}/contract").get_data(as_text=True)
-    assert "Send contract for signature" in page and "Contract status Generated — not signed" in page
+    assert "Send for E-Signature" in page and "Contract status Generated — not signed" in page
     assert client.post(f"/projects/{other.id}/contract/{contract_id}/send-for-signature",
                        data={"signer_name": SIGNER[0], "signer_email": SIGNER[1]}).status_code == 404
     sent = client.post(f"/projects/{project.id}/contract/{contract_id}/send-for-signature",

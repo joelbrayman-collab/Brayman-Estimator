@@ -1601,7 +1601,11 @@ def office_send_change_order_for_signature(
         if overlay.request_id is not None:
             raise SigningServiceError(BLOCK_ACTIVE_SIGNING_REQUEST)
         raise SigningServiceError(BLOCK_CHANGE_ORDER_NOT_APPROVED)
-    consent = ensure_synthetic_consent_version()
+    # PP-1 (29 Oct 2026): a real change order is signed under the production change-order consent. The training
+    # site keeps the synthetic consent and its test banner, so practice records are never mistaken for real ones.
+    authority = change_order_authority_class()
+    consent = (ensure_brayman_change_order_consent_version() if authority == AUTHORITY_PRODUCTION
+               else ensure_synthetic_consent_version())
     created = create_change_order_signing_request(
         change_order_id,
         organization_id=organization_id,
@@ -1612,7 +1616,7 @@ def office_send_change_order_for_signature(
         invited_email=invited_email,
         consent_version_id=consent.id,
         countersign_required=countersign_required,
-        authority_class=AUTHORITY_SYNTHETIC_UAT,
+        authority_class=authority,
         expires_at=expires_at if expires_at is not None else default_expires_at(),
     )
     approved = approve_signing_request(
@@ -1660,6 +1664,42 @@ def ensure_brayman_v1_consent_version() -> SigningConsentVersion:
     db.session.add(row)
     db.session.flush()
     return row
+
+
+# Client change orders (PP-1, 29 Oct 2026): the approved contract consent names "this contract", so change orders get
+# their own production version, worded in parallel with CONSENT-BRAYMAN-V1-001 with only the document named changed.
+# Created once, never edited (docs/governance/signing-consent-register.md).
+CONSENT_BRAYMAN_CHANGE_ORDER_V1_CODE = "CONSENT-BRAYMAN-CHANGE-ORDER-V1-001"
+CONSENT_BRAYMAN_CHANGE_ORDER_V1_BODY = (
+    "By ticking the box, typing your full name and selecting Sign & Accept, you agree to sign "
+    "this change order electronically. Your typed name and that selection are your signature on this "
+    "change order. Before you sign you can open the full change order above and keep a copy. After you sign "
+    "you can download the signed change order with its signing record. If you do not want to sign "
+    "electronically, do not continue and contact Brayman Construction."
+)
+
+
+def ensure_brayman_change_order_consent_version() -> SigningConsentVersion:
+    """The production consent wording for Brayman's client change orders. Created once, never edited."""
+    row = SigningConsentVersion.query.filter_by(version_code=CONSENT_BRAYMAN_CHANGE_ORDER_V1_CODE).first()
+    if row is not None:
+        return row
+    row = SigningConsentVersion(
+        version_code=CONSENT_BRAYMAN_CHANGE_ORDER_V1_CODE,
+        authority_class=AUTHORITY_PRODUCTION,
+        body_text=CONSENT_BRAYMAN_CHANGE_ORDER_V1_BODY,
+        created_by_identifier="brayman-v1-change-order-signing",
+    )
+    db.session.add(row)
+    db.session.flush()
+    return row
+
+
+def change_order_authority_class() -> str:
+    """PRODUCTION for the office; SYNTHETIC_UAT on the training site (TRAINING_ENVIRONMENT)."""
+    from app.training.service import enabled as training_site
+
+    return AUTHORITY_SYNTHETIC_UAT if training_site() else AUTHORITY_PRODUCTION
 
 
 def _consent_for_authority(authority: str) -> SigningConsentVersion:

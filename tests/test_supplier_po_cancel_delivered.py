@@ -16,7 +16,7 @@ from app import create_app, db
 from app.models.supplier_portal import SupplierDeliveryChange, SupplierPurchaseOrder, SupplierRequestEvent
 from app.services import supplier_hub as H
 from app.services.organizations import DEFAULT_ORGANIZATION_ID
-from tests.test_supplier_hub import _concrete_order, _fresh_login_per_request, app, client  # noqa: F401
+from tests.test_supplier_hub import SIGN, _concrete_order, _fresh_login_per_request, app, client  # noqa: F401
 
 
 def _order(order_id):
@@ -26,8 +26,11 @@ def _order(order_id):
 def test_the_office_cancels_a_confirmed_order_with_a_reason_and_the_supplier_sees_it(app, client):
     project, tomlinson, darcy, _user, order = _concrete_order(app, client)
     client.post(f"/projects/{project.id}/orders/{order.id}/delivery-change",
-                data={"new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
+                data={**SIGN, "new_date": (order.scheduled_date + timedelta(days=1)).isoformat(), "reason": "Weather"})
     assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 1
+    from app.services import supplier_signing as SS
+    waiting = SupplierDeliveryChange.query.filter_by(status="PENDING").one()
+    assert SS.change_signing(waiting).status == "SENT"  # signed by the office, waiting for the store
     page = client.get(f"/projects/{project.id}/supplier-requests").get_data(as_text=True)
     assert f'data-cancel-order="{order.id}"' in page and f'data-mark-delivered="{order.id}"' in page
     refused = client.post(f"/projects/{project.id}/orders/{order.id}/cancel", data={"reason": " "}, follow_redirects=True)
@@ -35,6 +38,10 @@ def test_the_office_cancels_a_confirmed_order_with_a_reason_and_the_supplier_see
     client.post(f"/projects/{project.id}/orders/{order.id}/cancel", data={"reason": "Pour moved to the spring"})
     assert _order(order.id).status == "CANCELLED"
     assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 0  # the waiting change is withdrawn
+    # FG-041 reconciled with cancel (28 Oct 2026): the withdrawn change's signing is voided, never signed; the
+    # fully signed order keeps its executed record.
+    assert SS.change_signing(waiting).status == "VOIDED"
+    assert SS.order_signing(_order(order.id)).executed_at is not None
     event = SupplierRequestEvent.query.filter_by(share_id=order.share_id, event_type="ORDER_CANCELLED").one()
     assert event.actor_side == "CONTRACTOR" and "Pour moved to the spring" in event.detail
     supplier_page = darcy.get(f"/supplier/{tomlinson.supplier_id}/requests/{order.share_id}").get_data(as_text=True)

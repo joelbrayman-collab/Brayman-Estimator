@@ -92,6 +92,9 @@ def env(tmp_path):
     context.pop()
 
 
+SIGN = {"sign_consent": "yes", "signer_name": "Test Signer"}  # supplier Native Signing (FG-041): every order, confirmation and change asked on screen is signed
+
+
 def _fresh(model, row_id):
     db.session.expire_all()
     return db.session.get(model, row_id)
@@ -597,7 +600,7 @@ def test_material_request_to_supplier_quote_order_and_worker_status(env):
             ben.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                      data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     ben.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
-             data={"delivery_date": (local_today() + timedelta(days=2)).isoformat(), "site_contact": "Kevin"})
+             data={**SIGN, "delivery_date": (local_today() + timedelta(days=2)).isoformat(), "site_contact": "Kevin"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share.id).one()
     assert order.total == Decimal("120.00") and "Ordered" in kevin.get("/field/requests")
     # The worker never sees a price anywhere in Field.
@@ -888,7 +891,7 @@ def test_the_migration_adds_exactly_the_fourteen_tables(tmp_path):
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["q4c7l2n8t3a6"]
+    assert script.get_heads() == ["a4d5e6f7a8b9"]
     assert script.get_revision("m7s3r5q8b2c4").down_revision == "w2z9r4d7k1m6"
     command.upgrade(cfg, "w2z9r4d7k1m6")
     engine = sa.create_engine(uri)

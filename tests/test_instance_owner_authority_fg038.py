@@ -650,7 +650,7 @@ def test_alembic_fg038_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["q4c7l2n8t3a6"]
+        assert script.get_heads() == ["a4d5e6f7a8b9"]
 
         command.upgrade(alembic_cfg, "b2c3d4e5f6a7")
         engine = db.engine
@@ -720,8 +720,8 @@ def test_alembic_fg038_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["q4c7l2n8t3a6"]
-            assert script.get_heads() == ["q4c7l2n8t3a6"]
+            assert [row[0] for row in heads] == ["a4d5e6f7a8b9"]
+            assert script.get_heads() == ["a4d5e6f7a8b9"]
             event_count = conn.execute(
                 sa.text("SELECT COUNT(*) FROM organization_instance_owner_events")
             ).scalar()

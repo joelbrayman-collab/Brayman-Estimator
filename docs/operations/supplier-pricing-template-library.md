@@ -1,5 +1,11 @@
 # Supplier Pricing Request — template library
 
+> **29 Oct 2026 — Supplier Unit Pricing.** Templates now have a schema 2 (requirements in takeoff units, sell units with
+> verified conversions only) and are used in the app on the project's Supplier requests page:
+> [../architecture/supplier-unit-pricing.md](../architecture/supplier-unit-pricing.md). `hardie-vertical-aluminum-v1`
+> is **superseded** by `hardie-vertical-aluminum-v2`: its box ratios and sealant coverage were not verified product
+> data and are removed (left unresolved until a person records a verified conversion). v1 stays loadable.
+
 Joel, 29 Oct 2026: "we should save this template for Hardie Board estimates? We should have a library of these?"
 
 A template is a reusable package for one kind of job: the item list, specifications, units, summary groups and the

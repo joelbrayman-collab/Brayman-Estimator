@@ -7,9 +7,10 @@ supplier, sends concrete as its own request, and places orders on returned quote
 from __future__ import annotations
 
 from datetime import date
+from io import BytesIO
 from app.services.local_time import local_today
 
-from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 
 from app import db
@@ -227,11 +228,17 @@ def project_requests(project_id):
     project, org_id = _project(project_id)
     shares = (SupplierRequestShare.query.filter_by(organization_id=org_id, project_id=project.id)
               .order_by(SupplierRequestShare.sent_at.desc()).all())
+    from app.services import supplier_pricing_templates as pricing_templates
+    from app.services import unit_pricing
+
     rows = []
     for share in shares:
         lines, blockers = order_lines(share)
         rows.append({"share": share, "order": purchase_order_for(share), "lines": lines, "blockers": blockers,
-                     "events": share_events(share)})
+                     "events": share_events(share),
+                     "unit": unit_pricing.price_package(share) if unit_pricing.is_unit_pricing(share) else None})
+    templates = [pricing_templates.load_template(t["key"]) for t in pricing_templates.list_templates()
+                 if t.get("schema", 1) >= 2]
     concrete = (ConcreteRequest.query.filter_by(organization_id=org_id, project_id=project.id)
                 .order_by(ConcreteRequest.id.desc()).all())
     accounts = [a for a in _accounts(org_id) if a.status == "ACTIVE"]
@@ -258,9 +265,133 @@ def project_requests(project_id):
                            schedule_options=schedule_options,
                            reasons=CHANGE_REASONS,
                            deliveries=upcoming_deliveries(organization_id=org_id, project_id=project.id),
-                           accounts=accounts, placements=CONCRETE_PLACEMENT,
+                           accounts=accounts, placements=CONCRETE_PLACEMENT, templates=templates,
+                           unit_options=unit_pricing.unit_options, unit_labels=unit_pricing.STATUS_LABELS,
+                           source_labels=unit_pricing.SOURCE_LABELS,
                            signed_in={a.supplier_id: supplier_has_sign_in(a.supplier_id) for a in accounts},
                            today=local_today())
+
+
+# ------------------------------------------------------------------ Supplier Unit Pricing (29 Oct 2026)
+def _unit_share(project, org_id, share_id):
+    from app.services import unit_pricing
+
+    share = _share(project, org_id, share_id)
+    if not unit_pricing.is_unit_pricing(share):
+        abort(404)
+    return share
+
+
+def _back(project, share=None):
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id)
+                    + (f"#share-{share.id}" if share is not None else "#unit-pricing"))
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing", methods=["POST"])
+def create_unit_pricing(project_id):
+    """Price a package from the template library: the takeoff's measurements in, a Supplier Pricing Request out."""
+    from app.services import supplier_pricing_templates as T
+    from app.services import unit_pricing
+
+    project, _org = _project(project_id)
+    key = (request.form.get("template") or "").strip()
+    try:
+        template = T.load_template(key)
+        measurements = {m["key"]: request.form.get(f"m_{m['key']}", "") for m in template["measurements"]}
+        choices = {c: request.form.get(f"c_{c}", "") for c in template.get("choices", {})}
+        share = unit_pricing.create_request(
+            project=project, user=current_user, account_id=request.form.get("contractor_supplier_account_id", type=int),
+            template_key=key, measurements=measurements, choices=choices,
+            needed_by=_date(request.form.get("needed_by"), "needed-by date", required=False))
+    except (T.SupplierPricingTemplateError, unit_pricing.UnitPricingError, SupplierHubError) as exc:
+        flash(str(exc), "error")
+        return _back(project)
+    if share.shared_json["unit_pricing"]["online"]:
+        flash(f"Pricing request {share.number} sent to {share.supplier.legal_name}. It is in their Supplier Hub now.",
+              "success")
+    else:
+        flash(f"Pricing request {share.number} prepared for {share.supplier.legal_name}, who has no Supplier Hub "
+              "sign-in: download the form, send it, and enter the prices they return here.", "success")
+    return _back(project, share)
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing/<int:share_id>/form.pdf")
+def unit_pricing_form(project_id, share_id):
+    from app.services import unit_pricing
+    from app.services.supplier_pricing_request_form import render_supplier_pricing_request_form
+
+    project, org_id = _project(project_id)
+    share = _unit_share(project, org_id, share_id)
+    request_data = unit_pricing.form_request(share)
+    request_data["project"] = project.name
+    pdf = render_supplier_pricing_request_form(request_data)
+    return send_file(BytesIO(pdf), mimetype="application/pdf", as_attachment=True,
+                     download_name=f"Supplier_Pricing_Request_{share.number}.pdf")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing/<int:share_id>/prices", methods=["POST"])
+def unit_pricing_prices(project_id, share_id):
+    """A supplier without a Supplier Hub sign-in returned the form: the contractor enters its prices as written."""
+    from app.services import unit_pricing
+
+    project, org_id = _project(project_id)
+    share = _unit_share(project, org_id, share_id)
+    try:
+        unit_pricing.record_prices(share, user=current_user, values=request.form.to_dict(), side="CONTRACTOR")
+    except unit_pricing.UnitPricingError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("The supplier's prices are recorded. Review the package below.", "success")
+    return _back(project, share)
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing/<int:share_id>/conversion", methods=["POST"])
+def unit_pricing_conversion(project_id, share_id):
+    from app.services import unit_pricing
+
+    project, org_id = _project(project_id)
+    share = _unit_share(project, org_id, share_id)
+    try:
+        unit_pricing.record_conversion(share, number=request.form.get("number", type=int) or 0,
+                                       per=request.form.get("per"), source=request.form.get("source", ""),
+                                       user=current_user)
+    except unit_pricing.UnitPricingError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Conversion recorded. The line is recalculated.", "success")
+    return _back(project, share)
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing/<int:share_id>/exclude", methods=["POST"])
+def unit_pricing_exclude(project_id, share_id):
+    from app.services import unit_pricing
+
+    project, org_id = _project(project_id)
+    share = _unit_share(project, org_id, share_id)
+    try:
+        unit_pricing.exclude_line(share, number=request.form.get("number", type=int) or 0,
+                                  reason=request.form.get("reason", ""), user=current_user,
+                                  include=request.form.get("include") == "1")
+    except unit_pricing.UnitPricingError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("The order lines are updated.", "success")
+    return _back(project, share)
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/unit-pricing/<int:share_id>/approve", methods=["POST"])
+def unit_pricing_approve(project_id, share_id):
+    from app.services import unit_pricing
+
+    project, org_id = _project(project_id)
+    share = _unit_share(project, org_id, share_id)
+    try:
+        approved = unit_pricing.approve(share, user=current_user)
+    except unit_pricing.UnitPricingError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Package approved: ${approved['subtotal']} before tax. Placing the order is the next step.", "success")
+    return _back(project, share)
 
 
 @supplier_office_bp.route("/projects/<int:project_id>/supplier-quote-comparison")

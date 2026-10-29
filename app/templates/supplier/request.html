@@ -1,11 +1,12 @@
 {% extends "supplier/base.html" %}
 {% from "supplier/_delivery.html" import delivery_panel, when with context %}
 {% from "supplier/_sign.html" import sign_fields, signing_line with context %}
+{% import "suppliers/_unit_pricing.html" as up with context %}
 {% block title %}{{ share.number }}{% endblock %}
 {% block content %}
 {% set s = share.shared_json %}
 <div class="page-heading">
-    <div><p class="eyebrow">{{ brand_for(supplier).name }} · {{ "Concrete request" if share.request_kind == kind_concrete else "Material request" }}</p>
+    <div><p class="eyebrow">{{ brand_for(supplier).name }} · {{ "Concrete request" if share.request_kind == kind_concrete else ("Pricing request: " ~ s.unit_pricing.title if unit else "Material request") }}</p>
     <h1>{{ share.number }}</h1>
     <p class="muted-copy">From {{ s.company }} — {{ s.contact_name }}{% if s.contact_email %} ({{ s.contact_email }}){% endif %} · {{ s.project_reference }} · Delivery town {{ s.delivery_town }}{% if s.needed_by %} · Needed by {{ s.needed_by }}{% endif %}</p></div>
     <div><a class="button button-secondary" href="{{ url_for('supplier_portal.inbox', supplier_id=supplier.id) }}">Back to requests</a></div>
@@ -64,7 +65,19 @@
 {{ delivery_panel(order, schedule, pending, changes, reasons, "SUPPLIER", "supplier_portal", {"supplier_id": supplier.id}, "the contractor") }}
 {% endif %}
 
-{% if share.request_kind == kind_concrete %}
+{% if unit %}
+{{ up.styles() }}
+<section class="form-panel" data-hub-unit-pricing="{{ share.number }}">
+    <h2>Items to price</h2>
+    {% if share.status in ("SENT", "OPENED") %}
+    {{ up.price_form(share, url_for('supplier_portal.return_quote', supplier_id=supplier.id, share_id=share.id), "SUPPLIER") }}
+    {% else %}
+    <p data-quote-returned="true">Prices returned by {{ unit.quote.entered_by }} on {{ share.returned_at.strftime("%B %d, %Y") }}, valid until {{ unit.quote.valid_until }}. CalibraytAI's calculation from your prices:</p>
+    {{ up.priced_table(share, unit) }}
+    {% if unit.approved %}<p data-unit-approved="true">The contractor approved this package on {{ unit.approved.at[:10] }}.</p>{% else %}<p class="muted-copy">The contractor reviews it; lines marked to confirm may need a quantity or a conversion from you.</p>{% endif %}
+    {% endif %}
+</section>
+{% elif share.request_kind == kind_concrete %}
 {% set c = s.concrete %}
 <section class="form-panel">
     <h2>Concrete</h2>

@@ -432,6 +432,8 @@ def remembered_skus(share) -> dict:
     """
     if share.request_kind != KIND_MATERIAL or share.status not in (SHARE_SENT, SHARE_OPENED):
         return {}
+    if share.source_kind == "UNIT_PRICING":  # a template package carries no catalogue material (29 Oct 2026)
+        return {}
     from app.models.supplier_catalogue import CanonicalMaterialSupplierMap, SupplierProduct
 
     manifest = _manifest_lines(share)

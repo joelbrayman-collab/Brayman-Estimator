@@ -1,0 +1,418 @@
+{
+  "key": "hardie-vertical-aluminum-v2",
+  "schema": 2,
+  "status": "active",
+  "title": "Hardie vertical siding + aluminum soffit, fascia & trim",
+  "trade": "Siding",
+  "scope": "Siding / aluminum package",
+  "measurements": [
+    {
+      "key": "siding_sf",
+      "label": "Vertical siding area",
+      "unit": "SF"
+    },
+    {
+      "key": "batten_lf",
+      "label": "Battens (16 in. O/C)",
+      "unit": "LF"
+    },
+    {
+      "key": "joint_lf",
+      "label": "Horizontal panel joints",
+      "unit": "LF"
+    },
+    {
+      "key": "trim_joint_lf",
+      "label": "Trim joints to seal",
+      "unit": "LF"
+    },
+    {
+      "key": "soffit_sf",
+      "label": "Soffit area",
+      "unit": "SF"
+    },
+    {
+      "key": "fascia_lf",
+      "label": "Fascia",
+      "unit": "LF"
+    },
+    {
+      "key": "corner_lf",
+      "label": "Outside corners",
+      "unit": "LF"
+    },
+    {
+      "key": "window_trim_lf",
+      "label": "Window trim",
+      "unit": "LF"
+    },
+    {
+      "key": "door_trim_lf",
+      "label": "Door / garage opening trim",
+      "unit": "LF"
+    },
+    {
+      "key": "drip_lf",
+      "label": "Window drip cap",
+      "unit": "LF"
+    },
+    {
+      "key": "freeze_lf",
+      "label": "Freeze boards / bands",
+      "unit": "LF"
+    },
+    {
+      "key": "jchannel_lf",
+      "label": "Soffit J-channel at wall",
+      "unit": "LF"
+    }
+  ],
+  "choices": {
+    "siding_colour": "Arctic White",
+    "soffit_colour": "Black",
+    "trim_colour": "White"
+  },
+  "groups": [
+    {
+      "key": "siding",
+      "label": "Siding package"
+    },
+    {
+      "key": "alum",
+      "label": "Soffit, fascia & aluminum"
+    }
+  ],
+  "source": "Supersedes v1 (29 Oct 2026). Requirements in takeoff units (SF, LF, pieces); the supplier prices in its own sell units; every conversion carries its basis. Conversions with no verified product data are left unresolved and must be recorded (with their source) before the package can be approved.",
+  "items": [
+    {
+      "key": "hpanel",
+      "group": "siding",
+      "item": "HardiePanel vertical siding",
+      "spec": "Cedarmill, {siding_colour} - 4x8 sheet ({siding_sf} SF + 10%)",
+      "requirement": {
+        "measure": "siding_sf",
+        "waste": 0.1,
+        "unit": "SF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "32",
+          "of": "SF",
+          "basis": "4 ft x 8 ft sheet = 32 SF (the sheet's stated size)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "hbatten",
+      "group": "siding",
+      "item": "HardieTrim batten",
+      "spec": "{siding_colour} - 12 ft, 16 in. O/C ({batten_lf} LF + 10%)",
+      "requirement": {
+        "measure": "batten_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "hnails",
+      "group": "siding",
+      "item": "Hardie siding nails",
+      "spec": "Ring shank, for the panels and battens",
+      "requirement": {
+        "pieces_of": [
+          "hpanel",
+          "hbatten"
+        ],
+        "unit": "PC fastened"
+      },
+      "sell_units": [
+        {
+          "unit": "BOX",
+          "per": null,
+          "of": "PC fastened",
+          "basis": "Pieces fastened per box: no verified product data"
+        }
+      ],
+      "default_unit": "BOX"
+    },
+    {
+      "key": "hflash",
+      "group": "siding",
+      "item": "Horizontal joint / Z flashing",
+      "spec": "10 ft - ~{joint_lf} LF of panel joints + 10%",
+      "requirement": {
+        "measure": "joint_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "10",
+          "of": "LF",
+          "basis": "10 ft piece = 10 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "hcaulk",
+      "group": "siding",
+      "item": "ColorMatch sealant",
+      "spec": "{siding_colour} - ~{trim_joint_lf} LF of trim joints",
+      "requirement": {
+        "measure": "trim_joint_lf",
+        "waste": 0,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "TUBE",
+          "per": null,
+          "of": "LF",
+          "basis": "LF sealed per tube: depends on the bead; no verified product data"
+        }
+      ],
+      "default_unit": "TUBE"
+    },
+    {
+      "key": "htouch",
+      "group": "siding",
+      "item": "Hardie touch-up kit",
+      "spec": "{siding_colour}",
+      "requirement": {
+        "fixed": 1,
+        "unit": "KIT"
+      },
+      "sell_units": [
+        {
+          "unit": "KIT",
+          "per": "1",
+          "of": "KIT",
+          "basis": "One kit"
+        }
+      ],
+      "default_unit": "KIT"
+    },
+    {
+      "key": "soffit",
+      "group": "alum",
+      "item": "Vented aluminum soffit",
+      "spec": "Gentek - {soffit_colour} - 16 in. x 12 ft ({soffit_sf} SF + 10%)",
+      "requirement": {
+        "measure": "soffit_sf",
+        "waste": 0.1,
+        "unit": "SF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "16",
+          "of": "SF",
+          "basis": "16 in. x 12 ft panel = 16 SF (the stated size)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "fascia",
+      "group": "alum",
+      "item": "6 in. aluminum fascia",
+      "spec": "Gentek - {soffit_colour} - 12 ft ({fascia_lf} LF + 10%)",
+      "requirement": {
+        "measure": "fascia_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "corner",
+      "group": "alum",
+      "item": "5 in. aluminum corner trim",
+      "spec": "Gentek - {trim_colour} - 10 ft ({corner_lf} LF + 10%)",
+      "requirement": {
+        "measure": "corner_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "10",
+          "of": "LF",
+          "basis": "10 ft piece = 10 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "wtrim",
+      "group": "alum",
+      "item": "Window trim",
+      "spec": "Gentek - {trim_colour}, 3-1/2 in. - 12 ft ({window_trim_lf} LF + 10%)",
+      "requirement": {
+        "measure": "window_trim_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "dtrim",
+      "group": "alum",
+      "item": "Door / garage opening trim",
+      "spec": "Gentek - {trim_colour}, 3-1/2 in. - 12 ft ({door_trim_lf} LF + 10%)",
+      "requirement": {
+        "measure": "door_trim_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "drip",
+      "group": "alum",
+      "item": "Window drip cap",
+      "spec": "Aluminum - 10 ft ({drip_lf} LF + 10%)",
+      "requirement": {
+        "measure": "drip_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "10",
+          "of": "LF",
+          "basis": "10 ft piece = 10 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "freeze",
+      "group": "alum",
+      "item": "Freeze boards / aluminum bands",
+      "spec": "Gentek - {trim_colour} - 12 ft ({freeze_lf} LF + 10%)",
+      "requirement": {
+        "measure": "freeze_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "jchan",
+      "group": "alum",
+      "item": "Soffit J-channel / receiver",
+      "spec": "{soffit_colour} - 12 ft ({jchannel_lf} LF at wall + 10%)",
+      "requirement": {
+        "measure": "jchannel_lf",
+        "waste": 0.1,
+        "unit": "LF"
+      },
+      "sell_units": [
+        {
+          "unit": "PC",
+          "per": "12",
+          "of": "LF",
+          "basis": "12 ft piece = 12 LF (the stated length)"
+        }
+      ],
+      "default_unit": "PC"
+    },
+    {
+      "key": "anails",
+      "group": "alum",
+      "item": "Aluminum trim nails",
+      "spec": "Colour-matched, for the aluminum pieces",
+      "requirement": {
+        "pieces_of": [
+          "soffit",
+          "fascia",
+          "corner",
+          "wtrim",
+          "dtrim",
+          "drip",
+          "freeze",
+          "jchan"
+        ],
+        "unit": "PC fastened"
+      },
+      "sell_units": [
+        {
+          "unit": "BOX",
+          "per": null,
+          "of": "PC fastened",
+          "basis": "Pieces fastened per box: no verified product data"
+        }
+      ],
+      "default_unit": "BOX"
+    },
+    {
+      "key": "screws",
+      "group": "alum",
+      "item": "Soffit / fascia fasteners",
+      "spec": "For the soffit panels",
+      "requirement": {
+        "pieces_of": [
+          "soffit"
+        ],
+        "unit": "PC fastened"
+      },
+      "sell_units": [
+        {
+          "unit": "BOX",
+          "per": null,
+          "of": "PC fastened",
+          "basis": "Pieces fastened per box: no verified product data"
+        }
+      ],
+      "default_unit": "BOX"
+    }
+  ]
+}

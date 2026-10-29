@@ -6,6 +6,13 @@ This block is the one authoritative "where are we" for CalibraytAI. Everything b
 status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
 **historical records**: where they disagree with this block, this block wins.
 
+- **SUPPLIER UNIT PRICING & CONVERSION (29 Oct 2026) — IMPLEMENTED ON BRANCH, NOT DEPLOYED (held for a separate
+  release).** Branch `feature/supplier-unit-pricing-2026-10-29` from `main` `ed3ff7d6`. No migration. Record:
+  [architecture/supplier-unit-pricing.md](architecture/supplier-unit-pricing.md). On the project's Supplier requests
+  page: takeoff measurements → template package → the supplier prices in its own units → governed conversion and
+  rounding → package price → review → Approve → purchase order with CaliSIGN. Hardie v2 has no invented ratio: nail
+  and fastener boxes and sealant tubes stay unresolved until a verified conversion is recorded. Release gate browser
+  checks: **309** (302 + 7).
 - **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — RELEASED.** Live `f9ca0f1183aae6c87ea8cb489b22b89f1406aac9`, deploy
   `dep-dbhs0aoae00c739lcn8g` (29 Oct 2026 17:54 EDT), database revision `a4d5e6f7a8b9` (no migration). Mac gate:
   3,657 passed, no skips, end-to-end walk and Cal tests passed, **302** browser checks; backup

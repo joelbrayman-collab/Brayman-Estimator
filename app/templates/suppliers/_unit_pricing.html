@@ -1,0 +1,99 @@
+{# Supplier Unit Pricing (29 Oct 2026): one request priced in the supplier's own sell units; Calibrayt converts,
+   rounds to whole purchasing units, extends and totals. Shared by the office (project supplier requests) and the
+   Supplier Hub. Every conversion shows where it comes from; a missing one is said plainly and never guessed. #}
+{% macro styles() %}<style>
+.up-missing { color: #9a3412; font-weight: 600; }
+.up-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.85em; background: #eef2f6; }
+.up-status.is-priced { background: #e7f5ec; color: #14532d; }
+.up-status.is-conversion_missing, .up-status.is-not_priced { background: #fdecea; color: #9a3412; }
+.up-status.is-excluded { background: #f1f1f1; color: #555; }
+.up-blockers { border-left: 4px solid #c2410c; padding: 8px 12px 8px 28px; background: #fff7ed; }
+.up-resolve { border: 1px solid #f3c9a6; border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+[data-unit-price-lines] input, [data-unit-price-lines] select { max-width: 100%; }
+</style>{% endmacro %}
+
+{% macro money(v) %}{{ "${:,.2f}".format(v) if v is not none else "—" }}{% endmacro %}
+
+{% macro requirement(line) %}{% if line.requirement.qty %}{{ line.requirement.qty }} {{ line.requirement.unit }}{% else %}to be counted{% endif %}<div class="muted-copy">{{ line.requirement.basis }}</div>{% endmacro %}
+
+{% macro conversion_text(row) %}{% if row.qty_source == "SUPPLIER" and not row.exact %}quantity stated by the supplier{% elif row.conversion %}1 {{ row.conversion.unit }} = {{ row.conversion.per }} {{ row.conversion.of }}<div class="muted-copy">{% if row.conversion.source == "CONTRACTOR" %}recorded by the contractor: {{ row.conversion.basis }}{% else %}{{ row.conversion.basis or source_labels.get(row.conversion.source, "") }}{% endif %}</div>{% else %}<strong class="up-missing">not known</strong>{% endif %}{% endmacro %}
+
+{# The request as sent: requirement and Calibrayt's quantity in the default sell unit. #}
+{% macro request_table(share) %}
+<div style="overflow-x: auto;"><table class="data-table pd-stack" data-unit-request="{{ share.number }}">
+    <thead><tr><th>No.</th><th>Item / specification</th><th>Requirement (takeoff)</th><th>Calibrayt quantity</th><th>Conversion</th></tr></thead>
+    <tbody>{% for line in share.shared_json.lines %}
+    <tr data-unit-line="{{ line.key }}"{% if not line.qty %} data-conversion-missing="true"{% endif %}>
+        <td data-label="No.">{{ line.number }}</td>
+        <td><strong>{{ line.item }}</strong><div class="muted-copy">{{ line.spec }}</div></td>
+        <td data-label="Requirement">{{ requirement(line) }}</td>
+        <td data-label="Calibrayt quantity">{% if line.qty %}<strong>{{ line.qty }} {{ line.default_unit }}</strong>{% if line.exact and line.exact != line.qty %}<div class="muted-copy">{{ line.exact }} rounded up to whole {{ line.default_unit }}</div>{% endif %}{% else %}<strong class="up-missing">To confirm</strong>{% endif %}</td>
+        <td data-label="Conversion">{% if line.conversion %}1 {{ line.conversion.unit }} = {{ line.conversion.per }} {{ line.conversion.of }}<div class="muted-copy">{{ line.conversion.basis }}</div>{% else %}<span class="up-missing">Not set</span><div class="muted-copy">{{ line.conversion_basis }}</div>{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+</table></div>
+{% endmacro %}
+
+{# The price entry: the supplier (in the Hub) or the contractor (from a returned form). #}
+{% macro price_form(share, action, who) %}
+<form method="post" action="{{ action }}" data-unit-price-form="{{ share.number }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p class="muted-copy">{% if who == "SUPPLIER" %}Price each item in the unit you normally sell it in (your POS unit): a sheet, a 12 ft piece, a box, a tube.{% else %}Enter the prices exactly as the supplier wrote them, in the units they used.{% endif %} CalibraytAI converts the requirement into that unit, rounds up to whole units, and calculates each line and the total. Where a conversion is not known, give the quantity {% if who == "SUPPLIER" %}you would supply{% else %}the supplier wrote{% endif %}, or how much one unit covers — or leave it for the contractor to confirm.</p>
+    <div style="overflow-x: auto;"><table class="data-table pd-stack" data-unit-price-lines="true">
+        <thead><tr><th>No.</th><th>Item</th><th>Requirement</th><th>Calibrayt quantity</th><th>Sold per</th><th>Unit price</th><th>SKU</th><th>Quantity or coverage (only if not known)</th></tr></thead>
+        <tbody>{% for line in share.shared_json.lines %}{% set n = '%02d'|format(line.number) %}
+        <tr data-price-line="{{ line.key }}">
+            <td data-label="No.">{{ line.number }}</td>
+            <td><strong>{{ line.item }}</strong><div class="muted-copy">{{ line.spec }}</div></td>
+            <td data-label="Requirement">{{ requirement(line) }}</td>
+            <td data-label="Calibrayt quantity">{% if line.qty %}{{ line.qty }} {{ line.default_unit }}{% else %}<span class="up-missing">To confirm</span>{% endif %}</td>
+            <td data-label="Sold per"><select name="sell_unit_{{ n }}" aria-label="Unit, line {{ line.number }}" data-sell-unit="{{ line.key }}">{% for o in unit_options(line) %}<option value="{{ o.unit }}">{{ o.label }}</option>{% endfor %}<option value="OTHER">Another unit…</option></select>
+                <input type="text" name="other_unit_{{ n }}" size="6" placeholder="unit" aria-label="Other unit, line {{ line.number }}" data-other-unit="{{ line.key }}"></td>
+            <td data-label="Unit price"><input name="unit_price_{{ n }}" size="8" inputmode="decimal" aria-label="Unit price, line {{ line.number }}" data-unit-price="{{ line.key }}"></td>
+            <td data-label="SKU"><input name="sku_{{ n }}" size="10" aria-label="SKU, line {{ line.number }}"></td>
+            <td data-label="Only if not known"><input name="supplier_qty_{{ n }}" size="5" inputmode="numeric" placeholder="qty" aria-label="Quantity in your unit, line {{ line.number }}" data-supplier-qty="{{ line.key }}">
+                <span class="muted-copy">or 1 unit =</span> <input name="supplier_per_{{ n }}" size="5" inputmode="decimal" placeholder="{{ line.requirement.unit }}" aria-label="How much one unit covers, line {{ line.number }} ({{ line.requirement.unit }})" data-supplier-per="{{ line.key }}"> <span class="muted-copy">{{ line.requirement.unit }}</span></td>
+        </tr>{% endfor %}</tbody>
+    </table></div>
+    <div class="form-grid">
+        <label>Quote number <input type="text" name="quote_number"></label>
+        <label>Prices valid until * <input type="date" name="valid_until" required></label>
+        <label>Notes (substitutions, lead times) <input type="text" name="notes"></label>
+    </div>
+    <script>
+    (function () {
+      var form = document.currentScript.closest("form");
+      form.querySelectorAll("[data-sell-unit]").forEach(function (select) {
+        var other = form.querySelector('[data-other-unit="' + select.getAttribute("data-sell-unit") + '"]');
+        var sync = function () { other.hidden = select.value !== "OTHER"; };
+        select.addEventListener("change", sync); sync();
+      });
+    })();
+    </script>
+    <div class="form-actions"><button type="submit" class="button is-primary" data-unit-price-submit>{{ "Return prices" if who == "SUPPLIER" else "Record the supplier's prices" }}</button></div>
+</form>
+{% endmacro %}
+
+{# The priced package: what Calibrayt calculated from the supplier's prices. #}
+{% macro priced_table(share, unit) %}
+<div style="overflow-x: auto;"><table class="data-table pd-stack" data-unit-priced="{{ share.number }}">
+    <thead><tr><th>No.</th><th>Item</th><th>Requirement</th><th>Priced per</th><th>Conversion</th><th>Quantity</th><th>Unit price</th><th>Extension</th><th>Status</th></tr></thead>
+    <tbody>{% for row in unit.rows %}
+    <tr data-priced-line="{{ row.line.key }}" data-line-status="{{ row.status }}">
+        <td data-label="No.">{{ row.line.number }}</td>
+        <td><strong>{{ row.line.item }}</strong><div class="muted-copy">{{ row.line.spec }}</div>{% if row.entry and row.entry.sku %}<div class="muted-copy">SKU {{ row.entry.sku }}</div>{% endif %}</td>
+        <td data-label="Requirement">{{ requirement(row.line) }}</td>
+        <td data-label="Priced per">{{ row.unit }}</td>
+        <td data-label="Conversion">{% if row.status == "EXCLUDED" %}—{% else %}{{ conversion_text(row) }}{% endif %}</td>
+        <td data-label="Quantity" data-line-qty="{{ row.qty if row.qty is not none else '' }}">{% if row.qty is not none %}<strong>{{ row.qty }} {{ row.unit }}</strong>{% if row.exact and row.exact != row.qty|string %}<div class="muted-copy">{{ row.exact }} → rounded up</div>{% endif %}{% else %}—{% endif %}</td>
+        <td data-label="Unit price">{{ money(row.unit_price) }}</td>
+        <td data-label="Extension" data-line-extension="{{ row.extension if row.extension is not none else '' }}">{{ money(row.extension) }}</td>
+        <td data-label="Status"><span class="up-status is-{{ (row.status or '')|lower }}">{{ unit_labels.get(row.status, "") }}</span>{% if row.missing %}<div class="muted-copy">{{ row.missing }}</div>{% endif %}{% if row.excluded %}<div class="muted-copy">{{ row.excluded.reason }} ({{ row.excluded.by }})</div>{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+    <tfoot>
+        {% for key, g in unit.groups.items() %}<tr data-group-total="{{ key }}"><td colspan="7">{{ g.label }}</td><td colspan="2">{{ money(g.total) }}</td></tr>{% endfor %}
+        <tr data-unit-subtotal="{{ unit.subtotal }}"><td colspan="7"><strong>Package before tax</strong></td><td colspan="2"><strong>{{ money(unit.subtotal) }}</strong></td></tr>
+        <tr><td colspan="7">HST ({{ (unit.hst_rate * 100)|round|int }}%)</td><td colspan="2">{{ money(unit.hst) }}</td></tr>
+        <tr data-unit-total="{{ unit.total }}"><td colspan="7"><strong>Total including HST</strong></td><td colspan="2"><strong>{{ money(unit.total) }}</strong></td></tr>
+    </tfoot>
+</table></div>
+{% endmacro %}

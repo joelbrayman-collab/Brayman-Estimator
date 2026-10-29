@@ -11,6 +11,10 @@ Rules (quantities round up; we lean slightly high so the supplier does no work):
 * ``{"measure": m, "waste": w, "per_piece": p}``: ceil(measurement x (1 + w) / p)
 * ``{"pieces_of": [item keys], "per_unit": n}``: ceil(sum of those items' quantities / n), e.g. nail boxes
 * ``{"fixed": n}``: n
+
+Schema 2 templates (Supplier Unit Pricing, 29 Oct 2026) state each item's requirement in takeoff units and the sell
+units it may be priced in, each with its verified conversion or none; ``app/services/unit_pricing.py`` reads them.
+Superseded templates stay loadable (earlier requests stay reproducible) but are not listed.
 """
 
 from __future__ import annotations
@@ -32,7 +36,10 @@ def list_templates() -> list[dict]:
     out = []
     for path in sorted(LIBRARY.glob("*.json")):
         t = json.loads(path.read_text())
-        out.append({"key": t["key"], "title": t["title"], "trade": t.get("trade", ""), "scope": t.get("scope", "")})
+        if t.get("status") == "superseded":  # kept so earlier requests stay reproducible; not offered (29 Oct 2026)
+            continue
+        out.append({"key": t["key"], "title": t["title"], "trade": t.get("trade", ""), "scope": t.get("scope", ""),
+                    "schema": int(t.get("schema") or 1)})
     return sorted(out, key=lambda t: t["title"])
 
 

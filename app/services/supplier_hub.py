@@ -707,7 +707,13 @@ def approve_concrete_quote(share: SupplierRequestShare, *, user) -> None:
 
 
 def order_lines(share):
-    return concrete_order_lines(share) if share.request_kind == KIND_CONCRETE else material_order_lines(share)
+    if share.request_kind == KIND_CONCRETE:
+        return concrete_order_lines(share)
+    from app.services import unit_pricing
+
+    if unit_pricing.is_unit_pricing(share):  # Supplier Unit Pricing (29 Oct 2026): the approved package
+        return unit_pricing.order_lines(share)
+    return material_order_lines(share)
 
 
 def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_contact: str = "",

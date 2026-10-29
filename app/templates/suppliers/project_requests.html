@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "supplier/_delivery.html" import delivery_panel, when with context %}
 {% from "supplier/_sign.html" import sign_fields, signing_line with context %}
+{% import "suppliers/_unit_pricing.html" as up with context %}
 {% block title %}Supplier requests | {{ project.name }}{% endblock %}
 {% block page_title %}Supplier requests{% endblock %}
 {% block content %}
@@ -20,13 +21,83 @@
     <p class="muted-copy"><a href="{{ url_for('supplier_office.deliveries') }}">All deliveries, every project</a></p>
 </section>
 
+{{ up.styles() }}
+<section class="form-panel" id="unit-pricing" data-unit-pricing-new="true">
+    <h2>Price a package from the template library</h2>
+    <p class="muted-copy">Enter the takeoff's measurements; CalibraytAI lists every component and its requirement, and the supplier prices each one in the unit they sell it in. Quantities are converted and rounded up to whole units only where the product's size is known; anything else is marked to confirm, never guessed.</p>
+    {% if templates and accounts %}
+    {% for t in templates %}
+    <form method="post" action="{{ url_for('supplier_office.create_unit_pricing', project_id=project.id) }}" class="form-grid" data-unit-template="{{ t.key }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="template" value="{{ t.key }}">
+        <p class="eyebrow" style="grid-column: 1 / -1;">{{ t.title }}</p>
+        {% for m in t.measurements %}<label>{{ m.label }} ({{ m.unit }}) * <input type="text" name="m_{{ m.key }}" inputmode="decimal" required data-measure="{{ m.key }}"></label>{% endfor %}
+        {% for c, v in t.choices.items() %}<label>{{ c|replace("_", " ")|capitalize }} <input type="text" name="c_{{ c }}" value="{{ v }}"></label>{% endfor %}
+        <label>Needed by <input type="date" name="needed_by"></label>
+        <label>Supplier * <select name="contractor_supplier_account_id" required>{% for a in accounts %}<option value="{{ a.id }}">{{ a.supplier.legal_name }}{% if not signed_in[a.supplier_id] %} (no sign-in: PDF form){% endif %}</option>{% endfor %}</select></label>
+        <div class="form-actions"><button type="submit" class="button is-primary" data-unit-create>Create the pricing request</button></div>
+    </form>
+    {% endfor %}
+    {% elif not accounts %}<p class="muted-copy">Add a supplier under Company → Suppliers first.</p>{% endif %}
+</section>
+
 <section class="form-panel" data-material-requests="true">
     <h2>Material and concrete requests</h2>
     {% for row in rows %}{% set share = row.share %}{% set order = row.order %}
     <article id="share-{{ share.id }}" class="supplier-share" data-share="{{ share.number }}" data-share-status="{{ share.status }}" style="border-top: 1px solid #ddd; padding-top: 12px; margin-top: 12px;">
-        <h3>{{ share.number }} — {{ share.supplier.legal_name }} <span class="muted-copy">({{ "concrete" if share.request_kind == "CONCRETE" else "materials" }})</span></h3>
+        <h3>{{ share.number }} — {{ share.supplier.legal_name }} <span class="muted-copy">({{ "concrete" if share.request_kind == "CONCRETE" else ("unit pricing: " ~ share.shared_json.unit_pricing.title if row.unit else "materials") }})</span></h3>
         <p>Sent {{ share.sent_at.strftime("%B %d, %Y") }} by {{ share.sent_by_name }} · Status: <strong>{{ {"SENT": "Sent, not opened", "OPENED": "Opened by the supplier", "RETURNED": "Quote returned", "WITHDRAWN": "Withdrawn", "SUPERSEDED": "Replaced by a newer request"}.get(share.status, share.status) }}</strong>{% if share.returned_at %} on {{ share.returned_at.strftime("%B %d, %Y") }} by {{ share.returned_by_name }}{% endif %}</p>
-        {% if share.request_kind == "MATERIAL" and share.response_ref %}
+        {% if row.unit %}{% set u = row.unit %}
+        <div class="unit-pricing" data-unit-pricing="{{ share.number }}">
+        {% if not u.returned %}
+            {{ up.request_table(share) }}
+            <p><a class="button button-secondary" data-unit-form-pdf href="{{ url_for('supplier_office.unit_pricing_form', project_id=project.id, share_id=share.id) }}">Download the pricing request form (PDF)</a>
+            {% if share.shared_json.unit_pricing.online %}<span class="muted-copy">It is in {{ share.supplier.legal_name }}'s Supplier Hub: they price it there.</span>{% else %}<span class="muted-copy">{{ share.supplier.legal_name }} has no Supplier Hub sign-in: send them the form; enter what they return below.</span>{% endif %}</p>
+            {% if share.status in ("SENT", "OPENED") %}
+            <details data-office-price-entry="{{ share.id }}"{% if not share.shared_json.unit_pricing.online %} open{% endif %}><summary>Enter the prices the supplier returned</summary>
+                {{ up.price_form(share, url_for('supplier_office.unit_pricing_prices', project_id=project.id, share_id=share.id), "CONTRACTOR") }}
+            </details>
+            {% endif %}
+        {% else %}
+            <p>Prices {{ "returned in the Supplier Hub by" if u.quote.entered_side == "SUPPLIER" else "entered by" }} {{ u.quote.entered_by }}{% if u.quote.quote_number %} · quote {{ u.quote.quote_number }}{% endif %} · valid until {{ u.quote.valid_until }}{% if u.quote.notes %} · {{ u.quote.notes }}{% endif %}</p>
+            {{ up.priced_table(share, u) }}
+            {% if u.approved %}
+            <p data-unit-approved="true"><strong>Package approved</strong> by {{ u.approved.by }} on {{ u.approved.at[:10] }}: {{ u.approved.lines|length }} lines, {{ up.money(u.approved.subtotal|float) }} before tax.</p>
+            {% elif not order %}
+            {% if u.blockers %}<ul class="up-blockers" data-unit-blockers="{{ u.blockers|length }}">{% for b in u.blockers %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+            {% for r in u.rows if r.status in ("CONVERSION_MISSING", "NOT_PRICED") %}
+            <div class="up-resolve" data-resolve-line="{{ r.line.key }}">
+                <p><strong>Line {{ r.line.number }}, {{ r.line.item }}:</strong> {{ r.missing }}</p>
+                {% if r.status == "CONVERSION_MISSING" %}
+                <form method="post" action="{{ url_for('supplier_office.unit_pricing_conversion', project_id=project.id, share_id=share.id) }}" class="form-grid" data-record-conversion="{{ r.line.key }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="number" value="{{ r.line.number }}">
+                    <label>1 {{ r.unit }} covers ({{ r.line.requirement.unit }}) * <input type="text" name="per" inputmode="decimal" required></label>
+                    <label>Source (spec sheet, supplier by phone…) * <input type="text" name="source" required minlength="3"></label>
+                    <div class="form-actions"><button type="submit" class="button-secondary">Record the conversion</button></div>
+                </form>
+                {% endif %}
+                <form method="post" action="{{ url_for('supplier_office.unit_pricing_exclude', project_id=project.id, share_id=share.id) }}" class="form-grid" data-exclude-line="{{ r.line.key }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="number" value="{{ r.line.number }}">
+                    <label>Or take it out of the order — reason * <input type="text" name="reason" required minlength="3"></label>
+                    <div class="form-actions"><button type="submit" class="button-secondary">Do not order this line</button></div>
+                </form>
+            </div>
+            {% endfor %}
+            {% for r in u.rows if r.status == "EXCLUDED" %}
+            <form method="post" action="{{ url_for('supplier_office.unit_pricing_exclude', project_id=project.id, share_id=share.id) }}" class="inline-form" data-include-line="{{ r.line.key }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="number" value="{{ r.line.number }}"><input type="hidden" name="include" value="1">
+                <button type="submit" class="button-secondary">Put line {{ r.line.number }} back in the order</button>
+            </form>
+            {% endfor %}
+            {% if not u.blockers %}
+            <form method="post" action="{{ url_for('supplier_office.unit_pricing_approve', project_id=project.id, share_id=share.id) }}" class="inline-form" data-unit-approve="{{ share.id }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="button is-primary">Approve the package ({{ up.money(u.subtotal) }} before tax)</button>
+            </form>
+            {% endif %}
+            {% endif %}
+        {% endif %}
+        </div>
+        {% elif share.request_kind == "MATERIAL" and share.response_ref %}
         <p><a class="button button-secondary" href="{{ url_for('deck_takeoff.view_response', project_id=project.id, response_id=share.response_ref) }}">Review the returned quote ({{ share.response_ref }})</a> — record its prices and approve the costs there.</p>
         {% elif share.request_kind == "CONCRETE" and share.quote_json %}
         {% set q = share.quote_json %}

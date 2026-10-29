@@ -127,7 +127,12 @@ def request_detail(supplier_id, share_id):
     from app.services.supplier_insights import remembered_skus
 
     order = purchase_order_for(share)
-    return render_template("supplier/request.html", supplier=supplier, areas=_areas(), share=share,
+    from app.services import unit_pricing
+
+    unit = unit_pricing.price_package(share) if unit_pricing.is_unit_pricing(share) else None
+    return render_template("supplier/request.html", supplier=supplier, areas=_areas(), share=share, unit=unit,
+                           unit_options=unit_pricing.unit_options, unit_labels=unit_pricing.STATUS_LABELS,
+                           source_labels=unit_pricing.SOURCE_LABELS,
                            remembered=remembered_skus(share),
                            order=order, events=share_events(share), reasons=CHANGE_REASONS,
                            schedule=current_schedule(order) if order else None,
@@ -146,7 +151,14 @@ def return_quote(supplier_id, share_id):
     except SupplierHubError:
         abort(404)
     try:
-        if share.request_kind == KIND_MATERIAL:
+        if share.source_kind == "UNIT_PRICING":  # Supplier Unit Pricing (29 Oct 2026): prices in your own units
+            from app.services import unit_pricing
+
+            try:
+                unit_pricing.record_prices(share, user=current_user, values=request.form.to_dict(), side="SUPPLIER")
+            except unit_pricing.UnitPricingError as exc:
+                raise SupplierHubError(str(exc)) from exc
+        elif share.request_kind == KIND_MATERIAL:
             upload = request.files.get("response_pdf")
             pdf = None
             if upload is not None and upload.filename:

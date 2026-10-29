@@ -44,9 +44,12 @@ def _job(**over):
                                  supplier_tag="SYNTHETIC", requested="October 29, 2026", **over)
 
 
-def test_the_library_lists_the_hardie_template():
-    assert {"key": HARDIE, "title": "Hardie vertical siding + aluminum soffit, fascia & trim", "trade": "Siding",
-            "scope": "Siding / aluminum package"} in list_templates()
+def test_the_library_lists_the_current_hardie_template_and_keeps_v1_loadable():
+    # Supplier Unit Pricing (29 Oct 2026): v2 states requirements and verified conversions; v1 (its box ratios
+    # were not verified product data) is superseded: not offered, still loadable so earlier forms reproduce.
+    listed = {t["key"]: t for t in list_templates()}
+    assert HARDIE not in listed and listed["hardie-vertical-aluminum-v2"]["schema"] == 2
+    assert load_template(HARDIE)["status"] == "superseded"
 
 
 def test_the_hardie_template_reproduces_the_first_jobs_quantities_and_specs_exactly():

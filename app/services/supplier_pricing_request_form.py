@@ -366,11 +366,12 @@ def _summary(form, data, blank):
     form.roundRect(34, 602, 544, 48, 6, stroke=0, fill=1)
     _text(form, 48, 630, "FINAL MATERIAL QUOTE - PRE-HST", "Helvetica-Bold", 10, NAVY)
     _box(form, "summary_total", 390, 613, 185, 27, size=13, read_only=True)
-    # As on the approved form: the HST box is white with the default 1 pt black outline.
+    # As on the approved form: the HST box is white with the default 1 pt black outline. It reaches down to 535
+    # so the Total box (541-561) sits inside it (it hung 6 pt out of the bottom; Joel, 29 Oct 2026).
     form.setFillColor(WHITE)
     form.setStrokeColor(BLACK)
     form.setLineWidth(1)
-    form.roundRect(34, 547, 544, 43, 5, stroke=1, fill=1)
+    form.roundRect(34, 535, 544, 55, 5, stroke=1, fill=1)
     _text(form, 48, 573, f"HST ({HST_RATE:.0%})", "Helvetica-Bold", 8, MUTED)
     _box(form, "summary_hst", 390, 562, 185, 20, size=9, read_only=True)
     _text(form, 48, 552, "TOTAL INCLUDING HST", "Helvetica-Bold", 9, NAVY)

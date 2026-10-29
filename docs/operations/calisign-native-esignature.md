@@ -1,7 +1,8 @@
 # CaliSIGN native e-signature (28 Oct 2026)
 
-**Status:** built on branch `feature/calisign-native-esignature-2026-10-28`, stacked on the FG-041 reconcile branch
-(PR #13). **NOT MERGED. NOT DEPLOYED.** No migration of its own. Supplier signing still depends on PR #13's
+**Status:** **RELEASED TO LIVE 29 Oct 2026** (`471eec4`, deploy `dep-dbhl0dafngtc73buj8q0`; PRs #13 and #16 merged into
+`main`). Earlier: built on branch `feature/calisign-native-esignature-2026-10-28`, stacked on the FG-041 reconcile branch
+(PR #13). No migration of its own. Supplier signing still depends on PR #13's
 migration (`a4d5e6f7a8b9`). Its consent `CONSENT-SUPPLIER-V1-001` was **approved by Joel on 29 Oct 2026**, exactly as
 written ([signing consent register](../governance/signing-consent-register.md)).
 
@@ -107,8 +108,8 @@ Nothing here is deployed. Each item must be resolved or explicitly dispositioned
 | 3 | Client Change Order production consent (PP-1) | **Resolved** — `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001`, the contract consent with only the document named changed (consent register) |
 | 4 | Trusted IP / proxy evidence (PP-2) | **Resolved** — `app/services/client_ip.py`: Cloudflare's `CF-Connecting-IP` on Render; `X-Forwarded-For` never trusted (consent register, PP-2) |
 | 5 | Migration rollback / recovery | **Planned** — procedure below, with the old code proven on a migrated database |
-| 6 | Final tests and the Mac release gate on the exact commit | Open until the gate passes on the Mac |
-| 7 | Deployment order | **Planned** — sequence below; production deployment pending the gate |
+| 6 | Final tests and the Mac release gate on the exact commit | **Passed 29 Oct 2026** — Mac full regression 3,623 passed, no skips; 298 browser checks in Chrome; migration rehearsed on a copy of the fresh backup |
+| 7 | Deployment order / production deployment | **Done 29 Oct 2026** — pushed 13:55 UTC, live 13:57:04, migrated 13:57:34 (window ≈30 s), post-release check RELEASED 09:58 EDT |
 
 ## Supplier migration verification — 29 Oct 2026 (readiness item 1)
 
@@ -184,3 +185,25 @@ Recovery points: the gate's fresh hosted backup (on the Mac) and the instance's 
 | Catastrophic damage to the database | Joel restores the pre-migration backup and redeploys `30d47b8`. Everything written after the backup is lost, so this is the last resort. | Backup verified (integrity, revision, SHA-256) at the time it was taken. |
 
 No step deletes data automatically; there is no automated rollback.
+
+## Release record — `calisign1`, 29 Oct 2026
+
+- Candidate `471eec4345d8a87defff564bd112a19b77862669` = `main` (fast-forward from `817bf451`; carries `main`'s
+  previously unreleased work, approved by Joel). PRs #13 and #16 merged; PR #15 not included.
+- Mac gate (`release_gate.sh`, label `calisign1`, started 07:47 EDT): MAC_FULL 3,623 passed, no skips, end-to-end
+  contractor walk and Cal tests passed; BROWSER_CHECKS 298 passed in Google Chrome; fresh hosted backup
+  `pre-calisign1-20261029-1309.db` (sha256 `8c66ca3b2578ab3b60713fbce0d2bc7784aa1682651eb54207184eb584b5c09b`, 219 tables,
+  2,092 rows, revision `q4c7l2n8t3a6`, integrity ok, Mac copy matches); rehearsal `q4c7l2n8t3a6 → a4d5e6f7a8b9`: every
+  row identical, schema identical except the three named checks; READY_FOR_PUSH.
+- Deploy `dep-dbhl0dafngtc73buj8q0` (Render API), live 13:57:04 UTC.
+- Migration (`release_migrate.sh`): pre-migration backup `pre-migrate-calisign1-20261029-135734.db` (same sha256; on the
+  instance and the Mac); 218 tables, 2,091 rows, every row identical; only the three checks changed; integrity ok.
+- Post-release check: live runs `471eec4`; revision `a4d5e6f7a8b9`; 219 tables, 2,092 rows = backup; integrity ok;
+  public checks passed.
+- Claude's signed-out smoke on Live: `/sign/<invalid>` shows the CaliSIGN "This link is not available." page; CaliSIGN
+  CSS (with the self-hosted script font), JS, font, identifier image, mark, icon and signing CSS served 200;
+  `/login` and `/supplier/login` 200; `/signing-requests/1/executed`, the contract and change-order pages redirect
+  signed-out visitors to sign-in; no 5xx requests and no error logs after the deploy. Signed-in pages were not
+  opened on Live (Claude does not sign in); they were exercised on the exact commit by the gate's walks.
+- Earlier attempts the same morning stopped safely before any push: zsh read `$SHA:t…` as a modifier; the
+  historical folder had moved off the Desktop; FP70's `._` files doubled the workbook count.

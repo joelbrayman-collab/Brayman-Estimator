@@ -93,7 +93,10 @@ def signature_from_form(form, request=None) -> SupplierSignature:
     ip = None
     agent = None
     if request is not None:
-        ip = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip() or None
+        # PP-2 (29 Oct 2026): the proxy-vouched address, as on the client signing page; X-Forwarded-For is not trusted.
+        from app.services.client_ip import request_client_ip
+
+        ip = request_client_ip()
         agent = request.headers.get("User-Agent")
     return SupplierSignature(name=(form.get("signer_name") or "").strip(), consent=form.get("sign_consent") == "yes",
                              ip=ip, user_agent=agent)

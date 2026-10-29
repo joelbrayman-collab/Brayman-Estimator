@@ -7,8 +7,9 @@ below is copied from the code that holds it and must stay identical to it.
 | Version | Authority | Used for | Signers | Status |
 |---|---|---|---|---|
 | `CONSENT-SUPPLIER-V1-001` | PRODUCTION | Supplier purchase orders and supplier delivery changes (FG-041) for real (non-demo) suppliers | Contractor/office signer and supplier/store signer, each signed in | **APPROVED — 29 OCTOBER 2026 (Joel Brayman)** |
+| `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001` | PRODUCTION | Client change orders sent from the office (FG-033 SIGN-D), from the 29 Oct 2026 CaliSIGN release | Client (secure link, no account); Brayman countersigns | **In use from release — 29 Oct 2026** (Joel authorized: the contract consent with only the document named changed) |
 | `CONSENT-BRAYMAN-V1-001` | PRODUCTION | Brayman V1 generated contracts (client signing) | Client (secure link, no account) | In use since 16 Oct 2026 (WF-04, internal V1 acceptance). Not broadened by the supplier approval. |
-| `CONSENT-SYNTHETIC-UAT-001` | SYNTHETIC_UAT | Synthetic/test requests: demo suppliers, and office-sent change orders (see PP-1) | Test signers | Test only. Not affected by the supplier approval. |
+| `CONSENT-SYNTHETIC-UAT-001` | SYNTHETIC_UAT | Synthetic/test requests: demo suppliers; change orders sent on the training site (`TRAINING_ENVIRONMENT`); engine tests | Test signers | Test only. No longer used for office change orders (PP-1). |
 
 ## CONSENT-SUPPLIER-V1-001 — APPROVED — 29 OCTOBER 2026
 
@@ -46,15 +47,41 @@ separate decisions for Joel.
 These do not change the approved wording. Each must be resolved or explicitly dispositioned before CaliSIGN is
 recommended for production.
 
-**PP-1 — Client Change Order consent.** Office-sent change orders
-(`office_send_change_order_for_signature`, `app/services/signing.py`) pin `CONSENT-SYNTHETIC-UAT-001` ("NOT FOR
-SIGNATURE") with authority `SYNTHETIC_UAT`, so a real client change order is not signed under an approved production
-consent. Do not substitute the supplier consent; do not silently broaden `CONSENT-BRAYMAN-V1-001` (its wording names
-"this contract"). Determine the governed solution (for example a change-order production consent version for Joel's
-approval) during CaliSIGN release preparation.
+**PP-1 — Client Change Order consent. RESOLVED 29 Oct 2026** — see `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001` below.
+Office-sent change orders had pinned `CONSENT-SYNTHETIC-UAT-001` ("NOT FOR SIGNATURE") with authority `SYNTHETIC_UAT`
+since SIGN-D (15 Sep 2026, scoped then as synthetic UAT; never completed for production when contracts went to
+production on 16 Oct). `CONSENT-BRAYMAN-V1-001` names "this contract", so it was not broadened.
 
-**PP-2 — IP / proxy evidence hardening.** Supplier signatures record the first `X-Forwarded-For` entry
+**PP-2 — IP / proxy evidence hardening. RESOLVED 29 Oct 2026** (`app/services/client_ip.py`). Before: supplier signatures record the first `X-Forwarded-For` entry
 (`signature_from_form`, `app/services/supplier_signing.py`), which the sender can supply; client signatures record
 `request.remote_addr` (`app/routes/sign.py`), which on Render may be the proxy rather than the signer. The app has no
-trusted-proxy configuration. Keep IP evidence; determine the correct trusted-proxy approach for the hosted
-architecture before production release.
+trusted-proxy configuration. After: both record `request_client_ip()`. On Render (it sets `RENDER=true`) every public
+request passes through Cloudflare, which sets `CF-Connecting-IP` to the address that connected to it and refuses a
+request that supplies that header itself; the app records that address when it is a valid IP. `X-Forwarded-For` is
+never trusted (Render appends to it without resetting it). Without the header (local, tests, the training site), or
+if it is malformed, the socket address is recorded, as before. `CLIENT_IP_HEADER` can name another header for
+another host. Sources: Render, "How Render handles DDoS attacks" (all inbound traffic passes through Cloudflare);
+Render's header-test demo (spoofed `CF-Connecting-IP` is refused by Cloudflare; `X-Forwarded-For` keeps a fake
+leftmost value). IP evidence means: the public address Cloudflare saw connecting, which may be a carrier, office or
+VPN gateway rather than the signer's own device.
+
+## CONSENT-BRAYMAN-CHANGE-ORDER-V1-001 — PRODUCTION — 29 OCTOBER 2026
+
+Source: `app/services/signing.py`, `CONSENT_BRAYMAN_CHANGE_ORDER_V1_CODE` / `CONSENT_BRAYMAN_CHANGE_ORDER_V1_BODY`.
+
+Joel's release authorization (29 Oct 2026): wording substantively parallel to the approved contract consent that only
+changes the document reference is an implementation/governance completion. This wording is
+`CONSENT-BRAYMAN-V1-001` with "contract" replaced by "change order" and nothing else changed (a test enforces it):
+
+> By ticking the box, typing your full name and selecting Sign & Accept, you agree to sign this change order
+> electronically. Your typed name and that selection are your signature on this change order. Before you sign you
+> can open the full change order above and keep a copy. After you sign you can download the signed change order with
+> its signing record. If you do not want to sign electronically, do not continue and contact Brayman Construction.
+
+Scope: client change orders sent from the office (status Approved), the client signing through the secure CaliSIGN
+link; Brayman countersigns by default. The training site keeps `CONSENT-SYNTHETIC-UAT-001`. Earlier change-order
+signing records keep the consent they pinned (synthetic), unchanged.
+
+Shared note (both client consents): "After you sign you can download …" — the signing link offers the completed
+document once every signature is in place (after Brayman's countersignature when required) and while the link is
+still valid (7 days by default); after that the office provides the copy (the completion email says so).

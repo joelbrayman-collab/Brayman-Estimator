@@ -248,7 +248,8 @@ def test_13_14_consent_is_required_and_not_preselected(app, client):
     html = _html(signer.get(path))
     box = re.search(r'<input type="checkbox" name="consent_accepted"[^>]*>', html).group(0)
     assert "checked" not in box and "required" in box
-    assert request.consent_version.body_text in html.replace("&#39;", "'"), "the existing consent wording, unchanged"
+    import html as _html_mod
+    assert request.consent_version.body_text in _html_mod.unescape(html), "the pinned consent wording, unchanged"
     refused = _html(_sign(signer, path, consent=False))
     assert "Please check the box before signing." in refused
     assert db.session.get(SigningRequest, request.id).status == S.STATUS_SENT

@@ -11,7 +11,7 @@ REGISTER = Path(__file__).resolve().parents[1] / "docs" / "governance" / "signin
 
 def test_the_approved_supplier_consent_is_the_wording_in_the_code():
     text = REGISTER.read_text(encoding="utf-8")
-    section = text.split(f"## {CONSENT_SUPPLIER_V1_CODE} — APPROVED — 29 OCTOBER 2026", 1)[1]
+    section = text.split(f"## {CONSENT_SUPPLIER_V1_CODE} — APPROVED — 29 OCTOBER 2026", 1)[1].split("\n## ", 1)[0]
     quoted = " ".join(line[2:].strip() for line in section.splitlines() if line.startswith("> "))
     assert re.sub(r"\s+", " ", quoted).strip() == CONSENT_SUPPLIER_V1_BODY
     assert f"| `{CONSENT_SUPPLIER_V1_CODE}` | PRODUCTION |" in text and "**APPROVED — 29 OCTOBER 2026" in text

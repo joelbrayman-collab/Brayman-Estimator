@@ -54,6 +54,10 @@ CALIBRAYTAI_LOGO_DARK = BRANDING / "calibraytai-logo-v1-dark.png"
 CONTRACTOR = "Brayman Construction Co. Inc."
 HOW_TO_PRICE = ("Review our takeoff. Supplier Qty is pre-filled; change it only if you see an adjustment. Enter Ben "
                 "Unit Cost - extensions and totals calculate automatically.")
+READER_URL = "https://get.adobe.com/reader/"
+READER_LABEL = "get.adobe.com/reader"
+HOW_TO_OPEN = ("Open this form in free Adobe Acrobat Reader (",
+               ") or in Chrome, Edge or Firefox so the totals calculate. Fill it in, save it, and send it back.")
 HST_RATE = 0.13
 ROWS_PER_PAGE = 10
 ROW_H = 39
@@ -270,9 +274,18 @@ def _request_info(form, data, blank):
 
 def _how_to_price(form):
     form.setFillColor(PANEL)
-    form.roundRect(34, 596, 544, 30, 5, stroke=0, fill=1)
+    form.roundRect(34, 585, 544, 41, 5, stroke=0, fill=1)
     _text(form, 44, 613, "HOW TO PRICE", "Helvetica-Bold", 8, NAVY)
     _text(form, 44, 602, HOW_TO_PRICE, "Helvetica", 7.3, MUTED)
+    # Joel, 29 Oct 2026: the totals calculate only in a viewer that runs the form's calculation, so the form
+    # says which ones, with a link to the free Reader.
+    x = 44
+    for text, font in ((HOW_TO_OPEN[0], "Helvetica"), (READER_LABEL, "Helvetica-Bold"), (HOW_TO_OPEN[1], "Helvetica")):
+        _text(form, x, 591, text, font, 7.3, NAVY if font.endswith("Bold") else MUTED)
+        width = stringWidth(text, font, 7.3)
+        if text == READER_LABEL:
+            form.linkURL(READER_URL, (x, 589, x + width, 599), relative=0)
+        x += width
 
 
 HEAD_CELLS = ((34, 168, ("ITEM / SPECIFICATION",)), (202, 142, ("CALIBRAYT", "QTY")), (344, 45, ("SUPPLIER", "QTY")),

@@ -47,6 +47,8 @@ def _widgets(pdf):
     for number, page in enumerate(reader.pages):
         for annot in page.get("/Annots", []):
             w = annot.get_object()
+            if w.get("/Subtype") != "/Widget":
+                continue  # the Reader link is a link, not a box
             out[str(w["/T"])] = {"page": number, "rect": [round(float(v)) for v in w["/Rect"]],
                                  "read_only": bool(int(w.get("/Ff", 0)) & 1), "da": str(w.get("/DA")),
                                  "value": str(w.get("/V") or ""), "aa": "/AA" in w}
@@ -193,3 +195,14 @@ def test_the_approved_logos_are_the_dark_repository_logos():
 
     assert form.BRAYMAN_LOGO_DARK.name == "brayman-construction-logo-dark.png" and form.BRAYMAN_LOGO_DARK.is_file()
     assert form.CALIBRAYTAI_LOGO_DARK.name == "calibraytai-logo-v1-dark.png" and form.CALIBRAYTAI_LOGO_DARK.is_file()
+
+
+def test_each_item_page_says_how_to_open_it_and_links_the_free_reader():
+    """Joel, 29 Oct 2026: the totals calculate only in a viewer that runs the form's calculation."""
+    for pdf in (render_supplier_pricing_request_form(_request()), render_blank_supplier_pricing_request_form()):
+        reader = PdfReader(BytesIO(pdf))
+        page = reader.pages[0]
+        text = page.extract_text()
+        assert "Adobe Acrobat Reader" in text and "Chrome, Edge or Firefox" in text and "send it back" in text
+        links = [a.get_object() for a in page.get("/Annots", []) if a.get_object().get("/Subtype") == "/Link"]
+        assert [str(link["/A"]["/URI"]) for link in links] == ["https://get.adobe.com/reader/"]

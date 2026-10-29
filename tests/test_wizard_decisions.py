@@ -57,6 +57,9 @@ STAFF = ("sam.office@example.invalid", "sam-office-password", "Sam Office (synth
 GONE = ("gone.person@example.invalid", "gone-person-password", "Gone Person (synthetic)")
 
 
+SIGN = {"sign_consent": "yes", "signer_name": "Test Signer"}  # supplier Native Signing (FG-041): every order, confirmation and change asked on screen is signed
+
+
 def _people(application, ben):
     """Ben (owner), Kevin (Field-only crew), Sam (office staff, not the owner), a deactivated person and another
     company's owner."""
@@ -432,10 +435,10 @@ def test_contractor_order_is_delivery_to_site_and_done_only_when_marked_delivere
             office.post(f"/projects/{share.project_id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     office.post(f"/projects/{share.project_id}/supplier-requests/{share_id}/order",
-                data={"delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
+                data={**SIGN, "delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share_id).one()
     darcy.post(f"/supplier/{sid}/orders/{order.id}/confirm",
-               data={"action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
+               data={**SIGN, "action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
     state, page = _sstate(darcy, sid, run_id, "delivery")
     assert state == "waiting" and "not marked delivered" in page and order.delivery_address in page
     assert _sstate(darcy, sid, run_id, "close")[0] == "todo"

@@ -254,6 +254,14 @@ def _register_office_auth(app: Flask) -> None:
 
     app.add_template_filter(availability_label, "availability_label")
 
+    # CaliSIGN (28 Oct 2026): the status of a document's signing request, read from the signing engine's records.
+    from app.services.calisign import client_signer_prefill, company_name, office_view, supplier_status
+
+    app.add_template_global(office_view, "calisign_view")
+    app.add_template_global(client_signer_prefill, "calisign_client_prefill")
+    app.add_template_global(supplier_status, "calisign_supplier_status")
+    app.add_template_global(company_name, "calisign_company")
+
     @app.context_processor
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}

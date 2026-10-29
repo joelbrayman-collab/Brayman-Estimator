@@ -34,10 +34,10 @@ def _snapshot(engine, skip=()):
     return out
 
 
-def test_the_appointment_revision_sits_on_the_single_line_of_revisions():
+def test_the_appointment_revision_follows_its_prior_in_the_single_chain():
+    # Supplier Native Signing (a4d5e6f7a8b9, 20 Oct 2026) now follows this revision.
     script = ScriptDirectory.from_config(_config(":memory:"))
-    assert len(script.get_heads()) == 1  # later revisions (pd1a2b3c4d5e, 20 Oct 2026) follow it
-    assert REVISION in {r.revision for r in script.walk_revisions()}
+    assert len(script.get_heads()) == 1
     assert script.get_revision(REVISION).down_revision == PRIOR
 
 

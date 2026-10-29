@@ -588,15 +588,21 @@ step("13 purchase order: concrete request to the supplier, the store quotes in t
   await order.locator("[name=delivery_date]").fill(day(9));
   await order.locator("[name=delivery_window]").fill("7:00–9:00");
   await order.locator("[name=site_contact]").fill("Ben Brayman (synthetic) 613-555-0100");
+  // Supplier Native Signing (FG-041): Ben signs the order as he places it.
+  await order.locator("[name=sign_consent]").check();
+  await order.locator("[name=signer_name]").fill("Ben Brayman (synthetic)");
   await shot(pg, "13-purchase-order", "approve-and-order");
   await submit(pg, order.locator("button[type=submit]"));
   const placed = await flash(pg);
-  assert.match(placed, /Purchase order PO-\d{4}-\d{4} sent/);
+  assert.match(placed, /Purchase order PO-\d{4}-\d{4} signed and sent/);
   W.po = placed.match(/PO-\d{4}-\d{4}/)[0];
   // The store confirms the order.
   await go(store.pg, "/supplier/");
   await submit(store.pg, store.pg.getByRole("link", { name: W.po }).first());
-  await submit(store.pg, store.pg.getByRole("button", { name: "Confirm order" }));
+  const confirm = store.pg.locator("[data-confirm-order]");
+  await confirm.locator("[name=sign_consent]").check();
+  await confirm.locator("[name=signer_name]").fill("Store Synthetic");
+  await submit(store.pg, store.pg.getByRole("button", { name: "Sign & Confirm Order" }));
   await shot(store.pg, "13-purchase-order", "supplier-confirmed");
   await go(pg, `/projects/${W.projectId}/supplier-requests`);
   assert.match(await pg.locator("main").innerText(), /[Cc]onfirmed/);

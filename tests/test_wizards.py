@@ -35,6 +35,9 @@ from tests.test_guided_estimating import (  # noqa: F401
 )
 
 
+SIGN = {"sign_consent": "yes", "signer_name": "Test Signer"}  # supplier Native Signing (FG-041): every order, confirmation and change asked on screen is signed
+
+
 def _run(run_id):
     db.session.expire_all()
     return db.session.get(WizardRun, run_id)
@@ -277,7 +280,7 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_the_project_lead_c
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["q4c7l2n8t3a6"]
+    assert script.get_heads() == ["a4d5e6f7a8b9"]
     assert script.get_revision("w2z9r4d7k1m6").down_revision == "g5e7c2a9d1b4"
     command.upgrade(cfg, "g5e7c2a9d1b4")
     engine = sa.create_engine(uri)
@@ -609,13 +612,13 @@ def test_supplier_pro_desk_wizard_follows_a_contractor_request_to_delivery(hub):
             office.post(f"/projects/{share.project_id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
     office.post(f"/projects/{share.project_id}/supplier-requests/{share_id}/order",
-                data={"delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
+                data={**SIGN, "delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share_id).first()
     assert order is not None, office.flashes()
     state, page = _sstate(darcy, sid, run_id, "order")
     assert state == "todo" and order.number in page and 'data-wizard-action="confirm-order"' in page
     darcy.post(f"/supplier/{sid}/orders/{order.id}/confirm",
-               data={"action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
+               data={**SIGN, "action": "confirm", "expected_delivery": (local_today() + timedelta(days=12)).isoformat()})
     assert _sstate(darcy, sid, run_id, "order")[0] == "done"
     assert _sstate(darcy, sid, run_id, "delivery")[0] == "waiting"
     assert _sstate(darcy, sid, run_id, "close")[0] == "todo"

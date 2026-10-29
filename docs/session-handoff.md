@@ -29,19 +29,21 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   28 Oct turnover record, kept as written, with the independent audit's corrections marked **[Corrected]** and its
   final section "Independent audit and corrective pass".
 - **Live:** Render `Calibryatai` (`srv-dar95mh42hec73df4rug`), branch `main`, auto-deploy off, running
-  `30d47b8` (deploy `dep-dbgeh86gekts73a54c60`, 27 Oct 2026). That release includes the 27 Oct Project Creation UX
-  (7-task Start a New Project, structured customer address, migration `q4c7l2n8t3a6`).
-- **In `main`, not yet released (no deploy authorized):** selected-work estimating (Approach B); the Project
-  Creation Step 4 plan-upload fix; the calendar month-fit fix; the Linda Bushel case record and Approved Masters
-  governance (Family 08); banked-hours completion; production cleanup tools (not rerun); the read-only Training
-  reviewer and email checks; the dark Brayman logo; the pinned website deploy script; the refined 18 Oct storybook
-  archive. `main` has **not** passed the Mac release gate as a whole; the next Live release must pass it on the
-  exact `main` commit.
-- **Approval-gated, outside `main`:** FG-041 supplier native signing, reconciled onto current `main` on branch
-  `reconcile/fg041-supplier-signing-on-main-2026-10-28` (draft PR #13, head `43694c53`; migration `a4d5e6f7a8b9` now
-  revises `q4c7l2n8t3a6`). **Do not merge PR #13** until the gates below are approved.
-  Not merged: consent wording **`CONSENT-SUPPLIER-V1-001` is not approved**, and its production migration is not
-  authorized. Both are Joel's decisions. The queued Native E-Signature UX task depends on this branch.
+  `471eec4` (deploy `dep-dbhl0dafngtc73buj8q0`, 29 Oct 2026 09:57 EDT), database revision `a4d5e6f7a8b9`.
+  **CaliSIGN release `calisign1`:** CaliSIGN native e-signature (PR #16) with FG-041 supplier signing (PR #13, migration
+  `a4d5e6f7a8b9`), and the previously unreleased `main` work (selected-work estimating, Project Creation Step 4 and
+  calendar fixes, banked hours, Linda Bushel/Family 08 governance, dark Brayman logo, ops tools) — Joel approved
+  carrying it. Mac gate: 3,623 passed, no skips; 298 browser checks; rehearsal and live migration in strict
+  `--altered-checks` mode, every row identical. Backups: `pre-calisign1-20261029-1309.db` and
+  `pre-migrate-calisign1-20261029-135734.db` (sha256 `8c66ca3b…c09b`, on the instance and the Mac). Rollback: redeploy
+  `30d47b8` (`dep-dbgeh86gekts73a54c60`); never downgrade once supplier signing records exist. Record:
+  [operations/calisign-native-esignature.md](operations/calisign-native-esignature.md).
+- **Consents in force:** `CONSENT-BRAYMAN-V1-001` (contracts), `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001` (client change
+  orders, from this release), `CONSENT-SUPPLIER-V1-001` (supplier POs and delivery changes, approved 29 Oct 2026);
+  `CONSENT-SYNTHETIC-UAT-001` for test/training only ([governance/signing-consent-register.md](governance/signing-consent-register.md)).
+- **Historical estimates for the Mac gate:** `~/CalibraytAI-Office/historical-estimates` (copied 29 Oct without FP70's
+  `._` files); run the gate with `CALIBRAYTAI_HISTORICAL_ESTIMATES_DIR` set to it. Joel's Terminal is zsh: write
+  `"${SHA}:path"`, not `$SHA:path`.
 - **Training & Acceptance Centre:** https://training.calibraytai.com (HostPapa, service `calibrayt-training`).
   Running commit: **not yet read** (needs the read-only WHM Terminal command in source-of-truth.md §5; the installer default is `f3a01e1`, v1rel8). Render preview `calibraytai-training-preview` runs `5f575c4`
   (branch `v1/training-centre-2026-10-21`); `url-register.md` lists it "to be suspended" — Joel's decision.

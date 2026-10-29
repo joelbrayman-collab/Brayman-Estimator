@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="CaliSIGN">
+<path d="M15 5h23l13 13v36a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4z" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linejoin="round"/>
+<path d="M38 5v13h13z" fill="#c79a2b" stroke="#c79a2b" stroke-width="2" stroke-linejoin="round"/>
+<path d="M19 19h12M19 27h22M19 35h15" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+<path d="M3 60c7-3 11-12 15-17 3-4 6-3 4 2-2 5-6 10-2 10 4 0 6-8 10-8 3 0 1 5 5 5 5 0 12-5 26-12" fill="none" stroke="#c79a2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

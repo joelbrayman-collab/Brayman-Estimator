@@ -51,7 +51,10 @@ sign_bp = Blueprint("sign", __name__, url_prefix="/sign")
 
 
 def _client_ip():
-    return request.remote_addr or "unknown"
+    # PP-2 (29 Oct 2026): the address the hosting proxy vouches for, never a sender-written X-Forwarded-For.
+    from app.services.client_ip import request_client_ip
+
+    return request_client_ip() or "unknown"
 
 
 def _user_agent():

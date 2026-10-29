@@ -4,7 +4,7 @@
 |---|---|
 | Status | **Governing record** of the 29 Oct 2026 catch-up (Joel's brief "GOVERNANCE CATCH-UP — PRACTICE / PRODUCTION / TRAINING"). |
 | Rule enforced | Completed and accepted major work does not accumulate on branches; Git is the source of truth; accepted work is promoted to the live environments; the Training Centre is reconciled whenever the user journey changes. |
-| Release label | `catchup1` (branch `release/governance-catchup-2026-10-29`) |
+| Release label | `catchup1` (branch `release/governance-catchup-2026-10-29`) — **released 29 Oct 2026, live `f9ca0f1`** |
 
 ## 1. Baseline (verified 29 Oct 2026, not assumed)
 
@@ -124,6 +124,19 @@ do not match how he thinks). He used the Training Centre, which ran the **26 Oct
    with their own buttons; the proposal still needs a separate sign-off and send (module 10).
 These are recorded, not changed: each is a product decision for Joel after the walk-through.
 
-## 9. Environments after `catchup1` (filled in at release)
+## 9. Environments after `catchup1` (29 Oct 2026)
 
-See the session handoff's current resume point for the final SHAs and checks.
+| Environment | SHA / revision | Major features current? | Deliberate differences |
+|---|---|---|---|
+| Production (Render `Calibryatai`) | `f9ca0f1`, deploy `dep-dbhs0aoae00c739lcn8g` (17:54 EDT), DB `a4d5e6f7a8b9` | Yes: CaliSIGN + FG-041, selected work, Project Creation UX, Compact Open a New Project, Supplier Pricing Request tooling | Production consents; `/training` answers 404 |
+| Practice = Training Centre application (HostPapa `calibrayt-training`) | `f9ca0f1`, DB `a4d5e6f7a8b9` (was `5c6f3d71`; backup `training-20261029-202041.db`) | Yes, same code | `TRAINING_ENVIRONMENT=1`; synthetic training company and records; demo suppliers and change orders pin `CONSENT-SYNTHETIC-UAT-001`; supplier practice logins |
+| Training Centre content (lessons, Tutor, Workflow Map, screenshots) | `f9ca0f1` | Yes: reconciled for selected work and CaliSIGN (§7) | Kevin's earlier results kept as recorded |
+| Render `calibraytai-training-preview` | `5f575c4` (unchanged) | No — retired preview, not an environment of record | Suspending it is Joel's decision (`url-register.md`) |
+
+Release evidence: Mac gate `catchup1` — 3,657 passed, no skips, end-to-end contractor walk and Cal tests passed, 302
+browser checks in Google Chrome; backup `pre-catchup1-20261029-2148.db` (sha256 `ea79738f66b89a15…ee4b04f66`, 219
+tables, 2,093 rows, integrity ok; Mac copy matches). After deploy: Render reports `f9ca0f1` live; no error or 5xx log
+lines since the deploy; signed out, sign-in pages answer 200, protected pages redirect to sign-in, `/training` is 404
+on Production, CaliSIGN and the new wizard stylesheet are served (the stylesheet is byte-identical to `f9ca0f1`).
+Training site, signed out: sign-in pages 200, CaliSIGN assets and the new screenshots served. Post-release check on
+the Mac (`postrelease_check.sh --label catchup1`): run by Joel after the deploy.

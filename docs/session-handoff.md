@@ -6,7 +6,13 @@ This block is the one authoritative "where are we" for CalibraytAI. Everything b
 status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
 **historical records**: where they disagree with this block, this block wins.
 
-- **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — IN RELEASE.** Record:
+- **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — RELEASED.** Live `f9ca0f1183aae6c87ea8cb489b22b89f1406aac9`, deploy
+  `dep-dbhs0aoae00c739lcn8g` (29 Oct 2026 17:54 EDT), database revision `a4d5e6f7a8b9` (no migration). Mac gate:
+  3,657 passed, no skips, end-to-end walk and Cal tests passed, **302** browser checks; backup
+  `pre-catchup1-20261029-2148.db` (sha256 `ea79738f…4f66`, 219 tables, 2,093 rows, integrity ok; on the instance
+  and the Mac). Rollback: redeploy `471eec4` (`dep-dbhl0dafngtc73buj8q0`), no database change to undo. Training
+  Centre (HostPapa) updated to the same `f9ca0f1` (was `5c6f3d71`; backup `training-20261029-202041.db`; migrations
+  `q4c7l2n8t3a6` and `a4d5e6f7a8b9` applied). PRs #15 and #17 merged. Record:
   [operations/governance-catchup-2026-10-29.md](operations/governance-catchup-2026-10-29.md). Branch
   `release/governance-catchup-2026-10-29` = `main` `02dd09ed` + PR #15 Compact Open a New Project (reconciled, no
   conflict; its browser walk added to the gate, **302** browser checks) + the Supplier Pricing Request generator and
@@ -37,7 +43,8 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   28 Oct turnover record, kept as written, with the independent audit's corrections marked **[Corrected]** and its
   final section "Independent audit and corrective pass".
 - **Live:** Render `Calibryatai` (`srv-dar95mh42hec73df4rug`), branch `main`, auto-deploy off, running
-  `471eec4` (deploy `dep-dbhl0dafngtc73buj8q0`, 29 Oct 2026 09:57 EDT), database revision `a4d5e6f7a8b9`.
+  `f9ca0f1` (`catchup1`, deploy `dep-dbhs0aoae00c739lcn8g`, 29 Oct 2026 17:54 EDT), database revision `a4d5e6f7a8b9`.
+  Before it: `471eec4` (deploy `dep-dbhl0dafngtc73buj8q0`, 29 Oct 2026 09:57 EDT).
   **CaliSIGN release `calisign1`:** CaliSIGN native e-signature (PR #16) with FG-041 supplier signing (PR #13, migration
   `a4d5e6f7a8b9`), and the previously unreleased `main` work (selected-work estimating, Project Creation Step 4 and
   calendar fixes, banked hours, Linda Bushel/Family 08 governance, dark Brayman logo, ops tools) — Joel approved
@@ -53,7 +60,7 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   `._` files); run the gate with `CALIBRAYTAI_HISTORICAL_ESTIMATES_DIR` set to it. Joel's Terminal is zsh: write
   `"${SHA}:path"`, not `$SHA:path`.
 - **Training & Acceptance Centre:** https://training.calibraytai.com (HostPapa, service `calibrayt-training`).
-  Running commit: **not yet read** (needs the read-only WHM Terminal command in source-of-truth.md §5; the installer default is `f3a01e1`, v1rel8). Render preview `calibraytai-training-preview` runs `5f575c4`
+  Running commit: **`f9ca0f1`** (installed 29 Oct 2026 by `install_training_centre.sh f9ca0f1…`; it was `5c6f3d71`). Render preview `calibraytai-training-preview` runs `5f575c4`
   (branch `v1/training-centre-2026-10-21`); `url-register.md` lists it "to be suspended" — Joel's decision.
 - **Do not delete** the branches named in [operations/source-of-truth.md](operations/source-of-truth.md); preservation
   tags `preserve/2026-10-28/*` are created by `tools/ops/create_preservation_tags.sh`.

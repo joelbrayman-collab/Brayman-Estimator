@@ -2,7 +2,8 @@
 
 **Status:** built on branch `feature/calisign-native-esignature-2026-10-28`, stacked on the FG-041 reconcile branch
 (PR #13). **NOT MERGED. NOT DEPLOYED.** No migration of its own. Supplier signing still depends on PR #13's
-migration (`a4d5e6f7a8b9`) and on `CONSENT-SUPPLIER-V1-001`, which is **not approved**.
+migration (`a4d5e6f7a8b9`). Its consent `CONSENT-SUPPLIER-V1-001` was **approved by Joel on 29 Oct 2026**, exactly as
+written ([signing consent register](../governance/signing-consent-register.md)).
 
 CaliSIGN is the name and look of CalibraytAI's existing native signing. It is not a new engine. The FG-033 engine
 (SIGN-A to SIGN-E) signs client contracts and change orders; FG-041 signs supplier purchase orders and delivery
@@ -88,8 +89,23 @@ consent on record. **Client SMS invitations are future work** and need a consent
   Chromium without Chrome's PDF viewer draws the document frame blank; Chrome on the Mac draws it. The walk also
   renders page 1 of the exact bytes the frame was served (`03b-supplement-…`).
 
-## Approval gates (unchanged by CaliSIGN)
+## Approval gates
 
-- PR #13 (FG-041) supplier migration: not applied anywhere hosted.
-- `CONSENT-SUPPLIER-V1-001`: not approved. Real suppliers cannot sign until it is.
-- Production deploy: Joel's Mac release gate.
+- PR #13 (FG-041) supplier migration: not applied anywhere hosted; production apply needs Joel's authorization.
+- `CONSENT-SUPPLIER-V1-001`: **APPROVED — 29 OCTOBER 2026** (Joel). Wording unchanged; no new version.
+- Production deploy: Joel's Mac release gate. The consent approval does not authorize deployment, the production
+  migration or real supplier signing requests.
+
+## Release readiness: PR #13 → PR #16 (opened 29 Oct 2026)
+
+Nothing here is deployed. Each item must be resolved or explicitly dispositioned before production is recommended.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Supplier migration readiness (`a4d5e6f7a8b9` on `q4c7l2n8t3a6`; `migration_check.py --altered-checks`; release gate wiring) | **Next** |
+| 2 | Supplier consent `CONSENT-SUPPLIER-V1-001` | **Complete** — approved 29 Oct 2026 |
+| 3 | Client Change Order production consent (PP-1 in the consent register) | Open — needs a governed solution and Joel's approval |
+| 4 | Trusted IP / proxy evidence (PP-2 in the consent register) | Open — technical hardening |
+| 5 | Migration rollback / recovery | Open |
+| 6 | Final tests and the Mac release gate on the exact commit | Open |
+| 7 | Deployment order (merge #13, then #16; backup; migration; deploy; post-checks) | Open — Joel authorizes |

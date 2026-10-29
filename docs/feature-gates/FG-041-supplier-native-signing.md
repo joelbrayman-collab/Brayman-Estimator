@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONCILED ONTO CURRENT MAIN ON BRANCH `reconcile/fg041-supplier-signing-on-main-2026-10-28` (28 Oct 2026) / NOT MERGED / NOT DEPLOYED / MIGRATION NOT APPLIED LIVE / CONSENT `CONSENT-SUPPLIER-V1-001` NOT APPROVED** |
+| Status | **RECONCILED ONTO CURRENT MAIN ON BRANCH `reconcile/fg041-supplier-signing-on-main-2026-10-28` (28 Oct 2026) / NOT MERGED / NOT DEPLOYED / MIGRATION NOT APPLIED LIVE / CONSENT `CONSENT-SUPPLIER-V1-001` APPROVED 29 OCT 2026 (wording unchanged; see [signing consent register](../governance/signing-consent-register.md))** |
 | Directive | Joel, 20 Oct 2026: "Connect native signing...!" — supplier-side signing "is just as important as the contractor - client side" and "is just a connection of the engine we already built". |
 | Engine | [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) Native Signing (frozen artifact, request, participants, events, executed PDF). No new provider. |
 | Migration | `a4d5e6f7a8b9` (revises `q4c7l2n8t3a6` since the 28 Oct 2026 reconciliation onto main; originally `z3c4d5e6f7a8`, then `pd1a2b3c4d5e`). Authorized for the development branch by Joel 20 Oct 2026; production apply needs his separate authorization at release. |
@@ -50,7 +50,8 @@ button labels on the affected forms); purchase order, confirmation and delivery-
   proves every row, column, key and foreign key is unchanged:
   `--from q4c7l2n8t3a6 --to a4d5e6f7a8b9 --new-tables "" --altered-checks ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role`.
 - The release gate script must pass those arguments for this release (not yet wired; release-time task).
-- Joel to approve the production consent wording `CONSENT-SUPPLIER-V1-001` before release.
+- Production consent wording `CONSENT-SUPPLIER-V1-001`: **APPROVED by Joel, 29 Oct 2026**, exactly as written
+  ([signing consent register](../governance/signing-consent-register.md)). Migration and release still need his authorization.
 - Signing custody: the 18 Oct finding (`SIGNING_ARTIFACT_ROOT` not set) applies here too; new supplier documents are
   written beside the live database's instance folder like other signing files.
 
@@ -82,14 +83,13 @@ with `-x` onto `main` `66c93062`.
 - **Tests written after 20 Oct** that place, confirm or change orders now send the consent tick and typed name, as
   every on-screen order, confirmation and change requires.
 - **Gate:** the consent wording `CONSENT-SUPPLIER-V1-001` is recorded in `app/services/supplier_signing.py` as a
-  production consent version created on first use. It is **not approved**. This branch is not merged into `main`,
-  because the next Live release from `main` would put that wording in front of real suppliers. Merge, migration
-  and release wait for Joel's approval of the wording and of the migration.
+  production consent version created on first use. **Approved by Joel on 29 Oct 2026** exactly as written. This
+  branch is still not merged into `main`; merge, migration and release wait for Joel's separate authorization.
 
 ## CaliSIGN presentation (28 Oct 2026)
 
 Branch `feature/calisign-native-esignature-2026-10-28`, stacked on this reconcile branch: the supplier signing above
 is unchanged in behaviour; it gains CaliSIGN wording (Sign & Send for E-Signature, Sign & Confirm Order, Sign &
 Accept), the adopt-signature preview, status chips and a CaliSIGN email to the store. Consent
-`CONSENT-SUPPLIER-V1-001` is still **not approved**; the migration is still **not applied live**.
+`CONSENT-SUPPLIER-V1-001` was **approved on 29 Oct 2026**; the migration is still **not applied live**.
 See `docs/operations/calisign-native-esignature.md`.

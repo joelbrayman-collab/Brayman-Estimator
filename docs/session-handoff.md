@@ -40,8 +40,11 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
 - **Approval-gated, outside `main`:** FG-041 supplier native signing, reconciled onto current `main` on branch
   `reconcile/fg041-supplier-signing-on-main-2026-10-28` (draft PR #13, head `43694c53`; migration `a4d5e6f7a8b9` now
   revises `q4c7l2n8t3a6`). **Do not merge PR #13** until the gates below are approved.
-  Not merged: consent wording **`CONSENT-SUPPLIER-V1-001` is not approved**, and its production migration is not
-  authorized. Both are Joel's decisions. The queued Native E-Signature UX task depends on this branch.
+  Consent wording **`CONSENT-SUPPLIER-V1-001` APPROVED by Joel, 29 Oct 2026**, exactly as written
+  ([governance/signing-consent-register.md](governance/signing-consent-register.md)). Its production migration is still
+  not authorized. CaliSIGN (PR #16) is stacked on this branch; release readiness is tracked in
+  [operations/calisign-native-esignature.md](operations/calisign-native-esignature.md) (pre-production follow-ups
+  PP-1 client change-order consent, PP-2 trusted IP/proxy evidence).
 - **Training & Acceptance Centre:** https://training.calibraytai.com (HostPapa, service `calibrayt-training`).
   Running commit: **not yet read** (needs the read-only WHM Terminal command in source-of-truth.md §5; the installer default is `f3a01e1`, v1rel8). Render preview `calibraytai-training-preview` runs `5f575c4`
   (branch `v1/training-centre-2026-10-21`); `url-register.md` lists it "to be suspended" — Joel's decision.

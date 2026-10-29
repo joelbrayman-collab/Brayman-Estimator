@@ -182,3 +182,31 @@ def test_gate_accepts_the_calendar_migration_revision():
     for revision, ok in (("z3c4d5e6f7a8", True), ("y2b3c4d5e6f7", True), ("Z3C4", False), ("z3c4d5e6f7a8;", False)):
         result = subprocess.run(["bash", "-c", f'[[ "$1" =~ {match.group(1)} ]]', "_", revision])
         assert (result.returncode == 0) is ok, revision
+
+
+def test_gate_and_live_apply_carry_the_named_check_constraints():
+    """Supplier signing (a4d5e6f7a8b9, verified 29 Oct 2026) rebuilds three tables only to widen three checks. The gate
+    must pass --altered-checks to the rehearsal and record it, and the live apply must use the same names, so both
+    run the strict comparison instead of the broader --altered-tables one."""
+    gate, migrate = _code(GATE), _code(RELEASE / "release_migrate.sh")
+    assert '--altered-checks) ALTERED_CHECKS=$2' in gate
+    assert '${ALTERED_CHECKS:+--altered-checks "$ALTERED_CHECKS"}' in gate
+    assert "ALTERED_CHECKS=$ALTERED_CHECKS" in gate
+    assert 'ALTERED_CHECKS=$(val ALTERED_CHECKS "$STATE")' in migrate
+    assert "${ALTERED_CHECKS:+ --altered-checks $ALTERED_CHECKS}" in migrate
+    match = re.search(r'\[\[ "\$ALTERED_CHECKS" =~ (\S+) \]\]', gate)
+    assert match, "gate must validate --altered-checks"
+    good = "ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,ck_signing_participants_role"
+    for names, ok in ((good, True), ("ck_x", True), ("signing_requests", False), ("ck_x;rm", False), ("ck_x,", False)):
+        result = subprocess.run(["bash", "-c", f'[[ "$1" =~ {match.group(1)} ]]', "_", names])
+        assert (result.returncode == 0) is ok, names
+
+
+def test_gate_refuses_altered_checks_without_a_migration():
+    sha = "a" * 40
+    bad = subprocess.run(
+        ["bash", str(GATE), "--label", "x", "--candidate", sha, "--branch", "b", "--main-base", sha, "--live-base", sha,
+         "--live-deploy", "dep-x", "--altered-checks", "ck_signing_requests_document_family"],
+        capture_output=True, text=True,
+    )
+    assert bad.returncode == 2 and "--altered-checks <ck_1,ck_2> needs --migration-to" in bad.stdout

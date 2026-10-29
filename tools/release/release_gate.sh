@@ -14,7 +14,7 @@
 #   git -C ~/Desktop/Brayman-Estimator show <candidate>:tools/release/release_gate.sh > /tmp/release_gate.sh
 #   bash /tmp/release_gate.sh --label cal2 --candidate <sha> --branch v1/completion \
 #        --main-base <sha> --live-base <sha> --live-deploy <dep-id> [--browser-expected 49]
-#        [--migration-to <revision> --new-tables <t1,t2,...> [--altered-tables <t1,...>]]
+#        [--migration-to <revision> --new-tables <t1,t2,...> [--altered-tables <t1,...>] [--altered-checks <ck_1,...>]]
 #
 # Gates (stops at the first failure):
 #   1 one run at a time; GitHub main = --main-base; --branch = --candidate; live instance (SSH) = --live-base
@@ -34,7 +34,7 @@
 # release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
 set -u
 usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""
+LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""; ALTERED_CHECKS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
@@ -47,6 +47,7 @@ while [ $# -gt 0 ]; do
     --migration-to) MIGRATION_TO=$2; shift 2;;
     --new-tables) NEW_TABLES=$2; shift 2;;
     --altered-tables) ALTERED_TABLES=$2; shift 2;;
+    --altered-checks) ALTERED_CHECKS=$2; shift 2;;
     *) usage;;
   esac
 done
@@ -60,8 +61,8 @@ if [ -n "$MIGRATION_TO$NEW_TABLES" ]; then
     || { echo "--migration-to <12-character revision> and --new-tables <t1,t2> go together"; exit 2; }
   # --new-tables none (27 Oct 2026): a migration that only adds columns to declared --altered-tables; the rehearsal
   # then requires that no table at all is added.
-  if [ "$NEW_TABLES" = "none" ] && [ -z "$ALTERED_TABLES" ]; then
-    echo "--new-tables none is only for a migration that changes declared --altered-tables"; exit 2
+  if [ "$NEW_TABLES" = "none" ] && [ -z "$ALTERED_TABLES$ALTERED_CHECKS" ]; then
+    echo "--new-tables none is only for a migration that changes declared --altered-tables (or --altered-checks)"; exit 2
   fi
 fi
 # --altered-tables <t1,...> (20 Oct 2026): existing tables whose schema the migration changes (e.g. a widened
@@ -69,6 +70,13 @@ fi
 if [ -n "$ALTERED_TABLES" ]; then
   [ -n "$MIGRATION_TO" ] && [[ "$ALTERED_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
     || { echo "--altered-tables <t1,t2> needs --migration-to and lower-case table names"; exit 2; }
+fi
+# --altered-checks <ck_1,...> (29 Oct 2026, supplier signing a4d5e6f7a8b9): the only check constraints the migration
+# may change. The rehearsal and the live apply then allow a rebuilt table only if its columns, keys, foreign keys and
+# every other check are identical (stricter than --altered-tables, which accepts any schema change of a table).
+if [ -n "$ALTERED_CHECKS" ]; then
+  [ -n "$MIGRATION_TO" ] && [[ "$ALTERED_CHECKS" =~ ^ck_[a-z0-9_]+(,ck_[a-z0-9_]+)*$ ]] \
+    || { echo "--altered-checks <ck_1,ck_2> needs --migration-to and check constraint names (ck_...)"; exit 2; }
 fi
 
 REPO_URL=https://github.com/joelbrayman-collab/Brayman-Estimator.git
@@ -232,7 +240,8 @@ if [ -n "$MIGRATION_TO" ]; then
   REHEARSAL="$GEN/$LABEL-rehearsal-$TS.db"
   cp "$LOCALB" "$REHEARSAL" || stop "could not copy the backup for the rehearsal"
   ./venv/bin/python tools/release/migration_check.py rehearse --db "$REHEARSAL" --from "$REVISION" \
-    --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" ${ALTERED_TABLES:+--altered-tables "$ALTERED_TABLES"} > "$OUT-rehearsal.txt" 2>&1
+    --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" ${ALTERED_TABLES:+--altered-tables "$ALTERED_TABLES"} \
+    ${ALTERED_CHECKS:+--altered-checks "$ALTERED_CHECKS"} > "$OUT-rehearsal.txt" 2>&1
   REH=$?
   rm -f "$REHEARSAL"  # production data: no extra copy is kept
   cat "$OUT-rehearsal.txt" | grep -E '^[A-Z_]+='
@@ -256,6 +265,7 @@ CLONE=$DEST
 MIGRATION_TO=$MIGRATION_TO
 NEW_TABLES=$NEW_TABLES
 ALTERED_TABLES=$ALTERED_TABLES
+ALTERED_CHECKS=$ALTERED_CHECKS
 EOF
 echo "== 4. READY_FOR_PUSH — stop here"
 if [ -n "$MIGRATION_TO" ]; then

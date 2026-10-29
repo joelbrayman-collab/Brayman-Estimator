@@ -111,3 +111,15 @@ def test_new_values_are_accepted_others_still_refused_and_downgrade_is_guarded(t
         with pytest.raises(sa.exc.IntegrityError):
             with db.engine.begin() as conn:
                 conn.execute(insert, {"seq": 3, "role": "SUPPLIER"})
+
+
+def test_the_release_gate_arguments_rehearse_exactly_the_three_checks(tmp_path):
+    """The form the release gate passes (29 Oct 2026): --new-tables none --altered-checks <the three>."""
+    path = tmp_path / "gate-form.db"
+    _at_prior_with_signing_rows(path)
+    result = subprocess.run([sys.executable, str(TOOL), "rehearse", "--db", str(path), "--from", PRIOR, "--to", REVISION,
+                             "--new-tables", "none", "--altered-checks", CHECKS], cwd=ROOT, capture_output=True, text=True,
+                            timeout=300)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert result.stdout.count("ALTERED_CHECK=") == 3 and "MIGRATION_REHEARSAL=ok" in result.stdout
+    assert "schema identical except the named check constraints" in result.stdout

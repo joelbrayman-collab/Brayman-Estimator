@@ -729,17 +729,23 @@ step("c08: Ben places the concrete order for today's work; Darcy confirms; Deliv
   if (await link.count()) await order.locator("[name=schedule_item_id]").selectOption(await link.getAttribute("value"));
   await order.locator("[name=site_contact]").fill("Kevin Field (training crew) 613-555-0101");
   await order.locator("[name=notes]").fill("Chute from the driveway, equipment pad beside the pool (training)");
-  await shot(pg, "c08-place-order", order.locator("button[type=submit]"));
-  await submit(pg, order.locator("button[type=submit]"));
+  // CaliSIGN (29 Oct 2026): the order is signed when it is placed (Adopt your signature).
+  await order.locator("[name=sign_consent]").check();
+  await order.locator("[name=signer_name]").fill("Ben Brayman (training)");
+  await shot(pg, "c08-place-order", order.locator("button[data-calisign-po-send]"));
+  await submit(pg, order.locator("button[data-calisign-po-send]"));
   const placed = await flash(pg);
-  assert.match(placed, /Purchase order PO-\d{4}-\d{4} sent/);
+  assert.match(placed, /Purchase order PO-\d{4}-\d{4} signed and sent/);
   W.po = placed.match(/PO-\d{4}-\d{4}/)[0];
   await shot(pg, "c08-order-sent");
   const store = await person("darcy");
   await go(store.pg, "/supplier/");
   await submit(store.pg, store.pg.getByRole("link", { name: W.po }).first());
-  await shot(store.pg, "c08-supplier-order", store.pg.getByRole("button", { name: "Confirm order" }));
-  await submit(store.pg, store.pg.getByRole("button", { name: "Confirm order" }));
+  const confirm = store.pg.locator("form[data-confirm-order]");
+  await confirm.locator("[name=sign_consent]").check();
+  await confirm.locator("[name=signer_name]").fill("Darcy (training)");
+  await shot(store.pg, "c08-supplier-order", confirm.locator("button[data-calisign-confirm]"));
+  await submit(store.pg, confirm.locator("button[data-calisign-confirm]"));
   await go(pg, `/projects/${W.projectId}/supplier-requests`);
   assert.match(await pg.locator("main").innerText(), /[Cc]onfirmed/);
   await go(pg, "/deliveries");

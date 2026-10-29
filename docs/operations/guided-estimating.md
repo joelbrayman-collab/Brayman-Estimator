@@ -1,5 +1,11 @@
 # Guided Project Estimating & Universal Calculator Integration (V1, 23 Oct 2026)
 
+> **Superseded in part (28 Oct 2026, live 29 Oct 2026):** new estimates use selected-work estimating (Approach B,
+> [../architecture/selected-work-estimating.md](../architecture/selected-work-estimating.md)): the scope is only the
+> work chosen on **What work are we doing?**, Internal or Subcontracted, with no stage template and no N/A. The
+> "Construction scope … N/A per stage" row below describes estimates made before that release. Training module 13
+> and its screenshots were reconciled to selected work on 29 Oct 2026.
+
 Branch `v1/guided-estimating-2026-10-23`, built on the pinned v1rel8 candidate `6adf757` plus the framing quote
 workflow (`e1c4b58`, Pricing Decision A). One additive migration: `g5e7c2a9d1b4` (follows `u7b3d9f2a4c6`).
 

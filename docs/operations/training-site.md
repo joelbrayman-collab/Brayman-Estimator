@@ -28,7 +28,7 @@ stop the service, copy the backup over `training.db`, and run the script with th
   supplier people on the supplier sign-in page; both return to `/training`.
 - Three trainings (22 Oct 2026), chosen on `/training/signin`: contractor owners and office staff
   (`app/training/contractor.py`), the Field crew on the iPhone ("I work on a crew (Field)",
-  `app/training/field_crew.py`, eight modules) and supplier owners and PRO Desk staff
+  `app/training/field_crew.py`, eight modules; a ninth, the quick actions, from 25 Oct 2026) and supplier owners and PRO Desk staff
   (`app/training/supplier.py`). A Field-only person (Kevin, Liam) registers straight into the Field Crew
   training and sees nothing else; it is stored as the contractor pathway with role Field worker, so no
   schema change. The owner previews it at `/training/review/field-crew` and follows the crew's lessons

@@ -5,8 +5,9 @@ keys stay exactly as they are (saved progress is keyed by lesson and acceptance-
 or moves one). They are added after module 12 when the Training Centre loads its content (app/training/content.py
 _load, one call):
 
-- Module 13, Guided Estimating — Ben's path New Project → Scope → Guided Estimating → Internal Cost Estimate →
-  Pricing → Proposal, on one synthetic new home. It is the centrepiece of Kevin's Contractor Review: he can do
+- Module 13, Guided Estimating — Ben's path New Project → What work are we doing? → Guided Estimating → Internal
+  Cost Estimate → Pricing → Proposal, on one synthetic new home (selected-work estimating, Approach B, 28 Oct 2026:
+  the scope is only the work chosen; no stage list and no N/A; reconciled 29 Oct 2026). It is the centrepiece of Kevin's Contractor Review: he can do
   the whole estimate on the training company without setting up a company or QuickBooks (the training site
   already has the company's labour rate, pricing policy and practice costs).
 - Module 14, the calculators' three choices — Use Result Only, Add to Existing Project, Create New Project, and
@@ -28,15 +29,13 @@ HOME = "Lakeview New Home (training)"
 CUSTOMER = "Jordan Avery (training)"
 INITIALS = (" On the training site everyone shares one training company: add your initials to the project name "
             "(for example 'Lakeview New Home (training) KF').")
-SCOPE_TABLE = ("Site preparation Subcontracted; Excavation Subcontracted; Footings & foundation Internal; Framing "
-               "Internal; Roofing Subcontracted; Windows & exterior doors Internal; Siding & exterior finishes "
-               "Subcontracted; Electrical Subcontracted; Plumbing Subcontracted; HVAC Subcontracted; Insulation "
-               "Subcontracted; Drywall Subcontracted; Interior finishes Internal; Final cleanup Internal")
+WORK = "Windows, Excavation, Footings, Electrical and HVAC"
+SCOPE_TABLE = "Windows Internal; Excavation Subcontracted; Footings Internal; Electrical Subcontracted; HVAC Subcontracted"
 
 M13 = Module(
     key="c13", pathway=P, number=13, title="Guided Estimating: a new home from start to proposal",
-    summary="New Project → Scope → Guided Estimating → Internal Cost Estimate → Pricing → Proposal. You say what is "
-            "being built and who does each stage; CalibraytAI brings the right calculator or quote to each stage "
+    summary="New Project → What work are we doing? → Guided Estimating → Internal Cost Estimate → Pricing → Proposal. You say what is "
+            "being built and who does each piece of work; CalibraytAI brings the right calculator or quote to each "
             "and builds one internal cost estimate. This is the centrepiece of the Contractor Review: no company "
             "or QuickBooks set-up is needed on the training site.",
     roles=OFFICE_ROLES,
@@ -44,7 +43,7 @@ M13 = Module(
         Lesson(
             key="c13-start-new-estimate", title="Start New Estimate: the project, what you build and your role",
             what="Start a new home estimate from Home: the project, the customer, what is being built and your role.",
-            why="The project type and your role choose the construction stages; you never have to know which "
+            why="You choose only the work you are doing and who does it; you never have to know which "
                 "calculator or page comes next.",
             steps=(
                 Step(title="Start New Estimate", app=O, where="Home → GUIDED WIZARDS",
@@ -67,10 +66,11 @@ M13 = Module(
                      if_wrong="'Project name and client are required': check both. Every Commercial Decision Gate "
                               "box needs a choice.",
                      shot="c13-new-project-type.png", endpoint="projects.create_project"),
-                Step(title="The construction scope opens", app=O, where="Construction scope",
-                     do="Read the list of stages",
-                     expect="Fourteen stages from Site preparation to Final cleanup, each with Internal, Subcontracted "
-                            "and N/A, and nothing chosen yet.",
+                Step(title="What work are we doing?", app=O, where="Work included in this project",
+                     do="Read the page",
+                     expect="'What work are we doing?' with the work under Exterior, Structure, Foundation & site, "
+                            "Interior, Mechanical & electrical and General, and nothing chosen yet. There is no list "
+                            "of stages to decide.",
                      if_wrong="Opened the project page instead? Press Start the guided estimate on it.",
                      shot="c13-scope-empty.png", endpoint="guided.scope"),
             ),
@@ -78,90 +78,93 @@ M13 = Module(
                      "Contractor." + INITIALS,
         ),
         Lesson(
-            key="c13-scope", title="Who does each stage: Internal, Subcontracted or N/A",
-            what="Choose who does each of the fourteen stages, save a draft, then finalize the scope.",
-            why="Internal stages bring your calculators and labour; subcontracted stages bring the quote tools; N/A "
-                "is a deliberate exclusion that shows on the estimate. Nothing is chosen for you.",
+            key="c13-scope", title="What work are we doing? Choose the work and who does it",
+            what="Choose the five pieces of work this exercise prices, say who does each, then start estimating.",
+            why="Only the work you choose is estimated: there is nothing to rule out and no N/A. Internal work brings "
+                "your calculators and labour; subcontracted work brings the quote tools.",
             steps=(
-                Step(title="Choose for each stage", app=O, where="Construction scope",
-                     do="Press the round choice for each stage",
-                     enter=SCOPE_TABLE,
-                     expect="Each stage shows the choice you pressed; the count of stages still to decide goes down.",
-                     if_wrong="Pressed the wrong one? Press the right one; only one can be chosen.",
+                Step(title="Choose the work", app=O, where="What work are we doing?",
+                     do=f"Tick {WORK} (Find work narrows the list), then press Add work",
+                     expect="'5 work items · 0 of 5 complete', each with Who is doing this work? Internal or "
+                            "Subcontracted. New work starts as Internal.",
+                     if_wrong="Missed one? The same page keeps Add work below the list. Work that is not in the "
+                              "list can be typed under Other work, named.",
                      shot="c13-scope-chosen.png", endpoint="guided.scope"),
-                Step(title="Mixed work, part by part", app=O, where="Construction scope → a stage → Parts of this stage",
-                     do="Open Parts of this stage to see how a stage is split (for example your materials and a "
-                        "subcontractor's installation). Leave it unticked for this exercise",
-                     expect="The parts of the stage, each with its own Internal, Subcontracted and N/A.",
-                     if_wrong="Decide this stage part by part is only for mixed work; untick it to decide the stage whole.",
-                     shot="c13-scope-parts.png", endpoint="guided.scope"),
-                Step(title="Save a draft", app=O, where="Construction scope → the bottom",
-                     do="Press Save (or Save & Exit to come back later)",
-                     expect="'Scope saved as a draft.' Undecided stages are allowed in a draft.",
-                     if_wrong="Finalize is refused until every stage is decided: it names the ones left.",
+                Step(title="Who is doing this work?", app=O, where="Work included in this project → each work item",
+                     do="Press Subcontracted on Excavation, Electrical and HVAC; leave Windows and Footings Internal",
+                     enter=SCOPE_TABLE,
+                     expect="Each work item shows the choice you pressed.",
+                     if_wrong="Pressed the wrong one? Press the other; only one is chosen.",
                      endpoint="guided.scope"),
-                Step(title="Finalize the scope", app=O, where="Construction scope → the bottom",
-                     do="Press Finalize scope & build the workflow",
-                     expect="The Estimating workflow: 0 of 14 stages complete, the stages in construction order with "
-                            "their responsibility, status and next action.",
-                     if_wrong="Changed your mind later? Construction scope stays open; each change is kept in the history.",
+                Step(title="Mixed work, or work to take out", app=O,
+                     where="A work item → More: split materials and installation, or remove",
+                     do="Open More on Windows to see the two choices. Leave them for this exercise",
+                     expect="Decide materials and installation separately (for example your materials and a "
+                            "subcontractor's installation), and Remove, which asks you to confirm.",
+                     if_wrong="Work that already holds estimate lines cannot be removed until those are taken off.",
+                     shot="c13-scope-parts.png", endpoint="guided.scope"),
+                Step(title="Estimate this work", app=O, where="Work included in this project → the bottom",
+                     do="Press Estimate this work",
+                     expect=f"The Estimating workflow: 0 of 5 work items complete, 'Estimating: {WORK.replace(' and ', ', ')}', "
+                            "each with who does it, its status and its next action.",
+                     if_wrong="Changed your mind later? The Work page stays open; each change is kept in the history.",
                      shot="c13-workflow.png", endpoint="guided.workflow"),
             ),
-            exercise="Choose the fourteen responsibilities above for your Lakeview estimate and finalize the scope.",
+            exercise=f"Choose {WORK} for your Lakeview estimate, with the responsibilities above, and press "
+                     "Estimate this work.",
         ),
         Lesson(
-            key="c13-internal-stage", title="An internal stage: the calculator comes to you",
-            what="Estimate Footings & foundation with the footing calculator, the estimate review and labour hours.",
-            why="The stage opens the right calculator with the project and stage chosen; the result goes to the estimate "
+            key="c13-internal-stage", title="Internal work: the calculator comes to you",
+            what="Estimate Footings with the footing calculator, the estimate review and labour hours.",
+            why="The work item opens the right calculator with the project and the work already chosen; the result goes to the estimate "
                 "only after you confirm each quantity and its company cost.",
             steps=(
-                Step(title="Open the stage", app=O, where="Estimating workflow → Footings & foundation",
-                     do="Press Footings & foundation",
-                     expect="Your tools for this stage: Footing calculator, ICF wall calculator, Concrete slab "
-                            "calculator, Labour hours and Enter a cost line.",
-                     if_wrong="Any stage can be opened in any order.",
+                Step(title="Open the work", app=O, where="Estimating workflow → Footings",
+                     do="Press Footings",
+                     expect="Your tools for this work: Footing calculator, Labour hours and Enter a cost line.",
+                     if_wrong="Any work item can be opened in any order.",
                      shot="c13-stage-internal.png", endpoint="guided.stage"),
-                Step(title="Calculate the footings", app=O, where="The stage → Footing calculator",
+                Step(title="Calculate the footings", app=O, where="Footings → Footing calculator",
                      do="Press Footing calculator, enter the two footings and the waste, press Calculate",
                      enter="Footing 1: 120 ft × 2 ft × 10 in; Footing 2: 40 ft × 2 ft × 10 in; Waste 5",
                      expect="The quantities, then 'What would you like to do with this result?' with your project "
-                            "and the Footings & foundation stage already chosen.",
+                            "and Footings already chosen.",
                      if_wrong="A red message means a box is empty or not a number.",
                      shot="c13-footing-calculator.png", endpoint="calculators.footing"),
-                Step(title="Add it to the stage", app=O, where="The calculator → Add to Existing Project",
+                Step(title="Add it to Footings", app=O, where="The calculator → Add to Existing Project",
                      do="Press Add to project, then Review it for the estimate",
                      expect="'Saved on Lakeview New Home…'. Pressing it again says it is already there: never doubled.",
                      if_wrong="The button stays grey until there is a result and a project.",
                      shot="c13-footing-add.png", endpoint="calculators.footing"),
                 Step(title="Send it to the estimate review", app=O, where="The calculation",
                      do="Check what was entered and calculated, then press Send to the estimate review",
-                     expect="The estimate review with the stage's section already chosen. Nothing is on the estimate yet.",
+                     expect="The estimate review with the Footings section already chosen. Nothing is on the estimate yet.",
                      if_wrong="'issued or locked': the estimate was issued; start a revision first.",
                      shot="c13-calc-send.png", endpoint="guided.calculation"),
                 Step(title="Confirm the quantity", app=O, where="The estimate review → Add to this estimate",
-                     do="Choose Ready-mix concrete 25 MPa (training) and press Add to estimate; then Back to the "
-                        "estimating stage",
-                     expect="'Quantity added to the estimate.' The stage lists the concrete line at the company cost.",
+                     do="Choose Ready-mix concrete 25 MPa (training) and press Add to estimate; then go back to "
+                        "Footings",
+                     expect="'Quantity added to the estimate.' Footings lists the concrete line at the company cost.",
                      if_wrong="'No company item uses this unit yet': the company has no cost in that unit.",
                      shot="c13-review-confirm.png", endpoint="estimates.calculation_review"),
-                Step(title="Labour hours", app=O, where="The stage → Labour hours",
+                Step(title="Labour hours", app=O, where="Footings → Labour hours",
                      do="Type the hours for the concrete line and press Save labour hours",
                      enter="40",
                      expect="A labour line at the company's approved labour rate.",
                      if_wrong="No approved labour rate? The company sets it under How we price.",
                      shot="c13-stage-labour.png", endpoint="guided.stage"),
-                Step(title="Confirm and complete", app=O, where="The stage → the bottom",
+                Step(title="Confirm and complete", app=O, where="Footings → the bottom",
                      do="Press Confirm who supplies and builds these lines, then Complete & Next",
-                     expect="'Footings & foundation is complete.' The next stage that is not complete opens.",
-                     if_wrong="'Not complete yet' lists what is missing: a stage completes only with confirmed costs, "
+                     expect="'Footings is complete.' The next work item that is not complete opens.",
+                     if_wrong="'Not complete yet' lists what is missing: work completes only with confirmed costs, "
                               "an approved allowance or a no-cost decision authorized by the owner.",
                      shot="c13-stage-complete.png", endpoint="guided.stage"),
             ),
-            exercise="Estimate Footings & foundation on your Lakeview project with the footing calculator (the two "
+            exercise="Estimate Footings on your Lakeview project with the footing calculator (the two "
                      "footings above, 5 % waste), the training concrete cost and 40 labour hours, and complete it.",
         ),
         Lesson(
-            key="c13-subcontracted-stage", title="A subcontracted stage: request, record, compare, use the cost",
+            key="c13-subcontracted-stage", title="Subcontracted work: request, record, compare, use the cost",
             what="Estimate Electrical from two subcontractor quotes.",
             why="A quote is evidence: selecting it only suggests the cost. You apply it with Use this cost on the "
                 "line (and can undo it), so nothing changes your estimate behind your back.",
@@ -170,25 +173,25 @@ M13 = Module(
                      do="Type what the electrician is to do and press Set up the subcontract",
                      enter="Wire the house to code, panel and fixtures (training)",
                      expect="The subcontract line on the estimate, with a Printable quote request sheet.",
-                     if_wrong="Only a subcontracted stage has a subcontract.",
+                     if_wrong="Only subcontracted work has a subcontract.",
                      shot="c13-sub-setup.png", endpoint="guided.stage"),
-                Step(title="Request the quote", app=O, where="The stage",
+                Step(title="Request the quote", app=O, where="Electrical",
                      do="Send the quote request sheet, then press I have sent the quote request",
-                     expect="The stage shows Waiting for Quote. Carry on with other stages while you wait.",
+                     expect="Electrical shows Waiting for Quote. Carry on with the other work while you wait.",
                      if_wrong="Quotes can also come by phone or email; record them the same way.",
                      shot="c13-sub-waiting.png", endpoint="guided.stage"),
-                Step(title="Record the quotes", app=O, where="The stage → Record a quote",
+                Step(title="Record the quotes", app=O, where="Electrical → Record a quote",
                      do="Fill in the subcontractor, reference, amount and date; press Record the quote (once for each)",
                      enter="Sparks Electric (training) EL-9 24500; Bright Wire (training) EL-10 26100",
                      expect="Quotes received lists both, with what they include and exclude.",
                      if_wrong="An amount must be a number, without the dollar sign.",
                      shot="c13-sub-quotes.png", endpoint="guided.stage"),
-                Step(title="Select and use the cost", app=O, where="The stage → Quotes received",
+                Step(title="Select and use the cost", app=O, where="Electrical → Quotes received",
                      do="Press Select this quote on EL-9, then Use this cost on the line",
                      expect="Suggested cost from the selected quote, then the line at $24,500.00, applied by you.",
                      if_wrong="Undo puts the line back to its earlier cost.",
                      shot="c13-sub-use-cost.png", endpoint="guided.stage"),
-                Step(title="Complete", app=O, where="The stage → the bottom",
+                Step(title="Complete", app=O, where="Electrical → the bottom",
                      do="Press Complete & Next",
                      expect="'Electrical is complete.'",
                      if_wrong="A quote that is only selected (not used on the line) is not a confirmed cost.",
@@ -198,14 +201,14 @@ M13 = Module(
         ),
         Lesson(
             key="c13-missing-costs", title="Missing costs, allowances and coming back later",
-            what="See a stage refused without a cost, approve an allowance, save and come back.",
+            what="See work refused without a cost, approve an allowance, save and come back.",
             why="A missing cost stays visible until it is resolved; the proposal waits for it. An allowance is an "
                 "explicit, approved decision with a reason. Deciding that included work has no cost at all is the "
                 "owner's decision (or a System Administrator's).",
             steps=(
                 Step(title="No cost, no completion", app=O, where="Estimating workflow → HVAC",
                      do="Press Complete & Next without any cost",
-                     expect="'Not complete yet: No cost yet …'. The stage stays as it was.",
+                     expect="'Not complete yet: No cost yet …'. HVAC stays as it was.",
                      if_wrong="That is the rule working: nothing completes on a click alone.",
                      shot="c13-missing.png", endpoint="guided.stage"),
                 Step(title="Approve an allowance", app=O, where="HVAC → Allowance or no-cost decision",
@@ -213,32 +216,32 @@ M13 = Module(
                         "Complete & Next",
                      enter="16000; Why an allowance: The HVAC quote is still to come",
                      expect="An allowance line on the estimate, approved in your name with the date and your reason "
-                            "(kept in the stage history); the stage completes as an Approved allowance.",
-                     if_wrong="'Say why this stage uses an allowance': the reason is required. Only a person who can "
+                            "(kept in the history); HVAC completes as an Approved allowance.",
+                     if_wrong="'Say why this work uses an allowance': the reason is required. Only a person who can "
                               "approve costing can approve an allowance. 'Authorize no cost' is shown only to the "
                               "owner and System Administrators: everyone else sees that it is the owner's decision.",
                      shot="c13-allowance.png", endpoint="guided.stage"),
-                Step(title="Save & Exit, then Resume", app=O, where="Any stage → Save & Exit",
+                Step(title="Save & Exit, then Resume", app=O, where="Windows → Save & Exit",
                      do="Press Save & Exit; on the project page press Resume estimating",
-                     expect="You are back on the stage where you stopped.",
+                     expect="You are back on Windows, where you stopped.",
                      if_wrong="Start New Estimate (Home → Estimate a Project → Continue manually) also lists "
                               "unfinished estimates to resume.",
                      shot="c13-resume.png", endpoint="projects.view_project"),
             ),
             exercise="On your Lakeview project try to complete HVAC with no cost, then approve a $16,000 allowance and "
-                     "complete it. Save & Exit and Resume.",
+                     "complete it. Open Windows, Save & Exit and Resume.",
         ),
         Lesson(
             key="c13-internal-cost", title="The internal cost estimate",
             what="Read the internal cost estimate and download it.",
-            why="It is the principal result of guided estimating: every stage's materials, labour, subcontracts, "
+            why="It is the principal result of guided estimating: every work item's materials, labour, subcontracts, "
                 "allowances and their sources in one place, for the office only.",
             steps=(
                 Step(title="Open it", app=O, where="Estimating workflow → Internal cost estimate",
                      do="Press Internal cost estimate",
-                     expect="INTERNAL — NOT FOR CUSTOMER DISTRIBUTION, the totals by kind of cost, each stage with its "
-                            "lines and sources, and anything still missing.",
-                     if_wrong="DRAFT means the costing is not approved yet; it updates as stages are confirmed.",
+                     expect="INTERNAL — NOT FOR CUSTOMER DISTRIBUTION, the totals by kind of cost, each work item with "
+                            "its lines and sources, and anything still missing.",
+                     if_wrong="DRAFT means the costing is not approved yet; it updates as work is confirmed.",
                      shot="c13-internal-cost.png", endpoint="guided.internal_cost"),
                 Step(title="Download or print", app=O, where="Internal cost estimate",
                      do="Press Download PDF (or Print)",
@@ -255,11 +258,12 @@ M13 = Module(
             why="The price comes from the company pricing policy and true gross margin, with HST; the customer sees the "
                 "scope and price, never your costs.",
             steps=(
-                Step(title="Every stage resolved", app=O, where="Estimating workflow → Review Pricing & Prepare Proposal",
+                Step(title="All the work resolved", app=O, where="Estimating workflow → Review Pricing & Prepare Proposal",
                      do="Read step 1",
-                     expect="Either 'Every included stage is complete', or the stages still missing a cost.",
-                     if_wrong="The proposal waits until every stage has a confirmed cost, an approved allowance or "
-                              "an authorized exclusion.",
+                     expect="Either 'Every included stage is complete' (the page still says stage; it means every work "
+                            "item), or the work still missing a cost.",
+                     if_wrong="The proposal waits until every work item has a confirmed cost, an approved allowance or "
+                              "an owner-authorized no-cost decision.",
                      shot="c13-pricing-blocked.png", endpoint="guided.pricing"),
                 Step(title="Approve the costing", app=O, where="Review Pricing & Prepare Proposal → 2",
                      do="Press Approve the costing",
@@ -273,12 +277,12 @@ M13 = Module(
                      shot="c13-pricing-priced.png", endpoint="guided.pricing"),
                 Step(title="Prepare the proposal", app=O, where="Review Pricing & Prepare Proposal → 4",
                      do="Press Prepare the proposal and save it as a draft",
-                     expect="The existing proposal page with the stages as sections and the selling price.",
+                     expect="The existing proposal page with the work items as sections and the selling price.",
                      if_wrong="Sending it to the customer is module 10.",
                      shot="c13-proposal.png", endpoint="proposals.create_proposal_route"),
             ),
-            exercise="When every stage of your Lakeview estimate is resolved (use allowances for the stages you are not "
-                     "pricing in this exercise), approve the costing, apply the pricing and prepare the proposal.",
+            exercise="When all the work on your Lakeview estimate is resolved (use allowances for Windows and Excavation, "
+                     "which this exercise does not price), approve the costing, apply the pricing and prepare the proposal.",
         ),
     ),
 )
@@ -314,8 +318,8 @@ M14 = Module(
             why="Everything you entered goes with it: you never type the calculation again.",
             steps=(
                 Step(title="Select Project", app=O, where="The result → Add to Existing Project",
-                     do="Choose the project and, if it has a guided estimate, the stage; press Add to project",
-                     enter="Lakeview New Home (training) <initials>; Footings & foundation",
+                     do="Choose the project and, if it has a guided estimate, the work; press Add to project",
+                     enter="Lakeview New Home (training) <initials>; Footings",
                      expect="'Saved on …' and Review it for the estimate. Pressing it again never adds it twice.",
                      if_wrong="Only your company's current projects are listed.",
                      shot="c14-add-existing.png", endpoint="calculators.concrete"),
@@ -326,8 +330,7 @@ M14 = Module(
                      if_wrong="Nothing is added until you press Add to estimate.",
                      shot="c14-send-review.png", endpoint="guided.calculation"),
             ),
-            exercise="Add a concrete result to your Lakeview project's Footings & foundation stage and confirm it in "
-                     "the estimate review.",
+            exercise="Add a concrete result to your Lakeview project's Footings and confirm it in the estimate review.",
         ),
         Lesson(
             key="c14-create-new-project", title="Create New Project from a calculator",
@@ -345,15 +348,16 @@ M14 = Module(
                      if_wrong="Nothing was saved; the project was not created.",
                      shot="c14-cancel-back.png", endpoint="calculators.concrete"),
                 Step(title="Create the project", app=O, where="The result → New Project → New Project form",
-                     do="Fill in the project, choose its type and role and press Save Project; finalize the scope",
+                     do="Fill in the project, choose its type and role and press Save Project; on What work are we "
+                        "doing? add Concrete slab and Footings, then press Estimate this work",
                      enter="Rivera Garage (training) <initials>; Garage / Outbuilding; Contractor performing selected portions",
-                     expect="'Your Concrete result is saved on the project'; after the scope, the workflow lists it "
-                            "under Calculations waiting for a stage.",
-                     if_wrong="Open the calculation and choose its stage, then Send to the estimate review.",
+                     expect="'Your Concrete result is saved on the project'; the workflow lists it under Calculations "
+                            "waiting for a work item.",
+                     if_wrong="Open the calculation and choose its work item, then Send to the estimate review.",
                      shot="c14-waiting.png", endpoint="guided.workflow"),
             ),
             exercise="From a concrete result create 'Rivera Garage (training) <initials>', cancelling once first, and send "
-                     "the waiting calculation to the Footings & foundation review.",
+                     "the waiting calculation to the Concrete slab review.",
         ),
         Lesson(
             key="c14-phone", title="On the iPhone (Useful Calculators)",
@@ -380,38 +384,39 @@ def _u(key, module, title, start, action, expected):
 
 
 UAT_CASES = (
-    _u("uat-c13-scope", "c13", "New home: fourteen stages, nothing chosen for you",
+    _u("uat-c13-scope", "c13", "New home: only the work you choose, nothing chosen for you",
        "Home → Estimate a Project → Continue manually (Start New Estimate)",
-       "Create a new project as New Home Construction and General Contractor; try Finalize with stages undecided; "
-       "then choose the fourteen responsibilities and finalize.",
-       "No stage is pre-chosen; Finalize is refused while any is undecided; the workflow lists the fourteen stages "
-       "in construction order with the responsibilities you chose."),
-    _u("uat-c13-internal", "c13", "Internal stage through its calculator and the estimate review",
-       "Estimating workflow → Footings & foundation",
-       "Open the Footing calculator from the stage, add the result to the stage, send it to the review, confirm the "
+       "Create a new project as New Home Construction and General Contractor; on What work are we doing? add Windows, "
+       "Excavation, Footings, Electrical and HVAC, make Excavation, Electrical and HVAC Subcontracted, and press "
+       "Estimate this work.",
+       "Nothing is chosen for you and no stage list or N/A appears; the workflow lists exactly the five work items "
+       "with the responsibilities you chose (0 of 5 complete)."),
+    _u("uat-c13-internal", "c13", "Internal work through its calculator and the estimate review",
+       "Estimating workflow → Footings",
+       "Open the Footing calculator from Footings, add the result to Footings, send it to the review, confirm the "
        "concrete, add labour hours, confirm routing and Complete & Next.",
-       "Nothing reaches the estimate before you confirm; the stage completes with the concrete at the company cost and "
+       "Nothing reaches the estimate before you confirm; Footings completes with the concrete at the company cost and "
        "the labour at the company rate."),
-    _u("uat-c13-subcontract", "c13", "Subcontracted stage: the quote suggests, you apply",
+    _u("uat-c13-subcontract", "c13", "Subcontracted work: the quote suggests, you apply",
        "Estimating workflow → Electrical",
        "Record two quotes, try Complete & Next, select one, press Use this cost on the line, then Complete & Next.",
-       "Complete is refused until the selected quote's cost is used on the line; then the stage completes at that cost."),
+       "Complete is refused until the selected quote's cost is used on the line; then Electrical completes at that cost."),
     _u("uat-c13-missing-cost", "c13", "Missing costs hold the proposal", "Review Pricing & Prepare Proposal",
-       "With one stage left without a cost, open Review Pricing & Prepare Proposal; then approve an allowance for it "
+       "With one work item left without a cost, open Review Pricing & Prepare Proposal; then approve an allowance for it "
        "(with the reason).",
-       "The page names the stage and offers no proposal until the allowance is approved."),
+       "The page names the work item and offers no proposal until the allowance is approved."),
     _u("uat-c13-internal-cost", "c13", "Internal cost estimate, office only", "Estimating workflow → Internal cost estimate",
        "Open the internal cost estimate and download the PDF.",
-       "Both are marked INTERNAL — NOT FOR CUSTOMER DISTRIBUTION and show each stage's costs and sources."),
+       "Both are marked INTERNAL — NOT FOR CUSTOMER DISTRIBUTION and show each work item's costs and sources."),
     _u("uat-c13-proposal", "c13", "Pricing and proposal from the guided estimate",
        "Review Pricing & Prepare Proposal",
        "Approve the costing, apply the company pricing and prepare the proposal.",
-       "The pricing shows the true gross margin and HST; the proposal shows the stages and selling price and none of "
+       "The pricing shows the true gross margin and HST; the proposal shows the work and selling price and none of "
        "your costs."),
     _u("uat-c14-use-only", "c14", "Use Result Only changes nothing", "CALCULATORS → Concrete calculator",
        "Calculate a slab and press Use result only.", "The result stays; no project or estimate changes."),
     _u("uat-c14-existing", "c14", "Add to Existing Project, once", "A calculator result → Add to Existing Project",
-       "Add a result to a project and stage, press Add to project again, then send it to the estimate review and confirm.",
+       "Add a result to a project and its work, press Add to project again, then send it to the estimate review and confirm.",
        "The second press says it is already there; the estimate gets one line, only after you confirm it."),
     _u("uat-c14-new-project", "c14", "Create New Project keeps the result; Cancel returns it",
        "A calculator result → Create New Project",

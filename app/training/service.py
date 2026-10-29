@@ -479,29 +479,32 @@ GENERAL_HELP = GENERAL_HELP + (
 GENERAL_HELP = GENERAL_HELP + (
     ("guided estimate start new estimating workflow stages stage", "Guided Estimating: Home → Estimate a Project "
      "(or Continue manually beneath it for Start New Estimate). "
-     "Choose the project (or a new one), what is being built and your role. On Construction scope choose Internal, "
-     "Subcontracted or N/A for every stage and press Finalize scope & build the workflow. Then open any stage, in any "
-     "order: each one brings its calculator or its quote tools. Back, Save, Save & Exit and Complete & Next are at the "
-     "bottom of every stage; Resume estimating is on the project page."),
-    ("internal subcontracted n/a na scope responsibility mixed parts split", "Internal: your own crew. Subcontracted: an "
-     "outside contractor. N/A: deliberately not part of this job (it shows as excluded). Nothing is chosen for you; "
-     "a draft may have undecided stages, but Finalize needs every one. For mixed work open Parts of this stage and "
-     "tick Decide this stage part by part (for example your materials, the subcontractor's installation)."),
-    ("complete completed cost missing allowance zero refused incomplete", "A stage is Complete only with confirmed "
+     "Choose the project (or a new one), what is being built and your role. On What work are we doing? tick the work "
+     "you are doing (Find work narrows the list; Other work, named, for anything not listed) and press Add work; then "
+     "choose Internal or Subcontracted for each and press Estimate this work. Then open any work item, in any order: "
+     "each one brings its calculator or its quote tools. Back, Save, Save & Exit and Complete & Next are at the "
+     "bottom of every work item; Resume estimating is on the project page."),
+    ("internal subcontracted n/a na scope responsibility mixed parts split remove work", "Only the work you choose is "
+     "estimated: there is no stage list to rule out and no N/A. Internal: your own crew. Subcontracted: an outside "
+     "contractor. New work starts as Internal. For mixed work open More on the work item and press Decide materials "
+     "and installation separately (for example your materials, the subcontractor's installation). Remove takes work "
+     "out after you confirm, and is refused while the work still holds estimate lines. Estimates made before 28 Oct "
+     "2026 keep their stages; their Work page offers Switch this draft to selected work."),
+    ("complete completed cost missing allowance zero refused incomplete", "A work item is Complete only with confirmed "
      "costs, an approved allowance (Allowance or no-cost decision → Approve the allowance, with the reason) or a "
      "no-cost decision, which only the owner or a System Administrator can authorize. Pressing Complete & Next "
-     "alone never completes it: the page lists what is missing, and the proposal waits until every stage is "
+     "alone never completes it: the page lists what is missing, and the proposal waits until all the work is "
      "resolved."),
-    ("quote quotes subcontractor waiting suggested select compare", "Subcontracted stage: set up the subcontract, send "
-     "the Printable quote request sheet and press I have sent the quote request (the stage shows Waiting for Quote; "
-     "carry on with other stages). Record each quote, press Select this quote, then Use this cost on the line. A "
+    ("quote quotes subcontractor waiting suggested select compare", "Subcontracted work: set up the subcontract, send "
+     "the Printable quote request sheet and press I have sent the quote request (the work shows Waiting for Quote; "
+     "carry on with the other work). Record each quote, press Select this quote, then Use this cost on the line. A "
      "selected quote only suggests the cost; Undo puts the line back."),
     ("calculator result project existing new only choices carry cancel duplicate", "After any calculator result: Use "
-     "Result Only (nothing saved), Add to Existing Project (choose the project and stage; it is kept with everything "
+     "Result Only (nothing saved), Add to Existing Project (choose the project and its work; it is kept with everything "
      "you entered and pressing it twice never doubles it) or Create New Project (the result waits on the new project; "
      "Cancel returns to the calculator with the same result). A calculation reaches the estimate only when you send "
      "it to the estimate review and confirm each quantity."),
-    ("internal cost document pdf customer distribution", "Estimating workflow → Internal cost estimate: every stage's "
+    ("internal cost document pdf customer distribution", "Estimating workflow → Internal cost estimate: every work item's "
      "materials, labour, subcontracts and allowances with their sources, marked INTERNAL — NOT FOR CUSTOMER "
      "DISTRIBUTION. Download PDF or Print. The customer gets the proposal, never this."),
 )

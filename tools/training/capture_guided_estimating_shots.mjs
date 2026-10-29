@@ -24,11 +24,10 @@ const PY = path.join(REPO, "venv/bin/python");
 const HOME = "Lakeview New Home (training) BB";
 const GARAGE = "Rivera Garage (training) BB";
 const CUSTOMER = "Jordan Avery (training)";
+// Selected-work estimating (28 Oct 2026; lessons reconciled 29 Oct 2026): the scope is only the work chosen.
 const SCOPE = {
-  site_prep: "SUBCONTRACTED", excavation: "SUBCONTRACTED", footings_foundation: "INTERNAL", framing: "INTERNAL",
-  roofing: "SUBCONTRACTED", windows_doors: "INTERNAL", siding: "SUBCONTRACTED", electrical: "SUBCONTRACTED",
-  plumbing: "SUBCONTRACTED", hvac: "SUBCONTRACTED", insulation: "SUBCONTRACTED", drywall: "SUBCONTRACTED",
-  interior_finishes: "INTERNAL", final_cleanup: "INTERNAL",
+  work_windows: "INTERNAL", work_excavation: "SUBCONTRACTED", work_footings: "INTERNAL",
+  work_electrical: "SUBCONTRACTED", work_hvac: "SUBCONTRACTED",
 };
 let browser, server, base, facts;
 const serverErrors = [];
@@ -187,26 +186,32 @@ step("c13: Start New Estimate, the new home, its type and role", async () => {
   await submit(pg, pg.locator("form.form-panel button[type=submit]"));
   assert.match(pathOf(pg), /\/guided\/scope$/);
   W.project = Number(pathOf(pg).split("/")[2]);
-  await shot(pg, "c13-scope-empty", pg.locator('[data-stage-row="site_prep"]'));
+  assert.match(await pg.locator("[data-add-work] h2").innerText(), /What work are we doing\?/);
+  assert.equal(await pg.locator("[data-stage-row]").count(), 0, "no stage template");
+  await shot(pg, "c13-scope-empty", pg.locator("[data-add-work]"));
 });
 
-step("c13: choose who does each stage and finalize", async () => {
+step("c13: choose the work, who does it, and estimate this work", async () => {
   const { pg } = await ben();
-  for (const [key, value] of Object.entries(SCOPE)) {
-    await pg.locator(`[data-stage-row="${key}"] > fieldset.ge-choice input[value="${value}"]`).check();
+  for (const key of Object.keys(SCOPE)) await pg.locator(`[data-add-work] input[name=work][value="${key}"]`).check();
+  await press(pg, "button[data-add-work-submit]");
+  for (const [key, resp] of Object.entries(SCOPE)) {
+    if (resp === "SUBCONTRACTED") await press(pg, `button[data-set-subcontracted="${key}"]`);
   }
-  await shot(pg, "c13-scope-chosen", pg.locator('[data-stage-row="footings_foundation"]'));
-  await pg.locator('[data-parts="framing"] > summary').click();
-  await shot(pg, "c13-scope-parts", pg.locator('[data-parts="framing"]'));
-  await pg.locator('[data-parts="framing"] > summary').click();
-  await press(pg, "button[data-scope-finalize]");
+  assert.equal(await pg.locator("#work").getAttribute("data-progress"), "0/5");
+  await shot(pg, "c13-scope-chosen", pg.locator("[data-work-list]"));
+  await pg.locator('[data-work-item="work_windows"] details.sw-more > summary').click();
+  await shot(pg, "c13-scope-parts", pg.locator('[data-work-item="work_windows"] details.sw-more'));
+  await pg.locator('[data-work-item="work_windows"] details.sw-more > summary').click();
+  await press(pg, "a[data-open-workflow]");
   assert.equal(pathOf(pg), `/projects/${W.project}/guided`);
+  assert.match(await pg.locator("[data-progress]").innerText(), /0 of 5 work items complete/);
   await shot(pg, "c13-workflow");
 });
 
-step("c13: an internal stage through its calculator, the review and labour", async () => {
+step("c13: internal work through its calculator, the review and labour", async () => {
   const { pg } = await ben();
-  await openStage(pg, "footings_foundation");
+  await openStage(pg, "work_footings");
   await shot(pg, "c13-stage-internal", pg.locator("[data-internal-tools]"));
   await submit(pg, pg.locator('a[data-tool="calculator:footing"]'));
   await fillFooting(pg);
@@ -231,9 +236,9 @@ step("c13: an internal stage through its calculator, the review and labour", asy
   await shot(pg, "c13-stage-complete");
 });
 
-step("c13: a subcontracted stage, waiting, quotes, select and use the cost", async () => {
+step("c13: subcontracted work, waiting, quotes, select and use the cost", async () => {
   const { pg } = await ben();
-  await openStage(pg, "electrical");
+  await openStage(pg, "work_electrical");
   await pg.fill("textarea[data-scope-description]", "Wire the house to code, panel and fixtures (training)");
   await press(pg, "button[data-setup-subcontract]");
   await shot(pg, "c13-sub-setup", pg.locator("[data-subcontract]"));
@@ -250,7 +255,7 @@ step("c13: a subcontracted stage, waiting, quotes, select and use the cost", asy
 
 step("c13: missing cost, an allowance, Save & Exit and Resume", async () => {
   const { pg } = await ben();
-  await openStage(pg, "hvac");
+  await openStage(pg, "work_hvac");
   await press(pg, "button[data-nav-complete-next]");
   await shot(pg, "c13-missing");
   await allowance(pg, "16000");
@@ -260,7 +265,7 @@ step("c13: missing cost, an allowance, Save & Exit and Resume", async () => {
   if (!(await box.getAttribute("open"))) await box.locator("summary").click();
   await shot(pg, "c13-allowance", pg.locator("[data-allowance-record]"));
   await press(pg, "button[data-nav-complete-next]");
-  await openStage(pg, "windows_doors");
+  await openStage(pg, "work_windows");
   await press(pg, "button[data-nav-save-exit]");
   await shot(pg, "c13-resume", pg.locator("[data-hub-guided]"));
 });
@@ -273,7 +278,7 @@ step("c13: the internal cost estimate and the pricing gate", async () => {
   await shot(pg, "c13-pricing-blocked");
 });
 
-step("c13: every stage resolved, costing approved, pricing applied, proposal prepared", async () => {
+step("c13: all the work resolved, costing approved, pricing applied, proposal prepared", async () => {
   const { pg } = await ben();
   for (const key of Object.keys(SCOPE)) {
     await go(pg, `/projects/${W.project}/guided`);
@@ -302,7 +307,7 @@ step("c14: Use Result Only and Add to Existing Project", async () => {
   await shot(pg, "c14-use-only", pg.locator("[data-option-use-only]"));
   await pg.selectOption("[data-link-select]", String(W.project));
   await pg.waitForSelector("[data-stage-wrap]:not([hidden])");
-  await pg.locator("[data-link-stage]").selectOption({ label: "Footings & foundation" });
+  await pg.locator("[data-link-stage]").selectOption({ label: "Footings" });
   await pg.click("[data-link-button]");
   await pg.waitForSelector("[data-link-status]:not([hidden]) a");
   await shot(pg, "c14-add-existing", pg.locator("[data-link-project]"));
@@ -329,10 +334,10 @@ step("c14: Create New Project, Cancel back to the same result, then the new proj
   await pg.check('input[name=contractor_role][value="SELECTED_PORTIONS"]');
   await commercial(pg);
   await submit(pg, pg.locator("form.form-panel button[type=submit]"));
-  for (const row of await pg.locator("[data-stage-row]").all()) {
-    await row.locator(":scope > fieldset.ge-choice input[value='INTERNAL']").check();
-  }
-  await press(pg, "button[data-scope-finalize]");
+  assert.match(pathOf(pg), /\/guided\/scope$/);
+  for (const key of ["work_concrete_slab", "work_footings"]) await pg.locator(`[data-add-work] input[name=work][value="${key}"]`).check();
+  await press(pg, "button[data-add-work-submit]");
+  await press(pg, "a[data-open-workflow]");
   await shot(pg, "c14-waiting", pg.locator("[data-waiting-calculations]"));
 });
 

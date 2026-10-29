@@ -1285,14 +1285,20 @@ M08 = Module(
                      expect="The form holds your values.",
                      if_wrong="Place orders only after Morgan has accepted (module 10) and the work is scheduled (module 11).",
                      shot="c08-place-order.png", endpoint="supplier_office.project_requests"),
-                Step(title="Place it", app=O, where="The order form",
-                     do="Press Place order",
-                     expect="'Purchase order PO-… sent'; it says Waiting for the supplier to confirm.",
-                     if_wrong="Cancel this order (with a reason the supplier sees) if it was a mistake.",
+                Step(title="Sign and send it", app=O, where="The order form → Adopt your signature",
+                     do="In Adopt your signature tick I agree to sign electronically and type your full name, then "
+                        "press Sign & Send for E-Signature (CaliSIGN)",
+                     enter="Your full name",
+                     expect="'Purchase order PO-… signed and sent to BMR Winchester (training). It is agreed when they "
+                            "sign and confirm it.' The order shows Awaiting Signature.",
+                     if_wrong="Without the tick and your name nothing is signed or sent. A mistake? Cancel this order "
+                              "(with a reason the supplier sees).",
                      shot="c08-order-sent.png", endpoint="supplier_office.project_requests"),
                 Step(title="BMR confirms", app=APP_SUPPLIER, where="Supplier Hub → the request → Purchase order",
-                     do="Darcy checks the date and presses Confirm order (or Report a problem)",
-                     expect="Your page says Confirmed by Darcy; agreed delivery date and window. The order is agreed.",
+                     do="Darcy checks the date, ticks I agree to sign electronically, types his full name and "
+                        "presses Sign & Confirm Order (or Report a problem)",
+                     expect="Your page says Confirmed by Darcy and Executed, with both signatures and the agreed delivery "
+                            "date and window. Both sides can download the signed purchase order.",
                      if_wrong="A problem shows the supplier's note; answer it or change the delivery.",
                      shot="c08-supplier-order.png", endpoint="supplier_portal.request_detail"),
                 Step(title="Deliveries", app=O, where="Supplier requests → All deliveries, every project (or /deliveries)",
@@ -1511,7 +1517,7 @@ M10 = Module(
                      do="Press Generate contract",
                      expect="'This contract is generated for review. It is not signed.' Contract status Generated — not "
                             "signed, with Open contract.",
-                     if_wrong="Generating does not send anything. Read it before Send contract for signature.",
+                     if_wrong="Generating does not send anything. Read it before Send for E-Signature (CaliSIGN).",
                      shot="c10-contract-generated.png", endpoint="projects.review_contract"),
             ),
             exercise="Generate the Harbour Lane contract for review and open it: check Morgan Ellis (training), the "
@@ -1727,8 +1733,8 @@ M11 = Module(
                      shot="c11-change-order-item.png", endpoint="project_controls.view_change_order"),
                 Step(title="Approve", app=O, where="The change order → Update status",
                      do="Choose Approved, press Save Status (once Morgan has agreed in writing)",
-                     expect="Status set to \"Approved\". Office Approved is not a customer signature; Send for Signature "
-                            "asks Morgan to sign.",
+                     expect="Status set to \"Approved\". Office Approved is not a customer signature; Send for E-Signature "
+                            "(CaliSIGN) asks Morgan to sign.",
                      if_wrong="Rejected or Cancelled if she says no.",
                      shot="c11-change-order-approve.png", endpoint="project_controls.view_change_order"),
             ),
@@ -1977,8 +1983,9 @@ UAT_CASES = (
        "The quote shows $612.50 before tax and 'Concrete quote approved. Placing the order is a separate step.' BMR "
        "never sees Morgan's name or the customer price.", OFFICE),
     _u("uat-c08-order", "c08", "Purchase order confirmed", "The approved quote → order form",
-       "Place order for the first job day linked to the schedule; BMR presses Confirm order.",
-       "PO-… sent, then Confirmed by the store with the agreed date; it is on Deliveries; Getting started step 13 is ticked.",
+       "Sign & Send for E-Signature for the first job day linked to the schedule; BMR presses Sign & Confirm Order.",
+       "PO-… signed and sent, then Confirmed and Executed (both signatures) with the agreed date; it is on Deliveries; "
+       "Getting started step 13 is ticked.",
        OFFICE),
     _u("uat-c09-estimate", "c09", "Estimate costed and priced", "Harbour Lane → New estimate",
        "Add the three lines, confirm Scope Delivery Review, Approve all costing, Apply org pricing policy.",

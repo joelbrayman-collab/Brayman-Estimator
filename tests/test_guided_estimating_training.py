@@ -48,7 +48,7 @@ def test_the_two_modules_follow_module_12_and_no_existing_key_changed():
 
 def test_bens_path_new_project_scope_guided_internal_cost_pricing_proposal():
     titles = [l.title for l in next(m for m in C.modules() if m.key == "c13").lessons]
-    order = ["Start New Estimate", "Who does each stage", "An internal stage", "A subcontracted stage",
+    order = ["Start New Estimate", "What work are we doing?", "Internal work", "Subcontracted work",
              "Missing costs", "The internal cost estimate", "Review Pricing & Prepare Proposal"]
     assert [next(i for i, t in enumerate(titles) if t.startswith(o)) for o in order] == list(range(7))
 
@@ -97,7 +97,8 @@ def test_the_workflow_map_shows_guided_estimating_and_the_calculators_choices():
     guided = {x.key: x for x in price.substeps if x.key.startswith("guided-")}
     assert [x.dest.endpoint for x in guided.values()] == ["guided.start", "guided.scope", "guided.workflow",
                                                           "guided.internal_cost", "guided.pricing"]
-    assert "Internal, Subcontracted or N/A" in price.description
+    # Selected-work estimating (28 Oct 2026): the map teaches choosing the work, never N/A (reconciled 29 Oct 2026).
+    assert "What work are we doing?" in price.description and "N/A" not in price.description
     assert {"c13-start-new-estimate", "c13-pricing-proposal"} <= set(price.lessons)
     assert {"uat-c13-scope", "uat-c13-proposal"} <= set(price.uat)
     plan = D.stage("c-plan")
@@ -109,8 +110,9 @@ def test_the_workflow_map_shows_guided_estimating_and_the_calculators_choices():
 
 def test_the_tutor_knows_the_guided_workflow():
     assert "Start New Estimate" in S.tutor_answer(None, 0, "how do I start a guided estimate")
-    assert "Internal: your own crew" in S.tutor_answer(None, 0, "what is subcontracted or n/a")
-    assert "approved allowance" in S.tutor_answer(None, 0, "why will my stage not complete, cost missing")
+    answer = S.tutor_answer(None, 0, "what is subcontracted or n/a")
+    assert "Internal: your own crew" in answer and "no N/A" in answer
+    assert "approved allowance" in S.tutor_answer(None, 0, "why will my work not complete, cost missing")
     assert "Use this cost on the line" in S.tutor_answer(None, 0, "what do I do with the subcontractor quote")
     assert "Create New Project" in S.tutor_answer(None, 0, "calculator result to a new project")
     _m, lesson = C.find_lesson("c13-internal-stage")

@@ -486,9 +486,10 @@ MODULES = (
                 why="The order is not agreed until you confirm it. It is also the first time you see the site address.",
                 steps=(
                     Step(title="How Ben places it", app=APP_OFFICE, where=REQUESTS_OFFICE,
-                         do="Ben fills Delivery date, Time window, Site contact and Notes for the supplier, then presses "
-                            "Place order",
-                         expect="'Purchase order PO-… sent to BMR Winchester (training). It is agreed when they confirm it.'",
+                         do="Ben fills Delivery date, Time window, Site contact and Notes for the supplier, signs in Adopt "
+                            "your signature and presses Sign & Send for E-Signature",
+                         expect="'Purchase order PO-… signed and sent to BMR Winchester (training). It is agreed when they "
+                                "sign and confirm it.'",
                          if_wrong="Ben can only order after he records and approves your returned prices.",
                          endpoint="supplier_office.project_requests", shot="s5-office-place-order.png"),
                     Step(title="The email", app=APP_EMAIL, where="Your inbox: 'New purchase order PO-…'",
@@ -516,19 +517,24 @@ MODULES = (
             Lesson(
                 key="s05-confirm", title="Confirm the order or report a problem",
                 what="Confirm the delivery you can make, or put the order on hold with a problem.",
-                why="Confirm order completes the agreement with the contractor under your account terms.",
+                why="Sign & Confirm Order completes the agreement with the contractor under your account terms: your "
+                    "signature is added to the purchase order the contractor signed.",
                 steps=(
                     Step(title="Confirm the order", app=APP_SUPPLIER, where="The request → Purchase order → the form under the lines",
-                         do="Check Delivery date you can make and Time window, type a Note to the contractor, press Confirm order",
+                         do="Check Delivery date you can make and Time window, type a Note to the contractor; in Adopt "
+                            "your signature tick I agree to sign electronically and type your full name; press Sign & "
+                            "Confirm Order",
                          enter="Note: 'Boards and railing from the Winchester yard (training)'",
-                         expect="'Order PO-… confirmed.' and 'Confirmed by Darcy … · Delivery <date>, 8:00–10:00'.",
+                         expect="'Order PO-… signed and confirmed. Both sides can download the signed purchase order.' and "
+                                "'Confirmed by Darcy … · Delivery <date>, 8:00–10:00'.",
                          if_wrong="If you cannot make the requested date, put the date you can make before confirming; "
                                   "it becomes the agreed delivery.",
                          endpoint="supplier_portal.request_detail", shot="s5-confirm-form.png"),
                     Step(title="What a confirmed order looks like", app=APP_SUPPLIER, where="The request → Purchase order",
                          do="Read the line under the order",
                          expect="Confirmed, by whom and when, the delivery, a Mark delivered link and the Delivery panel.",
-                         if_wrong="If it still shows the confirm form, the button was not pressed: press Confirm order.",
+                         if_wrong="If it still shows the confirm form, it was not signed: tick I agree to sign "
+                                  "electronically, type your name and press Sign & Confirm Order.",
                          endpoint="supplier_portal.request_detail", shot="s5-order-confirmed.png"),
                     Step(title="Or report a problem", app=APP_SUPPLIER, where="The request → Purchase order → the form",
                          do="Type what is wrong in Note to the contractor, then press Report a problem",
@@ -544,9 +550,10 @@ MODULES = (
                          if_wrong="If Ben still sees 'Waiting for the supplier to confirm', open the order again and check.",
                          endpoint="supplier_office.project_requests", shot="s5-office-order-agreed.png"),
                     Step(title="Confirm the concrete order", app=APP_SUPPLIER, where="The concrete request → Purchase order",
-                         do="Book the truck with Tomlinson Ready-Mix your usual way, then press Confirm order with a note",
+                         do="Book the truck with Tomlinson Ready-Mix your usual way, then sign and press Sign & Confirm "
+                            "Order with a note",
                          enter="Note: 'Booked with Tomlinson Ready-Mix (training)'",
-                         expect="'Order PO-… confirmed.'",
+                         expect="'Order PO-… signed and confirmed.'",
                          if_wrong="If Tomlinson cannot make the date, confirm the date they can make, or confirm and then "
                                   "use Change the delivery (module 6).",
                          endpoint="supplier_portal.request_detail"),
@@ -595,7 +602,8 @@ MODULES = (
                 steps=(
                     Step(title="Fill Change the delivery", app=APP_SUPPLIER,
                          where="The concrete order → Delivery → Change the delivery",
-                         do="Choose New date, type Time window, choose Reason, type a Note, press Send the change to the contractor",
+                         do="Choose New date, type Time window, choose Reason, type a Note; in Adopt your signature "
+                            "tick I agree to sign electronically and type your full name; press Sign & Send the Change",
                          enter="The next day; 10:00–12:00; Supplier availability; 'Tomlinson Ready-Mix has no pump truck "
                                "that morning (training)'",
                          expect="'Delivery change sent to the contractor. The current delivery stands until they accept.'",
@@ -632,15 +640,17 @@ MODULES = (
                          endpoint="supplier_portal.inbox", shot="s6-change-waiting-phone.png"),
                     Step(title="Read the change", app=APP_SUPPLIER, where="The order → Delivery",
                          do="Read the yellow box",
-                         expect="'Change requested by Ben …: old date → new date. Reason: Weather.' with Accept <date>, "
-                                "Decline and Propose another time instead.",
+                         expect="'Change requested by Ben …: old date → new date. Reason: Weather.' with Sign & "
+                                "Accept <date>, Decline and Propose another time instead.",
                          if_wrong="The delivery above stands until you answer.",
                          endpoint="supplier_portal.request_detail", shot="s6-answer-change-phone.png"),
-                    Step(title="Accept", app=APP_SUPPLIER, where="The order → Delivery", do="Press Accept <date>",
+                    Step(title="Accept", app=APP_SUPPLIER, where="The order → Delivery",
+                         do="In Adopt your signature tick I agree to sign electronically and type your full name, then "
+                            "press Sign & Accept <date>",
                          expect="'Answer sent to the contractor.' and 'Agreed delivery: <new date>'.",
                          if_wrong="To refuse, type a note in Note (required to decline) and press Decline. To offer a "
                                   "different time, open Propose another time instead, fill Date, Time window and Reason, "
-                                  "and press Propose this time.",
+                                  "sign and press Sign & Propose This Time. Declining needs no signature.",
                          endpoint="supplier_portal.request_detail", shot="s6-change-accepted-phone.png"),
                 ),
                 exercise="Have the contractor side (or your trainer) ask to move the Harbour Lane material delivery, then "
@@ -1025,8 +1035,8 @@ MODULES = (
                          if_wrong="See module 4.",
                          endpoint="supplier_portal.inbox", shot="s3-inbox.png"),
                     Step(title="Confirm", app=APP_SUPPLIER, where=STORE + " → Orders to confirm",
-                         do="Open each order and press Confirm order",
-                         expect="Each says 'Order PO-… confirmed.'",
+                         do="Open each order, sign and press Sign & Confirm Order",
+                         expect="Each says 'Order PO-… signed and confirmed.'",
                          if_wrong="See module 5.",
                          endpoint="supplier_portal.request_detail", shot="s5-order-confirmed.png"),
                     Step(title="Deliver", app=APP_SUPPLIER, where=STORE + " → Deliveries",
@@ -1158,8 +1168,8 @@ UAT_CASES = (
 
     _uat("uat-s05-confirm", "s05", "Confirm a purchase order",
          "Supplier Hub → Orders to confirm → the Harbour Lane material order",
-         "Check the date and window, type a note, press Confirm order.",
-         "'Order PO-… confirmed.'; Ben's page says 'The order is agreed.' with the same delivery."),
+         "Check the date and window, type a note, sign (tick and your full name), press Sign & Confirm Order.",
+         "'Order PO-… signed and confirmed.'; Ben's page shows Executed and the same delivery."),
     _uat("uat-s05-problem-note", "s05", "Report a problem needs a note",
          "Supplier Hub → a placed order (ask Ben for a new one)",
          "Press Report a problem with the note empty; then type a note and press it again.",
@@ -1170,11 +1180,11 @@ UAT_CASES = (
 
     _uat("uat-s06-supplier-change", "s06", "Ask to move a delivery",
          "Supplier Hub → the confirmed concrete order → Delivery → Change the delivery",
-         "New date +1 day, 10:00–12:00, Supplier availability, note, press Send the change to the contractor.",
+         "New date +1 day, 10:00–12:00, Supplier availability, note, sign, press Sign & Send the Change.",
          "'The current delivery stands until they accept'; Ben sees the change and can accept; then the agreed date is the new one."),
     _uat("uat-s06-answer-change", "s06", "Answer a contractor's change",
          "Supplier Hub → Delivery changes waiting for your answer",
-         "Open the order and press Accept <date>.",
+         "Open the order, sign and press Sign & Accept <date>.",
          "'Answer sent to the contractor.' and 'Agreed delivery: <new date>'; Ben's page shows the same date."),
     _uat("uat-s06-delivered", "s06", "Mark an order delivered",
          "Supplier Hub → a confirmed order → Mark delivered",

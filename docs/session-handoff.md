@@ -6,6 +6,14 @@ This block is the one authoritative "where are we" for CalibraytAI. Everything b
 status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
 **historical records**: where they disagree with this block, this block wins.
 
+- **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — IN RELEASE.** Record:
+  [operations/governance-catchup-2026-10-29.md](operations/governance-catchup-2026-10-29.md). Branch
+  `release/governance-catchup-2026-10-29` = `main` `02dd09ed` + PR #15 Compact Open a New Project (reconciled, no
+  conflict; its browser walk added to the gate, **302** browser checks) + the Supplier Pricing Request generator and
+  template library (tooling only) + the Training Centre reconciliation (module 13/14 for selected work, CaliSIGN
+  signing steps, Tutor, Workflow Map, re-taken screenshots). No migration. Training site (HostPapa) found on the
+  26 Oct code (`5c6f3d7` era, by static-file fingerprint): two releases behind Production; updated by `catchup1`.
+  Supplier Unit Pricing: not started (brief not supplied). Kevin's feedback classified in the record §8.
 - **Turnover/recovery workstream: CLOSED 28 Oct 2026 — TURNOVER SUBSTANTIALLY CORRECT — NO CURRENT WORK STRANDED —
   RELEASE/OPERATIONS VERIFICATION DEFERRED.** No further turnover investigation unless new evidence of missing work
   appears. Feature development continues from `main`.

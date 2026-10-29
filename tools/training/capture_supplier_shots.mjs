@@ -384,6 +384,12 @@ async function recordAndApprove(pg, shareId) {
 
 // ------------------------------------------------------------------ module 5: orders and confirmations
 
+// CaliSIGN (29 Oct 2026): placing, confirming and every agreed delivery change are signed (Adopt your signature).
+async function sign(form, name) {
+  await form.locator("[name=sign_consent]").first().check();
+  await form.locator("[name=signer_name]").first().fill(name);
+}
+
 test("s5: Ben places both orders; Darcy confirms them", async () => {
   const { pg } = await ben();
   await recordAndApprove(pg, W.second.id);
@@ -393,10 +399,11 @@ test("s5: Ben places both orders; Darcy confirms them", async () => {
   await form.locator("[name=delivery_window]").fill("8:00–10:00");
   await form.locator("[name=site_contact]").fill("Ben Brayman (training), 613-555-0100");
   await form.locator("[name=notes]").fill("Side gate on the left; pool is full, keep clear of the fence (training)");
+  await sign(form, "Ben Brayman (training)");
   await snap(pg, "s5-office-place-order", `[data-place-order="${W.second.id}"]`, 160);
-  await form.locator("button:has-text('Place order')").click();
+  await form.locator("button[data-calisign-po-send]").click();
   await pg.waitForLoadState();
-  W.materialPo = (await flash(pg)).match(/Purchase order (\S+) sent/)[1];
+  W.materialPo = (await flash(pg)).match(/Purchase order (\S+) signed and sent/)[1];
   const art = share(pg, W.concrete.id);
   await art.locator("[data-approve-quote] button").click();
   await pg.waitForLoadState();
@@ -405,9 +412,10 @@ test("s5: Ben places both orders; Darcy confirms them", async () => {
   await cform.locator("[name=delivery_window]").fill("7:00–9:00");
   await cform.locator("[name=site_contact]").fill("Ben Brayman (training), 613-555-0100");
   await cform.locator("[name=notes]").fill("Pump truck from Harbour Lane; call 30 minutes ahead (training)");
-  await cform.locator("button:has-text('Place order')").click();
+  await sign(cform, "Ben Brayman (training)");
+  await cform.locator("button[data-calisign-po-send]").click();
   await pg.waitForLoadState();
-  W.concretePo = (await flash(pg)).match(/Purchase order (\S+) sent/)[1];
+  W.concretePo = (await flash(pg)).match(/Purchase order (\S+) signed and sent/)[1];
   const { pg: d } = await darcy();
   await go(d, hub());
   assert.equal(await d.locator("[data-attention-orders]").getAttribute("data-attention-orders"), "2");
@@ -415,17 +423,19 @@ test("s5: Ben places both orders; Darcy confirms them", async () => {
   await go(d, hub(`requests/${W.second.id}`));
   assert.equal(await d.locator("[data-supplier-order]").getAttribute("data-supplier-order"), "PLACED");
   await snap(d, "s5-order-to-confirm", "[data-supplier-order]");
-  await snap(d, "s5-confirm-form", "[data-confirm-order]", 260);
   await d.locator("[data-confirm-order] [name=note]").fill("Boards and railing from the Winchester yard (training)");
+  await sign(d.locator("[data-confirm-order]"), "Darcy (training)");
+  await snap(d, "s5-confirm-form", "[data-confirm-order]", 260);
   await d.click("[data-confirm-order] button[value=confirm]");
   await d.waitForLoadState();
-  assert.match(await flash(d), new RegExp(`Order ${W.materialPo} confirmed`));
+  assert.match(await flash(d), new RegExp(`Order ${W.materialPo} signed and confirmed`));
   await snap(d, "s5-order-confirmed", "[data-supplier-order]");
   await go(d, hub(`requests/${W.concrete.id}`));
   await d.locator("[data-confirm-order] [name=note]").fill("Booked with Tomlinson Ready-Mix (training)");
+  await sign(d.locator("[data-confirm-order]"), "Darcy (training)");
   await d.click("[data-confirm-order] button[value=confirm]");
   await d.waitForLoadState();
-  assert.match(await flash(d), new RegExp(`Order ${W.concretePo} confirmed`));
+  assert.match(await flash(d), new RegExp(`Order ${W.concretePo} signed and confirmed`));
   await go(pg, requestsPage());
   assert.match(await share(pg, W.second.id).locator("[data-po]").innerText(), /The order is agreed/);
   await snap(pg, "s5-office-order-agreed", `article#share-${W.second.id} [data-po]`, 120);
@@ -450,13 +460,15 @@ test("s6: deliveries, a change from each side, and the material order marked del
   await ask.locator("[name=new_window]").fill("10:00–12:00");
   await ask.locator("[name=reason]").selectOption("Supplier availability");
   await ask.locator("[name=note]").fill("Tomlinson Ready-Mix has no pump truck that morning (training)");
+  await sign(ask, "Darcy (training)");
   await snap(d, "s6-request-change", "#delivery", 80);
-  await ask.locator("button:has-text('Send the change')").click();
+  await ask.locator("button:has-text('Send the Change')").click();
   await d.waitForLoadState();
   assert.match(await flash(d), /Delivery change sent to the contractor/);
   await snap(d, "s6-change-sent", "#delivery", 120);
   const { pg } = await ben();
   await go(pg, requestsPage());
+  await sign(share(pg, W.concrete.id).locator("[data-answer-change]"), "Ben Brayman (training)");
   await share(pg, W.concrete.id).locator("[data-answer-change] button[value=accept]").click();
   await pg.waitForLoadState();
   assert.match(await flash(pg), /Answer sent to the supplier/);
@@ -468,7 +480,8 @@ test("s6: deliveries, a change from each side, and the material order marked del
   await panel.locator("[name=new_window]").fill("8:00–10:00");
   await panel.locator("[name=reason]").selectOption("Weather");
   await panel.locator("[name=note]").fill("Rain forecast; the yard will be soft (training)");
-  await panel.locator("button:has-text('Send the change')").click();
+  await sign(panel.locator("[data-request-change]"), "Ben Brayman (training)");
+  await panel.locator("button:has-text('Send the Change')").click();
   await pg.waitForLoadState();
   assert.match(await flash(pg), /Delivery change sent/);
   await go(dp, hub());
@@ -477,6 +490,7 @@ test("s6: deliveries, a change from each side, and the material order marked del
   await dp.locator("[data-changes-waiting] a").first().click();
   await dp.waitForLoadState();
   await noSideways(dp, "phone answer change");
+  await sign(dp.locator("[data-answer-change]"), "Darcy (training)");
   await snap(dp, "s6-answer-change-phone", "[data-delivery-change]", 120);
   await dp.click("[data-answer-change] button[value=accept]");
   await dp.waitForLoadState();

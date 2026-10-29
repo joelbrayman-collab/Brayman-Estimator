@@ -359,9 +359,9 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
     Stage(
         id="c-price", journey="contractor", number=3, label="PRICE", title="Know what the job will cost",
         summary="Supplier quotations, approved material costs, labour, the estimate, margin and taxes.",
-        description="Guided Estimating: say what is being built and who does each stage (Internal, Subcontracted "
-                    "or N/A); each stage brings its calculator or its quotation tools, and every confirmed stage "
-                    "adds to one internal cost estimate. Ask the suppliers for prices, compare and approve what "
+        description="Guided Estimating: choose the work you are doing (What work are we doing?) and who does each "
+                    "(Internal or Subcontracted; nothing else is estimated); each work item brings its calculator or "
+                    "its quotation tools, and every confirmed work item adds to one internal cost estimate. Ask the suppliers for prices, compare and approve what "
                     "they return, add the labour, and price the estimate with the company's pricing and true gross "
                     "margin. Costing waits until each line says who supplies and who builds it.",
         primary=D_START_ESTIMATE,
@@ -369,9 +369,9 @@ CONTRACTOR_STAGES: Tuple[Stage, ...] = (
             S("wizard-estimating", "Guided Estimating with the guided wizard", D_WIZARDS, lesson="c15-estimating-wizard"),
             S("guided-start", "Start New Estimate (project type and your role)", D_START_ESTIMATE,
               lesson="c13-start-new-estimate"),
-            S("guided-scope", "Construction scope: Internal, Subcontracted or N/A for each stage",
-              _project("guided.scope", "Open Construction scope"), lesson="c13-scope"),
-            S("guided-workflow", "Guided estimating workflow: each stage's calculator or quote",
+            S("guided-scope", "What work are we doing? Choose the work, Internal or Subcontracted",
+              _project("guided.scope", "Open Work"), lesson="c13-scope"),
+            S("guided-workflow", "Guided estimating workflow: each work item's calculator or quote",
               _project("guided.workflow", "Open Estimating workflow"), lesson="c13-internal-stage"),
             S("guided-internal-cost", "Internal cost estimate (office only)",
               _project("guided.internal_cost", "Open Internal cost estimate"), lesson="c13-internal-cost"),
@@ -1010,7 +1010,7 @@ PRIVACY_NOTE = ("Suppliers see only what a contractor chose to share with them o
 CONTRACTOR_BRANCHES: Tuple[Branch, ...] = (
     Branch("calculators", "Calculators", "Concrete, stairs, ICF walls, framing, footings, roofing, siding, "
            "drywall and flooring: use them on their own or for a project. After a result: Use Result Only, Add to "
-           "Existing Project or Create New Project; Guided Estimating opens them from each stage.",
+           "Existing Project or Create New Project; Guided Estimating opens them from each work item.",
            (D_CONCRETE, _d("calculators.stairs", "Open Stair calculator"),
             _d("calculators.wall_form", "Open ICF wall calculator"),
             _d("calculators.wall_framing", "Open Wall framing calculator"), D_START_ESTIMATE),

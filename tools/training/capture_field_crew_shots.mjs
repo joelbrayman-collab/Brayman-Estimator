@@ -35,7 +35,7 @@ const JOB = "Harbour Lane Pool Deck (training)";
 const CREW = "Pool deck crew (training)";
 const WORK_ITEM = "Pool deck framing and decking (training)";
 const ACTIVITY = "Framing and decking (training)";
-const MONEY = [/\$\s?\d/, /\bprice/i, /\bcost/i, /margin/i, /markup/i, /invoice/i, /estimate/i];
+const MONEY = [/\$\s?\d/, /\bprice\b/i  /* "prices it on a change order" (extra work, 25 Oct 2026) explains, shows no price */, /\bcost/i, /margin/i, /markup/i, /invoice/i, /estimate/i];
 // The office's calendar day (America/Toronto), not the UTC day: after 8 pm Toronto the UTC date is tomorrow.
 const day = (offset) => new Date(Date.now() + offset * 864e5).toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
 
@@ -303,7 +303,7 @@ step("Kevin registers into the Field Crew training, ticks a step, asks the Tutor
   assert.doesNotMatch(reg, /Contractor owner|Office staff|Supplier/);
   await shot(k.pg, "f01-register", k.pg.locator("[data-register]"));
   await submit(k.pg, k.pg.locator("[data-register]"));
-  assert.equal(await k.pg.locator("[data-module]").count(), 8);
+  assert.equal(await k.pg.locator("[data-module]").count(), 9);  // module 9: the quick actions (Magnificent Seven, 25 Oct 2026)
   await shot(k.pg, "f01-training-home", k.pg.locator("[data-continue]"));
   await submit(k.pg, k.pg.locator("[data-continue]"));
   assert.equal(await k.pg.getAttribute("[data-lesson-page]", "data-lesson-page"), "f01-start-training");
@@ -503,7 +503,7 @@ step("the office moves the dates; Kevin sees them on This week", async () => {
 step("Kevin's Field acceptance tests on the iPhone", async () => {
   const k = sessions.kevin.pg;
   await go(k, "/training/uat");
-  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 21/);
+  assert.match(await k.locator("[data-uat-counts]").innerText(), /of 26/);  // 21 + the five Magnificent Seven Field tests (25 Oct 2026)
   await shot(k, "f08-uat-list", k.locator("[data-uat-continue]"));
   await submit(k, k.locator("[data-uat-continue]"));
   await k.check('input[name=status][value="FAIL"]');

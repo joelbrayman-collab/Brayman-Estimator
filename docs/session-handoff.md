@@ -12,7 +12,8 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   `pre-catchup1-20261029-2148.db` (sha256 `ea79738f…4f66`, 219 tables, 2,093 rows, integrity ok; on the instance
   and the Mac). Rollback: redeploy `471eec4` (`dep-dbhl0dafngtc73buj8q0`), no database change to undo. Training
   Centre (HostPapa) updated to the same `f9ca0f1` (was `5c6f3d71`; backup `training-20261029-202041.db`; migrations
-  `q4c7l2n8t3a6` and `a4d5e6f7a8b9` applied). PRs #15 and #17 merged. Record:
+  `q4c7l2n8t3a6` and `a4d5e6f7a8b9` applied). PRs #15 and #17 merged. Post-release check RELEASED (18:05 EDT; rows
+  and revision unchanged, integrity ok). Preservation tags `preserve/2026-10-28/*` created (10). Record:
   [operations/governance-catchup-2026-10-29.md](operations/governance-catchup-2026-10-29.md). Branch
   `release/governance-catchup-2026-10-29` = `main` `02dd09ed` + PR #15 Compact Open a New Project (reconciled, no
   conflict; its browser walk added to the gate, **302** browser checks) + the Supplier Pricing Request generator and
@@ -25,11 +26,11 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
   appears. Feature development continues from `main`.
 - **DEFERRED RELEASE / OPERATIONS VERIFICATION — NOT DONE; required before the next applicable production release
   (not a blocker to feature development):**
-  1. **Preservation tags** `preserve/2026-10-28/*` — not created (tag push refused from the cloud workspace). Run
+  1. **Preservation tags** `preserve/2026-10-28/*` — **created 29 Oct 2026 (10 tags, office Mac).** Earlier: not created (tag push refused from the cloud workspace). Run
      `tools/ops/create_preservation_tags.sh` from the office Mac. Until then the branches in
      [operations/source-of-truth.md](operations/source-of-truth.md) are the only preservation and must not be deleted.
      Required before any branch cleanup.
-  2. **HostPapa Training running commit** — not read. Read-only in WHM Terminal:
+  2. **HostPapa Training running commit** — **read 29 Oct 2026: `5c6f3d71`, now updated to `f9ca0f1`.** Earlier: not read. Read-only in WHM Terminal:
      `sudo -u calibrayt git -C /opt/calibrayt/app log -1 --format='%H %ad %s'; systemctl is-active calibrayt-training`.
      Required before the next Training release or any Training repoint.
   3. **Mac release gate on the exact `main` commit** — not run on any 28 Oct `main` (`main` contains merged work that

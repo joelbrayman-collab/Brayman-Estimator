@@ -27,7 +27,7 @@ deferred". Re-checked against Git:
 |---|---|
 | Mac release gate on the exact `main` commit | **Done** by the CaliSIGN release (`calisign1`: 3,623 passed, 298 browser checks). |
 | HostPapa Training running commit | **Still not read with WHM** — but now fingerprinted (§1): Training runs the 26 Oct code. It was not updated after the 27 Oct Project Creation release or the 29 Oct CaliSIGN release. **Gap: the Training Centre lagged Production by two releases.** Corrected by this catch-up (§7). |
-| Preservation tags `preserve/2026-10-28/*` | **Still not created** (no tags on GitHub). Included in Joel's Mac command for this release. |
+| Preservation tags `preserve/2026-10-28/*` | Were not created. **Created 29 Oct 2026** (10 tags) by Joel's Mac command for this release. |
 
 No accepted work was found missing from `main` other than the items in §3.
 
@@ -139,4 +139,7 @@ tables, 2,093 rows, integrity ok; Mac copy matches). After deploy: Render report
 lines since the deploy; signed out, sign-in pages answer 200, protected pages redirect to sign-in, `/training` is 404
 on Production, CaliSIGN and the new wizard stylesheet are served (the stylesheet is byte-identical to `f9ca0f1`).
 Training site, signed out: sign-in pages 200, CaliSIGN assets and the new screenshots served. Post-release check on
-the Mac (`postrelease_check.sh --label catchup1`): run by Joel after the deploy.
+the Mac (`postrelease_check.sh --label catchup1`): **RELEASED 29 Oct 2026 18:05 EDT** — main is the tested commit
+(git fsck ok); live `f9ca0f1`; revision `a4d5e6f7a8b9` unchanged; 219 tables, 2,093 rows, equal to the pre-release
+backup; integrity ok; signed-out public and Cal checks passed. Preservation tags `preserve/2026-10-28/*`: **10
+created** from the office Mac (closes the last deferred turnover item).

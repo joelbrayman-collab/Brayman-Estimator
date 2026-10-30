@@ -409,22 +409,36 @@ def seed_project_work_structure(
 
 
 def _seed_from_entered_labour(project, version, entered, org_id) -> None:
-    """One work item per estimate section, one activity per labour line, with its hours."""
-    by_section: dict[int, list] = defaultdict(list)
-    names: dict[int, str] = {}
+    """One work item per governed work package (or per estimate section when no package owns it), one activity per
+    labour line, with its hours and a link back to the line (30 Oct 2026). Work excluded from Brayman's price is
+    not Brayman's to plan, so it is not seeded."""
+    from app.services import work_packages as WP
+
+    groups: dict = {}
+    order: list = []
     for section, line in entered:
-        by_section[section.id].append(line)
-        names[section.id] = (section.name or "General").strip() or "General"
-    for element_order, (section_id, lines) in enumerate(by_section.items(), start=1):
+        if not WP.line_participates(line):
+            continue
+        package = WP.package_of_section(section)
+        key = ("package", package.id) if package is not None else ("section", section.id)
+        if key not in groups:
+            name = package.display_name if package is not None else ((section.name or "General").strip() or "General")
+            groups[key] = {"name": name, "package_id": package.id if package is not None else None, "lines": []}
+            order.append(key)
+        groups[key]["lines"].append(line)
+    for element_order, key in enumerate(order, start=1):
+        group = groups[key]
+        lines = group["lines"]
         element = ProjectWorkElement(
             organization_id=org_id,
             project_id=project.id,
-            display_name=names[section_id][:180],
+            display_name=group["name"][:180],
             status=WORK_STATUS_ACTIVE,
             sort_order=element_order * 10,
             source_kind=SOURCE_ESTIMATE_SEED,
             estimated_hours=sum(Decimal(line.quantity or 0) for line in lines),
             scope_origin=SCOPE_ORIGINAL,
+            guided_stage_id=group["package_id"],
         )
         db.session.add(element)
         db.session.flush()
@@ -438,6 +452,7 @@ def _seed_from_entered_labour(project, version, entered, org_id) -> None:
                     sort_order=activity_order * 10,
                     source_kind=SOURCE_ESTIMATE_SEED,
                     source_estimate_version_id=version.id,
+                    source_estimate_line_item_id=line.id,
                     estimated_hours=Decimal(line.quantity or 0),
                     quantity=Decimal(line.quantity or 0),
                     unit="hr",

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{# Gate 3 (Joel, 30 Oct 2026): subcontract commitments are approved by a person; before the customer accepts,
+   an Early Procurement Exception is required. Nothing is sent to a subcontractor from this page. #}
+{% block title %}Commitments | {{ project.name }}{% endblock %}
+{% block page_title %}Commitments{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Commitments — {{ project.name }}</h1>
+<p class="muted-copy" data-gate-2="{{ 'passed' if gate_2 else 'open' }}">{% if gate_2 %}The customer accepted the proposal: commitments need only approval.{% else %}The customer has not accepted the proposal yet. A commitment needs an Early Procurement Exception before it is approved.{% endif %}</p></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests</a></div></div>
+
+<section class="form-panel" data-commitment-queue>
+  <h2>Subcontracts</h2>
+  {% for c in rows %}
+  <article class="form-panel" data-commitment="{{ c.id }}" data-status="{{ c.status }}">
+    <h3>{{ c.subcontractor_name }} — ${{ "%.2f"|format(c.amount|float) }} <span class="status">{{ c.status|lower|capitalize }}</span></h3>
+    <p>{{ c.scope_text }}{% if c.guided_stage_id %} · Work package: {{ package_names.get(c.guided_stage_id, '—') }}{% endif %}{% if c.quote_reference %} · Quote {{ c.quote_reference }}{% endif %}</p>
+    <p class="muted-copy">Proposed by {{ c.proposed_by_name }}{% if c.decided_by_name %}; {{ c.status|lower }} by {{ c.decided_by_name }}{% if c.decision_note %} ({{ c.decision_note }}){% endif %}{% endif %}{% if c.early_exception_id %}; early exception #{{ c.early_exception_id }}{% endif %}.</p>
+    {% if c.status == "PROPOSED" %}
+      {% if not gate_2 %}
+      <form method="post" class="form-grid" data-commitment-exception="{{ c.id }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="early_exception"><input type="hidden" name="commitment_id" value="{{ c.id }}">
+        <label>Why it must be committed now * <input type="text" name="reason" required></label>
+        <label>Financial exposure ($) * <input type="text" name="financial_exposure" required inputmode="decimal"></label>
+        <label>Approving authority * <input type="text" name="approving_authority" required></label>
+        <div class="form-actions"><button type="submit" class="button-secondary">Record the exception</button></div>
+      </form>
+      {% endif %}
+      <form method="post" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="commitment_id" value="{{ c.id }}">
+        <input type="text" name="note" placeholder="Note (required to reject)" aria-label="Note">
+        <button type="submit" name="action" value="approve" class="button is-primary" data-approve-commitment="{{ c.id }}">Approve</button>
+        <button type="submit" name="action" value="reject" class="button-secondary">Reject</button>
+      </form>
+    {% elif c.status == "APPROVED" and not c.signing_document_id %}
+      <form method="post" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="commitment_id" value="{{ c.id }}">
+        <button type="submit" name="action" value="sign" class="button-secondary" data-open-subcontract-signing="{{ c.id }}">Prepare for signature (CaliSIGN)</button>
+      </form>
+    {% elif c.signing_document_id %}
+      <p class="muted-copy">Approved for signature on CaliSIGN. Not sent.</p>
+    {% endif %}
+  </article>
+  {% else %}
+  <p class="muted-copy">No subcontract commitments yet.</p>
+  {% endfor %}
+  <details class="form-panel" open>
+    <summary>Propose a subcontract</summary>
+    <form method="post" class="form-grid" data-propose-subcontract>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="propose">
+      <label>Subcontractor * <input type="text" name="subcontractor_name" required></label>
+      <label>Scope * <input type="text" name="scope_text" required></label>
+      <label>Amount before tax ($) * <input type="text" name="amount" required inputmode="decimal"></label>
+      <label>Quote reference <input type="text" name="quote_reference"></label>
+      {% if package_options %}<label>Work package <select name="guided_stage_id"><option value="">Not linked</option>{% for pid, label in package_options %}<option value="{{ pid }}">{{ label }}</option>{% endfor %}</select></label>{% endif %}
+      <div class="form-actions"><button type="submit" class="button is-primary">Propose</button></div>
+    </form>
+  </details>
+</section>
+
+<section class="form-panel" data-committed-by-package>
+  <h2>Committed cost by work package</h2>
+  {% if committed %}
+  <ul>{% for pid, amount in committed.items() %}<li>{{ package_names.get(pid, 'Not linked to a package') }}: ${{ "%.2f"|format(amount|float) }}</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">Nothing committed yet.</p>{% endif %}
+</section>
+
+<section class="form-panel" data-early-exceptions>
+  <h2>Early Procurement Exceptions</h2>
+  {% if exceptions %}
+  <ul>{% for e in exceptions %}<li>#{{ e.id }} — {{ e.proposed_commitment }}: exposure ${{ "%.2f"|format(e.financial_exposure|float) }}, approved by {{ e.approving_authority }} (recorded by {{ e.approved_by_name }}, {{ e.approved_at.strftime('%Y-%m-%d') }}) — {{ e.status|lower }}. Reason: {{ e.reason }}</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">None.</p>{% endif %}
+</section>
+{% endblock %}

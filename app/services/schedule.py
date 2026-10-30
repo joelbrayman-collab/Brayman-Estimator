@@ -323,7 +323,11 @@ def _propose_linked_deliveries() -> None:
         # G11 (schedule review, 19 Oct): the move is already saved. If proposing the delivery change fails,
         # keep the move, undo only the half-made proposal, and tell the office plainly what to do.
         try:
-            proposed = propose_deliveries_for_schedule_moves(moves)
+            # Decision 4 (30 Oct 2026): the delivery changes are drafted; a person sends them.
+            candidates = propose_deliveries_for_schedule_moves(moves, external=False)
+            from app.services.governed_schedule import draft_delivery_changes
+
+            proposed = draft_delivery_changes(sorted({(item_id, prior) for item_id, prior, _order in candidates}))
         except Exception:
             db.session.rollback()
             import logging

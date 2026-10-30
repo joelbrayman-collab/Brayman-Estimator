@@ -93,8 +93,9 @@ def _flash_delivery_proposals():
 
     count = getattr(g, "schedule_delivery_proposals", 0)
     if count:
-        flash(f"{count} linked supplier deliver{'y' if count == 1 else 'ies'} proposed for the new date. "
-              "The supplier is asked to accept; until then the agreed delivery stands.", "success")
+        flash(f"{count} supplier delivery change{'' if count == 1 else 's'} drafted for the new date. Nothing is "
+              "sent to the supplier until you send it from the project's schedule planning page; until then the "
+              "agreed delivery stands.", "success")
     for message in getattr(g, "schedule_delivery_attention", []):
         flash(message, "error")
 
@@ -491,6 +492,24 @@ def edit_item(item_id):
                     activity_item_id=item.id,
                 )
             else:
+                # Decision 1 (30 Oct 2026): a move that impacts other projects' crews is blocking. It becomes a
+                # Company Schedule Change Request for the two authorities instead of being applied.
+                from app.services import governed_schedule as GS
+                from app.services.schedule import parse_schedule_window
+
+                start, end = parse_schedule_window(request.form.get("scheduled_start"),
+                                                   request.form.get("scheduled_end"))
+                if GS.impact_analysis(item, start, end)["blocking"]:
+                    try:
+                        _applied, change = GS.request_schedule_change(
+                            item, new_start=start.isoformat(), new_end=end.isoformat(),
+                            reason=request.form.get("change_reason", ""), user=current_user)
+                    except GS.GovernedScheduleError as exc:
+                        raise ScheduleError(str(exc)) from exc
+                    flash(f"This move affects crews on other projects, so it was not applied. Company Schedule "
+                          f"Change Request #{change.id} waits for the project and company schedule authorities.",
+                          "error")
+                    return redirect(url_for("schedule.planning", project_id=item.project_id))
                 update_schedule_window(
                     item.id,
                     scheduled_start=request.form.get("scheduled_start"),
@@ -870,3 +889,76 @@ def calendar_feed_settings():
         feed=active_feed(organization.id, current_user),
         addresses=addresses,
     )
+
+
+# ---------------------------------------------------------------------------------------------- governed planning
+@schedule_bp.route("/projects/<int:project_id>/planning", methods=["GET", "POST"])
+def planning(project_id):
+    """Governed scheduling (Joel, 30 Oct 2026): anticipated start, preliminary schedule, Gantt, window
+    confirmation, Company Schedule Change Requests, delivery-change drafts and procurement windows."""
+    from app.models import Project, WorkScheduleItem
+    from app.models.schedule_governance import CompanyScheduleChangeRequest, ScheduleExternalDraft
+    from app.services import governed_schedule as GS
+
+    organization = _org()
+    project = Project.query.filter_by(id=project_id, organization_id=organization.id).first_or_404()
+    here = url_for("schedule.planning", project_id=project.id)
+    actor = (getattr(current_user, "display_name", None) or getattr(current_user, "email", "") or "").strip()
+    if request.method == "POST":
+        action = request.form.get("action", "")
+        form = request.form
+        try:
+            if action == "anticipated_start":
+                GS.set_anticipated_start(project, form.get("anticipated_start", ""), actor=actor)
+                flash("Anticipated construction start saved. It is a planning input only.", "success")
+            elif action == "apply_preliminary":
+                created = GS.apply_preliminary_schedule(project, crew_size=form.get("crew_size", type=int) or 2)
+                flash(f"{len(created)} anticipated window{'s' if len(created) != 1 else ''} added. Confirm each "
+                      "window when it is firm.", "success")
+            elif action == "confirm_window":
+                item = WorkScheduleItem.query.filter_by(id=form.get("item_id", type=int), project_id=project.id,
+                                                        organization_id=organization.id).first_or_404()
+                GS.confirm_window(item, actor=actor)
+                flash("Window confirmed.", "success")
+            elif action in ("approve_project", "approve_company", "reject", "override"):
+                change = CompanyScheduleChangeRequest.query.filter_by(
+                    id=form.get("request_id", type=int), project_id=project.id,
+                    organization_id=organization.id).first_or_404()
+                if action == "approve_project":
+                    GS.approve_change(change, user=current_user, authority="project", note=form.get("note", ""))
+                elif action == "approve_company":
+                    GS.approve_change(change, user=current_user, authority="company", note=form.get("note", ""))
+                elif action == "reject":
+                    GS.reject_change(change, user=current_user, note=form.get("note", ""))
+                else:
+                    GS.owner_override(change, user=current_user, reason=form.get("note", ""))
+                flash(f"Change request #{change.id}: {change.status.lower()}.", "success")
+                _flash_delivery_proposals()
+            elif action in ("send_draft", "discard_draft"):
+                draft = ScheduleExternalDraft.query.filter_by(id=form.get("draft_id", type=int), project_id=project.id,
+                                                              organization_id=organization.id).first_or_404()
+                if action == "send_draft":
+                    sent = GS.send_draft(draft, user=current_user)
+                    flash(f"Sent to the supplier: {len(sent)} delivery change{'s' if len(sent) != 1 else ''}. "
+                          "The agreed delivery stands until they answer.", "success")
+                else:
+                    GS.discard_draft(draft, user=current_user)
+                    flash("Draft discarded. Nothing was sent.", "success")
+            else:
+                abort(400)
+        except (GS.GovernedScheduleError, ScheduleError, ScheduleNotFoundError) as exc:
+            from app import db
+
+            db.session.rollback()
+            flash(str(exc), "error")
+        return redirect(here)
+    preliminary, preliminary_error = [], None
+    if project.anticipated_start is not None:
+        try:
+            preliminary = GS.preliminary_schedule(project)
+        except GS.GovernedScheduleError as exc:
+            preliminary_error = str(exc)
+    return render_template("schedule/planning.html", project=project, preliminary=preliminary,
+                           preliminary_error=preliminary_error, gantt=GS.gantt(project),
+                           requests=GS.open_requests(project), drafts=GS.pending_drafts(project),
+                           procurement=GS.procurement_plan(project, today=local_today()))

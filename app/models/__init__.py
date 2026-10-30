@@ -146,6 +146,8 @@ from app.models.labour_engine import (
 )
 from app.models.project_work_package import ProjectWorkPackage
 from app.models.estimate_approval import EstimateApproval
+from app.models.procurement_governance import EarlyProcurementException, SubcontractCommitment
+from app.models.schedule_governance import CompanyScheduleChangeRequest, ScheduleExternalDraft
 from app.models.plan_generation_candidate import PlanGenerationCandidate
 from app.models.project_construction_model import ProjectConstructionModelRevision
 from app.models.construction_drawing import ConstructionDrawingAttachment, ConstructionDrawingSet
@@ -348,6 +350,10 @@ __all__ = [
     "ProductionRateStandard",
     "ProjectWorkPackage",
     "EstimateApproval",
+    "EarlyProcurementException",
+    "SubcontractCommitment",
+    "CompanyScheduleChangeRequest",
+    "ScheduleExternalDraft",
     "ProjectWorkActivity",
     "ProjectWorkElement",
     "ProjectWorkScopeDelta",

@@ -716,10 +716,25 @@ def order_lines(share):
     return concrete_order_lines(share) if share.request_kind == KIND_CONCRETE else material_order_lines(share)
 
 
+def _package_for(project, guided_stage_id):
+    """The work package an order serves, only when it is on this project."""
+    if not guided_stage_id:
+        return None
+    from app.models.guided_estimating import GuidedEstimateStage
+
+    stage = db.session.get(GuidedEstimateStage, int(guided_stage_id))
+    if stage is None or stage.organization_id != project.organization_id or stage.guided_estimate.project_id != project.id:
+        raise SupplierHubError("That work package is not on this project.")
+    return stage.id
+
+
 def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_contact: str = "",
-                notes: str = "", delivery_window: str = "", schedule_item_id=None, signature=None) -> SupplierPurchaseOrder:
-    """Place the purchase order. With a signature (every order placed from the office), the contractor signs it."""
-    from app.services import supplier_signing
+                notes: str = "", delivery_window: str = "", schedule_item_id=None, signature=None,
+                guided_stage_id=None) -> SupplierPurchaseOrder:
+    """Place the purchase order. With a signature (every order placed from the office), the contractor signs it.
+
+    Gate 3 (30 Oct 2026): before the customer accepts the proposal, the order needs an Early Procurement Exception."""
+    from app.services import procurement_gate, supplier_signing
 
     if signature is not None:
         supplier_signing._require_valid(signature)
@@ -730,6 +745,10 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
         raise SupplierHubError("The order cannot be placed yet. " + " ".join(blockers))
     project = db.session.get(Project, share.project_id)
     total = sum((Decimal(line["line_value"] or "0") for line in lines), Decimal("0")).quantize(CENT)
+    try:
+        exception = procurement_gate.require_order_allowed(share, project, total=total)
+    except procurement_gate.ProcurementGateError as exc:
+        raise SupplierHubError(str(exc)) from exc
     order = SupplierPurchaseOrder(
         organization_id=share.organization_id,
         project_id=share.project_id,
@@ -749,9 +768,13 @@ def place_order(share: SupplierRequestShare, *, user, delivery_date=None, site_c
         placed_by_user_id=getattr(user, "id", None),
         placed_by_name=_display(user),
         placed_at=datetime.utcnow(),
+        guided_stage_id=_package_for(project, guided_stage_id),
     )
     db.session.add(order)
-    _event(share, "ORDER_PLACED", "CONTRACTOR", order.placed_by_name, f"{order.number}: ${total}")
+    db.session.flush()
+    procurement_gate.mark_exception_used(exception, order)
+    _event(share, "ORDER_PLACED", "CONTRACTOR", order.placed_by_name, f"{order.number}: ${total}"
+           + (f" (early procurement exception #{exception.id})" if exception is not None else ""))
     supplier_signing.open_order_signing(order, user=user, signature=signature)
     if signature is not None:
         _event(share, "ORDER_SIGNED", "CONTRACTOR", order.placed_by_name, f"{order.number} signed by {signature.name}")
@@ -1415,8 +1438,13 @@ def _schedule_attention(message: str) -> None:
         g.schedule_delivery_attention = getattr(g, "schedule_delivery_attention", []) + [message]
 
 
-def propose_deliveries_for_schedule_moves(moves) -> list:
+def propose_deliveries_for_schedule_moves(moves, *, external: bool = True) -> list:
     """For each moved schedule item, propose moving its linked open deliveries by the same number of days.
+
+    Governed scheduling (Joel, 30 Oct 2026, decision 4): a move first runs with ``external=False``. That tells the
+    office about a supplier's own waiting change (internal only) and returns the orders whose delivery change would
+    be sent, as (item_id, prior_start, order) tuples, so the change is drafted. Only a person sending the draft runs
+    this with ``external=True``, which writes to the supplier.
 
     Proposed by the contractor side and sent to the supplier to accept, decline or counter; the agreed
     delivery stands until then.
@@ -1461,6 +1489,9 @@ def propose_deliveries_for_schedule_moves(moves) -> list:
                     f"{_when(waiting.new_date, waiting.new_window)} and is waiting for your answer. The work now starts "
                     f"{item.scheduled_start.isoformat()}. Answer it (accept, propose another time or decline) on the "
                     f"project's supplier requests page. Until then the agreed delivery stands.")
+                continue
+            if not external:
+                proposed.append((item.id, prior_start, order))
                 continue
             if waiting is not None:
                 replaced_date, replaced_window = waiting.new_date, waiting.new_window

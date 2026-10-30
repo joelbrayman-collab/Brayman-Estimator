@@ -250,6 +250,9 @@ class ProjectWorkElement(db.Model):
         index=True,
     )
     estimated_hours = db.Column(db.Numeric(14, 6), nullable=True)
+    # Lineage (30 Oct 2026): the governed work package this work item was built from (plain integer, as in the
+    # estimate-to-project migration; SQLite cannot ALTER a constraint).
+    guided_stage_id = db.Column(db.Integer, nullable=True, index=True)
     scope_origin = db.Column(
         db.String(30),
         nullable=False,
@@ -346,6 +349,8 @@ class ProjectWorkActivity(db.Model):
         nullable=True,
         index=True,
     )
+    # Lineage (30 Oct 2026): the estimate labour line this activity's hours came from.
+    source_estimate_line_item_id = db.Column(db.Integer, nullable=True, index=True)
     estimated_hours = db.Column(db.Numeric(14, 6), nullable=True)
     quantity = db.Column(db.Numeric(14, 6), nullable=True)
     unit = db.Column(db.String(50), nullable=True)

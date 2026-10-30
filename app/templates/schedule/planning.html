@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{# Governed scheduling (Joel, 30 Oct 2026): the engine proposes, people decide. #}
+{% block title %}Schedule planning | {{ project.name }}{% endblock %}
+{% block page_title %}Schedule planning{% endblock %}
+{% block extra_css %}<style>
+.gantt{border:1px solid var(--border,#d6dbe1);border-radius:8px;padding:8px;overflow-x:auto}
+.gantt-row{display:grid;grid-template-columns:minmax(140px,28%) 1fr;align-items:center;gap:8px;min-height:30px;border-bottom:1px solid var(--border,#eef1f4)}
+.gantt-track{position:relative;height:18px;background:var(--surface-2,#f4f6f8);border-radius:4px;min-width:240px}
+.gantt-bar{position:absolute;top:0;height:18px;border-radius:4px;background:#2f6f4f}
+.gantt-bar.is-anticipated{background:repeating-linear-gradient(45deg,#8fb7a2,#8fb7a2 6px,#a9c9b8 6px,#a9c9b8 12px)}
+.gantt-legend span{display:inline-block;width:14px;height:10px;border-radius:2px;margin:0 4px 0 12px;vertical-align:middle}
+.plan-table{width:100%;border-collapse:collapse}.plan-table td,.plan-table th{padding:4px 6px;border-bottom:1px solid var(--border,#eef1f4);text-align:left}
+.is-late{color:#a43c00;font-weight:600}
+@media (max-width:640px){.gantt-row{grid-template-columns:1fr}}
+</style>{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Schedule planning — {{ project.name }}</h1>
+<p class="muted-copy">The anticipated start is a planning input only. Proposed windows are anticipated until a person confirms them. A move that affects other projects waits for the project and company schedule authorities. Supplier changes are drafts until someone with the authority sends them.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('schedule.company') }}">Company schedule</a></div></div>
+
+<section class="form-panel" data-anticipated-start>
+  <h2>Anticipated construction start</h2>
+  <form method="post" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="anticipated_start">
+    <input type="date" name="anticipated_start" value="{{ project.anticipated_start.isoformat() if project.anticipated_start else '' }}" aria-label="Anticipated construction start">
+    <button type="submit" class="button-secondary">Save</button>
+  </form>
+</section>
+
+<section class="form-panel" data-preliminary-schedule>
+  <h2>Preliminary schedule</h2>
+  {% if preliminary_error %}<p class="ge-warn">{{ preliminary_error }}</p>{% endif %}
+  {% if preliminary %}
+  <table class="plan-table"><thead><tr><th>Work</th><th>Hours</th><th>Days (2-person crew)</th><th>Start</th><th>End</th></tr></thead><tbody>
+  {% for row in preliminary %}<tr data-preliminary-row="{{ row.element.id }}"><td>{{ row.element.display_name }}</td><td>{{ "%.1f"|format(row.hours|float) }}</td><td>{{ row.duration_days }}</td><td>{{ row.start.isoformat() }}</td><td>{{ row.end.isoformat() }}</td></tr>{% endfor %}
+  </tbody></table>
+  <form method="post" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="apply_preliminary">
+    <label>Crew size <input type="number" name="crew_size" value="2" min="1" max="20"></label>
+    <button type="submit" class="button is-primary" data-apply-preliminary>Add as anticipated windows</button>
+  </form>
+  <p class="muted-copy">Work already scheduled is never moved by this.</p>
+  {% elif not project.anticipated_start %}<p class="muted-copy">Set the anticipated start to see a proposal.</p>
+  {% else %}<p class="muted-copy">No work plan to schedule yet. Build the work plan from the accepted estimate first.</p>{% endif %}
+</section>
+
+<section class="form-panel" data-gantt>
+  <h2>Gantt</h2>
+  {% if gantt.bars %}
+  <p class="muted-copy gantt-legend">{{ gantt.start.isoformat() }} to {{ gantt.end.isoformat() }} <span style="background:#2f6f4f"></span>Confirmed <span style="background:#a9c9b8"></span>Anticipated</p>
+  <div class="gantt">
+  {% for bar in gantt.bars %}
+    <div class="gantt-row" data-gantt-row="{{ bar.item.id }}" data-window-kind="{{ bar.kind }}">
+      <div>{{ bar.element.display_name }}<br><small class="muted-copy">{{ bar.start.isoformat() }} – {{ bar.end.isoformat() }} · {{ bar.kind|lower }}</small>
+      {% if bar.kind == "ANTICIPATED" %}
+      <form method="post" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="confirm_window"><input type="hidden" name="item_id" value="{{ bar.item.id }}"><button type="submit" class="button-secondary" data-confirm-window="{{ bar.item.id }}">Confirm window</button></form>
+      {% endif %}
+      <a href="{{ url_for('schedule.edit_item', item_id=bar.item.id) }}">Change dates</a></div>
+      <div class="gantt-track" aria-hidden="true"><div class="gantt-bar {{ 'is-anticipated' if bar.kind == 'ANTICIPATED' else '' }}" style="left:{{ bar.left_pct }}%;width:{{ bar.width_pct }}%"></div></div>
+    </div>
+  {% endfor %}
+  </div>
+  {% else %}<p class="muted-copy">Nothing scheduled yet.</p>{% endif %}
+</section>
+
+<section class="form-panel" data-change-requests>
+  <h2>Company Schedule Change Requests</h2>
+  {% for r in requests %}
+  {% set impact = r.impact %}
+  <article class="form-panel" data-change-request="{{ r.id }}">
+    <p><strong>#{{ r.id }}</strong> {{ r.prior_start.isoformat() }}–{{ r.prior_end.isoformat() }} → {{ r.proposed_start.isoformat() }}–{{ r.proposed_end.isoformat() }} · requested by {{ r.requested_by_name }}. Reason: {{ r.reason }}</p>
+    <ul>{% for c in impact.company_impacts %}<li>Crew also booked on {{ c.project }} {{ c.start }}–{{ c.end }}</li>{% endfor %}{% for s in impact.successors %}<li>Dependent work would start {{ s.would_start }}</li>{% endfor %}{% for d in impact.deliveries %}<li>Delivery {{ d.order }} ({{ d.status|lower }}) will need a supplier change</li>{% endfor %}</ul>
+    <p class="muted-copy">Project authority: {{ r.project_approved_by_name or "waiting" }} · Company Schedule Authority: {{ r.company_approved_by_name or "waiting" }}</p>
+    <form method="post" class="inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="request_id" value="{{ r.id }}">
+      <input type="text" name="note" placeholder="Note (required to reject or override)" aria-label="Note">
+      <button type="submit" name="action" value="approve_project" class="button-secondary">Approve (project)</button>
+      <button type="submit" name="action" value="approve_company" class="button-secondary">Approve (company)</button>
+      <button type="submit" name="action" value="reject" class="button-secondary">Reject</button>
+      <button type="submit" name="action" value="override" class="button-secondary">Owner override</button>
+    </form>
+  </article>
+  {% else %}<p class="muted-copy">None waiting.</p>{% endfor %}
+</section>
+
+<section class="form-panel" data-delivery-drafts>
+  <h2>Supplier delivery changes (drafts)</h2>
+  {% for d in drafts %}
+  <div data-draft="{{ d.id }}"><p>{{ d.summary }} Work moved from {{ d.prior_start.isoformat() }} to {{ d.new_start.isoformat() }}.</p>
+  <form method="post" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="draft_id" value="{{ d.id }}">
+    <button type="submit" name="action" value="send_draft" class="button is-primary" data-send-draft="{{ d.id }}">Send to the supplier</button>
+    <button type="submit" name="action" value="discard_draft" class="button-secondary">Discard</button></form></div>
+  {% else %}<p class="muted-copy">No drafts. A schedule move drafts its supplier delivery changes here.</p>{% endfor %}
+</section>
+
+<section class="form-panel" data-procurement-plan>
+  <h2>Procurement planning windows</h2>
+  {% if procurement %}
+  <table class="plan-table"><thead><tr><th>Work</th><th>Request quotes by</th><th>Order by</th><th>Needed on site</th><th>Window</th></tr></thead><tbody>
+  {% for p in procurement %}<tr><td>{{ p.element.display_name }}</td><td>{{ p.rfq_by.isoformat() }}</td><td class="{{ 'is-late' if p.late else '' }}">{{ p.order_by.isoformat() }}{% if p.late %} (late){% endif %}</td><td>{{ p.needed_on_site.isoformat() }}</td><td>{{ p.window_kind|lower }}</td></tr>{% endfor %}
+  </tbody></table>
+  <p class="muted-copy">Planning windows only. Ordering before the customer accepts needs an Early Procurement Exception.</p>
+  {% else %}<p class="muted-copy">Schedule the work to see when to request quotes and order.</p>{% endif %}
+</section>
+{% endblock %}

@@ -20,7 +20,7 @@ from app.models.project_work_package import (
 from app.plan_intelligence.models import PlanDocument
 from app.services.estimates import create_estimate
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
-from app.services.project_work_package import confirm_package, retire_package
+from app.services.project_work_package import confirm_package, list_confirmed, retire_package
 from app.services.start_project_walk import (
     STAGE_DOCUMENTS_DRAWINGS,
     STAGE_ESTIMATE,
@@ -259,11 +259,15 @@ def test_present_drawings_move_on_to_scope_when_scope_is_absent(app):
 
 
 def test_suggested_or_retired_packages_do_not_count_as_scope(app):
+    # Selected work is the single scope owner (Joel, 30 Oct 2026): a row in the former table, suggested or not,
+    # is not scope; removed work is not scope.
     project = _project()
     _complete_location(project)
     _plan(project)
-    package = _confirm(project, DELIVERY_SUBCONTRACT)
-    package.status = STATUS_SUGGESTED
+    db.session.add(ProjectWorkPackage(organization_id=project.organization_id, project_id=project.id,
+                                      work_element_template_id=_structure().id, delivery=DELIVERY_SUBCONTRACT,
+                                      status=STATUS_SUGGESTED, source_kind="CONTRACTOR",
+                                      actor_display_name="Later suggestion"))
     db.session.commit()
     suggested = resolve_start_project_walk(project.organization_id, project.id)
     assert suggested.stage == STAGE_WORK
@@ -273,8 +277,7 @@ def test_suggested_or_retired_packages_do_not_count_as_scope(app):
         package_id=_confirm(project, DELIVERY_INTERNAL, _structure()).id,
         actor="Joel Brayman",
     )
-    retired = ProjectWorkPackage.query.filter_by(status=STATUS_RETIRED).count()
-    assert retired == 1
+    assert list_confirmed(project.organization_id, project.id) == []
     result = resolve_start_project_walk(project.organization_id, project.id)
     assert result.stage == STAGE_WORK
 

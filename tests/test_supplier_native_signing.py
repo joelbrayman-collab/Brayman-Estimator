@@ -12,6 +12,7 @@ from io import BytesIO
 
 from pypdf import PdfReader
 
+from tests.procurement_support import allow_early_order
 from app import db
 from app.models.signing import (
     AUTHORITY_PRODUCTION,
@@ -61,6 +62,7 @@ def _placed_concrete(app, client, *, sign=True):
     data = {"delivery_date": delivery, "delivery_window": "7:00–9:00"}
     if sign:
         data.update(BEN)
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data=data)
     return project, tomlinson, store, share, delivery
 
@@ -89,11 +91,13 @@ def test_place_order_needs_the_contractors_signature_and_freezes_the_purchase_or
     assert b"Sign &amp; Send for E-Signature" in page.data and b'name="signer_name"' in page.data and b'name="sign_consent"' in page.data
 
     for missing in ({"signer_name": "Ben Contractor"}, {"sign_consent": "yes"}, {"sign_consent": "yes", "signer_name": " "}):
+        allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
         refused = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
                               data={"delivery_date": delivery, **missing}, follow_redirects=True)
         assert b"To sign," in refused.data
         assert SupplierPurchaseOrder.query.count() == 0 and SigningRequest.query.count() == 0
 
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={"delivery_date": delivery, **BEN})
     order = SupplierPurchaseOrder.query.one()
     request = SS.order_signing(order)

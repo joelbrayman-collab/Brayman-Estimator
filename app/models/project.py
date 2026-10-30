@@ -137,6 +137,9 @@ class Project(db.Model):
     client_project_number = db.Column(db.String(80), nullable=True, index=True)
     address = db.Column(db.String(255))
     status = db.Column(db.String(50), nullable=False, default="Lead")
+    # Anticipated Construction Start (Joel, 30 Oct 2026): a planning input only. It drives the preliminary schedule
+    # and procurement planning windows; it commits nothing.
+    anticipated_start = db.Column(db.Date, nullable=True)
     description = db.Column(db.Text)
     client_id = db.Column(
         db.Integer,

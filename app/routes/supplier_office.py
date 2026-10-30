@@ -253,7 +253,17 @@ def project_requests(project_id):
 
     concrete_deliveries = {c.id: concrete_delivery(c) for c in concrete}
     concrete_sent = {c.id: concrete_open_share(c) for c in concrete}
+    from app.services import procurement_gate
+    from app.services import guided_estimating as G
+    from app.services import work_packages as WP
+
+    gate_2 = procurement_gate.gate_2_passed(project)
+    for row in rows:
+        row["early_exception"] = procurement_gate.open_exception_for_share(row["share"])
+    package_options = [(p.id, p.display_name) for p in WP.packages(G.get_guided(org_id, project.id))
+                       if WP.package_participates(p)]
     return render_template("suppliers/project_requests.html", project=project, rows=rows, concrete=concrete,
+                           gate_2=gate_2, package_options=package_options,
                            concrete_deliveries=concrete_deliveries, concrete_sent=concrete_sent,
                            schedule_options=schedule_options,
                            reasons=CHANGE_REASONS,
@@ -344,11 +354,35 @@ def order(project_id, share_id):
                          site_contact=request.form.get("site_contact", ""), notes=request.form.get("notes", ""),
                          delivery_window=request.form.get("delivery_window", ""),
                          schedule_item_id=request.form.get("schedule_item_id") or None,
-                         signature=signature_from_form(request.form, request))
+                         signature=signature_from_form(request.form, request),
+                         guided_stage_id=request.form.get("guided_stage_id") or None)
     except SupplierHubError as exc:
         flash(str(exc), "error")
     else:
         flash(f"Purchase order {po.number} signed and sent to {share.supplier.legal_name}. It is agreed when they sign and confirm it.", "success")
+    return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")
+
+
+@supplier_office_bp.route("/projects/<int:project_id>/supplier-requests/<int:share_id>/early-exception",
+                          methods=["POST"])
+def early_exception(project_id, share_id):
+    """Gate 3 (30 Oct 2026): record a governed Early Procurement Exception before the customer accepts."""
+    from app.services import procurement_gate
+
+    project, org_id = _project(project_id)
+    share = _share(project, org_id, share_id)
+    try:
+        exception = procurement_gate.record_early_exception(
+            project, user=current_user, reason=request.form.get("reason", ""),
+            proposed_commitment=request.form.get("proposed_commitment", ""),
+            financial_exposure=request.form.get("financial_exposure", ""),
+            approving_authority=request.form.get("approving_authority", ""), share_id=share.id)
+    except procurement_gate.ProcurementGateError as exc:
+        flash(str(exc), "error")
+    else:
+        flash(f"Early Procurement Exception #{exception.id} recorded for {share.number} (exposure "
+              f"${exception.financial_exposure:,.2f}, approved by {exception.approving_authority}). The order can be "
+              "placed.", "success")
     return redirect(url_for("supplier_office.project_requests", project_id=project.id) + f"#share-{share.id}")
 
 
@@ -546,3 +580,61 @@ def signed_document(project_id, request_id):
     return Response(data, mimetype="application/pdf",
                     headers={"Content-Disposition": f'inline; filename="{filename}"', "Cache-Control": "private, no-store",
                              "X-Content-Type-Options": "nosniff"})
+
+
+# ------------------------------------------------------------------ Gate 3: commitments (Joel, 30 Oct 2026)
+@supplier_office_bp.route("/projects/<int:project_id>/commitments", methods=["GET", "POST"])
+def commitments(project_id):
+    """Subcontract commitments: propose, record an early exception, approve or reject, open for signature."""
+    from app.models.procurement_governance import SubcontractCommitment
+    from app.services import guided_estimating as G
+    from app.services import procurement_gate as PG
+    from app.services import work_packages as WP
+    from app.services.subcontract_signing import SubcontractSigningError, open_subcontract_signing
+
+    project, org_id = _project(project_id)
+    here = url_for("supplier_office.commitments", project_id=project.id)
+    if request.method == "POST":
+        action = request.form.get("action", "")
+        form = request.form
+        try:
+            if action == "propose":
+                PG.propose_subcontract(project, actor_name=_actor(), subcontractor_name=form.get("subcontractor_name", ""),
+                                       scope_text=form.get("scope_text", ""), amount=form.get("amount", ""),
+                                       guided_stage_id=form.get("guided_stage_id", type=int) or None,
+                                       quote_reference=form.get("quote_reference", ""))
+                flash("Commitment proposed. It waits for approval.", "success")
+            else:
+                commitment = SubcontractCommitment.query.filter_by(
+                    id=form.get("commitment_id", type=int), project_id=project.id, organization_id=org_id).first_or_404()
+                if action == "early_exception":
+                    PG.record_early_exception(project, user=current_user, reason=form.get("reason", ""),
+                                              proposed_commitment=f"Subcontract: {commitment.subcontractor_name}",
+                                              financial_exposure=form.get("financial_exposure", ""),
+                                              approving_authority=form.get("approving_authority", ""),
+                                              subcontract_commitment_id=commitment.id)
+                    flash("Early Procurement Exception recorded. The commitment can be approved.", "success")
+                elif action == "approve":
+                    PG.approve_subcontract(commitment, user=current_user, note=form.get("note", ""))
+                    flash(f"Commitment to {commitment.subcontractor_name} approved.", "success")
+                elif action == "reject":
+                    PG.reject_subcontract(commitment, actor_name=_actor(), note=form.get("note", ""))
+                    flash(f"Commitment to {commitment.subcontractor_name} rejected.", "success")
+                elif action == "sign":
+                    signing = open_subcontract_signing(commitment, user=current_user)
+                    flash(f"Subcontract frozen as {signing.request_number} and approved for signature. It is not "
+                          "sent until you send it.", "success")
+                else:
+                    abort(400)
+        except (PG.ProcurementGateError, SubcontractSigningError) as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+        return redirect(here)
+    rows = (SubcontractCommitment.query.filter_by(project_id=project.id, organization_id=org_id)
+            .order_by(SubcontractCommitment.id.asc()).all())
+    packages = WP.packages(G.get_guided(org_id, project.id))
+    return render_template("suppliers/commitments.html", project=project, rows=rows,
+                           package_names={p.id: p.display_name for p in packages},
+                           package_options=[(p.id, p.display_name) for p in packages if WP.package_participates(p)],
+                           gate_2=PG.gate_2_passed(project), committed=PG.committed_by_package(project),
+                           exceptions=PG.exceptions_for_project(project))

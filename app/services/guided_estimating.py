@@ -547,6 +547,20 @@ def _clear_completion(row):
 # ---------------------------------------------------------------------------------------------- estimate
 def ensure_estimate(guided, *, actor, user_id=None) -> Estimate:
     """The project's estimate for this guided workflow: the existing one it already uses, or a new draft."""
+    adopted = None
+    if guided.estimate is None:
+        # Scope confirmed first, estimate created by the person afterwards (30 Oct 2026): the project's one
+        # estimate is adopted rather than a second one started.
+        from app.models import Estimate
+
+        existing = Estimate.query.filter_by(project_id=guided.project_id,
+                                            organization_id=guided.organization_id).all()
+        if len(existing) == 1:
+            adopted = existing[0]
+            guided.estimate_id = adopted.id
+            db.session.flush()
+            db.session.expire(guided, ["estimate"])
+            _event(guided, "ESTIMATE_LINKED", actor=actor, detail=adopted.estimate_number, user_id=user_id)
     if guided.estimate is not None:
         estimate = guided.estimate
     else:

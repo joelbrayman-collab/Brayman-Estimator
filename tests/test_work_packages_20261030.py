@@ -313,3 +313,29 @@ def test_contractor_estimate_package_is_landscape_and_matches_the_engine(app):
     assert "INTERNAL — CONTRACTOR COPY" in text and "$46,841.29" in text and "$41,452.47" in text
     assert "Excluded from Brayman Construction scope; by the Owner / Client" in text
     assert "/AcroForm" not in str(reader.trailer["/Root"])  # plain PDF: no form fields, opens in any viewer
+
+
+# ---------------------------------------------------------------------------------------------- labour lineage (S6)
+def test_work_plan_is_seeded_per_included_package_with_line_lineage(app):
+    from app.models import ProjectWorkActivity, ProjectWorkElement
+    from app.services.work_structure import seed_project_work_structure
+
+    guided, version, packages = build_paulusse()
+    WP.exclude_work(packages["Exterior trim"], actor=JOEL)
+    for name, package in packages.items():
+        if name != "Exterior trim":
+            G.complete_stage(guided, package, actor=JOEL)
+    proposal = _sign_off(version)
+    proposal.status = "Issued"  # the customer commitment the work plan is built from (synthetic)
+    db.session.commit()
+    seed_project_work_structure(project_id=guided.project_id, estimate_version_id=version.id, seeded_by=JOEL,
+                                organization_id=guided.organization_id)
+    elements = ProjectWorkElement.query.filter_by(project_id=guided.project_id).order_by(ProjectWorkElement.sort_order).all()
+    assert [e.display_name for e in elements] == [n for n, _c, _h in PAULUSSE if n != "Exterior trim"]
+    assert all(e.guided_stage_id == packages[e.display_name].id for e in elements)
+    assert sum(Decimal(e.estimated_hours) for e in elements) == M("236")
+    for element in elements:
+        for activity in ProjectWorkActivity.query.filter_by(project_work_element_id=element.id):
+            line = db.session.get(EstimateLineItem, activity.source_estimate_line_item_id)
+            assert line is not None and WP.package_of_section(line.section).id == element.guided_stage_id
+            assert Decimal(activity.estimated_hours) == Decimal(line.quantity)

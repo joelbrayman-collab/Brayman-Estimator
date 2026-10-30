@@ -182,7 +182,8 @@ def confirm_package(
                                           "estimate's work page.")
         existing = next((r for r in SW.work_items(guided) if r.work_element_template_id == template.id), None)
         if existing is None:
-            added = SW.add_work(guided, custom_name=template.display_name, actor=name, user_id=user_id)
+            added = SW.add_work(guided, custom_name=template.display_name, actor=name, user_id=user_id,
+                                defer_estimate=True)
             row = added[0] if added else next(
                 r for r in SW.work_items(guided) if r.display_name == " ".join(template.display_name.split())[:120])
         else:
@@ -193,7 +194,7 @@ def confirm_package(
         db.session.commit()
         wanted = RESP_SUBCONTRACTED if delivery == DELIVERY_SUBCONTRACT else RESP_INTERNAL
         if not row.is_split and row.responsibility != wanted:
-            SW.set_responsibility(guided, row, wanted, actor=name, user_id=user_id)
+            SW.set_responsibility(guided, row, wanted, actor=name, user_id=user_id, defer_estimate=True)
     except (SW.SelectedWorkError, G.GuidedEstimatingError) as exc:
         db.session.rollback()
         raise ProjectWorkPackageError(str(exc)) from exc
@@ -212,7 +213,7 @@ def retire_package(*, organization_id, project_id, package_id, actor):
     if row is None:
         raise ProjectWorkPackageError("Project work not found.")
     try:
-        SW.remove_work(guided, row, actor=name, confirmed=True)
+        SW.remove_work(guided, row, actor=name, confirmed=True, defer_estimate=True)
     except (SW.SelectedWorkError, G.GuidedEstimatingError) as exc:
         db.session.rollback()
         raise ProjectWorkPackageError(str(exc)) from exc

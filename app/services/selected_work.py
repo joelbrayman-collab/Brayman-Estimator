@@ -236,9 +236,12 @@ def _add_parts(guided, stage, spec):
     db.session.expire(guided, ["stages"])
 
 
-def add_work(guided, *, keys: Sequence[str] = (), custom_name: str = "", actor: str, user_id=None
-             ) -> List[GuidedEstimateStage]:
-    """Add catalogue work and/or one named piece of work. Internal by default (one choice changes it)."""
+def add_work(guided, *, keys: Sequence[str] = (), custom_name: str = "", actor: str, user_id=None,
+             defer_estimate: bool = False) -> List[GuidedEstimateStage]:
+    """Add catalogue work and/or one named piece of work. Internal by default (one choice changes it).
+
+    ``defer_estimate``: project scope confirmed before any estimate (project setup, 30 Oct 2026) does not start an
+    estimate; the estimate is made when the person creates it, and it then adopts this scope."""
     from app.services import guided_estimating as G
 
     name = G._actor(actor)
@@ -290,7 +293,7 @@ def add_work(guided, *, keys: Sequence[str] = (), custom_name: str = "", actor: 
             db.session.expire(guided, ["stages"])
             _bring_in(guided, row, actor=name, user_id=user_id)
             added.append(row)
-    _settle(guided, actor=name, user_id=user_id)
+    _settle(guided, actor=name, user_id=user_id, create_estimate=not defer_estimate)
     db.session.commit()
     return added
 
@@ -311,7 +314,7 @@ def _bring_in(guided, row, *, actor, user_id=None):
              user_id=user_id)
 
 
-def _settle(guided, *, actor, user_id=None):
+def _settle(guided, *, actor, user_id=None, create_estimate: bool = True):
     """The scope is final whenever it has work and every work item is decided; then the estimate has a section for
     each work item (or part). With no work it goes back to a draft."""
     from app.services import guided_estimating as G
@@ -323,7 +326,8 @@ def _settle(guided, *, actor, user_id=None):
             guided.scope_finalized_at = G._now()
             guided.scope_finalized_by = actor
         db.session.flush()
-        G.ensure_estimate(guided, actor=actor, user_id=user_id)
+        if create_estimate or guided.estimate is not None:
+            G.ensure_estimate(guided, actor=actor, user_id=user_id)
     elif not items and guided.scope_status != SCOPE_DRAFT:
         guided.scope_status = SCOPE_DRAFT
     guided.updated_at = G._now()
@@ -342,7 +346,7 @@ def get_row(guided, row_id) -> GuidedEstimateStage:
     return row
 
 
-def set_responsibility(guided, row, value, *, actor, user_id=None):
+def set_responsibility(guided, row, value, *, actor, user_id=None, defer_estimate: bool = False):
     """Who does selected work (or one of its parts): Internal or Subcontracted. Never asked for other work."""
     from app.services import guided_estimating as G
 
@@ -359,7 +363,7 @@ def set_responsibility(guided, row, value, *, actor, user_id=None):
         G.change_responsibility(guided, row, value, actor=name, user_id=user_id)
     except G.GuidedEstimatingError as exc:
         raise SelectedWorkError(str(exc)) from exc
-    _settle(guided, actor=name, user_id=user_id)
+    _settle(guided, actor=name, user_id=user_id, create_estimate=not defer_estimate)
     db.session.commit()
 
 
@@ -440,7 +444,7 @@ def removal_check(row) -> List[str]:
     return found
 
 
-def remove_work(guided, row, *, actor, confirmed: bool, user_id=None):
+def remove_work(guided, row, *, actor, confirmed: bool, user_id=None, defer_estimate: bool = False):
     """Remove selected work that holds no estimate data, after the person confirms. The row and its history stay."""
     from app.services import guided_estimating as G
 
@@ -468,7 +472,7 @@ def remove_work(guided, row, *, actor, confirmed: bool, user_id=None):
     row.na_reason = None
     row.updated_at = G._now()
     G._event(guided, "WORK_REMOVED", actor=name, stage=row, detail=row.display_name, user_id=user_id)
-    _settle(guided, actor=name, user_id=user_id)
+    _settle(guided, actor=name, user_id=user_id, create_estimate=not defer_estimate)
     db.session.commit()
 
 

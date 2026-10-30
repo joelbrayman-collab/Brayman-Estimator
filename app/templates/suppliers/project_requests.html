@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading"><div><h1>Supplier requests — {{ project.name }}</h1>
 <details class="page-more" data-page-more><summary>More about this page</summary><div class="page-more-body"><p class="muted-copy">Requests sent to suppliers in CalibraytAI. A returned quote is an offer: record and approve its prices, then place the order. The order is agreed when the supplier confirms it.</p><p class="muted-copy">Concrete is its own request, sent only to the concrete supplier and never combined with material requests.</p></div></details></div>
-<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a> <a class="button button-secondary" data-compare-quotes href="{{ url_for('supplier_office.quote_comparison', project_id=project.id) }}">Compare quotes</a></div></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck takeoff</a> <a class="button button-secondary" data-compare-quotes href="{{ url_for('supplier_office.quote_comparison', project_id=project.id) }}">Compare quotes</a> <a class="button button-secondary" data-commitments href="{{ url_for('supplier_office.commitments', project_id=project.id) }}">Commitments</a></div></div>
 
 <section class="form-panel" data-project-deliveries="true">
     <h2>Deliveries</h2>
@@ -70,7 +70,20 @@
         {% elif share.status == "RETURNED" %}
         {% if row.blockers %}
         <p class="muted-copy" data-order-blocked="true">To place the order: {{ row.blockers|join(" ") }}</p>
+        {% elif not gate_2 and not row.early_exception %}
+        <div data-gate-2-blocked="{{ share.id }}">
+        <p class="muted-copy">The customer has not accepted the proposal yet, so nothing is ordered. To order early, record an Early Procurement Exception.</p>
+        <form method="post" action="{{ url_for('supplier_office.early_exception', project_id=project.id, share_id=share.id) }}" class="form-grid" data-early-exception="{{ share.id }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Why it must be ordered now * <input type="text" name="reason" required></label>
+            <label>The commitment (what, from whom) * <input type="text" name="proposed_commitment" required value="{{ share.number }} from {{ share.supplier.legal_name if share.supplier else 'the supplier' }}"></label>
+            <label>Financial exposure ($) * <input type="text" name="financial_exposure" required inputmode="decimal"></label>
+            <label>Approving authority * <input type="text" name="approving_authority" required placeholder="e.g. Joel Brayman, owner"></label>
+            <div class="form-actions"><button type="submit" class="button-secondary">Record the exception</button></div>
+        </form>
+        </div>
         {% else %}
+        {% if row.early_exception %}<p class="muted-copy" data-early-exception-open="{{ row.early_exception.id }}">Early Procurement Exception #{{ row.early_exception.id }}: exposure up to ${{ "%.2f"|format(row.early_exception.financial_exposure|float) }}, approved by {{ row.early_exception.approving_authority }}.</p>{% endif %}
         <form method="post" action="{{ url_for('supplier_office.order', project_id=project.id, share_id=share.id) }}" class="form-grid" data-place-order="{{ share.id }}" data-calisign-once>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             {% set ns = namespace(t=0) %}{% for l in row.lines %}{% set ns.t = ns.t + (l.line_value|float) %}{% endfor %}
@@ -80,6 +93,9 @@
             <label>Follows the project schedule item
                 <select name="schedule_item_id"><option value="">Not linked</option>{% for sid, label in schedule_options %}<option value="{{ sid }}">{{ label }}</option>{% endfor %}</select>
             </label>
+            {% if package_options %}<label>For the work package
+                <select name="guided_stage_id"><option value="">Not linked</option>{% for pid, label in package_options %}<option value="{{ pid }}">{{ label }}</option>{% endfor %}</select>
+            </label>{% endif %}
             <label>Site contact <input type="text" name="site_contact"></label>
             <label>Notes for the supplier <input type="text" name="notes"></label>
             {{ sign_fields(share) }}

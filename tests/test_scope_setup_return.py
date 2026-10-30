@@ -9,7 +9,8 @@ import pytest
 from app import create_app, db
 from app.models import Client, Organization, Project
 from app.models.project import DRAWING_REQUIREMENT_NOT_REQUIRED, ProjectLocation
-from app.models.project_work_package import ProjectWorkPackage
+from app.models.project_work_package import ProjectWorkPackage  # noqa: F401
+from app.services.project_work_package import list_confirmed
 from app.models.work_structure import WorkElementTemplate
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.work_structure import ensure_baseline_work_catalog
@@ -85,7 +86,7 @@ def _identity(project_id):
         project.client_id,
         project.status,
         location.street,
-        ProjectWorkPackage.query.filter_by(project_id=project_id).count(),
+        len(list_confirmed(project.organization_id, project_id)),  # selected work owns scope (30 Oct 2026)
     )
 
 
@@ -174,7 +175,8 @@ def test_direct_scope_use_still_stays_on_scope(client, app):
     assert b"Subcontractor" in saved.data
     assert b"Add work" in saved.data
     with app.app_context():
-        assert ProjectWorkPackage.query.filter_by(project_id=project_id).count() == 1
+        project = db.session.get(Project, project_id)
+        assert len(list_confirmed(project.organization_id, project_id)) == 1
 
 
 def test_other_organization_scope_and_setup_are_hidden(client, app):

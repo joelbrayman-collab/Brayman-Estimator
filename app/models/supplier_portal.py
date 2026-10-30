@@ -157,6 +157,8 @@ class SupplierPurchaseOrder(db.Model):
     scheduled_window = db.Column(db.String(60), nullable=True)
     # Optional link to the project schedule item this delivery serves; a move proposes a delivery change.
     schedule_item_id = db.Column(db.Integer, db.ForeignKey("work_schedule_items.id", ondelete="RESTRICT"), nullable=True)
+    # Lineage (30 Oct 2026): the work package this order serves, so committed cost is tracked by package.
+    guided_stage_id = db.Column(db.Integer, nullable=True, index=True)
     delivery_address = db.Column(db.String(300), nullable=False)
     site_contact = db.Column(db.String(160), nullable=True)
     notes = db.Column(db.Text, nullable=True)

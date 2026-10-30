@@ -18,6 +18,7 @@ from datetime import timedelta
 
 import pytest
 
+from tests.procurement_support import allow_early_order
 from app import db
 from app.models import Project
 from app.models.organization import Organization
@@ -434,6 +435,7 @@ def test_contractor_order_is_delivery_to_site_and_done_only_when_marked_delivere
         if result.get("recorded"):
             office.post(f"/projects/{share.project_id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     office.post(f"/projects/{share.project_id}/supplier-requests/{share_id}/order",
                 data={**SIGN, "delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share_id).one()

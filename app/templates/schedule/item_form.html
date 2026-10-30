@@ -70,6 +70,13 @@
             End
             <input type="date" name="scheduled_end" value="{% if item %}{{ item.scheduled_end.isoformat() }}{% endif %}" required>
         </label>
+        {% if item and not item.project_work_activity_id %}
+        <label>
+            Reason for the change (needed when the move affects crews on other projects)
+            <input type="text" name="change_reason" maxlength="500">
+        </label>
+        <p class="muted-copy"><a href="{{ url_for('schedule.planning', project_id=item.project_id) }}">Schedule planning</a>: Gantt, change requests and supplier drafts.</p>
+        {% endif %}
         {% if confirm_element or (not item) %}
         <label>
             Work item start (if you also need to extend the work item)

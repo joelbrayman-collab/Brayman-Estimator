@@ -22,6 +22,7 @@ from decimal import Decimal
 import pytest
 from flask import g
 
+from tests.procurement_support import allow_early_order
 from app import create_app, db
 from app.models.field_operations import (
     DailyJobSummary,
@@ -599,6 +600,7 @@ def test_material_request_to_supplier_quote_order_and_worker_status(env):
         if result.get("recorded"):
             ben.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                      data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     ben.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
              data={**SIGN, "delivery_date": (local_today() + timedelta(days=2)).isoformat(), "site_contact": "Kevin"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share.id).one()

@@ -107,6 +107,9 @@ class WorkScheduleItem(db.Model):
     )
     scheduled_start = db.Column(db.Date, nullable=False)
     scheduled_end = db.Column(db.Date, nullable=False)
+    # Governed scheduling (30 Oct 2026): ANTICIPATED (planned from the Anticipated Construction Start, a planning
+    # input only) or CONFIRMED (a person confirmed the window). Existing schedule is CONFIRMED.
+    window_kind = db.Column(db.String(12), nullable=False, default="CONFIRMED", server_default="CONFIRMED")
     status = db.Column(
         db.String(20),
         nullable=False,

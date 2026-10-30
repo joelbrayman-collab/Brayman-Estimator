@@ -17,6 +17,7 @@ from decimal import Decimal
 
 import pytest
 
+from tests.procurement_support import allow_early_order
 from app import db
 from app.models import Project
 from app.models.wizard import WizardRun, WizardRunEvent
@@ -611,6 +612,7 @@ def test_supplier_pro_desk_wizard_follows_a_contractor_request_to_delivery(hub):
         if result.get("recorded"):
             office.post(f"/projects/{share.project_id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     office.post(f"/projects/{share.project_id}/supplier-requests/{share_id}/order",
                 data={**SIGN, "delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.filter_by(share_id=share_id).first()

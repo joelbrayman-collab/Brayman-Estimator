@@ -9,6 +9,8 @@ request to its own supplier account, kept apart from material requests.
 from __future__ import annotations
 
 from datetime import date, timedelta
+from tests.procurement_support import allow_early_order
+from tests.schedule_support import send_schedule_drafts
 from app.services.local_time import local_today
 from decimal import Decimal
 from pathlib import Path
@@ -144,6 +146,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
     # The contractor sees it on the existing response page, records and approves, then orders.
     response_page = client.get(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}")
     assert response_page.status_code == 200 and b"Ready to record" in response_page.data
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     blocked = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", follow_redirects=True)
     assert b"Record the supplier" in blocked.data and SupplierPurchaseOrder.query.count() == 0
     client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/record", data={})
@@ -157,6 +160,7 @@ def test_material_request_goes_to_the_supplier_and_comes_back_through_the_same_c
         if result.get("recorded"):
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     placed = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
                          data={**SIGN, "delivery_date": (local_today() + timedelta(days=12)).isoformat(), "site_contact": "Ben"},
                          follow_redirects=True)
@@ -226,11 +230,13 @@ def test_concrete_is_its_own_request_to_its_own_supplier_and_is_ordered_and_conf
     })
     share = db.session.get(SupplierRequestShare, share.id)
     assert share.quote_json["concrete_value"] == "945.00" and share.quote_json["total_before_tax"] == "1020.00"
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     blocked = client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={**SIGN, "site_contact": "Ben"},
                           follow_redirects=True)
     assert b"Approve the concrete quote first" in blocked.data and SupplierPurchaseOrder.query.count() == 0
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")  # demo step 5, separate from the order
     assert db.session.get(SupplierRequestShare, share.id).quote_json["approved_by"]
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order", data={**SIGN, "site_contact": "Ben"})
     order = SupplierPurchaseOrder.query.one()
     assert order.total == Decimal("1020.00") and order.supplier_id == tomlinson.supplier_id
@@ -315,6 +321,7 @@ def _concrete_order(app, client):
     darcy.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote",
                data={"price_per_m3": "210", "valid_until": delivery})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
                 data={**SIGN, "delivery_date": delivery, "delivery_window": "7:00–9:00"})
     order = SupplierPurchaseOrder.query.one()
@@ -427,6 +434,9 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     before = _supplier_notices(DARCY[1]).count()
 
     shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
+    # Decision 4 (30 Oct 2026): the move drafts the delivery change; nothing reaches the supplier until it is sent.
+    assert SupplierDeliveryChange.query.count() == 0 and _supplier_notices(DARCY[1]).count() == before
+    send_schedule_drafts(project.id)
 
     change = SupplierDeliveryChange.query.one()
     assert change.status == "PENDING" and change.reason == "Project schedule change"
@@ -437,6 +447,7 @@ def test_moving_the_project_schedule_proposes_the_linked_delivery_to_the_supplie
     # Joel, 19 Oct 2026 (release blocker): a second move while our first request is waiting replaces it.
     # The supplier is never left answering a date the work no longer has.
     shift_project_schedule(project.id, days=1, organization_id=project.organization_id)
+    send_schedule_drafts(project.id)
     first = db.session.get(SupplierDeliveryChange, change.id)
     assert first.status == "WITHDRAWN"
     fresh = SupplierDeliveryChange.query.filter_by(status="PENDING").one()
@@ -476,9 +487,11 @@ def test_moving_the_work_back_withdraws_the_waiting_request_and_tells_the_suppli
 
     project, tomlinson, darcy, order, item, agreed = _linked_pour(app, client)
     shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
+    send_schedule_drafts(project.id)
     waiting = SupplierDeliveryChange.query.one()
     before = _supplier_notices(DARCY[1]).count()
     shift_project_schedule(project.id, days=-2, organization_id=project.organization_id)  # back on the agreed day
+    send_schedule_drafts(project.id)
     assert db.session.get(SupplierDeliveryChange, waiting.id).status == "WITHDRAWN"
     assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 0
     assert db.session.get(SupplierPurchaseOrder, order.id).scheduled_date == agreed
@@ -631,6 +644,7 @@ def _material_round(app, client, project, account, *, sku="TEST-SKU-1", minutes=
         if result.get("recorded"):
             client.post(f"/projects/{project.id}/deck-takeoff/responses/{share.response_ref}/approve",
                         data={"canonical_material_id": result["canonical_material_id"], "status": "APPROVED"})
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/order",
                 data={**SIGN, "delivery_date": (local_today() + timedelta(days=5)).isoformat(), "site_contact": "Ben"})
     return supplier, share, keys, first

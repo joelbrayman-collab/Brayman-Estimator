@@ -31,7 +31,9 @@ PRESERVED = {
     ENGINE: "7b4cc0433485da884b6302a1d69af9f7871b04aa19559268cfe814ff8cfca8f1",
     PROFILES: "901136d4676518164439fad4f860c0231fd5c72120e32e41b6b651c7e8cfcc9a",
     WALL_ROUTE: "924d5768e96503ef3053f48b025f60778cc43f6c25f02a1070cfc8d4d631daf8",
-    WALL_TEMPLATE: "182994daa102efdd81ee040ed87dcfd355ad1ffa26c405e07b513d6ae81ad7c7",
+    # Updated deliberately: Joel, 30 Oct 2026 ($75 labour rate governance, commit e90ec663) removed the stale
+    # "$65 CAD per man-hour" sentence from this page's text only (previous digest 182994da…ae81ad7c7).
+    WALL_TEMPLATE: "189959733b5de65c92ff72cfcf4ee96c820e55be1152a515f179e4f24619fee9",
 }
 CASES = (
     ("logix", "1523", "0", "0", "logix-office"),

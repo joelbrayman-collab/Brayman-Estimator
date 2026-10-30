@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** (current reference rule) |
-| Updated | 2026-10-27 |
+| Updated | 2026-10-30 |
 | Authority | Joel-approved product policy — not invented by implementation |
 
 ## Purpose
@@ -54,7 +54,11 @@ HST is **separate** from the pre-tax selling price. Apply HST after pre-tax sell
 | Effective | Rate | Authority | Applies to |
 |---|---|---|---|
 | 2026-08-25 | $65 CAD / man-hour | Joel (FG-008 ORG-001 seed, v1) | Estimates priced before 27 Oct 2026. Historical documents and estimates keep $65. |
-| 2026-10-27 | **$75 CAD / man-hour** | Joel, 27 Oct 2026 ("Ben labour rate is now $75 per hour"; "current/future Brayman Construction labour rate = $75/hour") | Current and future estimates. Recorded in Production as an approved ORG-001 direct labour cost rate standard (v2) through the labour engine; v1 stays for history. |
+| 2026-10-27 | **$75 CAD / man-hour** | Joel, 27 Oct 2026 ("Ben labour rate is now $75 per hour"; "current/future Brayman Construction labour rate = $75/hour"); confirmed 30 Oct 2026 ("This is permanent") | Current and future estimates. Governed as ORG-001 direct labour cost rate standard **v2** (ORG-APPROVED), approved by a named person on **Labour rates** (`/labour-engine/cost-rates`) through a calibration candidate; approval supersedes v1 for new work only. See [operations/labour-rate-75-2026-10-30.md](operations/labour-rate-75-2026-10-30.md). |
+
+**Correction (30 Oct 2026):** the 27 Oct line above said v2 was already recorded in Production. It was not: the 29 Oct Production backup still had only v1 ($65). Production status is recorded in the operations record linked above.
+
+**Do not reintroduce $65 for new work.** `ORG_001_DIRECT_LABOUR_COST_RATE` ($65) in `app/services/labour_engine.py` is the historical v1 seed only. The current value is `ORG_001_CURRENT_DIRECT_LABOUR_COST_RATE` ($75); estimates resolve the active approved standard, never a constant. Costing by date (`project_performance._RateBook`) keeps $65 for days before v2 took effect.
 
 ## Placeholder and pending pricing
 

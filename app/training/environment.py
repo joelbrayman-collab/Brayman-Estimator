@@ -105,6 +105,7 @@ def build(app, passwords: Dict[str, str] | None = None, administrator: tuple | N
     ensure_baseline_work_catalog()
     ensure_brayman_v1_interim_ontario_package()
     db.session.commit()
+    _company_labour_rate(ORG)
 
     users = {}
     for key, name, email, role in OFFICE_PEOPLE:
@@ -198,6 +199,20 @@ def build(app, passwords: Dict[str, str] | None = None, administrator: tuple | N
     out["_facts"] = {"organization_id": ORG, "supplier_id": supplier.id, "company": COMPANY, "customer": CUSTOMER,
                      "job": JOB, "supplier": SUPPLIER}
     return out
+
+
+def _company_labour_rate(org_id) -> None:
+    """The training company prices labour at Brayman's current rate, $75 an hour (Joel, 30 Oct 2026), not the
+    $65 v1 the migrations seed. Approved through the governed candidate path, so v1 stays as history; running it
+    again changes nothing."""
+    from app.services.labour_engine import ORG_001_CURRENT_DIRECT_LABOUR_COST_RATE, promote_direct_labour_cost_rate
+
+    promote_direct_labour_cost_rate(
+        ORG_001_CURRENT_DIRECT_LABOUR_COST_RATE,
+        approved_by="Training site set-up",
+        reason="Brayman's current direct labour cost rate, $75 an hour (Joel, 30 Oct 2026); $65 v1 kept as history.",
+        organization_id=org_id,
+    )
 
 
 def _guided_estimating_practice(org_id) -> None:

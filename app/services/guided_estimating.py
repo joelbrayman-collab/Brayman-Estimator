@@ -869,15 +869,15 @@ def add_manual_cost(guided, stage, *, kind, description, quantity, unit, unit_co
         raise GuidedEstimatingError("Describe the cost.")
     try:
         if kind == "labour":
-            from app.services.estimate_labour_hours import LabourHoursError, resolve_rate
+            from app.services.estimate_labour_hours import LabourHoursError, version_rate
 
-            try:
-                result, source = resolve_rate(guided.organization_id, persist_audit=True)
+            try:  # the project labour rate (Joel, 30 Oct 2026)
+                rate, source = version_rate(version, organization_id=guided.organization_id, actor=name)
             except LabourHoursError as exc:
                 raise GuidedEstimatingError(str(exc)) from exc
             count = sum(1 for l in section.line_items if (l.code or "").startswith(f"LAB-GE-{stage.id}-")) + 1
             line = add_manual_line(section, line_type="Custom", description=f"Labour — {text}"[:255],
-                                   quantity=quantity or "0", unit="hr", unit_cost=result.rate_per_man_hour,
+                                   quantity=quantity or "0", unit="hr", unit_cost=rate,
                                    code=f"LAB-GE-{stage.id}-{count}",
                                    notes=f"{source}. Hours entered by {name} (manual entry: no calculator covers it).")
         else:
@@ -1349,7 +1349,12 @@ def internal_cost_document(guided) -> dict:
     snapshot = current_costing_snapshot(version) if version is not None else None
     approved = bool(snapshot is not None and working_matches_costing_snapshot(version, snapshot))
     direct = _money(sum((s["total"] for s in stages), Decimal("0")))
+    from app.services.estimate_economics import economics as project_economics
+    from app.services.project_identity import reference_line
+
     return {"guided": guided, "project": guided.project, "version": version, "stages": stages,
+            "reference": reference_line(guided.project),
+            "economics": project_economics(version) if version is not None else None,
             "totals": {k: _money(v) if k != "labour_hours" else v for k, v in totals.items()},
             "direct_cost": direct, "costing_approved": approved, "snapshot": snapshot,
             "blockers": guided_blockers(guided), "generated_at": _now(),

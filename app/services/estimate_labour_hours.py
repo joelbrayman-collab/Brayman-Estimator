@@ -61,6 +61,32 @@ def resolve_rate(organization_id: str, *, override_rate="", override_reason="", 
     return result, source
 
 
+def version_rate(version, *, organization_id: str, actor: str = "", override_rate="", override_reason=""):
+    """The rate for this estimate's labour lines: the project labour rate (Joel, 30 Oct 2026).
+
+    A rate typed on the labour hours page is the project labour rate: it is set for the whole estimate (with the
+    same rule as on the estimate's Project pricing: a value different from the company default needs a reason) and
+    every labour line on the estimate follows it. Without one, the estimate's own rate (captured from the company
+    default when it was created) applies; an older estimate with none uses the company's approved rate.
+    """
+    from app.services.estimate_economics import EstimateEconomicsError, project_values, rate_source, set_project_pricing
+
+    if (override_rate or "").strip():
+        try:
+            set_project_pricing(version, actor=actor, labour_rate=override_rate, reason=override_reason,
+                                organization_id=organization_id)
+        except EstimateEconomicsError as exc:
+            raise LabourHoursError(str(exc)) from exc
+    values = project_values(version, organization_id)
+    if values["labour_rate"] is None:
+        raise LabourHoursError(
+            "No saved company labour rate is approved. Set it under How we price → labour, or enter a project rate with a reason."
+        )
+    if not values["labour_rate_is_override"] and values["defaults"]["labour_standard"] is not None:
+        resolve_rate(organization_id, persist_audit=True)  # the company rate's resolution stays audited
+    return values["labour_rate"], rate_source(version, organization_id)
+
+
 def rows(version) -> List[dict]:
     lines = list(iter_version_line_items(version))
     labour = {line.code: line for line in lines if is_labour_line(line)}
@@ -99,9 +125,8 @@ def save_hours(version, *, organization_id: str, hours_by_item: Dict[int, str], 
     parsed = {int(item_id): _hours(raw) for item_id, raw in hours_by_item.items()}
     if not any(value is not None for value in parsed.values()):
         raise LabourHoursError("Enter labour hours for at least one item.")
-    result, source = resolve_rate(organization_id, override_rate=override_rate,
-                                  override_reason=override_reason, persist_audit=True)
-    rate = result.rate_per_man_hour
+    rate, source = version_rate(version, organization_id=organization_id, actor=actor,
+                                override_rate=override_rate, override_reason=override_reason)
     by_id = {row["item"].id: row for row in rows(version)}
     added = updated = removed = 0
     try:

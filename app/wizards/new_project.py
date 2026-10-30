@@ -42,7 +42,7 @@ NEW_CUSTOMER_FIELDS = ("name", "company", "email", "phone", "street_address", "u
                        "postal_code", "country")
 NEW_PREFIX = "new_customer_"
 CUSTOMER_FIELDS = ("client_id", "customer_mode") + tuple(NEW_PREFIX + f for f in NEW_CUSTOMER_FIELDS)
-PROJECT_FIELDS = ("name", "project_number", "description", "guided_project_type", "project_type", "status")
+PROJECT_FIELDS = ("name", "client_project_number", "description", "guided_project_type", "project_type", "status")
 LOCATION_FIELDS = ("same_as_customer", "address", "street", "municipality", "province_state", "postal_zip",
                    "country", "permit_context_class", "pricing_posture", "execution_risk", "schedule_condition",
                    "site_condition", "estimate_stage", "delivery_model", "justification_reason",
@@ -308,7 +308,7 @@ def _location(ctx):
     ready = not missing
     missing.append("Continue creates the project.")
     values = {**FORM_DEFAULTS, **ctx.draft}
-    hidden = {k: values.get(k, "") for k in ("client_id", "name", "project_number", "description", "project_type",
+    hidden = {k: values.get(k, "") for k in ("client_id", "name", "client_project_number", "description", "project_type",
                                               "status")}
     client = _chosen_client(ctx)
     return StepView(TODO, "Ready to create the project" if ready else "Steps 1 and 2 come first", missing=missing,
@@ -552,7 +552,8 @@ def review_sections(ctx) -> list:
         f" (+{len(appointments) - 4} more)" if len(appointments) > 4 else "")
     return [
         ("Project information", "project_type", [
-            ("Name", project.name), ("Project #", project.project_number or "—"),
+            ("Name", project.name), ("Brayman Project #", project.project_number or "—"),
+            ("Client Project #", project.client_project_number or "—"),
             ("What is being built", PROJECT_TYPE_LABELS.get(guided_type, "—")),
             ("Commercial type", commercial.project_type if commercial else "—"), ("Status", project.status),
             ("Description", project.description or "—")]),

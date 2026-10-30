@@ -386,6 +386,14 @@ def _pricing_table(items, styles, *, detailed: bool):
     return table
 
 
+def _project_reference(proposal) -> str:
+    """Brayman Project # and Client Project # from the project record (Joel, 30 Oct 2026)."""
+    from app.services.project_identity import reference_line
+
+    estimate = getattr(proposal, "estimate", None)
+    return reference_line(getattr(estimate, "project", None)) if estimate is not None else ""
+
+
 def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
     """Build a PDF for ``proposal`` using snapshot values only.
 
@@ -510,6 +518,9 @@ def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
 
     project_lines = [Paragraph(_escape(CUSTOMER_PROJECT_LABEL.upper()), styles["label"])]
     project_lines.append(Paragraph(_escape(proposal.project_name), styles["body"]))
+    _reference = _project_reference(proposal)
+    if _reference:
+        project_lines.append(Paragraph(_escape(_reference), styles["meta"]))
     if proposal.project_address:
         project_lines.append(Paragraph(_escape(proposal.project_address), styles["meta"]))
 

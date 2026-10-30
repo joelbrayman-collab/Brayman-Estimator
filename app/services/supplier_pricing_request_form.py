@@ -108,6 +108,19 @@ def supplier_contact(supplier) -> dict:
             "phone": getattr(user, "mobile_phone", None) or getattr(user, "phone", None) or ""}
 
 
+def project_label(project) -> str:
+    """The form's PROJECT value: the job name with the Brayman Project # (and the Client Project # when it fits),
+    taken from the project record (Joel, 30 Oct 2026). The form's layout is unchanged."""
+    from app.services.project_identity import is_numbered_customer_project
+
+    label = project.name
+    if is_numbered_customer_project(project):
+        label = f"{label} · {project.project_number}"
+        if project.client_project_number and len(label) + len(project.client_project_number) + 12 <= 52:
+            label = f"{label} · Client # {project.client_project_number}"
+    return label
+
+
 def request_for_supplier_account(account, *, project, items: Sequence[dict], groups: Sequence[dict], requested: str,
                                  plans: str = "", scope: str = "", contact: Optional[dict] = None) -> dict:
     """The form's data when a supplier is chosen in the workflow: the project, the supplier (and branch) and the
@@ -117,7 +130,7 @@ def request_for_supplier_account(account, *, project, items: Sequence[dict], gro
     branch = location.display_name if location is not None else ""
     name = supplier.legal_name if not branch else f"{supplier.legal_name} - {branch}"
     tag = supplier.legal_name.upper() + (f" / {branch.upper()}" if branch else "")
-    return {"project": project.name, "supplier": name, "supplier_tag": tag, "requested": requested, "plans": plans,
+    return {"project": project_label(project), "supplier": name, "supplier_tag": tag, "requested": requested, "plans": plans,
             "scope": scope, "contact": contact if contact is not None else supplier_contact(supplier),
             "items": list(items), "groups": list(groups)}
 

@@ -66,6 +66,12 @@ class ScheduleNotFoundError(ScheduleError):
     """Raised when a Schedule row is missing or cross-org."""
 
 
+def _brayman_number(project) -> str:
+    from app.services.project_identity import is_numbered_customer_project
+
+    return project.project_number if is_numbered_customer_project(project) else ""
+
+
 def _integrity_fingerprint(exc: IntegrityError) -> str:
     orig = getattr(exc, "orig", None)
     return f"{exc} {orig or ''}".lower()
@@ -1577,6 +1583,7 @@ def _field_card(item: WorkScheduleItem, *, visible_dates, warnings, worker_user_
         "item_id": item.id,
         "project_id": item.project_id,
         "project_name": project_name,
+        "project_number": _brayman_number(item.project),
         "project_label": field_project_label(project_name),
         "address": site["address"],
         "destination": site["destination"],

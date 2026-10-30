@@ -1,9 +1,10 @@
-{# Start a New Project · Step 1, Project: name, number, what is being built, description; commercial type and status pre-filled. #}
+{# Start a New Project · Step 1, Project: name, client project # (the Brayman Project # is assigned automatically), what is being built, description; commercial type and status pre-filled. #}
 <div class="np-grid np-grid-2">
   <label class="np-field">Project name
     <input type="text" name="name" maxlength="180" value="{{ f['values'].get('name', '') }}" placeholder="e.g. Bushel rear deck" data-field="name"></label>
-  <label class="np-field">Project number <span class="cust-opt">optional</span>
-    <input type="text" name="project_number" maxlength="50" value="{{ f['values'].get('project_number', '') }}"></label>
+  <label class="np-field">Client Project # <span class="cust-opt">optional · the client's own job number</span>
+    <input type="text" name="client_project_number" maxlength="80" value="{{ f['values'].get('client_project_number', '') }}" placeholder="e.g. Lockwood job number" data-field="client_project_number"></label>
+  <p class="np-field np-auto" data-brayman-number>Brayman Project # <strong>Assigned automatically</strong> when the project is created</p>
 </div>
 <fieldset class="np-cards" data-project-types>
   <legend>What is being built</legend>

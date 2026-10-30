@@ -687,7 +687,7 @@ def persist_pricing_snapshot(
         requires_review=bool(resolved.get("requires_review")),
         override_reason=resolved.get("reason") or version.pricing_override_reason,
         direct_cost_basis=direct_cost,
-        target_gross_margin=policy.target_gross_margin if policy else None,
+        target_gross_margin=resolved.get("target_gross_margin", policy.target_gross_margin if policy else None),
         markup_rate=policy.markup_rate if policy else None,
         stack_overhead_percent=version.overhead_percent
         if resolved["method"] == "COST_PLUS_MARKUP_STACK"
@@ -838,6 +838,10 @@ def apply_resolved_pricing_to_version(
         treatment = policy.contingency_pricing_treatment if policy else None
         rate = policy.contingency_rate if policy else None
         gm = policy.target_gross_margin if policy else None
+        if method == "TRUE_GROSS_MARGIN" and version.target_gross_margin is not None:
+            # The project's own target gross margin (Joel, 30 Oct 2026: adjustable project by project).
+            gm = as_decimal(version.target_gross_margin)
+        resolved = dict(resolved, target_gross_margin=gm)
         markup = policy.markup_rate if policy else None
         amount, _basis, pre_tax = compute_named_method_pre_tax(
             method=method,

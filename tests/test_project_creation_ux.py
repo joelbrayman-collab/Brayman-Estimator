@@ -120,7 +120,7 @@ def test_linda_new_customer_is_carried_by_its_exact_id_with_no_detour_and_never_
 
 def _create(d, run_id, **location):
     """Create Project & Continue on Details (step 3): the fields the step's form posts to the New Project handler."""
-    fields = {k: v for k, v in _draft(run_id).items() if k in ("client_id", "name", "project_number", "description",
+    fields = {k: v for k, v in _draft(run_id).items() if k in ("client_id", "name", "client_project_number", "description",
                                                              "project_type", "status")}
     location.setdefault("contractor_role", "GENERAL_CONTRACTOR")  # Details: your role is chosen with the site
     fields.update(COMMERCIAL_DEFAULTS, permit_context_class="Other/unspecified", wizard_run=str(run_id),
@@ -454,7 +454,7 @@ def test_the_migration_adds_six_empty_customer_address_columns_and_changes_nothi
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["a4d5e6f7a8b9"]
+    assert script.get_heads() == ["r5e6f7a8b9c0"]
     assert script.get_revision("q4c7l2n8t3a6").down_revision == "e5d1v4r7y2k9"
     command.upgrade(cfg, "e5d1v4r7y2k9")
     engine = sa.create_engine(uri)

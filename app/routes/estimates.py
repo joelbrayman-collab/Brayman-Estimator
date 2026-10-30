@@ -168,9 +168,16 @@ def _builder_context(estimate, version, **extra):
         "costing_review": costing_review_context(version),
         "version_proposals": _version_proposals(version),
         "sign_off_blockers": _sign_off_blockers(version),
+        "project_economics": _project_economics(version),
     }
     context.update(extra)
     return context
+
+
+def _project_economics(version):
+    from app.services.estimate_economics import economics
+
+    return economics(version)
 
 
 def _render_builder(estimate, version, **extra):
@@ -540,6 +547,7 @@ def create_version(id):
 def internal_cost_breakdown(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
     view = assemble_internal_cost_breakdown(estimate, version)
+    view["project_economics"] = _project_economics(version)
     return render_template("estimates/internal_breakdown.html", **view)
 
 
@@ -691,6 +699,46 @@ def update_pricing(id, version_id):
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/project-pricing",
+    methods=["POST"],
+)
+def update_project_pricing(id, version_id):
+    """Project pricing: the estimate's labour rate and target gross margin (Joel, 30 Oct 2026)."""
+    from app.services.estimate_economics import EstimateEconomicsError, set_project_pricing
+    from app.services.return_path import from_request
+
+    estimate, version = _get_estimate_version(id, version_id)
+    back = from_request() or url_for("estimates.view_version", id=estimate.id, version_id=version.id) + "#project-pricing"
+    try:
+        done = set_project_pricing(
+            version,
+            actor=signed_in_approver(),
+            labour_rate=request.form.get("labour_rate", "").strip(),
+            margin_percent=request.form.get("margin_percent", "").strip(),
+            reason=request.form.get("reason", ""),
+            organization_id=estimate.project.organization_id,
+            user_id=getattr(current_user, "id", None),
+        )
+        db.session.commit()
+    except EstimateEconomicsError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+        return redirect(back)
+    if not done["changed"]:
+        flash("Project pricing unchanged.", "success")
+    else:
+        parts = ["Project pricing saved and the estimate recalculated."]
+        if done["rerated"]:
+            parts.append(f"{done['rerated']} labour line{'s' if done['rerated'] != 1 else ''} now at the new rate.")
+        if done["repriced"]:
+            parts.append("Pricing re-applied: the customer estimate and proposal use the new figures.")
+        elif done["rerated"] and not done["reapproved"]:
+            parts.append("Approve the costing and apply pricing to bring the customer documents up to date.")
+        flash(" ".join(parts), "success")
+    return redirect(back)
 
 
 @estimates_bp.route(

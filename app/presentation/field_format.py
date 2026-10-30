@@ -198,6 +198,7 @@ def field_group_schedule_cards(cards: list[dict]) -> list[dict]:
                 {
                     "project_id": key,
                     "project_name": card.get("project_name") or "",
+                    "project_number": card.get("project_number") or "",
                     "project_label": card.get("project_label")
                     or card.get("project_name")
                     or "",

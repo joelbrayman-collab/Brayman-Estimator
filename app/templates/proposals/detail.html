@@ -89,6 +89,7 @@
     <h2>Project</h2>
     <div class="form-grid">
         <div><p class="eyebrow">Name</p><p>{{ proposal.project_name }}</p></div>
+        {% for label, value in project_reference_pairs(proposal.estimate.project if proposal.estimate else none) %}<div><p class="eyebrow">{{ label }}</p><p data-project-reference>{{ value }}</p></div>{% endfor %}
         <div><p class="eyebrow">Address</p><p>{{ proposal.project_address or "—" }}</p></div>
     </div>
 </section>

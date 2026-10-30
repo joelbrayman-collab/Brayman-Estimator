@@ -1363,3 +1363,21 @@ form.people-access-actions:not(.form-grid) > p { margin: 0; }
 @media (max-width: 900px) {
     .page-heading > div:last-child:not(:first-child) { width: 100%; justify-content: flex-start; }
 }
+
+/* Project pricing: labour rate and target gross margin (Joel, 30 Oct 2026) */
+.project-pricing { background: var(--white, #fff); border: 1px solid var(--border, #d9dde3); border-radius: 14px; padding: 16px; margin: 0 0 20px; }
+.project-pricing h2 { margin: 0 0 12px; font-size: 1.15rem; }
+.project-pricing .pp-grid { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(240px, 1fr); gap: 20px; align-items: start; }
+.project-pricing .pp-field { margin-bottom: 12px; }
+.project-pricing label { display: block; font-weight: 600; margin-bottom: 4px; }
+.project-pricing .pp-input { display: flex; align-items: center; gap: 6px; }
+.project-pricing .pp-input input { width: 9rem; min-height: 44px; padding: 8px 10px; font-size: 1.05rem; text-align: right; border: 1px solid var(--border, #c9cdd3); border-radius: 8px; }
+.project-pricing .pp-reason input { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--border, #c9cdd3); border-radius: 8px; }
+.project-pricing .pp-note { color: var(--muted, #6b7280); font-size: .85rem; margin: 4px 0 0; }
+.project-pricing .pp-save { min-height: 44px; }
+.project-pricing .pp-figures { margin: 0; display: grid; gap: 0; }
+.project-pricing .pp-figures div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border, #e5e7eb); }
+.project-pricing .pp-figures dt { color: var(--muted, #4b5563); }
+.project-pricing .pp-figures dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+.project-pricing .pp-figures .pp-total dt, .project-pricing .pp-figures .pp-total dd { font-weight: 700; color: inherit; }
+@media (max-width: 720px) { .project-pricing .pp-grid { grid-template-columns: 1fr; } .project-pricing .pp-input input { width: 100%; } }

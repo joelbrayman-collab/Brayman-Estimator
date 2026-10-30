@@ -26,6 +26,14 @@
     </nav>
     <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
 </div>
+<form class="projects-search" method="get" action="{{ url_for('projects.list_projects') }}" role="search" data-project-search>
+    <input type="hidden" name="view" value="{{ list_view }}">
+    <label class="visually-hidden" for="project-search">Find a project</label>
+    <input id="project-search" type="search" name="q" value="{{ search_query or '' }}" placeholder="Brayman #, client #, name, client or address" data-project-search-input>
+    <button type="submit" class="button-quiet">Find</button>
+    {% if search_query %}<a class="button-quiet" href="{{ url_for('projects.list_projects', view=list_view) }}">Clear</a>{% endif %}
+</form>
+<style>.projects-search{display:flex;gap:8px;align-items:center;margin:0 0 12px}.projects-search input[type=search]{flex:1;min-height:44px;padding:8px 12px;border:1px solid var(--border,#d9dde3);border-radius:10px;max-width:520px}.projects-row-number{font-weight:700;margin-right:6px;font-variant-numeric:tabular-nums}.projects-row-clientno{color:var(--muted,#6b7280);font-size:.88rem}</style>
 
 {% if projects %}
 <div class="projects-workspace{% if list_view == 'closed' %} is-closed-view{% endif %}">
@@ -36,15 +44,22 @@
     {% for project in projects %}
     <a class="projects-row" href="{{ url_for('projects.view_project', id=project.id) }}">
         <span class="projects-row-identity">
-            <span class="projects-row-name">{{ project.name }}</span>
+            <span class="projects-row-name">{% if project.project_number %}<span class="projects-row-number" data-brayman-project-number>{{ project.project_number }}</span>— {% endif %}{{ project.name }}</span>
             <span class="projects-row-client">{{ project.client.name }}</span>
             {% if project.address %}
             <span class="projects-row-location">{{ project.address }}</span>
+            {% endif %}
+            {% if project.client_project_number %}
+            <span class="projects-row-clientno" data-client-project-number>Client Project # {{ project.client_project_number }}</span>
             {% endif %}
         </span>
         <span class="projects-row-stage">{{ project.status or "—" }}</span>
     </a>
     {% endfor %}
+</div>
+{% elif search_query %}
+<div class="register-card projects-empty" data-no-search-results>
+    <h2 class="projects-empty-title">No project matches “{{ search_query }}”</h2>
 </div>
 {% else %}
 <div class="register-card projects-empty">

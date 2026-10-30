@@ -134,6 +134,13 @@ class EstimateVersion(db.Model):
     )
     pricing_override_reason = db.Column(db.Text, nullable=True)
     pricing_override_by = db.Column(db.String(150), nullable=True)
+    # Project labour rate and target gross margin (Joel, 30 Oct 2026; app/services/estimate_economics.py): captured
+    # from the company defaults when the version is created and changed by the estimator. NULL on versions made
+    # before; those keep resolving as they did.
+    labour_rate = db.Column(db.Numeric(10, 2), nullable=True)
+    labour_rate_reason = db.Column(db.Text, nullable=True)
+    target_gross_margin = db.Column(db.Numeric(10, 6), nullable=True)  # a fraction: 0.15 is 15 %
+    target_gross_margin_reason = db.Column(db.Text, nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)

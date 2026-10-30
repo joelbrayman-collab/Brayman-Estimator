@@ -202,6 +202,10 @@ def generate_change_order_pdf(change_order) -> BytesIO:
             left.append(Paragraph(_escape(client.company), styles["meta"]))
     if project:
         left.append(Paragraph(f"Project: {_escape(project.name)}", styles["meta"]))
+        from app.services.project_identity import reference_line
+
+        if reference_line(project):
+            left.append(Paragraph(_escape(reference_line(project)), styles["meta"]))
         if project.address:
             left.append(Paragraph(_escape(project.address), styles["meta"]))
 

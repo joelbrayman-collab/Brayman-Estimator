@@ -480,6 +480,12 @@ def pricing(project_id):
     # The costing check recalculates lines in memory; this page writes nothing, so nothing of that is kept.
     db.session.rollback()
     version = G.current_version(G.get_guided(_org(), project.id))
+    economics = None
+    if version is not None:
+        from app.services.estimate_economics import economics as project_economics
+
+        economics = project_economics(version)
+        db.session.rollback()  # the figures are read only
     proposals = []
     if guided.estimate is not None:
         from app.models import Proposal
@@ -490,6 +496,7 @@ def pricing(project_id):
                            issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,
                            proposals=proposals, return_to=url_for("guided.pricing", project_id=project.id),
+                           economics=economics,
                            handoff=G.handoff(guided))
 
 

@@ -667,7 +667,7 @@ def test_the_migration_adds_exactly_the_ten_tables_matching_the_models(tmp_path)
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["a4d5e6f7a8b9"] and script.get_revision("u7b3d9f2a4c6").down_revision == "w7d3b9c1e5a8"
+    assert script.get_heads() == ["r5e6f7a8b9c0"] and script.get_revision("u7b3d9f2a4c6").down_revision == "w7d3b9c1e5a8"
     # release 8: project_calculations (w7d3b9c1e5a8) comes first, so diff from there
     command.upgrade(cfg, "w7d3b9c1e5a8")
     engine = sa.create_engine(uri)

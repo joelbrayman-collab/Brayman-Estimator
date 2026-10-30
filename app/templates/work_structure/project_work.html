@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">{{ project.name }}</p>
+        <p class="eyebrow">{% if project.project_number %}{{ project.project_number }} — {% endif %}{{ project.name }}</p>
         <h1>{{ contractor_copy.WORK_PLAN_HEADING }}</h1>
         <p>Work items for this project. Building project work from an estimate does not change the estimate.</p>
     </div>

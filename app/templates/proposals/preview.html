@@ -85,6 +85,7 @@
             <div class="col-md-6">
                 <div class="proposal-meta-label">{{ contractor_copy.CUSTOMER_PROJECT_LABEL }}</div>
                 <div class="fw-semibold">{{ proposal.project_name }}</div>
+                {% set _ref = project_reference_line(proposal.estimate.project if proposal.estimate else none) %}{% if _ref %}<div class="text-muted" data-project-reference>{{ _ref }}</div>{% endif %}
                 {% if proposal.project_address %}<div class="text-muted">{{ proposal.project_address }}</div>{% endif %}
             </div>
         </div>

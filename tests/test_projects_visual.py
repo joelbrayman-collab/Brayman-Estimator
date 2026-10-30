@@ -93,7 +93,7 @@ def test_projects_workspace_matches_home_action_language(client, app):
     assert "Visual Oak Street Client" in html
     assert "12 Oak St" in html
     assert "Estimating" in html
-    assert "PR-VIS-1" not in html
+    assert "PR-VIS-1" in html  # the Brayman Project # leads each row (Joel, 30 Oct 2026)
     assert "projects-row-identity" in html
     assert "projects-row-client" in html
     assert "projects-row-location" in html

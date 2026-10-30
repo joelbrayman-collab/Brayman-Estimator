@@ -1,0 +1,42 @@
+{# Project pricing (Joel, 30 Oct 2026): the project's labour rate and target gross margin, and what they produce.
+   One calculation (app/services/estimate_economics.py); the customer estimate and proposal use the same figures. #}
+{% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}
+{% macro project_pricing(econ, version, return_to, editable) %}
+<section class="project-pricing" id="project-pricing" data-project-pricing>
+  <h2>Project pricing</h2>
+  <div class="pp-grid">
+    <form class="pp-inputs" method="post" action="{{ url_for('estimates.update_project_pricing', id=version.estimate_id, version_id=version.id) }}" data-project-pricing-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="return_to" value="{{ return_to }}">
+      <div class="pp-field">
+        <label for="pp-labour-rate">Labour rate</label>
+        <div class="pp-input"><span>$</span><input id="pp-labour-rate" name="labour_rate" inputmode="decimal" value="{{ '%.2f'|format(econ.labour_rate|float) if econ.labour_rate is not none else '' }}" {% if not editable %}disabled{% endif %} data-labour-rate><span>/ hr</span></div>
+        {% if econ.labour_rate_is_override %}<p class="pp-note" data-labour-override>Project override · Company default {{ money(econ.labour_rate_default) }}</p>
+        {% elif econ.labour_rate_default is not none %}<p class="pp-note">Company default</p>{% endif %}
+      </div>
+      <div class="pp-field">
+        <label for="pp-margin">Target gross margin</label>
+        <div class="pp-input"><input id="pp-margin" name="margin_percent" inputmode="decimal" value="{{ '%.2f'|format(econ.margin_percent|float) if econ.margin_percent is not none else '' }}" {% if not editable %}disabled{% endif %} data-margin><span>%</span></div>
+        {% if econ.margin_is_override %}<p class="pp-note" data-margin-override>Project override · Company default {{ '%.2f'|format(econ.margin_default_percent|float) }}%</p>
+        {% elif econ.margin_default_percent is not none %}<p class="pp-note">Company default</p>{% endif %}
+      </div>
+      {% if editable %}
+      <div class="pp-field pp-reason">
+        <label for="pp-reason">Reason <span class="pp-note">(needed when a value differs from the company default)</span></label>
+        <input id="pp-reason" name="reason" value="" maxlength="300" placeholder="{{ econ.labour_rate_reason or econ.margin_reason or 'e.g. union crew; tight market' }}" data-reason>
+      </div>
+      <button type="submit" class="button pp-save" data-save-project-pricing>Save and recalculate</button>
+      {% endif %}
+    </form>
+    <dl class="pp-figures" data-project-figures>
+      <div><dt>Labour</dt><dd data-labour>{{ '%g'|format(econ.labour_hours|float) }} h · {{ money(econ.labour_cost) }}</dd></div>
+      <div><dt>Direct cost</dt><dd data-direct-cost>{{ money(econ.direct_cost) }}</dd></div>
+      <div><dt>Selling price</dt><dd data-selling-price>{{ money(econ.selling_price) }}</dd></div>
+      <div><dt>Gross profit</dt><dd data-gross-profit>{{ money(econ.gross_profit) }}</dd></div>
+      <div><dt>True gross margin</dt><dd data-true-margin>{% if econ.true_gross_margin_percent is none %}—{% else %}{{ '%.2f'|format(econ.true_gross_margin_percent|float) }}%{% endif %}</dd></div>
+      <div class="pp-total"><dt>Customer total incl. HST</dt><dd data-customer-total>{{ money(econ.customer_total) }}</dd></div>
+    </dl>
+  </div>
+  <p class="pp-note" data-pricing-state>{% if econ.applied %}These are the applied prices: the customer estimate and proposal show exactly these.{% elif econ.has_pricing %}Recalculated from the working costs. Approve the costing and apply pricing to bring the customer documents up to date.{% else %}Calculated from the working costs; pricing has not been applied yet.{% endif %}</p>
+</section>
+{% endmacro %}

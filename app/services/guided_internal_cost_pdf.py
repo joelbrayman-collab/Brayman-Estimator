@@ -64,7 +64,20 @@ def render_internal_cost_pdf(doc: dict) -> bytes:
     from app.services.local_time import format_local
 
     meta += f" · prepared {format_local(doc['generated_at'])}"
+    if doc.get("reference"):
+        story.append(Paragraph(escape(doc["reference"]), small))
     story.append(Paragraph(escape(meta), small))
+    econ = doc.get("economics")
+    if econ and econ.get("labour_rate") is not None:
+        pricing = (f"Project labour rate ${econ['labour_rate']:,.2f} / hr"
+                   + (" (project override)" if econ["labour_rate_is_override"] else "")
+                   + (f" · Target gross margin {econ['margin_percent']:.2f}%" if econ.get("margin_percent") is not None else "")
+                   + (" (project override)" if econ.get("margin_is_override") else ""))
+        if econ.get("selling_price") is not None:
+            pricing += (f" · Selling price ${econ['selling_price']:,.2f} · Gross profit ${econ['gross_profit']:,.2f}"
+                        f" · Customer total ${econ['customer_total']:,.2f}"
+                        + ("" if econ["applied"] else " (working figures, pricing not applied)"))
+        story.append(Paragraph(escape(pricing), small))
     state = (f"Costing approved (snapshot {doc['snapshot'].id})" if doc["costing_approved"]
              else "DRAFT — the costing is not approved for this version yet.")
     story += [Paragraph(escape(state), body), Spacer(1, 6)]

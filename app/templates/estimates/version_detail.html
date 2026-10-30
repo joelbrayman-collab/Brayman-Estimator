@@ -33,6 +33,7 @@
         <div>
             <p class="eyebrow">Project</p>
             <p>{{ estimate.project.name }}</p>
+            {% set _ref = project_reference_line(estimate.project) %}{% if _ref %}<p class="muted-copy" data-project-reference>{{ _ref }}</p>{% endif %}
         </div>
         <div>
             <p class="eyebrow">Client</p>
@@ -267,6 +268,9 @@
     </form>
     {% endif %}
 </section>
+
+{% from "estimates/_project_pricing.html" import project_pricing %}
+{{ project_pricing(project_economics, version, "", editable and version.status == 'Draft') }}
 
 <section class="form-panel" id="estimate-pricing" style="margin-bottom: 24px;">
     <h2>{{ contractor_copy.PRICING_HEADING }}</h2>

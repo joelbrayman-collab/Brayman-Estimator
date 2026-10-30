@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+
+import pytest
 from datetime import datetime
 from pathlib import Path
 
@@ -380,6 +382,17 @@ def test_existing_plan_rows_upgrade_as_uploaded(tmp_path):
         assert row.origin == PLAN_ORIGIN_UPLOADED
         assert row.original_filename == "legacy.pdf"
         assert row.sha256_hex == "d" * 64
+        # The project identity migration (r5e6f7a8b9c0, 30 Oct 2026) numbered the legacy project; a downgrade past it
+        # is refused while a number is held (recovery is the pre-migration backup).
+        with pytest.raises(SystemExit):  # flask-migrate reports the migration's RuntimeError and exits
+            downgrade(revision="k1f2a3b4c5d6")
+        db.session.remove()
+    # The plan-generation downgrade itself, on a database with no numbered project.
+    empty = tmp_path / "empty.db"
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///" + str(empty),
+                              "SECRET_KEY": "plan-generation-downgrade", "WTF_CSRF_ENABLED": False})
+    with application.app_context():
+        upgrade()
         downgrade(revision="k1f2a3b4c5d6")
         names = inspect(db.engine).get_table_names()
         assert "plan_generation_candidates" not in names

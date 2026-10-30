@@ -16,6 +16,7 @@ from app.models.supplier_portal import SupplierDeliveryChange, SupplierPurchaseO
 from app.models.transactional_message import TransactionalMessage
 from app.services import calisign as C
 from app.services import supplier_signing as SS
+from tests.procurement_support import allow_early_order
 from tests.test_deck_takeoff_workflow import app, client  # noqa: F401
 from tests.test_supplier_hub import DARCY, _fresh_login_per_request, _give_sign_in, _setup, _supplier_client, _tomlinson  # noqa: F401
 from tests.test_supplier_native_signing import BEN, STORE, _confirmed, _placed_concrete
@@ -43,6 +44,10 @@ def test_03_an_approved_quote_offers_sign_and_send_for_e_signature_and_an_unappr
     store = _supplier_client(app)
     store.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote", data={"price_per_m3": "210", "valid_until": delivery})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
+    # Gate 3 (decision 6, 30 Oct 2026): before the customer accepts, ordering needs an Early Procurement Exception.
+    blocked = client.get(f"/projects/{project.id}/supplier-requests").data
+    assert b"data-gate-2-blocked" in blocked and b"data-calisign-po-send" not in blocked
+    allow_early_order(share)
     page = client.get(f"/projects/{project.id}/supplier-requests").data
     assert b"data-calisign-po-send" in page and b"Sign &amp; Send for E-Signature" in page
     assert b"data-calisign-po-note" in page and b"Supplier Hub" in page

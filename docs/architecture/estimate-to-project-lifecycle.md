@@ -91,3 +91,35 @@ Shared and general costs get an explicit **shared** work package with a declared
 ## Stage outputs
 
 Defined on 2026-10-30 in [estimate-to-project-stage-outputs.md](estimate-to-project-stage-outputs.md). For each stage it gives purpose, inputs, outputs, package, gate, consumers, existing capability, classification, lineage and audit. It also covers both cross-stage controls.
+
+## Approved decisions (Joel, 2026-10-30) — implementation authorized
+
+The six open contradictions from the stage-output work are decided. Implementation, verification and deployment of this architecture are authorized end to end. The plan and progress ledger are in [docs/implementation/](../implementation/).
+
+1. **Masters 07 and 08: Excluded / By Others.** APPROVED. Both masters gain an Excluded / By Others section. Excluded work stays visible to the customer where commercially relevant, with the responsible party where known. Family V1 standards are otherwise preserved.
+2. **Contractor Estimate Package.** APPROVED as a new governed output: a generated contractor-facing working and review view of the governed estimate and work-package data. The application model stays authoritative. Paulusse REV2 is the functional reference. Its orientation follows its purpose (landscape).
+3. **Excluded work is non-destructive.** APPROVED. Excluding a work package never destroys any of the following:
+   - work package
+   - takeoff
+   - lines
+   - labour
+   - material requirements
+   - subcontract evidence
+   - drawing lineage
+   - scheduling intelligence
+   - dependencies
+   - responsibility
+
+   Only commercial participation and responsibility change. The rule that lines must be deleted before work can be marked N/A or excluded is removed for commercial exclusion.
+4. **Single governed scope owner.** APPROVED. Selected Work (`GuidedEstimateStage`) is the governed Work Package and the only scope owner. Confirmed Project Scope (`ProjectWorkPackage`, ADR-055) is folded into it. There is no third table. Downstream lineage originates from the Work Package.
+5. **Gate 1 immutability.** APPROVED. A Gate-1-approved version cannot be unlocked or altered. A change creates a successor version. The approved version is preserved permanently, with who approved it, when, and the exact values.
+6. **Procurement before Gate 2.** APPROVED rule: customer acceptance precedes external commitments. Exception: a governed **Early Procurement Exception** records:
+   - reason
+   - proposed commitment
+   - financial exposure
+   - approving authority
+   - approver identity and time
+   - resulting commitment
+   - permanent audit
+
+   It is never the normal path.

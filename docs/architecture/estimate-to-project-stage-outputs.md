@@ -285,6 +285,8 @@
 
 ## Contradictions discovered
 
+**All resolved on 2026-10-30.** See [estimate-to-project-lifecycle.md](estimate-to-project-lifecycle.md) § Approved decisions: 1 → decision 1; 2 → decision 2; 3 → decision 3; 4 → decision 4; 5 → decision 5; 6 → decision 6; 7 → already resolved by the scheduling decisions.
+
 1. **Approved masters vs new customer content.** The Master Template Family V1 is mandatory: "data changes by project, the approved document format does not", and any master change needs Joel's explicit approval. Masters 07 and 08 need an Excluded / By Others section to satisfy the customer-facing scope clarity rule. Changing them needs Joel's master approval.
 2. **New document type vs "no new layouts".** The Contractor Estimate Package (stage 5) is not one of the eight governed document types. The landscape builder proven in Paulusse needs registering as an approved governed type before it becomes a platform output. The masters' orientation also needs checking against the one-orientation package preference.
 3. **Selected-work exclusion vs the scope-clarity rule.** Marking selected work N/A currently requires its estimate lines to be deleted, and N/A work is hidden. That contradicts "deselecting scope changes responsibility; it does not erase the scope".

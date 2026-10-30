@@ -134,7 +134,9 @@ def parse_margin_percent(raw) -> Decimal:
 def labour_lines(version):
     from app.services.estimate_labour_hours import is_labour_line
 
-    return [line for section in version.sections for line in section.line_items if is_labour_line(line)]
+    from app.services.work_packages import participating_lines
+
+    return [line for line in participating_lines(version) if is_labour_line(line)]
 
 
 def rate_source(version, organization_id: Optional[str] = None) -> str:
@@ -154,9 +156,12 @@ def rate_source(version, organization_id: Optional[str] = None) -> str:
 def _rerate_labour_lines(version, rate: Decimal, actor: str) -> int:
     from app.services.estimate_builder import update_line_item
 
+    from app.services.estimate_labour_hours import is_labour_line
+
     source = rate_source(version)
     changed = 0
-    for line in labour_lines(version):
+    # Every labour line, excluded packages included, so a package brought back in carries the current rate.
+    for line in [line for section in version.sections for line in section.line_items if is_labour_line(line)]:
         if Decimal(str(line.unit_cost)) != rate:
             update_line_item(line, unit_cost=rate, notes=f"{source}. Rate changed by {actor}.")
             changed += 1

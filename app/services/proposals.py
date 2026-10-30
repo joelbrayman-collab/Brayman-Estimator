@@ -520,7 +520,9 @@ def proposal_issue_blockers(version):
     from app.services.guided_estimating import guided_issue_blockers
 
     guided = guided_issue_blockers(version)
-    priced = [line for line in iter_version_line_items(version) if Decimal(line.extended_cost or 0) != 0]
+    from app.services.estimate_costing import iter_priced_line_items
+
+    priced = [line for line in iter_priced_line_items(version) if Decimal(line.extended_cost or 0) != 0]
     if not priced:
         return guided
     blockers = list(guided)

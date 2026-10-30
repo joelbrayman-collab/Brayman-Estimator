@@ -101,6 +101,14 @@ def iter_version_line_items(version):
             yield item
 
 
+def iter_priced_line_items(version):
+    """The lines that make up Brayman's price: lines of an excluded work package are kept but do not participate
+    (governed work packages, 30 Oct 2026)."""
+    from app.services.work_packages import participating_lines
+
+    yield from participating_lines(version)
+
+
 def version_is_costing_editable(version):
     if version is None:
         return False
@@ -197,7 +205,7 @@ def current_costing_snapshot(version):
 def working_matches_costing_snapshot(version, snapshot):
     if snapshot is None:
         return False
-    working = list(iter_version_line_items(version))
+    working = list(iter_priced_line_items(version))
     frozen = list(snapshot.lines)
     if len(working) != len(frozen):
         return False
@@ -316,7 +324,7 @@ def evaluate_costing(version):
     if not version_is_costing_editable(version):
         _unique_append(block_codes, BLOCK_VERSION_NOT_EDITABLE)
 
-    lines = list(iter_version_line_items(version))
+    lines = list(iter_priced_line_items(version))
     for item in lines:
         line_blocks = []
         line_warns = []

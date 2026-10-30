@@ -585,9 +585,16 @@ def editable_version(guided) -> Optional[EstimateVersion]:
 def section_for(stage, version, *, create=False) -> Optional[EstimateSection]:
     if version is None:
         return None
+    # The durable work-package link first (30 Oct 2026); the name match remains only for sections made before the
+    # link existed, and such a section is linked the first time it is found on an editable version.
+    for section in version.sections:
+        if section.guided_stage_id == stage.id:
+            return section
     name = stage.section_name
     for section in version.sections:
-        if (section.name or "") == name:
+        if section.guided_stage_id is None and (section.name or "") == name:
+            if version_is_editable(version):
+                section.guided_stage_id = stage.id
             return section
     if not create or not version_is_editable(version):
         return None
@@ -595,7 +602,9 @@ def section_for(stage, version, *, create=False) -> Optional[EstimateSection]:
 
     leaves = [r.id for r in leaf_stages(stage.guided_estimate)]
     order = (leaves.index(stage.id) + 1) * 10 if stage.id in leaves else None
-    return create_section(version, name=name, description=(stage.explanation or None), sort_order=order)
+    section = create_section(version, name=name, description=(stage.explanation or None), sort_order=order)
+    section.guided_stage_id = stage.id
+    return section
 
 
 def _stage_has_lines(stage) -> bool:

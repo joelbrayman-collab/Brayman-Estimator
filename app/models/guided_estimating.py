@@ -55,6 +55,37 @@ RESP_NA = "NA"
 RESPONSIBILITIES = (RESP_INTERNAL, RESP_SUBCONTRACTED, RESP_NA)
 RESPONSIBILITY_LABELS = {RESP_INTERNAL: "Internal", RESP_SUBCONTRACTED: "Subcontracted", RESP_NA: "N/A"}
 
+# Governed work package (Joel, 30 Oct 2026; docs/architecture/estimate-to-project-lifecycle.md decisions 3 and 4).
+# Commercial status is separate from responsibility: an EXCLUDED package keeps every line, calculation, quote and
+# requirement; only its participation in Brayman's price and the responsible party change. RESP_NA ("removed")
+# remains the person's statement that the work is not part of the project at all.
+COMMERCIAL_INCLUDED = "INCLUDED"
+COMMERCIAL_EXCLUDED = "EXCLUDED"
+COMMERCIAL_STATUSES = (COMMERCIAL_INCLUDED, COMMERCIAL_EXCLUDED)
+
+PARTY_CONTRACTOR = "CONTRACTOR"
+PARTY_CLIENT = "CLIENT"
+PARTY_BY_OTHERS = "BY_OTHERS"
+PARTY_NAMED = "NAMED"
+RESPONSIBLE_PARTIES = (PARTY_CONTRACTOR, PARTY_CLIENT, PARTY_BY_OTHERS, PARTY_NAMED)
+
+DELIVERY_SELF_PERFORMED = "SELF_PERFORMED"
+DELIVERY_SUBCONTRACTED = "SUBCONTRACTED"
+DELIVERY_MATERIAL_ONLY = "MATERIAL_ONLY"
+DELIVERY_LABOUR_ONLY = "LABOUR_ONLY"
+DELIVERY_ALLOWANCE = "ALLOWANCE"
+DELIVERY_METHODS = (DELIVERY_SELF_PERFORMED, DELIVERY_SUBCONTRACTED, DELIVERY_MATERIAL_ONLY, DELIVERY_LABOUR_ONLY,
+                    DELIVERY_ALLOWANCE)
+DELIVERY_LABELS = {DELIVERY_SELF_PERFORMED: "Self-performed", DELIVERY_SUBCONTRACTED: "Subcontracted",
+                   DELIVERY_MATERIAL_ONLY: "Material only", DELIVERY_LABOUR_ONLY: "Labour only",
+                   DELIVERY_ALLOWANCE: "Allowance"}
+
+# Shared / general-conditions packages: participate while any contractor work in the estimate is included
+# (the proven Paulusse rule), or always.
+SHARED_WHILE_ANY_INCLUDED = "WHILE_ANY_INCLUDED"
+SHARED_ALWAYS = "ALWAYS"
+SHARED_RULES = (SHARED_WHILE_ANY_INCLUDED, SHARED_ALWAYS)
+
 STATUS_NOT_STARTED = "NOT_STARTED"
 STATUS_IN_PROGRESS = "IN_PROGRESS"
 STATUS_WAITING_FOR_QUOTE = "WAITING_FOR_QUOTE"
@@ -160,6 +191,16 @@ class GuidedEstimateStage(db.Model):
             "completion_basis IS NULL OR completion_basis IN "
             "('CONFIRMED_COSTS', 'APPROVED_ALLOWANCE', 'AUTHORIZED_ZERO_COST')",
             name="ck_guided_estimate_stages_completion_basis"),
+        db.CheckConstraint("commercial_status IN ('INCLUDED', 'EXCLUDED')",
+                           name="ck_guided_estimate_stages_commercial_status"),
+        db.CheckConstraint("responsible_party IS NULL OR responsible_party IN "
+                           "('CONTRACTOR', 'CLIENT', 'BY_OTHERS', 'NAMED')",
+                           name="ck_guided_estimate_stages_responsible_party"),
+        db.CheckConstraint("delivery_method IS NULL OR delivery_method IN "
+                           "('SELF_PERFORMED', 'SUBCONTRACTED', 'MATERIAL_ONLY', 'LABOUR_ONLY', 'ALLOWANCE')",
+                           name="ck_guided_estimate_stages_delivery_method"),
+        db.CheckConstraint("shared_rule IS NULL OR shared_rule IN ('WHILE_ANY_INCLUDED', 'ALWAYS')",
+                           name="ck_guided_estimate_stages_shared_rule"),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -194,6 +235,20 @@ class GuidedEstimateStage(db.Model):
     zero_cost_authorized_at = db.Column(db.DateTime, nullable=True)
     quote_requested_at = db.Column(db.DateTime, nullable=True)
     quote_requested_by = db.Column(db.String(150), nullable=True)
+    # --- governed work package (30 Oct 2026) ---
+    commercial_status = db.Column(db.String(12), nullable=False, default=COMMERCIAL_INCLUDED,
+                                  server_default=COMMERCIAL_INCLUDED)
+    responsible_party = db.Column(db.String(20), nullable=True)  # None = Brayman (included) / By Others (excluded)
+    responsible_party_name = db.Column(db.String(160), nullable=True)  # for NAMED (e.g. "Lockwood")
+    delivery_method = db.Column(db.String(20), nullable=True)  # None = derived from responsibility and split
+    shared_rule = db.Column(db.String(30), nullable=True)  # set = shared / general-conditions package
+    commercial_reason = db.Column(db.Text, nullable=True)
+    commercial_decided_by = db.Column(db.String(150), nullable=True)
+    commercial_decided_at = db.Column(db.DateTime, nullable=True)
+    work_element_template_id = db.Column(db.Integer, db.ForeignKey("work_element_templates.id", ondelete="RESTRICT"),
+                                         nullable=True, index=True)
+    plan_document_id = db.Column(db.Integer, db.ForeignKey("plan_documents.id", ondelete="RESTRICT"),
+                                 nullable=True, index=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -231,6 +286,19 @@ class GuidedEstimateStage(db.Model):
         if self.is_split:
             return "Mixed (by part)"
         return RESPONSIBILITY_LABELS.get(self.responsibility, "Not decided")
+
+    @property
+    def work_package(self):
+        """The governed work package this row belongs to: itself, or its parent for a part."""
+        return self.parent if self.parent is not None else self
+
+    @property
+    def is_shared(self) -> bool:
+        return self.work_package.shared_rule is not None
+
+    @property
+    def is_included(self) -> bool:
+        return self.work_package.commercial_status == COMMERCIAL_INCLUDED
 
     @property
     def section_name(self):

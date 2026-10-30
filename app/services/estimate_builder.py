@@ -87,9 +87,16 @@ def recalculate_version(version):
     if snapshot is not None:
         return refresh_version_from_snapshot(version)
 
+    from app.services.work_packages import section_participates
+
     subtotal = Decimal("0")
     for section in sections:
-        subtotal += Decimal(section.subtotal or 0)
+        if section_participates(section):
+            subtotal += Decimal(section.subtotal or 0)
+        else:
+            for item in section.line_items:
+                item.sell_price = Decimal("0.00")
+            section.subtotal = Decimal("0.00")
 
     version.subtotal = as_money(subtotal)
     overhead_percent = as_decimal(version.overhead_percent)
@@ -545,6 +552,7 @@ def clone_sections_to_version(source_version, target_version):
             description=section.description,
             sort_order=section.sort_order,
             subtotal=as_decimal(section.subtotal),
+            guided_stage_id=section.guided_stage_id,  # the work-package link travels with the copy
         )
         db.session.add(new_section)
         db.session.flush()

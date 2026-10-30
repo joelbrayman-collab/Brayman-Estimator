@@ -16,7 +16,7 @@ from app import create_app, db
 PRIOR = "s9f0a1b2c3d4"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "r5e6f7a8b9c0"  # estimate labour rate and margin (30 Oct 2026) follows supplier native signing (a4d5e6f7a8b9)
+GRAPH_HEAD = "s6f7a8b9c0d1"  # estimate-to-project platform (30 Oct 2026) follows estimate labour rate and margin (r5e6f7a8b9c0)
 
 
 def _cfg(db_uri):

@@ -220,12 +220,23 @@ def labour_engine_direct_cost_total(estimate_version, organization_id=None):
 
 
 def version_line_direct_cost(version):
-    """Sum of line extended_cost (waste already in extended_cost)."""
+    """Sum of line extended_cost (waste already in extended_cost) over the lines in Brayman's price."""
+    from app.services.work_packages import participating_lines
+
     total = Decimal("0")
-    for section in version.sections:
-        for item in section.line_items:
-            total += as_decimal(item.extended_cost)
+    for item in participating_lines(version):
+        total += as_decimal(item.extended_cost)
     return as_money(total)
+
+
+def _zero_excluded_sell_prices(version):
+    """Lines of an excluded work package keep their cost evidence but sell for nothing (30 Oct 2026)."""
+    from app.services.work_packages import section_participates
+
+    for section in version.sections:
+        if not section_participates(section):
+            for item in section.line_items:
+                item.sell_price = Decimal("0.00")
 
 
 def get_pricing_policy_for_org(policy_id, organization_id=None):
@@ -595,13 +606,15 @@ def _context_posture_risk(version):
 
 
 def _allocate_line_sell_prices(version, pre_tax_total, direct_total):
-    """Spread version pre-tax sell across lines in proportion to extended_cost."""
+    """Spread version pre-tax sell across the priced lines in proportion to extended_cost."""
+    from app.services.work_packages import participating_lines
+
+    _zero_excluded_sell_prices(version)
     remaining = as_money(pre_tax_total)
-    items = []
-    for section in version.sections:
-        for item in section.line_items:
-            items.append(item)
+    items = list(participating_lines(version))
     if not items:
+        for section in version.sections:
+            section.subtotal = Decimal("0.00")
         return
     if as_decimal(direct_total) == 0:
         share = as_money(as_decimal(pre_tax_total) / Decimal(len(items)))
@@ -631,6 +644,7 @@ def _allocate_line_sell_prices(version, pre_tax_total, direct_total):
 def apply_legacy_stack_totals(version):
     from app.services.estimate_builder import as_money as builder_money
 
+    _zero_excluded_sell_prices(version)
     subtotal = Decimal("0")
     for section in version.sections:
         section_total = Decimal("0")

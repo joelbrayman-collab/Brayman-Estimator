@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
-HEAD = "r5e6f7a8b9c0"  # estimate labour rate and margin (30 Oct 2026) follows supplier native signing (a4d5e6f7a8b9)
+HEAD = "s6f7a8b9c0d1"  # estimate-to-project platform (30 Oct 2026) follows estimate labour rate and margin (r5e6f7a8b9c0)
 
 
 def _config(db_path):

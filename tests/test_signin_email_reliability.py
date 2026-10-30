@@ -359,7 +359,7 @@ def test_the_migration_adds_exactly_one_table(tmp_path):
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["r5e6f7a8b9c0"]
+    assert script.get_heads() == ["s6f7a8b9c0d1"]
     assert script.get_revision("e5d1v4r7y2k9").down_revision == "m7s3r5q8b2c4"
     command.upgrade(cfg, "m7s3r5q8b2c4")
     engine = sa.create_engine(uri)

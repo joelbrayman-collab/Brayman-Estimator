@@ -14660,3 +14660,13 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Tests | `5094a2e`: 2766 passed, 0 failed, 11 skipped, 8870 warnings, 4225.8 s; 43 release browser checks passed |
 | Commit hash | `5094a2e` (tested); documentation record on top |
 
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-30 |
+| Branch | `docs/estimate-approval-gate-2026-10-30` |
+| Objective | Record the Formal Calibrayt Estimate Approval Gate and the three human commercial gates |
+| Business decision | Joel 30 Oct: the Estimate Builder PDF is a review/adjustment worksheet; formal contractor approval happens inside Calibrayt (APPROVE ESTIMATE, recorded and version-locked). Three distinct human gates: 1 contractor estimate approval, 2 customer acceptance, 3 external commitment approval before CaliSIGN sends. Everything between gates generated from governed information; no re-entry. Not to be implemented yet; held for the stage-definition exercise after the Paulusse review |
+| Implementation result | Docs only: [governance/estimate-approval-and-commercial-gates.md](governance/estimate-approval-and-commercial-gates.md). No product code, no migration, no deploy |
+| Tests | None (docs only) |
+| Commit hash | See git log |

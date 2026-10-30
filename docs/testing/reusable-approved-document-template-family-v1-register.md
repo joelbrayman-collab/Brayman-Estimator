@@ -183,8 +183,9 @@ Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED
 |-------|--------|
 | Family | 07 Client Construction Proposal |
 | Classification | **CUSTOMER-FACING** |
-| Master filename | `MASTER DOCX/07_Brayman_Client_Construction_Proposal_MASTER_V1.docx` |
-| Master DOCX SHA-256 | `213ce5c93dcf09b1299d066dc29e8cd68cfad3178b4a149a5f4ecf39349ba498` |
+| Master filename | `MASTER DOCX/07_Brayman_Client_Construction_Proposal_MASTER_V2.docx` |
+| Master DOCX SHA-256 | `a340e1f0402198eacc15cfb19718958010c40ede983056cc053f0afc7d838455` |
+| Version 1 (kept, unchanged) | `07_Brayman_Client_Construction_Proposal_MASTER_V1.docx` · `213ce5c93dcf09b1299d066dc29e8cd68cfad3178b4a149a5f4ecf39349ba498` |
 | DOCX bytes | 124322 |
 | Verification PDF | `VERIFICATION PDF/07_Brayman_Client_Construction_Proposal_MASTER_V1.pdf` |
 | PDF SHA-256 | `9eb1ca7110024a12470dc03a84e29a79b43fa9efef605cee48083f0f911d501b` |
@@ -204,8 +205,9 @@ Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED
 |-------|--------|
 | Family | 08 Customer Detailed Cost Estimate |
 | Classification | **CUSTOMER-FACING** |
-| Master filename | `MASTER DOCX/08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.docx` |
-| Master DOCX SHA-256 | `f9e7a27cf6924d55e7c92e53b5cb27dc77379ed421b7d982c79cbbb3588f100f` |
+| Master filename | `MASTER DOCX/08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V2.docx` |
+| Master DOCX SHA-256 | `738eeaf0ea34aa0dc1f9c7578e560119f3830f95f163b7389c1f51023e20265e` |
+| Version 1 (kept, unchanged) | `08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.docx` · `f9e7a27cf6924d55e7c92e53b5cb27dc77379ed421b7d982c79cbbb3588f100f` |
 | Derived from | Master 02 `b187911a02b808d3dcad81aa718e4e89a330c8b97b4bcd274231c1beff461a93` (unchanged). Same styles, header logo, page setup, footer, tables and hierarchy. |
 | Changes from Master 02 | Title CUSTOMER DETAILED COST ESTIMATE; subtitle DETAILED ESTIMATE; header line CONFIDENTIAL - INTERNAL ONLY removed (as Master 03); columns Material / Package · Description · Price, Labour Task · Hours · Price, Price Component · Amount; section Price Summary; footer document name; closing note states what prices include; document thumbnail removed. |
 | Purpose | Detailed customer selling prices, optionally with labour tasks and hours. Never contractor acquisition cost, internal labour rate, gross profit, margin or markup. Master 02 stays the internal economics document. |

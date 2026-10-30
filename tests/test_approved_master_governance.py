@@ -38,7 +38,9 @@ def test_every_governed_document_type_resolves_to_its_registered_approved_master
     for document_type in AM.GOVERNED_DOCUMENT_TYPES:
         master = AM.master_for(document_type)
         assert register[master.filename] == master.sha256, document_type
-        assert master.filename.startswith(master.family + "_") and master.filename.endswith("_V1.docx")
+        # 07 and 08 are V2 (decision 1, 30 Oct 2026: the Excluded / By Others section); the others are V1.
+        version = "_V2.docx" if master.family in ("07", "08") else "_V1.docx"
+        assert master.filename.startswith(master.family + "_") and master.filename.endswith(version)
     assert AM.master_for(AM.ONTARIO_CONSTRUCTION_CONTRACT).sha256 == family_05_master.FAMILY_05_MASTER_SHA256
 
 
@@ -177,6 +179,10 @@ NOT_GOVERNED = {
     "supplier_package_pdf.py": "supplier order package",
     "supplier_signing_pdf.py": "supplier purchase order and delivery change frozen for signing (FG-041)",
     "supplier_quote_pdf.py": "supplier's quotation to a contractor",
+    # 30 Oct 2026. The Contractor Estimate Package (decision 2) is internal and has no approved master family yet;
+    # its layout follows the accepted Paulusse REV2 package. A subcontract is frozen for CaliSIGN like a supplier PO.
+    "contractor_estimate_package.py": "internal Contractor Estimate Package (landscape; no approved master family)",
+    "subcontract_signing.py": "subcontract commitment frozen for signing (Gate 3)",
 }
 
 

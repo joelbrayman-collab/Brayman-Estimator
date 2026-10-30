@@ -64,3 +64,13 @@ separate release that changes live Production documents.
 | `app/services/guided_internal_cost_pdf.py` | Guided Estimating internal cost estimate | 02 Internal Detailed Cost Breakdown |
 | `app/services/estimate_quickbooks_pdf.py` | QuickBooks-ready estimate PDF | 04 QuickBooks Estimate Entry |
 | `app/services/brayman_v1_contract_presentation.py` | Brayman V1 contract presentation | 05 Ontario Construction Contract |
+
+## Additions, 30 Oct 2026 (estimate-to-project release)
+
+- `app/services/contractor_estimate_package.py`: the **Contractor Estimate Package** (decision 2). Internal to the
+  contractor, legal landscape on every page, plain PDF (no form fields or scripts). No approved master family exists
+  for it yet; its layout follows the accepted Paulusse REV2 package. Classified as not governed by a master until Joel
+  approves one.
+- `app/services/subcontract_signing.py`: a subcontract commitment frozen as a PDF for CaliSIGN (Gate 3), like the
+  supplier purchase order. Not a customer document.
+- Masters 07 and 08 are now V2, with the Excluded / By Others section (see the template family register).

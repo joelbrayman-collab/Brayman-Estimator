@@ -145,6 +145,7 @@ from app.models.labour_engine import (
     ProductionRateStandard,
 )
 from app.models.project_work_package import ProjectWorkPackage
+from app.models.estimate_approval import EstimateApproval
 from app.models.plan_generation_candidate import PlanGenerationCandidate
 from app.models.project_construction_model import ProjectConstructionModelRevision
 from app.models.construction_drawing import ConstructionDrawingAttachment, ConstructionDrawingSet
@@ -346,6 +347,7 @@ __all__ = [
     "LabourTaskMapping",
     "ProductionRateStandard",
     "ProjectWorkPackage",
+    "EstimateApproval",
     "ProjectWorkActivity",
     "ProjectWorkElement",
     "ProjectWorkScopeDelta",

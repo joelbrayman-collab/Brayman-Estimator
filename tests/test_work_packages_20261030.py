@@ -214,3 +214,77 @@ def test_lines_are_never_deleted_by_exclusion(app):
         WP.include_work(package, actor=JOEL)
     assert all(p.commercial_status == COMMERCIAL_INCLUDED for p in packages.values())
     assert figures(version) == BASELINE
+
+
+# ---------------------------------------------------------------------------------------------- Gate 1 (S4)
+def _sign_off(version):
+    from app.services.proposal_acceptance import sign_off_estimate
+    from app.services.proposals import create_proposal_template
+
+    create_proposal_template(name="Paulusse template (synthetic)", is_active=True, is_default=True,
+                             default_intro_text="Intro", default_payment_terms="As stated")
+
+    class _Joel:
+        id = None
+        display_name = JOEL
+        email = "joel@example.invalid"
+
+    return sign_off_estimate(version, user=_Joel())
+
+
+def test_gate_1_freezes_what_was_approved_with_a_fingerprint(app):
+    from app.services import estimate_approval as A
+
+    _guided, version, packages = build_paulusse()
+    WP.exclude_work(packages["Removal & substrate preparation"], actor=JOEL)
+    for name, package in packages.items():
+        if name != "Removal & substrate preparation":
+            assert G.complete_stage(package.guided_estimate, package, actor=JOEL)[0], name
+    # Excluded work needs no cost confirmation: its exclusion is the recorded decision.
+    assert not G.guided_issue_blockers(version)
+    _sign_off(version)
+    record = A.approval_for(version)
+    summary = record.summary
+    assert record.approved_by_name == JOEL and len(record.fingerprint) == 64
+    assert summary["customer_total"] == "49184.67" and summary["labour_hours"] == "242.00"
+    assert [x["name"] for x in summary["excluded"]] == ["Removal & substrate preparation"]
+    assert summary["excluded"][0]["text"] == "Excluded from Brayman Construction scope / By Others"
+    assert A.verify(version)["matches"] is True
+    with pytest.raises(A.EstimateApprovalError, match="cannot be unlocked"):
+        from app.services.estimates import unlock_version
+
+        unlock_version(version)
+    with pytest.raises(WP.WorkPackageError, match="new version"):
+        WP.include_work(packages["Removal & substrate preparation"], actor=JOEL)
+    with pytest.raises(A.EstimateApprovalError, match="why"):
+        A.create_successor_version(version, actor=JOEL, reason="")
+    successor = A.create_successor_version(version, actor=JOEL, reason="Owner wants the removal back (synthetic)")
+    assert successor.id != version.id and A.approval_for(successor) is None
+    assert A.verify(version)["matches"] is True  # the approved version is untouched
+
+
+# ---------------------------------------------------------------------------------------------- customer outputs (S5)
+def test_proposal_lists_included_and_excluded_work_and_prices_only_included(app):
+    from pypdf import PdfReader
+    from io import BytesIO
+
+    from app.services.proposal_pdf import generate_proposal_pdf
+
+    _guided, version, packages = build_paulusse()
+    removal = packages["Removal & substrate preparation"]
+    WP.exclude_work(removal, actor=JOEL, party=PARTY_NAMED, party_name="Lockwood")
+    for name, package in packages.items():
+        if package is not removal:
+            G.complete_stage(package.guided_estimate, package, actor=JOEL)
+    proposal = _sign_off(version)
+    assert "Removal & substrate preparation" not in [s.name for s in proposal.sections]
+    assert len(proposal.sections) == 7
+    assert proposal.total == M("49184.67")
+    scope = proposal.scope_snapshot
+    assert [x["name"] for x in scope["excluded"]] == ["Removal & substrate preparation"]
+    assert scope["excluded"][0]["text"] == "Excluded from Brayman Construction scope; by Lockwood"
+    assert len(scope["included"]) == 7
+    text = " ".join(page.extract_text() or "" for page in PdfReader(BytesIO(generate_proposal_pdf(proposal).getvalue())).pages)
+    text = " ".join(text.split())
+    assert "Included in Brayman Construction scope" in text and "Excluded / By Others" in text
+    assert "Removal & substrate preparation: Excluded from Brayman Construction scope; by Lockwood" in text

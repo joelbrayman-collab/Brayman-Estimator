@@ -193,6 +193,9 @@ def lock_version(version):
 
 
 def unlock_version(version):
+    from app.services.estimate_approval import refuse_unlock
+
+    refuse_unlock(version)  # Gate 1 is immutable (Joel, 30 Oct 2026): an approved version is never unlocked
     version.is_locked = False
     db.session.commit()
     return version

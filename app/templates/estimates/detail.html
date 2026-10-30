@@ -148,7 +148,7 @@
         <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=estimate.current_version.id) }}">View Version</a>
         {% if estimate.current_version.is_locked %}
         <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=estimate.current_version.id) }}" style="display: inline;">
-            <button type="submit">Unlock</button>
+            <button type="submit" {% if estimate.current_version.signed_off_at %}disabled title="Approved: create a new version to change it"{% endif %}>Unlock</button>
         </form>
         {% else %}
         <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=estimate.current_version.id) }}" style="display: inline;">
@@ -228,7 +228,7 @@
                 {% endif %}
                 {% if version.is_locked %}
                 <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=version.id) }}" style="display: inline;">
-                    <button type="submit">Unlock</button>
+                    <button type="submit" {% if version.signed_off_at %}disabled title="Approved: create a new version to change it"{% endif %}>Unlock</button>
                 </form>
                 {% else %}
                 <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=version.id) }}" style="display: inline;">

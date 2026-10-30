@@ -6,6 +6,7 @@ from app import create_app, db
 from app.models import Client, Organization, Project
 from app.models.calculation_estimate_mapping import CalculationResultIntake
 from app.models.estimate import EstimateLineItem
+from app.models.guided_estimating import GuidedEstimateEvent, GuidedEstimateStage
 from app.models.project_work_package import (
     DELIVERY_INTERNAL,
     DELIVERY_SUBCONTRACT,
@@ -274,10 +275,12 @@ def test_retire_keeps_the_row_and_drops_it_from_the_working_list(app):
         package_id=package.id,
         actor="Joel Brayman",
     )
-    stored = db.session.get(ProjectWorkPackage, package.id)
-    assert stored.status == STATUS_RETIRED
-    assert stored.retired_at is not None
+    # Confirmed work is selected work (30 Oct 2026): the row and its history stay; it leaves the working list.
+    stored = db.session.get(GuidedEstimateStage, package.id)
+    assert stored is not None and stored.responsibility == "NA"
+    assert [e.event for e in GuidedEstimateEvent.query.filter_by(stage_id=stored.id)][-1] == "WORK_REMOVED"
     assert list_confirmed(project.organization_id, project.id) == []
+    assert ProjectWorkPackage.query.count() == 0  # the former table is no longer written
 
 
 def test_scope_page_uses_contractor_language(app, client):
@@ -382,10 +385,12 @@ def test_add_from_the_page_confirms_work_without_an_estimate_line(app, client):
     assert "Foundation" in page
     assert "Subcontractor" in page
     assert EstimateLineItem.query.count() == 0
-    stored = ProjectWorkPackage.query.one()
-    assert stored.status == STATUS_CONFIRMED
+    assert ProjectWorkPackage.query.count() == 0  # selected work is the single scope owner (30 Oct 2026)
+    (stored,) = list_confirmed(project.organization_id, project.id)
+    assert stored.status == STATUS_CONFIRMED and stored.work_element_template_id == foundation.id
     assert stored.actor_display_name == "Office Test User"
-    assert stored.user_id == user.id
+    added = GuidedEstimateEvent.query.filter_by(stage_id=stored.id, event="WORK_ADDED").one()
+    assert added.user_id == user.id
     assert stored.plan_document_id is None
 
 

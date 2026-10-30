@@ -205,6 +205,9 @@ class Proposal(db.Model):
     payment_terms = db.Column(db.Text)
     warranty_text = db.Column(db.Text)
     acceptance_text = db.Column(db.Text)
+    # The governed scope at creation (30 Oct 2026): what is included in Brayman's price and what is excluded and by
+    # whom, from the same work-package selections as the price. None for estimates not governed by selected work.
+    scope_snapshot_json = db.Column(db.Text, nullable=True)
 
     show_detailed_pricing = db.Column(db.Boolean, nullable=False, default=True)
     show_section_totals = db.Column(db.Boolean, nullable=False, default=True)
@@ -239,6 +242,15 @@ class Proposal(db.Model):
         back_populates="proposal",
         uselist=False,
     )
+
+    @property
+    def scope_snapshot(self):
+        """{"included": [...], "excluded": [...]} as frozen at creation, or None."""
+        if not self.scope_snapshot_json:
+            return None
+        import json
+
+        return json.loads(self.scope_snapshot_json)
 
     def __repr__(self):
         return f"<Proposal {self.proposal_number}>"

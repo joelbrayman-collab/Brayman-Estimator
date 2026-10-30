@@ -172,6 +172,7 @@ def _work_page(project, guided):
     """Work included in this project (selected work, 28 Oct 2026): the one place work is added, decided and removed
     outside the wizard. Every change goes through app/services/selected_work.py."""
     from app.services import selected_work as W
+    from app.services import work_packages as WP
 
     here = url_for("guided.scope", project_id=project.id)
     back = _safe_return(request.values.get("return_to", ""))
@@ -203,9 +204,12 @@ def _work_page(project, guided):
                               user_id=_uid())
                 flash(f"{row.display_name} is no longer part of this estimate. The change is in the history.",
                       "success")
+            elif action in ("exclude", "include", "responsible_party", "delivery_method", "shared"):
+                row = W.get_row(guided, request.form.get("row_id", type=int))
+                flash(_work_package_action(WP, row, action), "success")
             else:
                 abort(400)
-        except (W.SelectedWorkError, G.GuidedEstimatingError) as exc:
+        except (W.SelectedWorkError, G.GuidedEstimatingError, WP.WorkPackageError) as exc:
             db.session.rollback()
             flash(str(exc), "error")
         return redirect(here + (f"?return_to={back}" if back else "") + "#work")
@@ -215,7 +219,38 @@ def _work_page(project, guided):
                            progress=W.progress(guided) if guided is not None else (0, 0),
                            accepted=G.accepted_proposal(guided) if guided is not None else None,
                            removal={r.id: W.removal_check(r) for r in items}, return_to=back,
-                           estimate_id=request.args.get("estimate_id", type=int))
+                           estimate_id=request.args.get("estimate_id", type=int), WP=WP,
+                           editable=_scope_editable(guided))
+
+
+def _scope_editable(guided) -> bool:
+    if guided is None:
+        return True
+    version = G.current_version(guided)
+    return version is None or G.version_is_editable(version)
+
+
+def _work_package_action(WP, row, action) -> str:
+    """The governed work-package decisions (Joel, 30 Oct 2026). Excluding work keeps every line; it changes who is
+    responsible for the work and whether it is in Brayman's price."""
+    form = request.form
+    if action == "exclude":
+        WP.exclude_work(row, actor=_actor(), party=form.get("party", ""), party_name=form.get("party_name", ""),
+                        reason=form.get("reason", ""), user_id=_uid())
+        return f"{row.display_name} is excluded from Brayman's price ({WP.responsible_label(row)}). Its lines are kept."
+    if action == "include":
+        WP.include_work(row, actor=_actor(), reason=form.get("reason", ""), user_id=_uid())
+        return f"{row.display_name} is included in Brayman's price again."
+    if action == "responsible_party":
+        WP.set_responsible_party(row, actor=_actor(), party=form.get("party", ""),
+                                 party_name=form.get("party_name", ""), user_id=_uid())
+        return f"{row.display_name}: {WP.responsible_label(row)}."
+    if action == "delivery_method":
+        WP.set_delivery_method(row, actor=_actor(), method=form.get("delivery_method", ""), user_id=_uid())
+        return f"{row.display_name}: {WP.delivery_label(row)}."
+    WP.set_shared(row, actor=_actor(), rule=form.get("shared_rule", ""), user_id=_uid())
+    return (f"{row.display_name} is shared general conditions." if row.shared_rule
+            else f"{row.display_name} is ordinary work.")
 
 
 def _safe_return(value):

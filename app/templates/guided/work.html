@@ -21,6 +21,8 @@
         <div class="sw-head">
           <a class="sw-name" href="{{ url_for('guided.stage', project_id=project.id, stage_id=row.id) if not row.is_split else url_for('guided.stage', project_id=project.id, stage_id=row.children[0].id) }}">{{ row.display_name }}</a>
           <span class="ge-resp">{{ row.responsibility_label }}</span>
+          <span class="ge-resp" data-commercial-status="{{ row.stage_key }}">{% if row.is_included %}In Brayman's scope{% else %}Excluded · {{ WP.responsible_label(row) }}{% endif %}</span>
+          {% if row.shared_rule %}<span class="ge-resp" data-shared="{{ row.stage_key }}">Shared general conditions</span>{% endif %}
         </div>
         {% if not row.is_split %}
         <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="sw-resp">
@@ -45,6 +47,66 @@
           {% endfor %}
         </ul>
         {% endif %}
+        {% set can_decide = (not locked) and editable %}
+        <div class="sw-package" data-work-package="{{ row.stage_key }}">
+          {% if row.is_included %}
+          <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row" data-exclude-form="{{ row.stage_key }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="exclude"><input type="hidden" name="row_id" value="{{ row.id }}">
+            <span class="sw-label">In Brayman's scope. If excluded, by:</span>
+            <select name="party" aria-label="If excluded, by" {% if not can_decide %}disabled{% endif %} data-exclude-party="{{ row.stage_key }}">
+              <option value="BY_OTHERS">By Others</option>
+              <option value="CLIENT">Owner / Client</option>
+              <option value="NAMED">A named party</option>
+            </select>
+            <input type="text" name="party_name" maxlength="160" placeholder="Name (for a named party)" aria-label="Named party" {% if not can_decide %}disabled{% endif %} data-exclude-name="{{ row.stage_key }}">
+            <input type="text" name="reason" maxlength="300" placeholder="Reason (optional)" aria-label="Reason" {% if not can_decide %}disabled{% endif %}>
+            <button type="submit" class="ge-secondary" {% if not can_decide %}disabled{% endif %} data-exclude-work="{{ row.stage_key }}">Exclude from Brayman's price</button>
+          </form>
+          {% else %}
+          <p class="ge-muted" data-excluded-text="{{ row.stage_key }}">{{ WP.customer_exclusion_text(row) }}. Its lines are kept and not priced.</p>
+          <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="include"><input type="hidden" name="row_id" value="{{ row.id }}">
+            <button type="submit" class="ge-primary" {% if not can_decide %}disabled{% endif %} data-include-work="{{ row.stage_key }}">Include in Brayman's price</button>
+          </form>
+          <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="responsible_party"><input type="hidden" name="row_id" value="{{ row.id }}">
+            <select name="party" aria-label="Excluded work is done by" {% if not can_decide %}disabled{% endif %} data-party="{{ row.stage_key }}">
+              <option value="BY_OTHERS" {% if row.responsible_party == 'BY_OTHERS' %}selected{% endif %}>By Others</option>
+              <option value="CLIENT" {% if row.responsible_party == 'CLIENT' %}selected{% endif %}>Owner / Client</option>
+              <option value="NAMED" {% if row.responsible_party == 'NAMED' %}selected{% endif %}>A named party</option>
+            </select>
+            <input type="text" name="party_name" maxlength="160" value="{{ row.responsible_party_name or '' }}" placeholder="Name" aria-label="Named party" {% if not can_decide %}disabled{% endif %}>
+            <button type="submit" class="ge-secondary" {% if not can_decide %}disabled{% endif %} data-set-party="{{ row.stage_key }}">Save who does it</button>
+          </form>
+          {% endif %}
+          <details class="sw-more">
+            <summary>Delivery and general conditions · {{ WP.delivery_label(row) }}</summary>
+            <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="delivery_method"><input type="hidden" name="row_id" value="{{ row.id }}">
+              <select name="delivery_method" aria-label="Delivery method" {% if not can_decide %}disabled{% endif %} data-delivery="{{ row.stage_key }}">
+                <option value="">Follow who is doing it</option>
+                {% for code, label in [('SELF_PERFORMED','Self-performed'),('SUBCONTRACTED','Subcontracted'),('MATERIAL_ONLY','Material only'),('LABOUR_ONLY','Labour only'),('ALLOWANCE','Allowance')] %}
+                <option value="{{ code }}" {% if row.delivery_method == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="ge-secondary" {% if not can_decide %}disabled{% endif %} data-set-delivery="{{ row.stage_key }}">Save delivery</button>
+            </form>
+            <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="shared"><input type="hidden" name="row_id" value="{{ row.id }}">
+              {% if row.shared_rule %}
+              <button type="submit" name="shared_rule" value="" class="ge-secondary" {% if not can_decide %}disabled{% endif %} data-unset-shared="{{ row.stage_key }}">Treat as ordinary work</button>
+              {% else %}
+              <button type="submit" name="shared_rule" value="WHILE_ANY_INCLUDED" class="ge-secondary" {% if not can_decide %}disabled{% endif %} data-set-shared="{{ row.stage_key }}">Shared general conditions</button>
+              <span class="ge-muted">Counts while any other work is in Brayman's price.</span>
+              {% endif %}
+            </form>
+          </details>
+        </div>
         {% if not locked %}
         <details class="sw-more">
           <summary>More: split materials and installation, or remove</summary>
@@ -60,7 +122,7 @@
           </form>
           {% set held = removal[row.id] %}
           {% if held %}
-          <p class="ge-muted" data-remove-blocked="{{ row.stage_key }}">{{ row.display_name }} has {{ held|join(', ') }}. Remove those from the estimate before removing the work; nothing is deleted without you.</p>
+          <p class="ge-muted" data-remove-blocked="{{ row.stage_key }}">{{ row.display_name }} has {{ held|join(', ') }}. To take it out of Brayman's price without losing anything, exclude it instead. Nothing is deleted without you.</p>
           {% else %}
           <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

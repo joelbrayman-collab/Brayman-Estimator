@@ -179,6 +179,22 @@
             </div>
         </section>
 
+        {% set governed_scope = proposal.scope_snapshot %}
+        {% if governed_scope %}
+        {% if governed_scope.included %}
+        <section class="proposal-section-block" data-scope-included>
+            <h2>Included in Brayman Construction scope</h2>
+            <ul>{% for item in governed_scope.included %}<li>{{ item.name }}</li>{% endfor %}</ul>
+        </section>
+        {% endif %}
+        {% if governed_scope.excluded %}
+        <section class="proposal-section-block" data-scope-excluded>
+            <h2>Excluded / By Others</h2>
+            <ul>{% for item in governed_scope.excluded %}<li><strong>{{ item.name }}</strong>: {{ item.text }}</li>{% endfor %}</ul>
+        </section>
+        {% endif %}
+        {% endif %}
+
         {% if proposal.clarifications %}
         <section class="proposal-section-block">
             <h2>Clarifications</h2>

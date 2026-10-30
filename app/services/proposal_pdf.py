@@ -394,6 +394,24 @@ def _project_reference(proposal) -> str:
     return reference_line(getattr(estimate, "project", None)) if estimate is not None else ""
 
 
+def _governed_scope_blocks(proposal, styles):
+    """Included and Excluded / By Others (30 Oct 2026). Deselected work changes responsibility; it is never erased:
+    the customer sees what is in Brayman's price and what is excluded and who does it."""
+    scope = proposal.scope_snapshot
+    if not scope:
+        return []
+    out = []
+    if scope.get("included"):
+        names = "<br/>".join("&#8226; " + _escape(i["name"]) for i in scope["included"])
+        out.append(Paragraph("Included in Brayman Construction scope", styles["heading"]))
+        out.append(Paragraph(names, styles["body"]))
+    if scope.get("excluded"):
+        out.append(Paragraph("Excluded / By Others", styles["heading"]))
+        rows = "<br/>".join(f"&#8226; <b>{_escape(x['name'])}</b>: {_escape(x['text'])}" for x in scope["excluded"])
+        out.append(Paragraph(rows, styles["body"]))
+    return out
+
+
 def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
     """Build a PDF for ``proposal`` using snapshot values only.
 
@@ -645,6 +663,7 @@ def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
         )
     )
     story.append(totals_table)
+    story.extend(_governed_scope_blocks(proposal, styles))
 
     for title, field in (
         ("Clarifications", proposal.clarifications),

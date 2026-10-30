@@ -131,6 +131,10 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
     if version.status == "Draft":
         version.status = "In Review"
     db.session.flush()
+    # Gate 1 (30 Oct 2026): the immutable approval record, with the frozen summary of what was approved.
+    from app.services.estimate_approval import record_approval
+
+    record_approval(version, user=user, actor_name=version.signed_off_by_name)
     existing = (
         Proposal.query.filter(Proposal.estimate_version_id == version.id,
                               Proposal.status.in_(("Draft", "Ready")))

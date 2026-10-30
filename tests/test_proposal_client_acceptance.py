@@ -199,11 +199,23 @@ def test_office_pdf_of_an_unsent_proposal_is_marked_office_copy(app, client):
     assert "OFFICE COPY" not in text
 
 
-def test_unlocking_a_signed_off_estimate_withdraws_the_sign_off(app, client):
+def test_a_signed_off_estimate_is_never_unlocked_and_is_revised_by_a_new_version(app, client):
+    # Decision 5 (Joel, 30 Oct 2026): Gate 1 is immutable. This replaces the earlier "unlock withdraws the sign-off".
+    from app.models import EstimateApproval
+
     ensure_office_user(); db.session.commit()
     login_office_user(client)
     _project, version = _version("EST-PA-9")
     client.post(f"/estimates/{version.estimate_id}/versions/{version.id}/sign-off")
-    client.post(f"/estimates/{version.estimate_id}/versions/{version.id}/unlock")
+    response = client.post(f"/estimates/{version.estimate_id}/versions/{version.id}/unlock", follow_redirects=True)
+    assert "is approved and cannot be unlocked" in response.get_data(as_text=True)
     version = db.session.get(type(version), version.id)
-    assert version.signed_off_at is None and not version.is_locked
+    assert version.signed_off_at is not None and version.is_locked
+    approval = EstimateApproval.query.filter_by(estimate_version_id=version.id).one()
+    client.post(f"/estimates/{version.estimate_id}/versions/{version.id}/revise", data={"reason": "Owner adds a deck"})
+    estimate = db.session.get(type(version.estimate), version.estimate_id)
+    successor = estimate.current_version
+    assert successor.id != version.id and not successor.is_locked and successor.signed_off_at is None
+    assert "Owner adds a deck" in successor.revision_reason
+    assert db.session.get(type(version), version.id).is_locked
+    assert EstimateApproval.query.filter_by(estimate_version_id=version.id).one().fingerprint == approval.fingerprint

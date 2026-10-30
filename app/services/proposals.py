@@ -408,12 +408,35 @@ def _apply_named_method_customer_totals(proposal, pricing_snapshot):
     return proposal
 
 
+def governed_scope_snapshot_json(version):
+    """The customer scope frozen into the proposal (30 Oct 2026): Included and Excluded / By Others, from the same
+    work-package selections that set the price. None when the estimate is not governed by selected work."""
+    import json
+
+    from app.services.work_packages import customer_scope
+
+    scope = customer_scope(version)
+    if not scope["governed"]:
+        return None
+    return json.dumps({
+        "included": [{"name": i["name"], "description": i.get("description") or "", "shared": bool(i.get("shared"))}
+                     for i in scope["included"]],
+        "excluded": [{"name": x["name"], "responsible": x["responsible"], "text": x["text"]}
+                     for x in scope["excluded"]],
+    }, sort_keys=True)
+
+
 def snapshot_estimate_version_content(proposal, version):
-    """Copy estimate sections/line items into independent proposal snapshots."""
+    """Copy estimate sections/line items into independent proposal snapshots. Work excluded from Brayman's price
+    (30 Oct 2026) is not priced on the proposal; it is listed under Excluded / By Others instead."""
+    from app.services.work_packages import section_participates
+
     pricing = getattr(version, "pricing_snapshot", None)
     use_named_allocation = named_method_governs(pricing)
 
     for section in version.sections:
+        if not section_participates(section):
+            continue
         proposal_section = ProposalSection(
             proposal_id=proposal.id,
             sort_order=section.sort_order,
@@ -666,6 +689,7 @@ def create_proposal(
         valid_until=valid_until,
         issued_at=datetime.utcnow() if status == "Issued" else None,
     )
+    proposal.scope_snapshot_json = governed_scope_snapshot_json(version)
     db.session.add(proposal)
     db.session.flush()
     snapshot_estimate_version_content(proposal, version)

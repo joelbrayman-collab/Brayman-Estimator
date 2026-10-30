@@ -655,21 +655,39 @@ def lock_estimate_version(id, version_id):
     methods=["POST"],
 )
 def unlock_estimate_version(id, version_id):
+    from app.services.estimate_approval import EstimateApprovalError
+
     estimate, version = _get_estimate_version(id, version_id)
-    was_signed_off = version.signed_off_at is not None and version.status not in ("Issued", "Accepted")
-    if was_signed_off:
-        # Unlocking a signed-off estimate withdraws the sign-off: it must be signed off again.
-        version.signed_off_at = None
-        version.signed_off_by_user_id = None
-        version.signed_off_by_name = None
-    unlock_version(version)
-    if was_signed_off:
-        flash(f"{version.display_label} unlocked. Its sign-off was withdrawn; sign it off again when it is ready.", "success")
+    try:
+        unlock_version(version)
+    except EstimateApprovalError as exc:
+        flash(str(exc), "error")
     else:
         flash(f"{version.display_label} unlocked.", "success")
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/revise",
+    methods=["POST"],
+)
+def revise_approved_version(id, version_id):
+    """Change an approved estimate: a successor version (Gate 1 is immutable, 30 Oct 2026)."""
+    from app.services.auth import form_actor
+    from app.services.estimate_approval import EstimateApprovalError, create_successor_version
+
+    estimate, version = _get_estimate_version(id, version_id)
+    try:
+        successor = create_successor_version(version, actor=form_actor("actor", fallback=""),
+                                             reason=request.form.get("reason", ""))
+    except EstimateApprovalError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("estimates.view_version", id=estimate.id, version_id=version.id))
+    flash(f"{successor.display_label} started from approved {version.display_label}. The approval stays on record; "
+          "approve the new version when it is ready.", "success")
+    return redirect(url_for("estimates.view_version", id=estimate.id, version_id=successor.id))
 
 
 @estimates_bp.route(

@@ -243,7 +243,7 @@ class EstimateSection(db.Model):
     subtotal = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     # Durable link to the governed work package (or its part) that owns this section (30 Oct 2026). Replaces the
     # fragile name match; None for sections not governed by selected work (manual or legacy estimates).
-    guided_stage_id = db.Column(db.Integer, db.ForeignKey("guided_estimate_stages.id", ondelete="RESTRICT"),
+    guided_stage_id = db.Column(db.Integer, db.ForeignKey("guided_estimate_stages.id", ondelete="RESTRICT", use_alter=True),
                                 nullable=True, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(

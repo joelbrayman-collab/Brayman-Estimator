@@ -79,7 +79,14 @@
             <button type="submit" class="button-secondary">Set as Current</button>
         </form>
         {% endif %}
-        {% if version.is_locked %}
+        {% if version.signed_off_at %}
+        {% if estimate.current_version_id == version.id %}
+        <form method="post" action="{{ url_for('estimates.revise_approved_version', id=estimate.id, version_id=version.id) }}" class="estimate-revise" data-revise-approved>
+            <input type="text" name="reason" required maxlength="300" placeholder="Why it is changing" aria-label="Why the approved estimate is changing">
+            <button type="submit" class="button-secondary">New version to change it</button>
+        </form>
+        {% endif %}
+        {% elif version.is_locked %}
         <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=version.id) }}">
             <button type="submit" class="button-secondary">Unlock</button>
         </form>

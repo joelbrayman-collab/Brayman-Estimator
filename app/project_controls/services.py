@@ -475,6 +475,7 @@ def add_change_order_item(
     unit="ea",
     unit_price=0,
     organization_id=None,
+    guided_stage_id=None,
 ):
     change_order = require_organization_change_order(
         change_order,
@@ -483,6 +484,15 @@ def add_change_order_item(
         message="Not found.",
     )
     raise_if_project_closed(change_order.project, ChangeOrderServiceError)
+    package_id = None
+    if guided_stage_id:
+        from app.models.guided_estimating import GuidedEstimateStage
+
+        stage = db.session.get(GuidedEstimateStage, int(guided_stage_id))
+        if (stage is None or stage.organization_id != change_order.organization_id
+                or stage.guided_estimate.project_id != change_order.project_id):
+            raise ChangeOrderServiceError("That work package is not on this project.")
+        package_id = stage.id
     description = (description or "").strip()
     unit = (unit or "").strip()
     if not description:
@@ -501,6 +511,7 @@ def add_change_order_item(
         unit=unit,
         unit_price=as_decimal(unit_price),
         sort_order=sort_order,
+        guided_stage_id=package_id,
     )
     apply_item_calculations(item)
     change_order.items.append(item)

@@ -322,8 +322,12 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_the_project_lead_c
             continue
         assert after[table] == before[table], table
         assert sorted(i["name"] for i in inspector.get_indexes(table)) == before_indexes[table], table
+    # Columns added to projects by later migrations (r5e6f7a8b9c0 client project number; s6f7a8b9c0d1 anticipated
+    # start, 30 Oct 2026) are not part of this revision.
+    later = {"projects": {"client_project_number", "anticipated_start"}}
     for model in (Run, Event, ProjectModel):
-        assert {c["name"] for c in inspector.get_columns(model.__tablename__)} == set(model.__table__.columns.keys())
+        assert {c["name"] for c in inspector.get_columns(model.__tablename__)} == (
+            set(model.__table__.columns.keys()) - later.get(model.__tablename__, set()))
     with engine.connect() as conn:
         for table, rows in before_rows.items():
             if table == "projects":

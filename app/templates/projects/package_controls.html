@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{# Cost, margin, actuals and closeout by work package (Joel, 30 Oct 2026). Internal: contains cost and margin. #}
+{% block title %}Cost control | {{ project.name }}{% endblock %}
+{% block page_title %}Cost control by work package{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Cost control — {{ project.name }}</h1>
+<p class="muted-copy">Internal. Estimate from the approved version; changes from approved change orders; committed from approved subcontracts and orders; actual from approved labour time.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('schedule.planning', project_id=project.id) }}">Schedule planning</a> <a class="button button-secondary" href="{{ url_for('supplier_office.commitments', project_id=project.id) }}">Commitments</a></div></div>
+{% if report.message %}<p class="ge-warn" data-controls-message>{{ report.message }}</p>{% else %}
+<section class="form-panel" data-package-controls>
+  <h2>By work package</h2>
+  <div class="table-scroll"><table class="plan-table">
+    <thead><tr><th>Work package</th><th>Est. hours</th><th>Actual hours</th><th>Est. cost</th><th>Committed</th><th>Actual labour</th><th>Forecast</th><th>Price + changes</th><th>Margin</th><th>Planned days</th><th>Actual days</th><th>Factor</th></tr></thead>
+    <tbody>
+    {% for r in report.rows %}<tr data-package-row="{{ r.package.id }}"><td>{{ r.package.display_name }}</td><td>{{ r.estimate_hours }}</td><td>{{ r.actual_hours }}</td><td>${{ "{:,.2f}".format(r.estimate_direct) }}</td><td>${{ "{:,.2f}".format(r.committed) }}</td><td>${{ "{:,.2f}".format(r.actual_labour) }}</td><td>${{ "{:,.2f}".format(r.forecast) }}</td><td>${{ "{:,.2f}".format(r.revenue) }}</td><td>${{ "{:,.2f}".format(r.margin) }}</td><td>{{ r.planned_days or "—" }}</td><td>{{ r.actual_days or "—" }}</td><td>{{ r.productivity_factor or "—" }}</td></tr>{% endfor %}
+    </tbody>
+    <tfoot><tr><th>Total</th><th>{{ report.totals.estimate_hours }}</th><th>{{ report.totals.actual_hours }}</th><th>${{ "{:,.2f}".format(report.totals.estimate_direct) }}</th><th>${{ "{:,.2f}".format(report.totals.committed) }}</th><th>${{ "{:,.2f}".format(report.totals.actual_labour) }}</th><th>${{ "{:,.2f}".format(report.totals.forecast) }}</th><th>${{ "{:,.2f}".format(report.totals.revenue) }}</th><th>${{ "{:,.2f}".format(report.totals.margin) }}</th><th></th><th></th><th></th></tr></tfoot>
+  </table></div>
+  {% if report.unlinked.actual_hours or report.unlinked.committed or report.unlinked.change %}<p class="muted-copy">Not tied to a work package: {{ report.unlinked.actual_hours }} h, ${{ "{:,.2f}".format(report.unlinked.committed) }} committed, ${{ "{:,.2f}".format(report.unlinked.change) }} in changes.</p>{% endif %}
+  <p class="muted-copy">Labour at ${{ report.labour_rate }}/h, the approved estimate's rate. Factor = actual hours ÷ estimated hours.</p>
+</section>
+<section class="form-panel" data-closeout>
+  <h2>Closeout</h2>
+  <form method="post" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="note" placeholder="What we learned (optional)" aria-label="Note">
+    <button type="submit" class="button-secondary" data-record-closeout>Record the closeout</button>
+  </form>
+  {% for c in closeouts %}<p class="muted-copy">Recorded by {{ c.recorded_by_name }} on {{ c.recorded_at.strftime('%Y-%m-%d') }}{% if c.note %}: {{ c.note }}{% endif %}</p>{% endfor %}
+</section>
+{% endif %}
+<section class="form-panel" data-calibration>
+  <h2>Calibration proposals (from recorded closeouts)</h2>
+  {% if calibration %}<ul>{% for c in calibration %}<li>{{ c.name }}: actual ÷ estimated hours averages {{ c.average_factor }} over {{ c.projects }} closeout{{ 's' if c.projects != 1 }}. A proposal to review; nothing is changed automatically.</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">None yet.</p>{% endif %}
+</section>
+{% endblock %}

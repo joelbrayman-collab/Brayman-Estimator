@@ -150,7 +150,7 @@
                 <td>{{ item.description }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.unit }}</td>
-                <td>${{ "%.2f"|format(item.unit_price) }}</td>
+                <td>${{ "%.2f"|format(item.unit_price) }}{% if item.guided_stage_id %}<br><small class="muted-copy" data-co-item-package>{{ package_names.get(item.guided_stage_id, '') }}</small>{% endif %}</td>
                 <td>${{ "%.2f"|format(item.total) }}</td>
                 <td>
                     <a class="button-link" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='items', edit_item=item.id) }}">Edit</a>
@@ -177,6 +177,7 @@
             <label>Quantity * <input type="number" name="quantity" value="1" step="0.0001" min="0" required></label>
             <label>Unit * <input type="text" name="unit" value="ea" required></label>
             <label>Unit price * <input type="number" name="unit_price" value="0" step="0.0001" min="0" required></label>
+            {% if package_options %}<label>Work package <select name="guided_stage_id"><option value="">Not linked</option>{% for pid, label in package_options %}<option value="{{ pid }}">{{ label }}</option>{% endfor %}</select></label>{% endif %}
         </div>
         <div class="form-actions">
             <button type="submit">Add Item</button>

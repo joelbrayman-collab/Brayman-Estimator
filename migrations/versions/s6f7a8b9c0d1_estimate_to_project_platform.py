@@ -12,6 +12,8 @@ Slice S1 (governed work package):
   audit fields, and the folded Confirmed Project Scope links (work_element_template_id, plan_document_id).
 - estimate_sections gains guided_stage_id, a durable link to the work package (or part) that owns the section.
 
+Slices S10/S11: change_order_items.guided_stage_id and project_closeout_records.
+
 Slices S8/S9: projects.anticipated_start, work_schedule_items.window_kind (existing rows CONFIRMED),
 company_schedule_change_requests and schedule_external_drafts.
 
@@ -233,6 +235,23 @@ def upgrade():
     for column in ("organization_id", "project_id", "work_schedule_item_id"):
         op.create_index(f"ix_schedule_external_drafts_{column}", "schedule_external_drafts", [column])
 
+    # Slices S10/S11: change-order items by work package; closeout records.
+    op.add_column("change_order_items", sa.Column("guided_stage_id", sa.Integer(), nullable=True))
+    op.create_index("ix_change_order_items_guided_stage_id", "change_order_items", ["guided_stage_id"])
+    op.create_table(
+        "project_closeout_records",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("organization_id", sa.String(length=50), nullable=False),
+        sa.Column("project_id", sa.Integer(), sa.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False),
+        sa.Column("recorded_by_name", sa.String(length=160), nullable=False),
+        sa.Column("recorded_at", sa.DateTime(), nullable=False),
+        sa.Column("note", sa.Text(), nullable=True),
+        sa.Column("report_json", sa.Text(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+    )
+    op.create_index("ix_project_closeout_records_organization_id", "project_closeout_records", ["organization_id"])
+    op.create_index("ix_project_closeout_records_project_id", "project_closeout_records", ["project_id"])
+
     # Deterministic backfill: link each section to the stage that names it, within the governed estimate.
     bind = op.get_bind()
     guided_rows = bind.execute(sa.text(
@@ -264,6 +283,8 @@ def downgrade():
         "IS NOT NULL OR delivery_method IS NOT NULL OR shared_rule IS NOT NULL OR work_element_template_id IS NOT "
         "NULL OR plan_document_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_approvals")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM project_closeout_records")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM change_order_items WHERE guided_stage_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM company_schedule_change_requests")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM schedule_external_drafts")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM projects WHERE anticipated_start IS NOT NULL")).scalar()
@@ -277,6 +298,12 @@ def downgrade():
     if held:
         raise RuntimeError("Estimate-to-project values are held; restore the pre-migration backup instead of "
                            "downgrading.")
+    op.drop_index("ix_project_closeout_records_project_id", table_name="project_closeout_records")
+    op.drop_index("ix_project_closeout_records_organization_id", table_name="project_closeout_records")
+    op.drop_table("project_closeout_records")
+    op.drop_index("ix_change_order_items_guided_stage_id", table_name="change_order_items")
+    with op.batch_alter_table("change_order_items") as batch:
+        batch.drop_column("guided_stage_id")
     for column in ("organization_id", "project_id", "work_schedule_item_id"):
         op.drop_index(f"ix_schedule_external_drafts_{column}", table_name="schedule_external_drafts")
         op.drop_index(f"ix_company_schedule_change_requests_{column}", table_name="company_schedule_change_requests")

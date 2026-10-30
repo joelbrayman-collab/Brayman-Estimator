@@ -138,6 +138,8 @@ class ChangeOrderItem(db.Model):
     )
     total = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     sort_order = db.Column(db.Integer, nullable=False, default=0)
+    # Change control by work package (30 Oct 2026): the package the change belongs to (plain integer).
+    guided_stage_id = db.Column(db.Integer, nullable=True, index=True)
 
     change_order = db.relationship("ChangeOrder", back_populates="items")
 

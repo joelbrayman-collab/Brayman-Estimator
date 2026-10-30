@@ -443,8 +443,14 @@ def view_change_order(id):
         invitation_url = session.get("signing_invitation_url") or ""
 
     next_view = _next_view()
+    from app.services import guided_estimating as G
+    from app.services import work_packages as WP
+
+    package_options = [(p.id, p.display_name) for p in WP.packages(G.get_guided(organization_id, change_order.project_id))]
     return render_template(
         "project_controls/change_orders/detail.html",
+        package_options=package_options,
+        package_names=dict(package_options),
         change_order=change_order,
         tab=tab,
         statuses=CHANGE_ORDER_STATUSES,
@@ -542,6 +548,7 @@ def add_item(id):
             quantity=request.form.get("quantity") or 1,
             unit=request.form.get("unit") or "ea",
             unit_price=request.form.get("unit_price") or 0,
+            guided_stage_id=request.form.get("guided_stage_id", type=int) or None,
         )
     except ChangeOrderServiceError as exc:
         flash(str(exc), "error")

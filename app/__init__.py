@@ -545,6 +545,7 @@ def create_app(config=None):
     from app.routes.cal_assistant import cal_bp
     from app.routes.projects import projects_bp
     from app.routes import project_scope as project_scope_routes  # noqa: F401
+    from app.routes import package_controls as package_controls_routes  # noqa: F401
     from app.routes import project_setup as project_setup_routes  # noqa: F401
     from app.routes import project_construction as project_construction_routes  # noqa: F401
     from app.routes.punch_list import punch_list_bp

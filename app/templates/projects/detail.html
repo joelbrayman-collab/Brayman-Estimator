@@ -1095,6 +1095,7 @@
         <div class="panel-header">
             <h2>Purchasing</h2>
             <a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests, concrete and orders</a>
+            <span data-governed-links> · <a href="{{ url_for('supplier_office.commitments', project_id=project.id) }}">Commitments</a> · <a href="{{ url_for('schedule.planning', project_id=project.id) }}">Schedule planning</a> · <a href="{{ url_for('projects.package_controls', id=project.id) }}">Cost control</a></span>
         </div>
         {% if purchase_orders %}
         <table class="data-table">

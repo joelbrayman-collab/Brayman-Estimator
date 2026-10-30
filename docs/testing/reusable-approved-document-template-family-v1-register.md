@@ -231,3 +231,17 @@ Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED
 EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED → VISUALLY VERIFIED → JOEL APPROVED → APPROVED REUSABLE MASTER
 
 Families **01, 02, 03, 04, 06, 07 and 08** are **JOEL APPROVED / APPROVED REUSABLE MASTER** (08 added 27 Oct 2026). Family **05** is **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**. Family 05 legal status remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
+
+## 07 and 08 — Version 2 (Joel's decision 1, 30 Oct 2026)
+
+Masters 07 and 08 gain an **Excluded / By Others** section: a heading and a two-column table (Work | Responsibility),
+placed after Included Scope in 07 and before Price Summary in 08. The customer sees what is not in Brayman
+Construction's price and who does it ("Excluded from Brayman Construction scope / By Others", "...; by Lockwood",
+"...; by the Owner / Client"). V1 files are unchanged and stay beside V2 in `MASTER DOCX/`. The masters stay outside Git.
+
+| Family | V2 filename | V2 DOCX SHA-256 |
+|---|---|---|
+| 07 | `07_Brayman_Client_Construction_Proposal_MASTER_V2.docx` | `a340e1f0402198eacc15cfb19718958010c40ede983056cc053f0afc7d838455` |
+| 08 | `08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V2.docx` | `738eeaf0ea34aa0dc1f9c7578e560119f3830f95f163b7389c1f51023e20265e` |
+
+`app/services/approved_masters.py` registers V2 for both families.

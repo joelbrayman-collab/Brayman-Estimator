@@ -79,14 +79,16 @@ APPROVED_MASTERS = {
         ApprovedMaster("06", DOOR_WINDOW_SKYLIGHT_SCHEDULE, "Door / Window / Skylight Schedule",
                        "06_Brayman_Door_Window_Skylight_Schedule_MASTER_V1.docx",
                        "3224e5945c83d90254d681ade168ee0a53d99041ac473978a00d152fb08714f2", "CUSTOMER-FACING"),
+        # 07 and 08 V2 (Joel's decision 1, 30 Oct 2026): V1 plus an "Excluded / By Others" section (Work |
+        # Responsibility). The V1 files stay unchanged beside them.
         ApprovedMaster("07", CLIENT_CONSTRUCTION_PROPOSAL, "Client Construction Proposal",
-                       "07_Brayman_Client_Construction_Proposal_MASTER_V1.docx",
-                       "213ce5c93dcf09b1299d066dc29e8cd68cfad3178b4a149a5f4ecf39349ba498", "CUSTOMER-FACING"),
+                       "07_Brayman_Client_Construction_Proposal_MASTER_V2.docx",
+                       "a340e1f0402198eacc15cfb19718958010c40ede983056cc053f0afc7d838455", "CUSTOMER-FACING"),
         # Family 08 (Joel's explicit instruction, 27 Oct 2026): derived from Master 02's presentation with
         # internal-only content removed; customer selling prices, never contractor cost or margin.
         ApprovedMaster("08", CUSTOMER_DETAILED_COST_ESTIMATE, "Customer Detailed Cost Estimate",
-                       "08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V1.docx",
-                       "f9e7a27cf6924d55e7c92e53b5cb27dc77379ed421b7d982c79cbbb3588f100f", "CUSTOMER-FACING"),
+                       "08_Brayman_Customer_Detailed_Cost_Estimate_MASTER_V2.docx",
+                       "738eeaf0ea34aa0dc1f9c7578e560119f3830f95f163b7389c1f51023e20265e", "CUSTOMER-FACING"),
     )
 }
 GOVERNED_DOCUMENT_TYPES = frozenset(APPROVED_MASTERS)

@@ -6,7 +6,8 @@ import pytest
 
 from app import create_app, db
 from app.models import Client, Organization, Project
-from app.models.project_work_package import DELIVERY_SUBCONTRACT, ProjectWorkPackage
+from app.models.project_work_package import DELIVERY_SUBCONTRACT, ProjectWorkPackage  # noqa: F401
+from app.services.project_work_package import list_confirmed
 from app.models.proposal import Proposal
 from app.plan_intelligence.models import PlanDocument
 from app.project_controls.models import ChangeOrder
@@ -196,7 +197,8 @@ def test_related_project_records_and_proposal_snapshot_stay_put(app):
     )
     db.session.expire_all()
     assert db.session.get(Project, project.id).client_id == new.id
-    assert db.session.get(ProjectWorkPackage, package.id).project_id == project.id
+    # Confirmed scope is selected work since 30 Oct 2026 (decision 4); it stays on the project.
+    assert [row.id for row in list_confirmed(project.organization_id, project.id)] == [package.id]
     assert db.session.get(PlanDocument, plan.id).project_id == project.id
     assert estimate.project_id == project.id
     assert db.session.get(ChangeOrder, change.id).project_id == project.id

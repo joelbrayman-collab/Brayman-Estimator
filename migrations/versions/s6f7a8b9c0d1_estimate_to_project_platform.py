@@ -12,7 +12,9 @@ Slice S1 (governed work package):
   audit fields, and the folded Confirmed Project Scope links (work_element_template_id, plan_document_id).
 - estimate_sections gains guided_stage_id, a durable link to the work package (or part) that owns the section.
 
-Every change is a plain ADD COLUMN, with no table rebuild, so existing rows are unchanged. commercial_status starts
+Every change is a plain ADD COLUMN, with no table rebuild, so existing rows are unchanged. As in the guided-estimating
+migration (project_calculations.guided_stage_id), the reference columns are plain integers: SQLite cannot ALTER a
+constraint, and the models declare the foreign keys. Value checks are enforced by the models' validators. commercial_status starts
 as INCLUDED, which is what every existing package is today.
 
 The section backfill is deterministic. A section is linked to the stage whose section_name equals the section's
@@ -54,17 +56,12 @@ def _section_name(stage, parents):
 def upgrade():
     for name, kind, options in STAGE_COLUMNS:
         op.add_column("guided_estimate_stages", sa.Column(name, kind, **options))
-    op.add_column("guided_estimate_stages", sa.Column(
-        "work_element_template_id", sa.Integer(), sa.ForeignKey("work_element_templates.id", ondelete="RESTRICT"),
-        nullable=True))
-    op.add_column("guided_estimate_stages", sa.Column(
-        "plan_document_id", sa.Integer(), sa.ForeignKey("plan_documents.id", ondelete="RESTRICT"), nullable=True))
+    op.add_column("guided_estimate_stages", sa.Column("work_element_template_id", sa.Integer(), nullable=True))
+    op.add_column("guided_estimate_stages", sa.Column("plan_document_id", sa.Integer(), nullable=True))
     op.create_index("ix_guided_estimate_stages_work_element_template_id", "guided_estimate_stages",
                     ["work_element_template_id"])
     op.create_index("ix_guided_estimate_stages_plan_document_id", "guided_estimate_stages", ["plan_document_id"])
-    op.add_column("estimate_sections", sa.Column(
-        "guided_stage_id", sa.Integer(), sa.ForeignKey("guided_estimate_stages.id", ondelete="RESTRICT"),
-        nullable=True))
+    op.add_column("estimate_sections", sa.Column("guided_stage_id", sa.Integer(), nullable=True))
     op.create_index("ix_estimate_sections_guided_stage_id", "estimate_sections", ["guided_stage_id"])
 
     # Deterministic backfill: link each section to the stage that names it, within the governed estimate.

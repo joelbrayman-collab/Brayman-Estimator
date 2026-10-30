@@ -799,6 +799,11 @@ def test_existing_project_selection_starts_one_guided_estimate_only(env):
     assert Project.query.filter_by(name=existing.name).count() == 1
 
 
+LATER_STAGE_COLUMNS = {"commercial_status", "responsible_party", "responsible_party_name", "delivery_method",
+                       "shared_rule", "commercial_reason", "commercial_decided_by", "commercial_decided_at",
+                       "work_element_template_id", "plan_document_id"}
+
+
 def test_the_migration_adds_exactly_the_guided_tables_and_columns(tmp_path):
     import sqlalchemy as sa
     from alembic import command
@@ -850,7 +855,9 @@ def test_the_migration_adds_exactly_the_guided_tables_and_columns(tmp_path):
     for model in (models.GuidedEstimate, models.GuidedEstimateStage, models.GuidedEstimateEvent,
                   models.CalculatorResultCarry, PC):
         table = model.__tablename__
-        assert {c["name"] for c in inspector.get_columns(table)} == set(model.__table__.columns.keys()), table
+        # Columns added later by the estimate-to-project migration (s6f7a8b9c0d1, 30 Oct 2026) are not this one's.
+        later = LATER_STAGE_COLUMNS if model is models.GuidedEstimateStage else set()
+        assert {c["name"] for c in inspector.get_columns(table)} == set(model.__table__.columns.keys()) - later, table
     with engine.connect() as conn:
         row_after = conn.execute(sa.text("SELECT * FROM project_calculations")).fetchall()
     assert tuple(row_after[0])[:len(row_before[0])] == tuple(row_before[0])

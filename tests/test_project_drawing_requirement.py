@@ -426,7 +426,9 @@ def test_existing_projects_upgrade_to_unknown_and_plans_remain(tmp_path):
             },
         )
         db.session.commit()
-        upgrade()
+        # Up to the revision before project numbering (r5e6f7a8b9c0 numbers existing projects and then refuses a
+        # downgrade while a number is held); this test is about the drawing-requirement round trip.
+        upgrade(revision="a4d5e6f7a8b9")
         requirement = db.session.execute(
             text("SELECT drawing_requirement, name FROM projects")
         ).one()

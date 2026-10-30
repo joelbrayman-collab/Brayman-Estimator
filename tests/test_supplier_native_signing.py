@@ -13,6 +13,7 @@ from io import BytesIO
 from pypdf import PdfReader
 
 from tests.procurement_support import allow_early_order
+from tests.schedule_support import send_schedule_drafts
 from app import db
 from app.models.signing import (
     AUTHORITY_PRODUCTION,
@@ -87,6 +88,7 @@ def test_place_order_needs_the_contractors_signature_and_freezes_the_purchase_or
     store = _supplier_client(app)
     store.post(f"/supplier/{tomlinson.supplier_id}/requests/{share.id}/quote", data={"price_per_m3": "210", "valid_until": delivery})
     client.post(f"/projects/{project.id}/supplier-requests/{share.id}/approve-quote")
+    allow_early_order(share)  # Gate 3 (30 Oct 2026): no customer acceptance in this test
     page = client.get(f"/projects/{project.id}/supplier-requests")
     assert b"Sign &amp; Send for E-Signature" in page.data and b'name="signer_name"' in page.data and b'name="sign_consent"' in page.data
 
@@ -245,6 +247,9 @@ def test_a_change_proposed_by_a_schedule_move_is_recorded_and_signed_when_accept
     order.schedule_item_id = item.id
     db.session.commit()
     shift_project_schedule(project.id, days=2, organization_id=project.organization_id)
+    # Decision 4 (30 Oct 2026): the move drafts the change; a person with the authority sends it.
+    assert SupplierDeliveryChange.query.filter_by(status="PENDING").count() == 0
+    send_schedule_drafts(project.id)
     change = SupplierDeliveryChange.query.filter_by(status="PENDING").one()
     request = SS.change_signing(change)
     assert request.status == "SENT" and all(p.signed_at is None for p in request.participants)

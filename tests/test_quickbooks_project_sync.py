@@ -95,13 +95,16 @@ def test_a_new_project_makes_the_customer_the_project_and_the_job_code_once(env)
     sub = fake.entities["Customer"][link.qbo_project_id]
     parent = fake.entities["Customer"][link.qbo_customer_id]
     assert parent["DisplayName"] == "Morgan Ellis (synthetic)" and sub["Job"] is True
-    assert sub["ParentRef"] == {"value": parent["Id"]} and sub["DisplayName"] == project.name
+    # Named like the job reference "<project number> <project name>" (the design above); since 30 Oct 2026 a new
+    # project receives its Brayman project number when it is created.
+    assert project.project_number and project.project_number.startswith("BC-")
+    assert sub["ParentRef"] == {"value": parent["Id"]} and sub["DisplayName"] == f"{project.project_number} {project.name}"
     assert link.qbo_project_sync_token == sub["SyncToken"] and link.qbo_customer_sync_token == parent["SyncToken"]
     creates = [c for c in fake.calls if c[0] == "POST" and c[1] == "customer"]
     assert len(creates) == 2 and all(c[2]["requestid"].startswith(("CT-CUST-", "CT-PROJ-")) for c in creates)
     assert all(len(c[2]["requestid"]) <= 50 for c in creates)
     jobcode = qbt.jobcodes[int(link.qbt_jobcode_id)]
-    assert jobcode["name"] == project.name and jobcode["active"] is True
+    assert jobcode["name"] == f"{project.project_number} {project.name}" and jobcode["active"] is True
     from app.models.payroll_time import QuickBooksTimeJobcodeLink
 
     assert QuickBooksTimeJobcodeLink.query.filter_by(project_id=project.id).one().qbt_jobcode_id == link.qbt_jobcode_id

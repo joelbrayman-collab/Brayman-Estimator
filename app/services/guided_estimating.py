@@ -555,7 +555,10 @@ def ensure_estimate(guided, *, actor, user_id=None) -> Estimate:
 
         existing = Estimate.query.filter_by(project_id=guided.project_id,
                                             organization_id=guided.organization_id).all()
-        if len(existing) == 1:
+        # Only an estimate made after the scope was confirmed is adopted; an estimate that already existed when the
+        # guided scope started stays untouched and the guided scope gets its own.
+        if len(existing) == 1 and guided.created_at is not None and existing[0].created_at is not None \
+                and existing[0].created_at >= guided.created_at:
             adopted = existing[0]
             guided.estimate_id = adopted.id
             db.session.flush()

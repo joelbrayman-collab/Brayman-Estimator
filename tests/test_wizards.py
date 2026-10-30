@@ -280,7 +280,7 @@ def test_the_migration_adds_exactly_the_two_wizard_tables_and_the_project_lead_c
     cfg.set_main_option("script_location", str(root / "migrations"))
     cfg.set_main_option("sqlalchemy.url", uri)
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == ["a4d5e6f7a8b9"]
+    assert script.get_heads() == ["r5e6f7a8b9c0"]
     assert script.get_revision("w2z9r4d7k1m6").down_revision == "g5e7c2a9d1b4"
     command.upgrade(cfg, "g5e7c2a9d1b4")
     engine = sa.create_engine(uri)

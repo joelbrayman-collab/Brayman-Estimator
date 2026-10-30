@@ -8,10 +8,24 @@
     <div>
         <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>Labour cost rates</h1>
-        <p>Currency per hour. Separate from production rate. A $65 rate is this organization's policy, not a platform default.</p>
+        <p>Currency per hour. Separate from production rate. Each rate here is this company's own policy, not a platform default. The newest approved version prices new work; earlier versions stay for history.</p>
     </div>
     <a class="button-link" href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }} home</a>
 </div>
+
+<section class="form-panel" id="company-labour-rate" data-company-labour-rate style="margin-bottom: 20px;">
+    <h2>Company labour rate</h2>
+    <p>What one hour of your crew's labour costs an estimate. New estimates start with it; each estimate can use its own (Project pricing). Changing it never reprices an existing estimate.</p>
+    <p>Current: <strong data-current-company-rate>{% if company_rate is not none %}${{ "%.2f"|format(company_rate) }} / hr{% else %}none approved{% endif %}</strong></p>
+    <form method="post" action="{{ url_for('labour_engine.set_company_rate') }}" class="pricing-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>New rate ($ per hour)<input name="rate" inputmode="decimal" required data-company-rate-input></label>
+            <label>Reason<input name="reason" required maxlength="300" placeholder="e.g. 2027 wage increase" data-company-rate-reason></label>
+        </div>
+        <button type="submit" data-save-company-rate>Approve as the company labour rate</button>
+    </form>
+</section>
 
 {% if cost_rates %}
 <table class="data-table">

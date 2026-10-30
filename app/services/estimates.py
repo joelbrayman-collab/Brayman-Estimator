@@ -110,6 +110,9 @@ def create_estimate(
         is_locked=False,
     )
     estimate.versions.append(version)
+    from app.services.estimate_economics import capture_defaults
+
+    capture_defaults(version, project.organization_id)  # company labour rate and margin become the project's
 
     db.session.add(estimate)
     db.session.flush()
@@ -161,6 +164,9 @@ def clone_current_version(
         total=Decimal(current.total or 0),
         is_locked=False,
     )
+    from app.services.estimate_economics import capture_defaults
+
+    capture_defaults(new_version, estimate.organization_id, from_version=current)  # a revision keeps the project's values
 
     db.session.add(new_version)
     db.session.flush()

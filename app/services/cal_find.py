@@ -171,7 +171,7 @@ def _contains_all(haystack: str, words) -> bool:
 
 
 def _project_haystack(project) -> str:
-    parts = [project.name or "", project.project_number or "", project.address or ""]
+    parts = [project.name or "", project.project_number or "", project.client_project_number or "", project.address or ""]
     client = getattr(project, "client", None)
     if client is not None:
         parts.append(client.name or "")
@@ -386,6 +386,7 @@ def match_references(org_id: str, refs) -> list:
     """Exact record numbers: estimate, proposal, contract, supplier request, purchase order, project."""
     from sqlalchemy import func
 
+    from app import db
     from app.models import Estimate, Project, Proposal
     from app.models.project_contract import GeneratedProjectContract
     from app.models.supplier_portal import ConcreteRequest, SupplierPurchaseOrder, SupplierRequestShare
@@ -394,8 +395,10 @@ def match_references(org_id: str, refs) -> list:
     for ref in refs:
         from app.services.time_entry import customer_projects_only
 
-        for p in customer_projects_only(Project.query.filter(Project.organization_id == org_id,
-                                                             func.lower(Project.project_number) == ref)).all():
+        for p in customer_projects_only(Project.query.filter(
+                Project.organization_id == org_id,
+                db.or_(func.lower(Project.project_number) == ref,
+                       func.lower(Project.client_project_number) == ref))).all():
             items.append(project_item(p))
         for e in Estimate.query.filter(Estimate.organization_id == org_id, func.lower(Estimate.estimate_number) == ref).all():
             items.append(Item(f"{e.estimate_number} — {e.title}", url_for("estimates.view_estimate", id=e.id),

@@ -58,7 +58,7 @@ from tests.scope_delivery_support import ensure_confirmed_scope_routing
 ACTOR = "Joel Brayman"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "a4d5e6f7a8b9"  # supplier native signing (FG-041, reconciled 28 Oct 2026) follows customer structured address (q4c7l2n8t3a6)
+GRAPH_HEAD = "r5e6f7a8b9c0"  # estimate labour rate and margin (30 Oct 2026) follows supplier native signing (a4d5e6f7a8b9)
 PRIOR = "r8e9f0a1b2c3"
 
 

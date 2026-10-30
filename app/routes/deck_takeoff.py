@@ -44,6 +44,12 @@ deck_takeoff_bp = Blueprint("deck_takeoff", __name__, url_prefix="/projects")
 MAX_UPLOAD = 15 * 1024 * 1024
 
 
+def _supplier_project_label(project):
+    from app.services.supplier_pricing_request_form import project_label
+
+    return project_label(project)
+
+
 def _project(project_id: int):
     org_id = get_current_organization_id()
     project = Project.query.filter_by(id=project_id, organization_id=org_id).first_or_404()
@@ -118,7 +124,7 @@ def _issued_request(project, org_id, state, account):
         takeoff=state["takeoff"],
         project_id=project.id,
         organization_id=org_id,
-        project_name=project.name,
+        project_name=_supplier_project_label(project),
         project_address=project.address or "",
         supplier_name=account.supplier.legal_name,
         contractor_supplier_account_id=account.id,

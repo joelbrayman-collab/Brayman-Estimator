@@ -38,7 +38,7 @@
     </table>
     </div>
     <h2>Project labour rate (optional)</h2>
-    <p class="muted-copy">Only when this project has an authorized rate different from the company rate. A reason is required.</p>
+    <p class="muted-copy">Changes the labour rate for this whole estimate (the same as Project pricing on the estimate): every labour line follows it. A rate different from the company rate needs a reason.</p>
     <label for="override_rate">Project rate per hour</label>
     <input id="override_rate" name="override_rate" inputmode="decimal" value="{{ form.get('override_rate', '') }}">
     <label for="override_reason">Reason for the project rate</label>

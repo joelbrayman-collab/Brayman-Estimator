@@ -262,6 +262,12 @@ def _register_office_auth(app: Flask) -> None:
     app.add_template_global(supplier_status, "calisign_supplier_status")
     app.add_template_global(company_name, "calisign_company")
 
+    # Project identity (30 Oct 2026): Brayman Project # / Client Project # from the project record, for documents.
+    from app.services.project_identity import reference_line, reference_pairs
+
+    app.add_template_global(reference_line, "project_reference_line")
+    app.add_template_global(reference_pairs, "project_reference_pairs")
+
     @app.context_processor
     def _session_timeout_settings():
         return {"session_timeout": page_settings()}

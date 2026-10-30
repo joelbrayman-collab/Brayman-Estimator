@@ -67,7 +67,7 @@ def _client(app, who):
 
 def _setup():
     """Ben (owner, office), Kevin (field-only, scheduled on the job today), the job's estimate and rate."""
-    ensure_org_001_direct_labour_cost_rate_standard()  # ORG-001's authorized $65/h (the migration seeds it live)
+    ensure_org_001_direct_labour_cost_rate_standard()  # ORG-001 v1 $65/h as seeded (this test's synthetic history)
     ben = ensure_office_user(email=BEN[0], password=BEN[1], display_name=BEN[2])
     set_instance_owner(ORG, UserMembership.query.filter_by(user_id=ben.id, organization_id=ORG).one().id, ben.id)
     kevin = ensure_office_user(email=KEVIN[0], password=KEVIN[1], display_name=KEVIN[2])

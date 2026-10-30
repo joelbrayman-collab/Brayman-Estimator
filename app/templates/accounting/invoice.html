@@ -4,7 +4,7 @@
 {% block content %}
 {% include "accounting/_style.html" %}
 <section class="page-header"><div><h2 class="page-title">Invoice {{ invoice.number }}</h2>
-  <p class="page-purpose">{{ invoice.kind_label }} · {{ invoice.client.name }} · Job: {{ job }}</p></div>
+  <p class="page-purpose">{{ invoice.kind_label }} · {{ invoice.client.name }} · Job: {{ job }}{% if invoice.project and invoice.project.client_project_number %} · Client Project # {{ invoice.project.client_project_number }}{% endif %}</p></div>
   <a class="button button-secondary" href="{{ url_for('accounting.index') }}">Accounting</a></section>
 <div class="form-panel" data-invoice-detail>
   <p>{{ invoice.description }}</p>

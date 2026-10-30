@@ -28,6 +28,7 @@ from app.services.commercial_context import (
     update_commercial_context,
 )
 from app.services.auth import current_actor_display_name, form_actor
+from app.services.project_identity import ProjectIdentityError
 from app.services.instance_authority import require_instance_owner_or_system_administrator
 from app.services.construction_model_entry import current_revision_for_project
 from app.services.organizations import get_current_organization_id
@@ -105,9 +106,18 @@ def list_projects():
     else:
         current_count = len(projects)
         closed_count = len(list_closed_projects(org_id))
+    query = " ".join((request.args.get("q") or "").split())[:120]
+    if query:
+        # Find a project by Brayman Project #, Client Project #, name, client or address (Joel, 30 Oct 2026):
+        # every word must appear; "0002" finds BC-2026-0002.
+        from app.services.cal_find import _project_haystack
+
+        words = query.lower().split()
+        projects = [p for p in projects if all(w in _project_haystack(p) for w in words)]
     return render_template(
         "projects/list.html",
         projects=projects,
+        search_query=query,
         list_view=view,
         current_count=current_count,
         closed_count=closed_count,
@@ -264,6 +274,34 @@ def _hub_contracts(project_id: int, organization_id: str) -> list[dict]:
     return contracts
 
 
+@projects_bp.route("/<int:id>/client-project-number", methods=["POST"])
+def update_client_project_number(id):
+    """Client Project # (Joel, 30 Oct 2026): office users set or correct the client's own job number; recorded."""
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    from app.services.project_identity import set_client_project_number
+
+    try:
+        done = set_client_project_number(project, request.form.get("client_project_number", ""),
+                                         actor=current_actor_display_name(), user_id=getattr(current_user, "id", None),
+                                         reason=request.form.get("reason", ""))
+        db.session.commit()
+    except ProjectIdentityError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+        return redirect(url_for("projects.view_project", id=project.id))
+    if not done["changed"]:
+        flash("Client Project # unchanged.", "success")
+    else:
+        flash(f"Client Project # {'saved: ' + project.client_project_number if project.client_project_number else 'cleared'}.",
+              "success")
+        if done["duplicates"]:
+            flash("Note: this client already has a project with the same Client Project # "
+                  f"({', '.join(p.project_number or p.name for p in done['duplicates'])}). Check it is not the same job.",
+                  "warning")
+    return redirect(url_for("projects.view_project", id=project.id))
+
+
 @projects_bp.route("/<int:id>/print.pdf")
 def print_project(id):
     org_id = get_current_organization_id()
@@ -278,6 +316,7 @@ def print_project(id):
                 [
                     project.name,
                     project.project_number or "No project number",
+                    *([f"Client Project # {project.client_project_number}"] if project.client_project_number else []),
                     project.client.name,
                 ],
             )
@@ -490,7 +529,6 @@ def create_project():
             project = Project(
                 organization_id=org_id,
                 name=name,
-                project_number=request.form.get("project_number", "").strip() or None,
                 address=request.form.get("address", "").strip(),
                 status=request.form.get("status", "Lead"),
                 description=request.form.get("description", "").strip(),
@@ -498,6 +536,12 @@ def create_project():
             )
             db.session.add(project)
             db.session.flush()
+            from app.services.project_identity import set_client_project_number
+
+            identity = set_client_project_number(project, request.form.get("client_project_number", ""),
+                                                 actor=form_actor("created_by") or current_actor_display_name(),
+                                                 user_id=getattr(current_user, "id", None),
+                                                 reason="Entered when the project was created")
             if request.form.get("project_lead_user_id"):
                 set_project_lead(organization_id=org_id, project_id=project.id,
                                  user_id=request.form.get("project_lead_user_id"), commit=False)
@@ -534,7 +578,11 @@ def create_project():
             from app.services.accounting_project_sync import project_changed
 
             project_changed(project, actor=current_user)  # QuickBooks customer, project and job code (when switched on)
-            flash("Project created successfully with commercial decision context.", "success")
+            flash(f"Project {project.project_number} created successfully with commercial decision context.", "success")
+            if identity["duplicates"]:
+                flash("Note: this client already has a project with Client Project # "
+                      f"{project.client_project_number} ({', '.join(p.project_number or p.name for p in identity['duplicates'])}). "
+                      "Check it is not the same job.", "warning")
             if wizard_run is not None:
                 from app.wizards.new_project import start_estimate_after_create
 
@@ -553,7 +601,7 @@ def create_project():
                 return follow_on
             return redirect(url_for("projects.project_setup", id=project.id))
 
-        except (CommercialContextValidationError, PermitFoundationError, ProjectLeadError) as e:
+        except (CommercialContextValidationError, PermitFoundationError, ProjectLeadError, ProjectIdentityError) as e:
             db.session.rollback()
             flash(str(e), "error")
             return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)

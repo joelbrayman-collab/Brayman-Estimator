@@ -24,7 +24,8 @@
     <p class="np-hint">The project is set up. Everything is on the project's own pages.</p>
     <dl class="np-review" data-created-summary>
       <div><dt>Project name</dt><dd>{{ project.name }}</dd></div>
-      <div><dt>Project #</dt><dd>{{ project.project_number or '—' }}</dd></div>
+      <div><dt>Brayman Project #</dt><dd data-brayman-project-number>{{ project.project_number or '—' }}</dd></div>
+      {% if project.client_project_number %}<div><dt>Client Project #</dt><dd data-client-project-number>{{ project.client_project_number }}</dd></div>{% endif %}
       <div><dt>Customer</dt><dd>{{ project.client.name if project.client else '—' }}</dd></div>
       <div><dt>Status</dt><dd>{{ project.status }}</dd></div>
       <div><dt>Your role</dt><dd>{{ guided.contractor_role_label if guided else 'Not chosen yet' }}</dd></div>

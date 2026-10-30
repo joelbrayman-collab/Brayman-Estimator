@@ -50,7 +50,9 @@ from app.models.project import (
     PermitProfile,
     Project,
     ProjectCommercialContext,
+    ProjectIdentityEvent,
     ProjectLocation,
+    ProjectNumberSequence,
     ProjectOperatingStateEvent,
 )
 from app.models.punch_list import ProjectPunchListItem, ProjectPunchListItemEvent
@@ -396,6 +398,8 @@ __all__ = [
     "ProjectCommercialContext",
     "ProjectLocation",
     "ProjectOperatingStateEvent",
+    "ProjectIdentityEvent",
+    "ProjectNumberSequence",
     "ProjectFinalWalkthroughAccessAttempt",
     "ProjectFinalWalkthroughInvitation",
     "ProjectFinalWalkthroughItem",

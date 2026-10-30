@@ -27,7 +27,7 @@ CUSTOMER = "Compact customer (synthetic)"
 # The inventory taken before the change (27 Oct 2026 seven-task wizard): every field the wizard posted, by the step
 # that now holds it. Test 3 proves each one is still on the page of its new step.
 INVENTORY = {
-    "project_type": ["name", "project_number", "guided_project_type", "description", "project_type", "status"],
+    "project_type": ["name", "client_project_number", "guided_project_type", "description", "project_type", "status"],
     "customer": ["customer_mode", "client_id", "new_customer_name", "new_customer_company", "new_customer_email",
                  "new_customer_phone", "new_customer_street_address", "new_customer_unit", "new_customer_city",
                  "new_customer_province_state", "new_customer_postal_code", "new_customer_country"],
@@ -119,7 +119,8 @@ def test_05_optional_fields_stay_optional(env):
     created = _create(d, run_id, street="", municipality="", province_state="", postal_zip="", country="Canada")
     assert created.headers["Location"].endswith(f"/wizards/run/{run_id}/step/documents")
     project = Project.query.filter_by(name=JOB).one()
-    assert project.project_number is None and project.project_lead_user_id is None
+    assert re.fullmatch(r"BC-\d{4}-\d{4}", project.project_number) and project.client_project_number is None
+    assert project.project_lead_user_id is None  # Brayman Project # assigned automatically (30 Oct 2026)
     _post(d, run_id, "documents")  # no plans: Save & Continue still goes on
     assert _run(run_id).current_step == "review"
 
@@ -146,7 +147,7 @@ def test_07_a_new_customer_is_created_once_in_place(env):
 def test_08_09_10_back_and_continue_keep_customer_project_and_details(env):
     _app, d, _ben = env
     run_id = _start(d, "NEW_PROJECT")
-    _through_customer(d, run_id, project_number="CNP-1", description="Rear deck (synthetic)")
+    _through_customer(d, run_id, client_project_number="CNP-1", description="Rear deck (synthetic)")
     _post(d, run_id, "location", action="save", street="5 Compact Rd", municipality="Kemptville",
           province_state="Ontario", postal_zip="K0G 1J0", country="Canada", contractor_role="GENERAL_CONTRACTOR",
           permit_context_class="Other/unspecified", **dict(COMMERCIAL_DEFAULTS, pricing_posture="Premium"))
@@ -169,7 +170,7 @@ def test_11_project_settings_reach_the_project_unchanged(env):
     _through_customer(d, run_id)
     settings = dict(COMMERCIAL_DEFAULTS, pricing_posture="Premium", execution_risk="Low", estimate_stage="Tender",
                     justification_reason="Owner asked for premium finishes (synthetic)")
-    fields = {k: v for k, v in _draft(run_id).items() if k in ("client_id", "name", "project_number", "description",
+    fields = {k: v for k, v in _draft(run_id).items() if k in ("client_id", "name", "client_project_number", "description",
                                                               "project_type", "status")}
     fields.update(settings, permit_context_class="Other/unspecified", wizard_run=str(run_id), plan_start="later",
                   street="5 Compact Rd", municipality="Kemptville", province_state="Ontario", postal_zip="",
@@ -214,7 +215,7 @@ def test_12_13_14_plans_upload_and_survive_navigation(env):
 # ------------------------------------------------------------------------------------------ 15–20 review and create
 def _ready_for_review(d):
     run_id = _start(d, "NEW_PROJECT")
-    _through_customer(d, run_id, project_number="CNP-2", description="Rear deck (synthetic)")
+    _through_customer(d, run_id, client_project_number="CNP-2", description="Rear deck (synthetic)")
     _create(d, run_id, street="5 Compact Rd", municipality="Kemptville", province_state="Ontario",
             postal_zip="K0G 1J0", country="Canada")
     _post(d, run_id, "documents", drawings_choice="none")
@@ -255,7 +256,8 @@ def test_18_19_20_one_project_with_what_was_entered_and_open_project(env):
     assert WizardRunEvent.query.filter_by(run_id=run_id, event="CONFIRMED").count() == 1
     project = Project.query.filter_by(name=JOB).one()
     db.session.refresh(project)
-    assert project.project_number == "CNP-2" and project.description == "Rear deck (synthetic)"
+    assert project.client_project_number == "CNP-2" and re.fullmatch(r"BC-\d{4}-\d{4}", project.project_number)
+    assert project.description == "Rear deck (synthetic)"
     assert project.client.name == CUSTOMER and project.status == "Lead"
     assert project.location.street == "5 Compact Rd" and project.location.postal_zip == "K0G 1J0"
     from app.services import guided_estimating as G

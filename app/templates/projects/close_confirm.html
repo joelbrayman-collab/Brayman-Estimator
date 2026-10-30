@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="lifecycle-confirm form-panel">
-    <p class="eyebrow">{{ project.name }}</p>
+    <p class="eyebrow">{% if project.project_number %}{{ project.project_number }} — {% endif %}{{ project.name }}</p>
     <h1>{{ contractor_copy.PROJECT_CLOSE_CONFIRM_TITLE }}</h1>
     <p class="lede">{{ contractor_copy.PROJECT_CLOSE_CONFIRM_LEDE }}</p>
     {% if open_punch_count %}

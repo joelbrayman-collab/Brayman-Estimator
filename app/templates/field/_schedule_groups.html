@@ -2,6 +2,7 @@
 {% for group in groups %}
 <section class="field-schedule-group">
     <p class="field-project-name" title="{{ group.project_name }}">{{ group.project_label }}</p>
+    {% if group.project_number %}<p class="field-muted" data-brayman-project-number>{{ group.project_number }}</p>{% endif %}
     {% if group.address %}
     <p class="field-project-address">
         {% if group.directions_url %}

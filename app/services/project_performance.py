@@ -489,34 +489,51 @@ class _RateBook:
         self._by_date = {}
 
     def on(self, day: date):
-        from datetime import datetime, time
-
-        from app.services.labour_engine import _active_org_approved_dlcrs
-
         if day not in self._by_date:
-            row = _active_org_approved_dlcrs(self.organization_id, datetime.combine(day, time.max))
+            row = self._in_force(day)
             if row is None:
                 row = self._first_rate_after(day)
             self._by_date[day] = row
         return self._by_date[day]
 
-    def _first_rate_after(self, day: date):
-        """Work done before the company's first authorized rate took effect is costed at that first rate."""
-        from datetime import datetime, time
+    def _authorized(self):
+        """Every ORG-APPROVED rate the company has authorized, including ones a later rate has superseded.
 
+        Approving a new rate marks the earlier one SUPERSEDED; it is still the rate that was in force for the days
+        before the new one took effect (Joel, 30 Oct 2026: $65 to $75 governs new work, history keeps $65).
+        """
         from app.models.labour_engine import DirectLabourCostRateStandard
 
-        start = datetime.combine(day, time.max)
-        rows = (
-            DirectLabourCostRateStandard.query.filter_by(
-                organization_id=self.organization_id,
-                approval_status="APPROVED",
-                evidence_class="ORG-APPROVED",
+        return (
+            DirectLabourCostRateStandard.query.filter(
+                DirectLabourCostRateStandard.organization_id == self.organization_id,
+                DirectLabourCostRateStandard.evidence_class == "ORG-APPROVED",
+                DirectLabourCostRateStandard.approval_status.in_(("APPROVED", "SUPERSEDED")),
             )
             .order_by(DirectLabourCostRateStandard.effective_from.asc(), DirectLabourCostRateStandard.version_number.asc())
             .all()
         )
-        for row in rows:
+
+    def _in_force(self, day: date):
+        """The latest authorized rate that had taken effect by the end of the day (and had not ended before it)."""
+        from datetime import datetime, time
+
+        end, start = datetime.combine(day, time.max), datetime.combine(day, time.min)
+        found = None
+        for row in self._authorized():
+            if row.effective_from is not None and row.effective_from > end:
+                continue
+            if row.effective_to is not None and row.effective_to < start:
+                continue
+            found = row
+        return found
+
+    def _first_rate_after(self, day: date):
+        """Work done before the company's first authorized rate took effect is costed at that first rate."""
+        from datetime import datetime, time
+
+        start = datetime.combine(day, time.max)
+        for row in self._authorized():
             if row.effective_from is not None and row.effective_from > start:
                 return row
         return None
@@ -618,10 +635,11 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
         snapshot = activity.source_labour_snapshot
         if snapshot is not None and snapshot.resolved_direct_labour_cost_rate is not None:
             rate = Decimal(str(snapshot.resolved_direct_labour_cost_rate))
-        elif current_rate is not None:
-            rate = Decimal(str(current_rate.rate_per_man_hour))
         else:
-            rate = None
+            # No frozen labour snapshot: the rate in force when the work was estimated, not today's rate.
+            estimated_on = activity.created_at.date() if activity.created_at is not None else as_of
+            in_force = rates.on(estimated_on)
+            rate = Decimal(str(in_force.rate_per_man_hour)) if in_force is not None else None
         if rate is None:
             row["estimated_cost_known"] = False
         else:

@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "u1b2c3d4e5f6"
 NEXT = "v2c3d4e5f6a7"
-HEAD = "a4d5e6f7a8b9"  # supplier native signing (FG-041, reconciled 28 Oct 2026) follows customer structured address (q4c7l2n8t3a6)
+HEAD = "r5e6f7a8b9c0"  # estimate labour rate and margin (30 Oct 2026) follows supplier native signing (a4d5e6f7a8b9)
 PRIOR = "t0a1b2c3d4e5"
 WATCHED = (
     "canonical_materials",

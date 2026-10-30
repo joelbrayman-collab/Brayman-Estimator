@@ -39,11 +39,13 @@ def hours(id, version_id):
             flash(f"Labour saved at {done['source']}: {done['added']} added, {done['updated']} changed, {done['removed']} removed. "
                   "Approve the costing again before pricing.", "success")
             return redirect(url_for("estimate_labour.hours", id=estimate.id, version_id=version.id))
-    try:
-        _result, source = labour.resolve_rate(org_id)
-        rate_error = None
-    except labour.LabourHoursError as exc:
-        source, rate_error = None, str(exc)
+    from app.services.estimate_economics import project_values, rate_source
+
+    if project_values(version, org_id)["labour_rate"] is not None:  # the project labour rate (30 Oct 2026)
+        source, rate_error = rate_source(version, org_id), None
+    else:
+        source, rate_error = None, ("No saved company labour rate is approved. Set it under How we price → labour, "
+                                    "or enter a project rate with a reason.")
     return render_template("estimates/labour_hours.html", estimate=estimate, version=version,
                            rows=labour.rows(version), rate_source=source, rate_error=rate_error,
                            form=request.form if request.method == "POST" else {})

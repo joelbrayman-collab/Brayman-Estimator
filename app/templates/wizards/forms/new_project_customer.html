@@ -6,6 +6,6 @@
     </select>
   </label>
   <label>Project name *<input type="text" name="name" maxlength="180" value="{{ f['values'].get('name', '') }}" data-field="name"></label>
-  <label>Project number<input type="text" name="project_number" maxlength="50" value="{{ f['values'].get('project_number', '') }}"></label>
+  <label>Client Project #<input type="text" name="client_project_number" maxlength="80" value="{{ f['values'].get('client_project_number', '') }}"></label>
   <label class="wz-wide">Short description<textarea name="description" rows="2">{{ f['values'].get('description', '') }}</textarea></label>
 </div>

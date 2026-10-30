@@ -192,6 +192,12 @@ def _delivery_town(project: Project) -> str:
 
 
 def _project_reference(project: Project) -> str:
+    # The Brayman Project # (Joel, 30 Oct 2026): the store's documents trace back to the Brayman job without the job
+    # name or customer (Supplier Hub rule). Older records with no number keep the old reference.
+    from app.services.project_identity import is_numbered_customer_project
+
+    if is_numbered_customer_project(project):
+        return f"Brayman Project # {project.project_number}"
     return f"Brayman project {project.id}"
 
 

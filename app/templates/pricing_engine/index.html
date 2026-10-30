@@ -15,6 +15,27 @@
 
 {{ contextual_help(help_content.office_topic("how_we_price")) }}
 
+<section class="form-panel" id="company-defaults" data-company-defaults style="margin-bottom: 20px;">
+    <h2>Company defaults for new estimates</h2>
+    <p>Each new estimate starts with these two values; the estimator can change either one for a project (Project pricing on the estimate). Changing a default never reprices an existing estimate.</p>
+    <dl class="pp-defaults">
+        <dt>Labour rate</dt>
+        <dd data-default-labour-rate>{% if company_defaults.labour_rate is not none %}${{ "%.2f"|format(company_defaults.labour_rate) }} / hr{% else %}none approved{% endif %} · <a href="{{ url_for('labour_engine.list_cost_rates') }}#company-labour-rate">change</a></dd>
+        <dt>Target gross margin</dt>
+        <dd data-default-margin>{% if company_defaults.target_gross_margin is not none %}{{ "%.2f"|format(company_defaults.target_gross_margin * 100) }}%{% else %}none approved{% endif %}</dd>
+    </dl>
+    {% if company_defaults.target_gross_margin is not none %}
+    <form method="post" action="{{ url_for('pricing_engine.set_default_margin') }}" class="pricing-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>New default target gross margin (%)<input name="margin_percent" inputmode="decimal" required data-default-margin-input></label>
+            <label>Reason<input name="reason" required maxlength="300" data-default-margin-reason></label>
+        </div>
+        <button type="submit" data-save-default-margin>Approve as the company default</button>
+    </form>
+    {% endif %}
+</section>
+
 {% if policies %}
 <div class="projects-workspace">
     {% for policy in policies %}

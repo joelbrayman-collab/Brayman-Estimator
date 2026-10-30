@@ -33,7 +33,14 @@ from app.services.organizations import (
     get_current_organization_id,
 )
 
+# ORG-001 v1 (25 Aug 2026), the rate the FG-008 migration seeded. HISTORICAL: it is no longer Brayman's current rate.
+# It stays only so a database migrated from scratch reproduces v1. New work is priced at the company's active
+# approved standard, never from this constant. v2 ($75) is approved by a person on Labour rates in the office
+# (Production) and by the Training build for the training company.
 ORG_001_DIRECT_LABOUR_COST_RATE = Decimal("65.00")
+# Brayman's current direct labour cost rate (Joel, 27 and 30 Oct 2026: "$75 per hour ... permanent"). Governed as an
+# ORG-APPROVED standard version through promote_direct_labour_cost_rate, which supersedes v1 for new work only.
+ORG_001_CURRENT_DIRECT_LABOUR_COST_RATE = Decimal("75.00")
 ORG_001_DLCR_CURRENCY = "CAD"
 ORG_001_DLCR_PROVENANCE = (
     "ORG-001 organization policy from docs/pricing-policy.md: "
@@ -123,7 +130,7 @@ def _unknown_organization_resolution(
     if kind == "DIRECT_LABOUR_COST_RATE":
         reason = (
             "Organization not found; fail-closed. No standard resolved. "
-            "ORG-001 $65 is not a platform default."
+            "ORG-001's rate is not a platform default."
         )
     else:
         reason = (
@@ -1112,6 +1119,46 @@ def transition_calibration_candidate(
     return candidate
 
 
+def promote_direct_labour_cost_rate(
+    rate,
+    *,
+    approved_by: str,
+    reason: str,
+    currency: str = "CAD",
+    organization_id: Optional[str] = None,
+) -> DirectLabourCostRateStandard:
+    """Make ``rate`` the company's current direct labour cost rate through the governed candidate path.
+
+    DRAFT -> PROPOSED -> IN_REVIEW -> APPROVED by a named human; approval creates the next ORG-APPROVED version
+    (effective now) and supersedes the earlier one. Estimates already priced keep the rate on their own lines;
+    costing by date keeps the earlier rate for the days before. Running it again with the same rate changes
+    nothing and returns the standard already in force.
+    """
+    org_id = _org_id(organization_id)
+    human = _require_human_actor(approved_by)
+    value = _as_decimal(rate)
+    if value is None or value <= 0:
+        raise LabourEngineError("Direct labour cost rate must be a positive number.")
+    if not (reason or "").strip():
+        raise LabourEngineError("A reason is required to change the company labour rate.")
+    current = _active_org_approved_dlcrs(org_id, None)
+    if current is not None and Decimal(str(current.rate_per_man_hour)) == value and current.currency == currency:
+        return current
+    candidate = create_calibration_candidate(
+        standard_kind="DIRECT_LABOUR_COST_RATE",
+        proposed_direct_labour_cost_rate=value,
+        proposed_currency=currency,
+        evidence_class="CURRENT",
+        analysis_summary=reason.strip(),
+        created_by=human,
+        organization_id=org_id,
+    )
+    for state in ("PROPOSED", "IN_REVIEW", "APPROVED"):
+        transition_calibration_candidate(candidate.id, state, actor=human, review_notes=reason.strip(),
+                                         organization_id=org_id)
+    return DirectLabourCostRateStandard.query.get(candidate.promoted_direct_labour_rate_id)
+
+
 def _supersede_prior_approved_prs(new_standard: ProductionRateStandard, actor: str) -> None:
     priors = ProductionRateStandard.query.filter(
         ProductionRateStandard.organization_id == new_standard.organization_id,
@@ -1719,7 +1766,7 @@ def resolve_direct_labour_cost_rate(
                         effective_from=as_of,
                         reason_selected=(
                             "No organization direct labour cost rate matched; "
-                            "manual entry required. ORG-001 $65 is not a platform default."
+                            "manual entry required. ORG-001's rate is not a platform default."
                         ),
                         override_reason=None,
                         requires_review=True,

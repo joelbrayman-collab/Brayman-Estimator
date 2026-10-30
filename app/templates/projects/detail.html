@@ -9,7 +9,18 @@
     {# Office tidy (Joel, 24 Oct 2026): no "Project Hub" label over the name; number, client and current/closed on one line. #}
     <div class="hub-heading-identity">
         <h1>{{ project.name }}</h1>
-        <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
+        <p class="hub-project-numbers" data-project-identity><strong data-brayman-project-number>{{ project.project_number or "No project number" }}</strong>{% if project.client_project_number %} · <span data-client-project-number>Client Project # {{ project.client_project_number }}</span>{% endif %} · {{ project.client.name }}</p>
+        {% if not project_is_closed %}
+        <details class="hub-client-number"><summary>{% if project.client_project_number %}Change Client Project #{% else %}Add Client Project #{% endif %}</summary>
+            <form method="post" action="{{ url_for('projects.update_client_project_number', id=project.id) }}" data-client-number-form>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Client Project # <input name="client_project_number" maxlength="80" value="{{ project.client_project_number or '' }}" data-client-number-input></label>
+                <label>Reason (optional) <input name="reason" maxlength="300"></label>
+                <button type="submit" class="button-quiet">Save</button>
+            </form>
+        </details>
+        <style>.hub-project-numbers{margin:2px 0;color:var(--muted,#4b5563)}.hub-project-numbers strong{color:var(--ink,#1f2328);font-variant-numeric:tabular-nums}.hub-client-number{font-size:.9rem;margin:2px 0}.hub-client-number form{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-top:6px}.hub-client-number input{min-height:40px;padding:6px 8px}</style>
+        {% endif %}
         <p class="hub-operating-identity">{{ operating_identity }}</p>
         {% set _missing = customer_missing(project.client) if project.operating_state != "CLOSED" else [] %}
         {% if _missing %}

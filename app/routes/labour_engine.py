@@ -1,5 +1,6 @@
 """Office routes for Labour Engine Phase B (FG-008)."""
 
+from app import db
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app.models.historical_estimates import HistoricalLabourItem
@@ -339,7 +340,32 @@ def list_cost_rates():
     return render_template(
         "labour_engine/cost_rates_list.html",
         cost_rates=list_direct_labour_cost_rate_standards(),
+        company_rate=_company_rate(),
     )
+
+
+def _company_rate():
+    from app.services.estimate_economics import company_defaults
+
+    return company_defaults(get_current_organization_id())["labour_rate"]
+
+
+@labour_engine_bp.route("/cost-rates/company", methods=["POST"])
+def set_company_rate():
+    """Company default labour rate in one step (Joel, 30 Oct 2026): approved now, new estimates take it."""
+    from app.services.estimate_economics import EstimateEconomicsError, set_company_labour_rate
+
+    try:
+        standard = set_company_labour_rate(request.form.get("rate", ""), actor=_actor(),
+                                           reason=request.form.get("reason", ""),
+                                           organization_id=get_current_organization_id())
+        db.session.commit()
+        flash(f"Company labour rate is now ${standard.rate_per_man_hour:.2f} an hour (version {standard.version_number}). "
+              "New estimates use it; existing estimates keep their own rate.", "success")
+    except EstimateEconomicsError as exc:
+        db.session.rollback()
+        flash(str(exc), "danger")
+    return redirect(url_for("labour_engine.list_cost_rates"))
 
 
 @labour_engine_bp.route("/cost-rates/<int:rate_id>")

@@ -21,6 +21,7 @@
         <div>
             <p class="eyebrow">Project</p>
             <p>{{ project.name }}</p>
+            {% set _ref = project_reference_line(project) %}{% if _ref %}<p class="muted-copy" data-project-reference>{{ _ref }}</p>{% endif %}
         </div>
         <div>
             <p class="eyebrow">Estimate</p>
@@ -48,6 +49,9 @@
         {% endif %}
     </div>
 </section>
+
+{% from "estimates/_project_pricing.html" import project_pricing %}
+{{ project_pricing(project_economics, version, "", false) }}
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Direct Cost reconciliation</h2>

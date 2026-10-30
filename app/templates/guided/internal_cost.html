@@ -6,6 +6,8 @@
 <div class="ge-wrap" data-internal-cost-document>
   <p class="ge-internal-mark" data-internal-marking>{{ doc.marking }}</p>
   <p class="eyebrow">{{ project.name }}{% if project.client %} · {{ project.client.name }}{% endif %}</p>
+  {% if doc.reference %}<p class="ge-muted" data-project-reference>{{ doc.reference }}</p>{% endif %}
+  {% if doc.economics and doc.economics.labour_rate is not none %}<p class="ge-muted" data-project-pricing-line>Labour rate {{ "${:,.2f}".format(doc.economics.labour_rate|float) }} / hr{% if doc.economics.labour_rate_is_override %} (project override){% endif %}{% if doc.economics.margin_percent is not none %} · Target gross margin {{ '%.2f'|format(doc.economics.margin_percent|float) }}%{% if doc.economics.margin_is_override %} (project override){% endif %}{% endif %}{% if doc.economics.selling_price is not none %} · Selling price {{ "${:,.2f}".format(doc.economics.selling_price|float) }} · Customer total {{ "${:,.2f}".format(doc.economics.customer_total|float) }}{% endif %}</p>{% endif %}
   <p class="ge-muted">{{ doc.guided.project_type_label }} · {{ doc.guided.contractor_role_label }}{% if doc.version %} · Estimate {{ doc.guided.estimate.estimate_number }} {{ doc.version.display_label }} ({{ doc.version.status }}){% endif %} · prepared {{ doc.generated_at|local_time("%Y-%m-%d %H:%M") }}</p>
   <p class="{{ 'ge-ok' if doc.costing_approved else 'ge-warn' }}" data-costing-state>{% if doc.costing_approved %}Costing approved (snapshot {{ doc.snapshot.id }}){% else %}DRAFT — the costing is not approved for this version yet; this document updates as stages are confirmed.{% endif %}</p>
   <div class="ge-actions ge-noprint">

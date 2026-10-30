@@ -43,11 +43,32 @@ def _policy_or_404(policy_id):
 def index():
     org_id = get_current_organization_id()
     policies = list_pricing_policies(org_id)
+    from app.services.estimate_economics import company_defaults
+
     return render_template(
         "pricing_engine/index.html",
         organization_id=org_id,
         policies=policies,
+        company_defaults=company_defaults(org_id),
     )
+
+
+@pricing_engine_bp.route("/default-margin", methods=["POST"])
+def set_default_margin():
+    """Company default target gross margin in one step (Joel, 30 Oct 2026): new estimates take it."""
+    from app.services.estimate_economics import EstimateEconomicsError, set_company_default_margin
+
+    try:
+        policy = set_company_default_margin(request.form.get("margin_percent", ""), actor=_actor(),
+                                            reason=request.form.get("reason", ""),
+                                            organization_id=get_current_organization_id())
+        db.session.commit()
+        flash(f"Company default target gross margin is now {policy.target_gross_margin * 100:.2f}%. "
+              "New estimates use it; existing estimates keep their own margin.", "success")
+    except EstimateEconomicsError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return redirect(url_for("pricing_engine.index"))
 
 
 @pricing_engine_bp.route("/policies/new", methods=["GET", "POST"])

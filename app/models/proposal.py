@@ -13,7 +13,7 @@ from app.services.organizations import get_current_organization_id
 # cost-line note are office provenance too, so no rate reaches a customer document.
 _PROVENANCE_NOTE = re.compile(
     r"^Approved contractor cost #\d+; quantity confirmed by |; rule [^;]*; quantity [^;]*; canonical "
-    r"|^(?:Company labour rate|Project rate) [-0-9.]+ per hour"
+    r"|^(?:Company labour rate|Project (?:labour )?rate) [-0-9.]+ per hour"
     r"|^Manual entry by .+: no CalibraytAI calculator covers this cost\.$"
     r"|^Allowance approved by ",
 )

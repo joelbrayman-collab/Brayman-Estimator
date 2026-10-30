@@ -129,7 +129,12 @@ class Project(db.Model):
         index=True,
     )
     name = db.Column(db.String(180), nullable=False)
+    # Brayman Project # (Joel, 30 Oct 2026): assigned automatically when the project record is created
+    # (BC-YYYY-NNNN for Brayman; app/services/project_identity.py), permanent and never reused.
     project_number = db.Column(db.String(50), unique=True)
+    # Client Project #: the client's own reference for the job (text: letters, digits, punctuation, leading zeros).
+    # Never generated; blank when the client has none. Not unique.
+    client_project_number = db.Column(db.String(80), nullable=True, index=True)
     address = db.Column(db.String(255))
     status = db.Column(db.String(50), nullable=False, default="Lead")
     description = db.Column(db.Text)
@@ -478,3 +483,64 @@ class PermitProfile(db.Model):
 
     def __repr__(self):
         return f"<PermitProfile p={self.project_id} v={self.version_number} current={self.is_current}>"
+
+
+
+class ProjectNumberSequence(db.Model):
+    """The last Brayman Project # issued per organization and year. Only ever counts up, so a number is never
+    issued twice, even after its project is closed or removed (gaps are fine)."""
+
+    __tablename__ = "project_number_sequences"
+
+    organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), primary_key=True)
+    year = db.Column(db.Integer, primary_key=True)
+    last_value = db.Column(db.Integer, nullable=False, default=0)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+
+class ProjectIdentityEvent(db.Model):
+    """Append-only history of a project's identifiers: the Brayman Project # assigned or corrected, and every change
+    to the Client Project # (previous value, new value, who, when, why)."""
+
+    __tablename__ = "project_identity_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "field IN ('BRAYMAN_PROJECT_NUMBER', 'CLIENT_PROJECT_NUMBER')",
+            name="ck_project_identity_events_field",
+        ),
+        db.Index("ix_project_identity_events_org_project", "organization_id", "project_id"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False, index=True)
+    field = db.Column(db.String(40), nullable=False)
+    previous_value = db.Column(db.String(80), nullable=True)
+    new_value = db.Column(db.String(80), nullable=True)
+    actor_identifier = db.Column(db.String(150), nullable=False)
+    actor_user_id = db.Column(db.Integer, nullable=True)
+    reason = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+
+# Brayman Project # (Joel, 30 Oct 2026; app/services/project_identity.py): numbered when the record is created,
+# recorded, and permanent.
+@db.event.listens_for(Project, "before_insert")
+def _project_number_on_insert(mapper, connection, target):  # noqa: ANN001
+    from app.services.project_identity import assign_on_insert
+
+    assign_on_insert(connection, target)
+
+
+@db.event.listens_for(Project, "after_insert")
+def _project_number_recorded(mapper, connection, target):  # noqa: ANN001
+    from app.services.project_identity import record_on_insert
+
+    record_on_insert(connection, target)
+
+
+@db.event.listens_for(Project, "before_update")
+def _project_number_permanent(mapper, connection, target):  # noqa: ANN001
+    from app.services.project_identity import guard_on_update
+
+    guard_on_update(target)

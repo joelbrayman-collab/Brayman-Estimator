@@ -258,7 +258,8 @@ def test_office_pages_create_show_search_and_edit_the_numbers(app):
     assert project.client_project_number == "LB-0712-R1"
     from app.services.cal_find import match_references
 
-    found = match_references(ORG, ["lb-0712-r1"])
+    with app.test_request_context():
+        found = match_references(ORG, ["lb-0712-r1"])
     assert any("Kingfisher cladding" in item.title for item in found)
 
 
@@ -430,7 +431,10 @@ def test_identifiers_reach_the_proposal_change_order_and_supplier_documents(app)
     text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
     assert f"Brayman Project # {project.project_number}" in text and "Client Project # LB-0712" in text
     assert _project_reference(project) == f"Brayman Project # {project.project_number}"  # never the job name
-    assert project_label(project) == f"{project.name} · {project.project_number} · Client # LB-0712"
+    # The form's PROJECT box holds 52 characters: the Client # is added only when it fits (by design).
+    assert project_label(project) == f"{project.name} · {project.project_number}"
+    project.name = "Paulusse"
+    assert project_label(project) == f"Paulusse · {project.project_number} · Client # LB-0712"
     from app.services.guided_internal_cost_pdf import render_internal_cost_pdf  # noqa: F401 - imported for the doc
 
     browser = _office(app)

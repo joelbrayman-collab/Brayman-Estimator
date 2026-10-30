@@ -88,13 +88,6 @@ Shared and general costs get an explicit **shared** work package with a declared
 - Change order item to estimate line or package.
 - Direct cost actual to package or line.
 
-## Next architecture step
+## Stage outputs
 
-Define the exact output package(s) for each stage:
-
-- contractor estimate package
-- customer package
-- execution package, including scheduling outputs
-- closeout package
-
-Map each output to existing generators before any implementation planning.
+Defined on 2026-10-30 in [estimate-to-project-stage-outputs.md](estimate-to-project-stage-outputs.md). For each stage it gives purpose, inputs, outputs, package, gate, consumers, existing capability, classification, lineage and audit. It also covers both cross-stage controls.

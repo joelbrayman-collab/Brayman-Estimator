@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **APPROVED DESIGN / RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** No Gantt, schema, migration or behaviour change is authorized by this record. |
+| Status | **APPROVED DESIGN / RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** No Gantt, schema, migration or behaviour change is authorized by this record. The five open scheduling decisions were **APPROVED on 2026-10-30** (§20); no scheduling decision remains open. |
 | Date | 2026-10-30 |
 | Owner | Joel Brayman (conceptual design approved through the Architect review) |
 | Extends | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md), the SCH architecture source of record. That record and its SCH-A–D implementation remain authoritative for what exists. This document records the next approved design layer on top of it. |
@@ -53,7 +53,9 @@ The Gantt and the calendars are views and controllers over the engine. They are 
 
 ## 3. Automatic initial Gantt
 
-**Anticipated Construction Start** is a first-class governed planning field. It is entered once and reused downstream.
+**Anticipated Construction Start** is a first-class governed **planning input**. It is entered once and reused downstream.
+
+It is **not** the authoritative project start date and never competes with the live schedule (approved decision 2, §20).
 
 The **Proposed Initial Gantt** is generated from whatever of the following is available:
 
@@ -82,6 +84,8 @@ Moving a Gantt activity does not synchronize another calendar. It proposes a cha
 
 Dragging, moving or resizing creates a **proposed** change. Its consequences are analysed and shown before the change becomes authoritative. Nothing cascades silently.
 
+When dependent activities are affected, Calibrayt **automatically calculates the proposed downstream movements**. The PM does not move each dependent activity by hand. Those movements are presented with their impacts and are never committed silently (approved decision 3, §20).
+
 | Kind | Consequences analysed |
 |---|---|
 | Project | Predecessors and successors; milestones; inspections; completion dates; dependent activities; subcontract phases; material requirements |
@@ -99,6 +103,8 @@ If a change has no governed adverse cross-project or shared-resource consequence
 ## 7. Company-impacting changes
 
 A change that affects another project, or a shared crew, employee, item of equipment or other protected resource, becomes a **Company Schedule Change Request**. The original schedule stays authoritative until approval.
+
+This is a **blocking governance gate**, not a warning: the change cannot become authoritative without the required approval. Ordinary scheduling warnings stay non-blocking (approved decision 1, §20).
 
 Authority is the role **COMPANY SCHEDULE AUTHORITY**. It is not hard-coded to a person. Ben may hold the role today.
 
@@ -183,14 +189,28 @@ The sequence is:
 
 1. approved internal change
 2. external impact analysis
-3. draft external change request or notice
-4. human review and approval
+3. **draft created automatically:** the supplier, subcontractor, rental or other external change request or notice
+4. **human review and approval** by the responsible communication role (§13A)
 5. CaliSIGN sends and tracks it
-6. the external party responds (ACCEPT, REJECT or PROPOSE NEW TIME)
+6. the external party responds (ACCEPT, REJECT/DECLINE or PROPOSE NEW TIME), and the response feeds back into the governed schedule
+
+(Approved decision 4, §20.)
 
 If an external party cannot accommodate the change, the unresolved exception is surfaced.
 
 Conceptual states: **PROPOSED → INTERNALLY APPROVED → EXTERNAL CONFIRMATION PENDING → FULLY CONFIRMED.** These are to be reconciled with existing status conventions rather than duplicating them.
+
+## 13A. Who approves external schedule communication
+
+Approval of external communication is **role-based**. It is not hard-coded to Ben or to the Company Schedule Authority (approved decision 5, §20).
+
+| Communication | Approved by |
+|---|---|
+| Subcontractor scheduling | The Project Manager, where the PM owns that relationship |
+| Supplier delivery changes | The procurement / purchasing role, where it owns that supplier commitment |
+| Any communication whose underlying schedule decision has company-level resource consequences | The Company Schedule Authority also participates, in the underlying schedule decision |
+
+**Schedule authority** (who may make a schedule change effective) and **communication responsibility** (who may approve what is said to an outside party) are separate concepts.
 
 ## 14. Materials, suppliers and equipment
 
@@ -299,9 +319,24 @@ Progression: estimate → preliminary schedule → supplier/subcontract evidence
 - Backward planning from lead times to latest order date
 - Equipment and rental resources
 
-### Items needing owner reconciliation before implementation
+## 20. Approved decisions (2026-10-30)
 
-1. **Platform warning law (2026-09-16).** SCH conflicts are informational and never block. Holding a company-impacting change as *proposed* until approval is an authority rule, not a warning. It must be reconciled explicitly, not slipped in.
-2. **"Do not add `Project.start_date` / `end_date`".** Anticipated Construction Start is a planning *input*. Once schedule items exist it must not become a second date authority, because the project bar stays derived from the schedule.
-3. **No automatic movement, no CPM.** The preliminary schedule is generated once as a proposal. Later moves show their consequences and never cascade silently. Whether successors can be shifted on confirmation is an implementation-preflight decision.
-4. **Delivery proposals after a schedule move.** Today `propose_deliveries_for_schedule_moves` sends the proposal to the supplier automatically. §13 requires a draft and human review before anything external is sent.
+All five were **APPROVED** by Joel on 2026-10-30. None remains open.
+
+1. **Company-impacting changes are a blocking governance gate.** Ordinary scheduling warnings stay non-blocking, as the platform warning law of 2026-09-16 requires. A proposed change that needs Company Schedule Authority approval **must not** become authoritative until that approval is obtained. This is an authority gate, not a warning, so it does not contradict the warning law.
+2. **Anticipated Construction Start is an approved planning input.** It is not the authoritative project start date. It feeds:
+   - the Proposed Initial Gantt
+   - subcontract planning windows
+   - preliminary resource demand
+   - other planning outputs
+
+   Once the governed live schedule exists, that schedule is authoritative and the project bar stays derived from it. The SCH rule against `Project.start_date` / `end_date` as a date authority is respected. The anticipated start is kept as historical planning and calibration evidence.
+3. **Dependent movement: automate the proposal, not the decision.** Calibrayt calculates the proposed downstream movements automatically, so the PM never moves each dependent activity by hand. Those movements are presented with their project, company and external impacts:
+   - **Project-contained consequences** follow PM authority.
+   - **Company-impacting consequences** need Company Schedule Authority governance.
+   - **External consequences** follow the external-change workflow (§13).
+
+   Nothing cascades silently. This replaces the SCH V1 "no automatic movement" rule with *automatic proposals, human-committed*. CPM, float and lag remain out of scope.
+4. **External schedule changes: automatic draft, human approval.** An approved internal change may automatically create the draft supplier, subcontractor, rental or other external request. It must not automatically communicate or alter an external commitment. A responsible person approves the communication before CaliSIGN sends and tracks it. Responses (Accept, Reject/Decline, Propose New Time) feed back into the engine.
+   - **Current-code consequence:** today `propose_deliveries_for_schedule_moves` sends the delivery proposal to the supplier directly, with no human review. When implementation is authorized, that path must become *draft → approval → send*. That is an EXTEND item, not an open decision.
+5. **External communication approval is role-based** (§13A). Schedule authority and communication responsibility are separate.

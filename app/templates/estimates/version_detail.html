@@ -72,6 +72,7 @@
         <a class="button button-secondary" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
         <span class="action-divider" aria-hidden="true"></span>
         <a class="button button-secondary" href="{{ url_for('estimates.internal_cost_breakdown', id=estimate.id, version_id=version.id) }}">Internal Detailed Cost Breakdown</a>
+        <a class="button button-secondary" href="{{ url_for('estimates.contractor_estimate_package', id=estimate.id, version_id=version.id) }}" data-contractor-package>Contractor Estimate Package (PDF)</a>
         <a class="button button-secondary" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
         <a class="button button-secondary" href="{{ url_for('project_controls.create_from_estimate_version', estimate_id=estimate.id, version_id=version.id) }}">Create Change Order</a>
         {% if estimate.current_version_id != version.id %}

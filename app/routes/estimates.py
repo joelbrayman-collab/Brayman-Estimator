@@ -551,6 +551,21 @@ def internal_cost_breakdown(id, version_id):
     return render_template("estimates/internal_breakdown.html", **view)
 
 
+@estimates_bp.route("/<int:id>/versions/<int:version_id>/contractor-package.pdf")
+def contractor_estimate_package(id, version_id):
+    """The governed Contractor Estimate Package (landscape; internal, 30 Oct 2026)."""
+    from flask import Response
+
+    from app.services.auth import current_actor_display_name
+    from app.services.contractor_estimate_package import build_contractor_estimate_package
+
+    estimate, version = _get_estimate_version(id, version_id)
+    pdf = build_contractor_estimate_package(version, generated_by=current_actor_display_name(fallback=""))
+    name = f"{estimate.estimate_number}_{version.version_number}_CONTRACTOR_ESTIMATE_PACKAGE.pdf".replace(" ", "_")
+    return Response(pdf, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="{name}"', "Cache-Control": "no-store"})
+
+
 @estimates_bp.route("/<int:id>/versions/<int:version_id>/print.pdf")
 def print_version(id, version_id):
     from app.services.desk_print import render_fact_sheet

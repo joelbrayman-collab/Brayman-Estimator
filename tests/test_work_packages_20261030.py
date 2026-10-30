@@ -288,3 +288,28 @@ def test_proposal_lists_included_and_excluded_work_and_prices_only_included(app)
     text = " ".join(text.split())
     assert "Included in Brayman Construction scope" in text and "Excluded / By Others" in text
     assert "Removal & substrate preparation: Excluded from Brayman Construction scope; by Lockwood" in text
+
+
+def test_contractor_estimate_package_is_landscape_and_matches_the_engine(app):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from app.services.contractor_estimate_package import build_contractor_estimate_package, package_rows
+
+    _guided, version, packages = build_paulusse()
+    WP.exclude_work(packages["Estate Stone veneer & sills"], actor=JOEL, party=PARTY_CLIENT)
+    rows = {r["name"]: r for r in package_rows(version)}
+    assert rows["Estate Stone veneer & sills"]["status"] == "Excluded · Owner / Client"
+    assert sum(r["sell"] for r in rows.values() if r["participates"]) == M("41452.47")
+    assert sum(r["hours"] for r in rows.values() if r["participates"]) == M("240")
+    reader = PdfReader(BytesIO(build_contractor_estimate_package(version, generated_by=JOEL)))
+    assert len(reader.pages) >= 3
+    for page in reader.pages:
+        box = page.mediabox
+        assert float(box.width) > float(box.height)  # every page landscape
+        assert round(float(box.width)) == 1008 and round(float(box.height)) == 612  # legal
+    text = " ".join(" ".join(page.extract_text().split()) for page in reader.pages)
+    assert "INTERNAL — CONTRACTOR COPY" in text and "$46,841.29" in text and "$41,452.47" in text
+    assert "Excluded from Brayman Construction scope; by the Owner / Client" in text
+    assert "/AcroForm" not in str(reader.trailer["/Root"])  # plain PDF: no form fields, opens in any viewer

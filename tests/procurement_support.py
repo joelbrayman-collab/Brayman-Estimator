@@ -12,7 +12,9 @@ def allow_early_order(share, *, exposure="1000000"):
     project = db.session.get(Project, share.project_id)
     if procurement_gate.gate_2_passed(project) or procurement_gate.open_exception_for_share(share) is not None:
         return None
+    from tests.schedule_support import company_manager
+
     return procurement_gate.record_early_exception(
-        project, actor_name="Joel Brayman (synthetic)", reason="Supplier workflow test (synthetic)",
+        project, user=company_manager(project.organization_id), reason="Supplier workflow test (synthetic)",
         proposed_commitment=f"{share.number} (synthetic)", financial_exposure=exposure,
         approving_authority="Joel Brayman, owner (synthetic)", share_id=share.id)

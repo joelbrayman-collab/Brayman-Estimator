@@ -147,5 +147,9 @@ def create_successor_version(version, *, actor: str, reason: str):
         raise EstimateApprovalError("Revise the current version of the estimate.")
     if not is_approved(version):
         raise EstimateApprovalError("This version is not approved; change it directly.")
+    from app.models import Proposal
+
+    if Proposal.query.filter_by(estimate_version_id=version.id, status="Accepted").first() is not None:
+        raise EstimateApprovalError("The customer accepted this estimate. Changes now go through a change order.")
     return clone_current_version(estimate, revision_reason=f"Revision of approved {version.display_label}: "
                                                           f"{reason.strip()}"[:500])

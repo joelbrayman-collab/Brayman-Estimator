@@ -302,6 +302,12 @@ def _bring_in(guided, row, *, actor, user_id=None):
     from app.services import guided_estimating as G
 
     row.responsibility = RESP_INTERNAL
+    # Work brought (back) in starts in Brayman's price with no earlier exclusion carried over (30 Oct 2026).
+    row.commercial_status = "INCLUDED"
+    row.responsible_party = None
+    row.responsible_party_name = None
+    row.commercial_reason = None
+    row.shared_rule = None
     row.decided_by = actor
     row.decided_at = G._now()
     row.na_reason = None
@@ -330,6 +336,11 @@ def _settle(guided, *, actor, user_id=None, create_estimate: bool = True):
             G.ensure_estimate(guided, actor=actor, user_id=user_id)
     elif not items and guided.scope_status != SCOPE_DRAFT:
         guided.scope_status = SCOPE_DRAFT
+    if guided.estimate is not None:
+        from app.services.work_packages import record_version_state
+
+        db.session.flush()
+        record_version_state(G.editable_version(guided))  # this version's scope record follows the work list
     guided.updated_at = G._now()
 
 

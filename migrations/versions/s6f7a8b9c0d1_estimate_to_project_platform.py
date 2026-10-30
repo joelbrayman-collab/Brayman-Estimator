@@ -99,6 +99,9 @@ def upgrade():
     op.add_column("estimate_sections", sa.Column("guided_stage_id", sa.Integer(), nullable=True))
     op.create_index("ix_estimate_sections_guided_stage_id", "estimate_sections", ["guided_stage_id"])
 
+    # Each estimate version keeps its own work-package commercial state (review finding, 30 Oct 2026).
+    op.add_column("estimate_versions", sa.Column("scope_state_json", sa.Text(), nullable=True))
+
     # Slice S4 (Gate 1): the immutable estimate approval record.
     op.create_table(
         "estimate_approvals",
@@ -203,8 +206,10 @@ def upgrade():
         sa.Column("requested_by_user_id", sa.Integer(), nullable=True),
         sa.Column("requested_by_name", sa.String(length=160), nullable=False),
         sa.Column("requested_at", sa.DateTime(), nullable=False),
+        sa.Column("project_approved_by_user_id", sa.Integer(), nullable=True),
         sa.Column("project_approved_by_name", sa.String(length=160), nullable=True),
         sa.Column("project_approved_at", sa.DateTime(), nullable=True),
+        sa.Column("company_approved_by_user_id", sa.Integer(), nullable=True),
         sa.Column("company_approved_by_name", sa.String(length=160), nullable=True),
         sa.Column("company_approved_at", sa.DateTime(), nullable=True),
         sa.Column("decided_note", sa.Text(), nullable=True),
@@ -283,6 +288,15 @@ def downgrade():
         "IS NOT NULL OR delivery_method IS NOT NULL OR shared_rule IS NOT NULL OR work_element_template_id IS NOT "
         "NULL OR plan_document_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_approvals")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_versions WHERE scope_state_json IS NOT NULL")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM supplier_purchase_orders WHERE guided_stage_id IS NOT NULL")).scalar()
+    held += bind.execute(sa.text(
+        "SELECT COUNT(*) FROM project_work_activities WHERE source_estimate_line_item_id IS NOT NULL")).scalar()
+    held += bind.execute(sa.text(
+        "SELECT COUNT(*) FROM signing_frozen_artifacts WHERE document_family = 'SUBCONTRACT'")).scalar()
+    held += bind.execute(sa.text(
+        "SELECT COUNT(*) FROM guided_estimate_stages WHERE commercial_reason IS NOT NULL OR commercial_decided_by "
+        "IS NOT NULL OR responsible_party_name IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM project_closeout_records")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM change_order_items WHERE guided_stage_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM company_schedule_change_requests")).scalar()
@@ -335,6 +349,8 @@ def downgrade():
     op.drop_index("ix_estimate_approvals_estimate_id", table_name="estimate_approvals")
     op.drop_index("ix_estimate_approvals_organization_id", table_name="estimate_approvals")
     op.drop_table("estimate_approvals")
+    with op.batch_alter_table("estimate_versions") as batch:
+        batch.drop_column("scope_state_json")
     op.drop_index("ix_estimate_sections_guided_stage_id", table_name="estimate_sections")
     with op.batch_alter_table("estimate_sections") as batch:
         batch.drop_column("guided_stage_id")

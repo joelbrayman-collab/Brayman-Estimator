@@ -303,15 +303,17 @@ def approve_change(request, *, user, authority: str, note: str = "") -> CompanyS
     if authority == "project":
         if not roles["project"]:
             raise GovernedScheduleError("Only someone with scheduling authority on the project can approve this.")
-        if request.company_approved_by_name == name:
+        if request.company_approved_by_user_id is not None and request.company_approved_by_user_id == user.id:
             raise GovernedScheduleError("The two approvals must come from two different people.")
         request.project_approved_by_name, request.project_approved_at = name, now
+        request.project_approved_by_user_id = user.id
     elif authority == "company":
         if not roles["company"]:
             raise GovernedScheduleError("Only the Company Schedule Authority can approve this.")
-        if request.project_approved_by_name == name:
+        if request.project_approved_by_user_id is not None and request.project_approved_by_user_id == user.id:
             raise GovernedScheduleError("The two approvals must come from two different people.")
         request.company_approved_by_name, request.company_approved_at = name, now
+        request.company_approved_by_user_id = user.id
     else:
         raise GovernedScheduleError("Choose which authority you are approving for.")
     if note:

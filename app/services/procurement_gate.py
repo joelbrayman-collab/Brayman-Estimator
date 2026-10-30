@@ -40,7 +40,10 @@ def _person(name) -> str:
 
 def _amount(value, label) -> Decimal:
     try:
-        amount = Decimal(str(value).replace(",", "").replace("$", "").strip()).quantize(Decimal("0.01"))
+        amount = Decimal(str(value).replace(",", "").replace("$", "").strip())
+        if not amount.is_finite():
+            raise InvalidOperation
+        amount = amount.quantize(Decimal("0.01"))
     except (InvalidOperation, AttributeError):
         raise ProcurementGateError(f"Enter the {label} in dollars.")
     if amount < 0:
@@ -60,10 +63,23 @@ def gate_2_passed(project) -> bool:
 
 
 # ---------------------------------------------------------------------------------------------- exceptions
-def record_early_exception(project, *, user=None, actor_name: str = "", reason: str, proposed_commitment: str,
-                           financial_exposure, approving_authority: str, share_id: Optional[int] = None,
+def _require_authority(user, organization_id) -> str:
+    """Commitments before Gate 2 and commitment approvals need Company Management or the owner (role-based)."""
+    from app.services.governed_schedule import _authorities
+
+    if user is None or getattr(user, "id", None) is None:
+        raise ProcurementGateError("A signed-in person with Company Management authority must decide this.")
+    roles = _authorities(user, organization_id)
+    if not (roles["company"] or roles["owner"]):
+        raise ProcurementGateError("Only Company Management or the owner can approve a commitment.")
+    return _person(getattr(user, "display_name", None) or getattr(user, "email", ""))
+
+
+def record_early_exception(project, *, user=None, reason: str, proposed_commitment: str,
+                           financial_exposure, approving_authority: str = "", share_id: Optional[int] = None,
                            subcontract_commitment_id: Optional[int] = None) -> EarlyProcurementException:
-    name = _person(actor_name or getattr(user, "display_name", None) or getattr(user, "email", ""))
+    name = _require_authority(user, project.organization_id)
+    approving_authority = approving_authority or name
     if gate_2_passed(project):
         raise ProcurementGateError("The customer has accepted the proposal; no exception is needed.")
     reason = (reason or "").strip()
@@ -155,9 +171,14 @@ def propose_subcontract(project, *, actor_name: str, subcontractor_name: str, sc
     return commitment
 
 
-def approve_subcontract(commitment, *, user=None, actor_name: str = "", note: str = "") -> SubcontractCommitment:
-    """Commitment approval: a person approves it. Before Gate 2 it needs an Early Procurement Exception."""
-    name = _person(actor_name or getattr(user, "display_name", None) or getattr(user, "email", ""))
+def approve_subcontract(commitment, *, user=None, note: str = "") -> SubcontractCommitment:
+    """Commitment approval: Company Management or the owner, not the person who proposed it (unless the owner).
+    Before Gate 2 it needs an Early Procurement Exception."""
+    from app.services.governed_schedule import _authorities
+
+    name = _require_authority(user, commitment.organization_id)
+    if name == commitment.proposed_by_name and not _authorities(user, commitment.organization_id)["owner"]:
+        raise ProcurementGateError("Someone other than the person who proposed it must approve the commitment.")
     if commitment.status != COMMITMENT_PROPOSED:
         raise ProcurementGateError("This commitment has already been decided.")
     exception = None

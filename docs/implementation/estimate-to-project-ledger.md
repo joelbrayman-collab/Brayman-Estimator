@@ -30,3 +30,23 @@ Routine architecture rulings, recorded as they are made.
 6. **Gate 2, 2026-10-30.** Gate 2 is passed when a proposal on the project is Accepted.
 7. **Masters 07/08, 2026-10-30.** V2 files were written beside V1 on the office Mac; V1 is unchanged. The register points at V2.
 8. **Tests changed by approved decisions.** Unlock-withdraws-sign-off became never-unlock (decision 5); supplier ordering tests record an Early Procurement Exception (decision 6); schedule-move tests send the drafted delivery change (decision 4); scope tests count selected work (decision 4); schema tests exclude columns added by later migrations.
+
+## Independent review (30 Oct 2026) — findings and fixes
+
+An independent review of the branch diff reported 15 findings. All were fixed before release:
+
+1. Exclusion state is now per estimate version (`estimate_versions.scope_state_json`); a change on a successor never changes an approved version (test: `test_a_change_on_the_successor_never_changes_the_approved_version`).
+2. Work-package changes and successor versions are refused after the customer accepts (Gate 2); changes go through a change order.
+3. Excluding or including work re-approves costing only when the costing was current before the change.
+4. Costing and pricing refusals during exclude/include become a message, not a server error.
+5. A change order copied from an estimate version leaves out excluded work.
+6. `version_direct_cost` counts only lines in Brayman's price.
+7. A whole-project shift and the combined work-item/activity move are refused when they affect crews on other projects; a single work-item move opens a Company Schedule Change Request.
+8. Early Procurement Exceptions and commitment approvals need Company Management or the owner; the proposer cannot approve their own commitment (the owner excepted).
+9. The two schedule authorities are compared by user id.
+10. Work removed and added again starts included, with no earlier exclusion carried over.
+11. An included shared package that is not counting is listed as included, not excluded.
+12. A proposal cannot be issued when every package is excluded.
+13. The downgrade guard counts every new value; the model validates the work-package fields the database cannot constrain.
+14. Confirmed scope in the former `project_work_packages` table: production holds 0 rows (29 Oct backup), so nothing moves.
+15. Bad form input (work package id, NaN amount, a duplicate catalogue name) is a message, not a server error.

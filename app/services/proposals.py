@@ -547,6 +547,11 @@ def proposal_issue_blockers(version):
 
     priced = [line for line in iter_priced_line_items(version) if Decimal(line.extended_cost or 0) != 0]
     if not priced:
+        from app.services.work_packages import customer_scope
+
+        scope = customer_scope(version)
+        if scope["governed"] and scope["excluded"] and not any(i.get("sell_price") for i in scope["included"]):
+            return list(guided) + ["All of the work is excluded from Brayman's price. Include some work first."]
         return guided
     blockers = list(guided)
     costing = current_costing_snapshot(version)

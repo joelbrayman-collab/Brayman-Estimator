@@ -184,8 +184,13 @@ def confirm_package(
         if existing is None:
             added = SW.add_work(guided, custom_name=template.display_name, actor=name, user_id=user_id,
                                 defer_estimate=True)
-            row = added[0] if added else next(
-                r for r in SW.work_items(guided) if r.display_name == " ".join(template.display_name.split())[:120])
+            if added:
+                row = added[0]
+            else:
+                key = SW._custom_key(" ".join(template.display_name.split())[:120])
+                row = next((r for r in SW.work_items(guided) if r.stage_key == key), None)
+                if row is None:
+                    raise ProjectWorkPackageError("That work is already in the project's scope.")
         else:
             row = existing
         row.work_element_template_id = template.id

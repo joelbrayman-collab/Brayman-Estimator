@@ -1315,7 +1315,7 @@ def guided_blockers(guided) -> List[str]:
         status = effective_status(stage, version)
         if status in (STATUS_COMPLETE, STATUS_EXCLUDED):
             continue
-        if not WP.package_participates(WP.package_of(stage)):
+        if not WP.package_participates(WP.package_of(stage), version):
             continue  # excluded from Brayman's price by a recorded decision (30 Oct 2026): its lines are not priced
         out.append(f"{stage.display_name} is {STATUS_LABELS[status]}: its costs are not confirmed, and no allowance "
                    f"or exclusion was approved.")

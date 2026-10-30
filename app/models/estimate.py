@@ -168,6 +168,9 @@ class EstimateVersion(db.Model):
     signed_off_at = db.Column(db.DateTime, nullable=True)
     signed_off_by_user_id = db.Column(db.Integer, nullable=True)  # users.id (no FK: added by ALTER TABLE)
     signed_off_by_name = db.Column(db.String(160), nullable=True)
+    # This version's own record of which work packages are in Brayman's price, who does the excluded work and the
+    # shared rule (30 Oct 2026). A change on a later version never changes this one. None: nothing was excluded.
+    scope_state_json = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
         db.DateTime,

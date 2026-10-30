@@ -23,11 +23,13 @@ def named_method_governs(snapshot):
 
 
 def version_direct_cost(version):
-    """Authoritative Direct Cost = Σ EstimateLineItem.extended_cost."""
+    """Authoritative Direct Cost = Σ EstimateLineItem.extended_cost over the lines in Brayman's price (work excluded
+    from the price is kept but not counted, 30 Oct 2026)."""
+    from app.services.work_packages import participating_lines
+
     total = Decimal("0")
-    for section in version.sections:
-        for item in section.line_items:
-            total += Decimal(item.extended_cost or 0)
+    for item in participating_lines(version):
+        total += Decimal(item.extended_cost or 0)
     return _as_money(total)
 
 

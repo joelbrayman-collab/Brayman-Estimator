@@ -168,6 +168,7 @@ def clone_current_version(
 
     capture_defaults(new_version, estimate.organization_id, from_version=current)  # a revision keeps the project's values
 
+    new_version.scope_state_json = current.scope_state_json  # the scope decisions carry into the revision
     db.session.add(new_version)
     db.session.flush()
     clone_sections_to_version(current, new_version)

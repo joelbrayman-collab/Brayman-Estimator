@@ -152,3 +152,28 @@ def test_planning_page_shows_the_governed_controls(app):
     page = http.get(f"/schedule/projects/{project.id}/planning").get_data(as_text=True)
     assert page.count("data-gantt-row=") == 8 and 'data-window-kind="ANTICIPATED"' in page
     assert "data-procurement-plan" in page and "Request quotes by" in page
+
+
+def test_moving_the_whole_project_into_another_projects_crew_is_refused(app):
+    from app.services.schedule import ScheduleError, shift_project_schedule
+
+    project = _seeded()
+    GS.set_anticipated_start(project, MONDAY.isoformat(), actor=JOEL)
+    items = GS.apply_preliminary_schedule(project)
+    worker, _m = _manager("worker3@example.invalid", "Worker 3 (synthetic)")
+    other = Project(name="Busy job (synthetic)", client_id=project.client_id, organization_id=project.organization_id,
+                    status="Active")
+    db.session.add(other)
+    db.session.commit()
+    element = add_project_element(project_id=other.id, display_name="Busy framing", organization_id=other.organization_id)
+    busy = create_schedule_item(project_id=other.id, project_work_element_id=element.id,
+                                scheduled_start=(items[0].scheduled_start + timedelta(days=7)).isoformat(),
+                                scheduled_end=(items[0].scheduled_end + timedelta(days=7)).isoformat(),
+                                organization_id=other.organization_id)
+    assign_user(busy.id, worker_user_id=worker.id, organization_id=other.organization_id)
+    assign_user(items[0].id, worker_user_id=worker.id, organization_id=project.organization_id)
+    before = [(i.scheduled_start, i.scheduled_end) for i in items]
+    with pytest.raises(ScheduleError, match="Busy job"):
+        shift_project_schedule(project.id, days=7, organization_id=project.organization_id)
+    assert [(db.session.get(WorkScheduleItem, i.id).scheduled_start, db.session.get(WorkScheduleItem, i.id).scheduled_end)
+            for i in items] == before

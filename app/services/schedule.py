@@ -557,6 +557,7 @@ def schedule_activity_with_element_adjustment(
     activity_start, activity_end = parse_schedule_window(
         activity_scheduled_start, activity_scheduled_end
     )
+    _refuse_company_impact(_active_element_item(element.id, org_id), element_start, element_end)
     if not _window_contains(element_start, element_end, activity_start, activity_end):
         raise ScheduleError("The activity dates must stay inside the work item dates.")
     try:
@@ -624,6 +625,20 @@ def schedule_activity_with_element_adjustment(
     return {"element_item": parent, "activity_item": activity_item}
 
 
+def _refuse_company_impact(item, start, end) -> None:
+    """Decision 1 (30 Oct 2026): a move that impacts crews on other projects is blocking. These combined moves are
+    refused; the work item's own date change opens a Company Schedule Change Request instead."""
+    if item is None or (item.scheduled_start, item.scheduled_end) == (start, end):
+        return
+    from app.services.governed_schedule import impact_analysis
+
+    impact = impact_analysis(item, start, end)
+    if impact["blocking"]:
+        projects = ", ".join(sorted({c["project"] for c in impact["company_impacts"]}))
+        raise ScheduleError(f"This move affects crews booked on {projects}. Change the work item's dates on its own "
+                            "so a Company Schedule Change Request records it for approval.")
+
+
 def shift_project_schedule(
     project_id: int,
     *,
@@ -649,6 +664,9 @@ def shift_project_schedule(
     )
     if not items:
         raise ScheduleError("This project has no scheduled work to move.")
+    for item in items:
+        if not item.project_work_activity_id:
+            _refuse_company_impact(item, item.scheduled_start + delta, item.scheduled_end + delta)
     try:
         for item in items:
             prior_start, prior_end = item.scheduled_start, item.scheduled_end

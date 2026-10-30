@@ -75,23 +75,24 @@ def package_rows(version) -> list:
     guided = GuidedEstimate.query.filter_by(estimate_id=version.estimate_id).first()
     hours_by_line = _line_hours(version)
     rows, owned = [], set()
-    for package in WP.packages(guided):
+    for package in WP.packages_in(guided, version):
         lines = WP.package_lines(package, version)
         owned.update(line.id for line in lines)
-        participates = WP.package_participates(package)
+        participates = WP.package_participates(package, version)
+        included = WP.is_included(package, version)
         rows.append({
             "name": package.display_name,
             "status": ("In Brayman's price" if participates else
-                       ("Shared: no other work included" if WP.is_included(package) else
-                        f"Excluded · {WP.responsible_label(package)}")),
+                       ("Shared: no other work included" if included else
+                        f"Excluded · {WP.responsible_label(package, version)}")),
             "participates": participates,
-            "shared": package.shared_rule is not None,
+            "shared": WP.state_of(package, version).shared is not None,
             "delivery": WP.delivery_label(package),
             "hours": sum((hours_by_line.get(line.id, Decimal("0")) for line in lines), Decimal("0")),
             "direct": sum((Decimal(line.extended_cost or 0) for line in lines), Decimal("0")),
             "sell": sum((Decimal(line.sell_price or 0) for line in lines), Decimal("0")),
             "lines": lines,
-            "exclusion_text": None if participates else WP.customer_exclusion_text(package),
+            "exclusion_text": None if included else WP.customer_exclusion_text(package, version),
         })
     loose = [line for section in version.sections for line in section.line_items if line.id not in owned]
     if loose:

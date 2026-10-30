@@ -83,8 +83,8 @@ def package_cost_report(project) -> dict:
     committed = PG.committed_by_package(project)
     changes = _change_by_package(project)
     rows = []
-    for package in WP.packages(get_guided(project.organization_id, project.id)):
-        if not WP.package_participates(package):
+    for package in WP.packages_in(get_guided(project.organization_id, project.id), version):
+        if not WP.package_participates(package, version):
             continue
         lines = WP.package_lines(package, version)
         est_direct = sum((Decimal(str(l.extended_cost or 0)) for l in lines), ZERO)

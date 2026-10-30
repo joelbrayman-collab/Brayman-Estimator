@@ -274,7 +274,11 @@ def create_change_order(
     if copy_estimate_lines and estimate_version is not None:
         use_direct_cost = change_order.pricing_snapshot_id is not None
         sort_order = 0
+        from app.services.work_packages import section_participates
+
         for section in estimate_version.sections:
+            if not section_participates(section):
+                continue  # work excluded from Brayman's price is not carried into a change order (30 Oct 2026)
             for line in section.line_items:
                 quantity = as_decimal(line.quantity)
                 if use_direct_cost:

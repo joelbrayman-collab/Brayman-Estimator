@@ -82,32 +82,83 @@ def is_removed(package: GuidedEstimateStage) -> bool:
     return package.responsibility == RESP_NA
 
 
-def is_included(package: GuidedEstimateStage) -> bool:
-    return package.commercial_status == COMMERCIAL_INCLUDED
+# Per-version commercial state (30 Oct 2026, review finding 1). Each estimate version keeps its own record of which
+# packages are in Brayman's price, who does the excluded work and the shared rule (EstimateVersion.scope_state_json).
+# A change on a successor version therefore never changes an earlier or approved version. A version without a record
+# predates exclusion: everything in it was included.
+ABSENT = "ABSENT"
 
 
-def _productive_included(guided) -> bool:
+class _State:
+    __slots__ = ("status", "party", "party_name", "shared")
+
+    def __init__(self, status, party, party_name, shared):
+        self.status, self.party, self.party_name, self.shared = status, party, party_name, shared
+
+
+def _live(package) -> _State:
+    return _State(package.commercial_status or COMMERCIAL_INCLUDED, package.responsible_party,
+                  package.responsible_party_name, package.shared_rule)
+
+
+def _version_record(version) -> Optional[dict]:
+    raw = getattr(version, "scope_state_json", None) if version is not None else None
+    if not raw:
+        return None
+    import json
+
+    cache = getattr(version, "_scope_state_cache", None)
+    if cache is not None and cache[0] == raw:
+        return cache[1]
+    record = json.loads(raw)
+    try:
+        version._scope_state_cache = (raw, record)
+    except AttributeError:
+        pass
+    return record
+
+
+def state_of(package, version=None) -> _State:
+    """The package's commercial state in ``version`` (the live state when no version is given)."""
+    if version is None:
+        return _live(package)
+    record = _version_record(version)
+    if record is None:
+        return _State(COMMERCIAL_INCLUDED, None, None, package.shared_rule)
+    row = (record.get("packages") or {}).get(str(package.id))
+    if row is None or row.get("removed"):
+        return _State(ABSENT, None, None, None)  # not part of this version's scope
+    return _State(row.get("status") or COMMERCIAL_INCLUDED, row.get("party"), row.get("party_name"), row.get("shared"))
+
+
+def is_included(package: GuidedEstimateStage, version=None) -> bool:
+    return state_of(package, version).status == COMMERCIAL_INCLUDED
+
+
+def _productive_included(guided, version=None) -> bool:
     for row in guided.top_stages:
-        if row.shared_rule is None and not is_removed(row) and is_included(row):
+        state = state_of(row, version)
+        if state.shared is None and not is_removed(row) and state.status == COMMERCIAL_INCLUDED:
             return True
     return False
 
 
-def package_participates(package: Optional[GuidedEstimateStage]) -> bool:
-    """Whether the package's lines count in Brayman's price."""
+def package_participates(package: Optional[GuidedEstimateStage], version=None) -> bool:
+    """Whether the package's lines count in Brayman's price (in ``version``; live when none is given)."""
     if package is None:
         return True  # a section no package governs (manual or older estimates) is priced as before
-    if not is_included(package):
+    state = state_of(package, version)
+    if state.status != COMMERCIAL_INCLUDED:
         return False
-    if package.shared_rule == SHARED_ALWAYS:
+    if state.shared == SHARED_ALWAYS:
         return True
-    if package.shared_rule == SHARED_WHILE_ANY_INCLUDED:
-        return _productive_included(package.guided_estimate)
+    if state.shared == SHARED_WHILE_ANY_INCLUDED:
+        return _productive_included(package.guided_estimate, version)
     return True
 
 
 def section_participates(section) -> bool:
-    return package_participates(package_of_section(section))
+    return package_participates(package_of_section(section), getattr(section, "estimate_version", None))
 
 
 def line_participates(line) -> bool:
@@ -119,9 +170,45 @@ def participating_lines(version) -> List:
     """The lines that make up Brayman's price, in section order."""
     out = []
     for section in version.sections:
-        if section_participates(section):
+        if package_participates(package_of_section(section), version):
             out.extend(section.line_items)
     return out
+
+
+def record_version_state(version) -> None:
+    """Write the live commercial state of every package into ``version`` (the editable current version)."""
+    import json
+
+    if version is None:
+        return
+    from app.models.guided_estimating import GuidedEstimate
+
+    guided = GuidedEstimate.query.filter_by(estimate_id=version.estimate_id).first()
+    if guided is None:
+        return
+    record = {"packages": {str(row.id): {"status": row.commercial_status or COMMERCIAL_INCLUDED,
+                                         "party": row.responsible_party, "party_name": row.responsible_party_name,
+                                         "shared": row.shared_rule, "removed": is_removed(row)}
+                           for row in guided.top_stages}}
+    version.scope_state_json = json.dumps(record, sort_keys=True)
+
+
+def load_version_state(version) -> None:
+    """Make the live package state match ``version`` (before changing it), e.g. after the current version moved."""
+    record = _version_record(version)
+    if record is None:
+        return
+    from app.models.guided_estimating import GuidedEstimate
+
+    guided = GuidedEstimate.query.filter_by(estimate_id=version.estimate_id).first()
+    if guided is None:
+        return
+    for row in guided.top_stages:
+        state = state_of(row, version)
+        row.commercial_status = state.status
+        row.responsible_party = state.party
+        row.responsible_party_name = state.party_name
+        row.shared_rule = state.shared
 
 
 def delivery_method(package: GuidedEstimateStage) -> Optional[str]:
@@ -142,25 +229,28 @@ def delivery_label(package: GuidedEstimateStage) -> str:
     return DELIVERY_LABELS[method]
 
 
-def responsible_label(package: GuidedEstimateStage, *, contractor_name: str = "Brayman Construction") -> str:
-    if is_included(package):
+def responsible_label(package: GuidedEstimateStage, version=None, *, contractor_name: str = "Brayman Construction") -> str:
+    state = state_of(package, version)
+    if state.status == COMMERCIAL_INCLUDED:
         return contractor_name
-    party = package.responsible_party or PARTY_BY_OTHERS
+    party = state.party or PARTY_BY_OTHERS
     if party == PARTY_CLIENT:
         return "Owner / Client"
-    if party == PARTY_NAMED and package.responsible_party_name:
-        return package.responsible_party_name
+    if party == PARTY_NAMED and state.party_name:
+        return state.party_name
     if party == PARTY_CONTRACTOR:
         return contractor_name
     return "By Others"
 
 
-def customer_exclusion_text(package: GuidedEstimateStage, *, contractor_name: str = "Brayman Construction") -> str:
+def customer_exclusion_text(package: GuidedEstimateStage, version=None, *,
+                            contractor_name: str = "Brayman Construction") -> str:
     """The proven customer wording: 'Excluded from Brayman Construction scope / By Others' or '...; by Lockwood'."""
+    state = state_of(package, version)
     base = f"Excluded from {contractor_name} scope"
-    party = package.responsible_party or PARTY_BY_OTHERS
-    if party == PARTY_NAMED and package.responsible_party_name:
-        return f"{base}; by {package.responsible_party_name}"
+    party = state.party or PARTY_BY_OTHERS
+    if party == PARTY_NAMED and state.party_name:
+        return f"{base}; by {state.party_name}"
     if party == PARTY_CLIENT:
         return f"{base}; by the Owner / Client"
     return f"{base} / By Others"
@@ -171,6 +261,15 @@ def packages(guided) -> List[GuidedEstimateStage]:
     if guided is None:
         return []
     return [row for row in guided.top_stages if not is_removed(row)]
+
+
+def packages_in(guided, version=None) -> List[GuidedEstimateStage]:
+    """The packages that are part of ``version``'s scope (the live scope when the version has no record)."""
+    if guided is None:
+        return []
+    if _version_record(version) is None:
+        return packages(guided)
+    return [row for row in guided.top_stages if state_of(row, version).status != ABSENT]
 
 
 def package_lines(package: GuidedEstimateStage, version) -> List:
@@ -189,20 +288,22 @@ def customer_scope(version, *, contractor_name: str = "Brayman Construction") ->
     estimate_id = getattr(version, "estimate_id", None)
     guided = GuidedEstimate.query.filter_by(estimate_id=estimate_id).first() if estimate_id else None
     included, excluded = [], []
-    for package in packages(guided):
+    for package in packages_in(guided, version):
         entry = {
             "id": package.id,
             "name": package.display_name,
             "description": (package.scope_description or package.explanation or "").strip()
             if not package.is_custom or package.scope_description else "",
-            "shared": package.shared_rule is not None,
+            "shared": state_of(package, version).shared is not None,
         }
-        if package_participates(package):
-            entry["sell_price"] = sum((line.sell_price or 0) for line in package_lines(package, version))
+        if is_included(package, version):
+            # Included work is listed even when a shared package is not counting (no other work included).
+            entry["sell_price"] = (sum((line.sell_price or 0) for line in package_lines(package, version))
+                                   if package_participates(package, version) else 0)
             included.append(entry)
-        elif not is_included(package):
-            entry["responsible"] = responsible_label(package, contractor_name=contractor_name)
-            entry["text"] = customer_exclusion_text(package, contractor_name=contractor_name)
+        else:
+            entry["responsible"] = responsible_label(package, version, contractor_name=contractor_name)
+            entry["text"] = customer_exclusion_text(package, version, contractor_name=contractor_name)
             excluded.append(entry)
     return {"governed": guided is not None, "included": included, "excluded": excluded}
 
@@ -223,40 +324,64 @@ def _require_package(package):
 
 
 def _require_editable(package):
+    """The current version, if it may change: not approved or issued (Gate 1) and not accepted by the customer
+    (Gate 2: changes then go through a change order). The live state is aligned with that version first."""
     from app.services import guided_estimating as G
 
+    try:
+        G._require_not_committed(package.guided_estimate)
+    except G.GuidedEstimatingError as exc:
+        raise WorkPackageError(str(exc)) from exc
     version = G.current_version(package.guided_estimate)
     if version is not None and not G.version_is_editable(version):
         raise WorkPackageError("The estimate is approved or issued. Make a new version to change its scope.")
+    load_version_state(version)
     return version
 
 
-def _refresh_commercials(version, actor, user_id=None) -> dict:
-    """After a participation change: re-approve the costing if it was otherwise current, and re-apply pricing if it
-    had been applied. This uses the same steps as a project labour-rate or margin change."""
+def _costing_current(version) -> bool:
+    from app.services.estimate_costing import current_costing_snapshot, working_matches_costing_snapshot
+
+    if version is None:
+        return False
+    costing = current_costing_snapshot(version)
+    return costing is not None and working_matches_costing_snapshot(version, costing)
+
+
+def _refresh_commercials(version, actor, user_id=None, *, costing_was_current: bool = False) -> dict:
+    """After a participation change: record it on the version, re-approve the costing only if it was current
+    before this change (an unreviewed cost is never approved on someone's behalf), and re-apply pricing if it
+    had been applied. The same steps as a project labour-rate or margin change."""
     from app.services.estimate_costing import (
+        EstimateCostingError,
         approve_all_costing,
         current_costing_snapshot,
         working_matches_costing_snapshot,
     )
-    from app.services.pricing_engine import apply_resolved_pricing_to_version
+    from app.services.pricing_engine import PricingEngineError, apply_resolved_pricing_to_version
 
     if version is None:
         return {"reapproved": False, "repriced": False}
+    record_version_state(version)
+    db.session.flush()
     costing = current_costing_snapshot(version)
     had_pricing = getattr(version, "pricing_snapshot", None) is not None
     reapproved = repriced = False
-    if costing is not None and not working_matches_costing_snapshot(version, costing):
-        approve_all_costing(version, actor=actor, user_id=user_id, commit=False)
-        reapproved = True
-    costing_now = current_costing_snapshot(version)
-    if had_pricing and costing_now is not None and working_matches_costing_snapshot(version, costing_now):
-        apply_resolved_pricing_to_version(version, actor=actor)
-        repriced = True
-    else:
-        from app.services.estimate_builder import recalculate_version
+    try:
+        if costing_was_current and costing is not None and not working_matches_costing_snapshot(version, costing):
+            approve_all_costing(version, actor=actor, user_id=user_id, commit=False)
+            reapproved = True
+        costing_now = current_costing_snapshot(version)
+        if had_pricing and costing_now is not None and working_matches_costing_snapshot(version, costing_now):
+            apply_resolved_pricing_to_version(version, actor=actor)
+            repriced = True
+        else:
+            from app.services.estimate_builder import recalculate_version
 
-        recalculate_version(version)
+            recalculate_version(version)
+    except (EstimateCostingError, PricingEngineError) as exc:
+        db.session.rollback()
+        raise WorkPackageError(f"The change was not made: {exc}") from exc
     db.session.flush()
     return {"reapproved": reapproved, "repriced": repriced}
 
@@ -267,6 +392,7 @@ def exclude_work(package, *, actor, party: str = PARTY_BY_OTHERS, party_name: st
     name = _actor(actor)
     _require_package(package)
     version = _require_editable(package)
+    was_current = _costing_current(version)
     party = (party or PARTY_BY_OTHERS).strip().upper()
     if party not in RESPONSIBLE_PARTIES or party == PARTY_CONTRACTOR:
         raise WorkPackageError("Choose who does the excluded work: By Others, the Owner / Client, or a named party.")
@@ -286,7 +412,7 @@ def exclude_work(package, *, actor, party: str = PARTY_BY_OTHERS, party_name: st
                detail=f"{package.display_name}: {responsible_label(package)}"
                       + (f"; reason: {package.commercial_reason}" if package.commercial_reason else ""),
                user_id=user_id)
-    result = _refresh_commercials(version, name, user_id)
+    result = _refresh_commercials(version, name, user_id, costing_was_current=was_current)
     db.session.commit()
     return result
 
@@ -296,6 +422,7 @@ def include_work(package, *, actor, reason: str = "", user_id=None) -> dict:
     name = _actor(actor)
     _require_package(package)
     version = _require_editable(package)
+    was_current = _costing_current(version)
     if is_included(package):
         return {"reapproved": False, "repriced": False}
     package.commercial_status = COMMERCIAL_INCLUDED
@@ -307,7 +434,7 @@ def include_work(package, *, actor, reason: str = "", user_id=None) -> dict:
     package.updated_at = _now()
     _event(package, "WORK_INCLUDED", actor=name, from_value=COMMERCIAL_EXCLUDED, to_value=COMMERCIAL_INCLUDED,
            detail=package.display_name, user_id=user_id)
-    result = _refresh_commercials(version, name, user_id)
+    result = _refresh_commercials(version, name, user_id, costing_was_current=was_current)
     db.session.commit()
     return result
 
@@ -316,7 +443,7 @@ def set_responsible_party(package, *, actor, party: str, party_name: str = "", u
     """Change who does excluded work, without changing the price."""
     name = _actor(actor)
     _require_package(package)
-    _require_editable(package)
+    version = _require_editable(package)
     if is_included(package):
         raise WorkPackageError("Included work is Brayman's. Exclude it first to name who does it.")
     party = (party or "").strip().upper()
@@ -332,13 +459,14 @@ def set_responsible_party(package, *, actor, party: str, party_name: str = "", u
     package.commercial_decided_at = _now()
     _event(package, "RESPONSIBLE_PARTY", actor=name, from_value=before[:80],
            to_value=responsible_label(package)[:80], detail=package.display_name, user_id=user_id)
+    record_version_state(version)
     db.session.commit()
 
 
 def set_delivery_method(package, *, actor, method: Optional[str], user_id=None) -> None:
     name = _actor(actor)
     _require_package(package)
-    _require_editable(package)
+    version = _require_editable(package)
     method = (method or "").strip().upper() or None
     if method is not None and method not in DELIVERY_METHODS:
         raise WorkPackageError("Choose how the work is delivered.")
@@ -358,6 +486,7 @@ def set_shared(package, *, actor, rule: Optional[str], user_id=None) -> dict:
     name = _actor(actor)
     _require_package(package)
     version = _require_editable(package)
+    was_current = _costing_current(version)
     rule = (rule or "").strip().upper() or None
     if rule is not None and rule not in SHARED_RULES:
         raise WorkPackageError("Choose when the shared costs count.")
@@ -365,7 +494,7 @@ def set_shared(package, *, actor, rule: Optional[str], user_id=None) -> dict:
     package.shared_rule = rule
     _event(package, "SHARED_RULE", actor=name, from_value=before, to_value=rule, detail=package.display_name,
            user_id=user_id)
-    result = _refresh_commercials(version, name, user_id)
+    result = _refresh_commercials(version, name, user_id, costing_was_current=was_current)
     db.session.commit()
     return result
 

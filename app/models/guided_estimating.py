@@ -255,6 +255,31 @@ class GuidedEstimateStage(db.Model):
     guided_estimate = db.relationship("GuidedEstimate", back_populates="stages")
     parent = db.relationship("GuidedEstimateStage", remote_side=[id], backref="children_rows")
 
+    # The database cannot add these check constraints to the existing table (SQLite); the model validates instead.
+    @validates("commercial_status")
+    def _v_commercial(self, key, value):
+        if value not in COMMERCIAL_STATUSES:
+            raise ValueError("Commercial status is INCLUDED or EXCLUDED.")
+        return value
+
+    @validates("responsible_party")
+    def _v_party(self, key, value):
+        if value is not None and value not in RESPONSIBLE_PARTIES:
+            raise ValueError("Responsible party is not recognized.")
+        return value
+
+    @validates("delivery_method")
+    def _v_delivery(self, key, value):
+        if value is not None and value not in DELIVERY_METHODS:
+            raise ValueError("Delivery method is not recognized.")
+        return value
+
+    @validates("shared_rule")
+    def _v_shared(self, key, value):
+        if value is not None and value not in SHARED_RULES:
+            raise ValueError("Shared rule is not recognized.")
+        return value
+
     @validates("responsibility")
     def _v_resp(self, key, value):
         if value in ("", None):

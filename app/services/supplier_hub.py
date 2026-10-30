@@ -722,7 +722,10 @@ def _package_for(project, guided_stage_id):
         return None
     from app.models.guided_estimating import GuidedEstimateStage
 
-    stage = db.session.get(GuidedEstimateStage, int(guided_stage_id))
+    try:
+        stage = db.session.get(GuidedEstimateStage, int(guided_stage_id))
+    except (TypeError, ValueError):
+        raise SupplierHubError("Choose the work package from the list.")
     if stage is None or stage.organization_id != project.organization_id or stage.guided_estimate.project_id != project.id:
         raise SupplierHubError("That work package is not on this project.")
     return stage.id

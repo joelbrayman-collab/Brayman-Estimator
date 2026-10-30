@@ -39,7 +39,9 @@ def test_cost_report_and_closeout_by_package(app):
     db.session.commit()
     commitment = PG.propose_subcontract(project, actor_name=JOEL, subcontractor_name="Soffit Co (synthetic)",
                                         scope_text="Soffit", amount="2500", guided_stage_id=siding.guided_stage_id)
-    PG.approve_subcontract(commitment, actor_name=JOEL)
+    from tests.schedule_support import company_manager
+
+    PG.approve_subcontract(commitment, user=company_manager(project.organization_id))
     change = ChangeOrder(organization_id=project.organization_id, project_id=project.id, number="CO-SYN-1",
                          title="Extra battens (synthetic)", status="Approved")
     db.session.add(change)

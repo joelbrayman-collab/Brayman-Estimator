@@ -339,3 +339,67 @@ def test_work_plan_is_seeded_per_included_package_with_line_lineage(app):
             line = db.session.get(EstimateLineItem, activity.source_estimate_line_item_id)
             assert line is not None and WP.package_of_section(line.section).id == element.guided_stage_id
             assert Decimal(activity.estimated_hours) == Decimal(line.quantity)
+
+
+# ---------------------------------------------------------------------------------------------- review findings
+def test_a_change_on_the_successor_never_changes_the_approved_version(app):
+    from app.services import estimate_approval as A
+
+    guided, version, packages = build_paulusse()
+    WP.exclude_work(packages["Removal & substrate preparation"], actor=JOEL)
+    for name, package in packages.items():
+        if name != "Removal & substrate preparation":
+            G.complete_stage(guided, package, actor=JOEL)
+    _sign_off(version)
+    approved_figures = figures(version)
+    successor = A.create_successor_version(version, actor=JOEL, reason="Owner adds trim (synthetic)")
+    WP.exclude_work(packages["Exterior trim"], actor=JOEL)
+    db.session.refresh(version)
+    assert figures(version) == approved_figures == EXCLUDED_ALONE["Removal & substrate preparation"]
+    assert A.verify(version)["matches"] is True
+    assert [x["name"] for x in WP.customer_scope(version)["excluded"]] == ["Removal & substrate preparation"]
+    assert {x["name"] for x in WP.customer_scope(successor)["excluded"]} == {"Removal & substrate preparation",
+                                                                              "Exterior trim"}
+    assert not WP.package_participates(packages["Exterior trim"], successor)
+    assert WP.package_participates(packages["Exterior trim"], version)
+
+
+def test_no_scope_change_or_revision_after_the_customer_accepts(app):
+    from app.services import estimate_approval as A
+
+    guided, version, packages = build_paulusse()
+    for package in packages.values():
+        G.complete_stage(guided, package, actor=JOEL)
+    proposal = _sign_off(version)
+    proposal.status = "Accepted"
+    db.session.commit()
+    with pytest.raises(A.EstimateApprovalError, match="change order"):
+        A.create_successor_version(version, actor=JOEL, reason="After acceptance (synthetic)")
+    with pytest.raises(WP.WorkPackageError, match="change order"):
+        WP.exclude_work(packages["Exterior trim"], actor=JOEL)
+
+
+def test_excluding_work_never_approves_an_unreviewed_cost(app):
+    from app.services.estimate_costing import current_costing_snapshot, working_matches_costing_snapshot
+
+    _guided, version, packages = build_paulusse()
+    line = WP.package_lines(packages["Exterior trim"], version)[0]
+    from app.services.estimate_builder import update_line_item as edit
+
+    edit(line, unit_cost=M("2500.00"))
+    db.session.commit()
+    before = current_costing_snapshot(version)
+    assert not working_matches_costing_snapshot(version, before)
+    WP.exclude_work(packages["Sealant & touch-up"], actor=JOEL)
+    assert current_costing_snapshot(version).id == before.id  # nobody approved the edited cost on their behalf
+
+
+def test_work_removed_and_added_again_starts_included(app):
+    guided, version, packages = build_paulusse()
+    trim = packages["Exterior trim"]
+    WP.exclude_work(trim, actor=JOEL, party=PARTY_NAMED, party_name="Lockwood")
+    assert not trim.is_included
+    trim.responsibility = "NA"  # removed (synthetic shortcut: its lines would otherwise block removal)
+    db.session.commit()
+    SW.add_work(guided, custom_name="Exterior trim", actor=JOEL)
+    assert trim.is_included and trim.responsible_party is None

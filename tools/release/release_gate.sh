@@ -14,7 +14,8 @@
 #   git -C ~/Desktop/Brayman-Estimator show <candidate>:tools/release/release_gate.sh > /tmp/release_gate.sh
 #   bash /tmp/release_gate.sh --label cal2 --candidate <sha> --branch v1/completion \
 #        --main-base <sha> --live-base <sha> --live-deploy <dep-id> [--browser-expected 49]
-#        [--migration-to <revision> --new-tables <t1,t2,...> [--altered-tables <t1,...>] [--altered-checks <ck_1,...>]]
+#        [--migration-to <revision> --new-tables <t1,t2,...> [--altered-tables <t1,...>] [--altered-checks <ck_1,...>]
+#         [--filled-columns <table.column,...>] [--populated-tables <t1,...>]]
 #
 # Gates (stops at the first failure):
 #   1 one run at a time; GitHub main = --main-base; --branch = --candidate; live instance (SSH) = --live-base
@@ -34,7 +35,7 @@
 # release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
 set -u
 usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""; ALTERED_CHECKS=""
+LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""; ALTERED_CHECKS=""; FILLED_COLUMNS=""; POPULATED_TABLES=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
@@ -48,6 +49,8 @@ while [ $# -gt 0 ]; do
     --new-tables) NEW_TABLES=$2; shift 2;;
     --altered-tables) ALTERED_TABLES=$2; shift 2;;
     --altered-checks) ALTERED_CHECKS=$2; shift 2;;
+    --filled-columns) FILLED_COLUMNS=$2; shift 2;;
+    --populated-tables) POPULATED_TABLES=$2; shift 2;;
     *) usage;;
   esac
 done
@@ -74,6 +77,17 @@ fi
 # --altered-checks <ck_1,...> (29 Oct 2026, supplier signing a4d5e6f7a8b9): the only check constraints the migration
 # may change. The rehearsal and the live apply then allow a rebuilt table only if its columns, keys, foreign keys and
 # every other check are identical (stricter than --altered-tables, which accepts any schema change of a table).
+# --filled-columns <table.column,...> and --populated-tables <t1,...> (30 Oct 2026, estimate-to-project release):
+# the data the migration is authorized to write, named here so Joel sees it in the command. A filled column that
+# already existed may only go from empty to a value; every other column of every row is still compared exactly.
+if [ -n "$FILLED_COLUMNS" ]; then
+  [ -n "$MIGRATION_TO" ] && [[ "$FILLED_COLUMNS" =~ ^[a-z_]+\.[a-z_]+(,[a-z_]+\.[a-z_]+)*$ ]] \
+    || { echo "--filled-columns <table.column,...> needs --migration-to"; exit 2; }
+fi
+if [ -n "$POPULATED_TABLES" ]; then
+  [ -n "$MIGRATION_TO" ] && [[ "$POPULATED_TABLES" =~ ^[a-z_]+(,[a-z_]+)*$ ]] \
+    || { echo "--populated-tables <t1,t2> needs --migration-to (and the tables in --new-tables)"; exit 2; }
+fi
 if [ -n "$ALTERED_CHECKS" ]; then
   [ -n "$MIGRATION_TO" ] && [[ "$ALTERED_CHECKS" =~ ^ck_[a-z0-9_]+(,ck_[a-z0-9_]+)*$ ]] \
     || { echo "--altered-checks <ck_1,ck_2> needs --migration-to and check constraint names (ck_...)"; exit 2; }
@@ -241,7 +255,8 @@ if [ -n "$MIGRATION_TO" ]; then
   cp "$LOCALB" "$REHEARSAL" || stop "could not copy the backup for the rehearsal"
   ./venv/bin/python tools/release/migration_check.py rehearse --db "$REHEARSAL" --from "$REVISION" \
     --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" ${ALTERED_TABLES:+--altered-tables "$ALTERED_TABLES"} \
-    ${ALTERED_CHECKS:+--altered-checks "$ALTERED_CHECKS"} > "$OUT-rehearsal.txt" 2>&1
+    ${ALTERED_CHECKS:+--altered-checks "$ALTERED_CHECKS"} ${FILLED_COLUMNS:+--filled-columns "$FILLED_COLUMNS"} \
+    ${POPULATED_TABLES:+--populated-tables "$POPULATED_TABLES"} > "$OUT-rehearsal.txt" 2>&1
   REH=$?
   rm -f "$REHEARSAL"  # production data: no extra copy is kept
   cat "$OUT-rehearsal.txt" | grep -E '^[A-Z_]+='
@@ -266,6 +281,8 @@ MIGRATION_TO=$MIGRATION_TO
 NEW_TABLES=$NEW_TABLES
 ALTERED_TABLES=$ALTERED_TABLES
 ALTERED_CHECKS=$ALTERED_CHECKS
+FILLED_COLUMNS=$FILLED_COLUMNS
+POPULATED_TABLES=$POPULATED_TABLES
 EOF
 echo "== 4. READY_FOR_PUSH — stop here"
 if [ -n "$MIGRATION_TO" ]; then

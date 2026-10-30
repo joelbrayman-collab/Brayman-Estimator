@@ -12,7 +12,14 @@ MIGRATION_REHEARSAL=ok or MIGRATE=ok; anything else is a stop.
 Both modes prove the same things: the database starts at --from; every existing table keeps its
 exact schema (or, for a table rebuilt only to change the named --altered-checks, the same columns,
 keys, foreign keys and other check constraints) and every row (count and SHA-256 of all rows, in rowid order); exactly the --new-tables
-appear, empty; the revision ends at --to; integrity is ok. "apply" first takes its own online
+appear, empty; the revision ends at --to; integrity is ok.
+
+Declared data changes (30 Oct 2026, estimate-to-project release s6f7a8b9c0d1), each named on the command line and
+shown to Joel with the release arguments:
+  --filled-columns t.c,...   a column the migration fills: an existing column may only go from NULL to a value
+                             (every value already held stays exactly as it was); an added column may start with a
+                             value. Every other column of every row is still compared exactly.
+  --populated-tables t,...   new tables (also in --new-tables) that the migration fills; their row counts are shown. "apply" first takes its own online
 backup next to the live database (instance/backups/pre-migrate-<label>-<UTC>.db) and refuses unless
 the instance runs --expect-sha. Nothing is downgraded: database recovery is that backup, with Joel.
 """
@@ -51,7 +58,15 @@ def _connect_ro(path: str) -> sqlite3.Connection:
     return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
 
 
-def snapshot(path: str, columns_of: dict | None = None) -> dict:
+def _split_filled(filled) -> dict:
+    out_: dict = {}
+    for item in filled or ():
+        table, _, column = item.partition(".")
+        out_.setdefault(table, set()).add(column)
+    return out_
+
+
+def snapshot(path: str, columns_of: dict | None = None, exclude: dict | None = None) -> dict:
     """Schema and content fingerprint of every table and index (except alembic_version).
 
     ``columns_of`` {table: [column, ...]} (24 Oct 2026, a declared altered table that gained a column): that
@@ -70,12 +85,16 @@ def snapshot(path: str, columns_of: dict | None = None) -> dict:
         for table in tables:
             columns[table] = [r[1] for r in con.execute(f'PRAGMA table_info("{table}")')]
             keep = (columns_of or {}).get(table)
+            skip = (exclude or {}).get(table, set())
             if keep is not None and set(keep) <= set(columns[table]):
-                select = ", ".join(f'"{c}"' for c in keep)
+                select = ", ".join(f'"{c}"' for c in keep if c not in skip) or "1"
                 extra = [c for c in columns[table] if c not in keep]
+                counted = [c for c in extra if c not in skip]  # a declared filled column may hold values
                 added[table] = (extra, con.execute(
-                    f'SELECT COUNT(*) FROM "{table}" WHERE ' + " OR ".join(f'"{c}" IS NOT NULL' for c in extra)
-                ).fetchone()[0] if extra else 0)
+                    f'SELECT COUNT(*) FROM "{table}" WHERE ' + " OR ".join(f'"{c}" IS NOT NULL' for c in counted)
+                ).fetchone()[0] if counted else 0)
+            elif skip:
+                select = ", ".join(f'"{c}"' for c in columns[table] if c not in skip) or "1"
             else:
                 select = "*"
             digest = hashlib.sha256()
@@ -92,9 +111,50 @@ def snapshot(path: str, columns_of: dict | None = None) -> dict:
             "integrity": integrity}
 
 
-def snapshot_after(path: str, before: dict, altered_tables) -> dict:
+def snapshot_after(path: str, before: dict, altered_tables, filled=()) -> dict:
     """The database after the upgrade; a declared altered table is compared over its earlier columns."""
-    return snapshot(path, {t: before["columns"][t] for t in altered_tables if t in before.get("columns", {})})
+    return snapshot(path, {t: before["columns"][t] for t in altered_tables if t in before.get("columns", {})},
+                    _split_filled(filled))
+
+
+def check_filled(before_path: str, after_path: str, filled) -> None:
+    """A declared filled column that already existed: only NULL -> value; every value already held is unchanged."""
+    for table, columns in _split_filled(filled).items():
+        old = _connect_ro(before_path)
+        try:
+            existing = [r[1] for r in old.execute(f'PRAGMA table_info("{table}")')]
+            if not existing:
+                fail(f"declared filled table {table} does not exist")
+            kept = [c for c in columns if c in existing]
+            before = {row[0]: row[1:] for row in old.execute(
+                f'SELECT rowid, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')} if kept else {}
+        finally:
+            old.close()
+        new = _connect_ro(after_path)
+        try:
+            after_columns = [r[1] for r in new.execute(f'PRAGMA table_info("{table}")')]
+            missing = [c for c in columns if c not in after_columns]
+            if missing:
+                fail(f"declared filled columns do not exist after the migration: {table}." + ", ".join(missing))
+            filled_count = {c: 0 for c in columns}
+            if kept:
+                after = {row[0]: row[1:] for row in new.execute(
+                    f'SELECT rowid, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')}
+                for rowid, values in before.items():
+                    for column, was, now in zip(kept, values, after.get(rowid, (None,) * len(kept))):
+                        if was is not None and was != now:
+                            fail(f"{table}.{column} changed a value already held (row {rowid})")
+                        if was is None and now is not None:
+                            filled_count[column] += 1
+            for column in columns:
+                if column not in kept:
+                    filled_count[column] = new.execute(
+                        f'SELECT COUNT(*) FROM "{table}" WHERE "{column}" IS NOT NULL').fetchone()[0]
+        finally:
+            new.close()
+        for column, count in sorted(filled_count.items()):
+            out("FILLED_COLUMN", f"{table}.{column}: {count} row(s) filled"
+                + (" (existing column; only empty values were filled)" if column in kept else " (added column)"))
 
 
 _CHECK = re.compile(r"CONSTRAINT\s+(\w+)\s+CHECK\s*\(")
@@ -152,7 +212,7 @@ def _belongs_to(key, tables) -> bool:
 
 
 def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_tables: list = (), altered_checks=(),
-            paths=None) -> None:
+            paths=None, filled=(), populated=()) -> None:
     out("REVISION_AFTER", after["revision"])
     out("INTEGRITY_AFTER", after["integrity"])
     if after["integrity"] != "ok":
@@ -204,9 +264,16 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
     added = sorted(set(after["content"]) - set(before["content"]))
     if added != sorted(new_tables):
         fail(f"new tables are {added}, expected {sorted(new_tables)}")
-    not_empty = [t for t in added if after["content"][t][0] != 0]
+    undeclared_populated = [t for t in populated if t not in new_tables]
+    if undeclared_populated:
+        fail("populated tables must also be new tables: " + ", ".join(undeclared_populated))
+    not_empty = [t for t in added if after["content"][t][0] != 0 and t not in populated]
     if not_empty:
         fail("new tables are not empty: " + ", ".join(not_empty))
+    for table in populated:
+        out("POPULATED_TABLE", f"{table}: {after['content'][table][0]} row(s)")
+    if filled and paths:
+        check_filled(paths[0], paths[1], filled)
     detail = "schema and every row identical"
     if rebuilt:
         detail = (f"every row identical; schema identical except the named check constraints on "
@@ -216,7 +283,7 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
     if added_columns:
         detail += f"; added empty columns: {','.join(added_columns)} (every existing row unchanged)"
     out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, {detail}")
-    out("NEW_TABLES", ",".join(added) + " (empty)")
+    out("NEW_TABLES", ",".join(added) + (" (empty)" if not populated else f" (populated as declared: {','.join(populated)})"))
 
 
 def _reference_copy(db: str) -> str:
@@ -234,7 +301,7 @@ def rehearse(args) -> None:
     db = os.path.abspath(args.db)
     if not os.path.exists(db):
         fail(f"{db} does not exist")
-    before = snapshot(db)
+    before = snapshot(db, exclude=_split_filled(args.filled_columns))
     out("REHEARSAL_DB", db)
     out("REVISION_BEFORE", before["revision"])
     out("INTEGRITY_BEFORE", before["integrity"])
@@ -242,13 +309,14 @@ def rehearse(args) -> None:
         fail(f"copy is at {before['revision']}, expected {args.from_rev}")
     if before["integrity"] != "ok":
         fail("copy integrity is not ok")
-    reference = _reference_copy(db) if args.altered_checks else None
+    reference = _reference_copy(db) if (args.altered_checks or args.filled_columns) else None
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
     try:
-        compare(before, snapshot_after(db, before, args.altered_tables), args.new_tables, args.to_rev, args.altered_tables,
-                args.altered_checks, (reference, db))
+        compare(before, snapshot_after(db, before, args.altered_tables, args.filled_columns), args.new_tables,
+                args.to_rev, args.altered_tables, args.altered_checks, (reference, db), args.filled_columns,
+                args.populated_tables)
     finally:
         if reference:
             os.remove(reference)
@@ -292,18 +360,19 @@ def apply(args) -> None:
         fail("pre-migration backup did not verify")
     out("PRE_MIGRATION_BACKUP", backup)
     out("PRE_MIGRATION_BACKUP_SHA256", hashlib.sha256(backup.read_bytes()).hexdigest())
-    before = snapshot(db)
+    before = snapshot(db, exclude=_split_filled(args.filled_columns))
     out("INTEGRITY_BEFORE", before["integrity"])
     if before["integrity"] != "ok":
         fail("live integrity is not ok before the migration")
     started = time.time()
     upgrade(db, args.to_rev)
     out("UPGRADE_SECONDS", "%.1f" % (time.time() - started))
-    after = snapshot_after(db, before, args.altered_tables)
+    after = snapshot_after(db, before, args.altered_tables, args.filled_columns)
     # Someone may have used the app during the minute of the release; compare against the moment
     # just before the upgrade, which is what the migration itself must not change. The structure of a
     # rebuilt table is compared with the verified pre-migration backup.
-    compare(before, after, args.new_tables, args.to_rev, args.altered_tables, args.altered_checks, (str(backup), db))
+    compare(before, after, args.new_tables, args.to_rev, args.altered_tables, args.altered_checks, (str(backup), db),
+            args.filled_columns, args.populated_tables)
     out("MIGRATE", "ok")
 
 
@@ -320,6 +389,10 @@ def main() -> None:
         p.add_argument("--altered-tables", default=[], type=lambda v: [t for t in v.split(",") if t])
         p.add_argument("--altered-checks", default=[], type=lambda v: [t for t in v.split(",") if t],
                        help="check constraints the migration is authorized to change (tables rebuilt for them)")
+        p.add_argument("--filled-columns", default=[], type=lambda v: [t for t in v.split(",") if t],
+                       help="table.column the migration is authorized to fill (existing: only NULL -> value)")
+        p.add_argument("--populated-tables", default=[], type=lambda v: [t for t in v.split(",") if t],
+                       help="new tables the migration is authorized to fill")
         if name == "rehearse":
             p.add_argument("--db", required=True)
         else:

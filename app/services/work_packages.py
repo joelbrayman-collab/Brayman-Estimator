@@ -364,6 +364,11 @@ def _refresh_commercials(version, actor, user_id=None, *, costing_was_current: b
         return {"reapproved": False, "repriced": False}
     record_version_state(version)
     db.session.flush()
+    if getattr(version, "winter_job", False) or any((line.code or "") == "WINTER-PROPANE"
+                                                   for section in version.sections for line in section.line_items):
+        from app.services import winter_job
+
+        winter_job.apply(version, actor=actor)  # winter heat follows the crew days of the work in Brayman's price
     costing = current_costing_snapshot(version)
     had_pricing = getattr(version, "pricing_snapshot", None) is not None
     reapproved = repriced = False

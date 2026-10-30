@@ -17,13 +17,14 @@ def hours(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
     org_id = get_current_organization_id()
     if request.method == "POST":
-        entries = {}
+        entries, crews = {}, {}
         for key, value in request.form.items():
-            if key.startswith("hours_"):
-                try:
-                    entries[int(key[len("hours_"):])] = value
-                except ValueError:
-                    continue
+            for prefix, target in (("hours_", entries), ("crew_", crews)):
+                if key.startswith(prefix):
+                    try:
+                        target[int(key[len(prefix):])] = value
+                    except ValueError:
+                        continue
         try:
             done = labour.save_hours(
                 version,
@@ -32,6 +33,7 @@ def hours(id, version_id):
                 actor=current_actor_display_name(fallback="Office"),
                 override_rate=request.form.get("override_rate", ""),
                 override_reason=request.form.get("override_reason", ""),
+                crew_by_item=crews,
             )
         except labour.LabourHoursError as exc:
             flash(str(exc), "error")

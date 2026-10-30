@@ -267,6 +267,9 @@ def _register_office_auth(app: Flask) -> None:
 
     app.add_template_global(reference_line, "project_reference_line")
     app.add_template_global(reference_pairs, "project_reference_pairs")
+    from app.services.winter_job import summary as winter_summary
+
+    app.add_template_global(winter_summary, "winter_summary")
 
     @app.context_processor
     def _session_timeout_settings():

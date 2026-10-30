@@ -20,6 +20,24 @@
         {% if econ.margin_is_override %}<p class="pp-note" data-margin-override>Project override · Company default {{ '%.2f'|format(econ.margin_default_percent|float) }}%</p>
         {% elif econ.margin_default_percent is not none %}<p class="pp-note">Company default</p>{% endif %}
       </div>
+      <div class="pp-field">
+        <label>HST</label>
+        <div class="pp-input"><input value="{{ '%g'|format(econ.tax_percent|float) if econ.tax_percent is not none else '' }}" disabled aria-label="HST"><span>%</span></div>
+        <p class="pp-note">From the pricing policy</p>
+      </div>
+      <input type="hidden" name="winter_form" value="1">
+      <div class="pp-field" data-winter-job>
+        <label class="pp-check"><input type="checkbox" name="winter_job" value="1" {% if version.winter_job %}checked{% endif %} {% if not editable %}disabled{% endif %} data-winter-toggle> Winter job</label>
+        <p class="pp-note">Adds the winter time increase to every labour line and propane for every crew day.</p>
+      </div>
+      <div class="pp-field">
+        <label for="pp-winter-pct">Winter time increase</label>
+        <div class="pp-input"><input id="pp-winter-pct" name="winter_time_increase_percent" inputmode="decimal" value="{{ '%g'|format(version.winter_time_increase_percent|float) }}" {% if not editable %}disabled{% endif %} data-winter-pct><span>%</span></div>
+      </div>
+      <div class="pp-field">
+        <label for="pp-propane">Propane per crew day</label>
+        <div class="pp-input"><span>$</span><input id="pp-propane" name="propane_per_crew_day" inputmode="decimal" value="{{ '%.2f'|format(version.propane_per_crew_day|float) }}" {% if not editable %}disabled{% endif %} data-propane><span>/ day</span></div>
+      </div>
       {% if editable %}
       <div class="pp-field pp-reason">
         <label for="pp-reason">Reason <span class="pp-note">(needed when a value differs from the company default)</span></label>
@@ -30,6 +48,7 @@
     </form>
     <dl class="pp-figures" data-project-figures>
       <div><dt>Labour</dt><dd data-labour>{{ '%g'|format(econ.labour_hours|float) }} h · {{ money(econ.labour_cost) }}</dd></div>
+      {% if version.winter_job %}{% set w = winter_summary(version) %}<div data-winter-figures><dt>Winter</dt><dd>{{ w.base_labour_hours }} h entered → {{ w.adjusted_labour_hours }} h · {{ '%.1f'|format(w.crew_days|float) }} crew days · propane {{ money(w.winter_heat_cost) }}</dd></div>{% endif %}
       <div><dt>Direct cost</dt><dd data-direct-cost>{{ money(econ.direct_cost) }}</dd></div>
       <div><dt>Selling price</dt><dd data-selling-price>{{ money(econ.selling_price) }}</dd></div>
       <div><dt>Gross profit</dt><dd data-gross-profit>{{ money(econ.gross_profit) }}</dd></div>

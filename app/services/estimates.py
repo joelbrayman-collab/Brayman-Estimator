@@ -169,6 +169,9 @@ def clone_current_version(
     capture_defaults(new_version, estimate.organization_id, from_version=current)  # a revision keeps the project's values
 
     new_version.scope_state_json = current.scope_state_json  # the scope decisions carry into the revision
+    for field in ("winter_job", "winter_time_increase_percent", "propane_per_crew_day", "hours_per_crew_day",
+                  "default_crew_size"):
+        setattr(new_version, field, getattr(current, field))  # the winter settings carry into the revision
     db.session.add(new_version)
     db.session.flush()
     clone_sections_to_version(current, new_version)

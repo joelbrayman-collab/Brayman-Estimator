@@ -96,7 +96,10 @@ def rows(version) -> List[dict]:
             continue
         existing = labour.get(_labour_code(item))
         out.append({"item": item, "labour_line": existing,
-                    "hours": None if existing is None else existing.quantity})
+                    # the hours entered (before any winter adjustment) and the crew size
+                    "hours": None if existing is None else (existing.base_quantity if existing.base_quantity is not None
+                                                            else existing.quantity),
+                    "crew": None if existing is None else existing.crew_size})
     return out
 
 
@@ -116,7 +119,7 @@ def _hours(raw) -> Optional[Decimal]:
 
 
 def save_hours(version, *, organization_id: str, hours_by_item: Dict[int, str], actor: str,
-               override_rate="", override_reason="") -> dict:
+               override_rate="", override_reason="", crew_by_item: Optional[Dict[int, str]] = None) -> dict:
     """Create, update or remove each item's labour line. Blank leaves an item alone; 0 removes its labour."""
     try:
         ensure_version_editable(version)
@@ -144,12 +147,28 @@ def save_hours(version, *, organization_id: str, hours_by_item: Dict[int, str], 
                     removed += 1
                 continue
             if existing is None:
-                add_manual_line(item.section, line_type="Custom", description=f"Labour — {item.description}"[:255],
-                                quantity=hours, unit=LABOUR_UNIT, unit_cost=rate, code=_labour_code(item), notes=notes)
+                existing = add_manual_line(item.section, line_type="Custom",
+                                           description=f"Labour — {item.description}"[:255], quantity=hours,
+                                           unit=LABOUR_UNIT, unit_cost=rate, code=_labour_code(item), notes=notes)
                 added += 1
             else:
+                existing.base_quantity = None  # the entered hours are the base again; winter is applied below
                 update_line_item(existing, quantity=hours, unit_cost=rate, notes=notes)
                 updated += 1
+            crew = (crew_by_item or {}).get(item_id)
+            if crew not in (None, ""):
+                try:
+                    existing.crew_size = max(1, int(str(crew).strip()))
+                except ValueError:
+                    raise LabourHoursError("Enter the crew size as a whole number of people.")
+        if getattr(version, "winter_job", False) or any(
+                (line.code or "") == "WINTER-PROPANE" for section in version.sections for line in section.line_items):
+            from app.services import winter_job
+
+            winter_job.apply(version, actor=actor)
+        from app import db
+
+        db.session.commit()
     except EstimateServiceError as exc:
         raise LabourHoursError(str(exc)) from exc
     return {"added": added, "updated": updated, "removed": removed, "rate": rate, "source": source}

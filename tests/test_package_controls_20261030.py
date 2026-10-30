@@ -59,7 +59,7 @@ def test_cost_report_and_closeout_by_package(app):
     assert row["actual_labour"] == M("7200.00")
     assert row["forecast"] == M("10721.28") + M("7200.00")  # non-labour estimate + labour already beyond estimate
     assert row["margin"] == row["revenue"] - row["forecast"]
-    assert report["totals"]["estimate_hours"] == M("272.00")
+    assert report["totals"]["estimate_hours"] == M("304.00")
 
     closeout = PC.closeout_report(project)
     siding_row = next(r for r in closeout["rows"] if r["package"].display_name == "HardiePanel siding & battens")

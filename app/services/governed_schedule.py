@@ -99,6 +99,24 @@ def _elements(project):
             .order_by(ProjectWorkElement.sort_order.asc(), ProjectWorkElement.id.asc()) if element_is_schedulable(e)]
 
 
+def element_crew_days(element) -> Optional[Decimal]:
+    """Crew days of a work item from its activities' estimate labour lines (hours already winter-adjusted when the
+    estimate is a winter job) and each line's crew size: the lineage hours -> crew days -> duration. None when the
+    activities have no estimate lineage."""
+    from app.models import EstimateLineItem, ProjectWorkActivity
+    from app.services.winter_job import line_crew_days
+
+    total, linked = Decimal("0"), False
+    for activity in ProjectWorkActivity.query.filter_by(project_work_element_id=element.id):
+        line = (db.session.get(EstimateLineItem, activity.source_estimate_line_item_id)
+                if activity.source_estimate_line_item_id else None)
+        if line is None:
+            continue
+        linked = True
+        total += line_crew_days(line, line.section.estimate_version)
+    return total if linked else None
+
+
 def preliminary_schedule(project, *, crew_size: int = DEFAULT_CREW_SIZE) -> list:
     """Proposed windows, in work order, finish-to-start. Dependencies decide the order when they exist."""
     from app.services.schedule import _active_dependencies
@@ -127,7 +145,9 @@ def preliminary_schedule(project, *, crew_size: int = DEFAULT_CREW_SIZE) -> list
             pending.append(element)
             continue
         start = start0 if not preds else add_working_days(max(ends[p] for p in preds), 1)
-        duration = calculated_duration_days(element.estimated_hours, crew_size=crew_size)
+        governed_days = element_crew_days(element)
+        duration = (max(1, math.ceil(governed_days - Decimal("0.0001"))) if governed_days is not None
+                    else calculated_duration_days(element.estimated_hours, crew_size=crew_size))
         end = window_end(start, duration)
         ends[element.id] = end
         plan.append({"element": element, "start": start, "end": end, "duration_days": duration,

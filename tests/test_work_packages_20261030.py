@@ -34,30 +34,41 @@ from tests.proposal_issue_support import approve_for_issue
 JOEL = "Joel Brayman"
 M = Decimal
 
-# The Paulusse REV2 work packages: (name, materials + equipment + other $, labour hours). The total is $19,547.32 of
-# material, equipment and disposal and 272 hours, the accepted baseline (docs/operations/paulusse-rev2-hold-2026-10-30.md).
+# Paulusse REV3 (the acceptance reference since 30 Oct 2026; REV2 is superseded, its files untouched): each work
+# package's material, equipment and other cost, and its labour activities (hours, crew), exactly as the REV3
+# Estimate Builder carries them. Hardie touch-up is Ben's 3 people x 1.5 days = 36 hours.
 PAULUSSE = (
-    ("General conditions", "800.00", "20"),
-    ("Removal & substrate preparation", "700.00", "30"),
-    ("Weather barrier & flashing", "1136.00", "18"),
-    ("HardiePanel siding & battens", "10721.28", "84"),
-    ("Exterior trim", "1896.75", "36"),
-    ("Aluminum soffit & fascia", "1712.57", "36"),
-    ("Estate Stone veneer & sills", "2312.72", "32"),
-    ("Sealant & touch-up", "268.00", "16"),
+    ("General conditions", "800.00", (("Set-up and protection", "8.00", 3), ("Receive and stage deliveries", "4.00", 3),
+                                      ("Final clean-up, magnet sweep, walk-through", "8.00", 3))),
+    ("Removal & substrate preparation", "700.00", (("Strip existing siding, load bin", "19.55", 3),
+                                                   ("Remove aluminum corners and trim", "4.45", 3),
+                                                   ("Inspect sheathing, re-nail", "6.00", 3))),
+    ("Weather barrier & flashing", "1136.00", (("Typar house wrap", "10.00", 3), ("Z flashing", "8.00", 3))),
+    ("HardiePanel siding & battens", "10721.28", (("HardiePanel vertical siding", "62.12", 3),
+                                                  ("HardieTrim battens", "21.88", 3))),
+    ("Exterior trim", "1896.75", (("Corner trim", "6.25", 3), ("Window trim", "18.08", 3), ("Door trim", "5.75", 3),
+                                  ("Drip cap", "1.75", 3), ("Freeze boards", "4.17", 3))),
+    ("Aluminum soffit & fascia", "1712.57", (("Vented soffit", "10.00", 3), ("J-channel", "5.25", 3),
+                                             ("Fascia", "20.75", 3))),
+    ("Estate Stone veneer & sills", "2312.72", (("Lath and scratch coat", "3.70", 2), ("Set stone and point", "21.30", 2),
+                                                ("Set limestone sills", "4.00", 2), ("Angle iron", "3.00", 2))),
+    ("Sealant & touch-up", "268.00", (("ColorMatch sealant", "12.00", 3), ("Hardie touch-up", "36.00", 3))),
 )
 
-# Accepted REV2 results: (hours, direct cost, selling price, HST, customer total).
-BASELINE = (M("272"), M("39947.32"), M("46996.85"), M("6109.59"), M("53106.44"))
+# Accepted REV3 results: (hours, direct cost, selling price, HST, customer total).
+BASELINE = (M("304"), M("42347.32"), M("49820.38"), M("6476.65"), M("56297.03"))  # CASE A, winter off
 EXCLUDED_ALONE = {
-    "Removal & substrate preparation": (M("242"), M("36997.32"), M("43526.26"), M("5658.41"), M("49184.67")),
-    "Weather barrier & flashing": (M("254"), M("37461.32"), M("44072.14"), M("5729.38"), M("49801.52")),
-    "HardiePanel siding & battens": (M("188"), M("22926.04"), M("26971.81"), M("3506.34"), M("30478.15")),
-    "Exterior trim": (M("236"), M("35350.57"), M("41588.91"), M("5406.56"), M("46995.47")),
-    "Aluminum soffit & fascia": (M("236"), M("35534.75"), M("41805.59"), M("5434.73"), M("47240.32")),
-    "Estate Stone veneer & sills": (M("240"), M("35234.60"), M("41452.47"), M("5388.82"), M("46841.29")),
+    "Removal & substrate preparation": (M("274"), M("39397.32"), M("46349.79"), M("6025.47"), M("52375.26")),
+    "Weather barrier & flashing": (M("286"), M("39861.32"), M("46895.67"), M("6096.44"), M("52992.11")),
+    "HardiePanel siding & battens": (M("220"), M("25326.04"), M("29795.34"), M("3873.39"), M("33668.73")),
+    "Exterior trim": (M("268"), M("37750.57"), M("44412.44"), M("5773.62"), M("50186.06")),
+    "Aluminum soffit & fascia": (M("268"), M("37934.75"), M("44629.12"), M("5801.79"), M("50430.91")),
+    "Estate Stone veneer & sills": (M("272"), M("37634.60"), M("44276.00"), M("5755.88"), M("50031.88")),
     "Sealant & touch-up": (M("256"), M("38479.32"), M("45269.79"), M("5885.07"), M("51154.86")),
 }
+WINTER_B = (M("364.80"), M("47467.32"), M("55843.91"), M("7259.71"), M("63103.62"))
+WINTER_C_NO_STONE = (M("326.40"), M("42190.60"), M("49636.00"), M("6452.68"), M("56088.68"))
+WINTER_D_30_50 = (M("395.23"), M("50056.30"), M("58889.76"), M("7655.67"), M("66545.43"))
 
 
 @pytest.fixture
@@ -89,17 +100,21 @@ def build_paulusse():
     db.session.add(project)
     db.session.commit()
     guided = SW.ensure_scope(ORG, project.id, actor=JOEL)
-    for name, _cost, _hours in PAULUSSE:
+    for name, _cost, _labour in PAULUSSE:
         SW.add_work(guided, custom_name=name, actor=JOEL)
     packages = {p.display_name: p for p in WP.packages(guided)}
     version = G.editable_version(guided)
-    hours = {}
-    for name, cost, hrs in PAULUSSE:
+    for name, cost, labour_rows in PAULUSSE:
         section = G.section_for(packages[name], version, create=True)
-        line = add_manual_line(section, line_type="Custom", description=f"{name}: materials, equipment and other",
-                               quantity=1, unit="ls", unit_cost=M(cost))
-        hours[line.id] = hrs
-    labour.save_hours(version, organization_id=ORG, hours_by_item=hours, actor=JOEL)
+        add_manual_line(section, line_type="Custom", description=f"{name}: materials, equipment and other",
+                        quantity=1, unit="ls", unit_cost=M(cost))
+        for n, (activity, hours, crew) in enumerate(labour_rows, 1):
+            # an ordinary labour line (LAB-, hours x the version's labour rate), as the labour-hours page writes it
+            line = add_manual_line(section, line_type="Custom", description=f"Labour — {activity}", quantity=M(hours),
+                                   unit=labour.LABOUR_UNIT, unit_cost=M("75.00"),
+                                   code=f"{labour.LABOUR_CODE_PREFIX}{packages[name].id}-{n}")
+            line.crew_size = crew
+    db.session.commit()
     WP.set_shared(packages["General conditions"], actor=JOEL, rule=SHARED_WHILE_ANY_INCLUDED)
     db.session.commit()
     approve_for_issue(version, actor=JOEL)
@@ -156,7 +171,7 @@ def test_customer_scope_names_the_excluded_work_and_the_responsible_party(app):
     assert [e["name"] for e in scope["excluded"]] == ["Removal & substrate preparation"]
     assert scope["excluded"][0]["text"] == "Excluded from Brayman Construction scope / By Others"
     assert "Removal & substrate preparation" not in [e["name"] for e in scope["included"]]
-    assert sum(e["sell_price"] for e in scope["included"]) == M("43526.26")
+    assert sum(e["sell_price"] for e in scope["included"]) == M("46349.79")
     WP.set_responsible_party(removal, actor=JOEL, party=PARTY_NAMED, party_name="Lockwood")
     assert WP.customer_scope(version)["excluded"][0]["text"] == "Excluded from Brayman Construction scope; by Lockwood"
     WP.set_responsible_party(removal, actor=JOEL, party=PARTY_CLIENT)
@@ -170,10 +185,10 @@ def test_rate_and_margin_work_with_an_exclusion(app):
     WP.exclude_work(packages["Removal & substrate preparation"], actor=JOEL)
     set_project_pricing(version, actor=JOEL, labour_rate="80", reason="Union crew (synthetic)")
     db.session.commit()
-    assert figures(version)[-1] == M("50793.26")
+    assert figures(version)[-1] == M("54196.55")
     set_project_pricing(version, actor=JOEL, margin_percent="20", reason="Tight schedule (synthetic)")
     db.session.commit()
-    assert figures(version)[-1] == M("53967.84")
+    assert figures(version)[-1] == M("57583.84")
 
 
 def test_general_conditions_drop_out_only_when_no_contractor_work_remains(app):
@@ -246,7 +261,7 @@ def test_gate_1_freezes_what_was_approved_with_a_fingerprint(app):
     record = A.approval_for(version)
     summary = record.summary
     assert record.approved_by_name == JOEL and len(record.fingerprint) == 64
-    assert summary["customer_total"] == "49184.67" and summary["labour_hours"] == "242.00"
+    assert summary["customer_total"] == "52375.26" and summary["labour_hours"] == "274.00"
     assert [x["name"] for x in summary["excluded"]] == ["Removal & substrate preparation"]
     assert summary["excluded"][0]["text"] == "Excluded from Brayman Construction scope / By Others"
     assert A.verify(version)["matches"] is True
@@ -279,7 +294,7 @@ def test_proposal_lists_included_and_excluded_work_and_prices_only_included(app)
     proposal = _sign_off(version)
     assert "Removal & substrate preparation" not in [s.name for s in proposal.sections]
     assert len(proposal.sections) == 7
-    assert proposal.total == M("49184.67")
+    assert proposal.total == M("52375.26")
     scope = proposal.scope_snapshot
     assert [x["name"] for x in scope["excluded"]] == ["Removal & substrate preparation"]
     assert scope["excluded"][0]["text"] == "Excluded from Brayman Construction scope; by Lockwood"
@@ -301,8 +316,8 @@ def test_contractor_estimate_package_is_landscape_and_matches_the_engine(app):
     WP.exclude_work(packages["Estate Stone veneer & sills"], actor=JOEL, party=PARTY_CLIENT)
     rows = {r["name"]: r for r in package_rows(version)}
     assert rows["Estate Stone veneer & sills"]["status"] == "Excluded · Owner / Client"
-    assert sum(r["sell"] for r in rows.values() if r["participates"]) == M("41452.47")
-    assert sum(r["hours"] for r in rows.values() if r["participates"]) == M("240")
+    assert sum(r["sell"] for r in rows.values() if r["participates"]) == M("44276.00")
+    assert sum(r["hours"] for r in rows.values() if r["participates"]) == M("272")
     reader = PdfReader(BytesIO(build_contractor_estimate_package(version, generated_by=JOEL)))
     assert len(reader.pages) >= 3
     for page in reader.pages:
@@ -310,7 +325,7 @@ def test_contractor_estimate_package_is_landscape_and_matches_the_engine(app):
         assert float(box.width) > float(box.height)  # every page landscape
         assert round(float(box.width)) == 1008 and round(float(box.height)) == 612  # legal
     text = " ".join(" ".join(page.extract_text().split()) for page in reader.pages)
-    assert "INTERNAL — CONTRACTOR COPY" in text and "$46,841.29" in text and "$41,452.47" in text
+    assert "INTERNAL — CONTRACTOR COPY" in text and "$50,031.88" in text and "$44,276.00" in text
     assert "Excluded from Brayman Construction scope; by the Owner / Client" in text
     assert "/AcroForm" not in str(reader.trailer["/Root"])  # plain PDF: no form fields, opens in any viewer
 
@@ -331,9 +346,9 @@ def test_work_plan_is_seeded_per_included_package_with_line_lineage(app):
     seed_project_work_structure(project_id=guided.project_id, estimate_version_id=version.id, seeded_by=JOEL,
                                 organization_id=guided.organization_id)
     elements = ProjectWorkElement.query.filter_by(project_id=guided.project_id).order_by(ProjectWorkElement.sort_order).all()
-    assert [e.display_name for e in elements] == [n for n, _c, _h in PAULUSSE if n != "Exterior trim"]
+    assert [e.display_name for e in elements] == [n for n, _c, _l in PAULUSSE if n != "Exterior trim"]
     assert all(e.guided_stage_id == packages[e.display_name].id for e in elements)
-    assert sum(Decimal(e.estimated_hours) for e in elements) == M("236")
+    assert sum(Decimal(e.estimated_hours) for e in elements) == M("268")
     for element in elements:
         for activity in ProjectWorkActivity.query.filter_by(project_work_element_id=element.id):
             line = db.session.get(EstimateLineItem, activity.source_estimate_line_item_id)
@@ -403,3 +418,120 @@ def test_work_removed_and_added_again_starts_included(app):
     db.session.commit()
     SW.add_work(guided, custom_name="Exterior trim", actor=JOEL)
     assert trim.is_included and trim.responsible_party is None
+
+
+# ---------------------------------------------------------------------------------------------- winter job (REV3)
+def _winter(version, **kw):
+    from app.services import winter_job as W
+
+    return W.set_winter_settings(version, actor=JOEL, **kw)
+
+
+def _propane(version):
+    return next((line.extended_cost for section in version.sections for line in section.line_items
+                 if line.code == "WINTER-PROPANE"), M("0.00"))
+
+
+def test_paulusse_rev3_winter_cases_and_the_full_state_sequence(app):
+    """REV3 acceptance: A off, B on 20% $35, C stone excluded, back, D 30% $50, off again. No stale values."""
+    _guided, version, packages = build_paulusse()
+    assert (version.winter_job, version.winter_time_increase_percent, version.propane_per_crew_day) == (
+        False, M("20.00"), M("35.00"))  # the approved defaults
+    assert figures(version) == BASELINE and _propane(version) == M("0.00")  # CASE A
+    _winter(version, winter_job=True)
+    assert figures(version) == WINTER_B and _propane(version) == M("560.00")  # CASE B
+    WP.exclude_work(packages["Estate Stone veneer & sills"], actor=JOEL)
+    assert figures(version) == WINTER_C_NO_STONE and _propane(version) == M("476.00")  # CASE C
+    WP.include_work(packages["Estate Stone veneer & sills"], actor=JOEL)
+    assert figures(version) == WINTER_B and _propane(version) == M("560.00")  # restored
+    _winter(version, increase_percent="30", propane_per_crew_day="50")
+    assert figures(version) == WINTER_D_30_50 and _propane(version) == M("866.73")  # CASE D
+    _winter(version, increase_percent="20", propane_per_crew_day="35", winter_job=False)
+    assert figures(version) == BASELINE and _propane(version) == M("0.00")  # off again, nothing stale
+    assert all(line.base_quantity is None for s in version.sections for line in s.line_items)
+
+
+def test_winter_lineage_and_the_approved_version_keeps_its_winter_values(app):
+    from app.services import estimate_approval as A
+    from app.services import winter_job as W
+
+    guided, version, packages = build_paulusse()
+    _winter(version, winter_job=True)
+    touch_up = next(l for l in WP.package_lines(packages["Sealant & touch-up"], version) if l.description.startswith("Labour — Hardie"))
+    assert (touch_up.base_quantity, touch_up.quantity, touch_up.extended_cost) == (M("36.0000"), M("43.2000"),
+                                                                                   M("3240.00"))
+    assert W.summary(version)["crew_days"] == "16.0000"
+    for package in packages.values():
+        G.complete_stage(guided, package, actor=JOEL)
+    proposal = _sign_off(version)
+    assert proposal.total == M("63103.62")
+    frozen = A.approval_for(version).summary["winter"]
+    assert frozen == {"winter_job": True, "winter_time_increase_percent": "20.00", "propane_per_crew_day": "35.00",
+                      "hours_per_crew_day": "8.00", "base_labour_hours": "304.00", "adjusted_labour_hours": "364.80",
+                      "crew_days": "16.0000", "winter_heat_cost": "560.00"}
+    with pytest.raises(W.WinterJobError, match="new version"):
+        _winter(version, winter_job=False)
+    successor = A.create_successor_version(version, actor=JOEL, reason="Spring start (synthetic)")
+    _winter(successor, winter_job=False)
+    assert figures(successor) == BASELINE
+    assert figures(version) == WINTER_B and A.verify(version)["matches"] is True  # history unchanged
+
+
+def test_customer_documents_show_the_rev3_total(app):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from app.services.proposal_pdf import generate_proposal_pdf
+
+    guided, version, packages = build_paulusse()
+    for package in packages.values():
+        G.complete_stage(guided, package, actor=JOEL)
+    proposal = _sign_off(version)
+    text = " ".join(page.extract_text() or "" for page in PdfReader(BytesIO(generate_proposal_pdf(proposal).getvalue())).pages)
+    assert "$56,297.03" in text  # REV3 winter off, through the governed proposal pipeline
+
+
+def test_winter_hours_drive_the_schedule(app):
+    from app.models import ProjectWorkElement
+    from app.services import governed_schedule as GS
+    from app.services.work_structure import seed_project_work_structure
+
+    guided, version, packages = build_paulusse()
+    _winter(version, winter_job=True)
+    for package in packages.values():
+        G.complete_stage(guided, package, actor=JOEL)
+    proposal = _sign_off(version)
+    proposal.status = "Accepted"
+    db.session.commit()
+    seed_project_work_structure(project_id=guided.project_id, estimate_version_id=version.id, seeded_by=JOEL,
+                                organization_id=guided.organization_id)
+    siding = ProjectWorkElement.query.filter_by(project_id=guided.project_id,
+                                                display_name="HardiePanel siding & battens").one()
+    assert Decimal(siding.estimated_hours) == M("100.80")  # 84 h x 1.2
+    assert GS.element_crew_days(siding) == M("4.2")  # 100.8 h / (3 x 8)
+    from datetime import date
+
+    guided.project.anticipated_start = date(2027, 5, 3)
+    db.session.commit()
+    plan = {row["element"].display_name: row for row in GS.preliminary_schedule(guided.project)}
+    assert plan["HardiePanel siding & battens"]["duration_days"] == 5  # 4.2 crew days -> 5 working days
+
+
+def test_project_pricing_form_sets_the_winter_job(app):
+    from tests.auth_fixtures import ensure_office_user, login_office_user
+
+    _guided, version, _packages = build_paulusse()
+    ensure_office_user()
+    http = app.test_client()
+    login_office_user(http)
+    url = f"/estimates/{version.estimate_id}/versions/{version.id}"
+    page = http.get(url).get_data(as_text=True)
+    assert "data-winter-toggle" in page and 'value="20"' in page and 'value="35.00"' in page  # defaults visible when off
+    http.post(url + "/project-pricing", data={"labour_rate": "75.00", "margin_percent": "15.00", "winter_form": "1",
+                                              "winter_job": "1", "winter_time_increase_percent": "20",
+                                              "propane_per_crew_day": "35.00"})
+    db.session.expire_all()
+    version = db.session.get(type(version), version.id)
+    assert version.winter_job and figures(version) == WINTER_B
+    assert "data-winter-figures" in http.get(url).get_data(as_text=True)

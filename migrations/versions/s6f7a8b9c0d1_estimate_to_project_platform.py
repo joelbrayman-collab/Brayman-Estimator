@@ -99,6 +99,19 @@ def upgrade():
     op.add_column("estimate_sections", sa.Column("guided_stage_id", sa.Integer(), nullable=True))
     op.create_index("ix_estimate_sections_guided_stage_id", "estimate_sections", ["guided_stage_id"])
 
+    # Winter job (Paulusse REV3, 30 Oct 2026): settings on the version; labour lines keep base hours and crew size.
+    op.add_column("estimate_versions", sa.Column("winter_job", sa.Boolean(), nullable=False, server_default=sa.false()))
+    op.add_column("estimate_versions", sa.Column("winter_time_increase_percent", sa.Numeric(6, 2), nullable=False,
+                                                 server_default="20"))
+    op.add_column("estimate_versions", sa.Column("propane_per_crew_day", sa.Numeric(10, 2), nullable=False,
+                                                 server_default="35.00"))
+    op.add_column("estimate_versions", sa.Column("hours_per_crew_day", sa.Numeric(5, 2), nullable=False,
+                                                 server_default="8"))
+    op.add_column("estimate_versions", sa.Column("default_crew_size", sa.Integer(), nullable=False,
+                                                 server_default="2"))
+    op.add_column("estimate_line_items", sa.Column("base_quantity", sa.Numeric(12, 4), nullable=True))
+    op.add_column("estimate_line_items", sa.Column("crew_size", sa.Integer(), nullable=True))
+
     # Each estimate version keeps its own work-package commercial state (review finding, 30 Oct 2026).
     op.add_column("estimate_versions", sa.Column("scope_state_json", sa.Text(), nullable=True))
 
@@ -288,7 +301,11 @@ def downgrade():
         "IS NOT NULL OR delivery_method IS NOT NULL OR shared_rule IS NOT NULL OR work_element_template_id IS NOT "
         "NULL OR plan_document_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_approvals")).scalar()
-    held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_versions WHERE scope_state_json IS NOT NULL")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_versions WHERE scope_state_json IS NOT NULL OR winter_job "
+                                 "OR winter_time_increase_percent <> 20 OR propane_per_crew_day <> 35 "
+                                 "OR hours_per_crew_day <> 8 OR default_crew_size <> 2")).scalar()
+    held += bind.execute(sa.text("SELECT COUNT(*) FROM estimate_line_items WHERE base_quantity IS NOT NULL "
+                                 "OR crew_size IS NOT NULL")).scalar()
     held += bind.execute(sa.text("SELECT COUNT(*) FROM supplier_purchase_orders WHERE guided_stage_id IS NOT NULL")).scalar()
     held += bind.execute(sa.text(
         "SELECT COUNT(*) FROM project_work_activities WHERE source_estimate_line_item_id IS NOT NULL")).scalar()
@@ -349,7 +366,13 @@ def downgrade():
     op.drop_index("ix_estimate_approvals_estimate_id", table_name="estimate_approvals")
     op.drop_index("ix_estimate_approvals_organization_id", table_name="estimate_approvals")
     op.drop_table("estimate_approvals")
+    with op.batch_alter_table("estimate_line_items") as batch:
+        batch.drop_column("crew_size")
+        batch.drop_column("base_quantity")
     with op.batch_alter_table("estimate_versions") as batch:
+        for column in ("default_crew_size", "hours_per_crew_day", "propane_per_crew_day",
+                       "winter_time_increase_percent", "winter_job"):
+            batch.drop_column(column)
         batch.drop_column("scope_state_json")
     op.drop_index("ix_estimate_sections_guided_stage_id", table_name="estimate_sections")
     with op.batch_alter_table("estimate_sections") as batch:

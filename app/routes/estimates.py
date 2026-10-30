@@ -756,6 +756,22 @@ def update_project_pricing(id, version_id):
             user_id=getattr(current_user, "id", None),
         )
         db.session.commit()
+        if request.form.get("winter_form") == "1":
+            from app.services.winter_job import WinterJobError, set_winter_settings
+
+            try:
+                winter = set_winter_settings(
+                    version, actor=signed_in_approver(), winter_job=request.form.get("winter_job") == "1",
+                    increase_percent=request.form.get("winter_time_increase_percent", "").strip(),
+                    propane_per_crew_day=request.form.get("propane_per_crew_day", "").strip(),
+                    user_id=getattr(current_user, "id", None))
+            except WinterJobError as exc:
+                raise EstimateEconomicsError(str(exc)) from exc
+            if winter["changed"]:
+                done = dict(done, changed=True)
+                flash("Winter settings saved: " + (
+                    f"winter job on, {winter['adjusted_labour_hours']} labour hours, {winter['crew_days']} crew days, "
+                    f"propane ${winter['winter_heat_cost']}." if winter["winter_job"] else "winter job off."), "success")
     except EstimateEconomicsError as exc:
         db.session.rollback()
         flash(str(exc), "error")

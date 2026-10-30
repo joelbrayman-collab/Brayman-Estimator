@@ -566,6 +566,8 @@ def clone_sections_to_version(source_version, target_version):
                 code=item.code,
                 description=item.description,
                 quantity=as_decimal(item.quantity),
+                base_quantity=item.base_quantity,
+                crew_size=item.crew_size,
                 unit=item.unit,
                 unit_cost=as_decimal(item.unit_cost),
                 waste_percent=as_decimal(item.waste_percent),

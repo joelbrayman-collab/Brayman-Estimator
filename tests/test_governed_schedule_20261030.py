@@ -49,11 +49,11 @@ def test_preliminary_schedule_is_proposed_applied_as_anticipated_and_confirmed(a
     GS.set_anticipated_start(project, MONDAY.isoformat(), actor=JOEL)
     assert WorkScheduleItem.query.count() == 0  # a planning input only: nothing scheduled by setting it
     plan = GS.preliminary_schedule(project)
-    assert [r["element"].display_name for r in plan] == [n for n, _c, _h in PAULUSSE]
-    assert plan[0]["start"] == MONDAY and plan[0]["duration_days"] == 2  # general conditions: 20 h
+    assert [r["element"].display_name for r in plan] == [n for n, _c, _l in PAULUSSE]
+    assert plan[0]["start"] == MONDAY and plan[0]["duration_days"] == 1  # general conditions: 20 h, crews of 3
     for previous, row in zip(plan, plan[1:]):
         assert row["start"] == GS.add_working_days(previous["end"], 1)  # finish-to-start, working days
-    assert sum(r["hours"] for r in plan) == Decimal("272")
+    assert sum(r["hours"] for r in plan) == Decimal("304")
     created = GS.apply_preliminary_schedule(project)
     assert len(created) == 8 and all(i.window_kind == "ANTICIPATED" for i in created)
     assert GS.apply_preliminary_schedule(project) == []  # scheduled work is never moved by it

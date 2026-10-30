@@ -140,6 +140,16 @@ class EstimateVersion(db.Model):
     labour_rate = db.Column(db.Numeric(10, 2), nullable=True)
     labour_rate_reason = db.Column(db.Text, nullable=True)
     target_gross_margin = db.Column(db.Numeric(10, 6), nullable=True)  # a fraction: 0.15 is 15 %
+    # Winter job (Joel, 30 Oct 2026; Paulusse REV3). Stored with the version, so an approved version keeps the values
+    # it was approved with. Off: no adjustment. On: every labour line's hours rise by the winter time increase, and
+    # propane per crew day x the winter-adjusted crew days is carried in general conditions.
+    winter_job = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
+    winter_time_increase_percent = db.Column(db.Numeric(6, 2), nullable=False, default=Decimal("20"),
+                                             server_default="20")
+    propane_per_crew_day = db.Column(db.Numeric(10, 2), nullable=False, default=Decimal("35.00"),
+                                     server_default="35.00")
+    hours_per_crew_day = db.Column(db.Numeric(5, 2), nullable=False, default=Decimal("8"), server_default="8")
+    default_crew_size = db.Column(db.Integer, nullable=False, default=2, server_default="2")
     target_gross_margin_reason = db.Column(db.Text, nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
@@ -291,6 +301,10 @@ class EstimateLineItem(db.Model):
     )
     code = db.Column(db.String(50))
     description = db.Column(db.String(255), nullable=False)
+    # Labour lines (30 Oct 2026): the hours entered before a winter adjustment (None: quantity is the entered hours)
+    # and the crew size that turns hours into crew days.
+    base_quantity = db.Column(db.Numeric(12, 4), nullable=True)
+    crew_size = db.Column(db.Integer, nullable=True)
     quantity = db.Column(
         db.Numeric(12, 4),
         nullable=False,

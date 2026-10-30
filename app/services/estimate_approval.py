@@ -65,6 +65,7 @@ def approval_summary(version) -> dict:
         "tax_percent": str(e.get("tax_percent")) if e.get("tax_percent") is not None else None,
         "tax": _money(e.get("tax")),
         "customer_total": _money(e.get("customer_total")),
+        "winter": __import__("app.services.winter_job", fromlist=["summary"]).summary(version),
         "line_count": len(lines),
         "lines_sha256": hashlib.sha256(json.dumps(lines, sort_keys=True).encode()).hexdigest(),
     }

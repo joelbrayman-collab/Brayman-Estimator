@@ -23,7 +23,7 @@
     {% if rows %}
     <div class="table-wrap">
     <table>
-        <thead><tr><th>Item</th><th>Quantity</th><th>Labour hours</th></tr></thead>
+        <thead><tr><th>Item</th><th>Quantity</th><th>Labour hours</th><th>Crew</th></tr></thead>
         <tbody>
         {% for row in rows %}
         <tr>
@@ -32,11 +32,15 @@
             <td><label class="visually-hidden" for="hours_{{ row.item.id }}">Labour hours for {{ row.item.description }}</label>
                 <input id="hours_{{ row.item.id }}" name="hours_{{ row.item.id }}" inputmode="decimal" style="max-width: 9em"
                        value="{{ form.get('hours_' ~ row.item.id, row.hours if row.hours is not none else '') }}"></td>
+            <td><label class="visually-hidden" for="crew_{{ row.item.id }}">Crew size for {{ row.item.description }}</label>
+                <input id="crew_{{ row.item.id }}" name="crew_{{ row.item.id }}" inputmode="numeric" style="max-width: 5em"
+                       value="{{ form.get('crew_' ~ row.item.id, row.crew if row.crew is not none else '') }}" placeholder="{{ version.default_crew_size }}"></td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
     </div>
+    {% if version.winter_job %}<p class="muted-copy" data-winter-note>Winter job: the hours you enter are increased by {{ '%g'|format(version.winter_time_increase_percent|float) }}% on the estimate (set under Project pricing).</p>{% endif %}
     <h2>Project labour rate (optional)</h2>
     <p class="muted-copy">Changes the labour rate for this whole estimate (the same as Project pricing on the estimate): every labour line follows it. A rate different from the company rate needs a reason.</p>
     <label for="override_rate">Project rate per hour</label>

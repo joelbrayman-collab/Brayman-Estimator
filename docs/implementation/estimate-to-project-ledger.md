@@ -50,3 +50,14 @@ An independent review of the branch diff reported 15 findings. All were fixed be
 13. The downgrade guard counts every new value; the model validates the work-package fields the database cannot constrain.
 14. Confirmed scope in the former `project_work_packages` table: production holds 0 rows (29 Oct backup), so nothing moves.
 15. Bad form input (work package id, NaN amount, a duplicate catalogue name) is a message, not a server error.
+
+## Paulusse REV3 (Joel, 30 Oct 2026) — the acceptance reference
+
+REV3 supersedes REV2 as the Paulusse acceptance reference; REV2 and Ben's package are untouched.
+
+- Hardie touch-up is 36 hours (3 people x 1.5 days). The test fixture carries REV3's 24 labour activities with their crews.
+- **Winter Job** is a governed setting on the estimate version: `winter_job` (default off), `winter_time_increase_percent` (default 20), `propane_per_crew_day` (default $35.00), `hours_per_crew_day` (8), `default_crew_size` (2). Editable per estimate under Project pricing, beside labour rate, margin and HST; visible when off.
+- Lineage: entered hours (`base_quantity`) -> winter adjustment -> adjusted hours on the ordinary labour line -> crew days (hours / crew x hours per day) -> labour cost -> work plan -> calculated duration -> schedule. No separate winter arithmetic.
+- Winter heat (propane) = winter-adjusted crew days of the work in Brayman's price x propane per crew day: one calculated line in the shared general-conditions package, with its routing confirmed by the person who made the decision. Off: the line is not there.
+- Gate 1 freezes the winter values (on/off, %, rate, entered and adjusted hours, crew days, winter heat). A successor version may change them; the approved version does not change.
+- Acceptance tests (`tests/test_work_packages_20261030.py`): A off 304.0 h / $0 / $42,347.32 / $56,297.03; B on 364.8 h / $560.00 / $47,467.32 / $63,103.62; C stone excluded 326.4 h / $476.00 / $42,190.60 / $56,088.68; D 30% and $50 395.23 h (395.2) / $866.73 / $50,056.30 / $66,545.43; and the sequence off -> on -> stone excluded -> restored -> 30%/$50 -> off. The proposal PDF shows $56,297.03 for A.

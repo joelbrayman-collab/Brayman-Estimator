@@ -76,3 +76,64 @@ Everything between these human gates should be generated automatically from gove
 - **Gate 2:** The proposal is generated from a locked version, and MONITOR's baseline comes from the accepted proposal → version → pricing snapshot (ADR-021). Both already exist.
 - **Gate 3:** Supplier POs and CaliSIGN supplier signing already exist. The contractor approval queue between the accepted baseline and CaliSIGN sending does not exist yet. Subcontract commitments also do not exist yet; see the Dynamic Estimate Builder architecture audit, 2026-10-30.
 - The PDF import / reconciliation path (step 3) is the one proposed in that audit: upload, read the fields, show the differences, apply through the normal services.
+
+---
+
+# Customer-facing scope clarity (addendum, recorded 2026-10-30)
+
+**Status:** RECORDED / BINDING REQUIREMENT. The Paulusse PDF part applies to the Paulusse scope include/exclude work. The platform part is NOT IMPLEMENTATION-AUTHORIZED and is held for the Dynamic Estimate Builder architecture work.
+
+## Governing rule
+
+**DESELECTING SCOPE CHANGES RESPONSIBILITY — IT DOES NOT ERASE THE SCOPE.**
+
+Deselecting a scope item from Brayman's price must never make it silently disappear from the customer documents. Every governed scope item resolves to a clear commercial status, either **INCLUDED** or **EXCLUDED**. When responsibility is known, the item also names the party: **BY LOCKWOOD**, **BY OWNER / CLIENT**, **BY OTHERS**, or another governed party.
+
+## When an item is excluded (internal Estimate Builder)
+
+- Preserve the construction quantity.
+- Mark the item as excluded from Brayman.
+- Name the responsible party only where the project record confirms it.
+- Remove the associated Brayman costs from the estimate.
+- Recalculate the project price.
+
+## Responsibility
+
+Never assume that an excluded item is "By Lockwood". Show "By Lockwood" only when the project information establishes it. Otherwise show "Excluded from Brayman Construction scope / By Others" until responsibility is confirmed.
+
+## Customer documents
+
+- **Customer Detailed Estimate:** two sections.
+  - **INCLUDED IN BRAYMAN CONSTRUCTION PRICE** lists all included scope packages.
+  - **EXCLUDED / BY OTHERS** lists all identified project scope not in Brayman's price, with the responsible party where it is known.
+  - Example wording: "Existing siding removal and substrate preparation — Excluded from Brayman Construction scope; by Lockwood."
+- **Customer Proposal:** the Included and Excluded sections derive from the SAME scope selections. The proposal must not keep independent scope wording that can drift away from the estimate.
+- **Chain:** Ben's scope selection → internal cost inclusion/exclusion → selling-price calculation → Customer Detailed Estimate → Customer Proposal.
+
+## Paulusse acceptance test (removal / preparation)
+
+1. Start from the accepted baseline.
+2. Exclude the applicable preparation/removal scope.
+3. Its Brayman costs disappear.
+4. Unrelated costs remain.
+5. The customer price recalculates.
+6. The Customer Detailed Estimate shows the work as excluded.
+7. The Proposal shows the work as excluded.
+8. Responsibility shows "By Lockwood" only if the project record supports it.
+9. Re-include the scope.
+10. Costs and customer wording return to Included.
+11. Restore the accepted baseline.
+
+## Future platform rule (Dynamic Estimate Builder)
+
+Every governed project work package keeps two separate concepts:
+
+- **Commercial Status:** Included or Excluded.
+- **Responsible Party / Delivery Method.**
+
+Examples:
+
+- Roofing: Included; Subcontracted; Brayman Construction / approved roofing subcontractor.
+- Site preparation: Excluded; Client.
+
+This extends the work-package design in the 2026-10-30 architecture audit. Delivery method is read from the existing scope-delivery routing (ADR-048). Commercial status and responsible party are new fields.

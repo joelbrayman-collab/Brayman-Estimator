@@ -61,3 +61,10 @@ REV3 supersedes REV2 as the Paulusse acceptance reference; REV2 and Ben's packag
 - Winter heat (propane) = winter-adjusted crew days of the work in Brayman's price x propane per crew day: one calculated line in the shared general-conditions package, with its routing confirmed by the person who made the decision. Off: the line is not there.
 - Gate 1 freezes the winter values (on/off, %, rate, entered and adjusted hours, crew days, winter heat). A successor version may change them; the approved version does not change.
 - Acceptance tests (`tests/test_work_packages_20261030.py`): A off 304.0 h / $0 / $42,347.32 / $56,297.03; B on 364.8 h / $560.00 / $47,467.32 / $63,103.62; C stone excluded 326.4 h / $476.00 / $42,190.60 / $56,088.68; D 30% and $50 395.23 h (395.2) / $866.73 / $50,056.30 / $66,545.43; and the sequence off -> on -> stone excluded -> restored -> 30%/$50 -> off. The proposal PDF shows $56,297.03 for A.
+
+## Release preparation (30 Oct 2026)
+
+- **One migration.** `r5e6f7a8b9c0` (project identity and estimate controls) was never released; it is folded into `s6f7a8b9c0d1` (down revision `a4d5e6f7a8b9`, the live head), because the gate accepts exactly one added migration.
+- **Declared data.** The migration fills new columns on existing rows (project numbers, section-to-stage links, commercial status, the winter defaults, window kind) and seeds two new tables (project number sequence, identity events). The gate options `--filled-columns` and `--populated-tables` declare exactly these; every other value of every row is still compared.
+- **Rehearsal** on the 29 Oct 21:48 backup (at `a4d5e6f7a8b9`): `MIGRATION_REHEARSAL=ok`; 218 tables; the only differences are the declared fills (projects.project_number 2, estimate_sections.guided_stage_id 2, guided_estimate_stages.commercial_status 50, five winter fields on 2 versions each, window_kind 0), the two seeded tables (1 and 2 rows) and the three widened signing checks.
+- **Regression** (file by file, 318 files): 3706 passed; the 11 failures, in 10 files, were all fixed and rerun (165 passed). The 11 historical-ingestion tests that need the real workbooks run in the Mac gate.

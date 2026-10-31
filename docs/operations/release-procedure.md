@@ -28,6 +28,8 @@ Production is changed only after Joel's explicit authorization of the exact comm
 
 Not covered by the generic gate (it stops if `migrations/` or `app/models` changed). A migration release needs, in addition and with Joel's separate authorization of the migration: a rehearsal on a copy of the fresh backup on the Mac that proves exactly which tables and columns are added and that no existing row or value changes (see `generated/v1hub_hosted_migrate.py`, 17 Oct, for the pattern), and the same proof on the live database once after the deploy.
 
+Since 29 Oct 2026 the gate carries this itself when it is given `--migration-to <revision>` with the declared change: `--new-tables`, `--altered-tables`, `--altered-checks`, and (30 Oct 2026) `--filled-columns table.column,...` and `--populated-tables`. The candidate must add exactly one migration file. The rehearsal on the fresh backup compares every row of every table: a declared filled column may only go from empty to a value (a value already held must not change), a declared populated table may receive rows (counted in the log), and everything else must be identical. `release_migrate.sh` applies the same check to the live database after the deploy, with the same declarations from the gate's STATE.
+
 ## Rollback
 
 Redeploy the previous live commit with the same settings (its deploy id is recorded by the gate). A database restore from the pre-release backup happens only with Joel's approval.

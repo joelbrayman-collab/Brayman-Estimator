@@ -230,10 +230,11 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
         lost = [c for c in before["columns"][table] if c not in after.get("columns", {}).get(table, [])]
         if lost:
             fail(f"columns removed from {table}: " + ", ".join(lost))
-        extra, filled = after.get("added", {}).get(table, ([], 0))
-        if filled:
-            fail(f"new columns of {table} hold values in {filled} existing row(s)")
-        added_columns += [f"{table}.{c}" for c in extra]
+        extra, holding = after.get("added", {}).get(table, ([], 0))
+        if holding:
+            fail(f"new columns of {table} hold values in {holding} existing row(s)")
+        declared_filled = _split_filled(filled).get(table, set())
+        added_columns += [f"{table}.{c}" for c in extra if c not in declared_filled]
     # A table the release declares as altered (e.g. a widened check constraint, --altered-tables) may change
     # its schema; every one of its rows must still be identical (checked above with all the others).
     declared = [t for t in altered_tables if t not in before["content"]]

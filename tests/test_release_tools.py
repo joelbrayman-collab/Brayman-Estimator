@@ -210,3 +210,30 @@ def test_gate_refuses_altered_checks_without_a_migration():
         capture_output=True, text=True,
     )
     assert bad.returncode == 2 and "--altered-checks <ck_1,ck_2> needs --migration-to" in bad.stdout
+
+
+def test_gate_and_live_apply_carry_the_declared_filled_columns_and_populated_tables():
+    """Estimate-to-project release (30 Oct 2026): the data the migration writes is named on the command line, recorded by
+    the gate, and the live apply uses the same declaration."""
+    gate, migrate = _code(GATE), _code(RELEASE / "release_migrate.sh")
+    assert '--filled-columns) FILLED_COLUMNS=$2' in gate and '--populated-tables) POPULATED_TABLES=$2' in gate
+    assert '${FILLED_COLUMNS:+--filled-columns "$FILLED_COLUMNS"}' in gate
+    assert '${POPULATED_TABLES:+--populated-tables "$POPULATED_TABLES"}' in gate
+    assert "FILLED_COLUMNS=$FILLED_COLUMNS" in gate and "POPULATED_TABLES=$POPULATED_TABLES" in gate
+    assert "${FILLED_COLUMNS:+ --filled-columns $FILLED_COLUMNS}" in migrate
+    assert "${POPULATED_TABLES:+ --populated-tables $POPULATED_TABLES}" in migrate
+    match = re.search(r'\[\[ "\$FILLED_COLUMNS" =~ (\S+) \]\]', gate)
+    assert match, "gate must validate --filled-columns"
+    for names, ok in (("projects.project_number", True), ("a.b,c.d", True), ("projects", False), ("a.b;rm", False)):
+        result = subprocess.run(["bash", "-c", f'[[ "$1" =~ {match.group(1)} ]]', "_", names])
+        assert (result.returncode == 0) is ok, names
+
+
+def test_gate_refuses_filled_columns_without_a_migration():
+    sha = "a" * 40
+    bad = subprocess.run(
+        ["bash", str(GATE), "--label", "x", "--candidate", sha, "--branch", "b", "--main-base", sha, "--live-base", sha,
+         "--live-deploy", "dep-x", "--filled-columns", "projects.project_number"],
+        capture_output=True, text=True,
+    )
+    assert bad.returncode == 2 and "--filled-columns <table.column,...> needs --migration-to" in bad.stdout

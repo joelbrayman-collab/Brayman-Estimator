@@ -55,9 +55,10 @@ def _at_prior_with_signing_rows(db_path):
 
 def test_the_supplier_signing_revision_follows_the_prior_and_is_followed_by_the_estimate_rate_and_margin():
     script = ScriptDirectory.from_config(_config(":memory:"))
-    # Estimate labour rate and margin (r5e6f7a8b9c0, 30 Oct 2026) now follows this revision.
+    # The estimate-to-project release (s6f7a8b9c0d1, 30 Oct 2026, with the project identity and estimate controls
+    # folded in) now follows this revision.
     assert script.get_heads() == ["s6f7a8b9c0d1"]
-    assert script.get_revision("r5e6f7a8b9c0").down_revision == REVISION
+    assert script.get_revision("s6f7a8b9c0d1").down_revision == REVISION
     assert script.get_revision(REVISION).down_revision == PRIOR
 
 

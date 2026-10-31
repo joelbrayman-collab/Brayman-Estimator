@@ -284,3 +284,78 @@ def test_the_clients_rehearsal_stops_on_a_changed_client_row_or_any_other_schema
         capsys.readouterr()
         assert outcome(path, before) == 1, name
         assert f"FAIL={expected}" in capsys.readouterr().out, name
+
+
+# ---------------------------------------------------------------------------------------------- declared data (30 Oct 2026)
+RELEASE_FROM, RELEASE_TO = "a4d5e6f7a8b9", "s6f7a8b9c0d1"
+RELEASE_NEW = ("project_number_sequences,project_identity_events,estimate_approvals,early_procurement_exceptions,"
+               "subcontract_commitments,company_schedule_change_requests,schedule_external_drafts,"
+               "project_closeout_records")
+RELEASE_ALTERED = ("projects,estimate_versions,estimate_sections,estimate_line_items,guided_estimate_stages,proposals,"
+                   "project_work_elements,project_work_activities,supplier_purchase_orders,work_schedule_items,"
+                   "change_order_items")
+RELEASE_CHECKS = ("ck_signing_frozen_artifacts_document_family,ck_signing_requests_document_family,"
+                  "ck_signing_participants_role")
+RELEASE_FILLED = ("projects.project_number,estimate_sections.guided_stage_id,guided_estimate_stages.commercial_status,"
+                  "estimate_versions.winter_job,estimate_versions.winter_time_increase_percent,"
+                  "estimate_versions.propane_per_crew_day,estimate_versions.hours_per_crew_day,"
+                  "estimate_versions.default_crew_size,work_schedule_items.window_kind")
+
+
+def _database_at_release_prior(path: Path) -> None:
+    app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{path}"})
+    with app.app_context():
+        cfg = Config(str(ROOT / "migrations" / "alembic.ini"))
+        cfg.set_main_option("script_location", str(ROOT / "migrations"))
+        cfg.set_main_option("sqlalchemy.url", f"sqlite:///{path}")
+        command.upgrade(cfg, RELEASE_FROM)
+    con = sqlite3.connect(path)
+    con.execute("INSERT OR IGNORE INTO organizations (id, legal_name, display_name, primary_address, default_region, currency, "
+                "tax_jurisdiction, is_active, created_at, updated_at) VALUES ('ORG-001', 'Synthetic Ltd.', 'Synthetic', "
+                "'1 Test Rd', 'Ontario', 'CAD', 'Ontario (HST 13%)', 1, '2026-10-19 00:00:00', '2026-10-19 00:00:00')")
+    con.execute("INSERT INTO clients (id, organization_id, name, created_at) VALUES (1, 'ORG-001', 'Client (synthetic)', "
+                "'2026-10-19 00:00:00')")
+    for pid, number in ((1, None), (2, "JOB-7")):
+        con.execute("INSERT INTO projects (id, organization_id, name, project_number, status, client_id, created_at, "
+                    "operating_state, operating_state_changed_at, drawing_requirement) VALUES (?, 'ORG-001', ?, ?, "
+                    "'Lead', 1, '2026-10-20 00:00:00', 'ACTIVE', '2026-10-20 00:00:00', 'UNKNOWN')",
+                    (pid, f"Job {pid} (synthetic)", number))
+    con.commit()
+    con.close()
+
+
+def test_the_release_migration_fills_only_what_it_declares(tmp_path):
+    db = tmp_path / "copy.db"
+    _database_at_release_prior(db)
+    undeclared = _run("rehearse", "--db", str(db), "--from", RELEASE_FROM, "--to", RELEASE_TO, "--new-tables", RELEASE_NEW,
+                      "--altered-tables", RELEASE_ALTERED, "--altered-checks", RELEASE_CHECKS)
+    assert undeclared.returncode != 0 and "FAIL=" in undeclared.stdout  # the numbering is data: it must be declared
+    db2 = tmp_path / "copy2.db"
+    _database_at_release_prior(db2)
+    declared = _run("rehearse", "--db", str(db2), "--from", RELEASE_FROM, "--to", RELEASE_TO, "--new-tables", RELEASE_NEW,
+                    "--altered-tables", RELEASE_ALTERED, "--altered-checks", RELEASE_CHECKS,
+                    "--filled-columns", RELEASE_FILLED, "--populated-tables", "project_number_sequences,project_identity_events")
+    assert declared.returncode == 0, declared.stdout + declared.stderr
+    assert "FILLED_COLUMN=projects.project_number: 1 row(s) filled (existing column; only empty values were filled)" \
+        in declared.stdout  # JOB-7 is held and stays
+    assert "POPULATED_TABLE=project_identity_events: 1 row(s)" in declared.stdout
+    con = sqlite3.connect(db2)
+    assert dict(con.execute("SELECT id, project_number FROM projects")) == {1: "BC-2026-0001", 2: "JOB-7"}
+    con.close()
+
+
+def test_a_filled_column_never_changes_a_value_already_held(tmp_path):
+    sys.path.insert(0, str(ROOT / "tools" / "release"))
+    import migration_check as M
+
+    before, after = tmp_path / "b.db", tmp_path / "a.db"
+    for path, values in ((before, (None, "KEEP")), (after, ("NEW", "CHANGED"))):
+        con = sqlite3.connect(path)
+        con.execute("CREATE TABLE t (id INTEGER PRIMARY KEY, c TEXT)")
+        con.executemany("INSERT INTO t (id, c) VALUES (?, ?)", list(enumerate(values, 1)))
+        con.commit()
+        con.close()
+    import pytest
+
+    with pytest.raises(SystemExit):
+        M.check_filled(str(before), str(after), ["t.c"])

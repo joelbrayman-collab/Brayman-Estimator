@@ -472,7 +472,7 @@ def test_migration_numbers_existing_projects_in_creation_order_and_keeps_existin
     con.commit()
     con.close()
     with application.app_context():
-        command.upgrade(_config(path), "r5e6f7a8b9c0")
+        command.upgrade(_config(path), "s6f7a8b9c0d1")  # the release migration (project identity folded in)
     con = sqlite3.connect(path)
     got = dict(con.execute("SELECT id, project_number FROM projects").fetchall())
     assert got == {27: "BC-2026-0001", 28: "BC-2026-0002", 29: "JOB-7", 30: "COMPANY-TIME-ORG-001", 31: "BC-2025-0001"}

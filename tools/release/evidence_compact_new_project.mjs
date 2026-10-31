@@ -19,6 +19,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { projectRows } from "./evidence_identity_gate3.mjs";
 
 const WIDTHS = [
   { label: "desktop", viewport: { width: 1600, height: 1000 } },
@@ -129,7 +130,9 @@ for (const { label, viewport } of WIDTHS) {
     assert.match(await flash(pg), /Before you go on.*Name the project/);
     assert.equal(await pg.locator('.wzc-modal [data-wizard-flash] [role="alert"]').count(), 1, "the refusal is announced");
     await pg.fill('[name="name"]', job);
-    await pg.fill('[name="project_number"]', `CNP-${viewport.width}`);
+    // The Brayman Project # is assigned when the project is created (Joel, 30 Oct 2026); the client's own number is typed.
+    assert.match(await pg.locator("[data-brayman-number]").innerText(), /Assigned automatically/);
+    await pg.fill('[name="client_project_number"]', `CNP-${viewport.width}`);
     await pg.locator('[name="guided_project_type"][value="ADDITION_RENOVATION"]').check();
     await pg.fill('[name="description"]', "Rear deck and stairs (synthetic)");
     await measure(pg, label, "1 Project");
@@ -158,7 +161,7 @@ for (const { label, viewport } of WIDTHS) {
     assert.equal(await stepOf(pg), "customer");
     await submit(pg, pg.locator("[data-wizard-back]"));
     assert.equal(await pg.inputValue('[name="name"]'), job, "Back keeps the project");
-    assert.equal(await pg.inputValue('[name="project_number"]'), `CNP-${viewport.width}`);
+    assert.equal(await pg.inputValue('[name="client_project_number"]'), `CNP-${viewport.width}`);
     await continueOn(pg);
     assert.match(await pg.locator("[data-customer-select]").evaluate((s) => s.options[s.selectedIndex].textContent), new RegExp(customer.replace(/[()]/g, "\\$&")));
     await continueOn(pg);
@@ -246,6 +249,7 @@ for (const { label, viewport } of WIDTHS) {
     assert.equal(posts, 1, "Finish sent once");
     const created = await pg.locator("[data-created-summary]").innerText();
     for (const expected of [job, `CNP-${viewport.width}`, customer, "Lead"]) assert.ok(created.includes(expected), `Project Created shows ${expected}`);
+    assert.match(await pg.locator("[data-brayman-project-number]").innerText(), /^BC-\d{4}-\d{4}$/, "the Brayman Project # was assigned");
     await noSideways(pg, `${label} created`);
     await shot(pg, label, "6-created");
     const open = await pg.locator("[data-open-project]").boundingBox();
@@ -257,7 +261,7 @@ for (const { label, viewport } of WIDTHS) {
     for (const expected of [job, customer]) assert.ok(page.includes(expected), `the project page shows ${expected}`);
     // Exactly one project was made.
     await go(pg, "/projects/");
-    assert.equal(await pg.getByText(job, { exact: true }).count(), 1, "one project");
+    assert.equal(await projectRows(pg, job), 1, "one project");
     assert.deepEqual(errors, []);
     await ctx.close();
   });

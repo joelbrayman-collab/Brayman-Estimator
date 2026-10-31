@@ -15,6 +15,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
 const SHOTS = process.env.EVIDENCE_SHOTS || "";
@@ -213,6 +214,8 @@ async function sign(scope, name) {
 test("step 5: the office places the purchase order", async () => {
   const { pg } = await office();
   await go(pg, requests());
+  assert.ok(await recordEarlyException(pg, W.shareId), "Gate 3: the office records the Early Procurement Exception");
+  await screen(pg, "office-early-procurement-exception");
   const form = article(pg).locator(`[data-place-order="${W.shareId}"]`);
   const summary = await form.locator("p").first().innerText();
   W.orderPreview = money(summary.split("total")[1]);
@@ -400,6 +403,7 @@ test("step 10: the office cancels a confirmed order with a reason; the supplier 
   const art = o.locator(`article#share-${facts.rival_share_id}`);
   await art.locator("[data-approve-quote] button").click();
   await o.waitForLoadState();
+  assert.ok(await recordEarlyException(o, facts.rival_share_id), "Gate 3 on the rival store's order too");
   await sign(o.locator(`article#share-${facts.rival_share_id} [data-place-order]`), "Ben Synthetic");
   await o.locator(`article#share-${facts.rival_share_id} [data-place-order] [data-calisign-po-send]`).click();
   await o.waitForLoadState();

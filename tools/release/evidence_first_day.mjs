@@ -16,6 +16,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
 const SHOTS = process.env.EVIDENCE_SHOTS || "";
@@ -403,7 +404,7 @@ step("10 customers: a client, then a project with the job address", async () => 
   await pg.selectOption("[name=project_type]", "Renovation");
   await shot(pg, "10-customers", "project");
   await submit(pg, pg.getByRole("button", { name: "Save Project" }));
-  assert.match(await flash(pg), /Project created/);
+  assert.match(await flash(pg), /Project BC-\d{4}-\d{4} created/);
   W.projectId = Number(pg.url().match(/\/projects\/(\d+)/)[1]);
   assert.match(await pg.locator("main").innerText(), /job location is complete/);
   await go(pg, `/projects/${W.projectId}`);
@@ -584,6 +585,9 @@ step("13 purchase order: concrete request to the supplier, the store quotes in t
   assert.match(await pg.locator("main").innerText(), /\$612\.50 before tax/);
   await submit(pg, pg.getByRole("button", { name: "Approve this quote" }));
   assert.match(await flash(pg), /Concrete quote approved/);
+  // Gate 3 (decision 6): before the customer accepts, Ben (the owner) records an Early Procurement Exception first;
+  // after acceptance (Gate 2) the order form is there directly.
+  await recordEarlyException(pg);
   const order = pg.locator("form[action$='/order']");
   await order.locator("[name=delivery_date]").fill(day(9));
   await order.locator("[name=delivery_window]").fill("7:00–9:00");

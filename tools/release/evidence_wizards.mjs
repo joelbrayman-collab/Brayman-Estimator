@@ -25,6 +25,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { projectRows } from "./evidence_identity_gate3.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
@@ -195,7 +196,7 @@ step("Start a New Project: required answers, autosave, Create once on Details, p
   }, W.run1);
   assert.ok(replay);
   await go(pg, "/projects/");
-  assert.equal(await pg.getByText("Browser Wizard Home (synthetic)", { exact: true }).count(), 1, "created once");
+  assert.equal(await projectRows(pg, "Browser Wizard Home (synthetic)"), 1, "created once");
   // Plans: "This job needs no drawings" is the project's own choice, recorded by Save & Continue.
   await go(pg, await stepUrl(W.run1, "documents"));
   await shot(pg, "wizard1-documents-desktop");

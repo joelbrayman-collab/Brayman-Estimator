@@ -61,7 +61,9 @@ def seed_records() -> dict:
 
     ensure_default_organization()
     ensure_jurisdiction_seed(commit=True)
-    ensure_office_user()
+    from tests.procurement_support import grant_company_management
+
+    grant_company_management(ensure_office_user(), ORG)
     ensure_brayman_v1_interim_ontario_package()
     db.session.commit()
 

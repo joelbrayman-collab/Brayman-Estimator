@@ -17,6 +17,7 @@ import path from "node:path";
 import { spawn, execFileSync } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
 const SHOTS = process.env.EVIDENCE_SHOTS || "";
@@ -323,6 +324,7 @@ const hubRequest = () => `/supplier/${facts.supplier_id}/requests/${facts.share_
 test("supplier PO 1: the office adopts its signature and selects Sign & Send for E-Signature (1600)", async () => {
   const { pg } = await officeWide();
   await go(pg, requestsPage());
+  assert.ok(await recordEarlyException(pg, facts.share_id), "Gate 3: the office records the Early Procurement Exception");
   const form = pg.locator(`article#share-${facts.share_id} [data-place-order]`);
   await form.locator("[name=delivery_date]").fill(day(10));
   await form.locator("[name=delivery_window]").fill("7:00–9:00");

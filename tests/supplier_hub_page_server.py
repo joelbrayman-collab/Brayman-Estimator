@@ -72,7 +72,9 @@ def seed_records() -> dict:
     ensure_default_organization()
     ensure_canonical_material_seed()
     ensure_org_001_direct_labour_cost_rate_standard()
-    ensure_office_user()
+    from tests.procurement_support import grant_company_management
+
+    grant_company_management(ensure_office_user(), ORG)
     code, name, cost, markup = INTERNAL_COST
     db.session.add(CostItem(organization_id=ORG, code=code, name=name, category="Labour", unit="day",
                             unit_cost=Decimal(cost), default_markup_percent=Decimal(markup)))

@@ -368,6 +368,10 @@ step("The supplier prices it in the Supplier Hub; Ben records, approves and orde
   assert.ok(materialId, "the recorded line can be approved");
   assert.equal(await postForm(pg, `/projects/${facts.project_id}/deck-takeoff/responses/${ref}/approve`,
     { canonical_material_id: materialId, status: "APPROVED" }), 200);
+  // Gate 3 (decision 6): before the customer accepts, Ben (the owner) records an Early Procurement Exception.
+  assert.equal(await postForm(pg, `/projects/${facts.project_id}/supplier-requests/${M.shareId}/early-exception`,
+    { reason: "Lumber lead time (synthetic)", proposed_commitment: "Deck lumber (synthetic)", financial_exposure: "5000",
+      approving_authority: "Ben Brayman, owner (synthetic)" }), 200);
   const orderDay = await pg.evaluate(() => new Date(Date.now() + 2 * 864e5).toISOString().slice(0, 10));
   assert.equal(await postForm(pg, `/projects/${facts.project_id}/supplier-requests/${M.shareId}/order`,
     { delivery_date: orderDay, site_contact: "Kevin", sign_consent: "yes", signer_name: "Ben Synthetic" }), 200);

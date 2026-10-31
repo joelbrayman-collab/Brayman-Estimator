@@ -234,7 +234,7 @@ step("Cross-entry: work added from the estimate page appears in the wizard; empt
   assert.deepEqual(await workKeys(pg), ["work_siding", "work_windows", "work_deck"], "the wizard sees the same work");
   await go(pg, `/projects/${W.guided}/guided/scope`);
   const deck = pg.locator('[data-work-item="work_deck"]');
-  await deck.locator("details.sw-more > summary").click();
+  await deck.locator("details.sw-more > summary", { hasText: "More: split materials" }).click();
   await deck.locator('[data-remove-confirm="work_deck"]').check();
   await submit(pg, deck.locator('button[data-remove-work="work_deck"]'));
   assert.deepEqual(await workKeys(pg), ["work_siding", "work_windows"]);
@@ -274,7 +274,7 @@ step("Guided: work holding estimate data cannot be removed (nothing is lost)", a
   const { pg, errors } = await person("ben", DESK);
   await go(pg, `/projects/${W.guided}/guided/scope`);
   const siding = pg.locator('[data-work-item="work_siding"]');
-  await siding.locator("details.sw-more > summary").click();
+  await siding.locator("details.sw-more > summary", { hasText: "More: split materials" }).click();
   assert.match(await siding.locator('[data-remove-blocked="work_siding"]').innerText(), /estimate line/);
   assert.equal(await siding.locator('button[data-remove-work="work_siding"]').count(), 0);
   assert.deepEqual(errors, []);

@@ -18,3 +18,14 @@ def allow_early_order(share, *, exposure="1000000"):
         project, user=company_manager(project.organization_id), reason="Supplier workflow test (synthetic)",
         proposed_commitment=f"{share.number} (synthetic)", financial_exposure=exposure,
         approving_authority="Joel Brayman, owner (synthetic)", share_id=share.id)
+
+
+def grant_company_management(user, organization_id):
+    """The page walks' office person decides Gate 3 in the browser (Early Procurement Exception), which needs
+    Company Management (decision 6, role-based). Synthetic users only."""
+    from app.models.user import UserMembership
+    from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT, grant_access_domain
+
+    membership = UserMembership.query.filter_by(user_id=user.id, organization_id=organization_id).one()
+    grant_access_domain(membership_id=membership.id, domain_key=ACCESS_DOMAIN_COMPANY_MANAGEMENT)
+    db.session.commit()

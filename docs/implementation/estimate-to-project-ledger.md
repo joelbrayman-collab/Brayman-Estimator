@@ -68,3 +68,27 @@ REV3 supersedes REV2 as the Paulusse acceptance reference; REV2 and Ben's packag
 - **Declared data.** The migration fills new columns on existing rows (project numbers, section-to-stage links, commercial status, the winter defaults, window kind) and seeds two new tables (project number sequence, identity events). The gate options `--filled-columns` and `--populated-tables` declare exactly these; every other value of every row is still compared.
 - **Rehearsal** on the 29 Oct 21:48 backup (at `a4d5e6f7a8b9`): `MIGRATION_REHEARSAL=ok`; 218 tables; the only differences are the declared fills (projects.project_number 2, estimate_sections.guided_stage_id 2, guided_estimate_stages.commercial_status 50, five winter fields on 2 versions each, window_kind 0), the two seeded tables (1 and 2 rows) and the three widened signing checks.
 - **Regression** (file by file, 318 files): 3706 passed; the 11 failures, in 10 files, were all fixed and rerun (165 passed). The 11 historical-ingestion tests that need the real workbooks run in the Mac gate.
+
+## Release e2p1 — RELEASED (31 Oct 2026)
+
+- **Gate** (Mac, 13:00): fast-forward main `ed3ff7d6` → `7087d0d0` (34 commits); full regression 3,732 passed, no skips
+  (historical estimates and Family 05 present); end-to-end contractor walk and Cal tests passed; browser checks 302/302 in
+  Google Chrome; fresh hosted backup `pre-e2p1-20261031-1823.db` (sha256 `ea79738f…`, 219 tables, 2,093 rows, integrity
+  ok, Mac copy matches); migration rehearsal ok; signing readiness ok; READY_FOR_PUSH.
+- **Earlier gate attempts stopped safely** (nothing pushed): Render SSH key not loaded after the reboot; historical
+  estimates folder not set; release walks not yet following decision 6 (Early Procurement Exception), the automatic
+  Brayman Project # and the new delivery panel (fixed in `7087d0d0`, walks only; 302/302).
+- **Push and deploy:** main = `7087d0d0` (Joel's authorization); Render deploy `dep-dbj4bnff3r2c73eu4qvg` live at
+  19:49 UTC. Rollback target: `f9ca0f11` (`dep-dbhs0aoae00c739lcn8g`).
+- **Migration** (`release_migrate.sh --label e2p1`): pre-migration backup `pre-migrate-e2p1-20261031-194958.db` (sha256
+  `ea79738f…`, identical to the gate's backup: no use of the app in between; Mac copy matches); `a4d5e6f7a8b9` →
+  `s6f7a8b9c0d1` in 4.6 s; 218 existing tables / 2,092 rows identical apart from the declared fills; MIGRATE=ok.
+- **Post-release check:** live runs `7087d0d0`, revision `s6f7a8b9c0d1`, integrity ok, POSTCHECK=ok; it then stopped on
+  the row total (2,096 vs 2,093) because `postrelease_check.sh` still assumes new tables are empty and does not read the
+  declared `--populated-tables`. A read-only per-table comparison of Live with the pre-release backup showed exactly the
+  8 new tables and nothing else: `project_number_sequences` 1, `project_identity_events` 2, the other six 0; every
+  existing table's count unchanged. **Follow-up:** teach `postrelease_check.sh` the declared populated tables.
+- **Signed-out Live smoke:** `/login` 200, `/supplier/login` 200, `/projects/` and `/projects/1` 302 to sign-in,
+  `/sign/<invalid>` 404 with the CaliSIGN "This link is not available" page, Cal icon 200; no 5xx requests and no error
+  logs after the deploy. Signed-in pages were not opened on Live (Claude does not sign in); they were exercised on the
+  exact commit by the gate's walks.

@@ -67,6 +67,14 @@ async function submitLink(who, locator) {
 
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
+// Task-First UX (31 Oct 2026): the Project page keeps each part of the job in a closed section; open them, as a person
+// opens the section they need, before reading or using what is inside.
+async function openProjectSections(page) {
+  if (!/^\/projects\/\d+\/?$/.test(new URL(page.url()).pathname)) return;
+  await page.evaluate(() => document.querySelectorAll("details[data-ts-section], details[data-more-actions]")
+    .forEach((d) => { d.open = true; }));
+}
+
 // One person's browser: a context with page-error capture and the small helpers every step uses.
 async function person(browser, base, viewport, pageErrors, label) {
   const ctx = await browser.newContext({ viewport });
@@ -78,8 +86,8 @@ async function person(browser, base, viewport, pageErrors, label) {
     flash: async () => (await page.locator(".flash, .alert, .field-flash, [role=alert]").filter({ visible: true }).allInnerTexts()).join(" | "),
     main: async () => page.locator("main").first().innerText(),
     body: async () => page.locator("body").innerText(),
-    go: async (url) => { await page.goto(url.startsWith("http") ? url : `${base}${url}`); await page.waitForLoadState(); },
-    submit: async (locator) => { await Promise.all([page.waitForLoadState(), locator.click()]); await page.waitForLoadState(); },
+    go: async (url) => { await page.goto(url.startsWith("http") ? url : `${base}${url}`); await page.waitForLoadState(); await openProjectSections(page); },
+    submit: async (locator) => { await Promise.all([page.waitForLoadState(), locator.click()]); await page.waitForLoadState(); await openProjectSections(page); },
     noSideways: async (what) => {
       const overflow = await page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth");
       assert.ok(overflow <= 1, `${what} scrolls sideways on the phone (${overflow}px)`);
@@ -537,7 +545,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.go(hubUrl);
     assert.match(await labourRow.innerText(), new RegExp(`${iso(today)}\\s+${iso(inDays(2))}`), "Kevin did not move the work");
     assert.match(await page.locator("#hub-time").innerText(), /Waiting for approval: 4\.00/);
-    const observations = page.locator("article", { has: page.getByRole("heading", { name: "Field Observations" }) });
+    const observations = page.locator("article", { has: page.getByRole("heading", { name: "Site notes & photos" }) });
     assert.match(await observations.innerText(), /Kevin Field \(synthetic crew\)\s+text\s+Current/i);
     await submitLink(ben, observations.locator("tbody a").first());
     assert.match(await ben.main(), /Footing forms checked before the pour \(synthetic observation\)/);
@@ -611,7 +619,9 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.equal(await page.locator("[data-open-orders]").count(), 0);
     await ben.submit(page.locator(`form[action="/projects/${projectId}/close"] button[type=submit]`));
     assert.match(await ben.flash(), /closed/i);
-    assert.match(await ben.main(), /This Project is closed\.[\s\S]*Closed\s+Reopen Project/);
+    // Task-First UX (31 Oct 2026): a closed job says Closed in its header and its one Next step is Reopen Project.
+    assert.match(await ben.main(), /This Project is closed\.[\s\S]*Closed[\s\S]*Reopen Project/);
+    assert.equal((await page.locator("[data-next-step-action]").innerText()).trim(), "Reopen Project");
     assert.equal(await stage(), "Completed");
     // Closed: Field no longer offers the job or its work.
     await kevin.go("/field/projects");

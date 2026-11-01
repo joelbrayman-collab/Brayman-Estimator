@@ -11,7 +11,7 @@ from app import create_app, db
 from app.models.client import Client
 from app.models.estimate import Estimate, EstimateLineItem
 from app.models.project import Project
-from app.navigation import NAV_SECTIONS
+from app.navigation import MORE_SECTIONS, NAV_SECTIONS
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import ensure_office_user, login_office_user
 from tests.browser_process import run_node_browser_test
@@ -57,7 +57,9 @@ def test_preserved_employment_files_match_the_recovered_archive():
 
 
 def test_employment_calculator_is_in_the_calculators_section():
-    section = next(row for row in NAV_SECTIONS if row["title"] == "Calculators")
+    # Task-First UX (Joel's mandate, 31 Oct 2026): the calculators left the sidebar for More › Calculators (and open
+    # from the work item on a project). Every calculator is still listed, in the same order, one click away.
+    section = next(row for row in MORE_SECTIONS if row["title"] == "Calculators")
     titles = [item["title"] for item in section["links"]]
     assert titles == [
         "Concrete calculator",

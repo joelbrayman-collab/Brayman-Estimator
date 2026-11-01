@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }} · Sheet {{ sheet.number or "—" }}</p>
+        <p class="eyebrow">Plans · Revision {{ revision.label }} · Sheet {{ sheet.number or "—" }}</p>
         <h1>{{ sheet.number or "Draft Sheet" }}: {{ sheet.title or "Untitled Sheet" }}</h1>
         <p class="muted-copy">{{ project.name }} · Discipline: {{ sheet.discipline_code }} · Status: <span class="status">{{ sheet.review_status }}</span></p>
     </div>

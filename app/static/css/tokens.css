@@ -1,0 +1,82 @@
+/* CalibraytAI design tokens: the ONE place colour, spacing, type and radius values live
+   (Task-First UX, 31 Oct 2026; docs/ux/task-first-ux-audit-2026-10-31.md section 8.1).
+
+   Before this file the tokens were split between app.css and v1-refinement.css, and --danger was used
+   (with a fallback) but never defined. app.css and field.css @import this file first; feature CSS uses
+   these names instead of new literals. Approved brand colours are unchanged: gold #c79a2b, black #141414,
+   CaliSIGN navy #1f3a5f, IBM Plex Sans. */
+
+:root {
+    /* Brand (approved; do not change) */
+    --gold: #c79a2b;
+    --gold-soft: #e8d7a8;
+    --brand-gold: var(--gold);
+    --black: #141414;
+    --navy: #1f3a5f;
+
+    /* Shell */
+    --sidebar: #17191d;
+    --sidebar-elevated: #22252b;
+    --sidebar-border: #2c3038;
+    --sidebar-width: 248px;
+    --sidebar-collapsed-width: 76px;
+    --header-height: 64px;
+
+    /* Surfaces and text */
+    --cream: #f4f2ee;
+    --workspace: #f6f5f2;
+    --white: #ffffff;
+    --surface: #ffffff;
+    --surface-muted: #faf8f4;
+    --surface-line: #ece7dd;
+    --row-hover: #faf7f0;
+    --text: #1c1f24;
+    --ink: var(--text);
+    --ink-soft: #3a3f47;
+    --muted: #5f636a;          /* 5.6:1 on --workspace, 6.0:1 on white (AA for body text) */
+    --border: #e2ddd4;
+    --line: var(--border);
+
+    /* Gold as text or as a thin line on a light surface is below 3:1, so text and focus use the deep gold. */
+    --gold-ink: #7a5a10;       /* 6.3:1 on white */
+    --focus: #7a5a10;
+    --focus-on-dark: #c79a2b;  /* the sidebar and other dark surfaces */
+    --focus-ring: 0 0 0 3px rgba(199, 154, 43, 0.35);
+
+    /* Status (each pairs a strong ink with a soft background; ink is >= 4.5:1 on its background) */
+    --danger: #b42318;
+    --danger-soft: #fdecea;
+    --warning: #8a5a00;
+    --warning-soft: #fff7e0;
+    --warning-line: #f0d58a;
+    --ok: #1e6b3a;
+    --ok-soft: #e8f4ec;
+    --info: #1f3a5f;
+    --info-soft: #eaf0f7;
+
+    /* Spacing scale (4 px base). Use these instead of new pixel literals. */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* Type: never shrink below --text-sm to make something fit. */
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+
+    /* Shape */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-soft: 0 1px 2px rgba(20, 20, 20, 0.04), 0 8px 24px rgba(20, 20, 20, 0.04);
+    --touch-target: 44px;
+
+    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Plan Intelligence · Take-off package</p>
+        <p class="eyebrow">Plans · Take-off package</p>
         <h1>Package #{{ package.id }} v{{ package.version_number }}</h1>
         <p class="muted-copy">{{ project.name }} · Status: <span class="status">{{ package.status }}</span> · {{ package.element_type }}</p>
     </div>
@@ -34,7 +34,7 @@
     </p>
     {% endif %}
     {% if package.status in ('approved', 'superseded') %}
-    <p class="muted-copy" style="margin-top: 12px;">This package is immutable. New evidence requires a new draft version.</p>
+    <p class="muted-copy" style="margin-top: 12px;">This package is approved and cannot change. New evidence requires a new draft version.</p>
     {% endif %}
 </section>
 
@@ -86,7 +86,7 @@
             <input type="text" name="approved_by" value="office-reviewer" required>
         </label>
         <div class="form-actions">
-            <button type="submit">Approve immutable package</button>
+            <button type="submit">Approve package (it cannot change after)</button>
         </div>
     </form>
 </section>

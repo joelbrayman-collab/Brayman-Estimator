@@ -16,6 +16,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
@@ -96,10 +97,13 @@ async function go(pg, url) {
   // A set-password link carries its credential after "#": the landing page's script posts it and moves on
   // (22 Oct 2026). Wait for that second page.
   if (url.includes("/reset-password#")) await pg.waitForFunction(() => !document.querySelector("[data-reset-open]"));
+  await openSectionsIfProjectPage(pg); // Task-First UX (31 Oct 2026): the Project page's closed sections
   return r;
 }
 async function submit(pg, locator) {
   await Promise.all([pg.waitForNavigation(), locator.click()]);
+  await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg);
   await pg.waitForLoadState();
 }
 async function signIn(s, [email, password], loginPath = "/login") {
@@ -131,9 +135,17 @@ function newestMail(template, to) {
 }
 // A page from the sidebar menu: the link under its section heading (e.g. Company → Getting started).
 async function menu(pg, section, href) {
+  // Task-First UX (Joel's mandate, 31 Oct 2026): the sidebar keeps six destinations; every other page is one click
+  // further, under More, the Admin gear, or the Purchasing / Time & Money pages. The walk follows those clicks.
+  // (`section` names where the link used to be in the old sidebar.)
   await go(pg, "/");
-  const nav = pg.locator("nav.sidebar-nav .sidebar-section").filter({ has: pg.locator(".sidebar-section-label", { hasText: new RegExp(`^\\s*${section}\\s*$`) }) }).first();
-  await submit(pg, nav.locator(`a.sidebar-link[href="${href}"]`));
+  const direct = pg.locator(`nav.sidebar-nav a.sidebar-link[href="${href}"]`);
+  if (await direct.count()) return submit(pg, direct.first());
+  const via = { "/accounting": "/time-and-money", "/suppliers": "/purchasing", "/settings/people": "/admin",
+                "/settings/crews": "/admin" }[href] || "/more";
+  await submit(pg, via === "/admin" ? pg.locator("[data-admin-gear]")
+                                    : pg.locator(`nav.sidebar-nav a.sidebar-link[href="${via}"]`));
+  await submit(pg, pg.locator(`a[data-link-hub-item][href="${href}"]`).first());
 }
 // Company → Getting started, from the menu; returns {done, total, steps: {key: bool}}.
 async function checklist(pg) {

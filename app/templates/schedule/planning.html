@@ -18,8 +18,8 @@
 <p class="muted-copy">The anticipated start is a planning input only. Proposed windows are anticipated until a person confirms them. A move that affects other projects waits for the project and company schedule authorities. Supplier changes are drafts until someone with the authority sends them.</p></div>
 <div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a> <a class="button button-secondary" href="{{ url_for('schedule.company') }}">Company schedule</a></div></div>
 
-<section class="form-panel" data-anticipated-start>
-  <h2>Anticipated construction start</h2>
+<section class="form-panel" id="anticipated-start" data-anticipated-start>
+  <h2>Planned start</h2>
   <form method="post" class="inline-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="anticipated_start">
     <input type="date" name="anticipated_start" value="{{ project.anticipated_start.isoformat() if project.anticipated_start else '' }}" aria-label="Anticipated construction start">
@@ -44,7 +44,7 @@
   {% else %}<p class="muted-copy">No work plan to schedule yet. Build the work plan from the accepted estimate first.</p>{% endif %}
 </section>
 
-<section class="form-panel" data-gantt>
+<section class="form-panel" id="gantt" data-gantt>
   <h2>Gantt</h2>
   {% if gantt.bars %}
   <p class="muted-copy gantt-legend">{{ gantt.start.isoformat() }} to {{ gantt.end.isoformat() }} <span style="background:#2f6f4f"></span>Confirmed <span style="background:#a9c9b8"></span>Anticipated</p>
@@ -63,11 +63,11 @@
   {% else %}<p class="muted-copy">Nothing scheduled yet.</p>{% endif %}
 </section>
 
-<section class="form-panel" data-change-requests>
-  <h2>Company Schedule Change Requests</h2>
+<section class="form-panel" id="change-requests" data-change-requests>
+  <h2>Requested date changes</h2>
   {% for r in requests %}
   {% set impact = r.impact %}
-  <article class="form-panel" data-change-request="{{ r.id }}">
+  <article class="form-panel" id="change-request-{{ r.id }}" data-change-request="{{ r.id }}">
     <p><strong>#{{ r.id }}</strong> {{ r.prior_start.isoformat() }}–{{ r.prior_end.isoformat() }} → {{ r.proposed_start.isoformat() }}–{{ r.proposed_end.isoformat() }} · requested by {{ r.requested_by_name }}. Reason: {{ r.reason }}</p>
     <ul>{% for c in impact.company_impacts %}<li>Crew also booked on {{ c.project }} {{ c.start }}–{{ c.end }}</li>{% endfor %}{% for s in impact.successors %}<li>Dependent work would start {{ s.would_start }}</li>{% endfor %}{% for d in impact.deliveries %}<li>Delivery {{ d.order }} ({{ d.status|lower }}) will need a supplier change</li>{% endfor %}</ul>
     <p class="muted-copy">Project authority: {{ r.project_approved_by_name or "waiting" }} · Company Schedule Authority: {{ r.company_approved_by_name or "waiting" }}</p>
@@ -83,8 +83,8 @@
   {% else %}<p class="muted-copy">None waiting.</p>{% endfor %}
 </section>
 
-<section class="form-panel" data-delivery-drafts>
-  <h2>Supplier delivery changes (drafts)</h2>
+<section class="form-panel" id="delivery-drafts" data-delivery-drafts>
+  <h2>Delivery notices to send</h2>
   {% for d in drafts %}
   <div data-draft="{{ d.id }}"><p>{{ d.summary }} Work moved from {{ d.prior_start.isoformat() }} to {{ d.new_start.isoformat() }}.</p>
   <form method="post" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="draft_id" value="{{ d.id }}">
@@ -93,8 +93,8 @@
   {% else %}<p class="muted-copy">No drafts. A schedule move drafts its supplier delivery changes here.</p>{% endfor %}
 </section>
 
-<section class="form-panel" data-procurement-plan>
-  <h2>Procurement planning windows</h2>
+<section class="form-panel" id="order-by-dates" data-procurement-plan>
+  <h2>Order-by dates</h2>
   {% if procurement %}
   <table class="plan-table"><thead><tr><th>Work</th><th>Request quotes by</th><th>Order by</th><th>Needed on site</th><th>Window</th></tr></thead><tbody>
   {% for p in procurement %}<tr><td>{{ p.element.display_name }}</td><td>{{ p.rfq_by.isoformat() }}</td><td class="{{ 'is-late' if p.late else '' }}">{{ p.order_by.isoformat() }}{% if p.late %} (late){% endif %}</td><td>{{ p.needed_on_site.isoformat() }}</td><td>{{ p.window_kind|lower }}</td></tr>{% endfor %}

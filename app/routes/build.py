@@ -113,6 +113,11 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
         project.drawing_requirement,
         bool(project_plans(org_id, project.id)),
     )
+    from app.routes.projects import project_task_screen_vars
+
+    operating = hub_operating_template_vars(project, org_id, current_user)
+    walkthrough = hub_walkthrough_template_vars(project, org_id, current_user)
+    records = _hub_record_template_vars(project, org_id)
     return (
         render_template(
             "projects/detail.html",
@@ -128,10 +133,14 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
                 organization_id=org_id,
                 project_id=project.id,
             ),
-            **hub_operating_template_vars(project, org_id, current_user),
+            # Task-First UX (31 Oct 2026): the same Task Screen as the Project page, with Money open at the form.
+            open_section="ts-money",
+            **operating,
             **hub_punch_list_template_vars(project, org_id, current_user),
-            **hub_walkthrough_template_vars(project, org_id, current_user),
-            **_hub_record_template_vars(project, org_id),
+            **walkthrough,
+            **records,
+            **project_task_screen_vars(project, org_id, hub=hub, records=records, operating=operating,
+                                       walkthrough=walkthrough, drawing_state=drawing_state),
         ),
         status,
     )

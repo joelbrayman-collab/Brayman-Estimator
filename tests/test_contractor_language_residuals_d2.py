@@ -156,7 +156,9 @@ def test_nav_uses_contractor_cost_library_and_previous_estimates():
     historical = next(
         item for item in NAV_ITEMS if item["endpoint"] == "historical_estimates.index"
     )
-    library = next(section for section in NAV_SECTIONS if section["title"] == COSTS_AND_PRICING_NAV_TITLE)
+    from app.navigation import MORE_SECTIONS  # Task-First UX (31 Oct 2026): Costs & pricing lives under More
+
+    library = next(section for section in MORE_SECTIONS if section["title"] == COSTS_AND_PRICING_NAV_TITLE)
     assert cost["title"] == WHAT_WE_PAY_NAV_TITLE
     assert any(item["title"] == REUSABLE_WORK_NAV_TITLE for item in library["links"])
     assert historical["title"] == PAST_JOBS_NAV_TITLE
@@ -228,7 +230,7 @@ def test_d1_help_and_learn_future_remain(client, project):
     for key in ("plan", "price", "contract", "build", "monitor"):
         assert f'id="help-{key}"' in html
         assert help_content.hub_topic(key).what in html
-    assert "LEARN · Future" in html
+    assert "LEARN · Future" not in html  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
     assert help_content.HUB_LEARN.future is True
 
 
@@ -238,4 +240,4 @@ def test_hub_get_does_not_create_pricing_rows(client, project):
     assert client.get(f"/projects/{project.id}").status_code == 200
     assert EstimatePricingSnapshot.query.count() == 0
     assert "TRUE_GROSS_MARGIN" not in html
-    assert "LEARN · Future" in html
+    assert "LEARN · Future" not in html  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page

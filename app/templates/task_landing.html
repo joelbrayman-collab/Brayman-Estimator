@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ heading }}{% endblock %}
+{% block content %}
+{# A primary destination built on the Task Screen standard (Task-First UX, 31 Oct 2026): purpose, what is waiting on
+   you (attention items of this area, each opening its task), then the pages of this area. #}
+{% import "partials/task_screen.html" as ts with context %}
+<div class="task-screen" data-task-landing="{{ landing }}">
+  {{ ts.purpose(purpose, why) }}
+  {{ ts.attention(items, heading="Waiting on you here", empty="Nothing in " ~ heading ~ " needs you right now.") }}
+  {% if jobs %}
+  <section class="ts-state" aria-label="Jobs with open supplier requests" data-purchasing-jobs>
+    <h2>Jobs with open supplier requests</h2>
+    <ul class="ts-state-list">
+      {% for row in jobs %}
+      <li class="ts-state-row is-todo"><span class="ts-state-mark" aria-hidden="true">&#9675;</span><span class="ts-state-text"><a href="{{ url_for('supplier_office.project_requests', project_id=row.project.id) }}">{{ row.project.name }}{% if row.project.project_number %} ({{ row.project.project_number }}){% endif %}</a> · {{ row.open }} open request{{ '' if row.open == 1 else 's' }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+  <section class="link-hub-section" aria-labelledby="landing-pages">
+    <h2 id="landing-pages">Everything in {{ heading }}</h2>
+    <ul class="link-hub-grid">
+      {% for item in links %}
+      <li><a href="{{ url_for(item.endpoint) }}" data-link-hub-item="{{ item.endpoint }}"><i class="bi {{ item.icon }}" aria-hidden="true"></i><span>{{ item.title }}</span></a></li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

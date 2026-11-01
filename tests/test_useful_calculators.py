@@ -223,13 +223,14 @@ def test_field_keeps_its_own_manifest_service_worker_and_cache(app):
 
 
 def test_the_collection_names_every_existing_calculator(app):
-    from app.navigation import NAV_SECTIONS
+    from app.navigation import MORE_SECTIONS
     from app.routes.useful_calculators import PHONE_CALCULATOR_ENDPOINTS
     from app.services import useful_calculators as UC
     from app.services.access_domains import FIELD_ONLY_ALLOWED_ENDPOINTS
 
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-    menu = next(s for s in NAV_SECTIONS if s["title"] == "Calculators")
+    # Task-First UX (31 Oct 2026): the office calculators menu is More › Calculators.
+    menu = next(s for s in MORE_SECTIONS if s["title"] == "Calculators")
     office = {c.office_endpoint for c in UC.CALCULATORS}
     assert {link["endpoint"] for link in menu["links"]} <= office
     # "Link to a project" (release 8) and the Guided Estimating result actions (23 Oct 2026: the stages of a project,

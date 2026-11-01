@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Plan Intelligence</p>
+        <p class="eyebrow">Plans</p>
         <h1>{{ document.original_filename }}</h1>
         <p class="muted-copy">{{ project.name }}{% if document.is_archived %} · Archived{% endif %}</p>
     </div>
@@ -26,7 +26,7 @@
         <div><p class="eyebrow">Size</p><p>{{ (document.byte_size / 1024) | round(1) }} KB</p></div>
         <div><p class="eyebrow">PDF title</p><p>{{ document.pdf_title or "—" }}</p></div>
         <div><p class="eyebrow">PDF author</p><p>{{ document.pdf_author or "—" }}</p></div>
-        <div><p class="eyebrow">SHA-256</p><p style="word-break: break-all;">{{ document.sha256_hex }}</p></div>
+        <div><p class="eyebrow">File check code</p><p style="word-break: break-all;">{{ document.sha256_hex }}</p></div>
         <div><p class="eyebrow">Uploaded</p><p>{{ document.created_at|local_time("%Y-%m-%d %H:%M") }}</p></div>
     </div>
     {% if document.notes %}

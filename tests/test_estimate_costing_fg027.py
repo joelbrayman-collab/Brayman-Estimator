@@ -589,7 +589,7 @@ def test_office_costing_review_and_approve_all_route(client, app):
     assert posted.status_code == 200
     assert EstimateCostingSnapshot.query.filter_by(estimate_version_id=version.id).count() == 1
     html = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
-    assert b"Approved costing snapshot" in html.data
+    assert b"Approved costing" in html.data and b"Approved costing snapshot" not in html.data  # Task-First UX: no "snapshot"
 
 
 def _clear_library_reference(line):

@@ -155,12 +155,14 @@ def test_project_documents_page_connects_existing_plans_lazily(app, world, tmp_p
 
 
 def test_insertion_points_nav_hub_customer_and_field(app, world):
-    from app.navigation import NAV_SECTIONS
+    # Task-First navigation (31 Oct 2026): the Company library (with Documents) lives under More.
+    from app.navigation import MORE_SECTIONS
 
-    assert any(link["endpoint"] == "documents.library" for s in NAV_SECTIONS for link in s["links"])
+    assert any(link["endpoint"] == "documents.library" for s in MORE_SECTIONS for link in s["links"])
     staff = signed_in(app, STAFF)
-    home = staff.get("/")
-    assert b'href="/documents"' in home.data
+    more = staff.get("/more")
+    assert more.status_code == 200
+    assert b'href="/documents"' in more.data
     hub = staff.get(f"/projects/{world['project'].id}")
     assert b"data-hub-documents" in hub.data
     customer = staff.get(f"/clients/{world['customer'].id}")

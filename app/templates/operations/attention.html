@@ -3,13 +3,21 @@
 {% block page_title %}What needs my attention?{% endblock %}
 {% block content %}
 {% include "operations/_style.html" %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/needs_attention.css', v='mag7-1') }}">
+{# The ONE attention list (Task-First UX, 31 Oct 2026): every item opens the task where it is decided. #}
 <section class="na-home" data-attention-page>
   <h2 class="na-title">WHAT NEEDS MY ATTENTION? <span class="na-count">{{ view.count }}</span></h2>
-  {% if view['items'] %}
-  {% set items = view['items'] %}{% include "operations/_attention_list.html" %}
-  {% else %}
-  <p class="na-empty" data-attention-empty>Nothing needs your attention right now.</p>
+  <p class="na-purpose">Everything waiting on you, across every job. Each button opens the exact screen where it is decided.</p>
+  {% if kinds|length > 1 %}
+  <ul class="na-filters" aria-label="Show only">
+    <li><a href="{{ url_for('operations.attention') }}"{% if not kind %} aria-current="page"{% endif %}>All</a></li>
+    {% for key, n in kinds %}
+    <li><a href="{{ url_for('operations.attention', kind=key) }}" data-attention-filter="{{ key }}"{% if kind == key %} aria-current="page"{% endif %}>{{ kind_label(key) }} ({{ n }})</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% set limit = None %}{% include "operations/_attention_groups.html" %}
+  {% if company_facts_link %}
+  <p class="na-related"><a href="{{ url_for('company_attention.index') }}" data-company-attention-details>Labour hours and schedule facts, job by job</a></p>
   {% endif %}
 </section>
 {% endblock %}

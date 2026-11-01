@@ -8,7 +8,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.navigation import NAV_SECTIONS
+from app.navigation import MORE_SECTIONS, NAV_SECTIONS
 from app.services import trade_area as ta
 from app.services.unit_conversion import convert
 from tests.test_wall_framing_calculator import app, client  # noqa: F401  (signed-in office client)
@@ -101,7 +101,9 @@ def test_invalid_input_is_refused_with_a_plain_message(call, message):
 
 
 def test_the_calculators_are_in_the_menu():
-    section = next(row for row in NAV_SECTIONS if row["title"] == "Calculators")
+    # Task-First UX (Joel's mandate, 31 Oct 2026): the calculators left the sidebar for More › Calculators (and open
+    # from the work item on a project). Every calculator is still listed, in the same order, one click away.
+    section = next(row for row in MORE_SECTIONS if row["title"] == "Calculators")
     titles = [item["title"] for item in section["links"]]
     for title in ("Footing calculator", "Roofing calculator", "Siding calculator", "Drywall calculator", "Flooring calculator"):
         assert title in titles

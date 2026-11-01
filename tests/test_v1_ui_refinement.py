@@ -20,19 +20,22 @@ def test_the_sidebar_uses_the_approved_calibraytai_logo_unchanged(client):
     assert hashlib.sha256(installed.read_bytes()).hexdigest() == hashlib.sha256(APPROVED_V1_DARK.read_bytes()).hexdigest()
 
 
-def test_calculators_are_collapsed_unless_a_calculator_is_open(client):
+def test_calculators_are_one_click_away_under_more_and_the_open_one_lights_more(client):
+    # Task-First UX (Joel's mandate, 31 Oct 2026): the collapsible Calculators group (15 Oct 2026) left the sidebar for
+    # More › Calculators; the sidebar keeps six destinations and More. Every calculator stays reachable.
     home = client.get("/").get_data(as_text=True)
-    group = home[home.index('data-sidebar-group="calculators"') - 80:]
-    assert '<details class="sidebar-section sidebar-collapsible" data-sidebar-group="calculators">' in home
+    assert 'data-sidebar-group="calculators"' not in home and 'href="/more"' in home
+    more = client.get("/more").get_data(as_text=True)
+    group = more[more.index('data-link-hub-section="calculators"'):]
     for path in ("/calculators/footing", "/calculators/roofing", "/calculators/concrete", "/calculators/stairs",
-                 "/calculators/wall-form", "/calculators/wall-framing", "/calculators/employment-vs-entrepreneurship"):
+                 "/calculators/wall-form", "/calculators/wall-framing", "/calculators/employment-vs-entrepreneurship",
+                 "/calculators/siding", "/calculators/drywall", "/calculators/flooring"):
         assert f'href="{path}"' in group, path  # every calculator stays reachable from the menu
     footing = client.get("/calculators/footing").get_data(as_text=True)
-    assert 'data-sidebar-group="calculators" open data-has-active="true"' in footing
-    # Only the open calculator is highlighted.
+    # Only one sidebar item is highlighted: More, where the open calculator lives.
     assert footing.count('class="sidebar-link is-active"') == 1
     active = footing[footing.index('class="sidebar-link is-active"'):][:200]
-    assert 'href="/calculators/footing"' in active
+    assert 'href="/more"' in active
 
 
 def test_home_shows_counts_and_the_calendar_in_the_top_band(client):

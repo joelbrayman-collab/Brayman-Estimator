@@ -55,7 +55,7 @@
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Direct Cost reconciliation</h2>
-    <p>Internal Direct Cost is the sum of line extended cost (waste already included). Labour rate snapshots are not included.</p>
+    <p>Internal Direct Cost is the sum of line extended cost (waste already included). Labour rate records are not included.</p>
     <p><strong>Direct Cost total: ${{ "%.2f"|format(direct_cost) }}</strong></p>
 </section>
 
@@ -148,7 +148,7 @@
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Labour rate snapshot</h2>
-    <p><strong>Labour rate snapshot — not included in selling-price basis</strong></p>
+    <p><strong>Labour rate record — not included in selling-price basis</strong></p>
     <p>These hours and costs are related evidence only. They do not increase Direct Cost or selling price.</p>
     {% if labour_snapshots %}
     <div class="table-wrap">
@@ -171,9 +171,9 @@
             </tbody>
         </table>
     </div>
-    <p>Labour snapshot hours (not in basis): {{ labour_total_hours }} · Direct labour cost (not in basis): ${{ "%.2f"|format(labour_total_cost) }}</p>
+    <p>Recorded labour hours (not in basis): {{ labour_total_hours }} · Direct labour cost (not in basis): ${{ "%.2f"|format(labour_total_cost) }}</p>
     {% else %}
-    <p class="muted-copy">No labour rate snapshot on this version.</p>
+    <p class="muted-copy">No labour rate record on this version.</p>
     {% endif %}
 </section>
 {% endblock %}

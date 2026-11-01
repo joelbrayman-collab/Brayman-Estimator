@@ -114,7 +114,9 @@ def test_field_header_uses_v2_on_light_background():
     css = Path("app/static/css/field.css").read_text()
     assert "body.field-body" in css
     assert "background: var(--cream)" in css
-    assert "--cream: #f4f2ee" in css
+    # Task-First UX (31 Oct 2026): the approved cream is defined once, in tokens.css, which field.css imports.
+    assert css.startswith('@import url("tokens.css");')
+    assert "--cream: #f4f2ee" in Path("app/static/css/tokens.css").read_text()
     base = Path("app/templates/field/base.html").read_text()
     assert PRODUCT_LOGO_V2 in base
     assert "calibraytai-logo-v1" not in base
@@ -154,7 +156,8 @@ def test_office_login_and_favicon_keep_tenant_logo():
 
 def test_project_hub_lifecycle_aria_and_office_chrome(client, project):
     html = client.get(f"/projects/{project.id}").get_data(as_text=True)
-    assert 'aria-label="CalibraytAI lifecycle"' in html
+    # Task-First UX (31 Oct 2026): the lifecycle anchor bar became the job's section strip.
+    assert 'aria-label="Parts of this job"' in html
     assert "Brayman Construction Platform" in html
     assert 'aria-label="CalibAi lifecycle"' not in html
 

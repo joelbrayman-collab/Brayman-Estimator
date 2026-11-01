@@ -80,9 +80,11 @@ def test_the_header_shows_the_exact_approved_cal_identity_and_opens_only_when_cl
         assert client.get(f"/static/img/cal-assistant/cal-{size}.png").status_code == 200
     # The existing Help and its voice control are still on the page, unchanged.
     assert 'class="contextual-help' in page and "data-help-voice" in page and "js/contextual_help.js" in page
-    # The disabled "Search (coming soon)" placeholder is gone; Notifications is unchanged.
+    # The disabled "Search (coming soon)" placeholder is gone. Task-First UX (31 Oct 2026): the disabled
+    # Notifications bell is now the live attention count, a link to the one attention list.
     assert "Search (coming soon)" not in page and "bi-search" not in page
-    assert "Notifications (coming soon)" in page
+    assert "Notifications (coming soon)" not in page
+    assert 'data-attention-bell data-attention-count-url="/attention/count"' in page
     assert "Upcoming deliveries" in page
 
 

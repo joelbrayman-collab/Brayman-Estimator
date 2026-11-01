@@ -18,7 +18,7 @@
 <form method="post" class="form-panel">
     <h3>Commercial Decision Gate (Version Update)</h3>
     <p class="muted-copy" style="margin-bottom: 16px;">
-        Updating commercial context creates a new immutable version. Historical estimates remain pinned to their original context snapshot.
+        Updating commercial context creates a new version; the earlier one is kept unchanged. Historical estimates keep the context they were priced with.
     </p>
 
     {% if current_context and current_context.is_legacy_unknown %}

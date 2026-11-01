@@ -38,9 +38,25 @@ def _projects(org):
 
 @operations_bp.route("/attention")
 def attention():
-    from app.services.needs_attention import assemble
+    """The ONE attention list (Task-First UX, 31 Oct 2026): Home's list in full, with the Company Attention facts for
+    those who may see them, grouped Waiting on you / Waiting on others, and filtered by kind (?kind=)."""
+    from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT, membership_has_access_domain
+    from app.services.needs_attention import assemble, kind_label
 
-    return render_template("operations/attention.html", view=assemble(_org(), current_user))
+    org = _org()
+    view = assemble(org, current_user)
+    kinds = sorted(view.get("kinds", {}).items(), key=lambda kv: (-kv[1], kind_label(kv[0])))
+    kind = (request.args.get("kind") or "").strip()
+    if kind and kind in view.get("kinds", {}):
+        keep = [i for i in view["items"] if i["kind"] == kind]
+        view = {**view, "items": keep, "count": len(keep),
+                "waiting_on_you": [i for i in keep if i.get("waiting_on") != "others"],
+                "waiting_on_others": [i for i in keep if i.get("waiting_on") == "others"]}
+    else:
+        kind = ""
+    return render_template("operations/attention.html", view=view, kinds=kinds, kind=kind, kind_label=kind_label,
+                           company_facts_link=membership_has_access_domain(current_user, org,
+                                                                           ACCESS_DOMAIN_COMPANY_MANAGEMENT))
 
 
 # ------------------------------------------------------------------------------------------------ material requests

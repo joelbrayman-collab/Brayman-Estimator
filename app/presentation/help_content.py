@@ -141,8 +141,7 @@ HUB_MONITOR = HelpTopic(
         "only."
     ),
     next=(
-        "Keep recording actuals as the job proceeds. LEARN is not available on "
-        "this Project yet."
+        "Keep recording actuals as the job proceeds."
     ),
 )
 

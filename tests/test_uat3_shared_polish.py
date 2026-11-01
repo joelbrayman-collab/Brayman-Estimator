@@ -25,17 +25,13 @@ def test_brand_is_not_in_the_daily_menu():
     endpoints = {item["endpoint"] for item in NAV_ITEMS}
     assert "Brand" not in titles
     assert "settings.brand_profile" not in endpoints
-    company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
-    assert [item["title"] for item in company["links"]] == [
-        "Getting started",  # 21 Oct 2026, Ben's first day checklist
-        "Workflow Guide",  # 21 Oct 2026, the Contractor Workflow Map
-        "Attention",
-        "People & Access",  # 21 Oct 2026, owner / System Administrator only
-        "Crews",
-        "Suppliers",
-        "Accounting",  # 21 Oct 2026, invoices and QuickBooks files
-        "Work catalog",
-    ]
+    # Task-First UX (31 Oct 2026): the Company group became the Admin gear (settings, people, crews, policies) and
+    # More (help); Suppliers and Accounting are inside Purchasing and Time & Money. Brand is still not a menu item.
+    from app.navigation import ADMIN_SECTIONS
+
+    company = next(row for row in ADMIN_SECTIONS if row["title"] == "Company")
+    assert [item["title"] for item in company["links"]][:3] == ["Company profile", "People & Access", "Crews"]
+    assert "Brand" not in [item["title"] for row in ADMIN_SECTIONS for item in row["links"]]
 
 
 def test_home_and_projects_keep_their_presentation():

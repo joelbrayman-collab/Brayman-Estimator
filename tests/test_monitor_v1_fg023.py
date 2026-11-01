@@ -754,7 +754,9 @@ def _html(response):
 
 
 def _monitor_html(html):
-    return html.split('id="hub-monitor"', 1)[-1].split('id="hub-plan"', 1)[0]
+    # Task-First UX (31 Oct 2026): Money is its own closed section on the Project page; it ends where the next
+    # section starts (it used to end at the Documents label).
+    return html.split('id="hub-monitor"', 1)[-1].split('data-ts-section="', 1)[0]
 
 
 def _csrf_token(response):

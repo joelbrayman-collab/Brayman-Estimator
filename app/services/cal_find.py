@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from flask import url_for
 from flask_login import current_user
 
-from app.navigation import NAV_SECTIONS
+from app.navigation import ADMIN_SECTIONS, MORE_SECTIONS, NAV_SECTIONS
 from app.presentation import help_content
 
 MAX_QUERY = 200
@@ -439,7 +439,8 @@ def _tool_visible(item) -> bool:
 def platform_tools() -> list:
     """Every menu destination this user can open, from the single navigation source."""
     tools = []
-    for section in NAV_SECTIONS:
+    # Task-First UX (31 Oct 2026): the sidebar, the More page and the Admin gear are one navigation source.
+    for section in NAV_SECTIONS + MORE_SECTIONS + ADMIN_SECTIONS:
         for item in section["links"]:
             if not _tool_visible(item):
                 continue
@@ -448,6 +449,8 @@ def platform_tools() -> list:
             except Exception:
                 continue
             tools.append(Item(item["title"], url, section["title"] or "Menu", "tool"))
+    if _company_management_allowed():
+        tools.append(Item("Company Attention", url_for("company_attention.index"), "Attention", "tool"))
     return tools
 
 
@@ -485,12 +488,12 @@ HELP_TOPIC_ENDPOINTS = {
 
 
 def _company_management_allowed() -> bool:
-    from app.navigation import NAV_ITEMS
+    """The Company Attention page needs the COMPANY_MANAGEMENT access domain (folded into the attention list on
+    31 Oct 2026; the page itself remains)."""
+    from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT
 
-    for item in NAV_ITEMS:
-        if item.get("endpoint") == "company_attention.index":
-            return _tool_visible(item)
-    return False
+    return _tool_visible({"endpoint": "company_attention.index", "enabled": True,
+                          "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT})
 
 
 def match_help(words, wants_help: bool) -> list:

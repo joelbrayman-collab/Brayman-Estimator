@@ -439,10 +439,11 @@ def test_needs_my_attention_lifecycle_from_real_records(env):
     app, facts = env
     ben = Person(app, "ben")
     home = ben.get("/")
-    assert "WHAT NEEDS MY ATTENTION?" in home and "Guided Wizards" in home
+    # Task-First UX (31 Oct 2026): the guided starts band is named for its outcome, "Start something".
+    assert "WHAT NEEDS MY ATTENTION?" in home and "Start something" in home
     # Attention first (Magnificent Seven), kept in the compact Home (Joel, 27 Oct 2026): then the guided starts, then
     # the Today / Coming days briefing.
-    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("Guided Wizards") < home.index("aria-label=\"Today and coming days\"")
+    assert home.index("WHAT NEEDS MY ATTENTION?") < home.index("Start something") < home.index("aria-label=\"Today and coming days\"")
     kevin = Person(app, "kevin")
     # Kevin enters time: an approval item appears with a one-click link to the time page for Kevin.
     kevin.post(f"/field/projects/{facts['project'].id}/time", data={

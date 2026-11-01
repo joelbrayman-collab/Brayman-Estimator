@@ -25,6 +25,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 import { projectRows } from "./evidence_identity_gate3.mjs";
 
 const PHONE = { width: 390, height: 844 };
@@ -92,10 +93,13 @@ async function person(key, viewport) {
 async function go(pg, url) {
   const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`);
   await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg); // Task-First UX (31 Oct 2026): the Project page's closed sections
   return r;
 }
 async function submit(pg, locator) {
   await Promise.all([pg.waitForNavigation(), locator.click()]);
+  await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg);
   await pg.waitForLoadState();
 }
 const pathOf = (pg) => new URL(pg.url()).pathname;
@@ -121,7 +125,8 @@ step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools
   const { pg, errors } = await person("ben", DESK);
   await go(pg, "/");
   const section = pg.locator("[data-wizard-home]");
-  assert.match(await section.innerText(), /guided wizards/i);
+  // Task-First UX (31 Oct 2026): the band is named for its outcome, "Start something" (was "Guided Wizards").
+  assert.match(await section.innerText(), /start something/i);
   for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
     const start = pg.locator(`[data-start-wizard="${key}"]`);
     assert.equal(await start.count(), 1, key);

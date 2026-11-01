@@ -11,6 +11,13 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+// Task-First UX (31 Oct 2026): the Project page keeps each part of the job in a closed section; open them before
+// reading the page's text, as a person opens the section they need.
+async function openProjectSections(page) {
+  await page.evaluate(() => document.querySelectorAll("details[data-ts-section], details[data-more-actions]")
+    .forEach((d) => { d.open = true; }));
+}
+
 const repoRoot = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const { chromium } = await import(
   pathToFileURL(path.join(repoRoot, "calculation-engines/concrete-slab-1.0.0/node_modules/playwright/index.mjs")).href
@@ -278,6 +285,7 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.match(await page.locator("[data-proposal-client-flow]").innerText(), /Accepted by E2E Synthetic Client/);
     // The sign-off already locked the estimate, so the hub shows the committed baseline at once.
     await page.goto(`${base}/projects/${projectId}`);
+    await openProjectSections(page);
     assert.equal(await page.locator("[data-lock-baseline]").count(), 0);
     let hub = await page.locator("main").innerText();
     assert.match(hub, /ORIGINAL ESTIMATED DIRECT COST\s+\$2667\.75/i);
@@ -311,6 +319,7 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await page.fill("[name=hours]", "4");
     await submit(page.getByRole("button", { name: "Send time" }));
     await page.goto(`${base}/projects/${projectId}`);
+    await openProjectSections(page);
     const actual = page.locator(`form[action="/projects/${projectId}/direct-cost-actuals"]`);
     await actual.locator("[name=cost_class]").selectOption("material");
     await actual.locator("[name=amount]").fill("800");
@@ -331,6 +340,7 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     await page.locator('form[action$="/status"] select[name=status]').selectOption("Approved");
     await submit(page.locator('form[action$="/status"] button[type=submit]'));
     await page.goto(`${base}/projects/${projectId}`);
+    await openProjectSections(page);
     hub = await page.locator("main").innerText();
     assert.match(hub, /APPROVED\/INVOICED CO REVENUE DELTA\s+\$600\.00/i);
     assert.match(hub, /ACTUAL DIRECT COST TO DATE\s+\$800\.00/i);

@@ -4,7 +4,7 @@ from flask import request
 from flask_login import current_user
 from sqlalchemy import or_
 
-from app.navigation import NAV_SECTIONS, is_nav_item_active
+from app.navigation import ADMIN_SECTIONS, MORE_SECTIONS, NAV_SECTIONS, is_nav_item_active
 from app.presentation import cal_copy, contractor_copy, help_content
 
 
@@ -32,6 +32,7 @@ def register_shell_context(app):
                         "links": links,
                         "collapsible": bool(section.get("collapsible")),
                         "has_active": any(link["active"] for link in links),
+                        "class": section.get("class", ""),
                     }
                 )
 
@@ -83,6 +84,7 @@ def register_shell_context(app):
 
         return {
             "nav_sections": nav_sections,
+            "admin_active": endpoint is not None and is_nav_item_active({"endpoint": "main.admin"}, endpoint),
             "shell_recent_estimates": recent_estimates,
             "shell_recent_proposals": recent_proposals,
             "company_name": company_name,
@@ -118,3 +120,22 @@ def _nav_item_visible(item, authenticated) -> bool:
         return membership_has_access_domain(current_user, org_id, domain)
     except Exception:
         return False
+
+
+def visible_sections(sections, authenticated=True, endpoint=None):
+    """MORE_SECTIONS or ADMIN_SECTIONS for the current person: the same visibility rules as the sidebar."""
+    out = []
+    for section in sections:
+        links = [{**item, "active": bool(endpoint) and item["endpoint"] == endpoint}
+                 for item in section["links"] if _nav_item_visible(item, authenticated)]
+        if links:
+            out.append({**section, "links": links})
+    return out
+
+
+def more_sections(endpoint=None):
+    return visible_sections(MORE_SECTIONS, getattr(current_user, "is_authenticated", False), endpoint)
+
+
+def admin_sections(endpoint=None):
+    return visible_sections(ADMIN_SECTIONS, getattr(current_user, "is_authenticated", False), endpoint)

@@ -1,7 +1,7 @@
-{# Needs My Attention items: what / job or person / status / date / one-click action. #}
+{# Needs My Attention items: what / job or person / why / date / one-click action straight to the task. #}
 <ul class="na-list" data-attention-list>
   {% for item in items %}
-  <li class="na-item na-{{ item.kind }}" data-attention-kind="{{ item.kind }}">
+  <li class="na-item na-{{ item.kind }}" data-attention-kind="{{ item.kind }}" data-attention-provider="{{ item.provider }}"{% if item.waiting_on == 'others' %} data-attention-waiting-on-others{% endif %}>
     <a class="na-link" href="{{ item.href }}" data-attention-action>
       <span class="na-what">{{ item.what }}</span>
       <span class="na-meta">{% if item.who %}{{ item.who }} · {% endif %}{{ item.status }}{% if item.when %} · {{ item.when }}{% endif %}</span>

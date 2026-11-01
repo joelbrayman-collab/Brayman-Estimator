@@ -25,7 +25,7 @@
 <div class="form-panel">
     <p class="eyebrow">SHEETS</p>
     <ol data-sheet-index>{% for sheet in sheets %}<li>{{ sheet.number }} — {{ sheet.title }}</li>{% endfor %}</ol>
-    <p class="muted-copy">PDF SHA-256 {{ record.pdf_sha256 }} · DXF SHA-256 {{ record.dxf_sha256 }}</p>
+    <p class="muted-copy">File check codes: PDF {{ record.pdf_sha256 }} · DXF {{ record.dxf_sha256 }}</p>
 </div>
 
 <div class="form-panel">

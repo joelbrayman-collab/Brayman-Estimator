@@ -7,10 +7,10 @@
 <div class="page-heading">
     <div>
         <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
-        <h1>Calibration candidates</h1>
+        <h1>Suggested rate updates</h1>
         <p>AI cannot approve. Approval writes a new organization-approved standard version.</p>
     </div>
-    <a class="button" href="{{ url_for('labour_engine.create_candidate') }}">New candidate</a>
+    <a class="button" href="{{ url_for('labour_engine.create_candidate') }}">New suggested update</a>
 </div>
 
 <p>
@@ -50,8 +50,8 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <h2>No calibration candidates</h2>
-    <p>Historical evidence does not become an operating standard until a human approves a candidate.</p>
+    <h2>No suggested rate updates</h2>
+    <p>Historical evidence does not become an operating standard until a person approves a suggested update.</p>
 </div>
 {% endif %}
 {% endblock %}

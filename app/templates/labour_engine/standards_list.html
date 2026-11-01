@@ -8,7 +8,7 @@
     <div>
         <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>Production rates</h1>
-        <p>Hours per production unit. Not a direct labour cost rate. Organization-approved versions are created only by candidate approval.</p>
+        <p>Hours per production unit. Not a direct labour cost rate. Organization-approved versions are created only by approving a suggested update.</p>
     </div>
     <a class="button" href="{{ url_for('labour_engine.create_standard') }}">New draft standard</a>
 </div>
@@ -47,7 +47,7 @@
 {% else %}
 <div class="empty-state">
     <h2>No production rate standards</h2>
-    <p>Create a draft, then promote through a calibration candidate. Historical evidence does not auto-promote.</p>
+    <p>Create a draft, then approve it as a suggested rate update. Historical evidence does not auto-promote.</p>
 </div>
 {% endif %}
 {% endblock %}

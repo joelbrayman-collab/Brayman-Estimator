@@ -509,33 +509,15 @@ def test_the_project_page_is_a_task_screen_with_one_next_step_and_every_action_k
     assert "TF hub job" in head and "data-project-stage" in head and "data-brayman-project-number" in head
 
 
-def test_the_documents_section_is_a_slot_for_the_documents_feature(client, app):
+def test_the_documents_section_links_the_jobs_documents_page(client, app):
+    # RDIMS merged (1 Nov 2026): documents.project_documents is registered, so the section links the job's
+    # Documents page directly (the placeholder sentence only shows when the endpoint is missing).
     with app.app_context():
         pid = _project().id
     page = _html(client.get(f"/projects/{pid}"))
     slot = page[page.index("data-project-documents-slot"):]
-    assert "This job's documents will be listed here." in slot[:600]
-    assert "data-project-documents-link" not in page  # documents.project_documents is not registered on this branch
-
-    # Once the Documents feature registers documents.project_documents, the section links to it.
-    from flask import Blueprint
-
-    other = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", "SECRET_KEY": "tf-docs",
-                        "WTF_CSRF_ENABLED": False})
-    bp = Blueprint("documents", __name__)
-    bp.add_url_rule("/projects/<int:project_id>/documents", "project_documents", lambda project_id: "docs")
-    other.register_blueprint(bp)
-    with other.app_context():
-        db.create_all()
-        ensure_default_organization()
-        ensure_office_user()
-        other_pid = _project().id
-        http = other.test_client()
-        login_office_user(http)
-        page = _html(http.get(f"/projects/{other_pid}"))
-        db.session.remove()
-        db.drop_all()
-    assert f'href="/projects/{other_pid}/documents" data-project-documents-link' in page
+    assert f'href="/projects/{pid}/documents" data-project-documents-link' in slot[:600]
+    assert "This job's documents will be listed here." not in slot[:600]
 
 
 def test_next_step_follows_the_job_through_every_stage(app):

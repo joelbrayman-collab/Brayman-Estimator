@@ -1,0 +1,185 @@
+/* The Task Screen standard (Task-First UX, 31 Oct 2026; audit section 7.2).
+   Context -> Purpose -> Current state -> Attention / Decision -> ONE primary action -> Details (closed).
+   Macros: app/templates/partials/task_screen.html. Tokens: tokens.css. No font is shrunk to fit:
+   long text wraps; wide content scrolls inside its own box. Works at 1280 px (laptop) and 390 px (phone). */
+
+/* ---------- Focus that can be seen (WCAG 2.4.7 / 1.4.11) ---------- */
+:where(a, button, summary, [tabindex], input, select, textarea):focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+}
+.shell-sidebar :where(a, button, summary):focus-visible,
+.ts-on-dark :where(a, button, summary):focus-visible {
+    outline-color: var(--focus-on-dark);
+}
+
+/* ---------- Screen ---------- */
+.task-screen {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    margin: 0 0 var(--space-6);
+}
+.task-screen > * { min-width: 0; }
+
+/* Context: who/what this is about, on one wrapped line. */
+.ts-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.ts-context-name { margin: 0; font-size: var(--text-xl); line-height: 1.25; overflow-wrap: anywhere; }
+.ts-context-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); }
+.ts-context-facts li { overflow-wrap: anywhere; }
+.ts-context-facts li + li::before { content: "·"; margin-right: var(--space-3); color: var(--muted); }
+.ts-stage {
+    display: inline-block;
+    padding: 2px var(--space-2);
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--black);
+    font-weight: 600;
+    font-size: var(--text-sm);
+}
+
+/* Purpose: the outcome, in contractor words, and one line of why. */
+.ts-purpose h2 { margin: 0; font-size: var(--text-lg); }
+.ts-purpose p { margin: var(--space-1) 0 0; color: var(--ink-soft); }
+
+/* The one primary action (a card that leads the screen). */
+.ts-next {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius-md);
+}
+.ts-next-eyebrow { margin: 0; font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-ink); }
+.ts-next-title { margin: var(--space-1) 0 0; font-size: var(--text-lg); font-weight: 600; overflow-wrap: anywhere; }
+.ts-next-why { margin: var(--space-1) 0 0; color: var(--ink-soft); }
+.ts-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target);
+    padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-sm);
+    background: var(--black);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: normal;
+    text-align: center;
+}
+.ts-primary:hover { background: #2a2d33; }
+
+/* Current state: "What Calibrayt already knows". */
+.ts-state {
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.ts-state h2, .ts-attention h2 { margin: 0 0 var(--space-2); font-size: var(--text-base); }
+.ts-state-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.ts-state-row { display: grid; grid-template-columns: 1.5em minmax(0, 1fr); gap: var(--space-2); align-items: start; }
+.ts-state-mark { font-weight: 700; text-align: center; }
+.ts-state-row.is-done .ts-state-mark { color: var(--ok); }
+.ts-state-row.is-attention .ts-state-mark { color: var(--danger); }
+.ts-state-row.is-todo .ts-state-mark { color: var(--muted); }
+.ts-state-text { overflow-wrap: anywhere; }
+.ts-state-text a { font-weight: 600; }
+
+/* Attention / decision area. */
+.ts-attention {
+    padding: var(--space-3) var(--space-4);
+    background: var(--warning-soft);
+    border: 1px solid var(--warning-line);
+    border-radius: var(--radius-md);
+}
+.ts-attention .na-list { margin: 0; }
+.ts-attention .na-item { border-top-color: var(--warning-line); }
+
+/* Details: closed until asked for. */
+.ts-details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    min-width: 0;
+}
+.ts-details > summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    min-height: var(--touch-target);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    font-weight: 600;
+    list-style-position: inside;
+}
+.ts-details > summary .ts-details-hint { font-weight: 400; color: var(--muted); overflow-wrap: anywhere; }
+.ts-details[open] > summary { border-bottom: 1px solid var(--surface-line); }
+.ts-details-body { padding: var(--space-4); min-width: 0; overflow-x: auto; }
+.ts-details-group { display: grid; gap: var(--space-3); }
+
+/* Secondary actions ("More actions"). */
+.ts-more-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* Tabs-as-links strip for a project (each opens its details section). */
+.ts-sections { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ts-sections a {
+    display: inline-flex; align-items: center; min-height: var(--touch-target);
+    padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface); text-decoration: none; font-weight: 600;
+}
+.ts-sections a:hover { border-color: var(--gold); }
+
+@media (max-width: 640px) {
+    .ts-next { grid-template-columns: minmax(0, 1fr); }
+    .ts-primary { width: 100%; }
+    .ts-context-facts li + li::before { content: none; margin: 0; }
+    .ts-context-facts { flex-direction: column; }
+}
+
+/* Sidebar: the More link sits apart from the six primary destinations; the attention count badge. */
+.sidebar-more { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--sidebar-border); }
+.sidebar-count { margin-left: auto; min-width: 1.6em; padding: 0 6px; border-radius: 999px; background: var(--gold); color: var(--black); font-size: var(--text-sm); font-weight: 700; text-align: center; }
+.sidebar-count[hidden] { display: none; }
+.header-icon-btn.is-active { color: var(--gold-ink); }
+
+/* More and Admin pages: tile grids of links grouped by purpose. */
+.link-hub { display: grid; gap: var(--space-5); }
+.link-hub-section h2 { margin: 0 0 var(--space-1); font-size: var(--text-lg); }
+.link-hub-section > p { margin: 0 0 var(--space-3); color: var(--ink-soft); }
+.link-hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.link-hub-grid a { display: flex; align-items: center; gap: var(--space-3); min-height: 56px; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
+.link-hub-grid a:hover { border-color: var(--gold); }
+.link-hub-grid a[aria-current="page"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.link-hub-grid .bi { font-size: 1.25rem; color: var(--gold-ink); }
+@media (max-width: 640px) { .link-hub-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Project page (Task-First UX, 31 Oct 2026). */
+.project-context { display: block; margin: 0; }
+.project-context h1 { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin: 0; font-size: var(--text-2xl); overflow-wrap: anywhere; }
+.hub-project-address { margin: var(--space-1) 0 0; color: var(--ink-soft); overflow-wrap: anywhere; }
+.project-overview-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+.project-sections { margin: 0; }
+.hub-more-actions .hub-heading-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.project-task-screen .ts-details-body > .dash-panels,
+.project-task-screen .ts-details-body > section { margin-bottom: var(--space-4); }
+@media (max-width: 900px) { .project-overview-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Phone header: the bell and the Admin gear joined the header (31 Oct 2026). On a phone the company box gives way
+   (Company profile is under the gear) so the header never widens the page. */
+@media (max-width: 480px) {
+    .shell-header .header-company { display: none; }
+}

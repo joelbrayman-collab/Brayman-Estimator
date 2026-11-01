@@ -152,7 +152,7 @@
     <style>
         .cal-text-notices { font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: auto; }
         .cal-text-notices + .cal-connect { margin-left: 0; }
-        .cal-text-notices.has-failed { color: var(--danger, #b42318); border-bottom-color: currentColor; font-weight: 600; }
+        .cal-text-notices.has-failed { color: var(--danger); border-bottom-color: currentColor; font-weight: 600; }
         @media (max-width: 700px) { .cal-text-notices { margin-left: 0; } }
     </style>
     <a class="cal-connect" data-calendar-connect="true" href="{{ url_for('schedule.calendar_feed_settings') }}">Outlook · Google · Apple Calendar</a>

@@ -2,14 +2,7 @@
    One coordinated layer over app.css: typography, spacing, hierarchy, buttons, tables, forms,
    Home, Clients and the collapsible Calculators group. Behaviour and navigation are unchanged. */
 
-:root {
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --ink-soft: #3a3f47;
-    --row-hover: #faf7f0;
-    --focus-ring: 0 0 0 3px rgba(199, 154, 43, 0.28);
-    --surface-line: #ece7dd;
-}
+/* Its tokens (--radius-sm/md, --ink-soft, --row-hover, --focus-ring, --surface-line) moved to tokens.css. */
 
 /* ---------- Typography and rhythm ---------- */
 body.app-shell {

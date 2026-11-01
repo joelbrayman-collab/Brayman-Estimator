@@ -1,23 +1,5 @@
-:root {
-    --gold: #c79a2b;
-    --gold-soft: #e8d7a8;
-    --black: #141414;
-    --sidebar: #17191d;
-    --sidebar-elevated: #22252b;
-    --sidebar-border: #2c3038;
-    --cream: #f4f2ee;
-    --workspace: #f6f5f2;
-    --white: #ffffff;
-    --muted: #6b6f76;
-    --text: #1c1f24;
-    --border: #e2ddd4;
-    --focus: #c79a2b;
-    --sidebar-width: 248px;
-    --sidebar-collapsed-width: 76px;
-    --header-height: 64px;
-    --shadow-soft: 0 1px 2px rgba(20, 20, 20, 0.04), 0 8px 24px rgba(20, 20, 20, 0.04);
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
+/* Tokens live in tokens.css (Task-First UX, 31 Oct 2026): one place, no split. */
+@import url("tokens.css");
 
 * {
     box-sizing: border-box;

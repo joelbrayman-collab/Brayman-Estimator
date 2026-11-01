@@ -1,0 +1,80 @@
+{# The Task Screen standard (Task-First UX, 31 Oct 2026; docs/ux/task-first-ux-audit-2026-10-31.md section 7.2).
+
+   Every task screen is built from these blocks, in this order:
+     1. ts.context(...)    who or what this is about (project, person, supplier) on one wrapped line
+     2. ts.purpose(...)    the outcome in contractor words + one line of why
+     3. ts.state(...)      "What Calibrayt already knows": done / needs attention / still to do
+     4. ts.attention(...)  only the decisions that need this person now (attention items)
+     5. ts.next_step(...)  exactly ONE primary action
+     6. ts.details(...)    closed <details> sections for calculations, lineage, audit and advanced work
+
+   Usage:  {% import "partials/task_screen.html" as ts with context %}
+   Styles: static/css/task-screen.css (linked by base.html); tokens: static/css/tokens.css. #}
+
+{% macro context(name, facts=[], stage=None, attrs="") -%}
+<header class="ts-context" data-ts-context {{ attrs|safe }}>
+    <h1 class="ts-context-name">{{ name }}</h1>
+    {% if stage %}<span class="ts-stage" data-ts-stage>{{ stage }}</span>{% endif %}
+    {% if facts or caller is defined %}
+    <ul class="ts-context-facts">
+        {% for fact in facts if fact %}<li>{{ fact }}</li>{% endfor %}
+        {% if caller is defined %}{{ caller() }}{% endif %}
+    </ul>
+    {% endif %}
+</header>
+{%- endmacro %}
+
+{% macro purpose(title, why="") -%}
+<div class="ts-purpose" data-ts-purpose>
+    <h2>{{ title }}</h2>
+    {% if why %}<p>{{ why }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+{# rows: [{"text": "...", "status": "done" | "attention" | "todo", "href": optional, "link": optional label}] #}
+{% macro state(rows, heading="What Calibrayt already knows") -%}
+<section class="ts-state" data-ts-state aria-label="{{ heading }}">
+    <h2>{{ heading }}</h2>
+    <ul class="ts-state-list">
+        {% for row in rows %}
+        {% set status = row.status or "todo" %}
+        <li class="ts-state-row is-{{ status }}" data-ts-state-row="{{ status }}">
+            <span class="ts-state-mark" aria-hidden="true">{% if status == "done" %}&#10003;{% elif status == "attention" %}!{% else %}&#9675;{% endif %}</span>
+            <span class="ts-state-text"><span class="visually-hidden">{% if status == "done" %}Done: {% elif status == "attention" %}Needs attention: {% else %}Still to do: {% endif %}</span>{{ row.text }}{% if row.href %} <a href="{{ row.href }}">{{ row.link or "Open" }}</a>{% endif %}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{%- endmacro %}
+
+{# items: the attention item dicts from app.services.attention (title/why/when/href/action). #}
+{% macro attention(items, heading="Needs your attention", empty="Nothing here needs you right now.") -%}
+<section class="ts-attention" data-ts-attention aria-label="{{ heading }}">
+    <h2>{{ heading }} <span class="na-count">{{ items|length }}</span></h2>
+    {% if items %}
+    {% include "operations/_attention_list.html" %}
+    {% else %}
+    <p class="na-empty">{{ empty }}</p>
+    {% endif %}
+</section>
+{%- endmacro %}
+
+{# step: {"eyebrow", "title", "why", "label", "url", "key"}; exactly one primary action per screen. #}
+{% macro next_step(step, eyebrow="Next step") -%}
+<section class="ts-next" data-next-step="{{ step.key or '' }}" aria-label="{{ eyebrow }}">
+    <div>
+        <p class="ts-next-eyebrow">{{ step.eyebrow or eyebrow }}</p>
+        <p class="ts-next-title">{{ step.title }}</p>
+        {% if step.why %}<p class="ts-next-why">{{ step.why }}</p>{% endif %}
+    </div>
+    {% if step.url %}<a class="ts-primary" href="{{ step.url }}" data-next-step-action>{{ step.label }}</a>{% endif %}
+</section>
+{%- endmacro %}
+
+{# A closed section. {% call ts.details("Purchasing", "ts-purchasing", hint="2 orders") %} ... {% endcall %} #}
+{% macro details(title, id, hint="", open=False, attrs="") -%}
+<details class="ts-details" id="{{ id }}" data-ts-section="{{ id }}"{% if open %} open{% endif %} {{ attrs|safe }}>
+    <summary><span>{{ title }}</span>{% if hint %}<span class="ts-details-hint">{{ hint }}</span>{% endif %}</summary>
+    <div class="ts-details-body">{{ caller() }}</div>
+</details>
+{%- endmacro %}

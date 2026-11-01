@@ -1,10 +1,7 @@
+@import url("tokens.css");
+/* Field overrides of the shared tokens (tokens.css): darker muted text for phones in daylight. */
 :root {
-    --gold: #c79a2b;
-    --black: #141414;
-    --cream: #f4f2ee;
-    --text: #1c1f24;
     --muted: #3d4148;
-    --white: #ffffff;
     --danger: #8b1e1e;
     --focus: #c79a2b;
     --field-pad-top: env(safe-area-inset-top, 0px);

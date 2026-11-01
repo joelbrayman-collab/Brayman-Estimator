@@ -15,7 +15,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
-import { REPO, freePort, launch, openSectionsIfProjectPage } from "./evidence_common.mjs";
+import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;

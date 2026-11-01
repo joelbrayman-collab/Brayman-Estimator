@@ -63,3 +63,17 @@ Rulings
 4. Wizards kept for now ("Guided Wizards" band renamed "Start something"); retiring them is the second half.
 5. Browser walks: the Project page sections are closed, so walks open them (`openSectionsIfProjectPage` in
    `evidence_common.mjs`, inline in the two e2e walks). No check removed or added.
+- **Verification (1 Nov 2026, cloud workspace).** Full suite run in two shards: 3,763 tests; 14 failures, every one an
+  assertion of the old structure or text (each updated deliberately with a comment, equivalent coverage) plus one
+  re-render path (`build._render_hub_with_actuals_form`) that now uses the same Task Screen; all re-run green.
+  11 skipped are the existing office-Mac-only historical workbook tests (no source copy here). Browser walks: all 26
+  evidence files (302 checks + identity_gate3's 1 = 303) and `tests/e2e/contractor_workflow.mjs` pass;
+  `tests/e2e/job_lifecycle.mjs` passes. Walks changed: field_time, first_day, guided_estimating, magnificent_seven,
+  selected_work, wizards, workflow_map (+ the two e2e walks); helpers in the new `tools/release/evidence_task_first.mjs`
+  (`evidence_common.mjs` keeps its pinned bytes). Check count unchanged. The receipt walk now uses the company date
+  (America/Toronto), which fixed a failure after 8 pm (UTC already tomorrow).
+- **Open (not this branch):** `tests/e2e/job_lifecycle.mjs` (run by `tests/test_job_lifecycle_e2e.py`) passed on
+  this branch on Saturday 31 Oct evening, then failed at 00:35 Sunday 1 Nov (Toronto): Field My Week (on a Sunday it
+  opens the coming week) does not list tomorrow's concrete delivery. It fails the same way on the baseline commit
+  `1d1448a0` at that hour, so it is a pre-existing day-of-week defect in Field week / deliveries. It needs its own
+  root-cause fix and a test.

@@ -149,7 +149,8 @@ def test_project_hub_renders_org_scoped(client, project):
     assert response.status_code == 200
     html = _html(response)
     # Office tidy (24 Oct 2026): no "Project Hub" label over the name; the page names the project.
-    assert "<h1>Hub Project</h1>" in html
+    # Task-First UX (31 Oct 2026): the stage sits beside the name in the job's context header.
+    assert '<h1>Hub Project <span class="ts-stage"' in html
     assert "HUB-001" in html
     assert "Hub Client" in html
     assert "PLAN" in html
@@ -162,7 +163,8 @@ def test_project_hub_renders_org_scoped(client, project):
     assert 'id="hub-contract"' in html
     assert 'id="hub-build"' in html
     assert 'id="hub-monitor"' in html
-    assert 'href="#hub-monitor"' in html
+    # Task-First UX (31 Oct 2026): the lifecycle anchor bar became the section strip; Money holds #hub-monitor.
+    assert 'href="#ts-money"' in html and 'id="ts-money"' in html
 
 
 def test_cross_org_project_hub_fails_closed(client, app, org_b):
@@ -448,7 +450,7 @@ def test_proposals_and_accepted_immutability(client, project):
     assert "Draft Hub Proposal" in html
     assert "Accepted Hub Proposal" in html
     assert "Accepted" in html
-    assert "immutable" in html
+    assert "accepted, cannot change" in html  # was "immutable" (Task-First contractor language, 31 Oct 2026)
     assert draft.proposal_number in html
     assert accepted.proposal_number in html
     assert f"/proposals/{accepted.id}" in html
@@ -485,9 +487,13 @@ def test_future_lifecycle_not_operational(client, project):
     assert "four-output" not in html
     assert "The four-output package remains Future" not in html
     # Joel, 16 Oct 2026: the Brayman contract is the V1 contract and is signed from the Contract page.
-    assert "sent from there for the customer's electronic signature" in html
+    # Task-First UX (31 Oct 2026): the "More about this page" paragraphs are gone; the Customer & Contract section
+    # says where the contract is signed.
+    assert "the contract, which is sent for e-signature from the Contract page" in html
     assert "production Ontario contract is not available" not in html
-    assert "internal cost breakdown" in html
+    # The explanatory paragraph naming the internal cost breakdown is gone (Task-First UX, 31 Oct 2026); the
+    # estimate and its breakdown are in the Scope & Estimate section.
+    assert 'data-ts-section="ts-estimate"' in html
     assert "LEARN · Future" not in html
     assert "MONITOR · Future" not in html
     assert "Estimated versus actual" in html
@@ -611,7 +617,9 @@ def test_historical_labour_is_not_project_operating_data(client, project):
     assert response.status_code == 200
     assert "HIST-HUB-EVIDENCE-XYZ" not in html
     assert "Unrelated Historical Job" not in html
-    assert "historical labour evidence" in html.lower()
+    # The LEARN note that described historical labour evidence is gone (Task-First UX, 31 Oct 2026); the evidence
+    # itself is still never shown as this project's data (above) and is untouched (below).
+    assert "historical labour evidence" not in html.lower()
     assert HistoricalLabourItem.query.count() == count_before
     db.session.refresh(item)
     assert item.hourly_rate == rate_before

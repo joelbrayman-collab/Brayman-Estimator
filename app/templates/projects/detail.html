@@ -231,7 +231,7 @@
 </section>
 {% endcall %}
 
-{% call ts.details("Customer &amp; Contract", "ts-customer", hint="Proposals, acceptance and the contract") %}
+{% call ts.details("Customer &amp; Contract", "ts-customer", hint="Proposals, acceptance, and the contract, which is sent for e-signature from the Contract page") %}
 <p class="hub-section-label" id="hub-contract">Contract</p>
 {{ contextual_help(help_content.hub_topic("contract")) }}
 {% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
@@ -770,7 +770,7 @@
 </section>
 {% endcall %}
 
-{% call ts.details("Money", "ts-money", hint="Estimated against actual cost, and the costs recorded") %}
+{% call ts.details("Money", "ts-money", hint="Estimated against actual cost, and the costs recorded", open=(open_section is defined and open_section == "ts-money")) %}
 <p class="hub-section-label" id="hub-monitor">Money</p>
 {{ contextual_help(help_content.hub_topic("monitor")) }}
 {% set monitor = hub.monitor %}

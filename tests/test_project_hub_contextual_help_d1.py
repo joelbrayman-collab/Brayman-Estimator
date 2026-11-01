@@ -158,7 +158,7 @@ def test_help_copy_has_no_engineering_terms_in_html(client, project):
     help_chunks = re.findall(
         r'<details class="contextual-help.*?</details>', html, flags=re.S
     )
-    assert len(help_chunks) == 6
+    assert len(help_chunks) == 5  # plan, price, contract, build, monitor; LEARN no longer shown (31 Oct 2026)
     combined = "\n".join(help_chunks)
     assert FORBIDDEN_HELP_TERMS.search(combined) is None
 

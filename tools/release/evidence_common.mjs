@@ -36,23 +36,3 @@ export function startOffice(port) {
   });
   return { child, ready };
 }
-// Task-First UX (31 Oct 2026): the Project page keeps each part of the job in a closed Details section. Before a
-// walk reads or clicks something inside one, open every <details> around it, as a person would.
-export async function reveal(locator) {
-  const target = locator.first();
-  await target.waitFor({ state: "attached" });
-  await target.evaluate((el) => {
-    for (let node = el; node; node = node.parentElement) if (node.tagName === "DETAILS") node.open = true;
-  });
-  return locator;
-}
-// The Project page (/projects/<id>): open its sections (and More actions) so a walk can read and use every part of
-// the job, as a person opens the section they need.
-export const PROJECT_PAGE = /^\/projects\/\d+\/?$/;
-export async function openSections(pg) {
-  await pg.evaluate(() => document.querySelectorAll("details[data-ts-section], details[data-more-actions]")
-    .forEach((d) => { d.open = true; }));
-}
-export async function openSectionsIfProjectPage(pg) {
-  if (PROJECT_PAGE.test(new URL(pg.url()).pathname)) await openSections(pg);
-}

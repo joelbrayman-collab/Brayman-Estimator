@@ -39,9 +39,12 @@ def test_project_hub_has_one_primary_action_and_keeps_every_action(app):
     estimate = _estimate("POLISH-HUB")
     client = _signed_in(app)
     page = client.get(f"/projects/{estimate.project_id}").get_data(as_text=True)
-    primary = page[page.index('class="action-group action-group-primary"'):]
-    primary = primary[:primary.index("</div>")]
-    assert primary.count('class="button"') == 1 and "Continue setup" in primary
+    # Task-First UX (31 Oct 2026): the one primary action is the Next step from the job's state; every other
+    # action is kept under More actions as a secondary button.
+    main = page[page.index("<main"):]
+    assert main.count('class="ts-primary"') == 1 and main.count("data-next-step-action") == 1
+    primary = main[main.index("data-next-step="):]
+    assert ">Continue setup</a>" in primary[:primary.index("</section>")]
     for label in ("Drawings", "Scope of work", "Enter construction information", "New Change Order", "Print"):
         assert f">{label}</a>" in page, label
         link = page[:page.index(f">{label}</a>")]

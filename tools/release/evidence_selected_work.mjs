@@ -20,7 +20,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
-import { REPO, freePort, launch, openSectionsIfProjectPage } from "./evidence_common.mjs";
+import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };

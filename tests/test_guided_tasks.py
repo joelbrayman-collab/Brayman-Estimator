@@ -419,3 +419,15 @@ def test_set_up_records_no_drawings_needed_on_the_same_screen(env):
                                    "plan_start": "none"})
     project = Project.query.filter_by(name="No plans (synthetic)").one()
     assert project.drawing_requirement == "NOT_REQUIRED"
+
+
+def test_set_up_starts_the_estimate_only_when_the_work_type_and_role_are_chosen(env):
+    _app, d, _ben = env
+    customer = synthetic_client()
+    d.post("/projects/new", data={"name": "No type yet (synthetic)", "client_id": customer.id, "start_guided": "1"})
+    project = Project.query.filter_by(name="No type yet (synthetic)").one()
+    assert G.get_guided(ORG, project.id) is None
+    assert not any("You can start the estimate" in m for m in d.flashes())  # no error for a choice left for later
+    d.post("/projects/new", data={"name": "Typed (synthetic)", "client_id": customer.id, "start_guided": "1",
+                                   "guided_project_type": "OTHER", "contractor_role": "GENERAL_CONTRACTOR"})
+    assert G.get_guided(ORG, Project.query.filter_by(name="Typed (synthetic)").one().id) is not None

@@ -795,7 +795,10 @@ def _guided_after_create(project, org_id, options):
         if carry is not None:
             record = CP.attach_carry(carry, project, user_id=getattr(current_user, "id", None),
                                      actor_display_name=current_actor_display_name(fallback="Office"))
-        if request.form.get("start_guided"):
+        # Set Up This Project (Slice C): "Start the estimate" is on by default, so it starts only when what is being
+        # built and your role were both chosen; otherwise the project page's next step asks for them later.
+        if (request.form.get("start_guided") and request.form.get("guided_project_type", "").strip()
+                and request.form.get("contractor_role", "").strip()):
             guided = G.start_guided_estimate(organization_id=org_id, project_id=project.id,
                                              project_type=request.form.get("guided_project_type", ""),
                                              contractor_role=request.form.get("contractor_role", ""),

@@ -76,8 +76,11 @@ test("office: upload a WSIB clearance, confirm its expiry, see it in attention, 
   const { ctx, pg } = await session();
   await signIn(pg, facts.staff);
   await go(pg, "/");
-  const menu = pg.locator('a[href="/documents"]').first();
-  assert.equal(await menu.count(), 1, "Documents is in the menu");
+  // Task-First navigation (31 Oct 2026, merged with Documents): the sidebar has six primary items and More; the
+  // company library's Documents link is on the More page. Same check: one step from the menu.
+  await submit(pg, pg.locator('a[href="/more"]').first());
+  const menu = pg.locator('main a[href="/documents"]').first();
+  assert.equal(await menu.count(), 1, "Documents is in the menu (More)");
   await submit(pg, menu);
   assert.equal(pathOf(pg), "/documents");
   assert.equal(await pg.locator("[data-documents-library]").count(), 1);

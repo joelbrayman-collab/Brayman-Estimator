@@ -31,3 +31,9 @@ export function seedWizardRun(repo, databaseUri, key, email, projectId = "") {
 export async function openFieldTodayMore(pg) {
   await pg.evaluate(() => document.querySelectorAll("details[data-field-today-more]").forEach((d) => { d.open = true; }));
 }
+
+// Set Up This Project (Slice C): the project settings and the "rural lot / address as written" field are in closed
+// sections. A walk that fills them opens every section of the form first, as a person does.
+export async function openSetUpSections(pg) {
+  await pg.evaluate(() => document.querySelectorAll("[data-set-up-form] details").forEach((d) => { d.open = true; }));
+}

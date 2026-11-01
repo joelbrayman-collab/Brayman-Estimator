@@ -77,7 +77,10 @@ SCOPE_FINANCIAL = "financial"
 SCOPE_COMPANY = "company"
 SCOPE_COMPANY_FACTS = "company_facts"
 SCOPE_OWNER_ADMIN = "owner_admin"
-SCOPES = (SCOPE_OFFICE, SCOPE_FINANCIAL, SCOPE_COMPANY, SCOPE_COMPANY_FACTS, SCOPE_OWNER_ADMIN)
+# The Supplier Hub (Slice C, 1 Nov 2026): providers for a store's own list. Never on the office list (scope_allows
+# refuses it); run only by ``assemble_for_supplier`` for one store.
+SCOPE_SUPPLIER = "supplier"
+SCOPES = (SCOPE_OFFICE, SCOPE_FINANCIAL, SCOPE_COMPANY, SCOPE_COMPANY_FACTS, SCOPE_OWNER_ADMIN, SCOPE_SUPPLIER)
 
 # Plain words for each kind (the filter chips on the attention list). Kind codes never show.
 KIND_LABELS = {
@@ -287,6 +290,40 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
     others = [i for i in items if i.get("waiting_on") == WAITING_ON_OTHERS]
     return {"items": items, "count": len(items), "hidden": False, "kinds": dict(kinds),
             "waiting_on_you": mine, "waiting_on_others": others}
+
+
+@dataclass
+class SupplierAttentionContext:
+    """What a Supplier Hub provider is given: the one store, today and the same helpers."""
+
+    supplier_id: int
+    today: date
+
+    link = staticmethod(_link)
+    item = staticmethod(_item)
+    day = staticmethod(_day)
+
+
+def assemble_for_supplier(supplier_id: int, *, today: Optional[date] = None) -> list:
+    """The Supplier Hub's registry items for one store (scope ``supplier``), oldest first. The store's existing
+    counts (quotes, orders, delivery changes, deliveries) stay in app/services/supplier_insights.attention."""
+    ctx = SupplierAttentionContext(supplier_id=supplier_id, today=today or local_today())
+    items = []
+    for provider in all_providers():
+        if provider.scope != SCOPE_SUPPLIER:
+            continue
+        try:
+            found = provider.collect(ctx) or []
+        except Exception:  # never let one source hide the rest
+            if current_app.testing:
+                raise
+            _log.exception("supplier attention provider %s could not be read", provider.key)
+            continue
+        for row in found:
+            row["provider"], row["scope"] = provider.key, SCOPE_SUPPLIER
+            items.append(row)
+    items.sort(key=lambda i: (i["sort_date"], i["what"]))
+    return items
 
 
 def count_for(organization_id: str, viewer) -> int:
@@ -696,7 +733,7 @@ def _estimate_ready(ctx):
             continue
         items.append(_item("estimates", f"{project.name} estimate is ready for your approval", _label(project),
                            "Every work item is priced; approving locks this estimate", "",
-                           _link("guided.pricing", project_id=project.id), "Review and approve",
+                           _link("guided.pricing", project_id=project.id), "Review This Estimate",
                            urgency="today", project_id=project.id))
     return items
 
@@ -901,6 +938,52 @@ def _calisign(ctx):
         elif req.status == STATUS_EXPIRED:
             items.append(_item("signing", f"{doc} {req.request_number} expired before it was signed", _label(project),
                                "Expired: send it again or withdraw it", _day(expires), href(req), "Open", **common))
+    return items
+
+
+@attention_provider("supplier_calisign_awaiting", "signing", SCOPE_SUPPLIER,
+                    title="Supplier Hub: purchase orders and delivery changes waiting for the store's CaliSIGN signature")
+def _supplier_calisign(ctx):
+    """The store's own documents open on CaliSIGN (sent, not yet signed by the store), from the signing records.
+    No rule is invented: a SENT request whose store participant has not signed is waiting for the store."""
+    from app.models.signing import (
+        DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE,
+        DOCUMENT_FAMILY_SUPPLIER_ORDER,
+        ROLE_CONTRACTOR,
+        ROLE_SUPPLIER,
+        STATUS_SENT,
+        SigningRequest,
+    )
+    from app.models.supplier_portal import SupplierDeliveryChange, SupplierPurchaseOrder
+
+    orders = {o.id: o for o in SupplierPurchaseOrder.query.filter_by(supplier_id=ctx.supplier_id).all()}
+    if not orders:
+        return []
+    changes = {c.id: c for c in SupplierDeliveryChange.query.filter(
+        SupplierDeliveryChange.order_id.in_(list(orders))).all()}
+    sources = [(DOCUMENT_FAMILY_SUPPLIER_ORDER, list(orders))]
+    if changes:
+        sources.append((DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE, list(changes)))
+    items = []
+    for family, ids in sources:
+        for req in SigningRequest.query.filter(SigningRequest.document_family == family,
+                                               SigningRequest.source_record_id.in_(ids),
+                                               SigningRequest.status == STATUS_SENT).all():
+            change = changes.get(req.source_record_id) if family == DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE else None
+            order = change.order if change is not None else orders.get(req.source_record_id)
+            if order is None or order.supplier_id != ctx.supplier_id or order.organization_id != req.organization_id:
+                continue
+            store = next((p for p in req.participants if p.role == ROLE_SUPPLIER), None)
+            if store is None or store.signed_at is not None or store.confirmed_signer_name:
+                continue
+            contractor = next((p.invited_name for p in req.participants if p.role == ROLE_CONTRACTOR), "")
+            sent = local_date(req.created_at) if req.created_at else None
+            doc = f"Purchase order {order.number}" if change is None else f"Delivery change on {order.number}"
+            href = _link("supplier_portal.request_detail", supplier_id=ctx.supplier_id, share_id=order.share_id,
+                         **({"_anchor": "delivery"} if change is not None else {}))
+            items.append(_item("signing", f"{doc} waiting for your signature", contractor,
+                               "Sent for e-signature", f"Sent {_day(sent)}" if sent else "", href, "Review and Sign",
+                               urgency="today", sort_date=sent))
     return items
 
 

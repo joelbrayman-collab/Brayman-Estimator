@@ -150,8 +150,26 @@ def workflow(project_id):
     if guided.scope_status != SCOPE_FINALIZED and not guided.estimate_id:
         return redirect(url_for("guided.scope", project_id=project.id))
     view = G.workflow_view(guided)
-    return render_template("guided/workflow.html", project=project, view=view, guided=guided,
+    # Price This Job (Task-First UX, Slice C): the same view, laid out as a Task Screen with ONE next action.
+    from app.services.guided_tasks import price_this_job
+
+    task = price_this_job(project, guided, view)
+    return render_template("guided/workflow.html", project=project, view=view, guided=guided, task=task,
+                           job_attention=_job_attention(project, kinds=("estimates", "quotes")),
                            responsibility_labels=RESPONSIBILITY_LABELS, history=G.history(guided, 15))
+
+
+def _job_attention(project, kinds):
+    """This job's attention items of these kinds (the one attention list, narrowed), for a Guided Task screen."""
+    try:
+        from app.services.needs_attention import assemble
+
+        view = assemble(_org(), current_user._get_current_object(), project_id=project.id)
+    except Exception:  # noqa: BLE001 - a Guided Task screen never fails because of the attention list
+        if __import__("flask").current_app.testing:
+            raise
+        return []
+    return [i for i in view.get("items", []) if i.get("kind") in kinds]
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/resume")
@@ -526,12 +544,16 @@ def pricing(project_id):
         from app.models import Proposal
 
         proposals = Proposal.query.filter_by(estimate_id=guided.estimate_id).order_by(Proposal.id.desc()).all()
+    # Review This Estimate (Task-First UX, Slice C): what is known, what needs a decision, ONE governed Approve.
+    from app.services.guided_tasks import review_this_estimate
+
+    review = review_this_estimate(project, guided)
     return render_template("guided/pricing.html", project=project, guided=guided, version=version,
                            blockers=G.guided_blockers(guided), costing=costing,
                            issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,
                            proposals=proposals, return_to=url_for("guided.pricing", project_id=project.id),
-                           economics=economics,
+                           economics=economics, review=review,
                            handoff=G.handoff(guided))
 
 

@@ -113,6 +113,19 @@ def start(wizard_key):
     wizard = require(wizard_key, SIDE_CONTRACTOR)
     if wizard is None:
         abort(404)
+    # Task-First UX, Slice C (1 Nov 2026; audit section 4): the contractor wizards are retired as linear runs. Their
+    # start link (a bookmark, an old page) opens the Guided Task that does the same job; no new run is started. A run
+    # started before keeps working below (resume, step, end), so nobody loses their place.
+    from app.services.guided_tasks import RETIRED_WIZARDS, retired_wizard_target
+
+    if wizard.key in RETIRED_WIZARDS:
+        project_id = request.values.get("project_id", type=int)
+        if project_id:
+            from app.models import Project
+
+            if Project.query.filter_by(id=project_id, organization_id=get_current_organization_id()).first() is None:
+                project_id = None  # another company's project: open the task without it
+        return redirect(retired_wizard_target(wizard.key, project_id))
     org = get_current_organization_id()
     from app.services.auth import current_actor_display_name
 

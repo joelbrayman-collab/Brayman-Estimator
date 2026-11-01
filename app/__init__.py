@@ -655,6 +655,9 @@ def create_app(config=None):
     app.register_blueprint(calculators_bp)
     app.register_blueprint(useful_calculators_bp)
     app.register_blueprint(guided_bp)
+    from app.routes.guided_tasks import guided_tasks_bp  # Guided Tasks (Task-First UX, Slice C, 1 Nov 2026)
+
+    app.register_blueprint(guided_tasks_bp)
     from app.routes.wizards import wizards_bp
 
     app.register_blueprint(wizards_bp)

@@ -2,10 +2,17 @@
 {% set a = attention %}
 <section class="form-panel supplier-attention" data-attention="{{ a.total }}" aria-labelledby="attention-heading">
     <h2 id="attention-heading">Needs attention</h2>
-    {% if a.total == 0 and a.upcoming_count == 0 %}
+    {% if a.total == 0 and a.upcoming_count == 0 and not a.signing_count %}
     <p class="muted-copy" data-attention-empty>Nothing waiting for {{ brand_for(supplier).name }} right now.</p>
     {% else %}
     <div class="attention-grid">
+        {% if a.signing_count %}
+        <div class="attention-item" data-attention-signing="{{ a.signing_count }}">
+            <p class="eyebrow">Waiting for your signature</p>
+            <p class="attention-count">{{ a.signing_count }}</p>
+            <ul class="attention-list">{% for i in a.signing %}<li><a href="{{ i.href }}" data-attention-sign>{{ i.what }}</a>{% if i.who %} · {{ i.who }}{% endif %}{% if i.when %} · {{ i.when }}{% endif %}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
         <div class="attention-item" data-attention-quotes="{{ a.quotes_count }}">
             <p class="eyebrow">Quotes to answer</p>
             <p class="attention-count">{{ a.quotes_count }}</p>

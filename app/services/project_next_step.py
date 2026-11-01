@@ -91,17 +91,19 @@ def next_step(project, organization_id: str, *, guided_summary=None, hub_contrac
         if guided_summary.get("selected") and not guided_summary.get("names"):
             return _step("scope", "Choose the work in this job", "Is Brayman doing this work, and who builds it?",
                          "Choose the work", url_for("guided.scope", project_id=pid), "ts-estimate")
+        # Slice C (1 Nov 2026): the step opens the Guided Task by name: Price This Job (the work items and the ONE
+        # next item) and Review This Estimate (the ONE governed Approve).
         if not guided_summary.get("selected") and guided.scope_status != "FINALIZED":
             return _step("scope", "Finish the scope of work", "Confirm the work items before pricing them.",
-                         "Price this job", url_for("guided.resume", project_id=pid), "ts-estimate")
+                         "Price This Job", url_for("guided.workflow", project_id=pid), "ts-estimate")
         if total and done < total:
             return _step("price", "Price this job",
                          f"{done} of {total} work item{'' if total == 1 else 's'} priced. Calibrayt opens the next one.",
-                         "Price this job", url_for("guided.resume", project_id=pid), "ts-estimate")
+                         "Price This Job", url_for("guided.workflow", project_id=pid), "ts-estimate")
         if version is not None and not version.is_locked and not is_approved(version):
             return _step("approve", "Review and approve the estimate",
                          "Every work item is priced. Approving locks this estimate so the proposal is built from it.",
-                         "Review and approve", url_for("guided.pricing", project_id=pid), "ts-estimate")
+                         "Review This Estimate", url_for("guided.pricing", project_id=pid), "ts-estimate")
     elif setup is not None and resolution is not None:
         estimate_version = _single_estimate_version(organization_id, project)
         if estimate_version is None or not estimate_version.is_locked:
@@ -117,7 +119,7 @@ def next_step(project, organization_id: str, *, guided_summary=None, hub_contrac
                          f"Proposal {issued.proposal_number} was sent. Follow up, or record an acceptance given "
                          "another way.", "Open the proposal", url_for("proposals.view_proposal", id=issued.id),
                          "ts-customer", eyebrow="Waiting on the customer")
-        draft = next((p for p in proposals if p.status == "Draft"), None)
+        draft = next((p for p in proposals if p.status in ("Draft", "Ready")), None)  # Ready: built on approval
         if draft is not None:
             return _step("proposal", "Check and send the proposal", "The proposal is built from the approved estimate.",
                          "Open the proposal", url_for("proposals.view_proposal", id=draft.id), "ts-customer")

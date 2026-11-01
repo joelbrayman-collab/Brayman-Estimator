@@ -33,7 +33,9 @@
             <p class="field-muted">{{ contractor_copy.FIELD_SCHEDULE_WARNING_HELP }}</p>
             {% endfor %}
             {% if show_time %}
-            <a class="field-btn field-btn-primary" href="{{ url_for('field.time_entry', project_id=card.project_id) }}">{{ contractor_copy.FIELD_ENTER_TIME }}</a>
+            {# Field Today (Slice C): one primary on the screen. With one_primary set, only the first card's Enter time is
+               primary; the others are the same link, styled secondary. Week, Month and Company Today are unchanged. #}
+            <a class="field-btn {% if one_primary is defined and one_primary and not (group == groups[0] and loop.first) %}field-btn-secondary{% else %}field-btn-primary{% endif %}" href="{{ url_for('field.time_entry', project_id=card.project_id) }}">{{ contractor_copy.FIELD_ENTER_TIME }}</a>
             {% endif %}
         </li>
         {% endfor %}

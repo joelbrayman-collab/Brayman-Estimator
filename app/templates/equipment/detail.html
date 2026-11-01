@@ -33,6 +33,6 @@
   </form>
 </details>
 <details class="panel"><summary><strong>History</strong></summary>
-  <ul class="docs-history">{% for e in history %}<li>{{ e.at.strftime('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}: {{ e.previous_value or '—' }} → {{ e.new_value or '—' }}){% endif %}</li>{% endfor %}</ul>
+  <ul class="docs-history">{% for e in history %}<li>{{ e.at|local_time('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}: {{ e.previous_value or '—' }} → {{ e.new_value or '—' }}){% endif %}</li>{% endfor %}</ul>
 </details>
 {% endblock %}

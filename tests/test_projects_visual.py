@@ -161,7 +161,9 @@ def test_create_project_route_unchanged(client):
     response = client.get("/projects/new")
     assert response.status_code == 200
     html = response.get_data(as_text=True)
-    assert "New Project" in html
+    # Slice C (1 Nov 2026): the New Project page is the Guided Task "Set Up This Project" (same route, same form post);
+    # the check is the same: the create screen renders and posts to the create route.
+    assert "Set Up This Project" in html
     assert 'action="/projects/new"' in html or 'method="post"' in html
 
 

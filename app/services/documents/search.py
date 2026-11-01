@@ -171,11 +171,11 @@ def _apply_filters(query, filters: Filters, today: date):
         if column and filters.context_id is not None:
             condition = and_(condition, getattr(DocumentLink, column) == filters.context_id)
         query = query.filter(exists().where(condition))
+    # Upload times are stored in UTC; the filter is on the office's calendar day (midnight in the company's zone).
     if filters.uploaded_from:
-        query = query.filter(Document.created_at >= datetime.combine(filters.uploaded_from, datetime.min.time()))
+        query = query.filter(Document.created_at >= _office_midnight_utc(filters.uploaded_from))
     if filters.uploaded_to:
-        query = query.filter(Document.created_at < datetime.combine(filters.uploaded_to + timedelta(days=1),
-                                                                    datetime.min.time()))
+        query = query.filter(Document.created_at < _office_midnight_utc(filters.uploaded_to + timedelta(days=1)))
     if filters.expiring_within is not None:
         query = query.filter(_action_dates_condition(until=today + timedelta(days=filters.expiring_within)))
     if filters.dates == "expired":
@@ -305,3 +305,13 @@ def context_rows(scope: Scope, context_kind: str, context_id=None, *, page=1, st
     filters = Filters(context_kind=context_kind if context_kind != CONTEXT_COMPANY else CONTEXT_COMPANY,
                       context_id=context_id, status=status)
     return search(scope, filters, page=page, today=today)
+
+
+def _office_midnight_utc(day: date) -> datetime:
+    """The start of ``day`` on the office's clock, as naive UTC (how created_at is stored)."""
+    from datetime import timezone
+
+    from app.services.local_time import company_timezone
+
+    local = datetime.combine(day, datetime.min.time()).replace(tzinfo=company_timezone())
+    return local.astimezone(timezone.utc).replace(tzinfo=None)

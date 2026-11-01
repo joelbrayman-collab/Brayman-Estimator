@@ -179,12 +179,38 @@ def test_filters_type_context_status_dates_and_uploaded(app):
     assert "policy" not in names()
     assert names(expiring_within=30) == ["wsib"]
     assert names(expiring_within=365) == ["coi", "wsib"]
-    filed_on = docs["wsib"].created_at.date()  # stored in UTC
+    from app.services.local_time import local_date
+
+    filed_on = local_date(docs["wsib"].created_at)  # stored in UTC; the filter is on the office's calendar day
     assert names(uploaded_from=filed_on + timedelta(days=1)) == []
     assert len(names(uploaded_from=filed_on, uploaded_to=filed_on)) == 6  # active, visible to staff
     assert "wsib" not in names(dates="none")
     proposed = file_pdf(world["staff"], CONTEXT_COMPANY, None, "licence.pdf", "Licence expires 2027-05-01")
     assert [r.document.id for r in search(scope, Filters(dates="proposed"), today=TODAY).rows] == [proposed.id]
+
+
+def test_uploaded_filters_use_the_office_calendar_day(app):
+    """An upload at 9:30 pm Toronto on 31 Oct is stored as 01:30 UTC on 1 Nov; the "uploaded" filter is about
+    the office's day, so it is a 31 Oct upload (My Week date fix follow-up, 1 Nov 2026)."""
+    from datetime import datetime
+
+    world = make_world(crew=False)
+    docs = _fixture_set(world)
+    scope = office_scope(world["staff"], ORG)
+    docs["wsib"].created_at = datetime(2026, 11, 1, 1, 30)  # naive UTC
+    for key in docs:
+        if key != "wsib":
+            docs[key].created_at = datetime(2026, 10, 20, 15, 0)
+    db.session.commit()
+
+    def names(**kw):
+        page = search(scope, Filters(**kw), today=TODAY)
+        lookup = {d.public_id: k for k, d in docs.items()}
+        return sorted(lookup[r.document.public_id] for r in page.rows)
+
+    assert names(uploaded_from=date(2026, 10, 31), uploaded_to=date(2026, 10, 31)) == ["wsib"]
+    assert names(uploaded_from=date(2026, 11, 1)) == []
+    assert "wsib" not in names(uploaded_to=date(2026, 10, 30))
 
 
 def test_expired_filter_and_new_version_resets_dates(app):

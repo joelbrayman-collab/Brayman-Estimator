@@ -11,10 +11,12 @@ Synthetic data only.
 from __future__ import annotations
 
 import ast
+import importlib.util
 import io
 import re
 import socket
 import sys
+import sysconfig
 from pathlib import Path
 
 import pytest
@@ -64,11 +66,35 @@ def test_no_airia_package_is_imported_anywhere():
     assert offenders == []
 
 
+def _is_stdlib(root: str) -> bool:
+    """True when `root` is a standard-library module. sys.stdlib_module_names only exists from Python 3.10;
+    production and the office Mac run 3.9.6, so the answer comes from where the module is installed."""
+    names = getattr(sys, "stdlib_module_names", None)
+    if names is not None:
+        return root in names
+    if root in sys.builtin_module_names:
+        return True
+    spec = importlib.util.find_spec(root)
+    if spec is None:
+        return False
+    if spec.origin in (None, "built-in", "frozen"):
+        return True
+    stdlib = sysconfig.get_paths()["stdlib"]
+    return spec.origin.startswith(stdlib) and "site-packages" not in spec.origin
+
+
+def test_stdlib_check_works_on_python_39_as_well():
+    for root in ("json", "pathlib", "sqlite3", "hashlib", "zipfile", "re"):
+        assert _is_stdlib(root), root
+    for root in ("flask", "sqlalchemy", "pypdf", "app"):
+        assert not _is_stdlib(root), root
+
+
 def test_document_modules_import_only_calibrayt_stdlib_and_locked_packages():
     lock = (REPO / "requirements-lock.txt").read_text().lower()
     for module in DOCUMENT_MODULES:
         for root in _imports(REPO / module):
-            if root == "app" or root in sys.stdlib_module_names or root == "__future__":
+            if root == "app" or root == "__future__" or _is_stdlib(root):
                 continue
             assert root in ALLOWED_THIRD_PARTY, (module, root)
     for package in ("flask", "flask-login", "sqlalchemy", "werkzeug", "markupsafe", "pypdf", "python-docx"):

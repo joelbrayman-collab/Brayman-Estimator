@@ -449,3 +449,10 @@ Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, F
 - The gate stopped correctly: "an existing migration file was changed or removed: migrations/env.py". The documents work had added an `include_object` hook there so that `flask db migrate` (autogenerate) ignores the FTS5 `document_search` table and its shadow tables. It is a developer-time convenience only; no upgrade, test or app path uses it.
 - Fix: `migrations/env.py` restored exactly to the live version. The release adds one migration file and changes no existing one.
 - Note for the next person who runs `flask db migrate`: autogenerate will propose dropping `document_search*` tables because they are not models. Delete those lines from the generated file. Adding the hook back belongs in its own release, declared as a change to an existing migration file.
+
+### Release gate stop 2, 1 Nov 2026 (tf1): Python 3.9
+
+- The Mac regression ran 3,986 tests on Python 3.9.6 (production's version): 3,985 passed, 1 failed. `test_document_modules_import_only_calibrayt_stdlib_and_locked_packages` used `sys.stdlib_module_names`, which only exists from Python 3.10. The container's runs used Python 3.13, so it passed there.
+- Fix: the test decides "standard library" with a 3.9-safe check (`_is_stdlib`: `sys.stdlib_module_names` when present, otherwise where the module is installed), with its own test.
+- Guard: new `tests/test_python39_compat.py` parses every Python file under app/, tests/, tools/ and migrations/ with the 3.9 grammar and refuses standard-library APIs that need 3.10 (`sys.stdlib_module_names` unless read through getattr/hasattr, `zip(strict=)`, `dataclass(slots=/kw_only=)`, `itertools.pairwise`, `bisect(key=)`). It flags the old line 71.
+- Both files pass on Python 3.9.6 (a locked-package 3.9 environment in the container) and on 3.13.

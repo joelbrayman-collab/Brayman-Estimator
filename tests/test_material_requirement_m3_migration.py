@@ -15,7 +15,7 @@ PRIOR = "q7d8e9f0a1b2"
 M3_REVISION = "r8e9f0a1b2c3"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "s6f7a8b9c0d1"  # estimate-to-project platform (30 Oct 2026) follows estimate labour rate and margin (r5e6f7a8b9c0)
+GRAPH_HEAD = "t7a8b9c0d1e2"  # company documents and equipment (31 Oct 2026) follows the estimate-to-project platform (s6f7a8b9c0d1)
 PRESERVED = (
     "organizations",
     "projects",

@@ -461,6 +461,7 @@ def create_app(config=None):
     app.config["HISTORICAL_UPLOAD_ACTOR"] = "Joel Brayman"
     app.config["BRAND_LOGO_MAX_BYTES"] = 5 * 1024 * 1024
     app.config["BUILD_ORIGINAL_MAX_BYTES"] = 25 * 1024 * 1024
+    app.config["DOCUMENT_MAX_BYTES"] = 25 * 1024 * 1024  # company documents (31 Oct 2026)
 
     if config:
         app.config.update(config)
@@ -495,6 +496,8 @@ def create_app(config=None):
         app.config["SIGNING_ARTIFACT_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-signing-artifacts-"
         )
+    if app.config.get("TESTING") and not app.config.get("DOCUMENT_ROOT"):  # company documents (31 Oct 2026)
+        app.config["DOCUMENT_ROOT"] = tempfile.mkdtemp(prefix="calibai-documents-")
     if app.config.get("TESTING") and not app.config.get("MAIL_CAPTURE_ROOT"):
         app.config["MAIL_CAPTURE_ROOT"] = tempfile.mkdtemp(prefix="calibai-mail-capture-")
     app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
@@ -689,6 +692,14 @@ def create_app(config=None):
 
     app.cli.add_command(email_cli)
     app.cli.add_command(identity_cli)
+    # Company documents and the equipment register (RDIMS, 31 Oct 2026): "flask documents connect-existing | reindex".
+    from app.routes.documents import documents_bp
+    from app.routes.equipment import equipment_bp
+    from app.cli.documents import documents_cli
+
+    app.register_blueprint(documents_bp)
+    app.register_blueprint(equipment_bp)
+    app.cli.add_command(documents_cli)
 
     @app.route("/field-sw.js")
     def field_service_worker():

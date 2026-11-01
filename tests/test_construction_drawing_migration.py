@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
-HEAD = "s6f7a8b9c0d1"  # estimate-to-project platform (30 Oct 2026) follows estimate labour rate and margin (r5e6f7a8b9c0)
+HEAD = "t7a8b9c0d1e2"  # company documents and equipment (31 Oct 2026) follows the estimate-to-project platform (s6f7a8b9c0d1)
 
 
 def _config(db_path):

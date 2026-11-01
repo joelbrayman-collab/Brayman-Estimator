@@ -1,0 +1,12 @@
+<div class="form-grid">
+  <label>Name<br><input name="name" required maxlength="160" value="{{ values.get('name', '') }}" placeholder="Truck 3, Kubota KX040"></label>
+  <label>Kind<br><select name="category">{% for code, label in categories %}<option value="{{ code }}"{% if values.get('category') == code %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label>Unit #<br><input name="unit_number" maxlength="40" value="{{ values.get('unit_number') or '' }}"></label>
+  <label>Make<br><input name="make" maxlength="80" value="{{ values.get('make') or '' }}"></label>
+  <label>Model<br><input name="model" maxlength="80" value="{{ values.get('model') or '' }}"></label>
+  <label>Serial #<br><input name="serial_number" maxlength="80" value="{{ values.get('serial_number') or '' }}"></label>
+  <label>Plate / registration<br><input name="plate_or_registration" maxlength="40" value="{{ values.get('plate_or_registration') or '' }}"></label>
+  <label>Year<br><input name="year" inputmode="numeric" value="{{ values.get('year') or '' }}"></label>
+  <label>Purchased on<br><input type="date" name="purchased_on" value="{{ values.get('purchased_on') or '' }}"></label>
+  <label>Notes<br><textarea name="notes" rows="2">{{ values.get('notes') or '' }}</textarea></label>
+</div>

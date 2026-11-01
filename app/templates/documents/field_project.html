@@ -1,0 +1,18 @@
+{% extends "field/base.html" %}
+{% block title %}Job documents — CalibraytAI{% endblock %}
+{% block field_page %}projects{% endblock %}
+{% block content %}
+<section class="field-panel" data-field-documents="{{ results.total }}">
+    <h1>Job documents</h1>
+    <p class="field-project-name">{{ project.name }}</p>
+    {% if results.rows %}
+    <ul class="field-recent">
+        {% for row in results.rows %}
+        <li class="field-recent-item">{% if row.availability == 'AVAILABLE' %}<a href="{{ url_for('documents.field_file', public_id=row.document.public_id) }}" target="_blank" rel="noopener">{{ row.document.title }}</a>{% else %}{{ row.document.title }} (not available){% endif %}
+            <p class="field-muted">{{ row.type_label }} · {{ row.document.created_at.strftime('%b %d, %Y') }}</p></li>
+        {% endfor %}
+    </ul>
+    {% else %}<p class="field-muted">No drawings, specifications, instructions or safety documents for this job yet. Ask the office.</p>{% endif %}
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.project_confirm', project_id=project.id) }}">Back to the job</a>
+</section>
+{% endblock %}

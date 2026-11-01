@@ -158,6 +158,13 @@ NAV_SECTIONS = (
                 "icon": "bi-archive",
                 "enabled": True,
             },
+            {
+                # Company documents (RDIMS, 31 Oct 2026). Keep the endpoint name stable: documents.library.
+                "title": "Documents",
+                "endpoint": "documents.library",
+                "icon": "bi-folder2-open",
+                "enabled": True,
+            },
         ),
     },
     {

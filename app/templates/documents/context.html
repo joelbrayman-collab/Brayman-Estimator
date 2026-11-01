@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "documents/_list.html" import document_rows, docs_style %}
+{% block title %}Documents · {{ context.label }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Documents{% endblock %}
+{% block content %}
+{{ docs_style() }}
+<section class="page-header" data-documents-context="{{ context.kind }}" data-context-id="{{ context.target_id or '' }}">
+  <div>
+    <p class="eyebrow">{{ context.kind_label }}</p>
+    <h2 class="docs-context-name">{% if context.kind == 'PROJECT' %}<a href="{{ url_for('projects.view_project', id=context.target_id) }}">{{ context.label }}</a>{% elif context.kind == 'CUSTOMER' %}<a href="{{ url_for('clients.edit_client', client_id=context.target_id) }}">{{ context.label }}</a>{% else %}{{ context.label }}{% endif %}</h2>
+    <p class="page-purpose">{% if context.kind == 'PROJECT' %}Drawings, contracts, signed copies, quotes, warranties and everything else for this job. Plans and signed contracts already in Calibrayt are listed here without being copied.{% elif context.kind == 'SUBCONTRACTOR' %}WSIB clearance, insurance, licences and agreements for this subcontractor. Confirmed expiry dates appear in What needs your attention.{% elif context.kind == 'SUPPLIER' %}Agreements, credit terms, product information and warranties from this supplier. Never shown to the supplier.{% elif context.kind == 'PERSON' %}Tickets, certifications and training records. Only the owner and System Administrators see these.{% elif context.kind == 'CUSTOMER' %}Approvals, agreements and other documents for this customer, and the documents of their projects.{% else %}Documents filed here.{% endif %}</p>
+  </div>
+  <a class="button-primary" href="{{ upload_url }}" data-documents-upload>Upload a document</a>
+</section>
+<p class="docs-browse">{% for value, label in (("ACTIVE", "Active"), ("ARCHIVED", "Archived"), ("ALL", "All")) %}{% if status == value %}<strong>{{ label }}</strong>{% else %}<a href="?status={{ value }}">{{ label }}</a>{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}
+  {% if context.kind == 'PROJECT' %} · <a href="{{ url_for('projects.view_project', id=context.target_id) }}#hub-build" data-documents-site-photos>Site photos (on the project)</a>{% endif %}
+  · <a href="{{ url_for('documents.library') }}">All documents</a></p>
+{% if connected and connected.registered %}<p class="muted-copy" data-documents-connected="{{ connected.registered }}">{{ connected.registered }} existing file{{ "s" if connected.registered != 1 }} from this project now listed here (not copied).</p>{% endif %}
+{{ document_rows(results, show_links=False, empty="No documents here yet. Upload the first one.") }}
+{% endblock %}

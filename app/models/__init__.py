@@ -246,6 +246,16 @@ from app.plan_intelligence.models import (
     TakeoffPackage,
     TakeoffPackageItem,
 )
+# Company documents and the equipment register (RDIMS, 31 Oct 2026).
+from app.models.equipment import OrganizationEquipment, OrganizationEquipmentEvent
+from app.models.documents import (
+    Document,
+    DocumentDate,
+    DocumentEvent,
+    DocumentLink,
+    DocumentText,
+    DocumentVersion,
+)
 
 __all__ = [
     "ProjectCalculation",
@@ -436,4 +446,12 @@ __all__ = [
     "ProposalLineItem",
     "ProposalSection",
     "ProposalTemplate",
+    "Document",
+    "DocumentDate",
+    "DocumentEvent",
+    "DocumentLink",
+    "DocumentText",
+    "DocumentVersion",
+    "OrganizationEquipment",
+    "OrganizationEquipmentEvent",
 ]

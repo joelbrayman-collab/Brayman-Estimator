@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ heading }}{% endblock %}
+{% block content %}
+<section class="page-header" data-documents-parties="{{ kind }}">
+  <div><p class="page-purpose">Choose one to see and file its documents.</p></div>
+  <a class="button-secondary" href="{{ url_for('documents.library') }}">All documents</a>
+</section>
+{% if can_add %}
+<form method="post" class="docs-inline-form" data-add-subcontractor style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:16px">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Add a subcontractor<br><input name="legal_name" required maxlength="220" placeholder="Company name" style="min-height:40px"></label>
+  <button type="submit" class="button-primary">Add</button>
+</form>
+{% endif %}
+{% if rows %}
+<ul class="register-card" style="list-style:none;padding:12px 16px">
+  {% for label, url in rows %}<li style="margin:6px 0"><a href="{{ url }}">{{ label }}</a></li>{% endfor %}
+</ul>
+{% else %}<p class="page-purpose">{{ empty }}</p>{% endif %}
+{% endblock %}

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Start New Estimate | Brayman Construction Platform{% endblock %}
-{% block page_title %}Start New Estimate{% endblock %}
+{% block title %}Price This Job | Brayman Construction Platform{% endblock %}
+{% block page_title %}Price This Job{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
 {% block content %}
 <div class="ge-wrap" data-guided-start>
-  {% from "wizards/_entry.html" import wizard_entry with context %}
-  {{ wizard_entry("GUIDED_ESTIMATING", "Guided Estimating, step by step:", "choose the project and the work, and the wizard takes you through that work to the proposal.", url_for('wizards.start', wizard_key='GUIDED_ESTIMATING'), manual_label="Continue Manually (this page)") }}
-  <p class="ge-lede">Pick the work and who does it. CalibraytAI then walks you through that work with the right calculator or quote, and builds one internal cost estimate.</p>
+  {# Price This Job, from Home (Task-First UX, Slice C, 1 Nov 2026): choose the job. The Guided Estimating wizard bar is
+     retired; the job's Price This Job screen takes you through the work. #}
+  <h1 class="ge-title" data-price-this-job-pick>Price This Job: choose the job</h1>
+  <p class="ge-lede">Pick the work and who does it. Calibrayt then brings the right calculator or quote to each piece of work, and builds one internal cost estimate.</p>
 
   <div class="ge-grid">
     <section class="ge-card">
@@ -45,7 +46,7 @@
         <strong>{{ row.project.name }}</strong>
         {% if row.guided %}
           <span class="ge-resp">{{ row.guided.project_type_label }}</span>
-          <div class="ge-actions"><a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=row.project.id) }}">Open the estimating workflow</a></div>
+          <div class="ge-actions"><a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=row.project.id) }}">Price This Job</a></div>
         {% else %}
         <form method="post" action="{{ url_for('guided.begin', project_id=row.project.id) }}" class="ge-form-row">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

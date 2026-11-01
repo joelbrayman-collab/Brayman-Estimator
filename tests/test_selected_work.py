@@ -179,8 +179,11 @@ def test_mixed_responsibility_by_materials_and_installation(env):
 def test_wizard_and_manual_work_on_the_same_scope_and_the_same_lines(env):
     _app, d, _ben = env
     project = _project(d, "Both ways (synthetic)")
-    run_id = int(d.post("/wizards/GUIDED_ESTIMATING/start", data={"project_id": project.id})
-                 .headers["Location"].rstrip("/").split("/")[-1])
+    # Slice C (1 Nov 2026): the wizard's web start now opens Price This Job and starts nothing; a run started before
+    # the retirement still works, made here the way the start made it (tests/test_wizards.py _start).
+    from tests.test_wizards import _start
+
+    run_id = _start(d, "GUIDED_ESTIMATING", project_id=str(project.id))
     page = d.get(f"/wizards/run/{run_id}/step/work")
     assert "What work are we doing?" in page
     for legacy in ("Project type and your role", "Review the construction stages", "Internal, Subcontracted or N/A"):
@@ -284,7 +287,8 @@ def test_subcontracted_work_quotes_and_internal_work_costs_and_the_internal_cost
     assert not any(s["excluded"] for s in doc["stages"])
     page = d.get(f"/projects/{project.id}/guided/internal-cost")
     _no_generic(page)
-    assert "Review Pricing" in d.get(f"/projects/{project.id}/guided")
+    # Slice C (1 Nov 2026): the link to the pricing page is named for the Guided Task, Review This Estimate.
+    assert "Review This Estimate" in d.get(f"/projects/{project.id}/guided")
     assert d.get(f"/projects/{project.id}/guided/pricing")
 
 
@@ -353,10 +357,13 @@ def test_project_creation_hands_over_a_scope_with_no_stages(env):
     _post(d, run_id, "documents", drawings_choice="none")
     response = d.post(f"/wizards/run/{run_id}/step/review?choice=finish", data={"wizard_action": "next"})
     assert response.headers["Location"].endswith(f"/wizards/run/{run_id}/created")
+    # Slice C (1 Nov 2026): the estimating start opens Price This Job on the project (no run); a run started before
+    # the retirement is made the way the start made it and still opens on the work step.
     response = d.post("/wizards/GUIDED_ESTIMATING/start", data={"project_id": str(project.id)})
-    import re
+    assert response.headers["Location"].endswith(f"/projects/{project.id}/guided")
+    from tests.test_wizards import _start as _start_run
 
-    estimating = int(re.search(r"/wizards/run/(\d+)", response.headers["Location"]).group(1))
+    estimating = _start_run(d, "GUIDED_ESTIMATING", project_id=str(project.id))
     assert WizardRun.query.get(estimating).wizard_key == "GUIDED_ESTIMATING"
     first = d.get(f"/wizards/run/{estimating}/step/work")
     assert "What work are we doing?" in first

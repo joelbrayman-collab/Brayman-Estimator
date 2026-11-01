@@ -1,14 +1,66 @@
 {% extends "base.html" %}
-{% block title %}Review Pricing & Prepare Proposal — {{ project.name }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}Review Pricing &amp; Prepare Proposal{% endblock %}
+{% block title %}Review This Estimate — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Review This Estimate{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
 {% block content %}
-<div class="ge-wrap" data-guided-pricing>
-  <p class="eyebrow"><a href="{{ url_for('guided.workflow', project_id=project.id) }}">{{ project.name }} — all stages</a></p>
+{# Review This Estimate (Task-First UX, Slice C, 1 Nov 2026; audit 3.8, 4.2 steps 11-13, 7.1). What Calibrayt already
+   knows, what still needs a decision, and ONE Approve: the existing Gate 1 sign-off (app/services/guided_tasks.py
+   approve_estimate), which runs the costing check and the pricing first with the same services and refusals, then
+   records the approval, locks the version and builds the proposal. The earlier separate steps (Approve the costing,
+   Apply the company pricing, Prepare the proposal, Into the build) are kept, closed, with every link, form and
+   data-* hook. #}
+{% import "partials/task_screen.html" as ts with context %}
+{% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}
+<div class="task-screen ge-wrap" data-guided-pricing data-guided-task-screen="review">
+  {% set _facts = [project.project_number, project.client.name if project.client else None] %}
+  {% if version %}{% set _facts = _facts + [guided.estimate.estimate_number ~ " · " ~ version.display_label] %}{% endif %}
+  {{ ts.context(project.name, facts=_facts) }}
+  {{ ts.purpose("Review This Estimate", "Check what the customer will pay, then approve it. The proposal is built from the approved estimate.") }}
+
+  {% set f = review.figures %}
+  {% if review.approved %}
+  <section class="ts-next" data-next-step="approved" data-estimate-approved aria-label="Approved">
+    <div>
+      <p class="ts-next-eyebrow">Approved</p>
+      <p class="ts-next-title">{{ version.display_label }} is approved{% if review.approval %} by {{ review.approval.approved_by_name }} on {{ review.approval.approved_at|local_time("%b %d, %Y") }}{% endif %}</p>
+      <p class="ts-next-why">It is locked. To change a price, start a new version from Price This Job.</p>
+    </div>
+    {% if review.proposal %}<a class="ts-primary" href="{{ url_for('proposals.view_proposal', id=review.proposal.id) }}" data-next-step-action>Open the proposal</a>{% endif %}
+  </section>
+  {% elif review.can_approve %}
+  <section class="ts-next" data-next-step="approve" aria-label="Approve">
+    <div>
+      <p class="ts-next-eyebrow">Your decision</p>
+      <p class="ts-next-title">Approve this estimate at {{ money(f.customer_total) }} including HST</p>
+      <p class="ts-next-why" data-approve-consequence>Approving confirms the costs, prices the job at {{ '%.2f'|format(f.margin_percent|float) if f.margin_percent is not none else '—' }}% margin and {{ money(f.labour_rate) }} an hour, and locks {{ version.display_label }} at {{ money(f.customer_total) }}. The proposal is built from it. An approved estimate is never unlocked; a change is a new version.</p>
+    </div>
+    <form method="post" action="{{ url_for('guided_tasks.approve_estimate', project_id=project.id) }}" data-approve-estimate-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="version_id" value="{{ version.id }}">
+      <input type="hidden" name="expected_total" value="{{ review.expected_total }}">
+      <button type="submit" class="ts-primary" data-approve-estimate>Approve Estimate</button>
+    </form>
+  </section>
+  {% else %}
+  {% set _first = review.decisions[0] if review.decisions else None %}
+  {{ ts.next_step({"key": "not_ready", "eyebrow": "Not ready to approve yet", "title": _first.text if _first else "Nothing to approve", "why": "Approve becomes available when nothing below needs a decision.", "label": (_first.link if _first else None), "url": (_first.href if _first else None)}) }}
+  {% endif %}
+
+  {% if review.decisions %}
+  <section class="ts-state" data-review-decisions aria-label="Needs a decision">
+    <h2>Needs a decision <span class="na-count">{{ review.decisions|length }}</span></h2>
+    <ul class="ts-state-list">{% for d in review.decisions %}<li class="ts-state-row is-attention"><span class="ts-state-mark" aria-hidden="true">!</span><span class="ts-state-text">{{ d.text }}{% if d.href %} <a href="{{ d.href }}">{{ d.link or "Open" }}</a>{% endif %}</span></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  {% if review.known %}{{ ts.state(review.known) }}{% endif %}
+
   {% if version and economics %}
   {% from "estimates/_project_pricing.html" import project_pricing %}
   {{ project_pricing(economics, version, return_to, version.status == 'Draft' and not version.is_locked) }}
   {% endif %}
+
+  {% call ts.details("Approve in separate steps", "ts-approve-steps", hint="The costing check and the pricing, one at a time") %}
   <section class="ge-card" data-step="stages">
     <h2>1. Every stage resolved</h2>
     {% if blockers %}<div class="ge-warn" data-pricing-blocked><p>The proposal waits until each stage has confirmed costs, an approved allowance or an authorized exclusion:</p><ul>{% for b in blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>
@@ -22,12 +74,12 @@
     {% if costing %}
       {% if costing.current_snapshot and costing.working_matches_current %}<p class="ge-ok" data-costing-approved>Costing approved for {{ version.display_label }}: direct cost {{ "${:,.2f}".format(costing.current_snapshot.approved_direct_cost_total|float) if costing.current_snapshot.approved_direct_cost_total is not none else '' }}.</p>
       {% elif costing.can_approve %}<p>The costing can be approved (it is checked by the existing costing rules).</p>
-      {% else %}<div class="ge-warn">Costing cannot be approved yet: {{ costing.block_codes|join(', ') }}</div>{% endif %}
+      {% else %}<div class="ge-warn">Costing cannot be approved yet: {% for c in costing.block_codes %}{{ review.block_words.get(c, "a line still needs a cost decision") }}{{ " " if not loop.last }}{% endfor %}</div>{% endif %}
     {% endif %}
     {% if not blockers and version.status == 'Draft' and not version.is_locked %}
     <form method="post" action="{{ url_for('estimates.approve_all_costing_route', id=version.estimate_id, version_id=version.id) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ return_to }}">
-      <button class="ge-primary" type="submit" data-approve-costing>Approve the costing</button>
+      <button class="ge-secondary" type="submit" data-approve-costing>Approve the costing</button>
     </form>
     {% endif %}
   </section>
@@ -47,19 +99,25 @@
     {% if not blockers and version.status == 'Draft' and not version.is_locked %}
     <form method="post" action="{{ url_for('estimates.apply_org_pricing', id=version.estimate_id, version_id=version.id) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="return_to" value="{{ return_to }}">
-      <button class="ge-primary" type="submit" data-apply-pricing>Apply the company pricing policy</button>
+      <button class="ge-secondary" type="submit" data-apply-pricing>Apply the company pricing policy</button>
     </form>
     {% endif %}
   </section>
+  {% endif %}
+  {% endcall %}
 
+  {% if version %}
+  {% call ts.details("The customer proposal", "ts-review-proposal", hint=(proposals|length ~ " proposal" ~ ("" if proposals|length == 1 else "s")) if proposals else "Built from the approved estimate") %}
   <section class="ge-card" data-step="proposal">
     <h2>4. Prepare the customer proposal</h2>
     <p class="ge-muted">The proposal shows the scope, inclusions, exclusions, allowances and the selling price. It never shows your internal costs, rates, supplier prices or margin.</p>
     {% if issue_blockers %}<div class="ge-warn" data-issue-blockers><p>The proposal cannot be issued yet:</p><ul>{% for b in issue_blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>{% endif %}
-    {% if not blockers %}<a class="ge-primary" data-create-proposal href="{{ url_for('proposals.create_proposal_route', estimate_id=version.estimate_id, version_id=version.id) }}">Prepare the proposal</a>{% endif %}
+    {% if not blockers %}<a class="ge-secondary" data-create-proposal href="{{ url_for('proposals.create_proposal_route', estimate_id=version.estimate_id, version_id=version.id) }}">Prepare the proposal</a>{% endif %}
     {% if proposals %}<ul>{% for p in proposals %}<li><a href="{{ url_for('proposals.view_proposal', id=p.id) }}" data-proposal="{{ p.id }}">{{ p.proposal_number }}</a> — {{ p.status }}</li>{% endfor %}</ul>{% endif %}
   </section>
+  {% endcall %}
 
+  {% call ts.details("Into the build", "ts-review-build", hint="Work plan, calendar, purchasing, changes") %}
   <section class="ge-card" data-step="build">
     <h2>5. Into the build</h2>
     <p class="ge-muted">Once the customer accepts, the same stages become the project's work items for the Company Calendar, crew scheduling, Field, time and job costing. Subcontracted stages go to subcontract coordination; your materials go to supplier purchasing. Estimated and actual costs stay separate.</p>
@@ -71,6 +129,16 @@
       <a class="ge-secondary" href="{{ url_for('project_controls.list_change_orders') }}">Change orders</a>
     </div>
   </section>
+  {% endcall %}
   {% endif %}
+
+  {% call ts.details("More for this job", "ts-review-more") %}
+  <div class="ge-actions">
+    <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}" data-price-this-job-link>Price This Job</a>
+    <a class="ge-secondary" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+    {% if version %}<a class="ge-secondary" href="{{ url_for('estimates.view_version', id=version.estimate_id, version_id=version.id) }}" data-line-items-link>Line items</a>
+    <a class="ge-secondary" href="{{ url_for('estimates.contractor_estimate_package', id=version.estimate_id, version_id=version.id) }}" data-contractor-package>Contractor Estimate Package (PDF)</a>{% endif %}
+  </div>
+  {% endcall %}
 </div>
 {% endblock %}

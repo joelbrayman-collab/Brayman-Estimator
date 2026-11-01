@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Review This Estimate | Brayman Construction Platform{% endblock %}
+{% block page_title %}Review This Estimate{% endblock %}
+{% block content %}
+{# Review This Estimate, from Home (Task-First UX, Slice C): the jobs whose estimate is priced and waiting for your
+   approval. Each opens the job's Review This Estimate screen, where the ONE Approve is. #}
+{% import "partials/task_screen.html" as ts with context %}
+<div class="ts-screen" data-review-list>
+{{ ts.purpose("Review This Estimate", "Pick the job. Every estimate here is priced and waiting for your approval.") }}
+{% if ready %}
+{% set first = ready[0] %}
+{{ ts.next_step({"key": "review", "title": first.project.name, "why": first.included ~ " work item" ~ ("" if first.included == 1 else "s") ~ " priced", "label": "Review This Estimate", "url": url_for('guided.pricing', project_id=first.project.id)}, eyebrow="Ready for your approval") }}
+<section class="ts-state" aria-label="Ready for your approval">
+  <h2>Ready for your approval <span class="na-count">{{ ready|length }}</span></h2>
+  <ul class="ts-state-list">
+    {% for row in ready %}
+    <li class="ts-state-row is-attention" data-review-ready="{{ row.project.id }}">
+      <span class="ts-state-mark" aria-hidden="true">!</span>
+      <span class="ts-state-text">{{ row.project.name }}{% if row.project.project_number %} ({{ row.project.project_number }}){% endif %} · {{ row.project.client.name if row.project.client else "" }} <a href="{{ url_for('guided.pricing', project_id=row.project.id) }}">Review</a></span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<section class="ts-next" data-next-step="none" aria-label="Next step">
+  <div><p class="ts-next-eyebrow">Nothing waiting</p><p class="ts-next-title">No estimate is waiting for your approval</p>
+  <p class="ts-next-why">An estimate appears here when every work item is priced.</p></div>
+</section>
+{% endif %}
+{% if pricing %}
+{% call ts.details("Still being priced", "ts-review-pricing", hint=pricing|length ~ "") %}
+<ul>{% for row in pricing %}<li data-review-pricing="{{ row.project.id }}">{{ row.project.name }}: {{ row.done }} of {{ row.included }} priced · <a href="{{ url_for('guided.workflow', project_id=row.project.id) }}">Price This Job</a></li>{% endfor %}</ul>
+{% endcall %}
+{% endif %}
+{% if approved %}
+{% call ts.details("Approved", "ts-review-approved", hint=approved|length ~ "") %}
+<ul>{% for row in approved %}<li data-review-approved="{{ row.project.id }}">{{ row.project.name }} · {{ row.version.display_label }} · <a href="{{ url_for('guided.pricing', project_id=row.project.id) }}">Open</a></li>{% endfor %}</ul>
+{% endcall %}
+{% endif %}
+</div>
+{% endblock %}

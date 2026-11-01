@@ -531,6 +531,11 @@ def create_project():
     from app.services.project_lead import ProjectLeadError, lead_choices, set_project_lead
 
     options["project_lead_people"] = lead_choices(org_id)
+    options.update(_set_up_defaults(org_id, clients))
+
+    def _form_again():
+        # Set Up This Project (Slice C): show the screen again with what was typed, after a refusal.
+        return render_template("projects/form.html", clients=clients, values=request.form, **options)
 
     if request.method == "POST":
         wizard_run = _wizard_run_for_create(org_id)
@@ -542,20 +547,25 @@ def create_project():
             location_form = _wizard_location_form(wizard_run, org_id)
         name = request.form.get("name", "").strip()
         client_id = request.form.get("client_id", type=int)
+        new_customer = wizard_run is None and request.form.get("customer_mode") == "new"
+        if new_customer:
+            client_id = None  # created below, in the same transaction as the project
 
         if wizard_run is not None and not (request.form.get("contractor_role") or "").strip():
             # Start a New Project, Details (compact five steps, 28 Oct 2026): your role is chosen with the details.
             flash("Choose your role on this job, then press Continue. Everything you typed is kept.", "error")
             return _wizard_create_failed(wizard_run)
-        if not name or not client_id:
+        new_customer_name = " ".join((request.form.get("new_customer_name") or "").split())
+        if not name or not (client_id or (new_customer and new_customer_name)):
             flash("Project name and client are required.", "error")
-            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or _form_again()
 
-        # Verify client belongs to current organization
-        client = Client.query.filter_by(id=client_id, organization_id=org_id).first()
-        if not client:
-            flash("Invalid client selection.", "error")
-            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
+        if not new_customer:
+            # Verify client belongs to current organization
+            client = Client.query.filter_by(id=client_id, organization_id=org_id).first()
+            if not client:
+                flash("Invalid client selection.", "error")
+                return _wizard_create_failed(wizard_run) or _form_again()
 
         context_data = {
             "project_type": request.form.get("project_type", "").strip(),
@@ -568,8 +578,19 @@ def create_project():
             "justification_reason": request.form.get("justification_reason", "").strip(),
             "change_summary": "Initial project commercial decision gate",
         }
+        if wizard_run is None:
+            # Set Up This Project (Slice C): a setting left out is filled in from the company defaults, and the
+            # commercial project type from what is being built. A value that was sent is validated as before.
+            _fill_set_up_defaults(context_data, request.form.get("guided_project_type", ""), options)
 
         try:
+            if new_customer:
+                from app.services import clients as customer_rules
+
+                client = customer_rules.create_client(org_id, {
+                    "name": new_customer_name, "email": request.form.get("new_customer_email", ""),
+                    "phone": request.form.get("new_customer_phone", "")}, commit=False)
+                client_id = client.id
             project = Project(
                 organization_id=org_id,
                 name=name,
@@ -648,13 +669,53 @@ def create_project():
         except (CommercialContextValidationError, PermitFoundationError, ProjectLeadError, ProjectIdentityError) as e:
             db.session.rollback()
             flash(str(e), "error")
-            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
+            return _wizard_create_failed(wizard_run) or _form_again()
         except Exception as e:
-            db.session.rollback()
-            flash(f"Error creating project: {str(e)}", "error")
-            return _wizard_create_failed(wizard_run) or render_template("projects/form.html", clients=clients, **options)
+            from app.services.clients import ClientError
 
-    return render_template("projects/form.html", clients=clients, **options)
+            db.session.rollback()
+            if isinstance(e, ClientError):
+                flash(str(e), "error")
+            else:
+                flash(f"Error creating project: {str(e)}", "error")
+            return _wizard_create_failed(wizard_run) or _form_again()
+
+    return render_template("projects/form.html", clients=clients, values={}, **options)
+
+
+# Set Up This Project (Task-First UX, Slice C, 1 Nov 2026): the company defaults the screen pre-fills (the same
+# values the form and the Start a New Project wizard always started with; app/wizards/new_project.FORM_DEFAULTS).
+SET_UP_SETTING_DEFAULTS = {"pricing_posture": "Competitive", "execution_risk": "Normal", "schedule_condition": "Normal",
+                           "site_condition": "Normal", "estimate_stage": "Preliminary", "delivery_model": "Self-Perform"}
+
+
+def _set_up_defaults(org_id, clients):
+    from app.services.clients import location_values
+
+    lead_ids = {str(p["id"]) if isinstance(p, dict) else str(getattr(p, "id", "")) for p in _lead_choices_safe(org_id)}
+    me = str(getattr(current_user, "id", "") or "")
+    return {"setting_defaults": SET_UP_SETTING_DEFAULTS,
+            "default_project_lead_id": me if me in lead_ids else "",
+            "client_addresses": {c.id: location_values(c) for c in clients}}
+
+
+def _lead_choices_safe(org_id):
+    from app.services.project_lead import lead_choices
+
+    try:
+        return lead_choices(org_id)
+    except Exception:  # noqa: BLE001 - the default lead is a convenience only
+        return []
+
+
+def _fill_set_up_defaults(context_data, guided_project_type, options):
+    from app.services.guided_estimating import COMMERCIAL_TYPE_HINT
+
+    if not context_data["project_type"]:
+        context_data["project_type"] = COMMERCIAL_TYPE_HINT.get((guided_project_type or "").strip(), "New Build")
+    for field, value in SET_UP_SETTING_DEFAULTS.items():
+        if not context_data[field]:
+            context_data[field] = value
 
 
 def _wizard_run_for_create(org_id):
@@ -734,7 +795,10 @@ def _guided_after_create(project, org_id, options):
         if carry is not None:
             record = CP.attach_carry(carry, project, user_id=getattr(current_user, "id", None),
                                      actor_display_name=current_actor_display_name(fallback="Office"))
-        if request.form.get("start_guided"):
+        # Set Up This Project (Slice C): "Start the estimate" is on by default, so it starts only when what is being
+        # built and your role were both chosen; otherwise the project page's next step asks for them later.
+        if (request.form.get("start_guided") and request.form.get("guided_project_type", "").strip()
+                and request.form.get("contractor_role", "").strip()):
             guided = G.start_guided_estimate(organization_id=org_id, project_id=project.id,
                                              project_type=request.form.get("guided_project_type", ""),
                                              contractor_role=request.form.get("contractor_role", ""),
@@ -768,6 +832,14 @@ def _plan_start_after_create(project, org_id):
 
     Either choice records that drawings are required. A failed upload never undoes the project."""
     choice = (request.form.get("plan_start") or "later").strip()
+    if choice == "none":
+        # Set Up This Project (Slice C): "No drawings needed" is answered on the same screen (the retired wizard's
+        # Plans step), recorded by the same service as the project page's choice.
+        try:
+            set_project_drawing_requirement(organization_id=org_id, project_id=project.id, requirement="NOT_REQUIRED")
+        except ProjectDrawingRequirementError:
+            pass
+        return None
     if choice not in ("upload", "generate"):
         return None
     try:

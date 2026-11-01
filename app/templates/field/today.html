@@ -10,11 +10,9 @@
 </nav>
 {% include "field/_texts_setup.html" %}
 {% include "field/_field_nav.html" %}
-{% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="field-toolbar">
-{{ contextual_help(help_content.field_topic("today")) }}
-<p class="field-actions"><a class="field-btn field-btn-secondary desk-print" href="{{ url_for('field.print_today') }}">{{ contractor_copy.PRINT_LABEL }}</a></p>
-</div>
+{# Field Today (Task-First UX, Slice C, 1 Nov 2026; audit 3.13): the day first, then one clear list of today's work
+   with ONE primary action (Capture on today's job, or Choose Project), then everything else closed under "More for
+   today". The seven quick actions above stay (Magnificent Seven, owner approved). Every link and hook is kept. #}
 <p class="field-today-orientation">
     <span class="field-today-weekday">{{ today_weekday }}</span>
     <span class="field-today-date">{{ today_natural_date }}</span>
@@ -35,39 +33,59 @@
     </form>
 </section>
 {% endif %}
-{% include "field/_banked_balance.html" %}
-<section class="field-panel">
+<section class="field-panel field-today-work" data-field-today-work>
     <h1>{{ my_work_heading }}</h1>
     {% if not schedule.cards %}
     <p>{{ contractor_copy.FIELD_NO_WORK_TODAY }}</p>
     {% else %}
     {% set groups = schedule.groups %}
     {% set show_time = true %}
+    {% set one_primary = true %}
     {% include "field/_schedule_groups.html" %}
     {% set deliveries = schedule.days[0].deliveries if schedule.days else [] %}{% include "field/_deliveries.html" %}
     {% endif %}
+    <div class="field-today-job" data-field-today-job>
+    {% if project %}
+    <h2>{{ contractor_copy.FIELD_NAV_TODAY }}: <span class="field-project-name">{{ project.name }}</span></h2>
+    {% if project.project_number %}<p class="field-muted">{{ project.project_number }}</p>{% endif %}
+    {# With work on today's list, its first Enter time is the primary; Capture is then secondary. #}
+    <a class="field-btn {{ 'field-btn-secondary' if schedule.cards else 'field-btn-primary' }}" href="{{ url_for('field.capture', project_id=project.id) }}" data-field-today-primary>Capture</a>
+    {% else %}
+    <h2>{{ contractor_copy.FIELD_NAV_TODAY }}</h2>
+    <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>
+    <a class="field-btn {{ 'field-btn-secondary' if schedule.cards else 'field-btn-primary' }}" href="{{ url_for('field.projects') }}" data-field-today-primary>Choose Project</a>
+    {% endif %}
+    </div>
 </section>
 
-<section class="field-panel">
-    <h2>{{ contractor_copy.FIELD_NAV_TODAY }}</h2>
+{# Banked hours stay in view: crew see earned, used and remaining banked hours (owner decision, 25 Oct 2026). #}
+{% include "field/_banked_balance.html" %}
+<details class="field-panel field-today-more" data-field-today-more>
+    <summary>More for today</summary>
+    <div class="field-today-more-body">
     {% if project %}
-    <p class="field-project-name">{{ project.name }}</p>
-    {% if project.project_number %}
-    <p class="field-muted">{{ project.project_number }}</p>
-    {% endif %}
-    <a class="field-btn field-btn-primary" href="{{ url_for('field.capture', project_id=project.id) }}">Capture</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=project.id) }}">{{ contractor_copy.FIELD_TIME_BUTTON }}</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.extra_work', project_id=project.id) }}">{{ contractor_copy.FIELD_EXTRA_WORK_BUTTON }}</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">{{ contractor_copy.FIELD_MY_TIME_HEADING }}</a>
     {% if company_project %}<a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=company_project.id) }}" data-company-time>Shop / Company Work</a>{% endif %}
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">{{ contractor_copy.FIELD_CHANGE_PROJECT }}</a>
     {% else %}
-    <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>
-    <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose Project</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.my_time') }}">{{ contractor_copy.FIELD_MY_TIME_HEADING }}</a>
     {% if company_project %}<a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=company_project.id) }}" data-company-time>Shop / Company Work</a>{% endif %}
     {% endif %}
-</section>
+    {% from "partials/contextual_help.html" import contextual_help with context %}
+    <div class="field-toolbar">
+    {{ contextual_help(help_content.field_topic("today")) }}
+    <p class="field-actions"><a class="field-btn field-btn-secondary desk-print" href="{{ url_for('field.print_today') }}">{{ contractor_copy.PRINT_LABEL }}</a></p>
+    </div>
+    </div>
+</details>
+<style>
+.field-today-job{margin-top:12px;border-top:1px solid var(--line,#d9dee5);padding-top:12px;}
+.field-today-job h2{margin:0 0 6px;}
+.field-today-more>summary{cursor:pointer;font-weight:700;min-height:var(--touch-target,44px);display:flex;align-items:center;}
+.field-today-more-body{display:grid;gap:8px;margin-top:8px;}
+</style>
 
 <section class="field-panel" id="field-retry-panel" hidden>
     <h2>{{ contractor_copy.FIELD_RETRY_HEADING }}</h2>

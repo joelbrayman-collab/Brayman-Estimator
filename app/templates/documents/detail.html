@@ -90,7 +90,7 @@
     <section class="panel" data-document-calisign>
       <div class="panel-header"><h2>CaliSIGN</h2></div>
       <p><strong>{{ signing.status.label }}</strong>{% if signing.status.detail %} — {{ signing.status.detail }}{% endif %}</p>
-      {% if signing.history %}<ul class="docs-history">{% for row in signing.history %}<li>{{ row.label }} · {{ row.at.strftime('%b %d, %Y %H:%M') if row.at else '' }}{% if row.who %} · {{ row.who }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+      {% if signing.history %}<ul class="docs-history">{% for row in signing.history %}<li>{{ row.label }} · {{ (row.at|local_time('%b %d, %Y %H:%M')) if row.at else '' }}{% if row.who %} · {{ row.who }}{% endif %}</li>{% endfor %}</ul>{% endif %}
       <p><a href="{{ signing.link }}" data-calisign-link>{% if signing.send_from_contract_page %}Open the contract page (send for signature there){% else %}Open in CaliSIGN{% endif %}</a></p>
     </section>
     {% endif %}
@@ -157,7 +157,7 @@
 
 <details class="panel" data-document-history><summary><strong>History</strong></summary>
   <ul class="docs-history">{% for e in events %}
-    <li>{{ e.at.strftime('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type.replace('_', ' ')|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}{% if e.previous_value is not none %}: {{ e.previous_value }} → {{ e.new_value }}{% endif %}){% endif %}{% if e.reason %} — {{ e.reason }}{% endif %}</li>
+    <li>{{ e.at|local_time('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type.replace('_', ' ')|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}{% if e.previous_value is not none %}: {{ e.previous_value }} → {{ e.new_value }}{% endif %}){% endif %}{% if e.reason %} — {{ e.reason }}{% endif %}</li>
   {% endfor %}</ul>
 </details>
 {% endblock %}

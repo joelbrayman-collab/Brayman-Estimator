@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}New Project | Brayman Construction Platform{% endblock %}
+{% block title %}Set Up This Project | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Project{% endblock %}
+{% block page_title %}Set Up This Project{% endblock %}
 
 {% block content %}
-<div class="page-heading">
-    <div>
-        <p class="eyebrow">Construction</p>
-        <h1>New Project</h1>
-    </div>
-</div>
-
-{% from "wizards/_entry.html" import wizard_entry with context %}
-{% if not carry %}{{ wizard_entry("NEW_PROJECT", "Start a New Project, step by step:", "customer, type, location, drawings, your role and the stages — then estimating.", url_for('wizards.start', wizard_key='NEW_PROJECT'), manual_label="Continue Manually (this form)") }}{% endif %}
+{# Set Up This Project (Task-First UX, Slice C, 1 Nov 2026; audit 3.5 and 4.1). One screen instead of the five-step
+   Start a New Project wizard and this separate form: the customer (choose one or add a new one here), what is being
+   built, your role, the job site and the plans. The software-only fields (status, commercial project type, permit
+   class, the six project settings, the Project Lead and starting the estimate) are filled in from the company's
+   defaults and stay adjustable under "Adjust project settings". The wizard's separate Review step is gone: the
+   project page shows everything once it is created. The form posts to projects.create_project exactly as before;
+   every validation is kept there (name and customer required, a reason for an exceptional setting, the customer
+   rules, the project identity rules). #}
+{% import "partials/task_screen.html" as ts with context %}
+{% set v = values or {} %}
+<div class="task-screen set-up-project" data-set-up-project>
+{{ ts.purpose("Set Up This Project", "The customer, the job site and what is being built. Calibrayt fills in the rest: the Brayman Project #, the project settings and the estimate.") }}
 {% if carry %}
 <div class="cc-carry-banner" data-carry-banner>
     <strong>Bringing your {{ carry_label }} result:</strong> {{ carry.summary }}.
@@ -21,89 +24,99 @@
     <a href="{{ carry_cancel_url }}" data-carry-cancel>Cancel and go back to the calculator</a>
 </div>
 {% endif %}
-{% if clients %}
-<form method="post" class="form-panel" enctype="multipart/form-data">
+<form method="post" class="form-panel su-form" enctype="multipart/form-data" data-set-up-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% if carry %}<input type="hidden" name="carry" value="{{ carry.token }}">{% endif %}
-    <h3>Project Details</h3>
-    <div class="form-grid">
-        <label>
-            Project name *
-            <input type="text" name="name" required>
-        </label>
+    {% set _mode = v.get('customer_mode') or ('existing' if clients else 'new') %}
 
-        <label>
-            Client Project #
-            <input type="text" name="client_project_number" maxlength="80" placeholder="The client's own job number (optional)">
-        </label>
-        <p class="muted-copy" data-brayman-number>Brayman Project #: assigned automatically when the project is created.</p>
-
-        <label>
-            Client *
-            <select name="client_id" required>
-                <option value="">Select a client</option>
-                {% for client in clients %}
-                <option value="{{ client.id }}">{{ client.name }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            Status
-            <select name="status">
-                <option>Lead</option>
-                <option>Estimating</option>
-                <option>Proposal Sent</option>
-                <option>Contracted</option>
-                <option>Active</option>
-                <option>Completed</option>
-                <option>Archived</option>
-            </select>
-        </label>
-
-        <label>
-            Project Lead (optional)
-            <select name="project_lead_user_id" data-project-lead-select>
-                <option value="">Unassigned</option>
-                {% for person in project_lead_people or [] %}
-                <option value="{{ person.id }}">{{ person.label }}</option>
-                {% endfor %}
-            </select>
-        </label>
-    </div>
-
-    <fieldset class="plan-start" data-guided-start-fields>
-        <legend>What is being built, and your role</legend>
-        <p class="muted-copy">These choose the construction stages for the guided estimate. You decide who does each stage next.</p>
-        <label>Project type
-            <select name="guided_project_type" data-guided-project-type>
-                <option value="">Choose</option>
-                {% for key, label in guided_project_types.items() %}<option value="{{ key }}" data-commercial="{{ guided_commercial_hint[key] }}">{{ label }}</option>{% endfor %}
-            </select>
-        </label>
-        <div role="radiogroup" aria-label="Contractor role">
-            {% for key, label in guided_roles.items() %}
-            <label style="display:flex;gap:8px;align-items:center;min-height:40px;"><input type="radio" name="contractor_role" value="{{ key }}" style="width:22px;height:22px;"> {{ label }}</label>
-            {% endfor %}
+    <fieldset class="su-section" data-su-customer>
+        <legend>Customer</legend>
+        {% if clients %}
+        <div class="su-choice" role="radiogroup" aria-label="Customer">
+            <label><input type="radio" name="customer_mode" value="existing" {% if _mode == 'existing' %}checked{% endif %} data-customer-mode> A customer we have</label>
+            <label><input type="radio" name="customer_mode" value="new" {% if _mode == 'new' %}checked{% endif %} data-customer-mode> A new customer</label>
         </div>
-        <label style="display:flex;gap:8px;align-items:center;min-height:40px;"><input type="checkbox" name="start_guided" value="1" {% if start_guided %}checked{% endif %} data-start-guided style="width:22px;height:22px;"> Start the guided estimate when the project is saved</label>
+        <label data-su-existing>
+            Customer *
+            <select name="client_id" data-client-select>
+                <option value="">Select a customer</option>
+                {% for client in clients %}
+                {% set a = (client_addresses or {}).get(client.id, {}) %}
+                <option value="{{ client.id }}" {% if v.get('client_id')|string == client.id|string %}selected{% endif %} data-street="{{ a.get('street', '') }}" data-municipality="{{ a.get('municipality', '') }}" data-province="{{ a.get('province_state', '') }}" data-postal="{{ a.get('postal_zip', '') }}" data-country="{{ a.get('country', '') }}" data-address="{{ a.get('address', '') }}">{{ client.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% else %}
+        <input type="hidden" name="customer_mode" value="new">
+        {% endif %}
+        <div class="form-grid su-new-customer" data-su-new-customer>
+            <label>New customer's name{% if not clients %} *{% endif %}
+                <input type="text" name="new_customer_name" maxlength="200" value="{{ v.get('new_customer_name', '') }}" autocomplete="off"></label>
+            <label>Email <span class="muted-copy">(optional)</span>
+                <input type="email" name="new_customer_email" maxlength="200" value="{{ v.get('new_customer_email', '') }}" autocomplete="off"></label>
+            <label>Phone <span class="muted-copy">(optional)</span>
+                <input type="tel" name="new_customer_phone" maxlength="40" value="{{ v.get('new_customer_phone', '') }}" autocomplete="off"></label>
+        </div>
     </fieldset>
-    <script>
-    document.querySelector("[data-guided-project-type]")?.addEventListener("change", (event) => {
-        const hint = event.target.selectedOptions[0]?.dataset.commercial;
-        const commercial = document.querySelector('select[name="project_type"]');
-        if (hint && commercial && !commercial.value) commercial.value = hint;
-    });
-    </script>
 
-    <fieldset class="plan-start" data-plan-start>
+    <fieldset class="su-section" data-su-job data-guided-start-fields>
+        <legend>The job</legend>
+        <div class="form-grid">
+            <label>
+                Project name *
+                <input type="text" name="name" required value="{{ v.get('name', '') }}">
+            </label>
+            <label>What is being built
+                <select name="guided_project_type" data-guided-project-type>
+                    <option value="">Choose</option>
+                    {% for key, label in guided_project_types.items() %}<option value="{{ key }}" data-commercial="{{ guided_commercial_hint[key] }}" {% if v.get('guided_project_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                </select>
+            </label>
+            <fieldset class="su-roles" role="radiogroup" aria-label="Your role on this job" data-contractor-role>
+                <legend>Your role on this job</legend>
+                {% for key, label in guided_roles.items() %}
+                <label class="su-check"><input type="radio" name="contractor_role" value="{{ key }}" {% if v.get('contractor_role') == key %}checked{% endif %}> {{ label }}</label>
+                {% endfor %}
+            </fieldset>
+            <label>
+                Client Project #
+                <input type="text" name="client_project_number" maxlength="80" placeholder="The client's own job number (optional)" value="{{ v.get('client_project_number', '') }}">
+            </label>
+        </div>
+        <p class="muted-copy" data-brayman-number>Brayman Project #: assigned automatically when the project is created.</p>
+        <label>
+            Description <span class="muted-copy">(optional)</span>
+            <textarea name="description" rows="2">{{ v.get('description', '') }}</textarea>
+        </label>
+    </fieldset>
+
+    <fieldset class="su-section" data-su-site>
+        <legend>Job site</legend>
+        {% if clients %}<label class="su-same" data-same-as-customer-label><input type="checkbox" name="same_as_customer" value="on" data-same-as-customer {% if v.get('same_as_customer') %}checked{% endif %}> Same as the customer's address</label>{% endif %}
+        <div class="form-grid">
+            <label>Street / civic address <input type="text" name="street" value="{{ v.get('street', '') }}" data-job="street"></label>
+            <label>City / town <input type="text" name="municipality" value="{{ v.get('municipality', '') }}" data-job="municipality"></label>
+            <label>Province / state <input type="text" name="province_state" value="{{ v.get('province_state', 'Ontario') }}" data-job="province_state"></label>
+            <label>Postal / ZIP <span class="muted-copy">(optional)</span> <input type="text" name="postal_zip" value="{{ v.get('postal_zip', '') }}" data-job="postal_zip"></label>
+            <label>Country <input type="text" name="country" value="{{ v.get('country', 'Canada') }}" data-job="country"></label>
+        </div>
+        <details class="np-more">
+            <summary>Rural lot or no civic address yet?</summary>
+            <label>Address as written (lot, concession, directions)
+                <input type="text" name="address" value="{{ v.get('address', '') }}" data-job="address"></label>
+        </details>
+    </fieldset>
+
+    <fieldset class="plan-start su-section" data-plan-start>
         <legend>Plans and drawings</legend>
-        <p class="muted-copy">The plan is what everyone works from. Add it now, or generate the drawings right after saving.</p>
         <div class="plan-start-options">
-            <input type="radio" id="plan-start-upload" name="plan_start" value="upload">
+            <input type="radio" id="plan-start-upload" name="plan_start" value="upload" {% if v.get('plan_start') == 'upload' %}checked{% endif %}>
             <label for="plan-start-upload"><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i><strong>Upload plan</strong><span>Add the plan PDF now.</span></label>
-            <input type="radio" id="plan-start-generate" name="plan_start" value="generate">
+            <input type="radio" id="plan-start-generate" name="plan_start" value="generate" {% if v.get('plan_start') == 'generate' %}checked{% endif %}>
             <label for="plan-start-generate"><i class="bi bi-pencil-square" aria-hidden="true"></i><strong>Generate drawings</strong><span>Go straight to the drawing tools after saving.</span></label>
-            <input type="radio" id="plan-start-later" name="plan_start" value="later" checked>
+            <input type="radio" id="plan-start-none" name="plan_start" value="none" {% if v.get('plan_start') == 'none' %}checked{% endif %} data-no-drawings>
+            <label for="plan-start-none"><i class="bi bi-slash-circle" aria-hidden="true"></i><strong>No drawings needed</strong><span>Small jobs done without plans.</span></label>
+            <input type="radio" id="plan-start-later" name="plan_start" value="later" {% if v.get('plan_start', 'later') == 'later' %}checked{% endif %}>
             <label for="plan-start-later"><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
         </div>
         <label class="plan-start-file" data-plan-start-file>
@@ -112,142 +125,104 @@
         </label>
     </fieldset>
 
-    <label>
-        Project address
-        <input type="text" name="address">
-    </label>
-    <p class="muted-copy">Free-text project address is preserved as-is. It is not parsed into structured location.</p>
-
-    <label>
-        Description
-        <textarea name="description" rows="3"></textarea>
-    </label>
-
-    <h3 style="margin-top: 24px;">Structured project location</h3>
-    <p class="muted-copy" style="margin-bottom: 16px;">
-        Civic fields used for location completeness and jurisdiction resolution. Incomplete location is allowed. Postal / ZIP is optional. Municipality is not guessed from free-text address.
-    </p>
-    <div class="form-grid">
-        <label>
-            Street / civic address
-            <input type="text" name="street">
+    {% call ts.details("Adjust project settings", "ts-project-settings", hint="Filled in from your company defaults") %}
+    <p class="muted-copy">Calibrayt fills these in. Change one only when this job is different; an exceptional choice needs a reason.</p>
+    <div class="form-grid" data-project-settings>
+        <label>Status
+            <select name="status">
+                {% for opt in ("Lead", "Estimating", "Proposal Sent", "Contracted", "Active", "Completed", "Archived") %}
+                <option {% if v.get('status', 'Lead') == opt %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
         </label>
-        <label>
-            Municipality
-            <input type="text" name="municipality">
-        </label>
-        <label>
-            Province / state
-            <input type="text" name="province_state">
-        </label>
-        <label>
-            Postal / ZIP (optional)
-            <input type="text" name="postal_zip">
-        </label>
-        <label>
-            Country
-            <input type="text" name="country">
-        </label>
-    </div>
-
-    <h3 style="margin-top: 24px;">Permit context class</h3>
-    <p class="muted-copy" style="margin-bottom: 16px;">
-        Permit Foundation classification only. This is not the commercial Project Type below and is not a zoning or use determination.
-    </p>
-    <label>
-        Permit context class
-        <select name="permit_context_class">
-            {% for opt in permit_context_classes %}
-            <option value="{{ opt }}" {% if opt == default_permit_context_class %}selected{% endif %}>{{ opt }}</option>
-            {% endfor %}
-        </select>
-    </label>
-
-    <h3 style="margin-top: 24px;">Commercial Decision Gate (Mandatory Context)</h3>
-    <p class="muted-copy" style="margin-bottom: 16px;">
-        Define commercial posture and operational parameters before estimating. These assumptions are versioned and preserved with all estimates.
-    </p>
-
-    <div class="form-grid">
-        <label>
-            Project Type *
-            <select name="project_type" required>
+        <label>Commercial project type
+            <select name="project_type">
+                <option value="">From what is being built</option>
                 {% for opt in project_types %}
-                <option value="{{ opt }}" {% if opt == "New Build" %}selected{% endif %}>{{ opt }}</option>
+                <option value="{{ opt }}" {% if v.get('project_type') == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
             </select>
         </label>
-
-        <label>
-            Pricing Posture *
-            <select name="pricing_posture" required>
-                {% for opt in pricing_postures %}
-                <option value="{{ opt }}" {% if opt == "Competitive" %}selected{% endif %}>{{ opt }}</option>
+        <label>Permit context class
+            <select name="permit_context_class">
+                {% for opt in permit_context_classes %}
+                <option value="{{ opt }}" {% if (v.get('permit_context_class') or default_permit_context_class) == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
             </select>
         </label>
-
-        <label>
-            Execution Risk *
-            <select name="execution_risk" required>
-                {% for opt in execution_risks %}
-                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
+        {% for name, label, options in [('pricing_posture', 'Pricing posture', pricing_postures), ('execution_risk', 'Execution risk', execution_risks), ('schedule_condition', 'Schedule condition', schedule_conditions), ('site_condition', 'Site condition', site_conditions), ('estimate_stage', 'Estimate stage', estimate_stages)] %}
+        <label>{{ label }}
+            <select name="{{ name }}">
+                {% for opt in options %}
+                <option value="{{ opt }}" {% if (v.get(name) or setting_defaults[name]) == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
             </select>
         </label>
-
-        <label>
-            Schedule Condition *
-            <select name="schedule_condition" required>
-                {% for opt in schedule_conditions %}
-                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            Site Condition *
-            <select name="site_condition" required>
-                {% for opt in site_conditions %}
-                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            Estimate Stage *
-            <select name="estimate_stage" required>
-                {% for opt in estimate_stages %}
-                <option value="{{ opt }}" {% if opt == "Preliminary" %}selected{% endif %}>{{ opt }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            Delivery Model *
-            <select name="delivery_model" required>
+        {% endfor %}
+        <label>Delivery model
+            <select name="delivery_model">
                 {% for opt in delivery_models %}
-                <option value="{{ opt }}" {% if opt == "Self-Perform" %}selected{% endif %}>{{ opt|delivery_model_label }}</option>
+                <option value="{{ opt }}" {% if (v.get('delivery_model') or setting_defaults['delivery_model']) == opt %}selected{% endif %}>{{ opt|delivery_model_label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Project Lead
+            <select name="project_lead_user_id" data-project-lead-select>
+                <option value="">Unassigned</option>
+                {% for person in project_lead_people or [] %}
+                <option value="{{ person.id }}" {% if (v.get('project_lead_user_id') or default_project_lead_id)|string == person.id|string %}selected{% endif %}>{{ person.label }}</option>
                 {% endfor %}
             </select>
         </label>
     </div>
-
-    <label style="margin-top: 12px;">
-        Justification Reason (Mandatory if exceptional posture/risk selected by organization policy)
-        <textarea name="justification_reason" rows="2" placeholder="Required for Premium posture, High execution risk, etc."></textarea>
+    <label>
+        Reason <span class="muted-copy">(needed for an exceptional posture or risk, e.g. Premium pricing or High risk)</span>
+        <textarea name="justification_reason" rows="2">{{ v.get('justification_reason', '') }}</textarea>
     </label>
+    <label class="su-check"><input type="checkbox" name="start_guided" value="1" {% if start_guided or not v or v.get('start_guided') %}checked{% endif %} data-start-guided> Start the estimate when the project is saved</label>
+    <p class="muted-copy">The Project Lead is a name on the project only: it gives no access and assigns no work.</p>
+    {% endcall %}
 
-    <div class="form-actions" style="margin-top: 20px;">
-        <button type="submit">Save Project</button>
+    <div class="form-actions su-actions">
+        <button type="submit" class="ts-primary" data-create-project>Create the project</button>
         <a href="{{ carry_cancel_url if carry else url_for('projects.list_projects') }}">Cancel</a>
     </div>
 </form>
-{% else %}
-<div class="empty-state">
-    <h2>A client is required</h2>
-    <p>Create a client before creating a project.</p>
-    <a class="button" href="{{ url_for('clients.create_client') }}">Create Client</a>
 </div>
-{% endif %}
+<style>
+.su-form{display:grid;gap:var(--space-4,16px);}
+.su-section{border:1px solid var(--line,#d9dee5);border-radius:var(--radius-md,8px);padding:var(--space-3,12px) var(--space-4,16px);margin:0;min-width:0;}
+.su-section legend{font-weight:700;padding:0 6px;}
+.su-roles{border:0;padding:0;margin:0;min-width:0;}.su-roles legend{font-weight:400;padding:0;}
+.su-choice{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);margin-bottom:8px;}
+.su-choice label,.su-same,.su-check{display:flex;gap:8px;align-items:center;min-height:var(--touch-target,44px);}
+.su-actions{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);align-items:center;}
+</style>
+<script>
+(function () {
+    var type = document.querySelector("[data-guided-project-type]");
+    var commercial = document.querySelector('select[name="project_type"]');
+    if (type && commercial) type.addEventListener("change", function () {
+        var hint = type.selectedOptions[0] && type.selectedOptions[0].dataset.commercial;
+        if (hint && !commercial.dataset.touched) commercial.value = hint;
+    });
+    if (commercial) commercial.addEventListener("change", function () { commercial.dataset.touched = "1"; });
+    var box = document.querySelector("[data-same-as-customer]");
+    var select = document.querySelector("[data-client-select]");
+    if (box && select) {
+        var map = {street: "street", municipality: "municipality", province_state: "province", postal_zip: "postal", country: "country", address: "address"};
+        var apply = function () {
+            var opt = select.selectedOptions[0];
+            Object.keys(map).forEach(function (k) {
+                var el = document.querySelector('[data-job="' + k + '"]');
+                if (!el) return;
+                if (box.checked && opt && opt.value) { el.dataset.typed = el.value; el.value = opt.dataset[map[k]] || (k === "country" ? el.value : ""); }
+                else if (el.dataset.typed !== undefined) { el.value = el.dataset.typed; }
+            });
+        };
+        box.addEventListener("change", apply);
+        select.addEventListener("change", function () { if (box.checked) apply(); });
+    }
+})();
+</script>
 {% endblock %}

@@ -167,8 +167,9 @@ step("Home: WHAT NEEDS MY ATTENTION? first and compact, the wizards' Start butto
   const aBox = await attention.boundingBox();
   const wBox = await pg.locator("[data-wizard-home]").boundingBox();
   assert.ok(aBox.y < wBox.y, "attention comes before the wizards");
-  for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
-    const box = await pg.locator(`[data-start-wizard="${key}"]`).boundingBox();
+  // Slice C (1 Nov 2026): the band's starts are the three Guided Tasks (the wizards are retired); same check.
+  for (const key of ["set_up", "price", "review"]) {
+    const box = await pg.locator(`[data-guided-task="${key}"]`).boundingBox();
     assert.ok(box.y + box.height <= DESK.height, `${key}: Start is still above the fold`);
   }
   await shot(pg, "home-attention-desktop");

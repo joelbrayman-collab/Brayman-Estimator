@@ -52,7 +52,7 @@ def main():
         db.session.add(Project(organization_id=ORG, name="40x80 Thickened-Edge Concrete Slab (synthetic)",
                                client_id=marc.id, status="Estimating"))
         db.session.commit()
-        facts = {"people": PEOPLE, "marc_id": marc.id}
+        facts = {"people": PEOPLE, "marc_id": marc.id, "database_uri": uri}
     port = int(os.environ["PROJECT_CREATION_PAGE_PORT"])
     print("FACTS " + json.dumps(facts), flush=True)
     print(f"READY {port}", flush=True)

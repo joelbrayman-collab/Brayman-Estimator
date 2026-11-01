@@ -20,6 +20,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { seedWizardRun } from "./evidence_task_first.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
@@ -120,12 +121,12 @@ step("Home: one Attention list first, one band of guided starts above the fold, 
   assert.equal(await pg.getByText("What needs attention", { exact: true }).count(), 0, "no second attention column");
   const attention = await pg.locator("[data-needs-attention]").boundingBox();
   assert.ok(attention.y < 260, `Attention comes first, right under the greeting (y=${Math.round(attention.y)})`);
-  for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
-    const start = pg.locator(`[data-start-wizard="${key}"]`);
+  // Slice C (1 Nov 2026): the band's three starts are the Guided Tasks (the wizards are retired); same checks.
+  for (const key of ["set_up", "price", "review"]) {
+    const start = pg.locator(`[data-guided-task="${key}"]`);
     assert.equal(await start.count(), 1, key);
     const box = await start.boundingBox();
     assert.ok(box.y > attention.y && box.y + box.height <= DESK.height, `${key}: Start right after Attention, above the fold (y=${Math.round(box.y)})`);
-    assert.equal(await pg.locator(`[data-continue-manually="${key}"]`).count(), 1, key);
   }
   const body = await pg.locator("main, body").first().innerText();
   assert.doesNotMatch(body, /\+ Start New Project|Start New Estimate/);
@@ -137,12 +138,18 @@ step("Home: one Attention list first, one band of guided starts above the fold, 
   assert.deepEqual(errors, []);
 });
 
+// Slice C (1 Nov 2026): a wizard's start no longer starts a run; a run started before the retirement keeps working.
+// The dialog checks below open such a run (tests/wizard_run_seed.py, the same service the start used).
+async function openNewProjectRun(pg) {
+  const run = await seedWizardRun(REPO, facts.database_uri, "NEW_PROJECT", facts.people.ben[0]);
+  await go(pg, `/wizards/run/${run}`);
+  return run;
+}
+
 // ------------------------------------------------------------------ the Linda failure, walked
 step("Start a New Project: a dialog with the five steps across the top; Project first", async () => {
   const { pg } = await person(DESK);
-  await go(pg, "/");
-  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
-  S.run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  S.run = await openNewProjectRun(pg);
   assert.equal(await stepOf(pg), "project_type");
   assert.equal(await pg.locator('[role="dialog"][aria-modal="true"]').count(), 1);
   assert.equal(await pg.locator("#wzc-dialog-title").innerText(), "Start a New Project");
@@ -311,9 +318,7 @@ step("Home lists Linda's missing information once; Complete information returns 
 // a PDF over the limit is stopped before anything is sent.
 const PLAN_PDF = fs.readFileSync(path.join(REPO, "tests/fixtures/e2e/synthetic-site-plan.pdf"));
 async function toPlans(pg, customer, job) {
-  await go(pg, "/");
-  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
-  const run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  const run = await openNewProjectRun(pg);
   await pg.fill('[name="name"]', job);
   await pg.locator('[name="guided_project_type"][value="OTHER"]').check();
   await continueOn(pg);
@@ -402,7 +407,10 @@ step("Step 4 on a desktop: a real plan PDF, Save & Continue says Uploading at on
   // A PDF over the upload limit is stopped here, with the reason; nothing is sent and the buttons stay usable.
   const limit = Number(await pg.getAttribute('input[name="plan_file"]', "data-max-bytes"));
   const big = Buffer.concat([PLAN_PDF, Buffer.alloc(limit + 1024 - PLAN_PDF.length, 32)]);
-  await pg.setInputFiles('input[name="plan_file"]', { name: "too-big-set.pdf", mimeType: "application/pdf", buffer: big });
+  // A 25 MB file crosses to the browser over the DevTools connection; on a busy 2-CPU workspace that alone can take
+  // longer than the walk's 15 s default for an action, so this one transfer gets a longer allowance. The check is the
+  // same: the page stops the file before anything is sent.
+  await pg.setInputFiles('input[name="plan_file"]', { name: "too-big-set.pdf", mimeType: "application/pdf", buffer: big }, { timeout: 120000 });
   let sent = 0;
   const count = (r) => { if (r.method() === "POST") sent += 1; };
   pg.on("request", count);
@@ -433,8 +441,7 @@ step("Step 4 on a phone: a real plan PDF goes up once and Step 5 follows; a file
 // ------------------------------------------------------------------ phone
 step("On a phone: every task page fits, buttons are full width, the customer form stacks", async () => {
   const { pg, errors } = await person(PHONE);
-  await go(pg, "/");
-  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  await openNewProjectRun(pg);
   assert.equal(await stepOf(pg), "project_type");
   await noSideways(pg, "project phone");
   await shot(pg, "wizard-project-phone", true);

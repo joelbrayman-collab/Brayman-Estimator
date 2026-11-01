@@ -142,7 +142,13 @@ def attention(supplier_id: int, *, today: Optional[date] = None) -> dict:
                              "agreed": schedule["agreed"], "change_pending": change is not None})
     upcoming.sort(key=lambda row: (row["date"], row["order"].id))
     changes.sort(key=lambda c: c.id)
+    # CaliSIGN (Slice C, 1 Nov 2026): documents waiting for this store's signature, from the attention registry.
+    # Each is also an order to confirm or a change to answer, so it is listed on its own and not added to "total".
+    from app.services.needs_attention import assemble_for_supplier
+
+    signing = assemble_for_supplier(supplier_id, today=today)
     return {
+        "signing": signing[:ATTENTION_LIST_LIMIT], "signing_count": len(signing),
         "quotes": quotes[:ATTENTION_LIST_LIMIT], "quotes_count": len(quotes),
         "orders": to_confirm[:ATTENTION_LIST_LIMIT], "orders_count": len(to_confirm),
         "changes": changes[:ATTENTION_LIST_LIMIT], "changes_count": len(changes),

@@ -424,8 +424,11 @@ def test_review_sections_edit_and_finish_shows_project_created(env):
     assert "Project Created Successfully" in created and LINDA in created
     assert created.index("data-open-project") < created.index("data-create-another")
     # Create Another Project starts a fresh run.
-    another = d.post("/wizards/NEW_PROJECT/start")
-    new_id = int(re.search(r"/wizards/run/(\d+)", another.headers["Location"]).group(1))
+    # Slice C (1 Nov 2026): it opens Set Up This Project (the wizard is retired, no run is started); a fresh run made
+    # the way the start used to make it still works, and the completion page is still this run's only.
+    assert 'href="/projects/new" data-create-another' in created
+    assert d.http.post("/wizards/NEW_PROJECT/start").headers["Location"].endswith("/projects/new")
+    new_id = _start(d, "NEW_PROJECT")
     assert new_id != run_id and _run(new_id).status == "ACTIVE"
     # The completion page belongs to a finished run of this company only.
     d.get(f"/wizards/run/{new_id}/created", status=404)

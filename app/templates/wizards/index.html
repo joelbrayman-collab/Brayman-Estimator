@@ -1,12 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Guided wizards | Brayman Construction Platform{% endblock %}
-{% block page_title %}Guided wizards{% endblock %}
+{% block title %}Guided Tasks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Guided Tasks{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">{% endblock %}
 {% block content %}
-{% set wizard_list = wizards %}
-{% macro _start(w) %}{{ url_for('wizards.start', wizard_key=w.key) }}{% endmacro %}
-{% set start_url = _start %}
-{% macro _manual(w) %}{{ w.manual_url() }}{% endmacro %}
-{% set manual_url = _manual %}
-{% include "wizards/_cards.html" %}
+{# Task-First UX, Slice C (1 Nov 2026): the office wizards are retired as step-by-step runs. This page lists the
+   Guided Tasks that do their jobs, and any wizard run started before, which can still be resumed or closed. #}
+{% import "partials/task_screen.html" as ts with context %}
+{{ ts.purpose("What do you need to do?", "Each task is one screen. Calibrayt works out everything it can and asks only what needs you.") }}
+<section class="wz-home" data-wizard-home aria-label="Guided Tasks">
+  <div class="wz-home-grid">
+    {% for t in guided_tasks_band() %}
+    <article class="wz-home-card" data-wizard-card="{{ t.key }}">
+      <h3>{{ t.name }}</h3>
+      <p>{{ t.why }}</p>
+      <div class="wz-home-actions"><a class="wz-primary" href="{{ t.url }}" data-guided-task="{{ t.key }}">{{ t.name }}</a></div>
+    </article>
+    {% endfor %}
+  </div>
+  {% if summaries %}
+  <div class="wz-resume" data-wizard-resume-list>
+    <h3>Started before: finish or close</h3>
+    <ul>
+      {% for s in summaries %}
+      <li data-resume-run="{{ s.run.id }}">
+        <a class="wz-resume-link" href="{{ s.resume_url }}" data-resume-wizard="{{ s.wizard.key }}"><strong>Resume {{ s.wizard.title }}</strong> — {{ s.subject }}</a>
+        <span class="wz-resume-meta">{{ s.progress.done }} of {{ s.progress.total }} steps{% if s.record_url %} · <a href="{{ s.record_url }}" data-open-record>open the record</a>{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
 {% endblock %}

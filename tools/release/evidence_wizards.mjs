@@ -25,7 +25,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
-import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
+import { openSectionsIfProjectPage, seedWizardRun } from "./evidence_task_first.mjs";
 import { projectRows } from "./evidence_identity_gate3.mjs";
 
 const PHONE = { width: 390, height: 844 };
@@ -127,12 +127,16 @@ step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools
   const section = pg.locator("[data-wizard-home]");
   // Task-First UX (31 Oct 2026): the band is named for its outcome, "Start something" (was "Guided Wizards").
   assert.match(await section.innerText(), /start something/i);
-  for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
-    const start = pg.locator(`[data-start-wizard="${key}"]`);
+  // Slice C (1 Nov 2026): the three wizards are retired; the band offers the three Guided Tasks that do their jobs,
+  // each above the fold, and the old start links open those tasks. Same checks: one start each, above the fold.
+  for (const key of ["set_up", "price", "review"]) {
+    const start = pg.locator(`[data-guided-task="${key}"]`);
     assert.equal(await start.count(), 1, key);
     const box = await start.boundingBox();
     assert.ok(box.y + box.height <= DESK.height, `${key}: Start is above the fold`);
-    assert.equal(await pg.locator(`[data-continue-manually="${key}"]`).count(), 1, key);
+  }
+  for (const [key, url] of [["NEW_PROJECT", "/projects/new"], ["GUIDED_ESTIMATING", "/estimating/start"]]) {
+    assert.equal(await pg.locator(`[data-start-wizard="${key}"]`).getAttribute("href"), url, key);
   }
   for (const sel of ["a[data-home-start-estimate]", "a.home-start", "a.home-calendar"]) assert.equal(await pg.locator(sel).count(), 1, sel);
   // Compact Home (Joel, 27 Oct 2026): each start once — no separate + Start New Project or Start New Estimate.
@@ -146,14 +150,19 @@ step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools
   assert.deepEqual(errors, []);
 });
 
+// Slice C (1 Nov 2026): a wizard's start no longer starts a run; a run started before the retirement keeps working.
+// These checks open such a run (tests/wizard_run_seed.py, the same service the start used) and drive it as before.
+async function seededRun(key, projectId = "") {
+  return seedWizardRun(REPO, facts.database_uri, key, facts.people.ben[0], projectId);
+}
+
 // ------------------------------------------------------------------ Wizard 1
 step("Start a New Project: required answers, autosave, Create once on Details, plans, review, Project Created", async () => {
   // Five compact steps in a dialog since Compact Open a New Project (Joel, 28 Oct 2026): Project, Customer, Details
   // (site, settings, your role and the Project Lead; Continue creates the project), Plans, Review, then Project Created.
   const { pg, errors } = await person("ben", DESK);
-  await go(pg, "/");
-  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
-  W.run1 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  W.run1 = await seededRun("NEW_PROJECT");
+  await go(pg, `/wizards/run/${W.run1}`);
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "project_type");
   assert.match(await pg.locator(".wzc-where").innerText(), /Step 1 of 5/);
   assert.equal(await pg.locator('[role="dialog"][aria-modal="true"]').count(), 1);
@@ -218,9 +227,10 @@ step("Start a New Project: required answers, autosave, Create once on Details, p
   assert.match(pathOf(pg), new RegExp(`/wizards/run/${W.run1}/created$`));
   assert.match(await pg.locator("#np-created-title").innerText(), /Project Created Successfully/);
   await shot(pg, "wizard1-created-desktop");
+  // Slice C: Project Created continues in the Guided Task, Price This Job (it opens on the work to choose).
   await submit(pg, pg.locator("[data-start-estimating]"));
-  assert.match(pathOf(pg), /\/wizards\/run\/\d+\/step\//);
-  assert.match(await pg.locator(".wz-eyebrow").innerText(), /Guided Estimating · Browser Wizard Home/);
+  assert.match(pathOf(pg), /\/projects\/\d+\/guided\/scope$/);
+  assert.match(await pg.locator("main").innerText(), /Browser Wizard Home/i);
   // The Project Hub shows the Project Lead chosen in the wizard.
   await go(pg, "/projects/");
   const hubHref = await pg.locator('a[href^="/projects/"]', { hasText: "Browser Wizard Home (synthetic)" }).first().getAttribute("href");
@@ -231,8 +241,7 @@ step("Start a New Project: required answers, autosave, Create once on Details, p
 
 step("Start a New Project on a phone: compact, no sideways scroll, the steps across the top", async () => {
   const { pg, errors } = await person("ben", PHONE);
-  await go(pg, "/");
-  await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
+  await go(pg, `/wizards/run/${await seededRun("NEW_PROJECT")}`);
   await noSideways(pg, "wizard 1 phone");
   assert.equal(await pg.locator("[data-stepper] li").count(), 5);
   const nextBox = await pg.locator("[data-wizard-next]").boundingBox();
@@ -256,9 +265,8 @@ step("Start a New Project on a phone: compact, no sideways scroll, the steps acr
 // ------------------------------------------------------------------ Wizard 2
 step("Guided Estimating on a costed project: approve costing and price it from the wizard (15.0 % margin)", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await go(pg, `/projects/${facts.projects.estimate}`);
-  await submit(pg, pg.locator('[data-start-wizard="GUIDED_ESTIMATING"]'));
-  W.run2 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  W.run2 = await seededRun("GUIDED_ESTIMATING", facts.projects.estimate);
+  await go(pg, `/wizards/run/${W.run2}`);
   for (const key of ["scope", "internal", "select_quotes", "internal_cost"]) {
     await go(pg, await stepUrl(W.run2, key));
     assert.equal(await state(pg), "done", key);
@@ -289,9 +297,8 @@ step("Guided Estimating on a costed project: approve costing and price it from t
 // ------------------------------------------------------------------ Wizard 3
 step("Manage a Project on the accepted project: real schedule counts and the actual status of features not on", async () => {
   const { pg, errors } = await person("ben", DESK);
-  await go(pg, `/projects/${facts.projects.manage}`);
-  await submit(pg, pg.locator('[data-start-wizard="MANAGE_PROJECT"]'));
-  W.run3 = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  W.run3 = await seededRun("MANAGE_PROJECT", facts.projects.manage);
+  await go(pg, `/wizards/run/${W.run3}`);
   await go(pg, await stepUrl(W.run3, "schedule"));
   assert.match(await pg.locator("[data-step-headline]").innerText(), /0 of 5 work items scheduled/);
   await shot(pg, "wizard3-schedule-desktop");

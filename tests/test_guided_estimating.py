@@ -245,7 +245,8 @@ def _set_aside_rest(d, project, stage):
 def test_new_project_type_role_and_the_fourteen_stage_scope(env):
     application, d, _ben = env
     # Home (compact, 27 Oct 2026): Estimate a Project, with Continue manually opening Start New Estimate.
-    assert 'href="/estimating/start" data-continue-manually="GUIDED_ESTIMATING" data-home-start-estimate' in d.get("/")
+    # Slice C (1 Nov 2026): the band's Price This Job opens the same page (the wizard / manual fork is gone).
+    assert 'href="/estimating/start" data-guided-task="price" data-start-wizard="GUIDED_ESTIMATING" data-home-start-estimate' in d.get("/")
     start = d.get("/estimating/start")
     assert "Create a new project" in start and "Estimate an existing project" in start
     client()

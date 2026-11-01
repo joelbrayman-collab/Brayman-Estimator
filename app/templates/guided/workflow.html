@@ -1,13 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Estimating workflow — {{ project.name }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}Estimating workflow{% endblock %}
+{% block title %}Price This Job — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Price This Job{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
 {% block content %}
-<div class="ge-wrap" data-guided-workflow>
-  {% from "wizards/_entry.html" import wizard_entry with context %}
-  {{ wizard_entry("GUIDED_ESTIMATING", "Guided Estimating wizard:", "the same work, one step at a time." if view.selected_work else "the same stages, one step at a time.", url_for('wizards.start', wizard_key='GUIDED_ESTIMATING'), fields={"project_id": project.id}, manual_label="Continue Manually (this page)") }}
-  <p class="eyebrow">{{ project.name }}{% if not view.selected_work %} · {{ guided.project_type_label }} · {{ guided.contractor_role_label }}{% endif %}</p>
-  {% if view.version %}<p class="ge-muted">Estimate {{ guided.estimate.estimate_number }} · {{ view.version.display_label }} ({{ view.version.status }}{% if view.version.is_locked %}, locked{% endif %})</p>{% endif %}
+{# Price This Job (Task-First UX, Slice C, 1 Nov 2026; audit 3.8, 4.2, 7.1). One screen: the work items with what each
+   still needs, the totals, and ONE primary action (the next item to price, or Review This Estimate when every item
+   is priced). Each item's calculator, quantities, labour hours, quotes and allowances stay on its own page
+   (guided.stage), unchanged. Everything else is in the closed sections at the bottom. Replaces the Guided Estimating
+   wizard's linear steps; every earlier link, form and data-* hook of this page is kept. #}
+{% import "partials/task_screen.html" as ts with context %}
+{% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}
+<div class="task-screen ge-wrap" data-guided-workflow data-guided-task-screen="price">
+  {% set _facts = [project.project_number, project.client.name if project.client else None] %}
+  {% if view.version %}{% set _facts = _facts + [guided.estimate.estimate_number ~ " · " ~ view.version.display_label ~ " (" ~ view.version.status ~ (", locked" if view.version.is_locked else "") ~ ")"] %}{% endif %}
+  {% if not view.selected_work %}{% set _facts = _facts + [guided.project_type_label ~ " · " ~ guided.contractor_role_label] %}{% endif %}
+  {{ ts.context(project.name, facts=_facts, attrs='data-estimate-context') }}
+  {{ ts.purpose("Price This Job", "Put a cost on each piece of work. Calibrayt brings the right calculator or quote to each one and adds it up.") }}
+  {{ ts.next_step(task.step, eyebrow=task.step.eyebrow or "Next step") }}
 
   <section class="ge-card" data-progress="{{ view.done }}/{{ view.included }}">
     {% if view.selected_work %}<h2 data-estimating-what>Estimating: {% for row in view.rows %}{{ row.stage.display_name }}{{ ", " if not loop.last }}{% endfor %}</h2>
@@ -19,25 +28,15 @@
       {% if not (view.selected_work and key == 'EXCLUDED') %}<span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>{% endif %}
       {% endfor %}
     </p>
-    <div class="ge-actions">
-      {% if view.resume %}<a class="ge-primary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
-      {% if view.selected_work %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-add-work-link>Add work</a>
-      {% else %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>{% endif %}
-      <a class="ge-secondary" data-internal-cost-link href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
-      <a class="ge-secondary" data-pricing-link href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
-      <a class="ge-secondary" href="{{ url_for('useful_calculators.index') }}">Calculators</a>
-    </div>
-    {% if view.accepted %}<p class="ge-warn">The customer accepted proposal {{ view.accepted.proposal_number }}. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>
-    {% elif not view.editable and view.version %}
-    <div class="ge-warn">This estimate version is {{ view.version.status }}{% if view.version.is_locked %} and locked{% endif %}; it is never overwritten. To change costs, start a revision (a new version).
-      <form method="post" action="{{ url_for('guided.revision', project_id=project.id) }}" class="ge-form-row" style="margin-top:8px;">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Why it is being revised<input type="text" name="reason" required maxlength="300"></label>
-        <button class="ge-secondary" type="submit" data-start-revision>Start a revision</button>
-      </form>
-    </div>
+    {% if task.figures %}
+    <dl class="pp-figures" data-price-totals>
+      <div><dt>Cost</dt><dd data-price-cost>{{ money(task.figures.direct_cost) }}</dd></div>
+      <div><dt>Selling price</dt><dd data-price-selling>{{ money(task.figures.selling_price) }}</dd></div>
+      <div><dt>True margin</dt><dd data-price-margin>{% if task.figures.true_gross_margin_percent is none %}—{% else %}{{ '%.1f'|format(task.figures.true_gross_margin_percent|float) }}%{% endif %}</dd></div>
+      <div><dt>Labour</dt><dd data-price-hours>{{ '%g'|format(task.figures.labour_hours|float) if task.figures.labour_hours is not none else '—' }} h</dd></div>
+    </dl>
     {% endif %}
-    {% if guided.estimate and guided.estimate.versions|length > 1 %}<p><a href="{{ url_for('guided.compare', project_id=project.id) }}" data-compare-versions>Compare estimate versions</a></p>{% endif %}
+    {% if view.accepted %}<p class="ge-warn">The customer accepted proposal {{ view.accepted.proposal_number }}. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>{% endif %}
   </section>
 
   {% if view.waiting_calculations %}
@@ -48,9 +47,10 @@
   </section>
   {% endif %}
 
-  {% if view.selected_work %}<h2>Work</h2>
-  <p class="ge-muted">Open any work item, in any order. A subcontractor's quote can take days: keep estimating the other work while you wait.</p>
-  {% else %}<h2>Stages, in construction order</h2>
+  <section class="ge-card" aria-labelledby="ptj-work">
+  {% if view.selected_work %}<h2 id="ptj-work">Work</h2>
+  <p class="ge-muted">Open any work item, in any order. A subcontractor's quote can take days: keep pricing the other work while you wait.</p>
+  {% else %}<h2 id="ptj-work">Stages, in construction order</h2>
   <p class="ge-muted">Open any stage, in any order. A subcontractor's quote can take days: keep estimating the other stages while you wait.</p>{% endif %}
   <ol class="ge-steps" data-stage-list>
     {% for row in view.rows %}
@@ -77,18 +77,46 @@
     </li>
     {% endfor %}
   </ol>
+  </section>
+
+  {% if job_attention %}{{ ts.attention(job_attention, heading="Needs you on this estimate") }}{% endif %}
+
+  {% call ts.details("More for this job", "ts-price-details", hint="Add work, calculators, supplier prices, line items") %}
+    <div class="ge-actions">
+      {% if view.resume %}<a class="ge-secondary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
+      {% if view.selected_work %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-add-work-link>Add or change work</a>
+      {% else %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>{% endif %}
+      <a class="ge-secondary" data-pricing-link href="{{ url_for('guided.pricing', project_id=project.id) }}">Review This Estimate</a>
+      <a class="ge-secondary" data-internal-cost-link href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+      <a class="ge-secondary" href="{{ url_for('useful_calculators.index') }}">Calculators</a>
+      <a class="ge-secondary" href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}" data-supplier-prices-link>Supplier prices</a>
+      {% if view.version %}<a class="ge-secondary" href="{{ url_for('estimates.view_version', id=view.version.estimate_id, version_id=view.version.id) }}" data-line-items-link>Line items</a>
+      <a class="ge-secondary" href="{{ url_for('guided.pricing', project_id=project.id) }}#project-pricing" data-labour-rate-link>Labour rate and margin for this job</a>{% endif %}
+    </div>
+    {% if guided.estimate and guided.estimate.versions|length > 1 %}<p><a href="{{ url_for('guided.compare', project_id=project.id) }}" data-compare-versions>Compare estimate versions</a></p>{% endif %}
+    {% if not view.accepted and not view.editable and view.version %}
+    <div class="ge-warn" data-revise-estimate>This estimate version is {{ view.version.status }}{% if view.version.is_locked %} and locked{% endif %}; it is never overwritten. To change costs, start a revision (a new version).
+      <form method="post" action="{{ url_for('guided.revision', project_id=project.id) }}" class="ge-form-row" style="margin-top:8px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Why it is being revised<input type="text" name="reason" required maxlength="300"></label>
+        <button class="ge-secondary" type="submit" data-start-revision>Start a revision</button>
+      </form>
+    </div>
+    {% endif %}
+  {% endcall %}
 
   {% if view.outstanding %}
-  <section class="ge-card" data-outstanding>
-    <h2>Outstanding</h2>
+  {% call ts.details("Still to do", "ts-price-outstanding", hint=view.outstanding|length ~ " open") %}
+  <section data-outstanding>
     <ul>{% for item in view.outstanding %}<li><strong>{{ item.stage.display_name }}</strong> — {{ item.status_label }}{% if item.issues %}: {{ item.issues[0] }}{% endif %}</li>{% endfor %}</ul>
   </section>
+  {% endcall %}
   {% endif %}
 
   {% if history %}
-  <details class="ge-card"><summary>Recent decisions</summary>
+  {% call ts.details("Recent decisions", "ts-price-history") %}
     <ul>{% for e in history %}<li>{{ e.created_at|local_time("%Y-%m-%d %H:%M") }} — {{ e.actor_display_name }}: {{ e.event|replace('_',' ')|lower }}{% if e.stage %} · {{ e.stage.section_name }}{% endif %}{% if e.to_value %} → {{ responsibility_labels.get(e.to_value, e.to_value) }}{% endif %}</li>{% endfor %}</ul>
-  </details>
+  {% endcall %}
   {% endif %}
 </div>
 {% endblock %}

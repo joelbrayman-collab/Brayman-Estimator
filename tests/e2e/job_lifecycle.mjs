@@ -143,6 +143,8 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await page.fill("[name=name]", CLIENT);
     await ben.submit(page.locator("main form button[type=submit]"));
     await ben.go("/projects/new");
+    // Set Up This Project (Slice C, 1 Nov 2026): the project settings are in a closed section; open it as a person does.
+    await page.evaluate(() => document.querySelectorAll("[data-set-up-form] details").forEach((d) => { d.open = true; }));
     await page.fill("[name=name]", JOB);
     await page.selectOption("[name=client_id]", { label: CLIENT });
     await page.selectOption("[name=status]", "Estimating");
@@ -518,6 +520,8 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await kevin.go("/field/today");
     assert.match(await kevin.main(), /Recent observations[\s\S]*Footing forms checked before the pour/);
     // The customer asks Kevin for a step in the footing: extra work, recorded on site.
+    // Field Today (Slice C): the job's Extra work button is under the closed "More for today"; open it first.
+    await kevin.page.evaluate(() => document.querySelectorAll("details[data-field-today-more]").forEach((d) => { d.open = true; }));
     await kevin.submit(kevin.page.getByRole("link", { name: "Extra work", exact: true }));
     await kevin.noSideways("Field Extra work");
     await kevin.page.fill("[name=description]", "Customer asked for a step in the footing (synthetic)");

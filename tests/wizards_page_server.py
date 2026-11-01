@@ -118,7 +118,7 @@ def main():
         _ = CostItem
     port = int(os.environ["WIZARDS_PAGE_PORT"])
     facts = {"people": PEOPLE, "projects": projects, "store": store, "store_login": list(STORE),
-             "rival_login": list(RIVAL), "quick": QUICK_FORM}
+             "rival_login": list(RIVAL), "quick": QUICK_FORM, "database_uri": uri}
     print("FACTS " + json.dumps(facts), flush=True)
     print(f"READY {port}", flush=True)
     application.run(host="127.0.0.1", port=port, use_reloader=False, threaded=True)

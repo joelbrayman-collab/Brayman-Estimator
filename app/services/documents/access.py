@@ -7,6 +7,8 @@
   specifications, instructions, safety) with STANDARD sensitivity, and nothing else.
 * Office members see STANDARD documents and, with has_office_financial_access, FINANCIAL ones.
 * People administrators (instance owner or System Administrator) also see PEOPLE documents and person pages.
+* Any document with an active link to a person is for people administrators only, whatever its sensitivity (review
+  fix I1, 1 Nov 2026: linking raises it to PEOPLE; this is the defence in depth for any row that is not).
 
 Every filter here is applied in SQL by the list, search and attention queries, never by hiding rows in a page.
 """
@@ -19,6 +21,7 @@ from typing import Optional
 from sqlalchemy import and_, exists
 
 from app.models.documents import (
+    CONTEXT_PERSON,
     CONTEXT_PROJECT,
     SENSITIVITY_FINANCIAL,
     SENSITIVITY_PEOPLE,
@@ -88,6 +91,10 @@ def scope_filter(query, scope: Scope):
                          Document.sensitivity.in_(scope.sensitivities))
     if scope.type_codes is not None:
         query = query.filter(Document.document_type.in_(sorted(scope.type_codes)))
+    if not scope.people_admin:
+        query = query.filter(~exists().where(and_(DocumentLink.document_id == Document.id,
+                                                  DocumentLink.unlinked_at.is_(None),
+                                                  DocumentLink.context_kind == CONTEXT_PERSON)))
     if scope.field:
         condition = and_(DocumentLink.document_id == Document.id, DocumentLink.unlinked_at.is_(None),
                          DocumentLink.context_kind == CONTEXT_PROJECT)
@@ -108,8 +115,6 @@ def require_document(public_id: str, scope: Scope) -> Document:
 
 
 def may_see_context_kind(scope: Scope, kind: str) -> bool:
-    from app.models.documents import CONTEXT_PERSON
-
     if kind == CONTEXT_PERSON:
         return scope.people_admin
     return True

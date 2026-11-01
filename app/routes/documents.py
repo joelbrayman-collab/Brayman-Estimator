@@ -162,11 +162,14 @@ def subcontractors():
         if not name:
             flash("Enter the subcontractor's name.", "error")
             return redirect(url_for("documents.subcontractors"))
+        # Review fix M3 (1 Nov 2026): the code with its "-N" suffix stays within 30 characters. Any office member may
+        # add one here, as on Scope delivery when a subcontractor's quote is recorded (no narrower permission exists).
         code = "".join(ch for ch in name.upper() if ch.isalnum())[:30] or "SUB"
         base, n = code, 1
         while Subcontractor.query.filter_by(organization_id=_org(), code=code).first() is not None:
             n += 1
-            code = f"{base}-{n}"
+            suffix = f"-{n}"
+            code = base[:30 - len(suffix)] + suffix
         try:
             row = create_subcontractor(organization_id=_org(), code=code, legal_name=name)
         except SubcontractQuoteError as exc:
@@ -287,7 +290,8 @@ def upload():
         return render_template("documents/upload.html", context=context, stage="review", blob=blob,
                                suggested=suggested, suggested_label=get_type(suggested).label,
                                type_options=_type_options(context.kind), proposals=proposals,
-                               duplicates=visible, duplicate_labels=labels_for_documents(_org(), [d.id for d in visible]),
+                               duplicates=visible, duplicate_labels=labels_for_documents(_org(), [d.id for d in visible],
+                                                                          include_people=scope.people_admin),
                                date_kinds=DATE_KINDS, date_labels=DATE_LABELS)
 
     type_code = request.form.get("document_type") or None
@@ -390,7 +394,8 @@ def detail(public_id):
     text_row = DocumentText.query.filter_by(version_id=current.id).first() if current else None
     links = (DocumentLink.query.filter_by(document_id=document.id).order_by(DocumentLink.unlinked_at.isnot(None),
                                                                               DocumentLink.id).all())
-    active_labels = labels_for_documents(document.organization_id, [document.id]).get(document.id, [])
+    active_labels = labels_for_documents(document.organization_id, [document.id],
+                                         include_people=scope.people_admin).get(document.id, [])
     events = (DocumentEvent.query.filter_by(document_id=document.id, organization_id=document.organization_id)
               .order_by(DocumentEvent.at.desc(), DocumentEvent.id.desc()).limit(200).all())
     primary = next((link for link in links if link.is_primary and link.unlinked_at is None), None)
@@ -559,10 +564,11 @@ def add_link(public_id):
 
 @documents_bp.route("/documents/<public_id>/links/<int:link_id>/end", methods=["POST"])
 def end_link(public_id, link_id):
-    document = _document_or_404(public_id)
+    scope = _scope()
+    document = _document_or_404(public_id, scope)
     link = DocumentLink.query.filter_by(id=link_id, document_id=document.id,
                                         organization_id=document.organization_id).first()
-    if link is None:
+    if link is None or not may_see_context_kind(scope, link.context_kind):
         abort(404)
     if _guard(lambda: ingest.end_link(document, _actor(), link, request.form.get("reason"))):
         flash("Link removed. It stays in the history.", "success")

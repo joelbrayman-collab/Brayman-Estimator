@@ -97,7 +97,8 @@ def document_attention_items(organization_id: str, user, today: Optional[date] =
                     DocumentDate.organization_id == organization_id)
             .order_by(DocumentDate.value).all())
     due_rows = [(d, doc) for d, doc in rows if d.value <= today + timedelta(days=d.remind_days_before)]
-    labels = labels_for_documents(organization_id, [doc.id for _, doc in due_rows[:MAX_ITEMS]])
+    labels = labels_for_documents(organization_id, [doc.id for _, doc in due_rows[:MAX_ITEMS]],
+                                  include_people=scope.people_admin)
     items = []
     for date_row, document in due_rows[:MAX_ITEMS]:
         ahead, passed, _ = _PHRASES[date_row.date_kind]

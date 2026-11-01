@@ -189,14 +189,19 @@ def _context_url(kind, target_id):
     return _url(endpoint, **values)
 
 
-def labels_for_documents(organization_id, document_ids) -> dict:
-    """{document_id: [(kind, label, url, link)]} for active links, in a fixed number of queries."""
+def labels_for_documents(organization_id, document_ids, *, include_people=True) -> dict:
+    """{document_id: [(kind, label, url, link)]} for active links, in a fixed number of queries.
+
+    ``include_people=False`` (a viewer who is not a people administrator; review fix I1): person links are left out,
+    so a person's name is never shown to them."""
     if not document_ids:
         return {}
     links = DocumentLink.query.filter(DocumentLink.document_id.in_(list(document_ids)),
                                       DocumentLink.organization_id == organization_id,
-                                      DocumentLink.unlinked_at.is_(None)).order_by(
-        DocumentLink.is_primary.desc(), DocumentLink.id).all()
+                                      DocumentLink.unlinked_at.is_(None))
+    if not include_people:
+        links = links.filter(DocumentLink.context_kind != CONTEXT_PERSON)
+    links = links.order_by(DocumentLink.is_primary.desc(), DocumentLink.id).all()
     ids_by_kind = defaultdict(set)
     for link in links:
         if link.target_id is not None:

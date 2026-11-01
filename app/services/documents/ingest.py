@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Optional
 
+from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 
 from app import db
@@ -27,6 +28,7 @@ from app.models.documents import (
     BASIS_EXTRACTED,
     CONTEXT_COLUMNS,
     CONTEXT_COMPANY,
+    CONTEXT_PERSON,
     DATE_CONFIRMED,
     DATE_KINDS,
     DATE_LABELS,
@@ -37,6 +39,7 @@ from app.models.documents import (
     ORIGIN_UPLOAD,
     RECORD_KINDS,
     SENSITIVITIES,
+    SENSITIVITY_PEOPLE,
     SOURCE_UPLOAD,
     STATUS_ACTIVE,
     STATUS_ARCHIVED,
@@ -55,7 +58,7 @@ from app.services.documents import dates as date_rules
 from app.services.documents import extract as extractor
 from app.services.documents import fts
 from app.services.documents.contexts import Context, link_filter
-from app.services.documents.types import TYPES, classify, default_sensitivity
+from app.services.documents.types import TYPES, classify, default_sensitivity, get_type, types_for_context
 
 CORRECTABLE_FIELDS = ("title", "document_type", "reference_number", "counterparty", "description", "keywords",
                       "sensitivity")
@@ -190,7 +193,23 @@ def add_link(document, actor: Actor, context: Context, *, primary=False, record_
     _event(document, actor, event_type, reason=reason,
            detail={"context": context.kind, "target_id": context.target_id, "record_kind": record_kind,
                    "record_id": record_id}, at=at)
+    if context.kind == CONTEXT_PERSON:
+        _raise_to_people(document, actor, at=at)
     return link
+
+
+PERSON_LINK_REASON = "Linked to a person: documents on a person's page are for people administrators only"
+
+
+def _raise_to_people(document, actor: Actor, *, at=None) -> None:
+    """Review fix I1 (1 Nov 2026): a document with a person link is a PEOPLE document (audited, never silently)."""
+    if document.sensitivity == SENSITIVITY_PEOPLE:
+        return
+    previous = document.sensitivity
+    document.sensitivity = SENSITIVITY_PEOPLE
+    _event(document, actor, "FIELD_CORRECTED", field_name="sensitivity", previous=previous, new=SENSITIVITY_PEOPLE,
+           reason=PERSON_LINK_REASON, at=at)
+    _touch(document)
 
 
 def end_link(document, actor: Actor, link: DocumentLink, reason: str) -> None:
@@ -253,6 +272,10 @@ def file_document(organization_id: str, actor: Actor, *, blob: UploadBlob, conte
         key, digest = storage.store_bytes(organization_id, blob.data, blob.ext)
     except storage.DocumentStorageError as exc:
         raise DocumentError(str(exc)) from exc
+    if type_code is not None and type_code not in {t.code for t in types_for_context(context.kind)}:
+        # Review fix M2 (1 Nov 2026): only a type offered for this place (e.g. no people document in a project).
+        raise DocumentError(f"A {get_type(type_code).label.lower() if type_code in TYPES else 'document of that type'} "
+                            f"can't be filed on {context.label}. Choose one of the types offered here.")
     suggested, rule = classify(blob.filename, context.kind)
     chosen = type_code if type_code in TYPES else suggested
     basis = TYPE_CONFIRMED if (type_code in TYPES and type_confirmed) else TYPE_SUGGESTED
@@ -375,8 +398,12 @@ def propose_dates(document, version, pages, actor: Actor, *, today=None) -> list
     return out
 
 
-def ensure_extracted(document, actor: Actor = None, *, today=None) -> bool:
-    """Deferred extraction (a large file, or a connected record) on first open. Returns True when text was added."""
+def ensure_extracted(document, actor: Actor = None, *, today=None, allow_large=False) -> bool:
+    """Deferred extraction (a connected record) on first open. Returns True when text was added.
+
+    Review fix I3 (1 Nov 2026): a file larger than MAX_SYNC_BYTES is never extracted in a request (the page says the
+    text is not indexed yet); ``flask documents reindex`` extracts it (allow_large=True). Two first opens at once: the
+    second insert of the version's text fails the unique version_id; that is rolled back and the page carries on."""
     from app.services.documents.sources import read_version_bytes, DocumentUnavailable
 
     version = document.current_version
@@ -384,15 +411,37 @@ def ensure_extracted(document, actor: Actor = None, *, today=None) -> bool:
         return False
     if DocumentText.query.filter_by(version_id=version.id).first() is not None:
         return False
+    if not allow_large and (version.byte_size or 0) > extractor.MAX_SYNC_BYTES:
+        return False
     try:
         data = read_version_bytes(version)
     except DocumentUnavailable:
         return False
-    extraction = extractor.extract_text(data, version.media_type)
-    _extract_and_propose(document, version, data, actor or SYSTEM, today=today, extraction=extraction)
-    fts.index_document(document)
-    db.session.commit()
+    if not allow_large and len(data) > extractor.MAX_SYNC_BYTES:
+        return False
+    try:
+        extraction = extractor.extract_text(data, version.media_type)
+        _extract_and_propose(document, version, data, actor or SYSTEM, today=today, extraction=extraction)
+        fts.index_document(document)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()  # another request stored this version's text first
+        return False
     return True
+
+
+def extract_missing(organization_id=None, actor: Actor = None) -> int:
+    """Extract the text of every current version that has none yet, large files included (flask documents reindex).
+    Returns the number of documents that gained text."""
+    query = Document.query
+    if organization_id:
+        query = query.filter_by(organization_id=organization_id)
+    count = 0
+    for document_id in [d.id for d in query.with_entities(Document.id).all()]:
+        document = db.session.get(Document, document_id)
+        if ensure_extracted(document, actor or SYSTEM, allow_large=True):
+            count += 1
+    return count
 
 
 def _date_row(document, date_id) -> DocumentDate:
@@ -528,9 +577,36 @@ def correct_field(document, actor: Actor, field: str, value, reason: str, *, all
         document.type_rule = None
     _event(document, actor, "FIELD_CORRECTED" if previous != new else "TYPE_CONFIRMED", field_name=field,
            previous=previous, new=new, reason=reason[:500])
+    if field == "document_type" and previous != new:
+        _sensitivity_follows_type(document, actor, previous, new)
     _touch(document)
     fts.index_document(document)
     db.session.commit()
+
+
+def _has_person_link(document) -> bool:
+    return DocumentLink.query.filter_by(document_id=document.id, unlinked_at=None,
+                                        context_kind=CONTEXT_PERSON).first() is not None
+
+
+def _sensitivity_follows_type(document, actor: Actor, old_type, new_type) -> None:
+    """Review fix M2 (1 Nov 2026): a type change moves the sensitivity with it (an invoice is FINANCIAL), when the
+    document held its old type's default (a people administrator's explicit choice is kept); never below PEOPLE while
+    a person link is active. Audited as a sensitivity correction."""
+    if _has_person_link(document):
+        _raise_to_people(document, actor)
+        return
+    primary = DocumentLink.query.filter_by(document_id=document.id, is_primary=True, unlinked_at=None).first()
+    kind = primary.context_kind if primary else CONTEXT_COMPANY
+    if document.sensitivity != default_sensitivity(old_type, kind):
+        return
+    target = default_sensitivity(new_type, kind)
+    if target == document.sensitivity:
+        return
+    previous = document.sensitivity
+    document.sensitivity = target
+    _event(document, actor, "FIELD_CORRECTED", field_name="sensitivity", previous=previous, new=target,
+           reason=f"Follows the document type ({get_type(new_type).label})")
 
 
 def confirm_type(document, actor: Actor) -> None:

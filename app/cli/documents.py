@@ -43,6 +43,9 @@ def connect_existing(organization_id, dry_run):
 @with_appcontext
 def reindex(organization_id):
     from app.services.documents.fts import rebuild
+    from app.services.documents.ingest import extract_missing
 
+    # Review fix I3 (1 Nov 2026): text a document page does not extract in the request (files over MAX_SYNC_BYTES).
+    click.echo(f"TEXT_EXTRACTED={extract_missing(organization_id)}")
     count = rebuild(organization_id)
     click.echo(f"INDEXED={count}" if count else "INDEXED=0 (FTS5 not available or no documents; search uses the fallback)")

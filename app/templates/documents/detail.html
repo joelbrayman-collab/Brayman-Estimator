@@ -66,6 +66,7 @@
     {% elif current and current.availability == 'AVAILABLE' %}
       <p class="muted-copy">This kind of file opens in its own program: <a href="{{ url_for('documents.file', public_id=document.public_id, download=1) }}">download {{ current.original_filename }}</a>.</p>
     {% endif %}
+    {% if current and not text_row and current.availability == 'AVAILABLE' %}<p class="muted-copy" data-text-not-indexed>Text not indexed yet: search finds this file by its name and details until its text is read.</p>{% endif %}
     {% if text_row and text_row.status == 'NO_TEXT' %}<p class="muted-copy">No readable text in this file; enter the dates by hand.</p>{% endif %}
   </div>
   <div>

@@ -150,15 +150,22 @@
                 {% endfor %}
             </select>
         </label>
-        {% for name, label, options in [('pricing_posture', 'Pricing posture', pricing_postures), ('execution_risk', 'Execution risk', execution_risks), ('schedule_condition', 'Schedule condition', schedule_conditions), ('site_condition', 'Site condition', site_conditions), ('estimate_stage', 'Estimate stage', estimate_stages), ('delivery_model', 'Delivery model', delivery_models)] %}
+        {% for name, label, options in [('pricing_posture', 'Pricing posture', pricing_postures), ('execution_risk', 'Execution risk', execution_risks), ('schedule_condition', 'Schedule condition', schedule_conditions), ('site_condition', 'Site condition', site_conditions), ('estimate_stage', 'Estimate stage', estimate_stages)] %}
         <label>{{ label }}
             <select name="{{ name }}">
                 {% for opt in options %}
-                <option value="{{ opt }}" {% if (v.get(name) or setting_defaults[name]) == opt %}selected{% endif %}>{{ opt|delivery_model_label if name == 'delivery_model' else opt }}</option>
+                <option value="{{ opt }}" {% if (v.get(name) or setting_defaults[name]) == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
             </select>
         </label>
         {% endfor %}
+        <label>Delivery model
+            <select name="delivery_model">
+                {% for opt in delivery_models %}
+                <option value="{{ opt }}" {% if (v.get('delivery_model') or setting_defaults['delivery_model']) == opt %}selected{% endif %}>{{ opt|delivery_model_label }}</option>
+                {% endfor %}
+            </select>
+        </label>
         <label>Project Lead
             <select name="project_lead_user_id" data-project-lead-select>
                 <option value="">Unassigned</option>

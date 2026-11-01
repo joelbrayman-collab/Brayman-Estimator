@@ -20,6 +20,7 @@ from app.models.documents import (
     DATE_RENEWAL_DUE,
     DATE_WARRANTY_ENDS,
 )
+from app.services.local_time import local_today
 
 EXTRACTOR_VERSION = "calibrayt-docs-dates-1"
 MAX_PER_KIND = 2
@@ -105,7 +106,7 @@ def _classify(before: str) -> Optional[str]:
 
 def find_dates(pages, *, today: Optional[date] = None) -> list:
     """Candidates from text pages ([str] or str). At most two per kind; out-of-range dates dropped."""
-    today = today or date.today()
+    today = today or local_today()  # the office's day, not the server's (UTC) date
     earliest = today - timedelta(days=366)
     latest = today + timedelta(days=365 * 25)
     if isinstance(pages, str):

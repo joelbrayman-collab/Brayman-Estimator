@@ -39,6 +39,7 @@ from app.models.documents import (
 )
 from app.services.documents.access import office_scope, scope_filter
 from app.services.documents.contexts import labels_for_documents
+from app.services.local_time import local_today
 
 SOON_DAYS = 14
 MAX_ITEMS = 50
@@ -85,7 +86,7 @@ def document_attention_items(organization_id: str, user, today: Optional[date] =
     scope = office_scope(user, organization_id) if user is not None else None
     if scope is None:
         return []
-    today = today or date.today()
+    today = today or local_today()  # the office's day, not the server's (UTC) date
     horizon = today + timedelta(days=365)
     rows = (scope_filter(db.session.query(DocumentDate, Document)
                          .join(Document, Document.id == DocumentDate.document_id)

@@ -181,3 +181,37 @@ Rulings
   opens the coming week) does not list tomorrow's concrete delivery. It fails the same way on the baseline commit
   `1d1448a0` at that hour, so it is a pre-existing day-of-week defect in Field week / deliveries. It needs its own
   root-cause fix and a test.
+
+## My Week date fix (1 Nov 2026, branch `task-first/myweek-fix`)
+
+Closes the "Open" item above (job_lifecycle walk failing just after midnight on Sunday 1 Nov).
+
+- **Root cause.** Not My Week. The walk computed "tomorrow" as now + 24 hours. Sunday 1 Nov 2026 is the day Toronto
+  leaves daylight time, a 25-hour day, so between 00:00 and 00:59 EDT now + 24 h was still 1 Nov: the concrete
+  delivery was dated *today*, a Sunday, and My Week on a Sunday (by design, 25 Oct) shows the coming Monday–Sunday,
+  so it was rightly not listed. Reproduced by running the walk with its clock and the app server's clock set to
+  00:20 EDT on 1 Nov (fails at the My Week assertion, line 485); at 01:12 the same walk passed. The baseline
+  `1d1448a0` fails the same way because the walk's arithmetic is older than it. A second wrong assumption in the walk:
+  it took "today" from the machine's clock zone while the app's is the company zone (America/Toronto); the release
+  gate sets no TZ, so on a UTC machine between 20:00 and midnight Toronto every walk date was a day ahead (on a
+  Saturday evening "tomorrow" became Monday, outside that week's My Week).
+- **App code checked.** `field_week_start`, `calendar_week_bounds`, `field_month_bounds`, the Field Today, Week and
+  Month routes all read `local_today()` and are correct. Four sibling defaults read the server's date
+  (`date.today()`, UTC in production) instead of the office's day and now use `local_today()`:
+  `governed_schedule.procurement_plan` (the "late" flag; its route already passed `local_today()`),
+  `documents.search.search` (library "expired" / "expiring within" filters), `documents.dates.find_dates` (proposed
+  dates from uploads) and `documents.attention.document_attention_items`. No model, migration or template change.
+- **Walk fixes (commented).** `tests/e2e/job_lifecycle.mjs` and `tests/e2e/contractor_workflow.mjs`: "today" is the
+  company zone's calendar day (`COMPANY_TIME_ZONE`, default America/Toronto) and day offsets are calendar days
+  (`new Date(y, m, d + n, 12)`), not multiples of 86,400,000 ms. No assertion changed.
+- **Tests.** New `tests/test_field_week_tomorrow_delivery.py` (22 cases; each runs with the process zone UTC and
+  America/Toronto): tomorrow's agreed delivery is on Kevin's default My Week, in tomorrow's day and no other, at a
+  Sunday morning, Saturday 22:30 and 23:59 EDT (already Sunday in UTC), Sunday 00:20 EDT and 01:30 EST on the DST-end
+  day, Saturday night before spring-forward and the 23-hour Sunday; week/month bounds follow the office day; Field
+  Week and Month agree in the evening; the procurement and Documents defaults use the office day (these fail on the
+  old code). Results: field/schedule/documents pytest files (26 files) 400 passed; `job_lifecycle.mjs` and
+  `contractor_workflow.mjs` pass on the real clock; `job_lifecycle.mjs` also passes with its and the server's clock
+  at 00:20 EDT on 1 Nov (where it failed before).
+- **Noted, not changed:** Documents "uploaded from/to" filters compare naive-UTC `created_at` with local-midnight
+  bounds (a document uploaded after 20:00 Toronto falls on the next day's filter); `tools/release/evidence_roles.mjs`
+  uses UTC dates for moves, consistent within each check, so harmless.

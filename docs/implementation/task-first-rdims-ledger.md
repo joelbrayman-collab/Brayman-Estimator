@@ -443,3 +443,9 @@ Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, F
 ### Deferred from the review (M1)
 
 - M1 (minor): a file uploaded but never filed stays on disk under the documents storage folder. It is not in the database, not searchable and not shown to anyone, so nothing leaks. Deferred to a cleanup command (`flask documents sweep-unfiled`) in a later release, because deleting user files needs its own reviewed rule (age threshold, dry run first). Nothing is deleted automatically in this release.
+
+### Release gate stop, 1 Nov 2026 (tf1)
+
+- The gate stopped correctly: "an existing migration file was changed or removed: migrations/env.py". The documents work had added an `include_object` hook there so that `flask db migrate` (autogenerate) ignores the FTS5 `document_search` table and its shadow tables. It is a developer-time convenience only; no upgrade, test or app path uses it.
+- Fix: `migrations/env.py` restored exactly to the live version. The release adds one migration file and changes no existing one.
+- Note for the next person who runs `flask db migrate`: autogenerate will propose dropping `document_search*` tables because they are not models. Delete those lines from the generated file. Adding the hook back belongs in its own release, declared as a change to an existing migration file.

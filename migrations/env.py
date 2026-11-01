@@ -72,12 +72,6 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def include_object(obj, name, type_, reflected, compare_to):
-    if type_ == "table" and name and (name == "document_search" or name.startswith("document_search_")):
-        return False
-    return True
-
-
 def run_migrations_online():
     """Run migrations in 'online' mode.
 
@@ -99,9 +93,6 @@ def run_migrations_online():
     conf_args = current_app.extensions['migrate'].configure_args
     if conf_args.get("process_revision_directives") is None:
         conf_args["process_revision_directives"] = process_revision_directives
-    # Documents (31 Oct 2026): the FTS5 search table and its shadow tables are not models; autogenerate ignores them.
-    if conf_args.get("include_object") is None:
-        conf_args["include_object"] = include_object
 
     connectable = get_engine()
 

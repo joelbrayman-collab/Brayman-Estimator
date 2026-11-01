@@ -16,7 +16,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
-import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
+import { openSections, openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
@@ -403,7 +403,10 @@ step("10 customers: a client, then a project with the job address", async () => 
   await submit(pg, pg.getByRole("button", { name: "Save Client" }));
   assert.match(await flash(pg), /Client created/);
   await go(pg, "/");
-  await submit(pg, pg.locator('a.home-start[data-continue-manually="NEW_PROJECT"]'));  // the New Project form
+  // Slice C (1 Nov 2026): Home's Set Up This Project is the New Project form (one screen; the settings are in a
+  // closed section, opened here as a person opens it).
+  await submit(pg, pg.locator('a.home-start[data-guided-task="set_up"]'));
+  await openSections(pg);
   await pg.fill("[name=name]", PROJECT);
   await pg.selectOption("[name=client_id]", { label: CLIENT.name });
   await pg.selectOption("[name=status]", "Estimating");
@@ -415,7 +418,7 @@ step("10 customers: a client, then a project with the job address", async () => 
   await pg.selectOption("[name=permit_context_class]", "Renovation");
   await pg.selectOption("[name=project_type]", "Renovation");
   await shot(pg, "10-customers", "project");
-  await submit(pg, pg.getByRole("button", { name: "Save Project" }));
+  await submit(pg, pg.getByRole("button", { name: "Create the project" }));
   assert.match(await flash(pg), /Project BC-\d{4}-\d{4} created/);
   W.projectId = Number(pg.url().match(/\/projects\/(\d+)/)[1]);
   assert.match(await pg.locator("main").innerText(), /job location is complete/);

@@ -35,16 +35,10 @@
       {% if estimating_run %}
       <a class="wz-secondary" href="{{ url_for('wizards.resume', run_id=estimating_run.id) }}" data-start-estimating>Resume Guided Estimating</a>
       {% elif guided %}
-      <form method="post" action="{{ url_for('wizards.start', wizard_key=estimating_key) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="project_id" value="{{ project.id }}">
-        <button type="submit" class="wz-secondary" data-start-estimating>Start Guided Estimating</button>
-      </form>
+      {# Slice C (1 Nov 2026): the estimate continues in the Guided Task, Price This Job (the wizard is retired). #}
+      <a class="wz-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}" data-start-estimating>Price This Job</a>
       {% endif %}
-      <form method="post" action="{{ url_for('wizards.start', wizard_key=new_project_key) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit" class="wz-secondary" data-create-another>Create Another Project</button>
-      </form>
+      <a class="wz-secondary" href="{{ url_for('projects.create_project') }}" data-create-another>Set Up Another Project</a>
     </div>
   </section>
 </div>

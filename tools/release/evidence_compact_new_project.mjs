@@ -20,6 +20,7 @@ import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
 import { projectRows } from "./evidence_identity_gate3.mjs";
+import { seedWizardRun } from "./evidence_task_first.mjs";
 
 const WIDTHS = [
   { label: "desktop", viewport: { width: 1600, height: 1000 } },
@@ -114,9 +115,10 @@ for (const { label, viewport } of WIDTHS) {
     const { ctx, pg, errors } = await session(viewport);
     const job = `Compact ${label} deck (synthetic)`;
     const customer = `Compact ${label} customer (synthetic)`;
-    await go(pg, "/");
-    await submit(pg, pg.locator('[data-start-wizard="NEW_PROJECT"]'));
-    const run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+    // Slice C (1 Nov 2026): the wizard's start no longer starts a run (it opens Set Up This Project); a run started
+    // before the retirement keeps working. This walk opens such a run (tests/wizard_run_seed.py) and checks it.
+    const run = await seedWizardRun(REPO, facts.database_uri, "NEW_PROJECT", facts.people.ben[0]);
+    await go(pg, `/wizards/run/${run}`);
 
     // 1 Project: the dialog launches with the five steps, Project current.
     assert.equal(await stepOf(pg), "project_type");

@@ -74,7 +74,7 @@
     {% if costing %}
       {% if costing.current_snapshot and costing.working_matches_current %}<p class="ge-ok" data-costing-approved>Costing approved for {{ version.display_label }}: direct cost {{ "${:,.2f}".format(costing.current_snapshot.approved_direct_cost_total|float) if costing.current_snapshot.approved_direct_cost_total is not none else '' }}.</p>
       {% elif costing.can_approve %}<p>The costing can be approved (it is checked by the existing costing rules).</p>
-      {% else %}<div class="ge-warn">Costing cannot be approved yet: {{ costing.block_codes|join(', ') }}</div>{% endif %}
+      {% else %}<div class="ge-warn">Costing cannot be approved yet: {% for c in costing.block_codes %}{{ review.block_words.get(c, "a line still needs a cost decision") }}{{ " " if not loop.last }}{% endfor %}</div>{% endif %}
     {% endif %}
     {% if not blockers and version.status == 'Draft' and not version.is_locked %}
     <form method="post" action="{{ url_for('estimates.approve_all_costing_route', id=version.estimate_id, version_id=version.id) }}">

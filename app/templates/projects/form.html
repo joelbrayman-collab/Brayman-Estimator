@@ -72,12 +72,12 @@
                     {% for key, label in guided_project_types.items() %}<option value="{{ key }}" data-commercial="{{ guided_commercial_hint[key] }}" {% if v.get('guided_project_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
                 </select>
             </label>
-            <label>Your role on this job
-                <select name="contractor_role" data-contractor-role>
-                    <option value="">Choose</option>
-                    {% for key, label in guided_roles.items() %}<option value="{{ key }}" {% if v.get('contractor_role') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                </select>
-            </label>
+            <fieldset class="su-roles" role="radiogroup" aria-label="Your role on this job" data-contractor-role>
+                <legend>Your role on this job</legend>
+                {% for key, label in guided_roles.items() %}
+                <label class="su-check"><input type="radio" name="contractor_role" value="{{ key }}" {% if v.get('contractor_role') == key %}checked{% endif %}> {{ label }}</label>
+                {% endfor %}
+            </fieldset>
             <label>
                 Client Project #
                 <input type="text" name="client_project_number" maxlength="80" placeholder="The client's own job number (optional)" value="{{ v.get('client_project_number', '') }}">
@@ -186,6 +186,7 @@
 .su-form{display:grid;gap:var(--space-4,16px);}
 .su-section{border:1px solid var(--line,#d9dee5);border-radius:var(--radius-md,8px);padding:var(--space-3,12px) var(--space-4,16px);margin:0;min-width:0;}
 .su-section legend{font-weight:700;padding:0 6px;}
+.su-roles{border:0;padding:0;margin:0;min-width:0;}.su-roles legend{font-weight:400;padding:0;}
 .su-choice{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);margin-bottom:8px;}
 .su-choice label,.su-same,.su-check{display:flex;gap:8px;align-items:center;min-height:var(--touch-target,44px);}
 .su-actions{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);align-items:center;}

@@ -220,7 +220,7 @@ def review_this_estimate(project, guided) -> dict:
     version = G.current_version(guided)
     out = {"version": version, "known": [], "decisions": [], "can_approve": False, "approved": False,
            "approval": None, "figures": None, "costing_current": False, "pricing_current": False,
-           "expected_total": "", "proposal": None}
+           "expected_total": "", "proposal": None, "block_words": COSTING_BLOCK_WORDS}
     if version is None:
         out["decisions"].append({"text": "Add the work and price it first.",
                                  "href": url_for("guided.workflow", project_id=project.id), "link": TASK_NAMES[PRICE]})

@@ -21,7 +21,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
-import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
+import { openSections, openSectionsIfProjectPage } from "./evidence_task_first.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
@@ -164,6 +164,7 @@ step("New Project asks what is being built and the contractor role, then asks wh
   const { pg, errors } = await person("ben", DESK);
   await submit(pg, pg.locator("a[data-new-project-estimate]"));
   assert.equal(pathOf(pg), "/projects/new");
+  await openSections(pg);  // Set Up This Project (Slice C): the project settings are in a closed section
   assert.equal(await pg.locator("[data-start-guided]").isChecked(), true);
   await pg.fill("input[name=name]", PROJECT);
   await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
@@ -363,6 +364,7 @@ step("Independent calculator: Create New Project, then Cancel returns to the cal
   const { pg, errors } = await person("ben", DESK);
   await submit(pg, pg.locator("[data-new-project-button]"));
   assert.equal(pathOf(pg), "/projects/new");
+  await openSections(pg);  // Set Up This Project (Slice C): the project settings are in a closed section
   assert.match(await pg.locator("[data-carry-banner]").innerText(), /Bringing your Concrete result/);
   await submit(pg, pg.locator("a[data-carry-cancel]"));
   assert.equal(pathOf(pg), "/calculators/concrete");

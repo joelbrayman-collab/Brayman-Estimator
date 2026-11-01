@@ -45,9 +45,30 @@ def _run(run_id):
 
 
 def _start(d, key, **data):
-    response = d.post(f"/wizards/{key}/start", data=data)
-    run_id = int(re.search(r"/wizards/run/(\d+)", response.headers["Location"]).group(1))
-    return run_id
+    """A wizard run to drive through its steps.
+
+    Task-First UX, Slice C (1 Nov 2026): the contractor wizards are retired as linear runs, so their web start now
+    opens the Guided Task (tests/test_guided_tasks.py proves it, and that no run is started). A run started before the
+    retirement keeps working through every step, so these tests create the run the way the start did (the same
+    service, the same company, person and project) and then drive it through the same pages as before. Equivalent
+    coverage: the run, its steps, drafts, handlers and refusals are all still exercised over HTTP.
+    """
+    from app.services.guided_tasks import RETIRED_WIZARDS
+
+    if key not in RETIRED_WIZARDS:
+        response = d.post(f"/wizards/{key}/start", data=data)
+        return int(re.search(r"/wizards/run/(\d+)", response.headers["Location"]).group(1))
+    from app.models.user import User
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID
+    from app.wizards import service as S
+
+    with d.http.session_transaction() as session:  # the signed-in person, as the start route would see them
+        user = db.session.get(User, int(session["_user_id"]))
+    project_id = data.get("project_id")
+    run = S.start_contractor_run(key, organization_id=DEFAULT_ORGANIZATION_ID,
+                                 actor=getattr(user, "display_name", "") or "Signed-in user",
+                                 user_id=getattr(user, "id", None), project_id=int(project_id) if project_id else None)
+    return run.id
 
 
 def _step(d, run_id, step, action="next", expect=302, **data):
@@ -86,22 +107,26 @@ def test_home_asks_what_do_you_need_to_do_and_keeps_every_existing_tool(env):
     # Home starts each guided wizard from one compact band (Project Creation UX, 27 Oct 2026): Start (primary) and
     # Continue manually, and the Company Calendar; no second set of start buttons.
     # Task-First UX (31 Oct 2026): the band is named for its outcome, "Start something" (was "Guided Wizards").
-    assert "Start something" in home and "What are Wizards?" in home
-    for label in ("Start a New Project", "Estimate a Project", "Manage a Project"):
+    # Slice C (1 Nov 2026): the three wizards are retired; the band's three starts are the Guided Tasks, and the
+    # "Start Guided Wizard / Continue manually" fork is gone (one way to do each task). Equivalent coverage: one start
+    # each, the same hooks on the task that took over the wizard's job, the same pages reached (/projects/new and
+    # /estimating/start were the two "Continue manually" pages), and the old start URL opens the same task.
+    assert "Start something" in home and "What are Wizards?" not in home
+    for label in ("Set Up This Project", "Price This Job", "Review This Estimate"):
         assert label in home
-    assert home.count("data-start-wizard=") == 3 and home.count(">Continue manually</a>") == 3
-    for key in ("NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"):
-        assert f'href="/wizards/{key}/start" data-start-wizard="{key}">' in home
+    assert home.count("data-guided-task=") == 3 and home.count(">Continue manually</a>") == 0
+    assert home.count("data-start-wizard=") == 2
+    assert 'href="/projects/new" data-guided-task="set_up" data-start-wizard="NEW_PROJECT">' in home
+    assert 'href="/estimating/start" data-guided-task="price" data-start-wizard="GUIDED_ESTIMATING" data-home-start-estimate>' in home
     # Nothing that was on Home before is gone: the New Project form, the estimate form, Company Calendar.
-    assert home.count("data-home-start-estimate") == 1 and home.count('class="home-start') == 1
+    assert home.count("data-home-start-estimate") == 1 and home.count('home-start') == 1
     assert home.count('class="home-calendar') == 1
     assert "+ Start New Project" not in home and "Start New Estimate" not in home  # the duplicates are gone
-    # Continue Manually goes straight to the existing page.
-    assert 'class="home-start hc-manual" href="/projects/new" data-continue-manually="NEW_PROJECT"' in home
-    assert 'href="/estimating/start" data-continue-manually="GUIDED_ESTIMATING" data-home-start-estimate' in home
-    # The entry pages offer both too.
-    assert 'data-start-wizard="NEW_PROJECT"' in d.get("/projects/new")
-    assert 'data-start-wizard="GUIDED_ESTIMATING"' in d.get("/estimating/start")
+    for key, page in (("NEW_PROJECT", "/projects/new"), ("GUIDED_ESTIMATING", "/estimating/start")):
+        assert d.http.get(f"/wizards/{key}/start").headers["Location"].endswith(page)
+    # The entry pages are the Guided Tasks themselves (no wizard bar on them any more).
+    assert "Set Up This Project" in d.get("/projects/new")
+    assert "Price This Job" in d.get("/estimating/start")
 
 
 def test_start_a_new_project_end_to_end_creates_the_project_once(env):
@@ -179,9 +204,11 @@ def test_start_a_new_project_end_to_end_creates_the_project_once(env):
     assert "data-start-estimating" in created and "data-create-another" in created
     assert Project.query.filter_by(organization_id=ORG).count() == 1
     # Start Guided Estimating from there opens the estimating wizard on the project.
+    # Slice C (1 Nov 2026): it opens the Guided Task, Price This Job, on the project; no wizard run is started.
+    assert f'href="/projects/{project.id}/guided" data-start-estimating>Price This Job</a>' in created
     started = d.post("/wizards/GUIDED_ESTIMATING/start", data={"project_id": str(project.id)})
-    estimating = WizardRun.query.filter_by(wizard_key="GUIDED_ESTIMATING", project_id=project.id).one()
-    assert started.headers["Location"].endswith(f"/wizards/run/{estimating.id}")
+    assert WizardRun.query.filter_by(wizard_key="GUIDED_ESTIMATING", project_id=project.id).count() == 0
+    assert started.headers["Location"].endswith(f"/projects/{project.id}/guided")
 
 
 def test_save_exit_resume_autosave_and_interruption_recovery(env):

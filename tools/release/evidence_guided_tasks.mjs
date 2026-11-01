@@ -83,6 +83,17 @@ async function onePrimary(pg, label) {
   const visible = await pg.locator("main .ts-primary").evaluateAll((els) => els.filter((e) => e.offsetParent !== null).length);
   assert.equal(visible, 1, `${label}: one primary action`);
 }
+// For the release report: what a person sees on a screen (visible links and buttons in the page body, not the menu).
+async function visibleControls(pg, label) {
+  const counts = await pg.evaluate(() => {
+    const seen = (e) => e.offsetParent !== null && !e.closest("nav, .shell-sidebar, header");
+    const main = document.querySelector("main") || document.body;
+    return { links: [...main.querySelectorAll("a[href]")].filter(seen).length,
+      buttons: [...main.querySelectorAll("button, input[type=submit]")].filter(seen).length };
+  });
+  console.log(`SCREEN ${label}: ${counts.links} links, ${counts.buttons} buttons visible`);
+  return counts;
+}
 async function manualCost(pg, { kind, description, quantity, unit = "", unitCost = "" }) {
   const form = pg.locator("form[data-manual-cost]");
   if (!(await form.isVisible())) await pg.locator("#manual > summary").click();
@@ -112,11 +123,12 @@ test("Set Up This Project: one screen, settings closed, creates the job with its
   await press(pg, '[data-guided-task="set_up"]');
   assert.equal(pathOf(pg), "/projects/new");
   await onePrimary(pg, "Set Up This Project");
+  await visibleControls(pg, "Set Up This Project");
   assert.equal(await pg.locator("#ts-project-settings").evaluate((d) => d.open), false, "settings closed");
   await pg.selectOption("select[name=client_id]", String(facts.customer_id));
   await pg.fill("input[name=name]", "Avery rear deck (synthetic)");
   await pg.selectOption("select[name=guided_project_type]", "OTHER");
-  await pg.selectOption("select[name=contractor_role]", "GENERAL_CONTRACTOR");
+  await pg.check('input[name=contractor_role][value="GENERAL_CONTRACTOR"]');
   await pg.locator("[data-same-as-customer]").check();
   await pg.locator("label[for=plan-start-none]").click();
   assert.equal(await pg.inputValue("input[name=street]"), "12 Synthetic Lane", "same as the customer's address");
@@ -136,6 +148,7 @@ test("Price This Job: the work list and ONE next item; priced, it points to Revi
   await go(pg, `/projects/${W.project}/guided`);
   assert.match(await pg.locator("[data-ts-purpose]").innerText(), /Price This Job/);
   await onePrimary(pg, "Price This Job");
+  await visibleControls(pg, "Price This Job");
   const next = pg.locator("[data-next-step-action]");
   assert.match(await next.innerText(), /^Price Deck/);
   assert.equal(await pg.locator("#ts-price-details").evaluate((d) => d.open), false, "details closed");
@@ -161,6 +174,7 @@ test("Review This Estimate: ONE Approve names the total; approving locks it and 
   await submit(pg, step);
   assert.equal(pathOf(pg), `/projects/${W.project}/guided/pricing`);
   await onePrimary(pg, "Review This Estimate");
+  await visibleControls(pg, "Review This Estimate");
   const total = await pg.locator("input[name=expected_total]").inputValue();
   const shown = Number(total).toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   assert.match(await pg.locator("[data-approve-consequence]").innerText(), new RegExp(`locks .*\\$${shown.replace(/,/g, ",")}`));
@@ -212,6 +226,7 @@ test("Field Today at 390 px: today's work first, one visible primary, the rest c
   const primaries = await pg.locator(".field-btn-primary").evaluateAll(
     (els) => els.filter((e) => e.offsetParent !== null && !e.closest("[data-field-texts-setup]")).length);
   assert.equal(primaries, 1, "one primary action");
+  await visibleControls(pg, "Field Today (phone)");
   assert.equal(await pg.locator("[data-field-today-more]").evaluate((d) => d.open), false, "More for today is closed");
   const workBox = await work.boundingBox();
   const moreBox = await pg.locator("[data-field-today-more]").boundingBox();

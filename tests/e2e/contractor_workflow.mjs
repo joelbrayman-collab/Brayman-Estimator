@@ -100,6 +100,8 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     assert.match(await flash(), /Client created/);
     await page.goto(`${base}/`);
     await submit(page.locator("a.home-start"));
+    // Set Up This Project (Slice C, 1 Nov 2026): the project settings are in a closed section; open it as a person does.
+    await page.evaluate(() => document.querySelectorAll("details[data-ts-section]").forEach((d) => { d.open = true; }));
     await page.fill("[name=name]", "E2E Synthetic Footing Job (not a customer)");
     await page.selectOption("[name=client_id]", { label: "E2E Synthetic Client (not a customer)" });
     await page.selectOption("[name=status]", "Estimating");

@@ -21,7 +21,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
-import { openSectionsIfProjectPage } from "./evidence_task_first.mjs";
+import { openSections, openSectionsIfProjectPage, seedWizardRun } from "./evidence_task_first.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
@@ -141,6 +141,7 @@ async function recordQuote(pg, { name, code, reference, amount }) {
 }
 async function newProject(pg, name, guided) {
   await go(pg, guided ? "/projects/new?guided=1" : "/projects/new");
+  await openSections(pg);  // Set Up This Project (Slice C): the project settings are in a closed section
   await pg.fill("input[name=name]", name);
   await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
   if (guided) {
@@ -157,10 +158,15 @@ async function newProject(pg, name, guided) {
   await submit(pg, pg.locator("form.form-panel button[type=submit]"));
 }
 async function priceAndPropose(pg, project) {
+  // Review This Estimate (Slice C): the separate costing and pricing steps are kept in closed sections; this walk
+  // opens them, as a person does, and uses them one at a time as before.
   await go(pg, `/projects/${project}/guided/pricing`);
+  await openSections(pg);
   if (await pg.locator("[data-approve-costing]").count()) await press(pg, "[data-approve-costing]");
+  await openSections(pg);
   if (await pg.locator("[data-apply-pricing]").count()) await press(pg, "[data-apply-pricing]");
   await go(pg, `/projects/${project}/guided/pricing`);
+  await openSections(pg);
   assert.equal(await pg.locator("[data-pricing-blocked]").count(), 0, "nothing blocks pricing");
   await press(pg, "a[data-create-proposal]");
   assert.match(pathOf(pg), /\/proposals\/new|\/proposal/);
@@ -176,9 +182,10 @@ step("Guided: Project Creation hands over to What work are we doing? with nothin
   W.guided = Number(pathOf(pg).split("/")[2]);
   assert.match(await flash(pg), /What work are we doing\?/);
   assert.equal(await pg.locator("[data-work-item]").count(), 0);
-  await go(pg, `/projects/${W.guided}`);
-  await submit(pg, pg.locator('[data-start-wizard="GUIDED_ESTIMATING"]').first());
-  W.run = Number(pathOf(pg).match(/\/wizards\/run\/(\d+)/)[1]);
+  // Slice C (1 Nov 2026): the Guided Estimating wizard is retired (its start opens Price This Job). A run started
+  // before the retirement keeps working; this walk opens such a run (tests/wizard_run_seed.py) and checks it.
+  W.run = await seedWizardRun(REPO, facts.database_uri, "GUIDED_ESTIMATING", facts.people.ben[0], W.guided);
+  await go(pg, `/wizards/run/${W.run}`);
   if (!/\/step\/work$/.test(pathOf(pg))) await go(pg, `/wizards/run/${W.run}/step/work`);
   assert.equal(await pg.getAttribute("[data-wizard-step]", "data-wizard-step"), "work");
   const text = await mainText(pg);

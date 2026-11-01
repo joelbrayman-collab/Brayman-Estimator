@@ -106,7 +106,8 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     html = response.get_data(as_text=True)
     assert contractor_copy.DASHBOARD_HEADING in html
     # One way to start a project on Home (Project Creation UX): the guided start, with Continue manually beside it.
-    assert 'data-start-wizard="NEW_PROJECT"' in html and "Start a New Project" in html
+    # Slice C (1 Nov 2026): that one way is the Guided Task, Set Up This Project (the hook stays on it).
+    assert 'data-start-wizard="NEW_PROJECT"' in html and "Set Up This Project" in html
     assert contractor_copy.HOME_START_PROJECT not in html
     assert 'href="/projects/new"' in html
     assert 'id="help-dashboard"' in html

@@ -17,6 +17,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
 import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { openFieldTodayMore } from "./evidence_task_first.mjs";
 
 let browser, server, base, facts, kevin, ben;
 const SHOTS = process.env.EVIDENCE_SHOTS || "";
@@ -204,6 +205,7 @@ step("3 Kevin, on his iPhone, sends job time and shop time once", async () => {
   await sendTime(pg, { element: facts.element, work: facts.activity, hours: "10" });
   assert.match(await flash(pg), /Time sent for approval\./);
   await go(pg, "/field/today");
+  await openFieldTodayMore(pg);  // Field Today (Slice C): Shop / Company Work is under "More for today"
   await submit(pg, pg.locator("a[data-company-time]").first());
   assert.match(await text(pg), /Shop \/ Company Work: paid company time, not a customer's job/);
   await phone(pg, "03-shop-form");

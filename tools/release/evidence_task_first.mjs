@@ -9,3 +9,25 @@ export async function openSections(pg) {
 export async function openSectionsIfProjectPage(pg) {
   if (PROJECT_PAGE.test(new URL(pg.url()).pathname)) await openSections(pg);
 }
+
+// Task-First UX, Slice C (1 Nov 2026): the contractor wizards' start now opens the Guided Task and starts nothing.
+// A run started before the retirement keeps working, so a walk that checks the runner opens such a run: made in the
+// walk's own temporary database by tests/wizard_run_seed.py (the same service the start used). Returns the run id.
+import { execFile } from "node:child_process";
+import path from "node:path";
+export function seedWizardRun(repo, databaseUri, key, email, projectId = "") {
+  return new Promise((resolve, reject) => {
+    execFile(path.join(repo, "venv/bin/python"), [path.join(repo, "tests/wizard_run_seed.py"), databaseUri, key, email,
+      projectId ? String(projectId) : ""], { cwd: repo }, (err, stdout, stderr) => {
+      const m = /RUN (\d+)/.exec(stdout || "");
+      if (err || !m) return reject(new Error(`wizard run seed failed: ${err || ""}\n${stdout}\n${stderr}`));
+      resolve(Number(m[1]));
+    });
+  });
+}
+
+// Field Today (Slice C, 1 Nov 2026): the job's secondary buttons, print and help are under a closed "More for today".
+// A walk that uses one of them opens it first, as the crew member does.
+export async function openFieldTodayMore(pg) {
+  await pg.evaluate(() => document.querySelectorAll("details[data-field-today-more]").forEach((d) => { d.open = true; }));
+}

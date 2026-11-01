@@ -162,6 +162,12 @@ def view_project(id):
         project.drawing_requirement,
         bool(project_plans(org_id, project.id)),
     )
+    operating = hub_operating_template_vars(project, org_id, current_user)
+    closeout = hub_punch_list_template_vars(project, org_id, current_user)
+    walkthrough = hub_walkthrough_template_vars(project, org_id, current_user)
+    records = hub_record_template_vars(project, org_id)
+    task = project_task_screen_vars(project, org_id, hub=hub, records=records, operating=operating,
+                                    walkthrough=walkthrough, drawing_state=drawing_state)
     return render_template(
         "projects/detail.html",
         project=project,
@@ -178,11 +184,47 @@ def view_project(id):
             organization_id=org_id,
             project_id=project.id,
         ),
-        **hub_operating_template_vars(project, org_id, current_user),
-        **hub_punch_list_template_vars(project, org_id, current_user),
-        **hub_walkthrough_template_vars(project, org_id, current_user),
-        **hub_record_template_vars(project, org_id),
+        **operating,
+        **closeout,
+        **walkthrough,
+        **records,
+        **task,
     )
+
+
+def project_task_screen_vars(project, organization_id, *, hub, records, operating, walkthrough, drawing_state) -> dict:
+    """The Project page as a Task Screen (Task-First UX, 31 Oct 2026): the one Next step from the job's real state,
+    "What Calibrayt already knows", this job's attention items and the Documents slot. Read only."""
+    from flask import current_app
+
+    from app.services.clients import missing_information
+    from app.services.needs_attention import assemble
+    from app.services.project_next_step import known_facts, next_step
+
+    attention = assemble(organization_id, current_user, project_id=project.id)
+    items = attention.get("items") or []
+    latest = walkthrough.get("walkthrough_latest_invitation")
+    answered = bool(latest is not None and latest.status == "RESPONDED" and not walkthrough.get("walkthrough_pending_items"))
+    closed = operating.get("project_is_closed", False)
+    step = next_step(project, organization_id, guided_summary=records.get("guided_summary"),
+                     hub_contracts=records.get("hub_contracts") or (), purchase_orders=records.get("purchase_orders") or (),
+                     attention_items=items, can_close=operating.get("can_manage_operating_lifecycle", False),
+                     is_closed=closed, open_closeout_items=walkthrough.get("walkthrough_open_punch_list_count") or 0,
+                     walkthrough_answered=answered)
+    missing = missing_information(project.client) if (project.client is not None and not closed) else []
+    facts = known_facts(project, job_address=records.get("job_address") or "", customer_missing=missing,
+                        drawing_state=drawing_state, guided_summary=records.get("guided_summary"),
+                        hub_contracts=records.get("hub_contracts") or (),
+                        purchase_orders=records.get("purchase_orders") or (), schedule=hub.get("schedule"))
+    documents_endpoint = "documents.project_documents"
+    return {
+        "next_step": step,
+        "project_facts": facts,
+        "project_attention": items,
+        # Documents (the Documents feature, another branch): linked once its endpoint is registered.
+        "project_documents_url": (url_for(documents_endpoint, project_id=project.id)
+                                  if documents_endpoint in current_app.view_functions else None),
+    }
 
 
 def hub_record_template_vars(project, organization_id: str) -> dict:

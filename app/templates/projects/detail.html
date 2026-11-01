@@ -5,11 +5,18 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="page-heading">
+{% import "partials/task_screen.html" as ts with context %}
+{# The Project page as a Task Screen (Task-First UX, 31 Oct 2026; audit 3.4 and 7.2).
+   Context (who, where, which stage) -> the ONE Next step from the job's real state (app/services/project_next_step.py)
+   -> What Calibrayt already knows -> what needs you on this job -> every other part of the job in closed sections.
+   Every earlier action, panel and data-* hook is kept; it moved into its section or into More actions. #}
+<div class="task-screen project-task-screen" data-project-task-screen>
+<div class="page-heading ts-context project-context" data-ts-context>
     {# Office tidy (Joel, 24 Oct 2026): no "Project Hub" label over the name; number, client and current/closed on one line. #}
     <div class="hub-heading-identity">
-        <h1>{{ project.name }}</h1>
+        <h1>{{ project.name }} <span class="ts-stage" data-ts-stage data-project-stage>{{ project.status }}</span></h1>
         <p class="hub-project-numbers" data-project-identity><strong data-brayman-project-number>{{ project.project_number or "No project number" }}</strong>{% if project.client_project_number %} · <span data-client-project-number>Client Project # {{ project.client_project_number }}</span>{% endif %} · {{ project.client.name }}</p>
+        {% if job_address %}<p class="hub-project-address" data-project-address>{{ job_address }}</p>{% endif %}
         {% if not project_is_closed %}
         <details class="hub-client-number"><summary>{% if project.client_project_number %}Change Client Project #{% else %}Add Client Project #{% endif %}</summary>
             <form method="post" action="{{ url_for('projects.update_client_project_number', id=project.id) }}" data-client-number-form>
@@ -28,20 +35,45 @@
         <style>.hub-customer-incomplete { margin: 4px 0 0; padding: 4px 10px; background: #fff7e0; border: 1px solid #f0d58a; border-radius: 8px; font-size: .9rem; display: inline-block; }</style>
         {% endif %}
     </div>
-    {# V1 refinement (Joel, 16 Oct 2026): one primary next action; every other existing action is kept, grouped and quieter. #}
-    <div class="hub-heading-actions">
-        <div class="action-group action-group-primary">
-            {% if not project_is_closed %}
-            <a class="button" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
-            {% elif can_manage_operating_lifecycle %}
-            <a class="button" href="{{ url_for('projects.reopen_project', id=project.id) }}">{{ contractor_copy.PROJECT_REOPEN_ACTION }}</a>
+</div>
+
+{{ ts.next_step(next_step, eyebrow=next_step.eyebrow) }}
+
+<div class="project-overview-grid">
+    {{ ts.state(project_facts) }}
+    {{ ts.attention(project_attention, heading="Needs you on this job", empty="Nothing on this job is waiting on you.") }}
+</div>
+
+<nav class="project-sections" aria-label="Parts of this job">
+    <ul class="ts-sections">
+        <li><a href="#ts-estimate">Scope &amp; Estimate</a></li>
+        <li><a href="#ts-customer">Customer &amp; Contract</a></li>
+        <li><a href="#ts-purchasing">Purchasing</a></li>
+        <li><a href="#ts-schedule">Schedule</a></li>
+        <li><a href="#ts-work">Work &amp; Time</a></li>
+        <li><a href="#ts-changes">Changes</a></li>
+        <li><a href="#ts-money">Money</a></li>
+        <li><a href="#ts-closeout">Closeout</a></li>
+        <li><a href="#ts-documents">Documents</a></li>
+        <li><a href="#ts-plans">Plans &amp; Permits</a></li>
+        <li><a href="#ts-details">Project details</a></li>
+    </ul>
+</nav>
+
+{# V1 refinement (Joel, 16 Oct 2026) kept every action; Task-First (31 Oct 2026): one primary (Next step above), the
+   rest here, closed until asked for. #}
+<details class="ts-details hub-more-actions" id="ts-more-actions" data-more-actions>
+    <summary><span>More actions</span><span class="ts-details-hint">Drawings, scope, change order, print, close and the guided wizard</span></summary>
+    <div class="ts-details-body">
+    <div class="hub-heading-actions ts-more-actions">
+        <div class="action-group" aria-label="Project setup">
+            {% if next_step.key != 'setup' %}<a class="button button-secondary" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>{% endif %}
+            {% if project_is_closed and can_manage_operating_lifecycle and next_step.key != 'closed' %}
+            <a class="button button-secondary" href="{{ url_for('projects.reopen_project', id=project.id) }}">{{ contractor_copy.PROJECT_REOPEN_ACTION }}</a>
             {% endif %}
         </div>
         <div class="action-group" aria-label="Project information">
-            {% if project_is_closed %}
-            <a class="button button-secondary" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
-            {% endif %}
-            <a class="button button-secondary" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
+                        <a class="button button-secondary" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
             <a class="button button-secondary" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
             <a class="button button-secondary" href="{{ url_for('projects.construction_information', id=project.id) }}">{% if construction_revision is defined and construction_revision %}Update construction information{% else %}Enter construction information{% endif %}</a>
         </div>
@@ -50,85 +82,695 @@
             <a class="button button-secondary" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
             {% endif %}
             <a class="button button-secondary desk-print" href="{{ url_for('projects.print_project', id=project.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
-            {% if can_manage_operating_lifecycle and not project_is_closed %}
+            {% if can_manage_operating_lifecycle and not project_is_closed and next_step.url != url_for('projects.close_project', id=project.id) %}
             <a class="button button-secondary" href="{{ url_for('projects.close_project', id=project.id) }}">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</a>
             {% endif %}
         </div>
     </div>
-</div>
 {% if not project_is_closed %}{% set wz = project_wizard_entry(project) %}{% if wz %}
 {% from "wizards/_entry.html" import wizard_entry with context %}
 {{ wizard_entry(wz.key, wz.title, wz.text, url_for('wizards.start', wizard_key=wz.key), fields={"project_id": project.id}, manual_label="Continue Manually (this page)", resume=wz.resume) }}
 {% endif %}{% endif %}
-
-<div class="hub-lifecycle-row">
-    <nav class="hub-lifecycle" aria-label="CalibraytAI lifecycle">
-        <a class="hub-lifecycle-step" href="#hub-identity">Project</a>
-        <a class="hub-lifecycle-step" href="#hub-commercial">Settings</a>
-        <a class="hub-lifecycle-step" href="#hub-monitor">Money</a>
-        <a class="hub-lifecycle-step" href="#hub-plan">Documents</a>
-        <a class="hub-lifecycle-step" href="#hub-build">Project work</a>
-        <span class="hub-lifecycle-step is-future">LEARN · Future</span>
-    </nav>
-    <details class="page-more" data-page-more>
-        <summary>More about this page</summary>
-        <div class="page-more-body"><p class="muted-copy hub-lifecycle-note">The internal cost breakdown, the customer estimate, and QuickBooks entry are available on this project. QuickBooks is typed in by hand. The Brayman contract is generated from the accepted proposal on the Contract page and is sent from there for the customer's electronic signature. Generating it does not sign it. LEARN remains future.</p><p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p><p class="muted-copy">Choose the work and who does it; CalibraytAI brings the right calculator or quote to each one.</p><p class="muted-copy">Send the proposal to the client from the proposal page. The client accepts it on their link (or the office records an acceptance given another way). An accepted proposal stays immutable; its contract is then generated on the Contract page, ready to send.</p><p class="muted-copy">Results linked from the calculators. A record of what was entered and calculated; a result reaches the estimate only after you review and confirm it.</p></div>
-    </details>
-</div>
-
-<section class="form-panel" id="hub-identity" style="margin-bottom: 20px;">
-    <p class="hub-section-label">Project</p>
-    <div class="form-grid">
-        <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
-        <div><p class="eyebrow">Address</p><p>{{ job_address or "—" }}</p></div>
-        <div><p class="eyebrow">Client</p><p>{{ project.client.name }} · <a href="{{ url_for('projects.correct_project_client_page', id=project.id) }}">Correct client</a></p></div>
-        <div data-hub-project-lead><p class="eyebrow">Project Lead</p><p><span data-project-lead>{{ project_lead_name(project) }}</span> · <a href="{{ url_for('projects.edit_project_lead', id=project.id) }}">{{ "Change" if project.project_lead_user_id else "Choose" }}</a></p></div>
-        <div><p class="eyebrow">Created</p><p>{{ project.created_at|local_time("%Y-%m-%d", zone_label=False) }}</p></div>
     </div>
-    <p class="muted-copy" style="margin-top: 12px;"><a href="{{ url_for('workflow_map.contractor', project_id=project.id) }}#workflow-stage" data-project-workflow-link>Where this job is in the Workflow Guide</a></p>
-    {% if project.description %}
-    <p style="margin-top: 16px;">{{ project.description }}</p>
-    {% endif %}
-</section>
+</details>
 
-<p class="hub-section-label" id="hub-commercial">Commercial settings</p>
-{% set ctx = project.current_commercial_context %}
-<section class="form-panel" style="margin-bottom: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="margin: 0;">{{ contractor_copy.PRICING_ASSUMPTIONS_HEADING }}{% if ctx %} (version {{ ctx.version_number }}){% endif %}</h3>
-        <a class="button-link" href="{{ url_for('projects.edit_commercial_context', id=project.id) }}">Update Context</a>
-    </div>
-    {% if ctx %}
-        {% if ctx.is_legacy_unknown %}
-        <div style="background: #fdf6e2; border-left: 4px solid #c79a2b; padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
-            <p style="margin: 0; font-weight: 600; color: #8a6d3b;">{{ contractor_copy.LEGACY_PRICING_ASSUMPTIONS_HEADING }}</p>
-            <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.9em;">
-                This project was created before pricing assumptions were recorded. Past assumptions will not be guessed. If this project becomes active, use Update Context to record them.
-            </p>
+
+{% call ts.details("Scope &amp; Estimate", "ts-estimate", hint=(guided_summary.done ~ " of " ~ guided_summary.included ~ " work items priced") if guided_summary and guided_summary.included else "Work, prices, calculations and estimates") %}
+<p class="hub-section-label" id="hub-price">Estimates and proposals</p>
+{{ contextual_help(help_content.hub_topic("price")) }}
+<section class="dash-panels">
+    <article class="panel panel-wide" id="hub-guided-estimate" data-hub-guided>
+        <div class="panel-header">
+            <h2>Estimate</h2>
+            {% if guided_summary and not guided_summary.selected %}<a href="{{ url_for('guided.workflow', project_id=project.id) }}">All stages</a>{% endif %}
+            {% if guided_summary and guided_summary.selected %}<a href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-hub-add-work>Add work</a>{% endif %}
         </div>
+        {% if guided_summary and guided_summary.selected %}
+        {% set gs = guided_summary %}
+        {% if gs.names %}
+        <p class="muted-copy" data-hub-work>Estimating: {{ gs.names|join(', ') }} · {{ gs.done }} of {{ gs.included }} work item{{ '' if gs.included == 1 else 's' }} complete</p>
         {% else %}
-        <div class="form-grid">
-            <div><p class="eyebrow">Project Type</p><p><strong>{{ ctx.project_type }}</strong></p></div>
-            <div><p class="eyebrow">Pricing Posture</p><p><strong>{{ ctx.pricing_posture }}</strong></p></div>
-            <div><p class="eyebrow">Execution Risk</p><p><strong>{{ ctx.execution_risk }}</strong></p></div>
-            <div><p class="eyebrow">Schedule Condition</p><p><strong>{{ ctx.schedule_condition }}</strong></p></div>
-            <div><p class="eyebrow">Site Condition</p><p><strong>{{ ctx.site_condition }}</strong></p></div>
-            <div><p class="eyebrow">Estimate Stage</p><p><strong>{{ ctx.estimate_stage }}</strong></p></div>
-            <div><p class="eyebrow">Delivery Model</p><p><strong>{{ ctx.delivery_model|delivery_model_label }}</strong></p></div>
-            <div><p class="eyebrow">Captured By</p><p>{{ ctx.created_by or "System" }} ({{ ctx.created_at.strftime("%Y-%m-%d") }})</p></div>
+        <p class="muted-copy" data-hub-work>No work chosen yet. <a href="{{ url_for('guided.scope', project_id=project.id) }}">What work are we doing?</a></p>
+        {% endif %}
+        <p>
+            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
+            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
+        </p>
+        {% elif guided_summary %}
+        {% set gs = guided_summary %}
+        <p class="muted-copy">{{ gs.guided.project_type_label }} · {{ gs.guided.contractor_role_label }} · {% if gs.guided.scope_status == 'FINALIZED' %}{{ gs.done }} of {{ gs.included }} stages complete{% else %}scope still a draft{% endif %}</p>
+        <p>
+            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
+            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
+            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
+        </p>
+        {% else %}
+        <p><a class="button" data-hub-guided-start href="{{ url_for('guided.workflow', project_id=project.id) }}">Start the guided estimate</a></p>
+        {% endif %}
+    </article>
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Related Estimates</h2>
+            <a href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
+            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+        </div>
+        <p class="muted-copy">{{ contractor_copy.HUB_PRICE_LIST_NOTE }}</p>
+        {% if hub.estimate_rows %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Estimate</th>
+                    <th>Status</th>
+                    <th>Current version</th>
+                    <th>{{ contractor_copy.HUB_PRICING_RECORDED_HEADING }}</th>
+                    <th>{{ contractor_copy.HUB_LABOUR_RECORDED_HEADING }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in hub.estimate_rows %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('estimates.view_estimate', id=row.estimate.id) }}">{{ row.estimate.title }}</a>
+                        <div class="muted-copy">{{ row.estimate.estimate_number }}</div>
+                    </td>
+                    <td><span class="status">{{ row.estimate.status }}</span></td>
+                    <td>
+                        {% if row.current_version %}
+                        <a href="{{ url_for('estimates.view_version', id=row.estimate.id, version_id=row.current_version.id) }}">v{{ row.current_version.version_number }}</a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.pricing_snapshot_present %}
+                        {{ contractor_copy.HUB_RECORDED_LABEL }} · {{ contractor_copy.pricing_method_label(row.pricing_method) }}
+                        {% else %}
+                        {{ contractor_copy.HUB_NOT_RECORDED_LABEL }}
+                        {% endif %}
+                    </td>
+                    <td>{{ contractor_copy.HUB_RECORDED_LABEL if row.labour_snapshot_present else contractor_copy.HUB_NOT_RECORDED_LABEL }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No estimates</h3>
+            <p>Create an estimate for this project to begin pricing.</p>
+            <a class="button-link" href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
         </div>
         {% endif %}
-        {% if ctx.justification_reason %}
-        <p style="margin-top: 12px;"><strong>Justification:</strong> <em>{{ ctx.justification_reason }}</em></p>
-        {% endif %}
-        {% if ctx.change_summary and not ctx.is_legacy_unknown %}
-        <p class="muted-copy" style="margin-top: 4px; font-size: 0.85em;">{{ ctx.change_summary }}</p>
-        {% endif %}
-    {% else %}
-        <p class="muted-copy">{{ contractor_copy.NO_PRICING_ASSUMPTIONS }}</p>
-    {% endif %}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Organization methodology: <a href="{{ url_for('pricing_engine.index') }}">{{ contractor_copy.PRICING_HEADING }}</a> ·
+            <a href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }}</a>
+            (catalogues, not this project’s operating data).
+        </p>
+        <p class="muted-copy" style="margin-top: 12px;">
+            <a href="{{ url_for('scope_delivery.review', project_id=project.id) }}">Scope Delivery Review</a>
+            — who provides material and who performs labour. Subcontract quote evidence is recorded there; selecting a quote does not set cost or pricing.
+            <a href="{{ url_for('supplier_package.mapping_review', project_id=project.id) }}">Supplier Package</a>
+            — mapping review and supplier-facing package. Price evidence is inform only.
+            <a href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck Takeoff</a>
+            <a href="{{ url_for('construction_drawings.index', project_id=project.id) }}">Construction Drawings</a>
+            — pool-deck material takeoff, supplier request, and supplier price return. Does not create estimate lines.
+            <a href="{{ url_for('estimate_quickbooks.review', project_id=project.id) }}">QuickBooks-ready entry</a>
+            — internal office sales-entry sheet and planned cost-class companion. Manual QuickBooks entry only. Not posted. Download does not confirm entry.
+        </p>
+    </article>
 </section>
+<section class="dash-panels">
+    <article class="panel panel-wide" id="calculations">
+        <div class="panel-header">
+            <h2>Calculations</h2>
+            <a href="{{ url_for('calculators.concrete') }}">Calculators</a>
+        </div>
+        {% if project_calculations %}
+        <table class="data-table">
+            <thead><tr><th>Date</th><th>Calculator</th><th>Result</th><th>By</th></tr></thead>
+            <tbody>
+                {% for calc in project_calculations %}
+                <tr data-project-calculation="{{ calc.id }}">
+                    <td>{{ calc.created_at.strftime("%Y-%m-%d") }}</td>
+                    <td>{{ calc.calculator_label }}{% if calc.reference %}<br><span class="muted-copy">{{ calc.reference }}</span>{% endif %}</td>
+                    <td>{{ calc.summary }}
+                        <details><summary>Details</summary>
+                            {% if calc.entered %}<p><strong>Entered</strong></p><ul>{% for row in calc.entered %}<li>{{ row.label }}: {{ row.value }}</li>{% endfor %}</ul>{% endif %}
+                            <p><strong>Calculated</strong></p><pre style="white-space: pre-wrap; font: inherit;">{{ calc.result_text }}</pre>
+                        </details>
+                    </td>
+                    <td>{{ calc.actor_display_name }}{% if calc.payload %}<br><a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-calculation-review-link>{% if calc.review_status == 'IN_REVIEW' %}In the estimate review{% else %}Review it for the estimate{% endif %}</a>{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted-copy">No calculations linked yet. On any calculator, calculate, choose this project under Link to a project, and select Link to project.</p>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
 
+{% call ts.details("Customer &amp; Contract", "ts-customer", hint="Proposals, acceptance and the contract") %}
+<p class="hub-section-label" id="hub-contract">Contract</p>
+{{ contextual_help(help_content.hub_topic("contract")) }}
+{% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
+<section class="dash-panels">
+    <article class="panel panel-wide" id="hub-contract-legal">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.CONTRACT_STATUS_HEADING }}</h2>
+        </div>
+        <p class="eyebrow">{{ contract_copy.heading }}</p>
+        <p>{{ contract_copy.lede }}</p>
+        <p>{{ contract_copy.next }}</p>
+        {% if contract_copy.show_package %}
+        {% if contract_copy.ontario %}<p>Ontario</p>{% endif %}
+        <p>{{ contract_copy.package_title }}</p>
+        <p>Version {{ contract_copy.package_version }}</p>
+        <p>Effective date {{ contract_copy.effective_from }}</p>
+        <p>Status {{ contract_copy.package_status }}</p>
+        {% if contract_copy.counsel_approved %}<p>Counsel approved</p>{% endif %}
+        <p><a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a></p>
+        {% endif %}
+        {% for contract in hub_contracts %}
+        <p data-hub-contract="{{ contract.number }}"><strong>{{ contract.number }}</strong> · {{ contract.label }}{% if loop.first and not contract_copy.show_package %} · <a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a>{% endif %}</p>
+        {% endfor %}
+        {% if contract_copy.warned %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_PENDING_UPDATE_WARN }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_ACTIVE_REMAINS_AUTHORITY }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
+        {% endif %}
+        {% if contract_copy.blocked %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_SAFEGUARD }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_PRODUCTION_GENERATED }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_FAMILY_05_FALLBACK }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
+        {% endif %}
+        {% if contract_copy.block_code or contract_copy.warn_code or contract_copy.jurisdiction_code %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_OFFICE_DETAIL_LABEL }}{% if contract_copy.jurisdiction_code %} · {{ contract_copy.jurisdiction_code }}{% endif %}{% if contract_copy.block_code %} · {{ contract_copy.block_code }}{% endif %}{% if contract_copy.warn_code %} · {{ contract_copy.warn_code }}{% endif %}</p>
+        {% endif %}
+    </article>
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Related Proposals</h2>
+            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
+        </div>
+        {% if hub.proposals %}
+        <ul class="activity-list">
+            {% for proposal in hub.proposals %}
+            <li>
+                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
+                    <span class="activity-title">{{ proposal.title }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}{% if proposal.status == "Accepted" %} · accepted, cannot change{% endif %}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No proposals</h3>
+            <p>Proposals created from this project’s estimates will appear here.</p>
+        </div>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
+
+{% call ts.details("Purchasing", "ts-purchasing", hint=((purchase_orders|length) ~ " purchase order" ~ ("" if purchase_orders|length == 1 else "s")) if purchase_orders else "Supplier requests, orders, subcontracts") %}
+<section class="dash-panels">
+    <article class="panel panel-wide" id="hub-purchasing">
+        <div class="panel-header">
+            <h2>Purchasing</h2>
+            <a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests, concrete and orders</a>
+            <span data-governed-links> · <a href="{{ url_for('supplier_office.commitments', project_id=project.id) }}">Subcontracts &amp; early orders</a> · <a href="{{ url_for('schedule.planning', project_id=project.id) }}">Schedule planning</a> · <a href="{{ url_for('projects.package_controls', id=project.id) }}">Cost control</a></span>
+        </div>
+        {% if purchase_orders %}
+        <table class="data-table">
+            <thead><tr><th>Order</th><th>Supplier</th><th>Total</th><th>Status</th><th>Delivery</th></tr></thead>
+            <tbody>
+                {% for row in purchase_orders %}
+                <tr data-hub-po="{{ row.order.number }}">
+                    <td><a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}#share-{{ row.order.share_id }}">{{ row.order.number }}</a></td>
+                    <td>{{ row.supplier }} · {{ row.kind }}</td>
+                    <td>{{ "${:,.2f}".format(row.order.total) }}</td>
+                    <td>{{ row.status }}</td>
+                    <td>{% if row.schedule.date %}{{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% if not row.schedule.agreed %} (requested){% endif %}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="muted-copy">No purchase orders yet. Send a material or concrete request to a supplier, then place the order on the returned quote.</p>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
+
+{% call ts.details("Schedule", "ts-schedule", hint="Dates, crews and changes to dates") %}
+<section class="dash-panels">
+    <article class="panel panel-wide" id="hub-schedule">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.SCHEDULE_HUB_HEADING }}</h2>
+            <a href="{{ url_for('schedule.company', project_id=project.id) }}">Company Calendar</a>
+        </div>
+        {% set schedule = hub.schedule %}
+        <p class="muted-copy">
+            {% if schedule.projects and schedule.projects[0].scheduled_start and schedule.projects[0].scheduled_end %}
+            {{ contractor_copy.SCHEDULE_PROJECT_RANGE }}:
+            {{ schedule.projects[0].scheduled_start.isoformat() }} → {{ schedule.projects[0].scheduled_end.isoformat() }}
+            {% else %}
+            {{ contractor_copy.SCHEDULE_UNSCHEDULED }}
+            {% endif %}
+        </p>
+        {% if schedule.projects and schedule.projects[0].schedule_items %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>{{ contractor_copy.SCHEDULE_ASSIGNED }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in schedule.projects[0].schedule_items %}
+                <tr>
+                    <td>
+                        {{ item.element.display_name }}
+                        {% if item.activity %} · {{ item.activity.display_name }}{% endif %}
+                    </td>
+                    <td>{{ item.scheduled_start.isoformat() }}</td>
+                    <td>{{ item.scheduled_end.isoformat() }}</td>
+                    <td>
+                        {% set assigned = schedule.assignments_by_item_id.get(item.id, []) %}
+                        {% if assigned %}
+                        {{ assigned | map(attribute='name') | join(', ') }}
+                        {% else %}
+                        {{ contractor_copy.SCHEDULE_UNASSIGNED }}
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ url_for('schedule.edit_item', item_id=item.id, next='hub') }}">Edit dates</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if schedule.conflicts %}
+        <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
+        <ul class="schedule-conflict-list">
+            {% for conflict in schedule.conflicts %}
+            <li>
+                <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
+                {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
+                <span class="schedule-warning-actions">
+                    {{ conflict.keep_label }}
+                    {% if conflict.move_url %}
+                    · <a href="{{ conflict.move_url }}{% if conflict.move_url %}?next=hub{% endif %}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
+                    {% endif %}
+                    {% if conflict.review_url %}
+                    · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
+                    {% endif %}
+                </span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endif %}
+        {% set view = schedule %}
+        {% set project = project %}
+        {% set next_view = 'hub' %}
+        {% set show_form = true %}
+        {% include "schedule/_work_order.html" %}
+        {% if schedule.unscheduled_elements %}
+        <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</p>
+        <ul>
+            {% for element in schedule.unscheduled_elements %}
+            <li>{{ element.display_name }} · <a href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">Set dates</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
+        {% if hub.schedule_history %}
+        <details class="schedule-history" data-schedule-history="{{ hub.schedule_history|length }}">
+            <summary>Recent schedule changes</summary>
+            <ul>
+            {% for h in hub.schedule_history %}
+                <li><strong>{{ h.when|local_time("%b %d, %Y %H:%M") }}</strong> · {{ h.who }} · {{ h.what }}</li>
+            {% endfor %}
+            </ul>
+        </details>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
+
+{% call ts.details("Work &amp; Time", "ts-work", hint="Work items, time, labour hours and what Field sent") %}
+<p class="hub-section-label" id="hub-build">Project work</p>
+{{ contextual_help(help_content.hub_topic("build")) }}
+<section class="dash-panels">
+    <article class="panel panel-wide" id="hub-project-work">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.WORK_PLAN_HEADING }}</h2>
+            <a href="{{ url_for('work_structure.project_work_plan', project_id=project.id) }}">Open project work</a>
+        </div>
+        {% if hub.work_seed %}
+        <p>Project work has been built from a locked issued or accepted estimate.</p>
+        {% elif hub.work_seed_versions %}
+        <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours. This does not change the estimate.</p>
+        <form method="post" action="{{ url_for('work_structure.seed_work_plan', project_id=project.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>
+                Locked estimate
+                <select name="estimate_version_id" required>
+                    {% for version in hub.work_seed_versions %}
+                    <option value="{{ version.id }}">{{ version.estimate.estimate_number }} · {{ version.display_label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit">{{ contractor_copy.BUILD_WORK_PLAN_BUTTON }}</button>
+        </form>
+        {% else %}
+        <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours.</p>
+        {% endif %}
+        {% if hub.work_scope_totals.current_authorized_hours is not none %}
+        <p class="muted-copy">
+            {{ contractor_copy.SCOPE_ORIGINAL_LABOUR }}:
+            {{ "%.2f"|format(hub.work_scope_totals.original_hours) }}
+            · {{ contractor_copy.SCOPE_APPROVED_CHANGES }}:
+            {{ "%.2f"|format(hub.work_scope_totals.approved_change_hours) }}
+            · {{ contractor_copy.SCOPE_CURRENT_AUTHORIZED }}:
+            {{ "%.2f"|format(hub.work_scope_totals.current_authorized_hours) }}
+        </p>
+        {% endif %}
+        {% if hub.unresolved_extra_work.activities or hub.unresolved_extra_work.elements %}
+        <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_BANNER }}</p>
+        {% endif %}
+        {% set active_work = hub.work_elements | selectattr("status", "equalto", "ACTIVE") | list %}
+        {% if active_work %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work item</th>
+                    <th>Activities</th>
+                    <th>Kind</th>
+                    <th>Estimated hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for element in active_work %}
+                <tr class="{% if element.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
+                    <td>{{ element.display_name }}</td>
+                    <td>{{ element.activities | selectattr("status", "equalto", "ACTIVE") | list | length }}</td>
+                    <td>
+                        {{ hub.scope_kind_label(element.scope_origin) }}
+                        {% if element.change_order %}
+                        · {{ hub.change_order_label(element.change_order) }}
+                        {% endif %}
+                    </td>
+                    <td>{% if element.estimated_hours is not none %}{{ "%.2f"|format(element.estimated_hours) }}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No project work yet</h3>
+            <p>Open project work to add items, or build from a locked estimate.</p>
+        </div>
+        {% endif %}
+    </article>
+    {% include "projects/_field_operations.html" %}
+    <article class="panel panel-wide" id="hub-time">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>
+            <a href="{{ url_for('time_entry.new_entry', project_id=project.id, next='hub') }}">Record time</a>
+            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
+        </div>
+        <p class="muted-copy">
+            Approved hours: {{ "%.2f"|format(hub.time_summary.approved_hours) }}
+            · Waiting for approval: {{ "%.2f"|format(hub.time_summary.pending_hours) }}
+            · Extra work hours: {{ "%.2f"|format(hub.time_summary.extra_work_hours) }}
+        </p>
+        {% if hub.time_summary.recent %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Worker</th>
+                    <th>Work</th>
+                    <th>Hours</th>
+                    <th>Kind</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in hub.time_summary.recent %}
+                <tr class="{% if entry.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
+                    <td><a href="{{ url_for('time_entry.detail', time_entry_id=entry.id, next='hub') }}">{{ entry.work_date.isoformat() }}</a></td>
+                    <td>{{ entry.worker_display_name }}</td>
+                    <td>{{ entry.element_display_name }} — {{ entry.activity_display_name }}</td>
+                    <td>{{ "%.2f"|format(entry.hours) }}</td>
+                    <td>
+                        {{ hub.time_summary.scope_kind_label(entry.scope_origin) }}
+                        {% if entry.change_order %}
+                        · {{ hub.time_summary.change_order_label(entry.change_order) }}
+                        {% endif %}
+                    </td>
+                    <td><span class="status">{{ hub.time_summary.status_label(entry.status) }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No time yet</h3>
+            <p>Field time for this project will appear here after it is sent.</p>
+        </div>
+        {% endif %}
+    </article>
+    <article class="panel panel-wide" id="hub-labour">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.LABOUR_HUB_HEADING }}</h2>
+            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
+        </div>
+        {% set labour = hub.labour %}
+        {% set labour_project = labour.project %}
+        {% set attention = labour.attention %}
+        <h3>{{ contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING }}</h3>
+        {% if attention['items'] %}
+        <ul class="attention-list">
+            {% for fact in attention['items'] %}
+            <li>
+                <strong>{{ fact.title }}</strong>
+                <p>{{ fact.detail }}</p>
+                {% if fact.destination and fact.destination.href %}
+                <p><a href="{{ fact.destination.href }}">{{ fact.destination.label }}</a></p>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>{{ attention.positive_title }}</p>
+        {% endif %}
+        <h3>{{ contractor_copy.LABOUR_AUTHORIZED_HEADING }}</h3>
+        <p>
+            {% if labour_project.allowance_known %}
+            {{ contractor_copy.LABOUR_ALLOWED }} {{ "%.2f"|format(labour_project.allowed_hours) }}
+            · {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
+            {% if labour_project.remaining_hours is not none %}
+            · {{ contractor_copy.LABOUR_REMAINING }} {{ "%.2f"|format(labour_project.remaining_hours) }}
+            {% endif %}
+            {% if labour_project.over_hours is not none %}
+            · {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(labour_project.over_hours) }}
+            {% endif %}
+            {% else %}
+            {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
+            · {{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}
+            {% endif %}
+        </p>
+        <p class="muted-copy">{{ contractor_copy.LABOUR_WAITING }} {{ "%.2f"|format(labour_project.waiting_hours) }}</p>
+        {% if labour.elements %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>{{ contractor_copy.LABOUR_ALLOWED }}</th>
+                    <th>{{ contractor_copy.LABOUR_USED }}</th>
+                    <th>{{ contractor_copy.LABOUR_REMAINING }}</th>
+                    <th>{{ contractor_copy.LABOUR_WAITING }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in labour.elements %}
+                <tr>
+                    <td>{{ row.display_name }}</td>
+                    <td>
+                        {% if row.allowance_known %}{{ "%.2f"|format(row.allowed_hours) }}{% else %}{{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}{% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(row.used_hours) }}</td>
+                    <td>
+                        {% if row.over_hours is not none %}
+                        {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(row.over_hours) }}
+                        {% elif row.remaining_hours is not none %}
+                        {{ "%.2f"|format(row.remaining_hours) }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if labour.extra_work.needs_review %}
+        <h3>{{ contractor_copy.SCOPE_EXTRA_WORK_LABEL }}</h3>
+        <p>
+            {{ "%.2f"|format(labour.extra_work.used_hours) }} {{ contractor_copy.LABOUR_HOURS_USED }}
+            · {{ "%.2f"|format(labour.extra_work.waiting_hours) }} {{ contractor_copy.LABOUR_HOURS_WAITING }}
+        </p>
+        {% endif %}
+        {% set cost = hub.labour_cost %}
+        <h3 id="hub-labour-cost">Estimated and actual labour</h3>
+        <p class="muted-copy">
+            Actual is approved time only, at the company costing rate
+            {% if cost.rate %}(${{ "%.2f"|format(cost.rate.rate) }} an hour, {{ cost.rate.currency }}, version {{ cost.rate.version }} on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% else %}(none authorized yet: set one on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% endif %}.
+            Wages and payroll are not used. Time waiting for approval is not in the actual.
+        </p>
+        {% if cost.rows %}
+        <div class="table-wrap">
+        <table class="data-table" data-labour-cost>
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>Estimated hours</th>
+                    <th>Actual hours</th>
+                    <th>Difference</th>
+                    <th>Estimated cost</th>
+                    <th>Actual cost</th>
+                    <th>Difference</th>
+                    <th>Waiting for approval</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in cost.rows + [cost.total] %}
+                <tr data-labour-kind="{{ row.kind or 'TOTAL' }}">
+                    <td>{% if loop.last %}<strong>{{ row.label }}</strong>{% else %}{{ row.label }}{% endif %}</td>
+                    <td>{% if row.estimated_hours is not none %}{{ "%.2f"|format(row.estimated_hours) }}{% else %}not estimated{% endif %}</td>
+                    <td>{{ "%.2f"|format(row.actual_hours) }}</td>
+                    <td>{% if row.hours_difference is not none %}{{ "%+.2f"|format(row.hours_difference) }}{% else %}—{% endif %}</td>
+                    <td>{% if row.estimated_cost is not none %}${{ "{:,.2f}".format(row.estimated_cost) }}{% else %}—{% endif %}</td>
+                    <td>${{ "{:,.2f}".format(row.actual_cost) }}{% if row.unrated_hours > 0 %} <span class="muted-copy">({{ "%.2f"|format(row.unrated_hours) }} h with no costing rate)</span>{% endif %}</td>
+                    <td>{% if row.cost_difference is not none %}{% if row.cost_difference < 0 %}-{% else %}+{% endif %}${{ "{:,.2f}".format(row.cost_difference|abs) }}{% else %}—{% endif %}</td>
+                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <p class="muted-copy">A plus difference is over the estimate. Extra work and company time have no estimate until they are priced.</p>
+        {% else %}
+        <p class="muted-copy">No estimated hours and no approved time yet.</p>
+        {% endif %}
+    </article>
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Site notes &amp; photos</h2>
+            <a href="{{ url_for('build.new_field_event', project_id=project.id) }}">Add a site note</a>
+        </div>
+        {% if hub.field_event_rows %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Occurred</th>
+                    <th>Recorded</th>
+                    <th>Actor</th>
+                    <th>Originals</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in hub.field_event_rows %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=row.event.id) }}">
+                            {{ row.event.occurred_at|local_time("%Y-%m-%d %H:%M") }}
+                        </a>
+                    </td>
+                    <td>{{ row.event.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
+                    <td>{{ row.event.actor_display_name }}</td>
+                    <td>{{ row.kind_summary or "—" }}</td>
+                    <td>
+                        {% if row.superseded %}
+                        <span class="status">Superseded</span>
+                        {% else %}
+                        <span class="status">Current</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No site notes or photos</h3>
+            <p>Notes and photos saved from the site will appear here.</p>
+        </div>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
+
+{% call ts.details("Changes", "ts-changes", hint=((hub.change_orders|length) ~ " change order" ~ ("" if hub.change_orders|length == 1 else "s")) if hub.change_orders else "Change orders and invoices") %}
+<section class="dash-panels">
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Related Change Orders</h2>
+            <span>
+                <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
+                · <a href="{{ url_for('accounting.new_invoice', project_id=project.id) }}" data-make-invoice>Make an invoice</a>
+            </span>
+        </div>
+        {% if hub.change_orders %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Signature</th>
+                    <th>Value</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for change_order in hub.change_orders %}
+                <tr>
+                    <td><a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">{{ change_order.number }}</a></td>
+                    <td>{{ change_order.title }}</td>
+                    <td><span class="status">{{ change_order.status }}</span></td>
+                    <td>
+                        {% set overlay = hub.signing_overlays.get(change_order.id) %}
+                        <span class="status status-sign-{{ overlay.hub_label|lower|replace(' ', '-') }}">{{ overlay.hub_label }}</span>
+                    </td>
+                    <td>${{ "%.2f"|format(change_order.total) }}</td>
+                    <td>{{ change_order.updated_at.strftime("%Y-%m-%d") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No change orders</h3>
+            <p>Project change orders will be listed here.</p>
+        </div>
+        {% endif %}
+    </article>
+</section>
+{% endcall %}
+
+{% call ts.details("Money", "ts-money", hint="Estimated against actual cost, and the costs recorded") %}
 <p class="hub-section-label" id="hub-monitor">Money</p>
 {{ contextual_help(help_content.hub_topic("monitor")) }}
 {% set monitor = hub.monitor %}
@@ -350,441 +992,10 @@
     <p class="muted-copy">{{ contractor_copy.PREVIOUS_ENTRIES_EMPTY }}</p>
     {% endif %}
 </section>
+{% endcall %}
 
-
-<p class="hub-section-label" id="hub-plan">Documents</p>
-<p class="muted-copy"><a href="{{ url_for('projects.workflow_documents', id=project.id) }}">Workflow documents</a></p>
-{{ contextual_help(help_content.hub_topic("plan")) }}
+{% call ts.details("Closeout", "ts-closeout", hint="Final walkthrough and punch list") %}
 <section class="dash-panels">
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Permit &amp; Approvals</h2>
-            <a href="{{ url_for('projects.edit_project_location', id=project.id) }}">Review location</a>
-            ·
-            <a href="{{ url_for('projects.view_permit_report', id=project.id) }}">Permit report</a>
-        </div>
-        {% set pf = hub.permit_foundation %}
-        {% set pi = hub.permit_intelligence %}
-        <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}{% if pi.report_available %} · {{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}{% endif %}</p>
-        <p class="muted-copy">{{ contractor_copy.PERMIT_NOT_MUNICIPAL_APPROVAL }}</p>
-        {% if pi.recheck_required %}
-        <p class="muted-copy"><strong>{{ contractor_copy.PERMIT_RECHECK_HEADING }}</strong> — {{ contractor_copy.PERMIT_RECHECK_WHY }}</p>
-        {% endif %}
-        {% if pi.attention_count and pi.attention_count > 0 %}
-        <p class="muted-copy"><strong>Commercial warning (acknowledgement only):</strong> {{ pi.attention_count }} finding(s) require attention before treating a final proposal or contract as unconstrained. This does not block proposals or contracts.</p>
-        {% endif %}
-        <div class="form-grid" style="margin-top: 12px;">
-            <div>
-                <p class="eyebrow">Location</p>
-                <p>
-                    {% if pf.location_completeness == "LOCATION_COMPLETE" %}
-                    complete
-                    {% else %}
-                    incomplete
-                    {% endif %}
-                </p>
-            </div>
-            <div>
-                <p class="eyebrow">Jurisdiction</p>
-                <p>
-                    {% if pf.jurisdiction_status == "JURISDICTION_RESOLVED" %}
-                    resolved
-                    {% else %}
-                    unresolved
-                    {% endif %}
-                </p>
-            </div>
-            <div>
-                <p class="eyebrow">Permit Profile</p>
-                <p>{{ "preliminary" if pf.profile_state == "preliminary" else "not generated" }}</p>
-            </div>
-            <div>
-                <p class="eyebrow">Plan/site analysis</p>
-                <p>{% if pi.plan_site_basis %}identified{% else %}not performed{% endif %}</p>
-            </div>
-            <div>
-                <p class="eyebrow">Substantive Permit Report</p>
-                <p>{% if pi.report_available %}available{% else %}not available{% endif %}</p>
-            </div>
-            <div>
-                <p class="eyebrow">Last analysis</p>
-                <p>{% if pi.last_analysis_at %}{{ pi.last_analysis_at|local_time("%Y-%m-%d %H:%M") }}{% else %}none{% endif %}</p>
-            </div>
-            <div>
-                <p class="eyebrow">Findings requiring attention</p>
-                <p>{{ pi.attention_count }}</p>
-            </div>
-            <div>
-                <p class="eyebrow">Recheck required</p>
-                <p>{% if pi.recheck_required %}yes{% else %}no{% endif %}</p>
-            </div>
-        </div>
-        {% if pf.profile %}
-        <p class="muted-copy" style="margin-top: 12px;">
-            Permit context: {{ pf.profile.permit_context_class }}
-            {% if pf.profile.resolved_jurisdiction_name %}
-            · Recorded permit authority: {{ pf.profile.resolved_jurisdiction_name }}
-            {% endif %}
-        </p>
-        {% else %}
-        <p class="muted-copy" style="margin-top: 12px;">
-            Existing projects keep free-text address until structured location is reviewed. No jurisdiction is invented.
-        </p>
-        {% endif %}
-    </article>
-
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Drawings</h2>
-            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All drawings</a>
-        </div>
-        <div id="drawing-requirement" class="drawing-requirement">
-            {% if drawing_state == "UNKNOWN" %}
-            <p>Drawing decision required. Choose whether this project needs drawings. That choice is not made for you.</p>
-            {% elif drawing_state == "NOT_REQUIRED" %}
-            <p>Drawings are not required for this project. No drawing was created.</p>
-            {% elif drawing_state == "REQUIRED_MISSING" %}
-            <p>Drawings are required. None are on this project yet. Open drawings to upload a PDF or build a drawing.</p>
-            <p><a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a></p>
-            {% else %}
-            <p>This project has a current drawing, so the drawing stage is satisfied. You do not have to answer whether drawings were required. Changing that choice does not remove the drawing.</p>
-            {% endif %}
-            <form method="post" action="{{ url_for('projects.set_project_drawing_requirement_choice', id=project.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="drawing-requirement-actions">
-                    <button type="submit" name="drawing_requirement" value="REQUIRED">Drawings are required</button>
-                    <button type="submit" name="drawing_requirement" value="NOT_REQUIRED">Drawings are not required</button>
-                </div>
-            </form>
-        </div>
-        {% if hub.plan_documents %}
-        <ul class="activity-list">
-            {% for document in hub.plan_documents %}
-            <li>
-                <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
-                    <span class="activity-title">{{ document.original_filename }}</span>
-                    <span class="activity-meta">{{ "Searchable" if document.has_text_layer else "No text layer" }} · {{ document.created_at.strftime("%Y-%m-%d") }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No drawings yet</h3>
-            <p>Upload a PDF drawing for this project.</p>
-            <a class="button-link" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Sheets</h2>
-            {% if hub.active_revision %}
-            <a href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=hub.active_revision.id) }}">Sheet index</a>
-            {% endif %}
-        </div>
-        {% if hub.sheet_count %}
-        <p>{{ hub.sheet_count }} sheet{{ "s" if hub.sheet_count != 1 else "" }} on revision {{ hub.active_revision.label }}.</p>
-        <ul class="activity-list">
-            {% for sheet in hub.sheets[:6] %}
-            <li>
-                <span class="activity-title">{{ sheet.number or "Unnumbered" }}{% if sheet.title %} — {{ sheet.title }}{% endif %}</span>
-                <span class="activity-meta">Review {{ contractor_copy.sentence_label(sheet.review_status) }} · Drawing {{ contractor_copy.sentence_label(sheet.drawing_status) }}</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No sheets recorded</h3>
-            <p>Sheet classification lives in Plan Intelligence. This hub does not create a drawing package.</p>
-            <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a>
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Scale / measurement</h2>
-            {% if hub.measure_sheet %}
-            <a href="{{ url_for('plan_intelligence.measure_sheet', project_id=project.id, sheet_id=hub.measure_sheet.id) }}">Measure sheet</a>
-            {% endif %}
-        </div>
-        <p>{{ hub.calibration_count }} stored calibration{{ "s" if hub.calibration_count != 1 else "" }} · {{ hub.measurement_count }} stored measurement{{ "s" if hub.measurement_count != 1 else "" }}.</p>
-    </article>
-
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Take-off</h2>
-            <a href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Take-off workspace</a>
-        </div>
-        {% if hub.latest_takeoff_run %}
-        <p>Latest run: <span class="status">{{ contractor_copy.sentence_label(hub.latest_takeoff_run.status) }}</span> · {{ contractor_copy.sentence_label(hub.latest_takeoff_run.element_type) }}</p>
-        {% else %}
-        <p class="muted-copy">No extraction runs stored for this project.</p>
-        {% endif %}
-        {% if hub.approved_takeoff_packages %}
-        <p>{{ hub.approved_takeoff_packages|length }} approved package{{ "s" if hub.approved_takeoff_packages|length != 1 else "" }}.</p>
-        <ul class="activity-list">
-            {% for package in hub.approved_takeoff_packages[:4] %}
-            <li>
-                <a href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">
-                    <span class="activity-title">{{ contractor_copy.sentence_label(package.element_type) }} v{{ package.version_number }}</span>
-                    <span class="activity-meta">{{ contractor_copy.sentence_label(package.status) }}{% if package.approved_total is not none %} · stored total {{ package.approved_total }} {{ package.approved_unit }}{% endif %}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% elif hub.takeoff_packages %}
-        <p>{{ hub.takeoff_packages|length }} package{{ "s" if hub.takeoff_packages|length != 1 else "" }} stored; none approved.</p>
-        {% else %}
-        <p class="muted-copy">No take-off packages stored.</p>
-        {% endif %}
-        <p class="muted-copy">This page does not add estimate lines. Open an approved package and choose Map to estimate. Nothing is added until Insert into estimate.</p>
-    </article>
-</section>
-
-<p class="hub-section-label" id="hub-price">Estimates and proposals</p>
-{{ contextual_help(help_content.hub_topic("price")) }}
-<section class="dash-panels">
-    <article class="panel panel-wide" id="hub-guided-estimate" data-hub-guided>
-        <div class="panel-header">
-            <h2>Guided estimate</h2>
-            {% if guided_summary and not guided_summary.selected %}<a href="{{ url_for('guided.workflow', project_id=project.id) }}">All stages</a>{% endif %}
-            {% if guided_summary and guided_summary.selected %}<a href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-hub-add-work>Add work</a>{% endif %}
-        </div>
-        {% if guided_summary and guided_summary.selected %}
-        {% set gs = guided_summary %}
-        {% if gs.names %}
-        <p class="muted-copy" data-hub-work>Estimating: {{ gs.names|join(', ') }} · {{ gs.done }} of {{ gs.included }} work item{{ '' if gs.included == 1 else 's' }} complete</p>
-        {% else %}
-        <p class="muted-copy" data-hub-work>No work chosen yet. <a href="{{ url_for('guided.scope', project_id=project.id) }}">What work are we doing?</a></p>
-        {% endif %}
-        <p>
-            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
-            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
-            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
-        </p>
-        {% elif guided_summary %}
-        {% set gs = guided_summary %}
-        <p class="muted-copy">{{ gs.guided.project_type_label }} · {{ gs.guided.contractor_role_label }} · {% if gs.guided.scope_status == 'FINALIZED' %}{{ gs.done }} of {{ gs.included }} stages complete{% else %}scope still a draft{% endif %}</p>
-        <p>
-            <a class="button" data-hub-guided-resume href="{{ url_for('guided.resume', project_id=project.id) }}">Resume estimating</a>
-            <a class="button-link" href="{{ url_for('guided.internal_cost', project_id=project.id) }}">Internal cost estimate</a>
-            <a class="button-link" href="{{ url_for('guided.pricing', project_id=project.id) }}">Review Pricing &amp; Prepare Proposal</a>
-        </p>
-        {% else %}
-        <p><a class="button" data-hub-guided-start href="{{ url_for('guided.workflow', project_id=project.id) }}">Start the guided estimate</a></p>
-        {% endif %}
-    </article>
-    <article class="panel panel-wide">
-        <div class="panel-header">
-            <h2>Related Estimates</h2>
-            <a href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
-            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
-        </div>
-        <p class="muted-copy">{{ contractor_copy.HUB_PRICE_LIST_NOTE }}</p>
-        {% if hub.estimate_rows %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Estimate</th>
-                    <th>Status</th>
-                    <th>Current version</th>
-                    <th>{{ contractor_copy.HUB_PRICING_RECORDED_HEADING }}</th>
-                    <th>{{ contractor_copy.HUB_LABOUR_RECORDED_HEADING }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in hub.estimate_rows %}
-                <tr>
-                    <td>
-                        <a href="{{ url_for('estimates.view_estimate', id=row.estimate.id) }}">{{ row.estimate.title }}</a>
-                        <div class="muted-copy">{{ row.estimate.estimate_number }}</div>
-                    </td>
-                    <td><span class="status">{{ row.estimate.status }}</span></td>
-                    <td>
-                        {% if row.current_version %}
-                        <a href="{{ url_for('estimates.view_version', id=row.estimate.id, version_id=row.current_version.id) }}">v{{ row.current_version.version_number }}</a>
-                        {% else %}
-                        —
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if row.pricing_snapshot_present %}
-                        {{ contractor_copy.HUB_RECORDED_LABEL }} · {{ contractor_copy.pricing_method_label(row.pricing_method) }}
-                        {% else %}
-                        {{ contractor_copy.HUB_NOT_RECORDED_LABEL }}
-                        {% endif %}
-                    </td>
-                    <td>{{ contractor_copy.HUB_RECORDED_LABEL if row.labour_snapshot_present else contractor_copy.HUB_NOT_RECORDED_LABEL }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No estimates</h3>
-            <p>Create an estimate for this project to begin pricing.</p>
-            <a class="button-link" href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
-        </div>
-        {% endif %}
-        <p class="muted-copy" style="margin-top: 12px;">
-            Organization methodology: <a href="{{ url_for('pricing_engine.index') }}">{{ contractor_copy.PRICING_HEADING }}</a> ·
-            <a href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }}</a>
-            (catalogues, not this project’s operating data).
-        </p>
-        <p class="muted-copy" style="margin-top: 12px;">
-            <a href="{{ url_for('scope_delivery.review', project_id=project.id) }}">Scope Delivery Review</a>
-            — who provides material and who performs labour. Subcontract quote evidence is recorded there; selecting a quote does not set cost or pricing.
-            <a href="{{ url_for('supplier_package.mapping_review', project_id=project.id) }}">Supplier Package</a>
-            — mapping review and supplier-facing package. Price evidence is inform only.
-            <a href="{{ url_for('deck_takeoff.review', project_id=project.id) }}">Deck Takeoff</a>
-            <a href="{{ url_for('construction_drawings.index', project_id=project.id) }}">Construction Drawings</a>
-            — pool-deck material takeoff, supplier request, and supplier price return. Does not create estimate lines.
-            <a href="{{ url_for('estimate_quickbooks.review', project_id=project.id) }}">QuickBooks-ready entry</a>
-            — internal office sales-entry sheet and planned cost-class companion. Manual QuickBooks entry only. Not posted. Download does not confirm entry.
-        </p>
-    </article>
-</section>
-
-<p class="hub-section-label" id="hub-contract">Contract</p>
-{{ contextual_help(help_content.hub_topic("contract")) }}
-{% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
-<section class="dash-panels">
-    <article class="panel panel-wide" id="hub-contract-legal">
-        <div class="panel-header">
-            <h2>{{ contractor_copy.CONTRACT_STATUS_HEADING }}</h2>
-        </div>
-        <p class="eyebrow">{{ contract_copy.heading }}</p>
-        <p>{{ contract_copy.lede }}</p>
-        <p>{{ contract_copy.next }}</p>
-        {% if contract_copy.show_package %}
-        {% if contract_copy.ontario %}<p>Ontario</p>{% endif %}
-        <p>{{ contract_copy.package_title }}</p>
-        <p>Version {{ contract_copy.package_version }}</p>
-        <p>Effective date {{ contract_copy.effective_from }}</p>
-        <p>Status {{ contract_copy.package_status }}</p>
-        {% if contract_copy.counsel_approved %}<p>Counsel approved</p>{% endif %}
-        <p><a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a></p>
-        {% endif %}
-        {% for contract in hub_contracts %}
-        <p data-hub-contract="{{ contract.number }}"><strong>{{ contract.number }}</strong> · {{ contract.label }}{% if loop.first and not contract_copy.show_package %} · <a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a>{% endif %}</p>
-        {% endfor %}
-        {% if contract_copy.warned %}
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_PENDING_UPDATE_WARN }}</p>
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_ACTIVE_REMAINS_AUTHORITY }}</p>
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
-        {% endif %}
-        {% if contract_copy.blocked %}
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_SAFEGUARD }}</p>
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_PRODUCTION_GENERATED }}</p>
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_FAMILY_05_FALLBACK }}</p>
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
-        {% endif %}
-        {% if contract_copy.block_code or contract_copy.warn_code or contract_copy.jurisdiction_code %}
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_OFFICE_DETAIL_LABEL }}{% if contract_copy.jurisdiction_code %} · {{ contract_copy.jurisdiction_code }}{% endif %}{% if contract_copy.block_code %} · {{ contract_copy.block_code }}{% endif %}{% if contract_copy.warn_code %} · {{ contract_copy.warn_code }}{% endif %}</p>
-        {% endif %}
-    </article>
-    <article class="panel panel-wide">
-        <div class="panel-header">
-            <h2>Related Proposals</h2>
-            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
-        </div>
-        {% if hub.proposals %}
-        <ul class="activity-list">
-            {% for proposal in hub.proposals %}
-            <li>
-                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
-                    <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}{% if proposal.status == "Accepted" %} · immutable{% endif %}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No proposals</h3>
-            <p>Proposals created from this project’s estimates will appear here.</p>
-        </div>
-        {% endif %}
-    </article>
-</section>
-
-<p class="hub-section-label" id="hub-build">Project work</p>
-{{ contextual_help(help_content.hub_topic("build")) }}
-<section class="dash-panels">
-    <article class="panel panel-wide" id="hub-project-work">
-        <div class="panel-header">
-            <h2>{{ contractor_copy.WORK_PLAN_HEADING }}</h2>
-            <a href="{{ url_for('work_structure.project_work_plan', project_id=project.id) }}">Open project work</a>
-        </div>
-        {% if hub.work_seed %}
-        <p>Project work has been built from a locked issued or accepted estimate.</p>
-        {% elif hub.work_seed_versions %}
-        <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours. This does not change the estimate.</p>
-        <form method="post" action="{{ url_for('work_structure.seed_work_plan', project_id=project.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label>
-                Locked estimate
-                <select name="estimate_version_id" required>
-                    {% for version in hub.work_seed_versions %}
-                    <option value="{{ version.id }}">{{ version.estimate.estimate_number }} · {{ version.display_label }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <button type="submit">{{ contractor_copy.BUILD_WORK_PLAN_BUTTON }}</button>
-        </form>
-        {% else %}
-        <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours.</p>
-        {% endif %}
-        {% if hub.work_scope_totals.current_authorized_hours is not none %}
-        <p class="muted-copy">
-            {{ contractor_copy.SCOPE_ORIGINAL_LABOUR }}:
-            {{ "%.2f"|format(hub.work_scope_totals.original_hours) }}
-            · {{ contractor_copy.SCOPE_APPROVED_CHANGES }}:
-            {{ "%.2f"|format(hub.work_scope_totals.approved_change_hours) }}
-            · {{ contractor_copy.SCOPE_CURRENT_AUTHORIZED }}:
-            {{ "%.2f"|format(hub.work_scope_totals.current_authorized_hours) }}
-        </p>
-        {% endif %}
-        {% if hub.unresolved_extra_work.activities or hub.unresolved_extra_work.elements %}
-        <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_BANNER }}</p>
-        {% endif %}
-        {% set active_work = hub.work_elements | selectattr("status", "equalto", "ACTIVE") | list %}
-        {% if active_work %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Work item</th>
-                    <th>Activities</th>
-                    <th>Kind</th>
-                    <th>Estimated hours</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for element in active_work %}
-                <tr class="{% if element.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
-                    <td>{{ element.display_name }}</td>
-                    <td>{{ element.activities | selectattr("status", "equalto", "ACTIVE") | list | length }}</td>
-                    <td>
-                        {{ hub.scope_kind_label(element.scope_origin) }}
-                        {% if element.change_order %}
-                        · {{ hub.change_order_label(element.change_order) }}
-                        {% endif %}
-                    </td>
-                    <td>{% if element.estimated_hours is not none %}{{ "%.2f"|format(element.estimated_hours) }}{% else %}—{% endif %}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No project work yet</h3>
-            <p>Open project work to add items, or build from a locked estimate.</p>
-        </div>
-        {% endif %}
-    </article>
     <article class="panel panel-wide" id="hub-final-walkthrough">
         <div class="panel-header">
             <h2>{{ contractor_copy.WALKTHROUGH_HUB_HEADING }}</h2>
@@ -997,429 +1208,269 @@
         </form>
         {% endif %}
     </article>
-    <article class="panel panel-wide" id="hub-schedule">
+</section>
+{% endcall %}
+
+{% call ts.details("Documents", "ts-documents", hint="Contracts, signed copies and job documents") %}
+{# Documents slot (Task-First UX, 31 Oct 2026): the Documents feature (another branch: /projects/<id>/documents,
+   endpoint documents.project_documents) fills this section; until it is merged the existing documents page is linked. #}
+<div class="project-documents-slot" data-project-documents-slot>
+    {% if project_documents_url %}
+    <p><a class="button button-secondary" href="{{ project_documents_url }}" data-project-documents-link>Open this job's documents</a></p>
+    {% else %}
+    <p class="muted-copy">This job's documents will be listed here.</p>
+    {% endif %}
+    <p class="muted-copy"><a href="{{ url_for('projects.workflow_documents', id=project.id) }}">Workflow documents</a></p>
+</div>
+{% endcall %}
+
+{% call ts.details("Plans &amp; Permits", "ts-plans", hint="Drawings, measurements and the permit report") %}
+<p class="hub-section-label" id="hub-plan">Plans &amp; permits</p>
+{{ contextual_help(help_content.hub_topic("plan")) }}
+<section class="dash-panels">
+    <article class="panel">
         <div class="panel-header">
-            <h2>{{ contractor_copy.SCHEDULE_HUB_HEADING }}</h2>
-            <a href="{{ url_for('schedule.company', project_id=project.id) }}">Company Calendar</a>
+            <h2>Permit &amp; Approvals</h2>
+            <a href="{{ url_for('projects.edit_project_location', id=project.id) }}">Review location</a>
+            ·
+            <a href="{{ url_for('projects.view_permit_report', id=project.id) }}">Permit report</a>
         </div>
-        {% set schedule = hub.schedule %}
-        <p class="muted-copy">
-            {% if schedule.projects and schedule.projects[0].scheduled_start and schedule.projects[0].scheduled_end %}
-            {{ contractor_copy.SCHEDULE_PROJECT_RANGE }}:
-            {{ schedule.projects[0].scheduled_start.isoformat() }} → {{ schedule.projects[0].scheduled_end.isoformat() }}
-            {% else %}
-            {{ contractor_copy.SCHEDULE_UNSCHEDULED }}
+        {% set pf = hub.permit_foundation %}
+        {% set pi = hub.permit_intelligence %}
+        <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}{% if pi.report_available %} · {{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}{% endif %}</p>
+        <p class="muted-copy">{{ contractor_copy.PERMIT_NOT_MUNICIPAL_APPROVAL }}</p>
+        {% if pi.recheck_required %}
+        <p class="muted-copy"><strong>{{ contractor_copy.PERMIT_RECHECK_HEADING }}</strong> — {{ contractor_copy.PERMIT_RECHECK_WHY }}</p>
+        {% endif %}
+        {% if pi.attention_count and pi.attention_count > 0 %}
+        <p class="muted-copy"><strong>Commercial warning (acknowledgement only):</strong> {{ pi.attention_count }} finding(s) require attention before treating a final proposal or contract as unconstrained. This does not block proposals or contracts.</p>
+        {% endif %}
+        <div class="form-grid" style="margin-top: 12px;">
+            <div>
+                <p class="eyebrow">Location</p>
+                <p>
+                    {% if pf.location_completeness == "LOCATION_COMPLETE" %}
+                    complete
+                    {% else %}
+                    incomplete
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="eyebrow">Jurisdiction</p>
+                <p>
+                    {% if pf.jurisdiction_status == "JURISDICTION_RESOLVED" %}
+                    resolved
+                    {% else %}
+                    unresolved
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="eyebrow">Permit Profile</p>
+                <p>{{ "preliminary" if pf.profile_state == "preliminary" else "not generated" }}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Plan/site analysis</p>
+                <p>{% if pi.plan_site_basis %}identified{% else %}not performed{% endif %}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Substantive Permit Report</p>
+                <p>{% if pi.report_available %}available{% else %}not available{% endif %}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Last analysis</p>
+                <p>{% if pi.last_analysis_at %}{{ pi.last_analysis_at|local_time("%Y-%m-%d %H:%M") }}{% else %}none{% endif %}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Findings requiring attention</p>
+                <p>{{ pi.attention_count }}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Recheck required</p>
+                <p>{% if pi.recheck_required %}yes{% else %}no{% endif %}</p>
+            </div>
+        </div>
+        {% if pf.profile %}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Permit context: {{ pf.profile.permit_context_class }}
+            {% if pf.profile.resolved_jurisdiction_name %}
+            · Recorded permit authority: {{ pf.profile.resolved_jurisdiction_name }}
             {% endif %}
         </p>
-        {% if schedule.projects and schedule.projects[0].schedule_items %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Work</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>{{ contractor_copy.SCHEDULE_ASSIGNED }}</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in schedule.projects[0].schedule_items %}
-                <tr>
-                    <td>
-                        {{ item.element.display_name }}
-                        {% if item.activity %} · {{ item.activity.display_name }}{% endif %}
-                    </td>
-                    <td>{{ item.scheduled_start.isoformat() }}</td>
-                    <td>{{ item.scheduled_end.isoformat() }}</td>
-                    <td>
-                        {% set assigned = schedule.assignments_by_item_id.get(item.id, []) %}
-                        {% if assigned %}
-                        {{ assigned | map(attribute='name') | join(', ') }}
-                        {% else %}
-                        {{ contractor_copy.SCHEDULE_UNASSIGNED }}
-                        {% endif %}
-                    </td>
-                    <td><a href="{{ url_for('schedule.edit_item', item_id=item.id, next='hub') }}">Edit dates</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% if schedule.conflicts %}
-        <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
-        <ul class="schedule-conflict-list">
-            {% for conflict in schedule.conflicts %}
-            <li>
-                <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
-                {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
-                <span class="schedule-warning-actions">
-                    {{ conflict.keep_label }}
-                    {% if conflict.move_url %}
-                    · <a href="{{ conflict.move_url }}{% if conflict.move_url %}?next=hub{% endif %}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
-                    {% endif %}
-                    {% if conflict.review_url %}
-                    · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
-                    {% endif %}
-                </span>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endif %}
-        {% set view = schedule %}
-        {% set project = project %}
-        {% set next_view = 'hub' %}
-        {% set show_form = true %}
-        {% include "schedule/_work_order.html" %}
-        {% if schedule.unscheduled_elements %}
-        <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</p>
-        <ul>
-            {% for element in schedule.unscheduled_elements %}
-            <li>{{ element.display_name }} · <a href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">Set dates</a></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
-        {% if hub.schedule_history %}
-        <details class="schedule-history" data-schedule-history="{{ hub.schedule_history|length }}">
-            <summary>Recent schedule changes</summary>
-            <ul>
-            {% for h in hub.schedule_history %}
-                <li><strong>{{ h.when|local_time("%b %d, %Y %H:%M") }}</strong> · {{ h.who }} · {{ h.what }}</li>
-            {% endfor %}
-            </ul>
-        </details>
-        {% endif %}
-    </article>
-    <article class="panel panel-wide" id="hub-purchasing">
-        <div class="panel-header">
-            <h2>Purchasing</h2>
-            <a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}">Supplier requests, concrete and orders</a>
-            <span data-governed-links> · <a href="{{ url_for('supplier_office.commitments', project_id=project.id) }}">Commitments</a> · <a href="{{ url_for('schedule.planning', project_id=project.id) }}">Schedule planning</a> · <a href="{{ url_for('projects.package_controls', id=project.id) }}">Cost control</a></span>
-        </div>
-        {% if purchase_orders %}
-        <table class="data-table">
-            <thead><tr><th>Order</th><th>Supplier</th><th>Total</th><th>Status</th><th>Delivery</th></tr></thead>
-            <tbody>
-                {% for row in purchase_orders %}
-                <tr data-hub-po="{{ row.order.number }}">
-                    <td><a href="{{ url_for('supplier_office.project_requests', project_id=project.id) }}#share-{{ row.order.share_id }}">{{ row.order.number }}</a></td>
-                    <td>{{ row.supplier }} · {{ row.kind }}</td>
-                    <td>{{ "${:,.2f}".format(row.order.total) }}</td>
-                    <td>{{ row.status }}</td>
-                    <td>{% if row.schedule.date %}{{ row.schedule.date.isoformat() }}{% if row.schedule.window %} {{ row.schedule.window }}{% endif %}{% if not row.schedule.agreed %} (requested){% endif %}{% else %}—{% endif %}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
         {% else %}
-        <p class="muted-copy">No purchase orders yet. Send a material or concrete request to a supplier, then place the order on the returned quote.</p>
-        {% endif %}
-    </article>
-
-    {% include "projects/_field_operations.html" %}
-
-    <article class="panel panel-wide" id="calculations">
-        <div class="panel-header">
-            <h2>Calculations</h2>
-            <a href="{{ url_for('calculators.concrete') }}">Calculators</a>
-        </div>
-        {% if project_calculations %}
-        <table class="data-table">
-            <thead><tr><th>Date</th><th>Calculator</th><th>Result</th><th>By</th></tr></thead>
-            <tbody>
-                {% for calc in project_calculations %}
-                <tr data-project-calculation="{{ calc.id }}">
-                    <td>{{ calc.created_at.strftime("%Y-%m-%d") }}</td>
-                    <td>{{ calc.calculator_label }}{% if calc.reference %}<br><span class="muted-copy">{{ calc.reference }}</span>{% endif %}</td>
-                    <td>{{ calc.summary }}
-                        <details><summary>Details</summary>
-                            {% if calc.entered %}<p><strong>Entered</strong></p><ul>{% for row in calc.entered %}<li>{{ row.label }}: {{ row.value }}</li>{% endfor %}</ul>{% endif %}
-                            <p><strong>Calculated</strong></p><pre style="white-space: pre-wrap; font: inherit;">{{ calc.result_text }}</pre>
-                        </details>
-                    </td>
-                    <td>{{ calc.actor_display_name }}{% if calc.payload %}<br><a href="{{ url_for('guided.calculation', project_id=project.id, calculation_id=calc.id) }}" data-calculation-review-link>{% if calc.review_status == 'IN_REVIEW' %}In the estimate review{% else %}Review it for the estimate{% endif %}</a>{% endif %}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p class="muted-copy">No calculations linked yet. On any calculator, calculate, choose this project under Link to a project, and select Link to project.</p>
-        {% endif %}
-    </article>
-
-    <article class="panel panel-wide" id="hub-time">
-        <div class="panel-header">
-            <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>
-            <a href="{{ url_for('time_entry.new_entry', project_id=project.id, next='hub') }}">Record time</a>
-            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
-        </div>
-        <p class="muted-copy">
-            Approved hours: {{ "%.2f"|format(hub.time_summary.approved_hours) }}
-            · Waiting for approval: {{ "%.2f"|format(hub.time_summary.pending_hours) }}
-            · Extra work hours: {{ "%.2f"|format(hub.time_summary.extra_work_hours) }}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Existing projects keep free-text address until structured location is reviewed. No jurisdiction is invented.
         </p>
-        {% if hub.time_summary.recent %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Worker</th>
-                    <th>Work</th>
-                    <th>Hours</th>
-                    <th>Kind</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in hub.time_summary.recent %}
-                <tr class="{% if entry.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
-                    <td><a href="{{ url_for('time_entry.detail', time_entry_id=entry.id, next='hub') }}">{{ entry.work_date.isoformat() }}</a></td>
-                    <td>{{ entry.worker_display_name }}</td>
-                    <td>{{ entry.element_display_name }} — {{ entry.activity_display_name }}</td>
-                    <td>{{ "%.2f"|format(entry.hours) }}</td>
-                    <td>
-                        {{ hub.time_summary.scope_kind_label(entry.scope_origin) }}
-                        {% if entry.change_order %}
-                        · {{ hub.time_summary.change_order_label(entry.change_order) }}
-                        {% endif %}
-                    </td>
-                    <td><span class="status">{{ hub.time_summary.status_label(entry.status) }}</span></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No time yet</h3>
-            <p>Field time for this project will appear here after it is sent.</p>
-        </div>
         {% endif %}
     </article>
-    <article class="panel panel-wide" id="hub-labour">
+
+    <article class="panel">
         <div class="panel-header">
-            <h2>{{ contractor_copy.LABOUR_HUB_HEADING }}</h2>
-            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
+            <h2>Drawings</h2>
+            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All drawings</a>
         </div>
-        {% set labour = hub.labour %}
-        {% set labour_project = labour.project %}
-        {% set attention = labour.attention %}
-        <h3>{{ contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING }}</h3>
-        {% if attention['items'] %}
-        <ul class="attention-list">
-            {% for fact in attention['items'] %}
+        <div id="drawing-requirement" class="drawing-requirement">
+            {% if drawing_state == "UNKNOWN" %}
+            <p>Drawing decision required. Choose whether this project needs drawings. That choice is not made for you.</p>
+            {% elif drawing_state == "NOT_REQUIRED" %}
+            <p>Drawings are not required for this project. No drawing was created.</p>
+            {% elif drawing_state == "REQUIRED_MISSING" %}
+            <p>Drawings are required. None are on this project yet. Open drawings to upload a PDF or build a drawing.</p>
+            <p><a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a></p>
+            {% else %}
+            <p>This project has a current drawing, so the drawing stage is satisfied. You do not have to answer whether drawings were required. Changing that choice does not remove the drawing.</p>
+            {% endif %}
+            <form method="post" action="{{ url_for('projects.set_project_drawing_requirement_choice', id=project.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="drawing-requirement-actions">
+                    <button type="submit" name="drawing_requirement" value="REQUIRED">Drawings are required</button>
+                    <button type="submit" name="drawing_requirement" value="NOT_REQUIRED">Drawings are not required</button>
+                </div>
+            </form>
+        </div>
+        {% if hub.plan_documents %}
+        <ul class="activity-list">
+            {% for document in hub.plan_documents %}
             <li>
-                <strong>{{ fact.title }}</strong>
-                <p>{{ fact.detail }}</p>
-                {% if fact.destination and fact.destination.href %}
-                <p><a href="{{ fact.destination.href }}">{{ fact.destination.label }}</a></p>
-                {% endif %}
+                <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
+                    <span class="activity-title">{{ document.original_filename }}</span>
+                    <span class="activity-meta">{{ "Searchable" if document.has_text_layer else "No text layer" }} · {{ document.created_at.strftime("%Y-%m-%d") }}</span>
+                </a>
             </li>
             {% endfor %}
         </ul>
         {% else %}
-        <p>{{ attention.positive_title }}</p>
-        {% endif %}
-        <h3>{{ contractor_copy.LABOUR_AUTHORIZED_HEADING }}</h3>
-        <p>
-            {% if labour_project.allowance_known %}
-            {{ contractor_copy.LABOUR_ALLOWED }} {{ "%.2f"|format(labour_project.allowed_hours) }}
-            · {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
-            {% if labour_project.remaining_hours is not none %}
-            · {{ contractor_copy.LABOUR_REMAINING }} {{ "%.2f"|format(labour_project.remaining_hours) }}
-            {% endif %}
-            {% if labour_project.over_hours is not none %}
-            · {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(labour_project.over_hours) }}
-            {% endif %}
-            {% else %}
-            {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
-            · {{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}
-            {% endif %}
-        </p>
-        <p class="muted-copy">{{ contractor_copy.LABOUR_WAITING }} {{ "%.2f"|format(labour_project.waiting_hours) }}</p>
-        {% if labour.elements %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Work</th>
-                    <th>{{ contractor_copy.LABOUR_ALLOWED }}</th>
-                    <th>{{ contractor_copy.LABOUR_USED }}</th>
-                    <th>{{ contractor_copy.LABOUR_REMAINING }}</th>
-                    <th>{{ contractor_copy.LABOUR_WAITING }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in labour.elements %}
-                <tr>
-                    <td>{{ row.display_name }}</td>
-                    <td>
-                        {% if row.allowance_known %}{{ "%.2f"|format(row.allowed_hours) }}{% else %}{{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}{% endif %}
-                    </td>
-                    <td>{{ "%.2f"|format(row.used_hours) }}</td>
-                    <td>
-                        {% if row.over_hours is not none %}
-                        {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(row.over_hours) }}
-                        {% elif row.remaining_hours is not none %}
-                        {{ "%.2f"|format(row.remaining_hours) }}
-                        {% else %}
-                        —
-                        {% endif %}
-                    </td>
-                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-        {% if labour.extra_work.needs_review %}
-        <h3>{{ contractor_copy.SCOPE_EXTRA_WORK_LABEL }}</h3>
-        <p>
-            {{ "%.2f"|format(labour.extra_work.used_hours) }} {{ contractor_copy.LABOUR_HOURS_USED }}
-            · {{ "%.2f"|format(labour.extra_work.waiting_hours) }} {{ contractor_copy.LABOUR_HOURS_WAITING }}
-        </p>
-        {% endif %}
-        {% set cost = hub.labour_cost %}
-        <h3 id="hub-labour-cost">Estimated and actual labour</h3>
-        <p class="muted-copy">
-            Actual is approved time only, at the company costing rate
-            {% if cost.rate %}(${{ "%.2f"|format(cost.rate.rate) }} an hour, {{ cost.rate.currency }}, version {{ cost.rate.version }} on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% else %}(none authorized yet: set one on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% endif %}.
-            Wages and payroll are not used. Time waiting for approval is not in the actual.
-        </p>
-        {% if cost.rows %}
-        <div class="table-wrap">
-        <table class="data-table" data-labour-cost>
-            <thead>
-                <tr>
-                    <th>Work</th>
-                    <th>Estimated hours</th>
-                    <th>Actual hours</th>
-                    <th>Difference</th>
-                    <th>Estimated cost</th>
-                    <th>Actual cost</th>
-                    <th>Difference</th>
-                    <th>Waiting for approval</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in cost.rows + [cost.total] %}
-                <tr data-labour-kind="{{ row.kind or 'TOTAL' }}">
-                    <td>{% if loop.last %}<strong>{{ row.label }}</strong>{% else %}{{ row.label }}{% endif %}</td>
-                    <td>{% if row.estimated_hours is not none %}{{ "%.2f"|format(row.estimated_hours) }}{% else %}not estimated{% endif %}</td>
-                    <td>{{ "%.2f"|format(row.actual_hours) }}</td>
-                    <td>{% if row.hours_difference is not none %}{{ "%+.2f"|format(row.hours_difference) }}{% else %}—{% endif %}</td>
-                    <td>{% if row.estimated_cost is not none %}${{ "{:,.2f}".format(row.estimated_cost) }}{% else %}—{% endif %}</td>
-                    <td>${{ "{:,.2f}".format(row.actual_cost) }}{% if row.unrated_hours > 0 %} <span class="muted-copy">({{ "%.2f"|format(row.unrated_hours) }} h with no costing rate)</span>{% endif %}</td>
-                    <td>{% if row.cost_difference is not none %}{% if row.cost_difference < 0 %}-{% else %}+{% endif %}${{ "{:,.2f}".format(row.cost_difference|abs) }}{% else %}—{% endif %}</td>
-                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        </div>
-        <p class="muted-copy">A plus difference is over the estimate. Extra work and company time have no estimate until they are priced.</p>
-        {% else %}
-        <p class="muted-copy">No estimated hours and no approved time yet.</p>
-        {% endif %}
-    </article>
-    <article class="panel panel-wide">
-        <div class="panel-header">
-            <h2>Related Change Orders</h2>
-            <span>
-                <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
-                · <a href="{{ url_for('accounting.new_invoice', project_id=project.id) }}" data-make-invoice>Make an invoice</a>
-            </span>
-        </div>
-        {% if hub.change_orders %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Signature</th>
-                    <th>Value</th>
-                    <th>Updated</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for change_order in hub.change_orders %}
-                <tr>
-                    <td><a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">{{ change_order.number }}</a></td>
-                    <td>{{ change_order.title }}</td>
-                    <td><span class="status">{{ change_order.status }}</span></td>
-                    <td>
-                        {% set overlay = hub.signing_overlays.get(change_order.id) %}
-                        <span class="status status-sign-{{ overlay.hub_label|lower|replace(' ', '-') }}">{{ overlay.hub_label }}</span>
-                    </td>
-                    <td>${{ "%.2f"|format(change_order.total) }}</td>
-                    <td>{{ change_order.updated_at.strftime("%Y-%m-%d") }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
         <div class="empty-state empty-state-compact">
-            <h3>No change orders</h3>
-            <p>Project change orders will be listed here.</p>
+            <h3>No drawings yet</h3>
+            <p>Upload a PDF drawing for this project.</p>
+            <a class="button-link" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
         </div>
         {% endif %}
     </article>
-    <article class="panel panel-wide">
+
+    <article class="panel">
         <div class="panel-header">
-            <h2>Field Observations</h2>
-            <a href="{{ url_for('build.new_field_event', project_id=project.id) }}">Add text observation</a>
+            <h2>Plan pages</h2>
+            {% if hub.active_revision %}
+            <a href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=hub.active_revision.id) }}">Sheet index</a>
+            {% endif %}
         </div>
-        {% if hub.field_event_rows %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Occurred</th>
-                    <th>Recorded</th>
-                    <th>Actor</th>
-                    <th>Originals</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in hub.field_event_rows %}
-                <tr>
-                    <td>
-                        <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=row.event.id) }}">
-                            {{ row.event.occurred_at|local_time("%Y-%m-%d %H:%M") }}
-                        </a>
-                    </td>
-                    <td>{{ row.event.created_at|local_time("%Y-%m-%d %H:%M") }}</td>
-                    <td>{{ row.event.actor_display_name }}</td>
-                    <td>{{ row.kind_summary or "—" }}</td>
-                    <td>
-                        {% if row.superseded %}
-                        <span class="status">Superseded</span>
-                        {% else %}
-                        <span class="status">Current</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if hub.sheet_count %}
+        <p>{{ hub.sheet_count }} sheet{{ "s" if hub.sheet_count != 1 else "" }} on revision {{ hub.active_revision.label }}.</p>
+        <ul class="activity-list">
+            {% for sheet in hub.sheets[:6] %}
+            <li>
+                <span class="activity-title">{{ sheet.number or "Unnumbered" }}{% if sheet.title %} — {{ sheet.title }}{% endif %}</span>
+                <span class="activity-meta">Review {{ contractor_copy.sentence_label(sheet.review_status) }} · Drawing {{ contractor_copy.sentence_label(sheet.drawing_status) }}</span>
+            </li>
+            {% endfor %}
+        </ul>
         {% else %}
         <div class="empty-state empty-state-compact">
-            <h3>No field observations</h3>
-            <p>Saved original field observations for this project will appear here.</p>
+            <h3>No sheets recorded</h3>
+            <p>Plan pages are set up from the job's drawings.</p>
+            <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a>
         </div>
         {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Measurements</h2>
+            {% if hub.measure_sheet %}
+            <a href="{{ url_for('plan_intelligence.measure_sheet', project_id=project.id, sheet_id=hub.measure_sheet.id) }}">Measure sheet</a>
+            {% endif %}
+        </div>
+        <p>{{ hub.calibration_count }} stored calibration{{ "s" if hub.calibration_count != 1 else "" }} · {{ hub.measurement_count }} stored measurement{{ "s" if hub.measurement_count != 1 else "" }}.</p>
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Quantities from plans</h2>
+            <a href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Take-off workspace</a>
+        </div>
+        {% if hub.latest_takeoff_run %}
+        <p>Latest run: <span class="status">{{ contractor_copy.sentence_label(hub.latest_takeoff_run.status) }}</span> · {{ contractor_copy.sentence_label(hub.latest_takeoff_run.element_type) }}</p>
+        {% else %}
+        <p class="muted-copy">No extraction runs stored for this project.</p>
+        {% endif %}
+        {% if hub.approved_takeoff_packages %}
+        <p>{{ hub.approved_takeoff_packages|length }} approved package{{ "s" if hub.approved_takeoff_packages|length != 1 else "" }}.</p>
+        <ul class="activity-list">
+            {% for package in hub.approved_takeoff_packages[:4] %}
+            <li>
+                <a href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">
+                    <span class="activity-title">{{ contractor_copy.sentence_label(package.element_type) }} v{{ package.version_number }}</span>
+                    <span class="activity-meta">{{ contractor_copy.sentence_label(package.status) }}{% if package.approved_total is not none %} · stored total {{ package.approved_total }} {{ package.approved_unit }}{% endif %}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% elif hub.takeoff_packages %}
+        <p>{{ hub.takeoff_packages|length }} package{{ "s" if hub.takeoff_packages|length != 1 else "" }} stored; none approved.</p>
+        {% else %}
+        <p class="muted-copy">No take-off packages stored.</p>
+        {% endif %}
+        <p class="muted-copy">This page does not add estimate lines. Open an approved package and choose Map to estimate. Nothing is added until Insert into estimate.</p>
     </article>
 </section>
+{% endcall %}
 
-<p class="hub-section-label" id="hub-learn">LEARN</p>
-{{ contextual_help(help_content.hub_topic("learn")) }}
-<div class="hub-future-note">
-    <p class="eyebrow">Future</p>
-    <p>LEARN is not operational. This hub does not generate AI recommendations or treat historical labour evidence as this project’s operating data.</p>
-</div>
+{% call ts.details("Project details", "ts-details", hint="Address, lead, created, pricing assumptions") %}
+<section class="form-panel" id="hub-identity" style="margin-bottom: 20px;">
+    <p class="hub-section-label">Project</p>
+    <div class="form-grid">
+        <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
+        <div><p class="eyebrow">Address</p><p>{{ job_address or "—" }}</p></div>
+        <div><p class="eyebrow">Client</p><p>{{ project.client.name }} · <a href="{{ url_for('projects.correct_project_client_page', id=project.id) }}">Correct client</a></p></div>
+        <div data-hub-project-lead><p class="eyebrow">Project Lead</p><p><span data-project-lead>{{ project_lead_name(project) }}</span> · <a href="{{ url_for('projects.edit_project_lead', id=project.id) }}">{{ "Change" if project.project_lead_user_id else "Choose" }}</a></p></div>
+        <div><p class="eyebrow">Created</p><p>{{ project.created_at|local_time("%Y-%m-%d", zone_label=False) }}</p></div>
+    </div>
+    <p class="muted-copy" style="margin-top: 12px;"><a href="{{ url_for('workflow_map.contractor', project_id=project.id) }}#workflow-stage" data-project-workflow-link>Where this job is in the Workflow Guide</a></p>
+    {% if project.description %}
+    <p style="margin-top: 16px;">{{ project.description }}</p>
+    {% endif %}
+</section>
 
-<div class="hub-future-note" style="margin-top: 16px;">
-    <p class="eyebrow">Future — not operational on this hub</p>
-    <p>Outside AI is not available on this hub. The internal cost breakdown, the customer estimate, and the QuickBooks entry sheet are available on this project. QuickBooks entry is typed by hand and is not posted to QuickBooks. The contract is generated and sent for signature from the Contract page.</p>
+<p class="hub-section-label" id="hub-commercial">Pricing assumptions</p>
+{% set ctx = project.current_commercial_context %}
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0;">{{ contractor_copy.PRICING_ASSUMPTIONS_HEADING }}{% if ctx %} (version {{ ctx.version_number }}){% endif %}</h3>
+        <a class="button-link" href="{{ url_for('projects.edit_commercial_context', id=project.id) }}">Update Context</a>
+    </div>
+    {% if ctx %}
+        {% if ctx.is_legacy_unknown %}
+        <div style="background: #fdf6e2; border-left: 4px solid #c79a2b; padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
+            <p style="margin: 0; font-weight: 600; color: #8a6d3b;">{{ contractor_copy.LEGACY_PRICING_ASSUMPTIONS_HEADING }}</p>
+            <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.9em;">
+                This project was created before pricing assumptions were recorded. Past assumptions will not be guessed. If this project becomes active, use Update Context to record them.
+            </p>
+        </div>
+        {% else %}
+        <div class="form-grid">
+            <div><p class="eyebrow">Project Type</p><p><strong>{{ ctx.project_type }}</strong></p></div>
+            <div><p class="eyebrow">Pricing Posture</p><p><strong>{{ ctx.pricing_posture }}</strong></p></div>
+            <div><p class="eyebrow">Execution Risk</p><p><strong>{{ ctx.execution_risk }}</strong></p></div>
+            <div><p class="eyebrow">Schedule Condition</p><p><strong>{{ ctx.schedule_condition }}</strong></p></div>
+            <div><p class="eyebrow">Site Condition</p><p><strong>{{ ctx.site_condition }}</strong></p></div>
+            <div><p class="eyebrow">Estimate Stage</p><p><strong>{{ ctx.estimate_stage }}</strong></p></div>
+            <div><p class="eyebrow">Delivery Model</p><p><strong>{{ ctx.delivery_model|delivery_model_label }}</strong></p></div>
+            <div><p class="eyebrow">Captured By</p><p>{{ ctx.created_by or "System" }} ({{ ctx.created_at.strftime("%Y-%m-%d") }})</p></div>
+        </div>
+        {% endif %}
+        {% if ctx.justification_reason %}
+        <p style="margin-top: 12px;"><strong>Justification:</strong> <em>{{ ctx.justification_reason }}</em></p>
+        {% endif %}
+        {% if ctx.change_summary and not ctx.is_legacy_unknown %}
+        <p class="muted-copy" style="margin-top: 4px; font-size: 0.85em;">{{ ctx.change_summary }}</p>
+        {% endif %}
+    {% else %}
+        <p class="muted-copy">{{ contractor_copy.NO_PRICING_ASSUMPTIONS }}</p>
+    {% endif %}
+</section>
+{% endcall %}
+
 </div>
 {% endblock %}

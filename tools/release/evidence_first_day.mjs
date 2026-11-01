@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import test, { after, afterEach, before } from "node:test";
-import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { REPO, freePort, launch, openSectionsIfProjectPage } from "./evidence_common.mjs";
 import { recordEarlyException } from "./evidence_identity_gate3.mjs";
 
 let browser, server, base, facts;
@@ -96,10 +96,13 @@ async function go(pg, url) {
   // A set-password link carries its credential after "#": the landing page's script posts it and moves on
   // (22 Oct 2026). Wait for that second page.
   if (url.includes("/reset-password#")) await pg.waitForFunction(() => !document.querySelector("[data-reset-open]"));
+  await openSectionsIfProjectPage(pg); // Task-First UX (31 Oct 2026): the Project page's closed sections
   return r;
 }
 async function submit(pg, locator) {
   await Promise.all([pg.waitForNavigation(), locator.click()]);
+  await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg);
   await pg.waitForLoadState();
 }
 async function signIn(s, [email, password], loginPath = "/login") {

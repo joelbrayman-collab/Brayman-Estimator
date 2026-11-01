@@ -20,7 +20,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import test, { after, before } from "node:test";
-import { REPO, freePort, launch } from "./evidence_common.mjs";
+import { REPO, freePort, launch, openSectionsIfProjectPage } from "./evidence_common.mjs";
 
 const PHONE = { width: 390, height: 844 };
 const DESK = { width: 1280, height: 900 };
@@ -92,10 +92,13 @@ async function person(key, viewport) {
 async function go(pg, url) {
   const r = await pg.goto(url.startsWith("http") ? url : `${base}${url}`);
   await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg); // Task-First UX (31 Oct 2026): the Project page's closed sections
   return r;
 }
 async function submit(pg, locator) {
   await Promise.all([pg.waitForNavigation(), locator.click()]);
+  await pg.waitForLoadState();
+  await openSectionsIfProjectPage(pg);
   await pg.waitForLoadState();
 }
 const pathOf = (pg) => new URL(pg.url()).pathname;

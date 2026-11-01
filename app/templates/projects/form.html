@@ -114,6 +114,8 @@
             <label for="plan-start-upload"><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i><strong>Upload plan</strong><span>Add the plan PDF now.</span></label>
             <input type="radio" id="plan-start-generate" name="plan_start" value="generate" {% if v.get('plan_start') == 'generate' %}checked{% endif %}>
             <label for="plan-start-generate"><i class="bi bi-pencil-square" aria-hidden="true"></i><strong>Generate drawings</strong><span>Go straight to the drawing tools after saving.</span></label>
+            <input type="radio" id="plan-start-none" name="plan_start" value="none" {% if v.get('plan_start') == 'none' %}checked{% endif %} data-no-drawings>
+            <label for="plan-start-none"><i class="bi bi-slash-circle" aria-hidden="true"></i><strong>No drawings needed</strong><span>Small jobs done without plans.</span></label>
             <input type="radio" id="plan-start-later" name="plan_start" value="later" {% if v.get('plan_start', 'later') == 'later' %}checked{% endif %}>
             <label for="plan-start-later"><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
         </div>

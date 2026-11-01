@@ -829,6 +829,14 @@ def _plan_start_after_create(project, org_id):
 
     Either choice records that drawings are required. A failed upload never undoes the project."""
     choice = (request.form.get("plan_start") or "later").strip()
+    if choice == "none":
+        # Set Up This Project (Slice C): "No drawings needed" is answered on the same screen (the retired wizard's
+        # Plans step), recorded by the same service as the project page's choice.
+        try:
+            set_project_drawing_requirement(organization_id=org_id, project_id=project.id, requirement="NOT_REQUIRED")
+        except ProjectDrawingRequirementError:
+            pass
+        return None
     if choice not in ("upload", "generate"):
         return None
     try:

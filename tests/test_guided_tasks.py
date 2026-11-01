@@ -411,3 +411,11 @@ def test_the_supplier_hub_lists_a_purchase_order_waiting_for_the_stores_signatur
     assert attention(tomlinson.supplier_id)["signing_count"] == 0
     # Another store never sees it.
     assert attention(tomlinson.supplier_id + 999)["signing_count"] == 0
+
+
+def test_set_up_records_no_drawings_needed_on_the_same_screen(env):
+    _app, d, _ben = env
+    d.post("/projects/new", data={"name": "No plans (synthetic)", "client_id": synthetic_client().id,
+                                   "plan_start": "none"})
+    project = Project.query.filter_by(name="No plans (synthetic)").one()
+    assert project.drawing_requirement == "NOT_REQUIRED"

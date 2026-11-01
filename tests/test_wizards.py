@@ -63,7 +63,7 @@ def _start(d, key, **data):
     from app.wizards import service as S
 
     with d.http.session_transaction() as session:  # the signed-in person, as the start route would see them
-        user = db.session.get(User, int(session["_user_id"]))
+        user = db.session.get(User, int(str(session["_user_id"]).split(":", 1)[0]))  # "<id>:<session version>"
     project_id = data.get("project_id")
     run = S.start_contractor_run(key, organization_id=DEFAULT_ORGANIZATION_ID,
                                  actor=getattr(user, "display_name", "") or "Signed-in user",

@@ -166,7 +166,9 @@ def _job_attention(project, kinds):
 
         view = assemble(_org(), current_user._get_current_object(), project_id=project.id)
     except Exception:  # noqa: BLE001 - a Guided Task screen never fails because of the attention list
-        if __import__("flask").current_app.testing:
+        from flask import current_app
+
+        if current_app.testing:
             raise
         return []
     return [i for i in view.get("items", []) if i.get("kind") in kinds]

@@ -340,6 +340,11 @@ step("The internal cost estimate is marked INTERNAL — NOT FOR CUSTOMER DISTRIB
 step("Review Pricing & Prepare Proposal waits while any stage's cost is missing", async () => {
   const { pg, errors } = await person("ben", DESK);
   await go(pg, `/projects/${W.project}/guided/pricing`);
+  // Review This Estimate (Slice C): no Approve while work is unpriced; the reason is the first decision shown, and
+  // the earlier step-by-step list (with the same reason) is in a closed section, opened here.
+  assert.equal(await pg.locator("[data-approve-estimate]").count(), 0);
+  assert.match(await pg.locator("[data-review-decisions]").innerText(), /HVAC is Not Started/);
+  await openSections(pg);
   assert.match(await pg.locator("[data-pricing-blocked]").innerText(), /HVAC is Not Started/);
   assert.equal(await pg.locator("[data-create-proposal]").count(), 0);
   assert.equal(await pg.locator("[data-approve-costing]").count(), 0);
@@ -382,6 +387,7 @@ step("Independent calculator: Create New Project carries the result into the new
   await pg.selectOption("select[name=client_id]", { label: "Jordan Avery (synthetic)" });
   await pg.selectOption("select[data-guided-project-type]", "GARAGE_OUTBUILDING");
   await pg.check('input[name=contractor_role][value="SELECTED_PORTIONS"]');
+  await openSections(pg);  // Set Up This Project (Slice C): the project settings are in a closed section
   for (const [name, value] of [["pricing_posture", "Fair Market"], ["execution_risk", "Normal"], ["schedule_condition", "Normal"],
     ["site_condition", "Normal"], ["estimate_stage", "Preliminary"], ["delivery_model", "Mixed"]]) {
     await pg.selectOption(`select[name=${name}]`, value);

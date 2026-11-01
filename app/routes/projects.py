@@ -692,14 +692,14 @@ SET_UP_SETTING_DEFAULTS = {"pricing_posture": "Competitive", "execution_risk": "
 def _set_up_defaults(org_id, clients):
     from app.services.clients import location_values
 
-    lead_ids = {str(p["id"]) if isinstance(p, dict) else str(getattr(p, "id", "")) for p in lead_choices_safe(org_id)}
+    lead_ids = {str(p["id"]) if isinstance(p, dict) else str(getattr(p, "id", "")) for p in _lead_choices_safe(org_id)}
     me = str(getattr(current_user, "id", "") or "")
     return {"setting_defaults": SET_UP_SETTING_DEFAULTS,
             "default_project_lead_id": me if me in lead_ids else "",
             "client_addresses": {c.id: location_values(c) for c in clients}}
 
 
-def lead_choices_safe(org_id):
+def _lead_choices_safe(org_id):
     from app.services.project_lead import lead_choices
 
     try:

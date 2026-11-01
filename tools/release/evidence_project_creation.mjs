@@ -407,7 +407,10 @@ step("Step 4 on a desktop: a real plan PDF, Save & Continue says Uploading at on
   // A PDF over the upload limit is stopped here, with the reason; nothing is sent and the buttons stay usable.
   const limit = Number(await pg.getAttribute('input[name="plan_file"]', "data-max-bytes"));
   const big = Buffer.concat([PLAN_PDF, Buffer.alloc(limit + 1024 - PLAN_PDF.length, 32)]);
-  await pg.setInputFiles('input[name="plan_file"]', { name: "too-big-set.pdf", mimeType: "application/pdf", buffer: big });
+  // A 25 MB file crosses to the browser over the DevTools connection; on a busy 2-CPU workspace that alone can take
+  // longer than the walk's 15 s default for an action, so this one transfer gets a longer allowance. The check is the
+  // same: the page stops the file before anything is sent.
+  await pg.setInputFiles('input[name="plan_file"]', { name: "too-big-set.pdf", mimeType: "application/pdf", buffer: big }, { timeout: 120000 });
   let sent = 0;
   const count = (r) => { if (r.method() === "POST") sent += 1; };
   pg.on("request", count);

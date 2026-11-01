@@ -181,3 +181,101 @@ Rulings
   opens the coming week) does not list tomorrow's concrete delivery. It fails the same way on the baseline commit
   `1d1448a0` at that hour, so it is a pre-existing day-of-week defect in Field week / deliveries. It needs its own
   root-cause fix and a test.
+
+## Slice C — Guided Tasks (branch `task-first/guided`, 1 Nov 2026)
+From `feature/task-first-rdims-2026-10-31` @ `14a523cc` (Slices A and B merged). No migration, no model or schema
+change, no route removed, no governed action weakened. Service `app/services/guided_tasks.py`; blueprint
+`app/routes/guided_tasks.py` (`guided_tasks.review_list`, `guided_tasks.approve_estimate`).
+
+### Built
+1. **Price This Job** (`guided.workflow`, `/projects/<id>/guided`, `guided/workflow.html`): one Task Screen — context
+   (job, Brayman #, customer, estimate and version), purpose, ONE primary action (`price_this_job`: the next
+   unpriced work item → its page `guided.stage`; every item priced → Review This Estimate; only quotes outstanding →
+   "Waiting on others"; nothing chosen → Choose the work), the progress and status counts, the totals (cost, selling
+   price, true margin, labour hours from `estimate_economics`), the work list with each item's status, "Next:" and
+   issues, this job's estimating attention items, then closed: More for this job (add/change work, Review This
+   Estimate, internal cost, calculators, supplier prices, line items, labour rate and margin, compare versions,
+   start a revision), Still to do, Recent decisions. Nothing re-implemented: calculators, quantities, labour hours,
+   quotes, allowances, routing and completion stay on the work item's page. `/estimating/start` (`guided.start`) is
+   the "choose the job" page for Price This Job.
+2. **Review This Estimate** (`guided.pricing`, `guided/pricing.html`): context, purpose, ONE primary — **Approve
+   Estimate** — with its consequence in figures ("confirms the costs, prices the job at M % margin and $R an hour,
+   and locks version N at $T"), Needs a decision (unfinished work, costing blocks in plain words, no proposal
+   template), What Calibrayt already knows (items priced, labour hours and rate, margin, HST, winter), the project
+   pricing form (labour rate and margin per project, unchanged), then closed: Approve in separate steps (the earlier
+   1-2-3 with `data-approve-costing` / `data-apply-pricing`), The customer proposal, Into the build, More for this
+   job. **The Approve is the existing Gate 1** (`guided_tasks.approve_estimate` → `estimate_costing.approve_all_costing`
+   when the costing is not current → `pricing_engine.apply_resolved_pricing_to_version` when the pricing is not
+   current → `proposal_acceptance.sign_off_estimate`, which writes the `EstimateApproval` record (who, when, frozen
+   summary, fingerprint), locks the version and builds the proposal). Same services, same refusals; any refusal
+   rolls everything back. It also refuses when the priced customer total differs from the total the person was shown
+   (`expected_total`), when the version changed, when it is already approved (Gate 1 immutable) or accepted.
+3. **Set Up This Project** (`projects.create_project`, `projects/form.html`): one screen — customer (choose, or add a
+   new one here: name, email, phone, created by `clients.create_client` in the same transaction), the job (name,
+   what is being built, your role, Client Project #, description), job site (same as the customer's address, rural
+   lot), plans (upload / generate / **No drawings needed** / later). Software-only fields are filled automatically
+   and kept under the closed **Adjust project settings**: status (Lead), commercial project type (from what is being
+   built; blank → `COMMERCIAL_TYPE_HINT`, else New Build), permit class (default), the six settings (company
+   defaults), Project Lead (the person creating it), start the estimate (on). Brayman Project # still automatic. The
+   wizard's separate Review step is removed. Every validation kept (name and customer, customer rules, reason for an
+   exceptional posture/risk, project identity, location, permit).
+4. **Wizard retirement**: `wizards.start` for NEW_PROJECT, GUIDED_ESTIMATING and MANAGE_PROJECT (GET and POST)
+   redirects to the Guided Task (`/projects/new`; `/projects/<id>/guided` or `/estimating/start`; the project page or
+   the project list) and starts no run. Runs started before keep working (resume, steps, end), and Home's "Continue
+   where you left off" still lists them. `/wizards/` lists the Guided Tasks and those runs. The project page's wizard
+   bar, the estimating start page's and the New Project form's wizard bars are replaced by Guided Task links;
+   Project Created's "Start Guided Estimating" → Price This Job, "Create Another Project" → Set Up Another Project.
+   Home's **Start something** band: Set Up This Project · Price This Job · Review This Estimate (no Continue manually
+   fork); `data-start-wizard` and `data-home-start-estimate` stay on the task that took over the job.
+   `WIZARD_STEP_LEDGER` records where every step went.
+5. **Field Today** (`field/today.html`): the date, returned time and "Before you finish today", then **one list of
+   today's work** with ONE primary (the first card's Enter time; with no work, Capture on the chosen job or Choose
+   Project), banked hours, then a closed **More for today** (Log time, Extra work, My time, Shop / Company Work,
+   Change project, Print, help). The seven quick actions stay (Magnificent Seven, owner approved).
+   `FIELD_ONLY_ALLOWED_ENDPOINTS` unchanged.
+6. **Supplier Hub**: registry scope `supplier` (`SCOPE_SUPPLIER`, never on the office list) and
+   `assemble_for_supplier`; provider `supplier_calisign_awaiting`: purchase orders and delivery changes on CaliSIGN
+   (status SENT) whose store participant has not signed, for that store only. Shown as "Waiting for your signature"
+   on the Supplier Hub attention panel with Review and Sign links; not added to the panel's total (each is also an
+   order to confirm or a change to answer).
+7. **Surfaced**: the project Next step says "Price This Job" (→ `guided.workflow`) and "Review This Estimate"
+   (→ `guided.pricing`); a Ready proposal (built on approval) is "Check and send the proposal"; the attention item
+   "estimate ready for your approval" opens Review This Estimate.
+
+### Wizard steps, before → after
+- Before: 4 linear wizards, **44 steps** (5 + 15 + 12 + 12); audit: 28 automatable/removable/mergeable.
+- After: the three contractor wizards (32 steps) are retired as linear runs. Their **21 A/R/M steps** are automated,
+  removed or merged (New Project 3, Guided Estimating 10, Manage a Project 8); their **11 K steps** (human decisions)
+  live on 3 Guided Task screens + the project Next step and the existing proposal / schedule / purchasing / change /
+  close pages. Contractor linear wizard steps offered: **32 → 0**. The Supplier Pro Desk wizard (12 steps, 7 A/R/M)
+  is unchanged in this slice (ruling C6). Total linear wizard steps offered: **44 → 12**; A/R/M steps done: **21 of 28**.
+
+### Screens simplified
+Home band, Set Up This Project (New Project form + the 5-step wizard → 1 screen), Price This Job (workflow page +
+wizard steps 1–10), Review This Estimate (pricing page + wizard steps 11–13; 3 approval buttons → 1), the estimating
+start page (Price This Job: choose the job), Project Created, the project page's wizard bar, `/wizards/`, Field Today,
+the Supplier Hub attention panel. Visible on each Guided Task screen (walk, desktop 1280 px, page body only):
+Set Up This Project SETUP_COUNTS; Price This Job PRICE_COUNTS; Review This Estimate REVIEW_COUNTS; Field Today (390 px)
+FIELD_COUNTS — each with exactly one primary action.
+
+### Rulings
+- C1 **Gate 1 single action**: the costing approval and the pricing are run inside the one Approve by their own
+  services (the audit's "software checks", 3.8); the estimator's decision is Approve with the figures shown. The
+  separate buttons stay (closed). No commercial rule changes: the pricing applied is the company's method with the
+  job's own labour rate and margin, exactly as "Apply the company pricing policy" applied it.
+- C2 **Approve what you saw**: the Approve carries the customer total shown; a different priced total refuses and
+  nothing is approved.
+- C3 **Retired wizards keep in-flight runs**: no new run from the web; existing runs can be finished or closed. Tests
+  and walks that check the runner open such a run (tests use the same service; walks use `tests/wizard_run_seed.py`
+  in the walk's own temporary database) — same checks, new navigation.
+- C4 **Set Up defaults**: blank settings are filled from the same defaults the form and wizard always pre-selected
+  (`SET_UP_SETTING_DEFAULTS`); sent values are validated as before. The permit class is the default class (deriving
+  it from the address needs municipal data: deferred).
+- C5 **Field Today**: the seven quick actions and banked hours stay visible (owner decisions); only the secondary job
+  buttons, print and help are closed. The texts consent question (one-time) is its own card.
+- C6 **Deferred**: Price This Request (supplier) and the Supplier Pro Desk wizard retirement; Get Customer Approval,
+  Award This Subcontract, Buy What's Needed, Schedule, Change and Close as Guided Task screens (their next steps
+  already open the existing pages); permit class from the address. No schema need was found.
+
+### Tests
+TESTS_PLACEHOLDER

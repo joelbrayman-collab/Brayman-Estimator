@@ -439,3 +439,7 @@ Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, F
   `test_supplier_hub.py`, `test_task_first_ux.py` at the final code: **221 passed**.
 - Browser: `evidence_documents.mjs evidence_guided_tasks.mjs` (`--test-concurrency=1`): **13 passed, 0 failed**.
 - Full suite not re-run here (shared machine with a running browser-walk job); the release gate runs it.
+
+### Deferred from the review (M1)
+
+- M1 (minor): a file uploaded but never filed stays on disk under the documents storage folder. It is not in the database, not searchable and not shown to anyone, so nothing leaks. Deferred to a cleanup command (`flask documents sweep-unfiled`) in a later release, because deleting user files needs its own reviewed rule (age threshold, dry run first). Nothing is deleted automatically in this release.

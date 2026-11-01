@@ -233,6 +233,12 @@ def _touch(document):
     document.updated_at = datetime.utcnow()
 
 
+def _title_from(filename: str) -> str:
+    """The file name without extension, underscores shown as spaces (secure_filename turns spaces into them)."""
+    stem = os.path.splitext(filename or "")[0].replace("_", " ").strip()
+    return (stem or filename or "Document")[:MAX_TITLE]
+
+
 def _clean(value, limit):
     value = (value or "").strip()
     return value[:limit] if value else None
@@ -252,7 +258,7 @@ def file_document(organization_id: str, actor: Actor, *, blob: UploadBlob, conte
     basis = TYPE_CONFIRMED if (type_code in TYPES and type_confirmed) else TYPE_SUGGESTED
     now = datetime.utcnow()
     document = Document(organization_id=organization_id,
-                        title=_clean(title, MAX_TITLE) or os.path.splitext(blob.filename)[0][:MAX_TITLE] or blob.filename,
+                        title=_clean(title, MAX_TITLE) or _title_from(blob.filename),
                         document_type=chosen, type_basis=basis, type_rule=rule if chosen == suggested else None,
                         status=STATUS_ACTIVE, sensitivity=default_sensitivity(chosen, context.kind), origin=ORIGIN_UPLOAD,
                         reference_number=_clean(reference_number, 120), counterparty=_clean(counterparty, 200),

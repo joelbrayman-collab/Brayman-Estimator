@@ -73,18 +73,18 @@ class Filters:
             except ValueError:
                 return None
 
-        def _int(name):
+        def _int(name, limit=3650):
             try:
                 value = int((args.get(name) or "").strip())
             except ValueError:
                 return None
-            return value if 0 <= value <= 3650 else None
+            return value if 0 <= value <= limit else None
 
         status = (args.get("status") or STATUS_ACTIVE).upper()
         kind = (args.get("context") or "").upper()
         return cls(q=(args.get("q") or "").strip()[:200], type_code=(args.get("type") or "").strip()[:60],
                    family=(args.get("family") or "").strip()[:40],
-                   context_kind=kind if kind in CONTEXT_KINDS else "", context_id=_int("context_id"),
+                   context_kind=kind if kind in CONTEXT_KINDS else "", context_id=_int("context_id", 2**31 - 1),
                    status=status if status in (STATUS_ACTIVE, STATUS_ARCHIVED, "ALL") else STATUS_ACTIVE,
                    uploaded_from=_date("from"), uploaded_to=_date("to"), expiring_within=_int("expiring"),
                    dates=(args.get("dates") or "").strip().lower()[:20], review=(args.get("review") or "") == "1")
@@ -139,14 +139,15 @@ def fts_match_expression(q: str) -> str:
     return " ".join('"' + t.replace('"', "") + '"*' for t in terms(q))
 
 
-def _current_version_id():
-    return (select(DocumentVersion.id).where(DocumentVersion.document_id == Document.id,
-                                              DocumentVersion.is_current.is_(True)).scalar_subquery())
+def _on_current_version():
+    """DocumentDate rows of the document's current version (both tables in the EXISTS; Document correlated)."""
+    return and_(DocumentDate.document_id == Document.id, DocumentVersion.id == DocumentDate.version_id,
+                DocumentVersion.is_current.is_(True))
 
 
 def _action_dates_condition(*, until: Optional[date] = None, before: Optional[date] = None):
-    condition = and_(DocumentDate.document_id == Document.id, DocumentDate.status == DATE_CONFIRMED,
-                     DocumentDate.date_kind.in_(ACTION_DATE_KINDS), DocumentDate.version_id == _current_version_id())
+    condition = and_(_on_current_version(), DocumentDate.status == DATE_CONFIRMED,
+                     DocumentDate.date_kind.in_(ACTION_DATE_KINDS))
     if until is not None:
         condition = and_(condition, DocumentDate.value <= until)
     if before is not None:
@@ -179,13 +180,9 @@ def _apply_filters(query, filters: Filters, today: date):
     if filters.dates == "expired":
         query = query.filter(_action_dates_condition(before=today))
     elif filters.dates == "proposed":
-        query = query.filter(exists().where(and_(DocumentDate.document_id == Document.id,
-                                                 DocumentDate.status == DATE_PROPOSED,
-                                                 DocumentDate.version_id == _current_version_id())))
+        query = query.filter(exists().where(and_(_on_current_version(), DocumentDate.status == DATE_PROPOSED)))
     elif filters.dates == "none":
-        query = query.filter(~exists().where(and_(DocumentDate.document_id == Document.id,
-                                                  DocumentDate.status == DATE_CONFIRMED,
-                                                  DocumentDate.version_id == _current_version_id())))
+        query = query.filter(~exists().where(and_(_on_current_version(), DocumentDate.status == DATE_CONFIRMED)))
     if filters.review:
         query = query.filter(or_(Document.type_basis == TYPE_SUGGESTED, exists().where(and_(
             DocumentVersion.document_id == Document.id, DocumentVersion.is_current.is_(True),

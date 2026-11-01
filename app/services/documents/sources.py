@@ -88,6 +88,7 @@ class KindReport:
 @dataclass
 class ConnectReport:
     kinds: dict = field(default_factory=dict)
+    dry_run: bool = False
 
     def kind(self, name) -> KindReport:
         return self.kinds.setdefault(name, KindReport())
@@ -184,21 +185,27 @@ def _project_contexts(project, client_id=None):
 
 
 def _run(report: ConnectReport, kind: str, rows, register_one, organization_id):
+    """One registration per source row, committed on its own (a dry run keeps nothing: the caller rolls back).
+    No SAVEPOINT is used: with SQLite's driver a released savepoint outside an explicit transaction commits."""
     registered = _registered_ids(organization_id, kind)
     stats = report.kind(kind)
-    for row in rows:
+    for row_id in [row.id for row in rows]:
         stats.rows += 1
-        if row.id in registered:
+        if row_id in registered:
             stats.already += 1
             continue
+        row = next(r for r in rows if r.id == row_id)
         try:
-            with db.session.begin_nested():
-                available = register_one(row)
+            available = register_one(row)
+            db.session.flush()
+            if not report.dry_run:
+                db.session.commit()
             stats.registered += 1
             if not available:
                 stats.missing += 1
         except Exception:  # noqa: BLE001 - one bad record never stops the run; it is counted
-            current_app.logger.exception("Could not connect %s %s as a document", kind, row.id)
+            db.session.rollback()
+            current_app.logger.exception("Could not connect %s %s as a document", kind, row_id)
             stats.failed += 1
 
 
@@ -377,7 +384,7 @@ def connect_existing_documents(organization_id: str, *, project_id: Optional[int
     """Idempotent: connect every existing plan, generated contract, signed PDF, drawing set (and, organization-wide,
     past job workbook) as a document. No file is copied or moved; nothing outside the document tables is written.
     With ``dry_run`` the counts are reported and nothing is kept."""
-    report = ConnectReport()
+    report = ConnectReport(dry_run=dry_run)
     _plans(organization_id, report, project_id)
     _contracts(organization_id, report, project_id)
     _signed(organization_id, report, project_id)

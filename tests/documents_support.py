@@ -77,6 +77,16 @@ PNG_1PX = (b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01
 def make_app(**config):
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
                               "SECRET_KEY": "test-secret-documents", "WTF_CSRF_ENABLED": False, **config})
+
+    @application.url_value_preprocessor
+    def _fresh_request_user(endpoint, values):
+        # Tests keep one app context open, so flask.g (and flask-login's cached user) would carry over from the
+        # previous request made by another test client. Each request resolves its own signed-in user.
+        from flask import g
+
+        g.pop("_login_user", None)
+        g.pop("organization_id", None)
+
     return application
 
 

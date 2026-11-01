@@ -119,7 +119,7 @@ def test_home_asks_what_do_you_need_to_do_and_keeps_every_existing_tool(env):
     assert 'href="/projects/new" data-guided-task="set_up" data-start-wizard="NEW_PROJECT">' in home
     assert 'href="/estimating/start" data-guided-task="price" data-start-wizard="GUIDED_ESTIMATING" data-home-start-estimate>' in home
     # Nothing that was on Home before is gone: the New Project form, the estimate form, Company Calendar.
-    assert home.count("data-home-start-estimate") == 1 and home.count('home-start') == 1
+    assert home.count("data-home-start-estimate") == 1 and home.count(' home-start"') == 1
     assert home.count('class="home-calendar') == 1
     assert "+ Start New Project" not in home and "Start New Estimate" not in home  # the duplicates are gone
     for key, page in (("NEW_PROJECT", "/projects/new"), ("GUIDED_ESTIMATING", "/estimating/start")):

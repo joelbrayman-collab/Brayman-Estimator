@@ -255,8 +255,11 @@ Home band, Set Up This Project (New Project form + the 5-step wizard → 1 scree
 wizard steps 1–10), Review This Estimate (pricing page + wizard steps 11–13; 3 approval buttons → 1), the estimating
 start page (Price This Job: choose the job), Project Created, the project page's wizard bar, `/wizards/`, Field Today,
 the Supplier Hub attention panel. Visible on each Guided Task screen (walk, desktop 1280 px, page body only):
-Set Up This Project SETUP_COUNTS; Price This Job PRICE_COUNTS; Review This Estimate REVIEW_COUNTS; Field Today (390 px)
-FIELD_COUNTS — each with exactly one primary action.
+Set Up This Project 1 button (Create the project) and 1 link (Cancel) beside the job's questions, 12 settings closed
+(was 29 fields and Save Project, all open); Price This Job 10 links, 0 buttons (was 1 primary + 6 secondary links + the wizard
+bar's 2); Review This Estimate 11 links, 4 buttons with ONE primary, Approve Estimate (was 3 primary-styled steps:
+Approve the costing, Apply the company pricing policy, Prepare the proposal); Field Today (390 px) 7 links, 4 buttons
+with ONE primary (was a primary per scheduled card plus Capture, and every job button open). Each Guided Task screen has exactly one primary action.
 
 ### Rulings
 - C1 **Gate 1 single action**: the costing approval and the pricing are run inside the one Approve by their own
@@ -277,5 +280,28 @@ FIELD_COUNTS — each with exactly one primary action.
   Award This Subcontract, Buy What's Needed, Schedule, Change and Close as Guided Task screens (their next steps
   already open the existing pages); permit class from the address. No schema need was found.
 
-### Tests
-TESTS_PLACEHOLDER
+- C7 **Found while running the whole suite** (both predate this branch, both fixed): the Documents and Equipment
+  history printed raw UTC clock times (`test_office_local_time`) — now `local_time`, as every office page; the Documents
+  walk looked for a sidebar link that the Task-First menu moved to More — it now opens More (same check).
+
+### Tests (1 Nov 2026, cloud workspace shared with other agents; commands per AGENTS.md)
+- `tests/test_guided_tasks.py`: **23 passed** (band, retired starts GET/POST, in-flight runs, step ledger, Set Up
+  screen/defaults/validations/new customer/no drawings/estimate start, Price This Job, Review This Estimate, Approve =
+  Gate 1 record + lock + proposal, refusal on changed figures with nothing kept, refusal while unpriced, review list,
+  Next step and attention, Field Today, the supplier provider's scope, the Supplier Hub signing item).
+- Full suite, one log per file (`venv/bin/python -m pytest -q -p no:warnings -p no:cacheprovider <file>`, Family 05
+  master env set), every file re-run at the final code where a later change could touch it: **328 files, 3,926 tests:
+  3,915 passed, 11 skipped (the office-Mac-only historical workbook tests), 0 failed.** Updated assertions (each with a
+  comment and equivalent coverage): `test_wizards` (band, Project Created, the run helper `_start` creates the run with
+  the same service), `test_project_creation_ux`, `test_selected_work`, `test_home_planning`, `test_guided_estimating`,
+  `test_projects_visual`. `test_concrete_calculator_access` and `test_stair_calculator_access` failed once while the
+  machine was at load ~7 on 2 CPUs (their page server must start within 20 s) and passed on the re-run; not changed.
+- Browser (`EVIDENCE_EXECUTABLE=… EVIDENCE_REPO=… node --test --test-reporter=tap --test-force-exit
+  --test-concurrency=1`): **all 28 `tools/release/evidence_*.mjs` walks, 316 checks passed, 0 failed** (302 + identity
+  gate 3's 1 at Slice A, + Documents 4, + the new **`evidence_guided_tasks.mjs`: 9 checks**); `tests/e2e/contractor_workflow.mjs`
+  and `tests/e2e/job_lifecycle.mjs` pass. Walks changed for the new navigation (same checks): wizards, project_creation,
+  compact_new_project, selected_work (open a run started before the retirement via `tests/wizard_run_seed.py`),
+  guided_estimating, first_day, magnificent_seven, time_payroll, documents, both e2e walks; helpers in
+  `evidence_task_first.mjs` (`seedWizardRun`, `openSetUpSections`, `openFieldTodayMore`); `evidence_common.mjs` and
+  `hosted_postcheck.py` untouched. The project-creation walk's 25 MB upload-limit file gets a 120 s transfer
+  allowance (it timed out at the 15 s default on the loaded workspace; the check is unchanged).

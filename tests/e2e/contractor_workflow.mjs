@@ -295,9 +295,14 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     // Project work from the contractor's labour hours, then dates, time and actual cost.
     await submit(page.getByRole("button", { name: "Build project work" }));
     assert.match(await page.locator("main").innerText(), /Current authorized labour: 6\.00/);
-    const today = new Date();
+    // The office's calendar day, as a local-noon Date (My Week date fix, 1 Nov 2026): the app's "today" is the company
+    // zone's (COMPANY_TIME_ZONE, default America/Toronto), not the machine's.
+    const [ty, tm, td] = new Intl.DateTimeFormat("en-CA", { timeZone: process.env.COMPANY_TIME_ZONE || "America/Toronto",
+      year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()).split("-").map(Number);
+    const today = new Date(ty, tm - 1, td, 12);
     const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const later = new Date(today.getTime() + 2 * 86400000);
+    // Two calendar days on, not 48 hours (a DST-change day is 23 or 25 hours long; My Week date fix, 1 Nov 2026).
+    const later = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 12);
     await page.goto(`${base}/schedule/items/new?project_id=${projectId}&next=hub`);
     await page.selectOption("[name=project_work_element_id]", { label: "Foundation and site" });
     await page.selectOption("[name=project_work_activity_id]", { index: 1 });

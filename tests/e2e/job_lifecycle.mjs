@@ -66,6 +66,15 @@ async function submitLink(who, locator) {
 }
 
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+// The office's calendar day (My Week date fix, 1 Nov 2026), as a local-noon Date so iso() and day arithmetic read it
+// the same on any machine. The app decides "today" in the company zone (COMPANY_TIME_ZONE, default America/Toronto);
+// a walk run on a UTC machine between 20:00 and midnight in Toronto would otherwise date everything a day ahead.
+const officeToday = () => {
+  const zone = process.env.COMPANY_TIME_ZONE || "America/Toronto";
+  const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" })
+    .format(new Date()).split("-").map(Number);
+  return new Date(y, m - 1, d, 12);
+};
 
 // Task-First UX (31 Oct 2026): the Project page keeps each part of the job in a closed section; open them, as a person
 // opens the section they need, before reading or using what is inside.
@@ -119,8 +128,12 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     browser = await chromium.launch(exe ? { executablePath: exe, headless: true } : { channel: "chrome", headless: true });
     ben = await person(browser, base, { width: 1280, height: 900 }, pageErrors, "office");
     const { page } = ben;
-    const today = new Date();
-    const inDays = (n) => new Date(today.getTime() + n * 86400000);
+    const today = officeToday();
+    // Calendar days, not 24-hour steps (My Week date fix, 1 Nov 2026): Toronto's DST-end day is 25 hours long, so in its
+    // first hour (00:00-00:59 EDT on 1 Nov 2026) today + 24 h was still 1 Nov and "tomorrow's" delivery was dated today,
+    // a Sunday, which My Week rightly leaves out (on a Sunday it shows the coming Monday-Sunday). The spring-forward
+    // day (23 hours) skipped a day the other way.
+    const inDays = (n) => new Date(today.getFullYear(), today.getMonth(), today.getDate() + n, 12);
 
     // ---------------------------------------------------------------- 1. estimate → issued proposal
     // (The estimating steps are proven figure by figure in contractor_workflow.mjs; here they only

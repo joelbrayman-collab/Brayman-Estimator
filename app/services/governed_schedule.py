@@ -453,7 +453,9 @@ def procurement_plan(project, *, today: Optional[date] = None, lead_days: int = 
     earlier) and request quotes by (RFQ_DAYS earlier again). Planning windows only; nothing is ordered."""
     from app.services.schedule import _active_element_item
 
-    today = today or date.today()
+    from app.services.local_time import local_today
+
+    today = today or local_today()  # the office's day, not the server's (UTC) date
     rows = []
     for element in _elements(project):
         item = _active_element_item(element.id, project.organization_id)

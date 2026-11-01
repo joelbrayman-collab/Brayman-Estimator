@@ -43,6 +43,7 @@ from app.services.documents import fts
 from app.services.documents.access import Scope, scope_filter
 from app.services.documents.contexts import labels_for_documents
 from app.services.documents.types import REGISTRY, type_label
+from app.services.local_time import local_today
 
 PAGE_SIZE = 50
 MAX_OFFSET = 2000
@@ -233,7 +234,7 @@ def _snippet(raw: Optional[str]) -> Optional[Markup]:
 
 def search(scope: Scope, filters: Filters, *, page: int = 1, page_size: int = PAGE_SIZE,
            today: Optional[date] = None, mode: Optional[str] = None) -> Page:
-    today = today or date.today()
+    today = today or local_today()  # the office's day, not the server's (UTC) date
     page = max(1, int(page or 1))
     offset = min((page - 1) * page_size, MAX_OFFSET)
     words = terms(filters.q)

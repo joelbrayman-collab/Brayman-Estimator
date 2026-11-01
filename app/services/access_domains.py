@@ -71,6 +71,11 @@ FIELD_ONLY_ALLOWED_ENDPOINTS = frozenset(
         "site_plans.file",
         "site_plans.page",
         "site_plans.sign_out",
+        # Job documents (31 Oct 2026): the drawings, specifications, instructions and safety documents of the jobs
+        # the crew member works on (same project rule, field_visible_project_ids), read only. No other document type,
+        # no PEOPLE or FINANCIAL document, no office document page (app/services/documents/access.py field_scope).
+        "documents.field_project",
+        "documents.field_file",
     }
 )
 

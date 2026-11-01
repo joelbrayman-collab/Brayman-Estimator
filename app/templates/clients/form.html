@@ -10,6 +10,7 @@
     <div>
         <p class="eyebrow">Customers</p>
         <h1>{% if client %}{{ client.name }}{% else %}New Client{% endif %}</h1>
+        {% if client %}<p class="muted-copy"><a href="{{ url_for('documents.customer_documents', client_id=client.id) }}" data-customer-documents>Documents</a></p>{# RDIMS insertion point #}{% endif %}
     </div>
 </div>
 

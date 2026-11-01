@@ -1,0 +1,52 @@
+{# Documents list (shared by the library and every context page). Rows come from app/services/documents/search.py;
+   no file bytes or text are loaded for a list. #}
+{% macro document_rows(results, show_links=True, empty="No documents here yet.") -%}
+{% if results.rows %}
+<p class="register-count" data-documents-count="{{ results.total }}">{{ results.total }} document{{ "" if results.total == 1 else "s" }}{% if results.mode == "like" %} · searching names and file text{% endif %}</p>
+<div class="register-card">
+<table class="register-table docs-table" data-documents-list>
+  <thead><tr><th>Document</th><th>Type</th><th>Key dates</th>{% if show_links %}<th>Linked to</th>{% endif %}<th>Status</th></tr></thead>
+  <tbody>
+  {% for row in results.rows %}
+  <tr data-document-row="{{ row.document.public_id }}">
+    <td><a href="{{ url_for('documents.detail', public_id=row.document.public_id) }}">{{ row.document.title }}</a>
+      <div class="muted-copy docs-file">{{ row.filename }}{% if row.version_number and row.version_number > 1 %} · version {{ row.version_number }}{% endif %}</div>
+      {% if row.snippet %}<div class="docs-snippet" data-document-snippet>{{ row.snippet }}</div>{% endif %}</td>
+    <td data-label="Type">{{ row.type_label }}{% if row.document.type_basis == "SUGGESTED" %} <span class="docs-tag docs-tag-review">to confirm</span>{% endif %}</td>
+    <td data-label="Key dates">{% for d in row.dates %}<div>{{ d.label }}: {{ d.value.strftime('%b %d, %Y') }}</div>{% else %}{% if not row.proposed %}—{% endif %}{% endfor %}
+      {% if row.proposed %}<div class="docs-tag docs-tag-review" data-dates-to-confirm>{{ row.proposed }} date{{ "s" if row.proposed != 1 }} to confirm</div>{% endif %}</td>
+    {% if show_links %}<td data-label="Linked to">{% for kind, label, url in row.labels[:3] %}{% if url %}<a href="{{ url }}">{{ label }}</a>{% else %}{{ label }}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}</td>{% endif %}
+    <td data-label="Status">{% if row.availability == "MISSING" %}<span class="docs-tag docs-tag-missing">File not available</span>{% elif row.document.status == "ARCHIVED" %}Archived{% else %}Active{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if results.pages > 1 %}
+<nav class="docs-pager" aria-label="Pages">
+  {% if results.has_prev %}<a href="{{ url_for(request.endpoint, **dict(request.view_args, **dict(request.args, page=results.page - 1))) }}">Previous</a>{% endif %}
+  <span>Page {{ results.page }} of {{ results.pages }}</span>
+  {% if results.has_next %}<a href="{{ url_for(request.endpoint, **dict(request.view_args, **dict(request.args, page=results.page + 1))) }}" data-documents-next>Next</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<p class="page-purpose" data-documents-empty>{{ empty }}</p>
+{% endif %}
+{%- endmacro %}
+
+{% macro docs_style() -%}
+<style>
+.docs-file{font-size:.85rem}.docs-snippet{font-size:.85rem;color:var(--muted,#4b5563);margin-top:4px}.docs-snippet mark{background:#fff1b8}
+.docs-tag{display:inline-block;font-size:.78rem;padding:1px 8px;border-radius:10px;background:#eef2f7}
+.docs-tag-review{background:#fff7e0;border:1px solid #f0d58a}.docs-tag-missing{background:#fdecec;border:1px solid #f3b4b4}
+.docs-tag-overdue{background:#fdecec;border:1px solid #f3b4b4}.docs-pager{display:flex;gap:16px;margin:12px 0}
+.docs-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:8px 0 16px}.docs-filters label{display:flex;flex-direction:column;font-size:.85rem}
+.docs-filters input,.docs-filters select{min-height:40px;padding:6px 8px;max-width:100%}
+.docs-browse{display:flex;flex-wrap:wrap;gap:12px;margin:4px 0 16px}
+.docs-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:20px}@media (max-width:900px){.docs-grid{grid-template-columns:1fr}}
+.docs-preview{width:100%;min-height:560px;border:1px solid #d0d7de;border-radius:8px}.docs-preview-img{max-width:100%;border:1px solid #d0d7de;border-radius:8px}
+.docs-dates form,.docs-inline-form{display:flex;flex-wrap:wrap;gap:6px;align-items:end;margin:6px 0}
+.docs-dates input,.docs-dates select,.docs-inline-form input,.docs-inline-form select{min-height:36px;padding:4px 6px}
+.docs-history li{margin:4px 0}.docs-attention{padding:10px 14px;border-radius:8px;background:#fff7e0;border:1px solid #f0d58a;margin:8px 0 16px}
+</style>
+{%- endmacro %}

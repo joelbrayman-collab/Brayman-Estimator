@@ -353,7 +353,7 @@
 
 
 <p class="hub-section-label" id="hub-plan">Documents</p>
-<p class="muted-copy"><a href="{{ url_for('projects.workflow_documents', id=project.id) }}">Workflow documents</a></p>
+<p class="muted-copy"><a href="{{ url_for('projects.workflow_documents', id=project.id) }}">Workflow documents</a>{# RDIMS insertion point (31 Oct 2026): the project's Documents page. #} · <a href="{{ url_for('documents.project_documents', project_id=project.id) }}" data-hub-documents>Documents</a></p>
 {{ contextual_help(help_content.hub_topic("plan")) }}
 <section class="dash-panels">
     <article class="panel">

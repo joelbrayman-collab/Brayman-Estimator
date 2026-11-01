@@ -354,6 +354,11 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
                                fact.get("detail") or "", "", dest.get("href") or f"/projects/{fact.get('project_id')}",
                                "Open"))
 
+    # ---- documents (RDIMS, 31 Oct 2026): confirmed expiry / inspection / renewal / warranty dates, and roll-ups
+    from app.services.documents.attention import document_attention_items
+
+    items.extend(document_attention_items(org, viewer, today))
+
     items.sort(key=lambda i: (URGENCY_ORDER.get(i["urgency"], 3), i["sort_date"], i["what"]))
     kinds = defaultdict(int)
     for i in items:

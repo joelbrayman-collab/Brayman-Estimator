@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Add equipment | Brayman Construction Platform{% endblock %}
+{% block page_title %}Add equipment{% endblock %}
+{% block content %}
+<form method="post" class="form-panel" data-equipment-form>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% include "equipment/_fields.html" %}
+  <p><button type="submit" class="button-primary">Add</button> <a href="{{ url_for('equipment.index') }}">Cancel</a></p>
+</form>
+{% endblock %}

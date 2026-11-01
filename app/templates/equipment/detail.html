@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "documents/_list.html" import document_rows, docs_style %}
+{% block title %}{{ item.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Equipment{% endblock %}
+{% block content %}
+{{ docs_style() }}
+<section class="page-header" data-equipment="{{ item.id }}">
+  <div>
+    <p class="eyebrow">{{ item.category_label }}{% if item.unit_number %} · Unit {{ item.unit_number }}{% endif %}{% if item.status != 'ACTIVE' %} · Retired{% endif %}</p>
+    <h2 class="docs-context-name">{{ item.name }}</h2>
+    <p class="page-purpose">{{ [item.year, item.make, item.model]|select|join(' ') }}{% if item.serial_number %} · Serial {{ item.serial_number }}{% endif %}{% if item.plate_or_registration %} · Plate {{ item.plate_or_registration }}{% endif %}</p>
+  </div>
+  <a class="button-primary" href="{{ upload_url }}" data-documents-upload>Upload a document</a>
+</section>
+<section class="panel" data-equipment-due>
+  <div class="panel-header"><h2>Next due</h2></div>
+  {% for d in upcoming %}<p>{{ d.label }}: <strong>{{ d.value.strftime('%b %d, %Y') }}</strong></p>{% else %}<p class="muted-copy">No confirmed inspection, renewal or warranty dates yet. Upload the inspection report or registration and confirm its date.</p>{% endfor %}
+</section>
+<h3>Documents</h3>
+{{ document_rows(results, show_links=False, empty="No documents yet: add the manual, registration, inspection reports and warranty.") }}
+<details class="panel"><summary><strong>Change details</strong></summary>
+  <form method="post" data-equipment-edit>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% with values = {'name': item.name, 'category': item.category, 'unit_number': item.unit_number, 'make': item.make, 'model': item.model, 'serial_number': item.serial_number, 'plate_or_registration': item.plate_or_registration, 'year': item.year, 'purchased_on': item.purchased_on.isoformat() if item.purchased_on else '', 'notes': item.notes} %}
+    {% include "equipment/_fields.html" %}
+    {% endwith %}
+    <p><button type="submit" class="button-secondary">Save</button></p>
+  </form>
+  <form method="post" action="{{ url_for('equipment.retire', equipment_id=item.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="retired" value="{{ '1' if item.status == 'ACTIVE' else '0' }}">
+    <button type="submit" class="button-secondary" data-equipment-retire>{{ 'Retire (out of service)' if item.status == 'ACTIVE' else 'Put back in service' }}</button>
+  </form>
+</details>
+<details class="panel"><summary><strong>History</strong></summary>
+  <ul class="docs-history">{% for e in history %}<li>{{ e.at.strftime('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}: {{ e.previous_value or '—' }} → {{ e.new_value or '—' }}){% endif %}</li>{% endfor %}</ul>
+</details>
+{% endblock %}

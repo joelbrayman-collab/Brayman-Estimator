@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "documents/_list.html" import document_rows, docs_style %}
+{% block title %}Documents | Brayman Construction Platform{% endblock %}
+{% block page_title %}Documents{% endblock %}
+{% block content %}
+{{ docs_style() }}
+<section class="page-header" data-documents-library>
+  <div>
+    <p class="page-purpose">Every document you may see, in one place: company policies, insurance, WSIB, licences, and the documents filed on projects, people, equipment, suppliers, subcontractors and customers.</p>
+  </div>
+  <a class="button-primary" href="{{ upload_url }}" data-documents-upload>Upload a company document</a>
+</section>
+
+<p class="docs-browse" data-documents-browse>Browse:
+  <a href="{{ url_for('documents.library', context='COMPANY') }}">Company</a>
+  <a href="{{ url_for('projects.list_projects') }}">Projects</a>
+  <a href="{{ url_for('clients.list_clients') }}">Customers</a>
+  <a href="{{ url_for('documents.suppliers') }}">Suppliers</a>
+  <a href="{{ url_for('documents.subcontractors') }}">Subcontractors</a>
+  <a href="{{ url_for('equipment.index') }}" data-equipment-link>Equipment</a>
+  {% if people_admin %}<a href="{{ url_for('documents.people') }}">People</a>{% endif %}
+  · <a href="{{ url_for('documents.library', expiring=30) }}" data-documents-expiring>Expiring in 30 days</a>
+  · <a href="{{ url_for('documents.library', dates='proposed') }}">Dates to confirm</a>
+  · <a href="{{ url_for('documents.library', review='1') }}">To review</a>
+</p>
+
+<form class="docs-filters" method="get" action="{{ url_for('documents.library') }}" role="search" data-documents-search>
+  <label>Search<input type="search" name="q" value="{{ filters.q }}" placeholder="Name, file text, project, supplier…"></label>
+  <label>Type<select name="type"><option value="">Any type</option>{% for t in types %}<option value="{{ t.code }}"{% if filters.type_code == t.code %} selected{% endif %}>{{ t.label }}</option>{% endfor %}</select></label>
+  <label>Filed on<select name="context"><option value="">Anywhere</option>{% for k in context_kinds %}<option value="{{ k }}"{% if filters.context_kind == k %} selected{% endif %}>{{ context_labels[k] }}</option>{% endfor %}</select></label>
+  <label>Status<select name="status">{% for value, label in (("ACTIVE", "Active"), ("ARCHIVED", "Archived"), ("ALL", "All")) %}<option value="{{ value }}"{% if filters.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label>Due within (days)<input type="number" min="0" max="3650" name="expiring" value="{{ filters.expiring_within if filters.expiring_within is not none else '' }}" style="width:7em"></label>
+  <label>Uploaded from<input type="date" name="from" value="{{ filters.uploaded_from or '' }}"></label>
+  <label>to<input type="date" name="to" value="{{ filters.uploaded_to or '' }}"></label>
+  <button type="submit" class="button-secondary">Find</button>
+</form>
+
+{{ document_rows(results, empty="Nothing found. Try fewer words, or upload the document.") }}
+{% endblock %}

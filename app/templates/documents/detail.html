@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% from "documents/_list.html" import docs_style %}
+{% block title %}{{ document.title }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Document{% endblock %}
+{% block content %}
+{{ docs_style() }}
+{# Task Screen: context → purpose → current state → decision → one primary action → details on demand. #}
+<section class="page-header" data-document="{{ document.public_id }}" data-document-status="{{ document.status }}">
+  <div>
+    <p class="eyebrow" data-document-links>{% for kind, label, url, link in links %}{% if url %}<a href="{{ url }}">{{ label }}</a>{% else %}{{ label }}{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+    <h2 class="docs-context-name" data-document-title>{{ document.title }}</h2>
+    <p class="page-purpose">{{ doc_type.label }}{% if document.type_basis == 'SUGGESTED' %} <span class="docs-tag docs-tag-review">suggested</span>{% endif %}{% if document.reference_number %} · #{{ document.reference_number }}{% endif %}{% if document.counterparty %} · {{ document.counterparty }}{% endif %}
+      · {% if document.status == 'ARCHIVED' %}<strong>Archived</strong>{% if document.archive_reason %} ({{ document.archive_reason }}){% endif %}{% else %}Active{% endif %}
+      {% if current %}· version {{ current.version_number }}{% endif %}</p>
+  </div>
+  {% if current and current.availability == 'AVAILABLE' %}<a class="button-primary" href="{{ url_for('documents.file', public_id=document.public_id, download=1) }}" data-document-download>Download</a>{% endif %}
+</section>
+
+{% if current and current.availability == 'MISSING' %}
+<p class="docs-attention" data-document-missing>This file is not available (it was never kept on this server or has been lost). Upload it again as a new version below.</p>
+{% endif %}
+{% if document.type_basis == 'SUGGESTED' and document.status == 'ACTIVE' %}
+<form method="post" action="{{ url_for('documents.confirm_type', public_id=document.public_id) }}" class="docs-attention docs-inline-form" data-document-confirm-type>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <span>Is this a <strong>{{ doc_type.label }}</strong>?</span>
+  <button type="submit" class="button-secondary">Yes, that's right</button>
+  <span class="muted-copy">Otherwise change the type under Details.</span>
+</form>
+{% endif %}
+{% if proposed and document.status == 'ACTIVE' %}
+<section class="docs-attention docs-dates" data-document-proposed="{{ proposed|length }}">
+  <p><strong>We found these dates — confirm or change.</strong> Only confirmed dates create reminders.</p>
+  {% for d in proposed %}
+  <div data-proposed-date="{{ d.id }}">
+    <strong>{{ d.label }}: {{ d.value.strftime('%b %d, %Y') }}</strong>{% if d.evidence_text %} <span class="muted-copy">“{{ d.evidence_text }}”</span>{% endif %}
+    <form method="post" action="{{ url_for('documents.confirm_date', public_id=document.public_id, date_id=d.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button-primary" data-confirm-date="{{ d.id }}">Confirm</button>
+    </form>
+    <details><summary>Change it</summary>
+      <form method="post" action="{{ url_for('documents.confirm_date', public_id=document.public_id, date_id=d.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="date" name="value" value="{{ d.value.isoformat() }}" required>
+        <input name="reason" placeholder="Why it's different" required>
+        remind <input type="number" name="remind_days_before" value="{{ d.remind_days_before }}" min="0" max="365" style="width:5em"> days before
+        <button type="submit" class="button-secondary">Confirm the corrected date</button>
+      </form>
+    </details>
+    <form method="post" action="{{ url_for('documents.reject_date', public_id=document.public_id, date_id=d.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button-secondary" data-reject-date="{{ d.id }}">Not a real date</button>
+    </form>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+<div class="docs-grid">
+  <div>
+    {% if inline %}
+      {% if current.media_type == 'application/pdf' %}
+      <iframe class="docs-preview" src="{{ url_for('documents.file', public_id=document.public_id) }}" title="{{ document.title }}" data-document-preview="pdf"></iframe>
+      {% else %}
+      <img class="docs-preview-img" src="{{ url_for('documents.file', public_id=document.public_id) }}" alt="{{ document.title }}" data-document-preview="image">
+      {% endif %}
+    {% elif current and current.availability == 'AVAILABLE' %}
+      <p class="muted-copy">This kind of file opens in its own program: <a href="{{ url_for('documents.file', public_id=document.public_id, download=1) }}">download {{ current.original_filename }}</a>.</p>
+    {% endif %}
+    {% if text_row and text_row.status == 'NO_TEXT' %}<p class="muted-copy">No readable text in this file; enter the dates by hand.</p>{% endif %}
+  </div>
+  <div>
+    <section class="panel" data-document-dates>
+      <div class="panel-header"><h2>Key dates</h2></div>
+      {% for d in confirmed %}<p data-confirmed-date="{{ d.date_kind }}"><strong>{{ d.label }}</strong>: {{ d.value.strftime('%b %d, %Y') }} <span class="muted-copy">· reminder {{ d.remind_days_before }} days before · {{ d.decided_by_name }}</span></p>{% else %}<p class="muted-copy">No confirmed dates.</p>{% endfor %}
+      {% if document.status == 'ACTIVE' and current %}
+      <details><summary>Add or change a date</summary>
+        <form method="post" action="{{ url_for('documents.enter_date', public_id=document.public_id) }}" class="docs-inline-form" data-enter-date>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <select name="kind" required>{% for k in date_kinds %}<option value="{{ k }}">{{ date_labels[k] }}</option>{% endfor %}</select>
+          <input type="date" name="value" required>
+          <input type="number" name="remind_days_before" value="30" min="0" max="365" style="width:5em" title="Remind days before">
+          <input name="reason" placeholder="Why (when changing a date)">
+          <button type="submit" class="button-secondary">Save date</button>
+        </form>
+      </details>
+      {% endif %}
+    </section>
+
+    {% if signing %}
+    <section class="panel" data-document-calisign>
+      <div class="panel-header"><h2>CaliSIGN</h2></div>
+      <p><strong>{{ signing.status.label }}</strong>{% if signing.status.detail %} — {{ signing.status.detail }}{% endif %}</p>
+      {% if signing.history %}<ul class="docs-history">{% for row in signing.history %}<li>{{ row.label }} · {{ row.at.strftime('%b %d, %Y %H:%M') if row.at else '' }}{% if row.who %} · {{ row.who }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+      <p><a href="{{ signing.link }}" data-calisign-link>{% if signing.send_from_contract_page %}Open the contract page (send for signature there){% else %}Open in CaliSIGN{% endif %}</a></p>
+    </section>
+    {% endif %}
+
+    {% if document.status == 'ACTIVE' %}
+    <section class="panel">
+      <div class="panel-header"><h2>New version</h2></div>
+      <form method="post" enctype="multipart/form-data" action="{{ url_for('documents.add_version', public_id=document.public_id) }}" data-document-new-version>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p><input type="file" name="file" required></p>
+        <p><input name="note" placeholder="What changed (e.g. renewed for 2027)" maxlength="500" style="width:100%"></p>
+        <button type="submit" class="button-secondary">Upload the new version</button>
+        <p class="muted-copy">The current file is kept in the history; nothing is overwritten.</p>
+      </form>
+    </section>
+    {% endif %}
+  </div>
+</div>
+
+<details class="panel" data-document-versions><summary><strong>Versions ({{ versions|length }})</strong></summary>
+  <ul class="docs-history">{% for v in versions %}
+    <li data-version="{{ v.version_number }}">Version {{ v.version_number }}{% if v.is_current %} (current){% endif %} · {{ v.original_filename }} · {{ v.created_at.strftime('%b %d, %Y') }} · {{ v.created_by_name }} · {{ source_labels.get(v.source_kind, v.source_kind) }}{% if v.note %} · {{ v.note }}{% endif %}
+      {% if v.availability == 'AVAILABLE' %}· <a href="{{ url_for('documents.file', public_id=document.public_id, v=v.version_number, download=1) }}">Download</a>{% else %}· not available{% endif %}</li>
+  {% endfor %}</ul>
+</details>
+
+<details class="panel" data-document-details><summary><strong>Details and links</strong></summary>
+  <form method="post" action="{{ url_for('documents.correct', public_id=document.public_id) }}" class="docs-inline-form" data-document-correct>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="field">
+      <option value="title">Name</option><option value="document_type">Type</option><option value="reference_number">Reference #</option>
+      <option value="counterparty">Issued by</option><option value="keywords">Keywords</option><option value="description">Notes</option>
+      {% if can_set_sensitivity %}<option value="sensitivity">Who may see it</option>{% endif %}
+    </select>
+    <input name="value" placeholder="New value (type: {{ type_options|map(attribute='code')|join(', ')|truncate(60) }})" list="docs-types">
+    <datalist id="docs-types">{% for t in type_options %}<option value="{{ t.code }}">{{ t.label }}</option>{% endfor %}{% if can_set_sensitivity %}{% for s in sensitivities %}<option value="{{ s }}">{% endfor %}{% endif %}</datalist>
+    <input name="reason" placeholder="Why" required>
+    <button type="submit" class="button-secondary">Change</button>
+  </form>
+  <p><strong>Linked to</strong></p>
+  <ul class="docs-history">{% for kind, label, url, link in links %}
+    <li>{{ context_labels[kind] }}: {% if url %}<a href="{{ url }}">{{ label }}</a>{% else %}{{ label }}{% endif %}{% if link.is_primary %} (filed here){% endif %}
+      {% if links|length > 1 %}<form method="post" action="{{ url_for('documents.end_link', public_id=document.public_id, link_id=link.id) }}" class="docs-inline-form" style="display:inline-flex"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input name="reason" placeholder="Why remove" required><button type="submit" class="button-secondary">Remove link</button></form>{% endif %}</li>
+  {% endfor %}</ul>
+  <form method="post" action="{{ url_for('documents.add_link', public_id=document.public_id) }}" class="docs-inline-form" data-document-add-link>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="context">{% for k in link_kinds %}<option value="{{ k }}">{{ context_labels[k] }}</option>{% endfor %}</select>
+    <input name="context_id" placeholder="Number (from its page address)" inputmode="numeric" required>
+    <button type="submit" class="button-secondary">Link</button>
+  </form>
+  {% if document.status == 'ACTIVE' %}
+  <form method="post" action="{{ url_for('documents.archive', public_id=document.public_id) }}" class="docs-inline-form" data-document-archive>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="reason" placeholder="Why archive (never deleted)" required>
+    <button type="submit" class="button-secondary">Archive</button>
+  </form>
+  {% else %}
+  <form method="post" action="{{ url_for('documents.restore', public_id=document.public_id) }}" class="docs-inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="button-secondary" data-document-restore>Restore</button>
+  </form>
+  {% endif %}
+</details>
+
+<details class="panel" data-document-history><summary><strong>History</strong></summary>
+  <ul class="docs-history">{% for e in events %}
+    <li>{{ e.at.strftime('%b %d, %Y %H:%M') }} · {{ e.actor_name }} · {{ e.event_type.replace('_', ' ')|capitalize }}{% if e.field_name %} ({{ e.field_name.replace('_', ' ') }}{% if e.previous_value is not none %}: {{ e.previous_value }} → {{ e.new_value }}{% endif %}){% endif %}{% if e.reason %} — {{ e.reason }}{% endif %}</li>
+  {% endfor %}</ul>
+</details>
+{% endblock %}

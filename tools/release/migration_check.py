@@ -19,7 +19,8 @@ shown to Joel with the release arguments:
   --filled-columns t.c,...   a column the migration fills: an existing column may only go from NULL to a value
                              (every value already held stays exactly as it was); an added column may start with a
                              value. Every other column of every row is still compared exactly.
-  --populated-tables t,...   new tables (also in --new-tables) that the migration fills; their row counts are shown. "apply" first takes its own online
+  --populated-tables t,...   new tables (also in --new-tables) that the migration fills; their row counts are shown,
+                             recorded by release_migrate.sh, and checked after the release ("postcheck-rows"). "apply" first takes its own online
 backup next to the live database (instance/backups/pre-migrate-<label>-<UTC>.db) and refuses unless
 the instance runs --expect-sha. Nothing is downgraded: database recovery is that backup, with Joel.
 """
@@ -377,6 +378,53 @@ def apply(args) -> None:
     out("MIGRATE", "ok")
 
 
+def _pairs(value: str) -> dict:
+    """"t=n,u=m" -> {"t": n, "u": m} (table names lower-case with underscores; counts whole numbers)."""
+    result = {}
+    for item in (value or "").split(","):
+        if not item:
+            continue
+        m = re.fullmatch(r"([a-z_][a-z0-9_]*)=(\d+)", item.strip())
+        if not m:
+            fail(f"not a table=count pair: {item!r}")
+        result[m.group(1)] = int(m.group(2))
+    return result
+
+
+def _tables_rows(line: str):
+    m = re.fullmatch(r"TABLES=(\d+) ROWS=(\d+)", (line or "").strip())
+    if not m:
+        fail(f"not a TABLES=n ROWS=n line: {line!r}")
+    return int(m.group(1)), int(m.group(2))
+
+
+def postcheck_rows(args) -> None:
+    """Post-release row check (Joel, 31 Oct 2026, the e2p1 follow-up): the live database must hold exactly the
+    pre-release backup's rows, plus the new tables, plus the rows the approved migration seeded into the declared
+    --populated-tables (counted by release_migrate.sh when it applied the migration). Each seeded table must still
+    hold exactly what the migration put in it; nothing else may differ."""
+    btables, brows = _tables_rows(args.backup)
+    ltables, lrows = _tables_rows(args.live)
+    seeded, live_counts = _pairs(args.seeded), _pairs(args.live_counts)
+    declared = list(args.populated_tables)
+    if sorted(seeded) != sorted(declared):
+        fail(f"the migration's recorded seed counts ({','.join(sorted(seeded)) or 'none'}) do not match the "
+             f"declared --populated-tables ({','.join(sorted(declared)) or 'none'})")
+    for table in declared:
+        if table not in args.new_tables:
+            fail(f"{table} is declared populated but is not a new table of this release")
+        if live_counts.get(table) != seeded[table]:
+            fail(f"{table} holds {live_counts.get(table)} row(s) on the live database; the migration seeded "
+                 f"{seeded[table]}")
+        out("SEEDED_TABLE", f"{table}: {seeded[table]} row(s), as seeded by the migration")
+    expected = (btables + len(args.new_tables), brows + sum(seeded.values()))
+    out("EXPECTED_LIVE", "TABLES=%d ROWS=%d" % expected)
+    if (ltables, lrows) != expected:
+        fail("records differ from the pre-release backup plus the declared migration seed (expected "
+             "TABLES=%d ROWS=%d; live TABLES=%d ROWS=%d)" % (expected + (ltables, lrows)))
+    out("ROWS_CHECK", "ok")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="mode", required=True)
@@ -399,8 +447,15 @@ def main() -> None:
         else:
             p.add_argument("--expect-sha", required=True)
             p.add_argument("--label", required=True)
+    p = sub.add_parser("postcheck-rows", help="post-release: live rows = backup + new tables + declared seed")
+    p.add_argument("--backup", required=True, help='the pre-release backup, "TABLES=n ROWS=n"')
+    p.add_argument("--live", required=True, help='the live database now, "TABLES=n ROWS=n"')
+    p.add_argument("--new-tables", required=True, type=lambda v: [] if v == "none" else [t for t in v.split(",") if t])
+    p.add_argument("--populated-tables", default=[], type=lambda v: [t for t in v.split(",") if t])
+    p.add_argument("--seeded", default="", help="table=count recorded by release_migrate.sh")
+    p.add_argument("--live-counts", default="", help="table=count read from the live database")
     args = parser.parse_args()
-    (rehearse if args.mode == "rehearse" else apply)(args)
+    {"rehearse": rehearse, "apply": apply, "postcheck-rows": postcheck_rows}[args.mode](args)
 
 
 if __name__ == "__main__":

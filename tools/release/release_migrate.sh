@@ -68,6 +68,13 @@ if grep -q '^ALREADY_MIGRATED=yes' "$OUT-migrate.txt"; then
   exit 0
 fi
 PBACK=$(val PRE_MIGRATION_BACKUP "$OUT-migrate.txt"); PSHA=$(val PRE_MIGRATION_BACKUP_SHA256 "$OUT-migrate.txt")
+# 31 Oct 2026 (e2p1 follow-up): record what the migration seeded into each declared --populated-tables, so the
+# post-release check can prove the live rows are the backup plus exactly that seed.
+SEEDED=$(grep '^POPULATED_TABLE=' "$OUT-migrate.txt" | sed -E 's/^POPULATED_TABLE=([a-z_][a-z0-9_]*): ([0-9]+) row\(s\).*/\1=\2/' | paste -sd, -)
+if [ -n "$POPULATED_TABLES" ]; then
+  [ -n "$SEEDED" ] || stop "the migration did not report the rows it seeded into $POPULATED_TABLES"
+  echo "MIGRATION_SEEDED=$SEEDED" >> "$STATE"
+fi
 
 echo "== 4. Pre-migration backup to this Mac"
 LOCALP="$BACKUPS/$(basename "$PBACK")"

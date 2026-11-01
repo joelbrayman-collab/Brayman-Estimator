@@ -32,6 +32,8 @@ REMOTE_PY='cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.ve
 SHA=$(val SHA "$STATE"); LIVE_BASE=$(val LIVE_BASE "$STATE"); LIVE_DEPLOY=$(val LIVE_DEPLOY "$STATE")
 REVISION=$(val REVISION "$STATE"); LOCALB=$(val BACKUP "$STATE"); BROWS=$(val BACKUP_ROWS "$STATE"); DEST=$(val CLONE "$STATE")
 MIGRATION_TO=$(val MIGRATION_TO "$STATE"); NEW_TABLES=$(val NEW_TABLES "$STATE")
+POPULATED_TABLES=$(val POPULATED_TABLES "$STATE"); SEEDED=$(val MIGRATION_SEEDED "$STATE")
+BACKUP_ROWS=$(val BACKUP_ROWS "$STATE")
 EXPECT_REVISION=${MIGRATION_TO:-$REVISION}
 if [ -n "$MIGRATION_TO" ]; then
   grep -q "^MIGRATED .*-> $MIGRATION_TO\|^MIGRATED already at $MIGRATION_TO" "$STATUS" || stop "run release_migrate.sh --label $LABEL first (migration $REVISION -> $MIGRATION_TO)"
@@ -68,8 +70,29 @@ grep -q '^POSTCHECK=ok' "$OUT-postcheck.txt" || stop "post-deploy database check
 [ "$(val REVISION "$OUT-postcheck.txt")" = "$EXPECT_REVISION" ] || stop "database revision is $(val REVISION "$OUT-postcheck.txt"), expected $EXPECT_REVISION"
 [ "$(val INTEGRITY "$OUT-postcheck.txt")" = "ok" ] || stop "database integrity is not ok"
 LROWS=$(grep '^TABLES=' "$OUT-postcheck.txt")
+if [ -n "$MIGRATION_TO" ] && [ -n "$POPULATED_TABLES" ]; then
+  # 31 Oct 2026 (e2p1 follow-up): the approved migration seeded the declared new tables; read their counts on the
+  # live database (read-only) and prove live = backup + new tables + exactly that seed.
+  [ -n "$SEEDED" ] || stop "release_migrate.sh did not record the rows the migration seeded into $POPULATED_TABLES"
+  COUNTS=$(ssh "${SSH_OPTS[@]}" "$HOST" "$REMOTE_PY $POPULATED_TABLES" <<'PYEOF' | tr -d '\r' | grep '^COUNTS=' | cut -d= -f2-
+import os, sqlite3, sys
+uri = os.environ.get("CALIBRAYTAI_DATABASE_URI", "")
+c = sqlite3.connect("file:" + uri[len("sqlite:///"):] + "?mode=ro", uri=True)
+print("COUNTS=" + ",".join("%s=%d" % (t, c.execute('SELECT COUNT(*) FROM "%s"' % t).fetchone()[0]) for t in sys.argv[1].split(",")))
+PYEOF
+)
+  [ -n "$COUNTS" ] || stop "could not read the seeded tables' row counts on the live database"
+  python3 "$DEST/tools/release/migration_check.py" postcheck-rows --backup "$BACKUP_ROWS" --live "$LROWS" \
+    --new-tables "$NEW_TABLES" --populated-tables "$POPULATED_TABLES" --seeded "$SEEDED" --live-counts "$COUNTS" \
+    > "$OUT-rows.txt" 2>&1
+  cat "$OUT-rows.txt"
+  grep -q '^ROWS_CHECK=ok' "$OUT-rows.txt" || stop "records differ from the pre-release backup plus the declared migration seed (see $OUT-rows.txt) — check whether anyone used the app during the release"
+  BROWS=$(val EXPECTED_LIVE "$OUT-rows.txt")
+fi
 [ "$LROWS" = "$BROWS" ] || stop "records differ from the pre-release backup (backup: $BROWS; live: $LROWS) — check whether anyone used the app during the release"
-if [ -n "$MIGRATION_TO" ]; then
+if [ -n "$MIGRATION_TO" ] && [ -n "$POPULATED_TABLES" ]; then
+  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new tables plus the migration's declared seed ($SEEDED); $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+elif [ -n "$MIGRATION_TO" ]; then
   status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new, empty tables; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
 else
   status "LIVE_RUNNING_SHA=$RUN; revision $REVISION unchanged; $LROWS equal to the pre-release backup; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"

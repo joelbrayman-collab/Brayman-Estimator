@@ -4,12 +4,15 @@
 {# The company name is already in the top bar's company box (and the browser tab title); the bar title is just Home. #}
 {% block page_title %}Home{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home-compact.css', v='pcux-1') }}">
+{% endblock %}
+
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.office_topic("dashboard")) }}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/wizards.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home-compact.css', v='pcux-1') }}">
 {% set wizard_list = office_wizards() %}
 {% set summaries = office_wizard_summaries(6) %}
 {% macro _start(w) %}{{ url_for('wizards.start', wizard_key=w.key) }}{% endmacro %}
@@ -31,15 +34,11 @@
     </div>
 </section>
 
-{% if attention and not attention.hidden %}{% set attention_shown = 4 %}{% include "operations/_home_attention.html" %}{% endif %}
+{# Task-First Home (31 Oct 2026): 1. What needs your attention (the top items, each with one task button) 2. Start
+   something 3. Today on site and the coming days. Failed crew texts are an attention item now, not a banner. #}
+{% if attention and not attention.hidden %}{% include "operations/_home_attention.html" %}{% endif %}
 {% include "wizards/_home_strip.html" %}
 {% include "wizards/_home_resume.html" %}
-
-{% set sms_failed = sms_schedule_attention() %}
-{% if sms_failed %}
-<p class="home-sms-attention" role="alert" data-home-sms-attention="{{ sms_failed }}"><a href="{{ url_for('sms_notifications.office_notices') }}">{{ sms_failed }} schedule text{{ '' if sms_failed == 1 else 's' }} to workers not delivered. Check and retry.</a></p>
-<style>.home-sms-attention { border-left: 4px solid var(--danger, #b42318); padding: 8px 12px; margin: 0 0 12px; overflow-wrap: anywhere; } .home-sms-attention a { color: var(--danger, #b42318); font-weight: 600; }</style>
-{% endif %}
 {# One Attention list (Project Creation UX, 27 Oct 2026): the Company Attention facts this column repeated are already in
    WHAT NEEDS MY ATTENTION? above for the people who may see them. #}
 <section class="home-briefing hc-briefing" aria-label="Today and coming days">
@@ -73,15 +72,21 @@
     </div>
 </section>
 
-<ul class="home-counts" aria-label="Current work">
-    {% for item in view.pulse %}
-    <li>
-        <a href="{{ item.href }}">
-            <span>{{ item.label }}</span>
-            <b>{{ item.value }}</b>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+{# The pulse counts are reference, not decisions: kept, closed until asked for. #}
+<details class="ts-details home-counts-details" data-home-counts>
+    <summary><span>Current work in numbers</span></summary>
+    <div class="ts-details-body">
+    <ul class="home-counts" aria-label="Current work">
+        {% for item in view.pulse %}
+        <li>
+            <a href="{{ item.href }}">
+                <span>{{ item.label }}</span>
+                <b>{{ item.value }}</b>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
+</details>
 
 {% endblock %}

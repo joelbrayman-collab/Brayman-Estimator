@@ -1,0 +1,18 @@
+{# The one attention list, in two groups (Task-First UX, 31 Oct 2026; audit 5.4 rule 3):
+   Waiting on you first; Waiting on others (a customer, supplier or subcontractor has the next move) collapsed.
+   Expects: view (needs_attention.assemble), limit (optional: how many "waiting on you" to show). #}
+{% set _mine = view.waiting_on_you if view.waiting_on_you is defined else view['items'] %}
+{% set _others = view.waiting_on_others if view.waiting_on_others is defined else [] %}
+{% if _mine %}
+{% set items = _mine[:limit] if limit else _mine %}{% include "operations/_attention_list.html" %}
+{% elif not _others %}
+<p class="na-empty" data-attention-empty>Nothing needs your attention right now.</p>
+{% else %}
+<p class="na-empty" data-attention-empty-mine>Nothing is waiting on you right now.</p>
+{% endif %}
+{% if _others %}
+<details class="na-others" data-attention-others="{{ _others|length }}">
+  <summary>Waiting on others <span class="na-count na-count-quiet">{{ _others|length }}</span></summary>
+  {% set items = _others %}{% include "operations/_attention_list.html" %}
+</details>
+{% endif %}

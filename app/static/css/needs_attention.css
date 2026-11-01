@@ -13,8 +13,8 @@
 .na-what { font-weight: 600; overflow-wrap: anywhere; }
 .na-meta { color: var(--muted, #555); font-size: 0.9rem; overflow-wrap: anywhere; }
 .na-urgency { font-size: 0.8rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
-.na-urgency-overdue { color: var(--danger, #b42318); }
-.na-urgency-today { color: #8a5a00; }
+.na-urgency-overdue { color: var(--danger); }
+.na-urgency-today { color: var(--warning); }
 .na-go { font-weight: 600; white-space: nowrap; font-size: 0.9rem; }
 .na-empty { margin: 4px 0 0; color: var(--muted, #555); }
 @media (max-width: 640px) {
@@ -22,3 +22,15 @@
   .na-go { display: none; }
   .na-link { flex-direction: column; min-height: 44px; justify-content: center; }
 }
+/* Task-First UX (31 Oct 2026): one list in two groups; the header bell; kind filters. */
+.na-others { margin-top: var(--space-2, 8px); border-top: 1px solid var(--border, #e2ddd4); padding-top: var(--space-2, 8px); }
+.na-others > summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 8px; }
+.na-count-quiet { background: var(--surface-line, #ece7dd); color: var(--text, #1c1f24); }
+.na-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 0; list-style: none; }
+.na-filters a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border: 1px solid var(--border, #e2ddd4); border-radius: 999px; text-decoration: none; background: var(--surface, #fff); }
+.na-filters a[aria-current="page"] { border-color: var(--gold, #c79a2b); font-weight: 700; }
+.na-purpose { margin: 4px 0 0; color: var(--ink-soft, #3a3f47); }
+.na-related { margin: 12px 0 0; }
+.header-attention { position: relative; text-decoration: none; }
+.header-attention-count { position: absolute; top: 2px; right: 0; min-width: 1.4em; padding: 0 4px; border-radius: 999px; background: var(--danger); color: var(--white); font-size: 0.75rem; font-weight: 700; line-height: 1.4; text-align: center; }
+.header-attention-count[hidden] { display: none; }

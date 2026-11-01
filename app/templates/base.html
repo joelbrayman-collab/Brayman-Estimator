@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/v1-refinement.css') }}">
+    {# Task-First UX (31 Oct 2026): the Task Screen standard and the shared attention list. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task-screen.css', v='tf-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/needs_attention.css', v='tf-1') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cal-assistant.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {# CaliSIGN (28 Oct 2026): signing panels and the typed-signature preview. #}
@@ -54,9 +57,17 @@
                 {% endif %}
                 {% endif %}
                 {% if current_user.is_authenticated %}{% include "partials/cal_assistant.html" %}{% endif %}
-                <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)" title="Notifications (coming soon)">
+                {% if current_user.is_authenticated %}
+                {# The bell is the live attention count (Task-First UX, 31 Oct 2026): it opens the one attention list.
+                   The count is fetched after the page loads, so no page waits for it. #}
+                <a class="header-icon-btn header-attention" href="{{ url_for('operations.attention') }}" data-attention-bell data-attention-count-url="{{ url_for('main.attention_count') }}" aria-label="What needs your attention" title="What needs your attention">
                     <i class="bi bi-bell" aria-hidden="true"></i>
-                </button>
+                    <span class="header-attention-count" data-attention-bell-count hidden></span>
+                </a>
+                <a class="header-icon-btn{% if admin_active %} is-active{% endif %}" href="{{ url_for('main.admin') }}" data-admin-gear aria-label="Admin and settings" title="Admin and settings"{% if admin_active %} aria-current="page"{% endif %}>
+                    <i class="bi bi-gear" aria-hidden="true"></i>
+                </a>
+                {% endif %}
                 <a
                     class="header-company"
                     href="{{ url_for('settings.brand_profile') }}"
@@ -106,6 +117,7 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/shell.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/task_screen.js', v='tf-1') }}" defer></script>
     <script src="{{ url_for('static', filename='js/contextual_help.js', v='d5-voice') }}" defer></script>
     <script src="{{ url_for('static', filename='js/cal_assistant.js', v='find-it-1') }}" defer></script>
     {% include "partials/session_timeout.html" %}

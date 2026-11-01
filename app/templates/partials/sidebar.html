@@ -1,3 +1,4 @@
+{# Task-First UX (31 Oct 2026): six primary destinations, then More (app/navigation.py). Admin is the header gear. #}
 <aside class="shell-sidebar" id="shell-sidebar" aria-label="Primary">
     <div class="sidebar-brand">
         <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}" aria-label="{{ product_name }} home">
@@ -36,7 +37,7 @@
                 <i class="bi bi-chevron-down sidebar-group-chevron" aria-hidden="true"></i>
             </summary>
         {% else %}
-        <div class="sidebar-section">
+        <div class="sidebar-section{% if section.class %} {{ section.class }}{% endif %}">
             {% if section.title %}
             {% if section.endpoint %}
             <a class="sidebar-section-label" href="{{ url_for(section.endpoint) }}">{{ section.title }}</a>
@@ -57,6 +58,7 @@
                     >
                         <i class="bi {{ item.icon }}" aria-hidden="true"></i>
                         <span class="sidebar-link-label">{{ item.title }}</span>
+                        {% if item.endpoint == 'main.dashboard' %}<span class="sidebar-count" data-attention-bell-count hidden></span>{% endif %}
                     </a>
                     {% else %}
                     <span

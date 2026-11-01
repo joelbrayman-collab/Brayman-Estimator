@@ -91,3 +91,58 @@ def test_the_migrate_script_parses_the_migration_report_into_seed_pairs(tmp_path
     script = f'OUT="{tmp_path}/m"; cp "{report}" "$OUT-migrate.txt"; {line}; echo "$SEEDED"'
     r = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
     assert r.stdout.strip() == "project_number_sequences=1,project_identity_events=2", r.stderr
+
+
+# Review fix M4 (1 Nov 2026): a rerun of release_migrate.sh that finds the database ALREADY_MIGRATED used to exit
+# without MIGRATION_SEEDED in the state file, so postrelease_check.sh stopped. The rerun now keeps the value already
+# recorded, recovers it from the first apply's saved report, records it empty when nothing was declared populated, and
+# otherwise stops with a clear instruction.
+
+def _rerun_block() -> str:
+    text = MIGRATE.read_text()
+    start, end = text.index("# >>> seed-on-rerun"), text.index("# <<< seed-on-rerun")
+    return text[start:end]
+
+
+def _rerun(tmp_path, populated, state_lines=(), earlier=None, label="docs"):
+    gen = tmp_path / "gen"
+    gen.mkdir(exist_ok=True)
+    state = gen / f"{label}-release-state.txt"
+    state.write_text("".join(f"{l}\n" for l in ("SHA=" + "a" * 40, *state_lines)))
+    if earlier is not None:
+        (gen / f"{label}-migrate-20261101-100000-migrate.txt").write_text(earlier)
+    out = gen / f"{label}-migrate-20261101-110000"
+    out.with_name(out.name + "-migrate.txt").write_text("REVISION_BEFORE=t7a8b9c0d1e2\nALREADY_MIGRATED=yes (nothing done)\n"
+                                                        "MIGRATE=ok\n")
+    script = (f'set -u; GEN="{gen}"; LABEL={label}; STATE="{state}"; STATUS="{gen}/{label}-release-status.txt"; OUT="{out}"; POPULATED_TABLES="{populated}"; '
+              f'MIGRATION_TO=t7a8b9c0d1e2; status() {{ echo "STATUS: $1"; }}; stop() {{ echo "STOP: $1"; exit 1; }}; '
+              + _rerun_block() + '\necho "DONE"')
+    r = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+    return r.returncode, r.stdout + r.stderr, state.read_text()
+
+
+def test_a_rerun_keeps_the_seed_already_recorded(tmp_path):
+    code, out, state = _rerun(tmp_path, POP, ["MIGRATION_SEEDED=project_number_sequences=1,project_identity_events=2"])
+    assert code == 0 and "DONE" in out, out
+    assert state.count("MIGRATION_SEEDED=") == 1
+
+
+def test_a_rerun_with_no_populated_tables_records_an_empty_seed(tmp_path):
+    code, out, state = _rerun(tmp_path, "")
+    assert code == 0 and "DONE" in out, out
+    assert "MIGRATION_SEEDED=\n" in state
+
+
+def test_a_rerun_recovers_the_seed_from_the_first_apply_report(tmp_path):
+    first = ("REVISION_BEFORE=s6f7a8b9c0d1\nPOPULATED_TABLE=project_number_sequences: 1 row(s)\n"
+             "POPULATED_TABLE=project_identity_events: 2 row(s)\nMIGRATE=ok\n")
+    code, out, state = _rerun(tmp_path, POP, earlier=first)
+    assert code == 0 and "DONE" in out, out
+    assert "MIGRATION_SEEDED=project_number_sequences=1,project_identity_events=2\n" in state
+    assert "first apply" in out
+
+
+def test_a_rerun_without_any_record_of_the_seed_stops_with_an_instruction(tmp_path):
+    code, out, state = _rerun(tmp_path, POP, earlier="REVISION_BEFORE=s6f7a8b9c0d1\n")  # first run's report incomplete
+    assert code == 1 and "STOP:" in out and "MIGRATION_SEEDED" not in state
+    assert "send Claude" in out

@@ -23,6 +23,12 @@ shown to Joel with the release arguments:
                              recorded by release_migrate.sh, and checked after the release ("postcheck-rows"). "apply" first takes its own online
 backup next to the live database (instance/backups/pre-migrate-<label>-<UTC>.db) and refuses unless
 the instance runs --expect-sha. Nothing is downgraded: database recovery is that backup, with Joel.
+
+Search index (review fix C1, 1 Nov 2026): virtual tables (document_search, FTS5) and their shadow tables are detected
+from sqlite_master and handled automatically: counted and reported (SEARCH_INDEX_NEW / SEARCH_INDEX), never
+row-hashed, never declared in --new-tables, never in the TABLES=/ROWS= totals ("count-rows", used by the release gate
+for the backup and by postrelease_check.sh for the live database). A WITHOUT ROWID table is fingerprinted in
+primary-key order.
 """
 
 from __future__ import annotations
@@ -67,8 +73,49 @@ def _split_filled(filled) -> dict:
     return out_
 
 
+# Shadow tables SQLite's virtual-table modules create next to a virtual table <vt>: FTS5 (_data, _idx, _content,
+# _docsize, _config), FTS3/4 (_segments, _segdir, _stat) and R*Tree (_node, _parent, _rowid).
+_SHADOW_SUFFIXES = ("data", "idx", "content", "docsize", "config", "segments", "segdir", "stat", "node", "parent",
+                    "rowid")
+_WITHOUT_ROWID = re.compile(r"\)\s*WITHOUT\s+ROWID\s*;?\s*$", re.IGNORECASE)
+
+
+def search_index_tables(con: sqlite3.Connection) -> list:
+    """Virtual tables (the documents search index, document_search, FTS5) and their shadow tables (review fix C1,
+    1 Nov 2026). They are a derived search index, rebuilt from the documents by ``flask documents reindex``: FTS5 writes
+    rows into its shadow tables when it is created, two of them are WITHOUT ROWID, and the app rewrites them whenever a
+    document is filed. They are counted and reported (SEARCH_INDEX), never row-hashed, never part of --new-tables and
+    never part of the release's TABLES=/ROWS= totals."""
+    rows = list(con.execute("SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"))
+    names = {name for name, _sql in rows}
+    virtual = sorted(name for name, sql in rows if (sql or "").lstrip().upper().startswith("CREATE VIRTUAL TABLE"))
+    found = set(virtual)
+    for vt in virtual:
+        found |= {f"{vt}_{suffix}" for suffix in _SHADOW_SUFFIXES if f"{vt}_{suffix}" in names}
+    return sorted(found)
+
+
+def _row_order(con: sqlite3.Connection, table: str) -> str:
+    """ORDER BY for a stable fingerprint: rowid, or for a WITHOUT ROWID table its primary key (then every column)."""
+    sql = con.execute("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?", (table,)).fetchone()
+    if not (sql and sql[0] and _WITHOUT_ROWID.search(sql[0].strip())):
+        return "rowid"
+    info = list(con.execute(f'PRAGMA table_info("{table}")'))
+    key = [r[1] for r in sorted((r for r in info if r[5]), key=lambda r: r[5])]
+    return ", ".join(f'"{c}"' for c in key + [r[1] for r in info if r[1] not in key])
+
+
+def count_rows(con: sqlite3.Connection) -> tuple:
+    """(tables, rows, index_tables, index_rows): every table except sqlite_* and the search index; then the index."""
+    index = set(search_index_tables(con))
+    names = [r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")]
+    core = [n for n in names if n not in index]
+    count = lambda ts: sum(con.execute(f'SELECT COUNT(*) FROM "{t}"').fetchone()[0] for t in ts)  # noqa: E731
+    return len(core), count(core), len(index), count(sorted(index))
+
+
 def snapshot(path: str, columns_of: dict | None = None, exclude: dict | None = None) -> dict:
-    """Schema and content fingerprint of every table and index (except alembic_version).
+    """Schema and content fingerprint of every table and index (except alembic_version and the search index).
 
     ``columns_of`` {table: [column, ...]} (24 Oct 2026, a declared altered table that gained a column): that
     table's rows are fingerprinted over exactly those earlier columns, and ``added`` counts the rows where any
@@ -81,7 +128,10 @@ def snapshot(path: str, columns_of: dict | None = None, exclude: dict | None = N
                 "SELECT type, name, sql FROM sqlite_master WHERE type IN ('table','index') AND name NOT LIKE 'sqlite_%'"
             )
         }
-        tables = sorted(name for kind, name in schema if kind == "table" and name != "alembic_version")
+        index = search_index_tables(con)
+        search_index = {t: con.execute(f'SELECT COUNT(*) FROM "{t}"').fetchone()[0] for t in index}
+        tables = sorted(name for kind, name in schema
+                        if kind == "table" and name != "alembic_version" and name not in search_index)
         content, columns, added = {}, {}, {}
         for table in tables:
             columns[table] = [r[1] for r in con.execute(f'PRAGMA table_info("{table}")')]
@@ -100,7 +150,7 @@ def snapshot(path: str, columns_of: dict | None = None, exclude: dict | None = N
                 select = "*"
             digest = hashlib.sha256()
             count = 0
-            for row in con.execute(f'SELECT {select} FROM "{table}" ORDER BY rowid'):
+            for row in con.execute(f'SELECT {select} FROM "{table}" ORDER BY {_row_order(con, table)}'):
                 digest.update(repr(row).encode("utf-8"))
                 count += 1
             content[table] = (count, digest.hexdigest())
@@ -109,13 +159,23 @@ def snapshot(path: str, columns_of: dict | None = None, exclude: dict | None = N
     finally:
         con.close()
     return {"schema": schema, "content": content, "columns": columns, "added": added, "revision": revision,
-            "integrity": integrity}
+            "integrity": integrity, "search_index": search_index}
 
 
 def snapshot_after(path: str, before: dict, altered_tables, filled=()) -> dict:
     """The database after the upgrade; a declared altered table is compared over its earlier columns."""
     return snapshot(path, {t: before["columns"][t] for t in altered_tables if t in before.get("columns", {})},
                     _split_filled(filled))
+
+
+def _row_key(con: sqlite3.Connection, table: str) -> str:
+    """One value identifying a row: rowid, or for a WITHOUT ROWID table its primary key as one quoted value."""
+    order = _row_order(con, table)
+    if order == "rowid":
+        return "rowid"
+    info = list(con.execute(f'PRAGMA table_info("{table}")'))
+    key = [r[1] for r in sorted((r for r in info if r[5]), key=lambda r: r[5])] or [r[1] for r in info]
+    return " || char(31) || ".join(f'quote("{c}")' for c in key)
 
 
 def check_filled(before_path: str, after_path: str, filled) -> None:
@@ -127,8 +187,9 @@ def check_filled(before_path: str, after_path: str, filled) -> None:
             if not existing:
                 fail(f"declared filled table {table} does not exist")
             kept = [c for c in columns if c in existing]
+            key = _row_key(old, table)
             before = {row[0]: row[1:] for row in old.execute(
-                f'SELECT rowid, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')} if kept else {}
+                f'SELECT {key}, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')} if kept else {}
         finally:
             old.close()
         new = _connect_ro(after_path)
@@ -140,7 +201,7 @@ def check_filled(before_path: str, after_path: str, filled) -> None:
             filled_count = {c: 0 for c in columns}
             if kept:
                 after = {row[0]: row[1:] for row in new.execute(
-                    f'SELECT rowid, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')}
+                    f'SELECT {_row_key(new, table)}, {", ".join(chr(34) + c + chr(34) for c in kept)} FROM "{table}"')}
                 for rowid, values in before.items():
                     for column, was, now in zip(kept, values, after.get(rowid, (None,) * len(kept))):
                         if was is not None and was != now:
@@ -286,6 +347,21 @@ def compare(before: dict, after: dict, new_tables: list, to_rev: str, altered_ta
         detail += f"; added empty columns: {','.join(added_columns)} (every existing row unchanged)"
     out("EXISTING_TABLES_UNCHANGED", f"{len(before['content'])} tables, {sum(c for c, _ in before['content'].values())} rows, {detail}")
     out("NEW_TABLES", ",".join(added) + (" (empty)" if not populated else f" (populated as declared: {','.join(populated)})"))
+    _report_search_index(before, after)
+
+
+def _report_search_index(before: dict, after: dict) -> None:
+    """The search index is reported, not compared: it is derived data the app rewrites (see search_index_tables)."""
+    old, new = before.get("search_index", {}), after.get("search_index", {})
+    created = sorted(set(new) - set(old))
+    if created:
+        out("SEARCH_INDEX_NEW", ",".join(created) + " (search index; %d row(s) written by the index itself; not "
+            "declared as --new-tables, not in the row totals)" % sum(new[t] for t in created))
+    gone = sorted(set(old) - set(new))
+    if gone:
+        out("SEARCH_INDEX_REMOVED", ",".join(gone))
+    if new:
+        out("SEARCH_INDEX", "TABLES=%d ROWS=%d" % (len(new), sum(new.values())))
 
 
 def _reference_copy(db: str) -> str:
@@ -425,6 +501,26 @@ def postcheck_rows(args) -> None:
     out("ROWS_CHECK", "ok")
 
 
+def count_rows_mode(args) -> None:
+    """The release's row totals (review fix C1): "TABLES=n ROWS=n" over every table except sqlite_* and the search
+    index, then "SEARCH_INDEX=TABLES=n ROWS=n". The release gate counts the backup with it (BACKUP_ROWS) and the
+    post-release check counts the live database with it (piped over SSH, --live), so both sides count the same tables.
+    Read-only."""
+    path = args.db
+    if args.live:
+        uri = os.environ.get("CALIBRAYTAI_DATABASE_URI", "")
+        path = uri[len("sqlite:///"):] if uri.startswith("sqlite:///") else ""
+    if not path or not os.path.exists(path):
+        fail("no SQLite database to count")
+    con = _connect_ro(path)
+    try:
+        tables, rows, index_tables, index_rows = count_rows(con)
+    finally:
+        con.close()
+    print("TABLES=%d ROWS=%d" % (tables, rows))
+    print("SEARCH_INDEX=TABLES=%d ROWS=%d" % (index_tables, index_rows), flush=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="mode", required=True)
@@ -454,8 +550,12 @@ def main() -> None:
     p.add_argument("--populated-tables", default=[], type=lambda v: [t for t in v.split(",") if t])
     p.add_argument("--seeded", default="", help="table=count recorded by release_migrate.sh")
     p.add_argument("--live-counts", default="", help="table=count read from the live database")
+    p = sub.add_parser("count-rows", help="row totals without the search index, then the search index (read-only)")
+    where = p.add_mutually_exclusive_group(required=True)
+    where.add_argument("--db", help="a database file (the release gate's backup copy)")
+    where.add_argument("--live", action="store_true", help="the live database named by CALIBRAYTAI_DATABASE_URI")
     args = parser.parse_args()
-    {"rehearse": rehearse, "apply": apply, "postcheck-rows": postcheck_rows}[args.mode](args)
+    {"rehearse": rehearse, "apply": apply, "postcheck-rows": postcheck_rows, "count-rows": count_rows_mode}[args.mode](args)
 
 
 if __name__ == "__main__":

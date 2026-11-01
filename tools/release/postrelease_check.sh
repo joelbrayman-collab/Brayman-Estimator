@@ -69,7 +69,14 @@ grep -q '^POSTCHECK=ok' "$OUT-postcheck.txt" || stop "post-deploy database check
 [ "$(val RUNNING_SHA "$OUT-postcheck.txt")" = "$SHA" ] || stop "post-check did not run on $SHA"
 [ "$(val REVISION "$OUT-postcheck.txt")" = "$EXPECT_REVISION" ] || stop "database revision is $(val REVISION "$OUT-postcheck.txt"), expected $EXPECT_REVISION"
 [ "$(val INTEGRITY "$OUT-postcheck.txt")" = "ok" ] || stop "database integrity is not ok"
-LROWS=$(grep '^TABLES=' "$OUT-postcheck.txt")
+# Live row totals with the same helper the release gate used for the backup (review fix C1, 1 Nov 2026): every table
+# except sqlite_* and the search index (document_search and its FTS5 shadow tables, derived data the app rewrites,
+# reported on its own line). hosted_postcheck.py's TABLES= line counts every table and is not the comparison.
+ssh "${SSH_OPTS[@]}" "$HOST" "$REMOTE_PY count-rows --live" < "$DEST/tools/release/migration_check.py" > "$OUT-rows-live.txt" 2>&1
+cat "$OUT-rows-live.txt"
+LROWS=$(grep '^TABLES=' "$OUT-rows-live.txt")
+LSEARCH=$(val SEARCH_INDEX "$OUT-rows-live.txt")
+[ -n "$LROWS" ] && [ -n "$LSEARCH" ] || stop "could not count the live database's rows (see $OUT-rows-live.txt)"
 if [ -n "$MIGRATION_TO" ] && [ -n "$POPULATED_TABLES" ]; then
   # 31 Oct 2026 (e2p1 follow-up): the approved migration seeded the declared new tables; read their counts on the
   # live database (read-only) and prove live = backup + new tables + exactly that seed.
@@ -91,11 +98,11 @@ PYEOF
 fi
 [ "$LROWS" = "$BROWS" ] || stop "records differ from the pre-release backup (backup: $BROWS; live: $LROWS) — check whether anyone used the app during the release"
 if [ -n "$MIGRATION_TO" ] && [ -n "$POPULATED_TABLES" ]; then
-  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new tables plus the migration's declared seed ($SEEDED); $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new tables plus the migration's declared seed ($SEEDED); search index $LSEARCH (not in the totals); $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
 elif [ -n "$MIGRATION_TO" ]; then
-  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new, empty tables; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+  status "LIVE_RUNNING_SHA=$RUN; revision $MIGRATION_TO (migrated from $REVISION); $LROWS = the pre-release backup's rows plus the new, empty tables; search index $LSEARCH (not in the totals); $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
 else
-  status "LIVE_RUNNING_SHA=$RUN; revision $REVISION unchanged; $LROWS equal to the pre-release backup; $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
+  status "LIVE_RUNNING_SHA=$RUN; revision $REVISION unchanged; $LROWS equal to the pre-release backup; search index $LSEARCH (not in the totals); $(grep '^PROPOSALS=' "$OUT-postcheck.txt"); integrity ok"
 fi
 
 echo "== 4. Public and Cal checks (signed out)"

@@ -64,6 +64,25 @@ ssh "${SSH_OPTS[@]}" -n "$HOST" "$REMOTE_RUN apply --from $REVISION --to $MIGRAT
 cat "$OUT-migrate.txt" | grep -E '^[A-Z_]+='
 grep -q '^MIGRATE=ok' "$OUT-migrate.txt" || stop "migration did not complete (see $OUT-migrate.txt); the app keeps running; database recovery only with Joel"
 if grep -q '^ALREADY_MIGRATED=yes' "$OUT-migrate.txt"; then
+  # >>> seed-on-rerun (review fix M4, 1 Nov 2026): postrelease_check.sh needs MIGRATION_SEEDED. A rerun keeps the
+  # value already recorded; otherwise it takes it from the first apply's saved report, or records it empty when no
+  # table was declared populated; with no record of the seed it stops rather than guess.
+  if ! grep -q '^MIGRATION_SEEDED=' "$STATE"; then
+    if [ -z "$POPULATED_TABLES" ]; then
+      echo "MIGRATION_SEEDED=" >> "$STATE"
+    else
+      EARLIER=""
+      for f in "$GEN/$LABEL"-migrate-*-migrate.txt; do
+        [ -f "$f" ] && [ "$f" != "$OUT-migrate.txt" ] || continue
+        grep -q '^MIGRATE=ok' "$f" && grep -q '^POPULATED_TABLE=' "$f" && ! grep -q '^ALREADY_MIGRATED=' "$f" && EARLIER=$f
+      done
+      [ -n "$EARLIER" ] || stop "the database is already at $MIGRATION_TO but this Mac has no report of the first apply, so the rows it seeded into $POPULATED_TABLES are not recorded; do not run postrelease_check.sh; send Claude the status file ($STATUS) — the seed counts are then read from the pre-migration backup on the instance (instance/backups/pre-migrate-$LABEL-*.db) with Joel"
+      RESEED=$(grep '^POPULATED_TABLE=' "$EARLIER" | sed -E 's/^POPULATED_TABLE=([a-z_][a-z0-9_]*): ([0-9]+) row\(s\).*/\1=\2/' | paste -sd, -)
+      echo "MIGRATION_SEEDED=$RESEED" >> "$STATE"
+      status "MIGRATION_SEEDED=$RESEED recorded from the first apply's report $EARLIER"
+    fi
+  fi
+  # <<< seed-on-rerun
   status "MIGRATED already at $MIGRATION_TO (nothing done)"
   exit 0
 fi

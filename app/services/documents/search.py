@@ -264,10 +264,11 @@ def search(scope: Scope, filters: Filters, *, page: int = 1, page_size: int = PA
         total = base.order_by(None).count()
         documents = base.order_by(Document.created_at.desc(), Document.id.desc()).offset(offset).limit(page_size).all()
         result_mode = "like" if words else "browse"
-    return Page(_rows(scope.organization_id, documents, snippets), total, page, page_size, result_mode)
+    return Page(_rows(scope.organization_id, documents, snippets, include_people=scope.people_admin), total, page,
+                page_size, result_mode)
 
 
-def _rows(organization_id, documents, snippets=None) -> list:
+def _rows(organization_id, documents, snippets=None, *, include_people=True) -> list:
     if not documents:
         return []
     ids = [d.id for d in documents]
@@ -289,7 +290,7 @@ def _rows(organization_id, documents, snippets=None) -> list:
                 dates.setdefault(d.document_id, []).append(d)
             else:
                 proposed[d.document_id] = proposed.get(d.document_id, 0) + 1
-    labels = labels_for_documents(organization_id, ids)
+    labels = labels_for_documents(organization_id, ids, include_people=include_people)
     out = []
     for d in documents:
         v = versions.get(d.id)

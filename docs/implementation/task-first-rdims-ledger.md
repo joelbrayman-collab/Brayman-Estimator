@@ -102,9 +102,15 @@ and `docs/rdims/airia-rdims-reuse-map-2026-10-31.md`. Users see "Documents", "Co
   the date-filter tests was fixed by putting the version table inside each EXISTS.
 
 ### For the release owner
-- New tables for the migration check / post-release row step: the 8 above + `document_search` and its 5 shadow tables
-  when FTS5 is present (probe production SQLite first). All empty after the migration; rows appear only after
-  `flask documents connect-existing` (or the first project Documents page opened).
+- New tables for the migration check / post-release row step (**corrected 1 Nov 2026, review fix C1**): declare
+  exactly the 8 above with `--new-tables` — not `document_search` or its shadow tables. The 8 are empty after the
+  migration; their rows appear only after `flask documents connect-existing` (or the first project Documents page
+  opened). `document_search` (FTS5, when the SQLite build has it) is **not** empty: FTS5 writes its own bookkeeping
+  rows when it is created (`document_search_data` 2, `document_search_config` 1), and two shadow tables are WITHOUT
+  ROWID. `migration_check.py` now detects virtual tables and their shadow tables itself and treats them as a search
+  index: reported on `SEARCH_INDEX_NEW=` / `SEARCH_INDEX=`, never row-hashed, never in `--new-tables`, never in the
+  `TABLES=/ROWS=` totals (gate backup count and post-release live count both use `migration_check.py count-rows`).
+  See "Review fixes" below for the exact gate arguments.
 - Add `instance/documents` to the post-release storage check; add `evidence_documents.mjs` (4 checks) to the gate.
 
 ### Verification (31 Oct 2026, local, no skips)
@@ -342,3 +348,94 @@ with ONE primary (was a primary per scheduled card plus Capture, and every job b
   `evidence_task_first.mjs` (`seedWizardRun`, `openSetUpSections`, `openFieldTodayMore`); `evidence_common.mjs` and
   `hosted_postcheck.py` untouched. The project-creation walk's 25 MB upload-limit file gets a 120 s transfer
   allowance (it timed out at the 15 s default on the loaded workspace; the check is unchanged).
+
+## Review fixes (branch `task-first/review-fixes`, 1 Nov 2026)
+
+Independent code review of `feature/task-first-rdims-2026-10-31` @ 26a37fea; every finding re-verified in code before
+fixing; a failing test first for each (the new tests were run against the pre-fix code and failed, except the guards
+that pin behaviour already correct). The only migration stays `t7a8b9c0d1e2` (unchanged); `evidence_common.mjs` and
+`hosted_postcheck.py` untouched (checksums still match `PROVEN_HELPERS`).
+
+### Fixed
+- **C1 (critical) release check vs. the FTS5 index.** `migration_check.py snapshot()` ordered every table by rowid;
+  `document_search_idx` / `document_search_config` are WITHOUT ROWID ("no such column: rowid"), and FTS5 writes 3
+  rows when created, so "new tables are empty" could never pass: the gate rehearsal of this release, and every later
+  release's before-snapshot, would stop. Now `search_index_tables()` finds virtual tables (`sqlite_master`
+  `CREATE VIRTUAL TABLE…`) and their shadow tables (`<vt>_data/_idx/_content/_docsize/_config`, plus the FTS3/4 and
+  R*Tree suffixes) and treats them as a search index: counted and reported (`SEARCH_INDEX_NEW=`, `SEARCH_INDEX=`),
+  not row-hashed, not in `--new-tables`, not in "new tables must be empty". An ordinary WITHOUT ROWID table is
+  fingerprinted in primary-key order (and keyed by its primary key in the filled-column check). New read-only mode
+  `count-rows` (`TABLES=n ROWS=n` without sqlite_* and the index, then `SEARCH_INDEX=TABLES=n ROWS=n`): the release
+  gate counts the backup with it (state file `BACKUP_ROWS` + new `BACKUP_SEARCH_INDEX`) and `postrelease_check.sh`
+  counts the live database with it (the same file piped over SSH, `count-rows --live`), so both sides count the same
+  tables; `hosted_postcheck.py`'s own `TABLES=` line (every table) is no longer the comparison. `postcheck-rows` is
+  unchanged (it now receives index-free totals on both sides). Rehearsal on a synthetic s6f7a8b9c0d1 copy:
+  `EXISTING_TABLES_UNCHANGED=226 tables, 71 rows, schema and every row identical`; `NEW_TABLES=` the 8, `(empty)`;
+  `SEARCH_INDEX_NEW=document_search,…_config,…_content,…_data,…_docsize,…_idx (search index; 3 row(s) …)`;
+  `count-rows` before `TABLES=227 ROWS=72`, after `TABLES=235 ROWS=72` (+8 tables, +0 rows), `SEARCH_INDEX=TABLES=6 ROWS=3`.
+- **I1 person documents.** `ingest.add_link` (also used by "Link it here" and the document page's "Link to") now
+  raises a document to PEOPLE when an active PERSON link is added and records a `FIELD_CORRECTED` sensitivity event
+  ("Linked to a person: …"; events stay insert-only). Defence in depth: `access.scope_filter` hides any document with
+  an active PERSON link from a viewer who is not a people administrator (lists, FTS and LIKE search, attention,
+  opening); `labels_for_documents(include_people=False)` leaves person labels out for them (search rows, document page,
+  duplicate prompt, document attention); ending a PERSON link needs `may_see_context_kind` (404 otherwise). The FTS
+  `labels` column still holds person names (people administrators search by them) — it can only match documents the
+  viewer's scope already allows, so it never reaches a non-administrator (tested).
+- **I2 attention cost.** (a) `count_for` (the bell) answers from a 60 s per-person, per-day cache kept per app process
+  (`current_app.extensions`); `assemble()` of the full list for today (Home, the full list, Purchasing, Time & Money)
+  primes it, so those pages' bell needs no second assembly; the attention list itself is always assembled fresh.
+  (b) `AttentionContext.project_id`: the Project page and Price This Job pass it; material requests, delivery
+  exceptions, job updates, punch list, guided estimates (Gate 1, subcontract quotes), calculator results and intakes,
+  subcontract quote evidence, prices missing, CaliSIGN and change-order drafts filter by project in SQL; time, documents
+  and failed crew texts (items never tied to one project) are skipped there. Result identical (tested against the
+  org-wide list filtered by project). (c) `_supplier_prices_missing`: one aggregate COUNT over sections/lines/cost
+  items for the draft versions (same rule) instead of lazy loads per section, line and cost item; `subcontract_quotes`
+  prefetches versions and lines in one query each; `missing_time` reads the window's schedule items (assignments and
+  workers eager-loaded) and time entries once instead of per day.
+- **I3 extraction on open.** `ensure_extracted` skips a file over `MAX_SYNC_BYTES` (the page shows "Text not indexed
+  yet"); `flask documents reindex` now extracts missing text first (`extract_missing`, large files included,
+  `TEXT_EXTRACTED=n`) and then rebuilds the index. A concurrent first open's duplicate `DocumentText` insert
+  (`IntegrityError`) is rolled back and the page carries on.
+- **M2 types.** `file_document` refuses a type not offered for the filing context (`types_for_context`), with a plain
+  message. `correct_field("document_type")` moves the sensitivity with the type when the document held its old type's
+  default (an invoice → FINANCIAL, back → STANDARD; audited), keeps an administrator's explicit choice, and never goes
+  below PEOPLE while a PERSON link is active.
+- **M3 subcontractor code.** Generated codes keep `code + "-N"` within 30 characters. **Ruling:** `POST /subcontractors`
+  stays open to any office member (office scope), the same as Scope delivery, where recording a subcontractor's quote
+  creates the subcontractor; there is no narrower permission for managing subcontract parties.
+- **M4 migrate rerun.** `release_migrate.sh` on `ALREADY_MIGRATED`: keeps a `MIGRATION_SEEDED` already in the state
+  file; otherwise records it empty when no `--populated-tables` were declared; otherwise recovers it from the first
+  apply's saved report (`$GEN/<label>-migrate-*-migrate.txt` with `MIGRATE=ok` and `POPULATED_TABLE=` lines); with no
+  such report it stops and tells the operator to send Claude the status file (counts then read from the instance's
+  pre-migration backup with Joel). Not needed by this release (no populated tables) but fixed for the next.
+- **M5 owner reminder.** `reminders.owner_items` counts from the items, leaving out the providers the Task-First list
+  added under an owner-reminder kind (`change_order_drafts`, the only one); the owner's text/email counts are exactly
+  those before 31 Oct; the draft stays on the attention list.
+
+### Release-gate migration arguments (this release)
+`--migration-to t7a8b9c0d1e2 --new-tables organization_equipment,organization_equipment_events,documents,document_versions,document_links,document_dates,document_events,document_text`
+— no `--altered-tables`, `--altered-checks`, `--filled-columns` or `--populated-tables`. Do **not** list
+`document_search` or its shadow tables: the check finds them and reports them on `SEARCH_INDEX_NEW=` (whether or not
+the SQLite build has FTS5, the arguments are the same). Expected post-release: live `TABLES` = backup + 8, `ROWS` =
+backup rows (before `connect-existing`), search index on its own line.
+
+### Tests (1 Nov 2026)
+Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, Family 05 master env set; no xdist):
+- New: `tests/test_migration_check_search_index.py` (10: real FTS5 rehearsal s6f7a8b9c0d1 → t7a8b9c0d1e2, FTS tables
+  refused as `--new-tables`, a real row in a new table still stops, next-release snapshot of an indexed database,
+  `count-rows` local and piped `--live`, apply + `count-rows` + `postcheck-rows` end to end vs. the pinned hosted
+  post-check, ordinary WITHOUT ROWID table, scripts use the helper); `tests/test_release_postcheck_seed.py` +4 (M4
+  rerun: keep, empty, recover from the first report, stop with an instruction); `tests/test_documents_review_fixes.py`
+  (16: I1 ×6, I3 ×3 incl. reindex, M2 ×5, M3 ×1, labels); `tests/test_attention_review_fixes.py` (8: M5 ×2, statement
+  count does not grow with sections/lines/cost items, prices-missing rule pinned, project list identical and cheaper,
+  bell cache TTL/fresh list, per person + primed, narrowed/backdated lists never prime).
+- Release tools: `test_migration_check_search_index.py`, `test_migration_check.py`, `test_release_tools.py`,
+  `test_release_postcheck_seed.py`: **47 passed**; `test_release_postcheck_seed.py` after M4: **13 passed**.
+- Documents: `tests/test_documents_*.py`, `test_uat3_workflow_documents.py`,
+  `test_customer_documents_no_internal_costing_20261024.py` at the final code: **164 passed**.
+- Attention / reminders: `test_attention_review_fixes.py`, `test_company_attention_fg035.py`,
+  `test_core_close_slice_b_fg035.py`, `test_documents_attention.py`, `test_guided_tasks.py`, `test_magnificent_seven.py`,
+  `test_project_creation_ux.py`, `test_project_needs_attention_fg035.py`, `test_quickbooks_project_sync.py`,
+  `test_supplier_hub.py`, `test_task_first_ux.py` at the final code: **221 passed**.
+- Browser: `evidence_documents.mjs evidence_guided_tasks.mjs` (`--test-concurrency=1`): **13 passed, 0 failed**.
+- Full suite not re-run here (shared machine with a running browser-walk job); the release gate runs it.

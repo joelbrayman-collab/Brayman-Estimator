@@ -240,14 +240,14 @@ done
 [ -f "$LOCALB" ] || stop "could not copy the backup to the Mac"
 [ "$(shasum -a 256 "$LOCALB" | awk '{print $1}')" = "$BSHA" ] || stop "Mac backup checksum differs"
 [ "$(/usr/bin/sqlite3 "$LOCALB" 'PRAGMA integrity_check;')" = "ok" ] || stop "Mac backup integrity is not ok"
-BROWS=$(/usr/bin/python3 - "$LOCALB" <<'PYEOF'
-import sqlite3, sys
-c = sqlite3.connect("file:%s?mode=ro" % sys.argv[1], uri=True)
-t = [r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")]
-print("TABLES=%d ROWS=%d" % (len(t), sum(c.execute('SELECT COUNT(*) FROM "%s"' % x).fetchone()[0] for x in t)))
-PYEOF
-)
-status "BACKUP=$BPATH sha256=$BSHA $BROWS revision=$REVISION integrity=ok; Mac copy $LOCALB matches"
+# Row totals (review fix C1, 1 Nov 2026): every table except sqlite_* and the search index (document_search and its
+# FTS5 shadow tables, derived data the app rewrites); the index is recorded on its own line. postrelease_check.sh
+# counts the live database with the same helper, so both sides count the same tables.
+BCOUNT=$(/usr/bin/python3 tools/release/migration_check.py count-rows --db "$LOCALB") || stop "could not count the backup's rows"
+BROWS=$(echo "$BCOUNT" | grep '^TABLES=')
+BSEARCH=$(echo "$BCOUNT" | grep '^SEARCH_INDEX=' | cut -d= -f2-)
+[ -n "$BROWS" ] && [ -n "$BSEARCH" ] || stop "could not count the backup's rows ($BCOUNT)"
+status "BACKUP=$BPATH sha256=$BSHA $BROWS (search index $BSEARCH, not in the totals) revision=$REVISION integrity=ok; Mac copy $LOCALB matches"
 
 if [ -n "$MIGRATION_TO" ]; then
   echo "== 3a. Migration rehearsal on a copy of the fresh production backup (this Mac only)"
@@ -276,6 +276,7 @@ LIVE_DEPLOY=$LIVE_DEPLOY
 REVISION=$REVISION
 BACKUP=$LOCALB
 BACKUP_ROWS=$BROWS
+BACKUP_SEARCH_INDEX=$BSEARCH
 CLONE=$DEST
 MIGRATION_TO=$MIGRATION_TO
 NEW_TABLES=$NEW_TABLES

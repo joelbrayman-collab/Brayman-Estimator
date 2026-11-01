@@ -38,6 +38,7 @@ title (= what), why (= status), due (= when), severity, scope, provider, project
 from __future__ import annotations
 
 import logging
+import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
@@ -162,6 +163,9 @@ class AttentionContext:
     projects: dict
     roles: dict = field(default_factory=dict)
     items_so_far: list = field(default_factory=list)
+    # Review fix I2 (1 Nov 2026): the Project page's list. A provider may filter its query by this project (SQL);
+    # assemble() still keeps only this project's items, so the result is the same either way.
+    project_id: Optional[int] = None
 
     link = staticmethod(_link)
     item = staticmethod(_item)
@@ -257,7 +261,8 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
         return {"items": [], "count": 0, "hidden": True, "kinds": {}, "waiting_on_you": [], "waiting_on_others": []}
     if include_company_facts is not None:
         roles = {**roles, "company_management_facts": include_company_facts}
-    ctx = AttentionContext(org=org, viewer=viewer, today=today, projects=_projects(org), roles=roles)
+    ctx = AttentionContext(org=org, viewer=viewer, today=today, projects=_projects(org), roles=roles,
+                           project_id=project_id)
     items = []
     for provider in all_providers():
         if provider.scope == SCOPE_COMPANY_FACTS and include_company_facts is not None:
@@ -288,6 +293,8 @@ def assemble(organization_id: str, viewer, *, today: Optional[date] = None, incl
         kinds[i["kind"]] += 1
     mine = [i for i in items if i.get("waiting_on") != WAITING_ON_OTHERS]
     others = [i for i in items if i.get("waiting_on") == WAITING_ON_OTHERS]
+    if project_id is None and include_company_facts is None and today == local_today():
+        _remember_bell(org, viewer, len(mine))  # the same list the bell counts: the page's bell needs no second read
     return {"items": items, "count": len(items), "hidden": False, "kinds": dict(kinds),
             "waiting_on_you": mine, "waiting_on_others": others}
 
@@ -326,10 +333,52 @@ def assemble_for_supplier(supplier_id: int, *, today: Optional[date] = None) -> 
     return items
 
 
+# Review fix I2 (1 Nov 2026): the header bell asks for its count on every page. It is a hint, so it is answered from a
+# short per-person cache (per app process), filled by the bell itself or by any page that just assembled the same list
+# (Home, the full list, Purchasing, Time & Money). The attention list itself is always assembled fresh.
+BELL_CACHE_SECONDS = 60
+_BELL_CACHE_MAX = 2000
+
+
+def _now() -> float:
+    return time.monotonic()
+
+
+def _bell_key(organization_id, viewer):
+    user_id = getattr(viewer, "id", None)
+    if user_id is None:
+        return None
+    return (organization_id, int(user_id), local_today())
+
+
+def _bell_cache() -> dict:
+    return current_app.extensions.setdefault("attention_bell_cache", {})
+
+
+def _remember_bell(organization_id, viewer, count: int) -> None:
+    key = _bell_key(organization_id, viewer)
+    if key is None:
+        return
+    cache = _bell_cache()
+    if len(cache) >= _BELL_CACHE_MAX:
+        cutoff = _now() - BELL_CACHE_SECONDS
+        for stale in [k for k, (at, _n) in cache.items() if at < cutoff]:
+            cache.pop(stale, None)
+        if len(cache) >= _BELL_CACHE_MAX:
+            cache.clear()
+    cache[key] = (_now(), count)
+
+
 def count_for(organization_id: str, viewer) -> int:
-    """The header bell: how many items are waiting on this person (not on others)."""
+    """The header bell: how many items are waiting on this person (not on others). Cached for BELL_CACHE_SECONDS."""
+    key = _bell_key(organization_id, viewer)
+    hit = _bell_cache().get(key) if key is not None else None
+    if hit is not None and _now() - hit[0] < BELL_CACHE_SECONDS:
+        return hit[1]
     view = assemble(organization_id, viewer)
-    return len(view.get("waiting_on_you") or [])
+    count = len(view.get("waiting_on_you") or [])
+    _remember_bell(organization_id, viewer, count)
+    return count
 
 
 # ================================================================================================= helpers
@@ -342,28 +391,45 @@ def working_days(org) -> set:
 
 def missing_time(org, *, today: date, include_today: bool = False) -> list:
     """(user_id, name, day, [project ids]) for scheduled people with no time at all entered for that day."""
+    from sqlalchemy.orm import joinedload, selectinload
+
+    from app.models.schedule import SCHEDULE_STATUS_ACTIVE, WorkScheduleAssignment, WorkScheduleItem
     from app.models.user import UserMembership
-    from app.services.daily_summaries import item_workers, scheduled_items
+    from app.services.daily_summaries import item_workers
 
     days = working_days(org)
     out = []
     active = {m.user_id for m in UserMembership.query.filter_by(organization_id=org, is_active=True).all()}
     start = 0 if include_today else 1
+    first, last = today - timedelta(days=MISSING_TIME_DAYS), today - timedelta(days=start)
+    # Review fix I2 (1 Nov 2026): the window's scheduled work (with its people) and time entries in one query each,
+    # instead of per day and per assignment; each day then sees exactly daily_summaries.scheduled_items(org, None, day).
+    window_items = (WorkScheduleItem.query
+                    .options(selectinload(WorkScheduleItem.assignments).joinedload(WorkScheduleAssignment.worker))
+                    .filter(WorkScheduleItem.organization_id == org, WorkScheduleItem.status == SCHEDULE_STATUS_ACTIVE,
+                            WorkScheduleItem.scheduled_start <= last, WorkScheduleItem.scheduled_end >= first)
+                    .order_by(WorkScheduleItem.id).all())
+    entered_on = defaultdict(set)
+    if window_items:
+        for user_id, work_date in db.session.query(LabourTimeEntry.worker_user_id, LabourTimeEntry.work_date).filter(
+                LabourTimeEntry.organization_id == org, LabourTimeEntry.work_date >= first,
+                LabourTimeEntry.work_date <= last, LabourTimeEntry.status != TIME_STATUS_SUPERSEDED).all():
+            entered_on[work_date].add(user_id)
     for back in range(start, MISSING_TIME_DAYS + 1):
         day = today - timedelta(days=back)
         if day.weekday() not in days:
             continue
         people = defaultdict(lambda: {"name": "", "projects": set()})
-        for item in scheduled_items(org, None, day):
+        for item in window_items:
+            if not (item.scheduled_start <= day <= item.scheduled_end):
+                continue
             for user_id, name in item_workers(item, day).items():
                 if user_id in active:
                     people[user_id]["name"] = name
                     people[user_id]["projects"].add(item.project_id)
         if not people:
             continue
-        entered = {row[0] for row in db.session.query(LabourTimeEntry.worker_user_id).filter(
-            LabourTimeEntry.organization_id == org, LabourTimeEntry.work_date == day,
-            LabourTimeEntry.status != TIME_STATUS_SUPERSEDED).all()}
+        entered = entered_on.get(day, set())
         for user_id, row in people.items():
             if user_id not in entered:
                 out.append((user_id, row["name"], day, sorted(row["projects"])))
@@ -380,6 +446,8 @@ def _reminder_time(org) -> str:
 # ---- existing items (Magnificent Seven, 25 Oct 2026): same words, links now built with url_for
 @attention_provider("time_to_approve", "time", title="Time entries to approve, returned time, missing time")
 def _time(ctx):
+    if ctx.project_id is not None:
+        return []  # none of these items belongs to one project (the Project page never shows them)
     org, today, projects = ctx.org, ctx.today, ctx.projects
     items = []
     submitted = defaultdict(list)
@@ -412,8 +480,11 @@ def _time(ctx):
 @attention_provider("material_requests", "materials", title="Material requests to review or send to a supplier")
 def _materials(ctx):
     items = []
-    for r in FieldMaterialRequest.query.filter(FieldMaterialRequest.organization_id == ctx.org,
-                                               FieldMaterialRequest.status.in_((MR_SUBMITTED, MR_APPROVED))):
+    query = FieldMaterialRequest.query.filter(FieldMaterialRequest.organization_id == ctx.org,
+                                              FieldMaterialRequest.status.in_((MR_SUBMITTED, MR_APPROVED)))
+    if ctx.project_id is not None:
+        query = query.filter(FieldMaterialRequest.project_id == ctx.project_id)
+    for r in query:
         status = "Waiting for your review" if r.status == MR_SUBMITTED else "Approved — choose the supplier"
         items.append(_item("materials", f"Material request: {r.description}",
                            f"{_label(ctx.projects.get(r.project_id))} · {r.requested_by_name}", status,
@@ -541,7 +612,10 @@ def _suppliers(ctx):
 @attention_provider("delivery_exceptions", "deliveries", title="Deliveries the crew reported short or damaged")
 def _delivery_exceptions(ctx):
     items = []
-    for row in DeliveryConfirmation.query.filter_by(organization_id=ctx.org, exception_status=EXCEPTION_OPEN):
+    query = DeliveryConfirmation.query.filter_by(organization_id=ctx.org, exception_status=EXCEPTION_OPEN)
+    if ctx.project_id is not None:
+        query = query.filter(DeliveryConfirmation.project_id == ctx.project_id)
+    for row in query:
         items.append(_item("deliveries", f"Delivery {row.outcome_label.lower()}: {row.order.number} "
                            f"({row.order.share.supplier.legal_name})", f"{_label(ctx.projects.get(row.project_id))} · "
                            f"{row.confirmed_by_name}", "Delivery problem to resolve", _day(local_date(row.confirmed_at)),
@@ -623,7 +697,10 @@ def _schedule_conflicts(ctx):
 @attention_provider("job_updates", "tasks", title="Problems or delays reported in a job update")
 def _job_updates(ctx):
     items = []
-    for s in DailyJobSummary.query.filter_by(organization_id=ctx.org, problem_status=PROBLEM_OPEN):
+    query = DailyJobSummary.query.filter_by(organization_id=ctx.org, problem_status=PROBLEM_OPEN)
+    if ctx.project_id is not None:
+        query = query.filter(DailyJobSummary.project_id == ctx.project_id)
+    for s in query:
         items.append(_item("tasks", f"Problem or delay reported: {(s.problems_text or '')[:80]}",
                            f"{_label(ctx.projects.get(s.project_id))} · {s.submitted_by_name}", "Job update — open",
                            _day(s.work_date), _link("operations.job_update", summary_id=s.id), "Open the job update",
@@ -636,7 +713,10 @@ def _punch(ctx):
     from app.models.punch_list import PUNCH_LIST_STATUS_OPEN, ProjectPunchListItem
 
     punch = defaultdict(int)
-    for row in ProjectPunchListItem.query.filter_by(organization_id=ctx.org, status=PUNCH_LIST_STATUS_OPEN):
+    query = ProjectPunchListItem.query.filter_by(organization_id=ctx.org, status=PUNCH_LIST_STATUS_OPEN)
+    if ctx.project_id is not None:
+        query = query.filter(ProjectPunchListItem.project_id == ctx.project_id)
+    for row in query:
         punch[row.project_id] += 1
     items = []
     for pid, n in punch.items():
@@ -656,6 +736,8 @@ def _documents(ctx):
     The documents service applies the viewer's document permissions; no compliance rules are inferred."""
     from app.services.documents.attention import document_attention_items
 
+    if ctx.project_id is not None:
+        return []  # document items are not tied to one project (the Project page never shows them)
     rows = []
     for row in document_attention_items(ctx.org, ctx.viewer, ctx.today):
         row.setdefault("why", row.get("status") or "")
@@ -695,8 +777,8 @@ def _failed_texts(ctx):
     from app.services.access_domains import has_office_scheduling_authority
     from app.services.crew_notices import attention_count
 
-    if not has_office_scheduling_authority(ctx.viewer, ctx.org):
-        return []
+    if ctx.project_id is not None or not has_office_scheduling_authority(ctx.viewer, ctx.org):
+        return []  # (not tied to one project)
     n = attention_count(ctx.org)
     if not n:
         return []
@@ -709,7 +791,10 @@ def _failed_texts(ctx):
 def _guided_estimates(ctx):
     from app.models.guided_estimating import GuidedEstimate
 
-    for guided in GuidedEstimate.query.filter_by(organization_id=ctx.org).all():
+    query = GuidedEstimate.query.filter_by(organization_id=ctx.org)
+    if ctx.project_id is not None:
+        query = query.filter(GuidedEstimate.project_id == ctx.project_id)
+    for guided in query.all():
         project = ctx.projects.get(guided.project_id)
         if _open(project):
             yield guided, project
@@ -747,7 +832,10 @@ def _calculator_results(ctx):
 
     items = []
     waiting = defaultdict(list)
-    for calc in ProjectCalculation.query.filter_by(organization_id=ctx.org, review_status="AWAITING_REVIEW").all():
+    calcs_query = ProjectCalculation.query.filter_by(organization_id=ctx.org, review_status="AWAITING_REVIEW")
+    if ctx.project_id is not None:
+        calcs_query = calcs_query.filter(ProjectCalculation.project_id == ctx.project_id)
+    for calc in calcs_query.all():
         if calc.payload and _open(ctx.projects.get(calc.project_id)):
             waiting[calc.project_id].append(calc)
     for pid, calcs in waiting.items():
@@ -758,10 +846,13 @@ def _calculator_results(ctx):
         items.append(_item("estimates", f"{n} calculator result{'' if n == 1 else 's'} waiting to go on the estimate",
                            _label(project), "Calculated, not reviewed for the estimate yet", "", href,
                            "Review for the estimate", project_id=pid))
-    open_intakes = (db.session.query(CalculationResultIntake)
-                    .join(CalculationQuantityReview, CalculationQuantityReview.intake_id == CalculationResultIntake.id)
-                    .filter(CalculationResultIntake.organization_id == ctx.org,
-                            CalculationQuantityReview.status == STATUS_OPEN).distinct().all())
+    intakes_query = (db.session.query(CalculationResultIntake)
+                     .join(CalculationQuantityReview, CalculationQuantityReview.intake_id == CalculationResultIntake.id)
+                     .filter(CalculationResultIntake.organization_id == ctx.org,
+                             CalculationQuantityReview.status == STATUS_OPEN))
+    if ctx.project_id is not None:
+        intakes_query = intakes_query.filter(CalculationResultIntake.project_id == ctx.project_id)
+    open_intakes = intakes_query.distinct().all()
     for intake in open_intakes:
         project = ctx.projects.get(intake.project_id)
         version = db.session.get(EstimateVersion, intake.estimate_version_id)
@@ -798,22 +889,30 @@ def _subcontract_quotes(ctx):
                                waiting_on=WAITING_ON_YOU if overdue else WAITING_ON_OTHERS))
     received = defaultdict(list)
     selected_lines = set()
-    for q in SubcontractQuoteEvidence.query.filter(SubcontractQuoteEvidence.organization_id == ctx.org,
-                                                   SubcontractQuoteEvidence.selection_status.in_(
-                                                       (QUOTE_STATUS_RECEIVED, QUOTE_STATUS_SELECTED))).all():
+    quotes_query = SubcontractQuoteEvidence.query.filter(SubcontractQuoteEvidence.organization_id == ctx.org,
+                                                         SubcontractQuoteEvidence.selection_status.in_(
+                                                             (QUOTE_STATUS_RECEIVED, QUOTE_STATUS_SELECTED)))
+    if ctx.project_id is not None:
+        quotes_query = quotes_query.filter(SubcontractQuoteEvidence.project_id == ctx.project_id)
+    for q in quotes_query.all():
         if q.selection_status == QUOTE_STATUS_SELECTED:
             selected_lines.add(q.estimate_line_item_id)
         else:
             received[q.estimate_line_item_id].append(q)
+    # One query each for the versions and lines involved (was one get per received line).
+    wanted = {line_id: quotes[0] for line_id, quotes in received.items() if line_id not in selected_lines}
+    versions = {v.id: v for v in EstimateVersion.query.filter(
+        EstimateVersion.id.in_({q.estimate_version_id for q in wanted.values()} or {-1})).all()}
+    lines = {li.id: li for li in EstimateLineItem.query.filter(EstimateLineItem.id.in_(set(wanted) or {-1})).all()}
     for line_id, quotes in received.items():
         if line_id in selected_lines:
             continue
         q = quotes[0]
         project = ctx.projects.get(q.project_id)
-        version = db.session.get(EstimateVersion, q.estimate_version_id)
+        version = versions.get(q.estimate_version_id)
         if not _open(project) or version is None or version.is_locked:
             continue
-        line = db.session.get(EstimateLineItem, line_id)
+        line = lines.get(line_id)
         what = line.description if line is not None else "subcontract work"
         n = len(quotes)
         href = (_link("guided.compare", project_id=project.id) if project.id in guided_projects
@@ -827,21 +926,40 @@ def _subcontract_quotes(ctx):
 
 @attention_provider("supplier_prices_missing", "estimates", title="Estimate material lines still without a price")
 def _supplier_prices_missing(ctx):
-    from app.models import Estimate
+    """Review fix I2 (1 Nov 2026): one aggregate query for the unpriced material lines of every draft estimate (was
+    every section, line and cost item loaded one by one). Same rule: a "Cost Item" line of a Material cost item with
+    no unit cost (empty or 0) and no costing override reason (empty)."""
+    from sqlalchemy import func, or_
+    from sqlalchemy.orm import joinedload
 
-    items = []
-    for estimate in Estimate.query.filter_by(organization_id=ctx.org).all():
+    from app.models import Estimate
+    from app.models.cost_item import CostItem
+    from app.models.estimate import EstimateLineItem, EstimateSection
+
+    query = Estimate.query.options(joinedload(Estimate.current_version)).filter_by(organization_id=ctx.org)
+    if ctx.project_id is not None:
+        query = query.filter(Estimate.project_id == ctx.project_id)
+    drafts = []
+    for estimate in query.all():
         project = ctx.projects.get(estimate.project_id)
         version = estimate.current_version
         if not _open(project) or version is None or version.is_locked or (version.status or "Draft") != "Draft":
             continue
-        missing = 0
-        for section in version.sections:
-            for line in section.line_items:
-                item = getattr(line, "cost_item", None)
-                if (line.line_type == "Cost Item" and item is not None and (item.category or "") == "Material"
-                        and not (line.unit_cost or 0) and not line.costing_override_reason):
-                    missing += 1
+        drafts.append((estimate, project, version))
+    if not drafts:
+        return []
+    missing_by_version = dict(
+        db.session.query(EstimateSection.estimate_version_id, func.count(EstimateLineItem.id))
+        .join(EstimateLineItem, EstimateLineItem.estimate_section_id == EstimateSection.id)
+        .join(CostItem, CostItem.id == EstimateLineItem.cost_item_id)
+        .filter(EstimateSection.estimate_version_id.in_({v.id for _e, _p, v in drafts}),
+                EstimateLineItem.line_type == "Cost Item", CostItem.category == "Material",
+                or_(EstimateLineItem.unit_cost.is_(None), EstimateLineItem.unit_cost == 0),
+                or_(EstimateLineItem.costing_override_reason.is_(None), EstimateLineItem.costing_override_reason == ""))
+        .group_by(EstimateSection.estimate_version_id).all())
+    items = []
+    for estimate, project, version in drafts:
+        missing = missing_by_version.get(version.id, 0)
         if not missing:
             continue
         items.append(_item("estimates", f"{missing} material line{'' if missing == 1 else 's'} still need a price",
@@ -908,8 +1026,11 @@ def _calisign(ctx):
         return _link("supplier_office.project_requests", project_id=req.project_id)
 
     items = []
-    for req in SigningRequest.query.filter(SigningRequest.organization_id == ctx.org, SigningRequest.status.in_(
-            (STATUS_APPROVED_FOR_SIGNATURE, STATUS_SENT, STATUS_SIGNED, STATUS_DECLINED, STATUS_EXPIRED))).all():
+    query = SigningRequest.query.filter(SigningRequest.organization_id == ctx.org, SigningRequest.status.in_(
+        (STATUS_APPROVED_FOR_SIGNATURE, STATUS_SENT, STATUS_SIGNED, STATUS_DECLINED, STATUS_EXPIRED)))
+    if ctx.project_id is not None:
+        query = query.filter(SigningRequest.project_id == ctx.project_id)
+    for req in query.all():
         project = ctx.projects.get(req.project_id)
         if not _open(project):
             continue
@@ -1106,7 +1227,10 @@ def _change_order_drafts(ctx):
     from app.project_controls.models import ChangeOrder
 
     items = []
-    for co in ChangeOrder.query.filter_by(organization_id=ctx.org, status="Draft").all():
+    query = ChangeOrder.query.filter_by(organization_id=ctx.org, status="Draft")
+    if ctx.project_id is not None:
+        query = query.filter(ChangeOrder.project_id == ctx.project_id)
+    for co in query.all():
         project = ctx.projects.get(co.project_id)
         if not _open(project):
             continue

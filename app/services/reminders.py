@@ -197,13 +197,24 @@ def crew_items(organization_id: str, user_id: int, day: date) -> list:
     return items
 
 
+# Review fix M5 (1 Nov 2026): providers added to the attention list by the Task-First UX (31 Oct 2026) under a kind the
+# owner's reminder counts, which the reminder did not count before. They stay on the attention list; the owner's text
+# and email count exactly what they counted before.
+OWNER_REMINDER_EXCLUDED_PROVIDERS = frozenset({"change_order_drafts"})
+
+
 def owner_items(organization_id: str, user, day: date) -> list:
     from app.services.needs_attention import assemble
 
     view = assemble(organization_id, user, today=day)
+    kinds: dict = {}
+    for item in view.get("items") or []:
+        if item.get("provider") in OWNER_REMINDER_EXCLUDED_PROVIDERS:
+            continue
+        kinds[item["kind"]] = kinds.get(item["kind"], 0) + 1
     out = []
     for kind, label in OWNER_KINDS.items():
-        n = view.get("kinds", {}).get(kind, 0)
+        n = kinds.get(kind, 0)
         if n:
             out.append({"key": kind, "text": f"{n} {label}{'' if n == 1 or label.endswith('s') else 's'}",
                         "sms": f"{n} {label}{'' if n == 1 or label.endswith('s') else 's'}", "href": "/"})

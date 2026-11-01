@@ -83,3 +83,16 @@ and `docs/rdims/airia-rdims-reuse-map-2026-10-31.md`. Users see "Documents", "Co
   when FTS5 is present (probe production SQLite first). All empty after the migration; rows appear only after
   `flask documents connect-existing` (or the first project Documents page opened).
 - Add `instance/documents` to the post-release storage check; add `evidence_documents.mjs` (4 checks) to the gate.
+
+### Verification (31 Oct 2026, local, no skips)
+- Documents tests (7 files): 135 passed (service 82, search 19, attention 7, connect-existing 8, routes 16,
+  migration 3, standalone 5) — included in the runs below.
+- Head-asserting suites moved to `t7a8b9c0d1e2` (45 files, deliberate update of "current head" only): 713 passed.
+- Broader affected suites (security sweep, field-only, nav/UAT presentation, contractor language, project hub,
+  attention, people access, release tools, migration check, site plans, field, signing artifacts, access domains +
+  documents): 409 passed, 3 failed → fixed and re-run green: the field-only endpoint freeze gained the two reviewed
+  job-document endpoints (`tests/test_security_route_sweep.py`, 9 passed); `tests/test_uat3_workflow_documents.py`
+  now asserts the per-job register stays out of the menu and the only "Documents" item is `documents.library`
+  (5 passed).
+- Browser: `tests/e2e` contractor workflow + job lifecycle 2 passed; `tools/release/evidence_documents.mjs` 4/4.
+- Full 3,700+ regression not run in this worktree (2-CPU container); the release gate runs it.

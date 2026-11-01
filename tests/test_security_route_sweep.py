@@ -368,6 +368,11 @@ EXPECTED_FIELD_ONLY_ENDPOINTS = {
     "site_plans.file",
     "site_plans.page",
     "site_plans.sign_out",
+    # Job documents (31 Oct 2026), reviewed: documents linked to the crew member's own jobs (field_visible_project_ids)
+    # of the crew-visible types only (drawings, specifications, instructions, safety), STANDARD sensitivity, read only
+    # (tests/test_documents_routes.py). Every other documents.* / equipment.* page sends them to Field.
+    "documents.field_project",
+    "documents.field_file",
     "field.text_messages",  # schedule texts: the person's own mobile number and consent only (22 Oct 2026)
     "field.text_messages_setup",  # the one-time schedule-texts question on first Field use: own answer only
     # The Magnificent Seven Field quick actions (25 Oct 2026), reviewed: each is limited to the person's own jobs

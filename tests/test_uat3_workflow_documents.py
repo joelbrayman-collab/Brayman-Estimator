@@ -171,7 +171,10 @@ def test_project_page_is_truthful_about_what_can_be_opened():
     assert "renderer" not in html.lower()
     assert "Workflow documents" in hub
     assert "settings.brand_profile" not in {item["endpoint"] for item in NAV_ITEMS}
-    assert not any(item["title"] == "Documents" for item in NAV_ITEMS)
+    # The per-job workflow-documents register stays on the project, never in the menu. Since 31 Oct 2026 the menu's
+    # only "Documents" item is the company document library (documents.library), not this register.
+    assert "projects.workflow_documents" not in {item["endpoint"] for item in NAV_ITEMS}
+    assert [item["endpoint"] for item in NAV_ITEMS if item["title"] == "Documents"] == ["documents.library"]
 
 
 def test_breakdown_has_no_action_until_the_job_has_an_estimate():

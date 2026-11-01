@@ -217,6 +217,8 @@ def project_task_screen_vars(project, organization_id, *, hub, records, operatin
                         hub_contracts=records.get("hub_contracts") or (),
                         purchase_orders=records.get("purchase_orders") or (), schedule=hub.get("schedule"))
     documents_endpoint = "documents.project_documents"
+    # The Next step is the one primary action: the same task is not offered a second time in this job's list.
+    items = [i for i in items if not step.get("url") or i.get("href") != step["url"]]
     return {
         "next_step": step,
         "project_facts": facts,

@@ -619,7 +619,9 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     assert.equal(await page.locator("[data-open-orders]").count(), 0);
     await ben.submit(page.locator(`form[action="/projects/${projectId}/close"] button[type=submit]`));
     assert.match(await ben.flash(), /closed/i);
-    assert.match(await ben.main(), /This Project is closed\.[\s\S]*Closed\s+Reopen Project/);
+    // Task-First UX (31 Oct 2026): a closed job says Closed in its header and its one Next step is Reopen Project.
+    assert.match(await ben.main(), /This Project is closed\.[\s\S]*Closed[\s\S]*Reopen Project/);
+    assert.equal((await page.locator("[data-next-step-action]").innerText()).trim(), "Reopen Project");
     assert.equal(await stage(), "Completed");
     // Closed: Field no longer offers the job or its work.
     await kevin.go("/field/projects");

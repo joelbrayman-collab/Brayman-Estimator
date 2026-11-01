@@ -191,7 +191,9 @@ def test_pages_office_and_crew(app, people, job):
     bad = office.post("/accounting/reconcile", data={"report": (io.BytesIO(b"a,b\n1,2\n"), "x.csv")},
                       content_type="multipart/form-data")
     assert "does not look like a QuickBooks invoice list" in bad.get_data(as_text=True)
-    assert "Accounting" in office.get("/").get_data(as_text=True)
+    # Task-First UX (31 Oct 2026): Accounting is inside the Time & Money destination of the sidebar.
+    assert "Time &amp; Money" in office.get("/").get_data(as_text=True)
+    assert "Accounting" in office.get("/time-and-money").get_data(as_text=True)
 
     from flask import g
 

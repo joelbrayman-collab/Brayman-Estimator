@@ -161,8 +161,10 @@ def next_step(project, organization_id: str, *, guided_summary=None, hub_contrac
                                                                  _anchor="hub-punch-list"), "ts-closeout")
     if walkthrough_answered:
         if can_close:
+            from app.presentation.contractor_copy import PROJECT_CLOSE_ACTION
+
             return _step("close", "Close this project", "The walkthrough is answered and the punch list is done.",
-                         "Close this project", url_for("projects.close_project", id=pid), "ts-closeout")
+                         PROJECT_CLOSE_ACTION, url_for("projects.close_project", id=pid), "ts-closeout")
         return _step("close", "Ready to close", "The owner or a System Administrator closes the job.",
                      None, None, "ts-closeout")
     if accepted is not None:

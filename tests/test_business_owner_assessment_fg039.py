@@ -361,7 +361,10 @@ def test_parked_decision_tool_stays_reachable_and_off_daily_nav(client):
     html = dashboard.get_data(as_text=True)
     assert dashboard.status_code == 200
     assert PAGE not in html
-    assert "/calculators/employment-vs-entrepreneurship" in html
+    # Task-First UX (31 Oct 2026): the calculators are one click away under More, not in the daily sidebar.
+    more = client.get("/more").get_data(as_text=True)
+    assert PAGE not in more
+    assert "/calculators/employment-vs-entrepreneurship" in more
     page = client.get(PAGE)
     assert page.status_code == 200
     assert "Employment vs Entrepreneurship" in page.get_data(as_text=True)

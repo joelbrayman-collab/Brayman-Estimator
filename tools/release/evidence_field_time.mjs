@@ -111,9 +111,17 @@ async function shot(pg, name) {
   await pg.screenshot({ path: path.join(SHOTS, file), fullPage: true });
 }
 async function menu(pg, section, href) {
+  // Task-First UX (Joel's mandate, 31 Oct 2026): the sidebar keeps six destinations; every other page is one click
+  // further, under More, the Admin gear, or the Purchasing / Time & Money pages. The walk follows those clicks.
+  // (`section` names where the link used to be in the old sidebar.)
   await go(pg, "/");
-  const nav = pg.locator("nav.sidebar-nav .sidebar-section").filter({ has: pg.locator(".sidebar-section-label", { hasText: new RegExp(`^\\s*${section}\\s*$`) }) }).first();
-  await submit(pg, nav.locator(`a.sidebar-link[href="${href}"]`));
+  const direct = pg.locator(`nav.sidebar-nav a.sidebar-link[href="${href}"]`);
+  if (await direct.count()) return submit(pg, direct.first());
+  const via = { "/accounting": "/time-and-money", "/suppliers": "/purchasing", "/settings/people": "/admin",
+                "/settings/crews": "/admin" }[href] || "/more";
+  await submit(pg, via === "/admin" ? pg.locator("[data-admin-gear]")
+                                    : pg.locator(`nav.sidebar-nav a.sidebar-link[href="${via}"]`));
+  await submit(pg, pg.locator(`a[data-link-hub-item][href="${href}"]`).first());
 }
 // Kevin's time form: choose the work item and the work, the hours, a note; Send time.
 async function sendTime(pg, { element, work, hours, note }) {

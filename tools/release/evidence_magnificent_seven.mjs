@@ -251,7 +251,9 @@ step("Suzanne's Receipts Inbox: review, approve, confirmed by QuickBooks with th
   M.receiptUrl = pathOf(pg);
   assert.equal(await pg.locator("img.ops-photo").count(), 1, "the original image is on the page");
   await pg.fill("input[name=vendor_name]", "BMR Winchester (synthetic)");
-  const today = await pg.evaluate(() => new Date().toISOString().slice(0, 10));
+  // The company's date (America/Toronto), not UTC: after 8 pm in Toronto the UTC date is already tomorrow and the
+  // receipt date would be "in the future" (app/services/local_time.py).
+  const today = await pg.evaluate(() => new Date().toLocaleDateString("en-CA", { timeZone: "America/Toronto" }));
   await pg.fill("input[name=receipt_date]", await pg.inputValue("input[name=receipt_date]") || today);
   await pg.fill("input[name=subtotal]", "100.00");
   await pg.fill("input[name=tax_amount]", "13.00");
@@ -336,6 +338,9 @@ step("Need Materials from the phone appears on Ben's list; one click opens it; a
   await go(pg, "/");
   assert.equal(await pg.locator(`[data-attention-action][href="${M.materialUrl}"]`).count(), 0, "resolved: gone");
   await go(pg, "/operations/attention");
+  // Task-First UX (31 Oct 2026): a request the supplier has to answer is "Waiting on others", collapsed under the
+  // items waiting on Ben; he opens that group to see it.
+  await pg.locator("[data-attention-others] > summary").click();
   assert.match(await pg.locator("[data-attention-page]").innerText(), /Waiting for a price from BMR Winchester/);
   await go(kevin.pg, "/field/requests");
   assert.match(await kevin.pg.locator("[data-field-my-requests]").innerText(), /Sent to the supplier/);

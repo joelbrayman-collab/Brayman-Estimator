@@ -64,14 +64,18 @@ def test_costs_and_pricing_entry_names_the_three_inputs(client):
     assert "data-table" not in html
     assert "Cost library" not in html
     assert "material-catalogue" not in html
-    section = next(row for row in NAV_SECTIONS if row["title"] == "Costs & pricing")
+    # Task-First UX (31 Oct 2026): Costs & pricing is a More section; How we price (company policy) is under Admin.
+    from app.navigation import ADMIN_ITEMS, MORE_SECTIONS
+
+    section = next(row for row in MORE_SECTIONS if row["title"] == "Costs & pricing")
     assert section["endpoint"] == "costs_and_pricing.index"
     assert [item["title"] for item in section["links"]] == [
         "What we pay",
         "Reusable work",
-        "How we price",
+        "Materials catalogue",
     ]
-    assert NAV_SECTIONS[0]["links"][0]["title"] == "Home"
+    assert any(item["title"] == "How we price" and item["endpoint"] == "pricing_engine.index" for item in ADMIN_ITEMS)
+    assert NAV_SECTIONS[0]["links"][0]["title"] == "Attention"
 
 
 def test_what_we_pay_uses_cost_items_and_hides_list_actions(client):

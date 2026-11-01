@@ -85,7 +85,8 @@ def test_home_asks_what_do_you_need_to_do_and_keeps_every_existing_tool(env):
     home = d.get("/")
     # Home starts each guided wizard from one compact band (Project Creation UX, 27 Oct 2026): Start (primary) and
     # Continue manually, and the Company Calendar; no second set of start buttons.
-    assert "Guided Wizards" in home and "What are Wizards?" in home
+    # Task-First UX (31 Oct 2026): the band is named for its outcome, "Start something" (was "Guided Wizards").
+    assert "Start something" in home and "What are Wizards?" in home
     for label in ("Start a New Project", "Estimate a Project", "Manage a Project"):
         assert label in home
     assert home.count("data-start-wizard=") == 3 and home.count(">Continue manually</a>") == 3
@@ -239,7 +240,7 @@ def test_wizards_stay_inside_the_company_and_field_crew_are_kept_out(env):
     other.post("/projects/new", data={"wizard_run": str(run_id), "name": "Hijack", "client_id": customer_other.id},
                status=404)
     assert Project.query.filter_by(name="Hijack").count() == 0
-    assert "Guided Wizards" in other.get("/")
+    assert "Start something" in other.get("/")
     assert "Resume Start a New Project" not in other.get("/")
     kevin = _field_only_kevin(application, ben)
     for url in ("/wizards/", f"/wizards/run/{run_id}/step/customer"):

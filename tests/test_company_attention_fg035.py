@@ -280,15 +280,18 @@ def test_unauthenticated_follows_existing_login_behaviour(app, client):
 
 
 def test_navigation_visible_with_b(app, client):
+    # Task-First UX (31 Oct 2026): Company Attention is folded into the ONE attention list (the sidebar's
+    # "Attention"), which links these facts, job by job, for Company Management.
     _grant_b()
     html = client.get("/projects/").get_data(as_text=True)
-    assert 'href="/company-attention"' in html
-    assert contractor_copy.ATTENTION_NAV_TITLE in html
+    assert contractor_copy.ATTENTION_NAV_TITLE in html and 'href="/"' in html
+    assert 'href="/company-attention"' in client.get("/operations/attention").get_data(as_text=True)
 
 
 def test_navigation_hidden_without_b(app, client):
     html = client.get("/projects/").get_data(as_text=True)
     assert 'href="/company-attention"' not in html
+    assert 'href="/company-attention"' not in client.get("/operations/attention").get_data(as_text=True)
 
 
 def test_direct_url_cannot_bypass_b(app, client):

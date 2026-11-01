@@ -178,7 +178,7 @@ def test_event_detail_uses_rendition_for_real_heic(client, app):
     assert "build_renditions" not in html
     assert str(app.config["BUILD_RENDITION_ROOT"]) not in html
     hub = client.get(f"/projects/{project.id}").get_data(as_text=True)
-    assert "Field Observations" in hub
+    assert "Site notes &amp; photos" in hub  # was "Field Observations" (Task-First UX, 31 Oct 2026)
     assert "Related Change Orders" in hub
     assert "build_renditions" not in hub
 

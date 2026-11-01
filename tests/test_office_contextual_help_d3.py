@@ -209,10 +209,9 @@ def test_d1_hub_help_still_renders(client, project):
         _assert_topic_rendered(html, topic)
         assert f'id="hub-{key}"' in html
         assert topic.surface == help_content.SURFACE_HUB
-    learn_help = html.split('id="help-learn"', 1)[1].split("</details>", 1)[0]
-    assert help_content.HUB_LEARN.what in learn_help
+    assert 'id="help-learn"' not in html  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
     assert help_content.HUB_LEARN.future is True
-    assert "LEARN · Future" in html
+    assert "LEARN · Future" not in html
     assert "Punch List" in help_content.HUB_BUILD.do
     assert "Final Walkthrough" in help_content.HUB_BUILD.what
     assert "Client comments are not the Punch List until" in help_content.HUB_BUILD.do

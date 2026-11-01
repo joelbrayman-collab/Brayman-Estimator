@@ -248,8 +248,8 @@ def test_rendered_hub_maps_missing_states_and_preserves_monitor(client, project)
     assert 'id="hub-monitor"' in html
     assert "Estimated versus actual" in html
     assert "MONITOR · Future" not in html
-    assert "LEARN · Future" in html
-    assert "LEARN is not operational" in html
+    assert "LEARN · Future" not in html  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
+    assert "LEARN is not operational" not in html
     assert "NET PROFIT" not in html
     view = assemble_monitor_v1(project, project.organization_id)
     assert view["actuals_state"] == "MISSING_ACTUALS"
@@ -422,7 +422,7 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
     assert "Labour rates" in method_block
     assert "Pricing Engine" not in method_block
     assert "Labour Engine" not in method_block
-    assert "LEARN · Future" in hub
+    assert "LEARN · Future" not in hub  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
     assert "NET PROFIT" not in hub
     assert PRICING_ASSUMPTIONS_HEADING in hub
     assert PERMIT_FOUNDATION_EYEBROW in hub
@@ -444,18 +444,22 @@ def test_slice4_office_shell_labels_are_pinned():
 
 
 def test_slice4_nav_routes_and_engine_labels(client, project):
-    from app.navigation import NAV_ITEMS
+    from app.navigation import ALL_NAV_ITEMS, NAV_ITEMS
 
     assert all(item["endpoint"] != "labour_engine.index" for item in NAV_ITEMS)
-    pricing = next(item for item in NAV_ITEMS if item["endpoint"] == "pricing_engine.index")
+    # Task-First UX (31 Oct 2026): How we price is company policy, under the Admin gear.
+    pricing = next(item for item in ALL_NAV_ITEMS if item["endpoint"] == "pricing_engine.index")
     assert pricing["title"] == "How we price"
     home = _html(client.get("/"))
     assert 'href="/labour-engine/"' not in home
     labour_page = _html(client.get("/labour-engine/"))
     assert f"<h1>{LABOUR_RATES_HEADING}</h1>" in labour_page
-    assert 'href="/pricing-engine/"' in home
-    assert ">How we price<" in home
-    assert ">Pricing<" not in home
+    # Task-First UX (31 Oct 2026): How we price is one click away under the Admin gear.
+    assert 'href="/admin"' in home
+    admin = _html(client.get("/admin"))
+    assert 'href="/pricing-engine/"' in admin
+    assert ">How we price<" in admin
+    assert ">Pricing<" not in home and ">Pricing<" not in admin
     assert "Labour Engine" not in home
     assert "Pricing Engine" not in home
     assert DASHBOARD_HEADING in home
@@ -463,7 +467,7 @@ def test_slice4_nav_routes_and_engine_labels(client, project):
     assert SIGN_OUT_LABEL in home
     assert 'aria-label="Log out"' not in home
     hub = _html(client.get(f"/projects/{project.id}"))
-    assert "LEARN · Future" in hub
+    assert "LEARN · Future" not in hub  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
     assert "NET PROFIT" not in hub
     settings = _html(client.get("/settings/brand-profile"))
     assert f"<h1>{BRAND_PROFILE_HEADING}</h1>" in settings
@@ -578,7 +582,7 @@ def test_slice5_field_web_surfaces_hide_raw_internal_copy(client, project):
     assert "Switch Project" not in today_confirmed
     assert "Needs Retry" not in today_confirmed
     hub = _html(client.get(f"/projects/{project.id}"))
-    assert "LEARN · Future" in hub
+    assert "LEARN · Future" not in hub  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
     assert "NET PROFIT" not in hub
 
 

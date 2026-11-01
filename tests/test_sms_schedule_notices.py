@@ -429,7 +429,10 @@ def test_failed_text_is_shown_and_retried_once(app, client):
     assert f'data-sms-retry="{failed.id}"' in page and "Failed" in page and "•••-0101" in page
     assert "613-555-0101" not in page and "+16135550101" not in page
     assert 'data-text-notices-link="1"' in client.get("/schedule").get_data(as_text=True)
-    assert 'data-home-sms-attention="1"' in client.get("/").get_data(as_text=True)
+    # Task-First UX (31 Oct 2026): the Home banner is now one item on the attention list, linking to the text notices.
+    home = client.get("/").get_data(as_text=True)
+    assert 'data-attention-provider="schedule_texts_failed"' in home
+    assert "1 schedule text to workers not delivered" in home and 'href="/schedule/text-notices"' in home
 
     opener.status = 201
     response = client.post(f"/schedule/text-notices/texts/{failed.id}/retry", follow_redirects=True)
@@ -440,7 +443,7 @@ def test_failed_text_is_shown_and_retried_once(app, client):
     assert len(attempts) == 2 and len(opener.calls) == 2
     detail = SmsTextMessageDetail.query.filter_by(text_message_id=attempts[1].id).one()
     assert detail.retry_of_text_message_id == failed.id and detail.retried_by_display_name
-    assert 'data-home-sms-attention' not in client.get("/").get_data(as_text=True)
+    assert 'data-attention-provider="schedule_texts_failed"' not in client.get("/").get_data(as_text=True)
     # The second attempt delivered: nothing left to retry.
     assert client.post(f"/schedule/text-notices/texts/{attempts[1].id}/retry", follow_redirects=True).status_code == 200
     assert len(_texts(kevin)) == 2

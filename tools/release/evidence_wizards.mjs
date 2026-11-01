@@ -124,7 +124,8 @@ step("Home: GUIDED WIZARDS with the three wizards above the fold, existing tools
   const { pg, errors } = await person("ben", DESK);
   await go(pg, "/");
   const section = pg.locator("[data-wizard-home]");
-  assert.match(await section.innerText(), /guided wizards/i);
+  // Task-First UX (31 Oct 2026): the band is named for its outcome, "Start something" (was "Guided Wizards").
+  assert.match(await section.innerText(), /start something/i);
   for (const key of ["NEW_PROJECT", "GUIDED_ESTIMATING", "MANAGE_PROJECT"]) {
     const start = pg.locator(`[data-start-wizard="${key}"]`);
     assert.equal(await start.count(), 1, key);

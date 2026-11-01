@@ -477,8 +477,8 @@ def test_future_lifecycle_not_operational(client, project):
     html = _html(response)
     assert response.status_code == 200
     assert "MONITOR" in html
-    assert "LEARN" in html
-    assert "Field Observations" in html
+    assert "LEARN" not in html  # Task-First UX (31 Oct 2026; audit 8.3): unbuilt LEARN is no longer shown on the Project page
+    assert "Site notes &amp; photos" in html  # was "Field Observations" (Task-First contractor language)
     assert "Related Change Orders" in html
     assert "Field BUILD" not in html
     assert "QuickBooks" in html
@@ -488,7 +488,7 @@ def test_future_lifecycle_not_operational(client, project):
     assert "sent from there for the customer's electronic signature" in html
     assert "production Ontario contract is not available" not in html
     assert "internal cost breakdown" in html
-    assert "LEARN · Future" in html
+    assert "LEARN · Future" not in html
     assert "MONITOR · Future" not in html
     assert "Estimated versus actual" in html
     assert "No actual costs entered yet" in html
@@ -496,8 +496,7 @@ def test_future_lifecycle_not_operational(client, project):
     assert "Record actual direct cost" in html
     workspace = html.split('id="main-content"', 1)[-1]
     assert 'type="submit"' in workspace
-    learn = html.split('id="hub-learn"', 1)[-1]
-    assert "LEARN is not operational" in learn
+    assert 'id="hub-learn"' not in html and "LEARN is not operational" not in html
     assert "project health" not in html.lower()
     assert "completion percent" not in html.lower()
     assert "Start monitoring" not in html

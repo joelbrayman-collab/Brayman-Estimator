@@ -97,7 +97,9 @@ test("contractor owner: Workflow Guide in the menu, stage cards, Back / Next, ar
   const ben = await signIn("ben", "ben", DESK);
   const { pg } = ben;
   await pg.goto(`${base}/`);
-  await Promise.all([pg.waitForNavigation(), pg.locator('.sidebar-link[href="/workflow"]').click()]);
+  // Task-First UX (31 Oct 2026): the Workflow Guide is under More › Help, one click from the sidebar.
+  await Promise.all([pg.waitForNavigation(), pg.locator('.sidebar-link[href="/more"]').click()]);
+  await Promise.all([pg.waitForNavigation(), pg.locator('a[data-link-hub-item][href="/workflow"]').click()]);
   assert.equal(new URL(pg.url()).pathname, "/workflow");
   assert.equal(await current(pg), "c-setup");
   assert.ok(await pg.locator('[data-wf-page="c-setup"]').isVisible());

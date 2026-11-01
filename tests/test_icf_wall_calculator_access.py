@@ -13,7 +13,7 @@ from app import create_app, db
 from app.models import Estimate, Project
 from app.models.calculation_estimate_mapping import CalculationResultIntake
 from app.models.estimate import EstimateLineItem
-from app.navigation import NAV_SECTIONS
+from app.navigation import MORE_SECTIONS, NAV_SECTIONS
 from app.services.icf_quantity import build_icf_standard_quantities
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import ensure_office_user, login_office_user
@@ -85,7 +85,9 @@ def test_existing_icf_engine_and_wall_form_page_are_unchanged():
 
 
 def test_icf_wall_calculator_is_in_the_calculators_section():
-    section = next(row for row in NAV_SECTIONS if row["title"] == "Calculators")
+    # Task-First UX (Joel's mandate, 31 Oct 2026): the calculators left the sidebar for More › Calculators (and open
+    # from the work item on a project). Every calculator is still listed, in the same order, one click away.
+    section = next(row for row in MORE_SECTIONS if row["title"] == "Calculators")
     titles = [item["title"] for item in section["links"]]
     assert titles == [
         "Concrete calculator",
@@ -100,6 +102,10 @@ def test_icf_wall_calculator_is_in_the_calculators_section():
         "Flooring calculator",
     ]
     assert NAV_SECTIONS[0]["title"] is None
+    # Reachable: the sidebar's More link opens the page that lists each calculator (main.more).
+    assert any(item["endpoint"] == "main.more" for row in NAV_SECTIONS for item in row["links"])
+    assert {item["endpoint"] for item in section["links"]} >= {"calculators.wall_form", "calculators.concrete",
+                                                               "calculators.stairs", "calculators.footing"}
 
 
 @pytest.mark.no_office_auth

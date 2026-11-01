@@ -141,20 +141,16 @@ def test_monitor_existing_guidance_remains(client, project):
 
 
 def test_learn_help_stays_future(client, project):
+    # Task-First UX (31 Oct 2026; audit 8.3): LEARN is unbuilt, so the Project page no longer shows it at all. The
+    # help topic itself stays defined as Future (help_content.HUB_LEARN) for when it is built.
     response = client.get(f"/projects/{project.id}")
     html = _html(response)
     assert response.status_code == 200
-    assert "LEARN · Future" in html
-    learn_help = html.split('id="help-learn"', 1)[1].split("</details>", 1)[0]
-    assert help_content.HUB_LEARN.what in learn_help
-    assert help_content.WHAT_LABEL not in learn_help
-    assert help_content.DO_LABEL not in learn_help
-    assert help_content.NEXT_LABEL not in learn_help
-    assert 'id="help-learn"' in html
-    assert "contextual-help is-future" in html
+    assert "LEARN · Future" not in html and 'id="help-learn"' not in html and 'id="hub-learn"' not in html
+    assert help_content.HUB_LEARN.future is True
+    assert help_content.HUB_LEARN.what
     assert "Generate recommendation" not in html
-    learn = html.split('id="hub-learn"', 1)[-1]
-    assert "LEARN is not operational" in learn
+    assert "LEARN is not operational" not in html
 
 
 def test_help_copy_has_no_engineering_terms_in_html(client, project):

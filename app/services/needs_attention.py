@@ -81,7 +81,7 @@ SCOPES = (SCOPE_OFFICE, SCOPE_FINANCIAL, SCOPE_COMPANY, SCOPE_COMPANY_FACTS, SCO
 
 # Plain words for each kind (the filter chips on the attention list). Kind codes never show.
 KIND_LABELS = {
-    "estimates": "Estimates", "customers": "Customers", "signing": "Signatures & contracts",
+    "estimates": "Estimates", "proposals": "Proposals", "customers": "Customers", "signing": "Signatures & contracts",
     "purchasing": "Purchasing", "quotes": "Supplier prices", "materials": "Material requests",
     "deliveries": "Deliveries", "planning": "Dates to decide", "schedule": "Schedule", "extra_work": "Changes & extra work",
     "time": "Time", "receipts": "Receipts", "quickbooks": "QuickBooks", "tasks": "Job problems & punch list",
@@ -802,7 +802,7 @@ def _proposal_project(proposal, ctx):
     return ctx.projects.get(estimate.project_id) if estimate is not None else None
 
 
-@attention_provider("proposal_awaiting_customer", "customers", title="Proposal sent, customer has not answered")
+@attention_provider("proposal_awaiting_customer", "proposals", title="Proposal sent, customer has not answered")
 def _proposals_waiting(ctx):
     from app.models import Proposal
 
@@ -814,7 +814,7 @@ def _proposals_waiting(ctx):
         sent = local_date(proposal.issued_at) if proposal.issued_at else None
         quiet = sent is not None and sent <= ctx.today - timedelta(days=PROPOSAL_QUIET_DAYS)
         expires = proposal.valid_until
-        items.append(_item("customers", f"Proposal {proposal.proposal_number} sent: no answer yet", _label(project),
+        items.append(_item("proposals", f"Proposal {proposal.proposal_number} sent: no answer yet", _label(project),
                            ("Sent " + (f"{(ctx.today - sent).days} days ago" if sent else "") +
                             (" — give the customer a call" if quiet else "")).strip(),
                            ("Expires " + _day(expires)) if expires else (f"Sent {_day(sent)}" if sent else ""),

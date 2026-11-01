@@ -125,14 +125,16 @@ def test_owner_and_system_administrator_open_the_pages(app):
         assert STAFF[2] in text and "People &amp; Access" in text
         assert client.get("/settings/people/new").status_code == 200
         assert client.get(f"/settings/people/{ids['staff_m']}").status_code == 200
-        # The menu offers it.
-        assert 'href="/settings/people"' in client.get("/projects/").get_data(as_text=True)
+        # The menu offers it: the Admin gear (Task-First UX, 31 Oct 2026).
+        assert 'href="/admin"' in client.get("/projects/").get_data(as_text=True)
+        assert 'href="/settings/people"' in client.get("/admin").get_data(as_text=True)
 
 
 def test_ordinary_office_user_is_refused_everywhere_and_not_offered_it(app):
     ids = _ids(app)
     client = _client(app, STAFF)
     assert 'href="/settings/people"' not in client.get("/projects/").get_data(as_text=True)
+    assert 'href="/settings/people"' not in client.get("/admin").get_data(as_text=True)  # Admin gear (31 Oct 2026)
     mid = ids["owner_m"]
     gets = ["/settings/people", "/settings/people/new", f"/settings/people/{mid}"]
     posts = [

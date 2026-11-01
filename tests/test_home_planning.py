@@ -124,8 +124,11 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
 
     assert "AI Assistant" not in html.replace(cal_copy.CAL_IDENTITY, "").replace(cal_copy.CAL_OPEN_LABEL, "")
     assert 'href="/decision-tools/employment-vs-entrepreneurship"' not in html
-    assert 'href="/calculators/employment-vs-entrepreneurship"' in html
-    assert 'href="/assemblies/"' in html
+    # Task-First UX (31 Oct 2026): calculators and reusable work moved from the sidebar to More, one click away.
+    assert 'href="/more"' in html
+    more = client.get("/more").get_data(as_text=True)
+    assert 'href="/calculators/employment-vs-entrepreneurship"' in more
+    assert 'href="/assemblies/"' in more
     assert 'href="/proposals/"' in html or 'href="/proposals"' in html
     assert 'src="/static/branding/calibraytai-logo-v1-dark.png"' in html
     assert "calibraytai-logo-v2.png" not in html

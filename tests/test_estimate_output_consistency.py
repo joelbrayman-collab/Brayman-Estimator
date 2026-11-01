@@ -312,7 +312,7 @@ def test_labour_snapshot_labeled_not_in_basis_and_not_mutated(client, app):
     assert resp.status_code == 200
     html = resp.data
     assert b"LABOUR ENGINE SNAPSHOT" not in html
-    assert b"Labour rate snapshot" in html
+    assert b"Labour rate record" in html  # was "snapshot" (Task-First UX, 31 Oct 2026)
     assert b"not included in selling-price basis" in html
 
     frozen_labour = EstimateLabourSnapshot.query.get(labour.id)

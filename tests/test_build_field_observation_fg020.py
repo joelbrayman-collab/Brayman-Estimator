@@ -214,12 +214,12 @@ def test_office_text_event_create_and_hub_list(client, app):
     hub = client.get(f"/projects/{project.id}")
     html = hub.get_data(as_text=True)
     assert hub.status_code == 200
-    assert "Field Observations" in html
+    assert "Site notes &amp; photos" in html  # was "Field Observations" (Task-First UX, 31 Oct 2026)
     assert "Related Change Orders" in html
     assert "Noted wet insulation" not in html or "text" in html
     assert "Office Test User" in html
     assert "Current" in html
-    assert "Add text observation" in html
+    assert "Add a site note" in html  # was "Add text observation" (Task-First UX, 31 Oct 2026)
     assert "Field BUILD" not in html
     detail = client.get(f"/projects/{project.id}/field-events/{event.id}")
     assert detail.status_code == 200

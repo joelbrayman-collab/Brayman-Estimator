@@ -60,8 +60,10 @@ def next_step(project, organization_id: str, *, guided_summary=None, hub_contrac
     pid = project.id
     if is_closed:
         if can_close:
+            from app.presentation.contractor_copy import PROJECT_REOPEN_ACTION
+
             return _step("closed", "This job is closed", "Everything on it is kept. Reopen it to change anything.",
-                         "Reopen this project", url_for("projects.reopen_project", id=pid), "ts-closeout")
+                         PROJECT_REOPEN_ACTION, url_for("projects.reopen_project", id=pid), "ts-closeout")
         return _step("closed", "This job is closed", "Everything on it is kept and can be read here.")
 
     proposals = _proposals(project)

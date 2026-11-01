@@ -111,7 +111,8 @@ def test_projects_workspace_matches_home_action_language(client, app):
     assert 'aria-label="Breadcrumb"' in detail
     assert 'href="/projects/">Projects</a>' in detail
     assert "Project stage" in detail
-    assert "Commercial settings" in detail
+    # Task-First UX (31 Oct 2026): the Project page's parts are closed sections with contractor names.
+    assert "Pricing assumptions" in detail
     assert ">Money<" in detail
     assert ">Documents<" in detail
     assert "Project work" in detail

@@ -239,8 +239,9 @@ def test_contractor_owner_sees_the_whole_map_and_every_link_answers(site):
     assert not any(h.startswith("/supplier/") for h in links), "no Supplier Hub page from the contractor side"
     assert ("/training/" in " ".join(links)) is f["training"], "lesson links only on the training site"
     _every_link_answers(ben, links)
-    # The menu entry
-    assert 'href="/workflow"' in _get(ben, "/").get_data(as_text=True)
+    # The menu entry: under More › Help since the Task-First navigation (31 Oct 2026), one click from every page.
+    assert 'href="/more"' in _get(ben, "/").get_data(as_text=True)
+    assert 'href="/workflow"' in _get(ben, "/more").get_data(as_text=True)
 
 
 def test_office_staff_see_the_reason_not_the_owner_pages(site):

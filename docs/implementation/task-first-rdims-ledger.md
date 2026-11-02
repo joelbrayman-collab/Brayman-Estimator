@@ -456,3 +456,19 @@ Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, F
 - Fix: the test decides "standard library" with a 3.9-safe check (`_is_stdlib`: `sys.stdlib_module_names` when present, otherwise where the module is installed), with its own test.
 - Guard: new `tests/test_python39_compat.py` parses every Python file under app/, tests/, tools/ and migrations/ with the 3.9 grammar and refuses standard-library APIs that need 3.10 (`sys.stdlib_module_names` unless read through getattr/hasattr, `zip(strict=)`, `dataclass(slots=/kw_only=)`, `itertools.pairwise`, `bisect(key=)`). It flags the old line 71.
 - Both files pass on Python 3.9.6 (a locked-package 3.9 environment in the container) and on 3.13.
+
+## Released (tf1), 1 Nov 2026
+- Gate (office Mac, Python 3.9.6): READY_FOR_PUSH for `ec80e6f1`. Full regression 3,990 passed, no skips; contractor
+  e2e walk and Cal tests passed; 315/315 browser checks in Google Chrome (desktop and phone). Fresh backup
+  `pre-tf1-20261101-2312.db` (227 tables, 2,137 rows, sha256 `2a9bca04…`), rehearsal 0.8 s: 226 existing tables /
+  2,136 rows identical, 8 new tables empty, search index 6 tables / 3 rows.
+- main `7087d0d0` → `ec80e6f1` (fast-forward); Render deploy `dep-dbj4bnff3r2c73eu4qvg` superseded by
+  `dep-dbjt7dg473hc73ar5qig`, live 00:07 UTC 2 Nov.
+- Production migration `s6f7a8b9c0d1` → `t7a8b9c0d1e2` in 4.3 s after its own backup
+  (`pre-migrate-tf1-20261102-045744.db`, same sha256 as the gate backup; Mac copy matches): existing tables and rows
+  identical, 8 new tables empty, integrity ok.
+- Post-release check: live runs `ec80e6f1` at `t7a8b9c0d1e2`; TABLES=235 ROWS=2,137 = backup rows + 8 empty tables;
+  search index separate; integrity ok; signed-out public and Cal checks passed. RELEASED 23:58 EST.
+- Rollback target: redeploy `7087d0d0` (runs unchanged with the added tables); database restore only with Joel's approval.
+- Not yet done: a signed-in check by Joel (Claude does not sign in); company-wide `connect-existing` (per project it
+  runs when that project's Documents page first opens).

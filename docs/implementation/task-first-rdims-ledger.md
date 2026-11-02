@@ -456,3 +456,136 @@ Commands per AGENTS.md (`venv/bin/python -m pytest -q -p no:warnings <files>`, F
 - Fix: the test decides "standard library" with a 3.9-safe check (`_is_stdlib`: `sys.stdlib_module_names` when present, otherwise where the module is installed), with its own test.
 - Guard: new `tests/test_python39_compat.py` parses every Python file under app/, tests/, tools/ and migrations/ with the 3.9 grammar and refuses standard-library APIs that need 3.10 (`sys.stdlib_module_names` unless read through getattr/hasattr, `zip(strict=)`, `dataclass(slots=/kw_only=)`, `itertools.pairwise`, `bisect(key=)`). It flags the old line 71.
 - Both files pass on Python 3.9.6 (a locked-package 3.9 environment in the container) and on 3.13.
+
+## Viewport-first density corrective (2 Nov 2026)
+
+Branch `feature/viewport-density-2026-11-02` from the live commit `ec80e6f1`. Mandate: "AIRIA-DENSITY UX CORRECTIVE
+RELEASE" (acceptance finding UX-DENSITY-001, Set Up This Project). Audit, AiRIA areas inspected, the reusable rules
+and the plan: `docs/ux/viewport-density-audit-2026-11-02.md`. No migration, no model or schema change, no route,
+form-field name, data-* hook, permission or governed action changed. Measured by the new browser walk
+`tools/release/evidence_density.mjs` (server `tests/density_page_server.py`), Chromium, 100% zoom, laptop 1280 x 800
+(the gate), 1280 x 720 recorded, phone 390 x 844. The baseline was taken with the same walk on the ec80e6f1 screens
+(`DENSITY_BASELINE=1`) before any change.
+
+### Shared changes
+- `tokens.css`: header 64 -> 52 px; density tokens `--control-height` 38, `--control-pad-y/x` 6/10, `--label-gap` 4,
+  `--field-gap-y/x` 10/14, `--stack-gap` 12, `--card-pad-y/x` 10/14, `--workspace-pad-top/bottom` 12/32. Touch targets
+  stay 44 px on coarse pointers and at 720 px and below; no text below `--text-sm`.
+- `task-screen.css`: the Task Screen blocks use the padding tokens (context, next step, state, attention, details);
+  12 px screen gap; one-line purpose; `title_in_header` (the top bar's title is not repeated on a laptop); 38 px
+  summaries on a mouse laptop. New shared layout: `.ts-details-grid` (closed sections side by side, opened one full
+  width, one-line hints with a tooltip), `.ts-cols`/`.ts-col` (two working columns at >= 1100 px), `.ts-form`
+  (light groups with inline legends, `.ts-row`, `.ts-inline`, `.ts-optional`, `.ts-actions`). Office form controls
+  (`:where`, so component rules still win): label 20 -> 10 px, input margin 8 -> 4 px, padding 11-12 -> 6 x 10 px,
+  `.form-panel` 22-28 -> 16 x 20 px. Compact flash messages; link-hub tiles 56 -> 44 px.
+- `partials/task_screen.html`: `purpose(..., title_in_header=False)`; details hint carries a `title`.
+- `guided-estimating.css`: task-screen cards (padding, headings, progress bar, badges, totals as a 2 x 2 grid).
+- `v1-refinement.css` / `estimates/_project_pricing.html`: project pricing in compact rows (rate, margin, HST; winter;
+  reason and Save), figures beside them; the winter explanation is the checkbox tooltip. Same fields and names.
+- `field.css`: 44 px quick actions (were 52), tighter day navigation, header and work card.
+- `calendar-months.js`: the month box is measured again on `load` (it was sized before the page finished loading and
+  ended about 40 px below the window).
+
+### Chrome changes
+- Header 52 px. Below 1440 px the company box and the signed-in name collapse to icons (names stay as tooltip and
+  accessible name; the company name is also at the top of the menu), so "Review This Estimate" is no longer cut off.
+- Workspace top padding 12 px, bottom 32 px. Sidebar unchanged (six destinations + More already AiRIA-like).
+
+### Screens reconstructed and progressive disclosure
+- **Set Up This Project** (`projects/form.html`): one compact form. The customer choice and the customer on one row;
+  with "A customer we have" the new-customer fields are hidden (not removed); with "A new customer" only name (marked
+  *), email and phone (optional) on one row and the customer list and "Same as the customer's address" are hidden;
+  switching back keeps what was typed. The job on one row (name, what is built, Client Project #); the role as one
+  row of choices; the description behind "Add a description (optional)"; the five job-site fields on one row; the
+  address as written behind its disclosure; the four plan choices as one row (their explanations are tooltips on a
+  laptop and stay visible on a phone); settings four to a row with the reason in the grid. Optional parts open on
+  their own when the screen comes back refused with something typed there; the settings open when a setting differs
+  from the default or the refusal is about a setting (`settings_problem` from the route on
+  `CommercialContextValidationError` / `ProjectLeadError`). The Brayman Project # note sits beside Create.
+- **Price This Job**: two columns (next step, waiting calculations, work list | progress, counts, totals); the closed
+  sections three across.
+- **Review This Estimate**: decision, then the compact pricing (figures and rates in view), then what Calibrayt knows in
+  two columns, closed sections three across.
+- **Project page**: the 12 closed parts three across (one-line hints); the jump strip, which named the same parts, shows
+  only below 900 px where the parts stack; fixed the doubly escaped "Scope &amp;amp; Estimate" headings.
+- **Documents library**: the three date filters behind "Dates" (open on their own when one is set); tighter browse
+  line and filter row. Context pages unchanged (they already fit).
+- **Field Today** (phone): the one-time "Get a text" question moves below today's work (still asked on the screen); the
+  template whitespace that put two empty lines above the job address is trimmed.
+- Repeated explanatory blocks removed from view: the duplicate task title on Set Up / Price This Job / Review This
+  Estimate (laptop), the project page's duplicate section strip (laptop), the four plan-choice explanations (laptop,
+  as tooltips), the winter explanation (tooltip), the separate Project Lead note (merged into the settings note).
+
+### Guided Task changes
+Price This Job and Review This Estimate keep ONE primary action and every hook; Set Up This Project asks only the
+branch that applies. No Gate 1/2/3, CaliSIGN or approval logic changed.
+
+### Before / after at 1280 x 800 (task = bottom of the active task; scroll = page scroll)
+
+| Screen | Before fits | Before task / scroll | After fits | After task / scroll | Remaining scroll, reason |
+|---|---|---|---|---|---|
+| Home | YES | 594 / 108 | YES | 578 / 59 | 59 px: Today and Coming days reference below the task |
+| Attention | YES | 290 / 0 | YES | 274 / 0 | none (a long list scrolls) |
+| Projects | YES | 725 / 0 | YES | 705 / 0 | none (fits at 720 now too) |
+| Set Up This Project (customer we have) | **NO** | 1952 / 1255 | **YES** | 673 / 0 | none |
+| Set Up This Project (new customer) | **NO** | 1952 / 1255 | **YES** | 699 / 0 | none |
+| Project page | YES | 296 / 710 | YES | 254 / 0 | none |
+| Price This Job (priced) | **NO** | 978 / 558 | **YES** | 426 / 0 | none |
+| Price This Job (to price) | **NO** | 1031 / 545 | **YES** | 528 / 0 | none |
+| Review This Estimate | YES (decision only) | 366 / 989 | YES (decision + figures) | 553 / 88 | 88 px: closed sections below the task |
+| Documents library | YES | 757 / 461 | YES | 574 / 254 | 254 px: the document list itself (9 documents) |
+| Project / customer / supplier / subcontractor / person documents | YES | 418 / 0 | YES | 394 / 0 | none |
+| Equipment | YES | 506 / 0 | YES | 490 / 0 | none |
+| Purchasing | YES | 354 / 0 | YES | 310 / 0 | none |
+| Time & Money | YES | 490 / 0 | YES | 398 / 0 | none |
+| Calendar | NO (marginal)\* | — / 274 | YES | 794 / 206 | 206 px: the colour key below the month box; months scroll inside their box by design |
+
+\* The baseline selector measured the whole calendar workspace (1003 px); with the month box itself it ended about
+40 px below the window (838 px measured after the shared header change, before the `load` fix).
+
+At 1280 x 720 every screen's active task also fits after the change (before: Set Up, Price This Job, Projects,
+Documents library and Calendar did not).
+
+### Set Up This Project (UX-DENSITY-001) before / after
+- Customer we have: page 2055 -> 800 px; Create at 1952 -> 673 px; 0 px scroll (was 1255).
+- New customer: Create at 1952 -> 699 px; 0 px scroll.
+- Refused (no customer name): Create at 2015 -> 746 px; 7 px scroll; the new-customer name is in view with what was
+  typed kept.
+- Optional settings opened: a 4-across block (asserted under 420 px; was a 2-column stack); page 2908 -> 1097 px.
+- Refused for a setting (Premium without a reason): the settings open on their own with the reason in view; the reason
+  field ends at 983 px, so this state scrolls 345 px (documented, not routine: it is the part with the problem, below
+  the task).
+- Visible text inputs and selects: customer we have 13 -> 9 (new-customer name/email/phone and the description are
+  out of view); new customer 13 -> 11.
+
+### Phone (390 x 844)
+- Field Today: today's work and its primary action (Enter time) end at 817 px (was 1503): on the first screen. Seven
+  quick actions kept (44 px). No sideways scrolling.
+- Home, Set Up, Project page, Price This Job, Review This Estimate, Documents library: one column, no sideways scroll;
+  they scroll vertically as phones may. Project page, Price This Job and Review This Estimate show their primary
+  action on the first screen.
+
+### Numbers
+- Mean page height of the 18 measured laptop screens: 1072 -> 834 px; median page height 800 -> 800 px (most short
+  pages already fit). Median bottom of the active task: 455 -> 412 px. Total page scroll across them: 4900 -> 607 px.
+- Primary screens needing routine scroll at 1280 x 800: 4 (Set Up, Price This Job, Calendar marginally, Field Today
+  on a phone) -> 0. One non-routine state scrolls (Set Up refused for a setting, above).
+- Permanently visible fields on Set Up: 13 -> 9 (customer we have).
+- Shared components compacted: 11 (header, workspace, form controls, form panel, flash, ts-context, ts-next, ts-state,
+  ts-attention, ts-details, link-hub tiles) plus 3 new shared layouts (details grid, two columns, compact form).
+- Repeated explanatory blocks removed from view: 6 kinds (listed above).
+
+### Tests (2 Nov 2026)
+- New `tests/test_viewport_density.py` (10, written first): the customer branch hides the other branch's fields,
+  no-customers case, the page switch script, optional parts closed, refusal opens the settings / description /
+  address as written, defaults sent back stay closed, Review keeps the figures out of closed sections after the
+  decision, Field Today work before the texts question. 10 passed.
+- Affected pytest files (74, per file, `venv/bin/python -m pytest -q -p no:warnings -p no:cacheprovider`, Family 05
+  master env set): **1125 passed, 0 failed**.
+- Browser: the 27 gate walks + `evidence_density.mjs` (added to `release_gate.sh`): **324 tests** (315 + 9 new).
+  Full run: 320 passed, 4 failed — 2 density checks (a `white-space: nowrap` on the new-customer labels made the page
+  74 px wider; fixed) and 2 `evidence_training.mjs` sign-in checks (the trainee landed on `/login` after Sign in; the
+  training site and the sign-in page are not touched by this branch; `evidence_training.mjs` alone then failed 10/13
+  the same way once and passed 13/13 on the next run: a timing flake under load, not fixed here).
+  After the fix: `evidence_density.mjs` 9/9; `evidence_training.mjs` 13/13.
+- Gate: `--browser-expected 324`.

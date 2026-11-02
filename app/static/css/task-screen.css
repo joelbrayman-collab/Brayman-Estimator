@@ -197,24 +197,21 @@
    Nothing here shrinks text below --text-sm.
    ========================================================================================================== */
 
-/* 1-2. Shared form controls in the office workspace. */
-.shell-workspace label { margin-bottom: var(--field-gap-y); }
-.shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
-.shell-workspace select,
-.shell-workspace textarea {
+/* 1-2. Shared form controls in the office workspace. Kept at low specificity (:where) so a component's own rule
+   (a search box, the pricing inputs, a calculator) still wins; this replaces only the old global defaults. */
+.shell-workspace :where(label) { margin-bottom: var(--field-gap-y); }
+.shell-workspace :where(input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]), select, textarea) {
     margin-top: var(--label-gap);
     padding: var(--control-pad-y) var(--control-pad-x);
 }
-.shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
-.shell-workspace select { min-height: var(--control-height); }
-.shell-workspace .form-grid { gap: var(--field-gap-y) var(--field-gap-x); }
-.shell-workspace .form-grid > label { margin-bottom: 0; }
-.shell-workspace .form-panel, .shell-workspace .empty-state { padding: var(--space-4) var(--space-5); }
+.shell-workspace :where(input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]), select) { min-height: var(--control-height); }
+.shell-workspace :where(.form-grid) { gap: var(--field-gap-y) var(--field-gap-x); }
+.shell-workspace .form-grid > :where(label) { margin-bottom: 0; }
+.shell-workspace :where(.form-panel, .empty-state) { padding: var(--space-4) var(--space-5); }
 .shell-workspace:not(:has(> .wf, > .cal-workspace)) { padding-top: var(--workspace-pad-top); }
 .shell-workspace { padding-bottom: var(--workspace-pad-bottom); }
 @media (pointer: coarse), (max-width: 720px) {
-    .shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
-    .shell-workspace select { min-height: var(--touch-target); }
+    .shell-workspace :where(input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]), select) { min-height: var(--touch-target); }
 }
 @media (pointer: fine) and (min-width: 721px) {
     .ts-details > summary { min-height: var(--control-height); padding-top: var(--space-1); padding-bottom: var(--space-1); }

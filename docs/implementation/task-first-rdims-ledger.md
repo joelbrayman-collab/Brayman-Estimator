@@ -588,4 +588,6 @@ Documents library and Calendar did not).
   training site and the sign-in page are not touched by this branch; `evidence_training.mjs` alone then failed 10/13
   the same way once and passed 13/13 on the next run: a timing flake under load, not fixed here).
   After the fix: `evidence_density.mjs` 9/9; `evidence_training.mjs` 13/13.
+- Final full browser run on the branch head (all 28 files above, `--test-concurrency=1`): **324 passed, 0 failed**,
+  no server or page errors in any walk.
 - Gate: `--browser-expected 324`.

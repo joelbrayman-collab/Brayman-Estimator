@@ -9,3 +9,10 @@ playwright==1.56.0
 # An RFC 5545 parser independent of app/services/calendar_sync.py, for tests/test_calendar_connect.py
 # (reads the private feed the way Outlook, Google Calendar and Apple Calendar do).
 icalendar==6.3.2
+
+# Parallel test runs (faster gate, 2 Nov 2026): the release gate runs the full suite with
+# `pytest -n auto --dist loadfile`. pytest-xdist 3.8.0 supports Python 3.9 and pytest 8.4.2;
+# execnet is its only dependency not already in requirements-lock.txt. A plain serial
+# `pytest -q tests` still works unchanged. See docs/implementation/faster-gate-2026-11-02.md.
+pytest-xdist==3.8.0
+execnet==2.1.1

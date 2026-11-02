@@ -37,7 +37,7 @@ FAMILY_05_DEPENDENT_FILES = frozenset({
     # confidential folder (CALIBRAYTAI_APPROVED_MASTER_DIR on a machine without the office Mac's Documents).
     "test_approved_master_governance.py",
 })
-_MASTER_STATE = {"status": None, "path": None, "failed": [], "other_failed": 0}
+_MASTER_STATE = {"status": None, "path": None, "failed": [], "other_failed": 0, "worker": False}
 
 
 def family_05_master_status():
@@ -61,20 +61,48 @@ def pytest_configure(config):
     )
     _point_tests_at_family_05_master()
     _MASTER_STATE["status"], _MASTER_STATE["path"] = family_05_master_status()
+    _MASTER_STATE["worker"] = _is_xdist_worker(config)
+    # Faster gate (2 Nov 2026): db.create_all() on a fresh in-memory test database restores a cached copy of the
+    # empty schema instead of re-running ~1,000 DDL statements, and the PBKDF2 password check is memoised per exact
+    # (hash, password) pair. Neither changes what a test sees; see tests/fast_fixtures.py for when each applies.
+    from app import db
+    from tests import fast_fixtures
+
+    fast_fixtures.install_schema_cache(db)
+    fast_fixtures.install_password_check_cache()
+
+
+def _is_xdist_worker(config) -> bool:
+    """True inside a pytest-xdist worker process (the gate runs `-n auto`; faster gate, 2 Nov 2026)."""
+    return hasattr(config, "workerinput")
+
+
+def _master_dependent(nodeid: str, text: str) -> bool:
+    return (Path(nodeid.split("::", 1)[0]).name in FAMILY_05_DEPENDENT_FILES
+            or "MISSING_PRESENTATION_MASTER" in text)
 
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+    """Attach the missing-master explanation to the failure itself (runs where the test runs; under xdist the
+    section travels back to the controller with the report)."""
     outcome = yield
     report = outcome.get_result()
-    if not report.failed:
+    if not report.failed or _MASTER_STATE["status"] == "present":
         return
-    text = str(report.longrepr or "")
-    if _MASTER_STATE["status"] != "present" and (
-            Path(str(item.fspath)).name in FAMILY_05_DEPENDENT_FILES or "MISSING_PRESENTATION_MASTER" in text):
-        _MASTER_STATE["failed"].append(item.nodeid)
+    if _master_dependent(item.nodeid, str(report.longrepr or "")):
         report.sections.append(("Missing test dependency", "The confidential Family 05 contract master is "
                                 f"{_MASTER_STATE['status']} at {_MASTER_STATE['path']}. See docs/testing/test-environment.md."))
+
+
+def pytest_runtest_logreport(report):
+    """Count failures for the end-of-run summary. This hook runs in the process that prints the summary: the only
+    process in a serial run, the controller under xdist (workers forward every report), so the totals cover all
+    workers. Workers do not count, so nothing is counted twice."""
+    if not report.failed or _MASTER_STATE.get("worker"):
+        return
+    if _MASTER_STATE["status"] != "present" and _master_dependent(report.nodeid, str(report.longrepr or "")):
+        _MASTER_STATE["failed"].append(report.nodeid)
     else:
         _MASTER_STATE["other_failed"] += 1
 

@@ -60,7 +60,8 @@ The Family 05 master, the historical workbooks, any office database (`instance/`
 ## Commands
 
 ```bash
-./venv/bin/python -m pytest -q                       # complete suite
+./venv/bin/python -m pytest -q                       # complete suite, one process
+./venv/bin/python -m pytest -q -n auto --dist loadfile tests   # complete suite in parallel, as the release gate runs it
 ./venv/bin/python -m pytest -q tests/test_<area>.py  # one area
 node --test --test-force-exit tests/e2e/contractor_workflow.mjs   # also run inside the suite
 ```

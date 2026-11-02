@@ -184,14 +184,24 @@ for pkg in calculation-engines/concrete-slab-1.0.0 calculation-engines/stair-ont
 done
 bash tools/setup_test_environment.sh --check || stop "test environment check failed"
 PYTEST="./venv/bin/python -u -X faulthandler -m pytest -p no:cacheprovider -o faulthandler_timeout=180"
+# Faster gate (2 Nov 2026): the same complete suite, spread over one pytest-xdist worker per CPU core. --dist loadfile
+# keeps each test file on one worker, in file order, exactly as a serial run sees it. The junit XML still lists every
+# test case (the no-skip, end-to-end and Cal checks below read it unchanged, and the count check compares it with the
+# summary line). PYTEST_WORKERS=4 sets the worker count; PYTEST_WORKERS=0 runs serially in one process.
+XDIST="-n ${PYTEST_WORKERS:-auto} --dist loadfile"
 START=$(date +%s)
-$PYTEST -q -rfEs --junitxml="$OUT-junit.xml" tests 2>&1 | tee "$OUT-full.txt" | tail -15
+$PYTEST -q -rfEs $XDIST --junitxml="$OUT-junit.xml" tests 2>&1 | tee "$OUT-full.txt" | tail -15
 FULL=${PIPESTATUS[0]}
 status "MAC_FULL=$(grep -E '(passed|failed)' "$OUT-full.txt" | tail -1) exit=$FULL duration=$(( $(date +%s) - START ))s"
 [ "$FULL" -eq 0 ] || stop "complete Mac regression did not pass; nothing pushed"
-/usr/bin/python3 - "$OUT-junit.xml" <<'PYEOF' || stop "a test was skipped, or the end-to-end contractor walk or the Cal tests did not run and pass"
-import sys, xml.etree.ElementTree as E
+/usr/bin/python3 - "$OUT-junit.xml" "$OUT-full.txt" <<'PYEOF' || stop "a test was skipped, the junit XML does not list every test that passed, or the end-to-end contractor walk or the Cal tests did not run and pass"
+import re, sys, xml.etree.ElementTree as E
 cases = list(E.parse(sys.argv[1]).iter("testcase"))
+summary = re.findall(r"(\d+) passed", open(sys.argv[2], errors="replace").read())
+listed = sum(1 for c in cases if not any(x.tag in ("skipped", "failure", "error") for x in c))
+if not summary or int(summary[-1]) != listed:
+    print("JUNIT_COUNT %d passed test cases in the XML, summary says %s" % (listed, summary[-1] if summary else "nothing"))
+    sys.exit(1)
 skipped = [c.get("classname") + "::" + c.get("name") for c in cases if any(x.tag == "skipped" for x in c)]
 for s in skipped:
     print("SKIPPED " + s)

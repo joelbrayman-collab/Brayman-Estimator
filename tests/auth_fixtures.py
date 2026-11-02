@@ -4,6 +4,7 @@ from app import db
 from app.models.user import User, UserMembership
 from app.services.auth import hash_password, normalize_email
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
+from tests.fast_fixtures import office_password_hash
 
 DEFAULT_OFFICE_EMAIL = "office@example.com"
 DEFAULT_OFFICE_PASSWORD = "office-test-password"
@@ -20,7 +21,8 @@ def create_user(
     user = User(
         email=normalize_email(email),
         display_name=display_name,
-        password_hash=hash_password(password),
+        # A real hash_password() hash, made once per password per test process (tests/fast_fixtures.py).
+        password_hash=office_password_hash(password),
         is_active=is_active,
     )
     db.session.add(user)

@@ -500,6 +500,14 @@ def create_app(config=None):
         app.config["DOCUMENT_ROOT"] = tempfile.mkdtemp(prefix="calibai-documents-")
     if app.config.get("TESTING") and not app.config.get("MAIL_CAPTURE_ROOT"):
         app.config["MAIL_CAPTURE_ROOT"] = tempfile.mkdtemp(prefix="calibai-mail-capture-")
+    # Tests only (faster gate, 2 Nov 2026): a test app that names no upload folder writes to its own temporary
+    # folder, not the shared instance/ folder, so parallel test workers never share plan or workbook files.
+    if app.config.get("TESTING") and not app.config.get("PLAN_UPLOAD_ROOT"):
+        app.config["PLAN_UPLOAD_ROOT"] = tempfile.mkdtemp(prefix="calibai-plan-uploads-")
+    if app.config.get("TESTING") and not app.config.get("HISTORICAL_UPLOAD_ROOT"):
+        app.config["HISTORICAL_UPLOAD_ROOT"] = tempfile.mkdtemp(prefix="calibai-historical-uploads-")
+    if app.config.get("TESTING") and not app.config.get("DECK_TAKEOFF_ROOT"):
+        app.config["DECK_TAKEOFF_ROOT"] = tempfile.mkdtemp(prefix="calibai-deck-takeoff-")
     app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
     app.config.setdefault("SIGNING_TOKEN_FAIL_WINDOW_SECONDS", 900)
     app.config.setdefault("SIGNING_SOFFICE_PATH", None)

@@ -444,6 +444,32 @@ def _register_office_auth(app: Flask) -> None:
         return render_template("errors/500.html", reference=reference), 500
 
 
+# Storage roots a TESTING app gets as temporary folders when the test names none (config key, folder prefix).
+_TESTING_TEMP_ROOTS = (
+    ("BRAND_LOGO_ROOT", "calibai-brand-logos-"),
+    ("BUILD_ORIGINAL_ROOT", "calibai-build-originals-"),
+    ("BUILD_RENDITION_ROOT", "calibai-build-renditions-"),
+    ("QUICKBOOKS_PACKAGE_ROOT", "calibai-quickbooks-packages-"),
+    ("CONTRACT_ARTIFACT_ROOT", "calibai-generated-contracts-"),
+    ("SIGNING_ARTIFACT_ROOT", "calibai-signing-artifacts-"),
+    ("DOCUMENT_ROOT", "calibai-documents-"),  # company documents (31 Oct 2026)
+    ("MAIL_CAPTURE_ROOT", "calibai-mail-capture-"),
+    ("PLAN_UPLOAD_ROOT", "calibai-plan-uploads-"),
+    ("HISTORICAL_UPLOAD_ROOT", "calibai-historical-uploads-"),
+    ("DECK_TAKEOFF_ROOT", "calibai-deck-takeoff-"),
+)
+
+
+def _testing_temp_dir(app, prefix):
+    """TESTING only: a temporary folder that is deleted with its app (or at process exit, whichever is first)."""
+    import shutil
+    import weakref
+
+    path = tempfile.mkdtemp(prefix=prefix)
+    weakref.finalize(app, shutil.rmtree, path, True)
+    return path
+
+
 def create_app(config=None):
     app = Flask(__name__)
 
@@ -474,40 +500,13 @@ def create_app(config=None):
     if app.config.get("TESTING"):
         app.config.setdefault("WTF_CSRF_ENABLED", False)
 
-    if app.config.get("TESTING") and not app.config.get("BRAND_LOGO_ROOT"):
-        app.config["BRAND_LOGO_ROOT"] = tempfile.mkdtemp(prefix="calibai-brand-logos-")
-    if app.config.get("TESTING") and not app.config.get("BUILD_ORIGINAL_ROOT"):
-        app.config["BUILD_ORIGINAL_ROOT"] = tempfile.mkdtemp(
-            prefix="calibai-build-originals-"
-        )
-    if app.config.get("TESTING") and not app.config.get("BUILD_RENDITION_ROOT"):
-        app.config["BUILD_RENDITION_ROOT"] = tempfile.mkdtemp(
-            prefix="calibai-build-renditions-"
-        )
-    if app.config.get("TESTING") and not app.config.get("QUICKBOOKS_PACKAGE_ROOT"):
-        app.config["QUICKBOOKS_PACKAGE_ROOT"] = tempfile.mkdtemp(
-            prefix="calibai-quickbooks-packages-"
-        )
-    if app.config.get("TESTING") and not app.config.get("CONTRACT_ARTIFACT_ROOT"):
-        app.config["CONTRACT_ARTIFACT_ROOT"] = tempfile.mkdtemp(
-            prefix="calibai-generated-contracts-"
-        )
-    if app.config.get("TESTING") and not app.config.get("SIGNING_ARTIFACT_ROOT"):
-        app.config["SIGNING_ARTIFACT_ROOT"] = tempfile.mkdtemp(
-            prefix="calibai-signing-artifacts-"
-        )
-    if app.config.get("TESTING") and not app.config.get("DOCUMENT_ROOT"):  # company documents (31 Oct 2026)
-        app.config["DOCUMENT_ROOT"] = tempfile.mkdtemp(prefix="calibai-documents-")
-    if app.config.get("TESTING") and not app.config.get("MAIL_CAPTURE_ROOT"):
-        app.config["MAIL_CAPTURE_ROOT"] = tempfile.mkdtemp(prefix="calibai-mail-capture-")
-    # Tests only (faster gate, 2 Nov 2026): a test app that names no upload folder writes to its own temporary
-    # folder, not the shared instance/ folder, so parallel test workers never share plan or workbook files.
-    if app.config.get("TESTING") and not app.config.get("PLAN_UPLOAD_ROOT"):
-        app.config["PLAN_UPLOAD_ROOT"] = tempfile.mkdtemp(prefix="calibai-plan-uploads-")
-    if app.config.get("TESTING") and not app.config.get("HISTORICAL_UPLOAD_ROOT"):
-        app.config["HISTORICAL_UPLOAD_ROOT"] = tempfile.mkdtemp(prefix="calibai-historical-uploads-")
-    if app.config.get("TESTING") and not app.config.get("DECK_TAKEOFF_ROOT"):
-        app.config["DECK_TAKEOFF_ROOT"] = tempfile.mkdtemp(prefix="calibai-deck-takeoff-")
+    if app.config.get("TESTING"):
+        # Test apps that name no storage folder get their own temporary ones, so tests (and parallel test workers)
+        # never share the repository's instance/ folder. Each folder is removed when its app is garbage-collected or
+        # the process exits (faster gate, 2 Nov 2026: a full run used to leave ~30,000 calibai-* folders in /tmp).
+        for key, prefix in _TESTING_TEMP_ROOTS:
+            if not app.config.get(key):
+                app.config[key] = _testing_temp_dir(app, prefix)
     app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
     app.config.setdefault("SIGNING_TOKEN_FAIL_WINDOW_SECONDS", 900)
     app.config.setdefault("SIGNING_SOFFICE_PATH", None)

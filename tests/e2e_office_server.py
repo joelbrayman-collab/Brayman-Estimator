@@ -70,4 +70,7 @@ def main():
 
 
 if __name__ == "__main__":
+    from tests import server_cleanup
+
+    server_cleanup.install()  # its temporary files go when it stops
     main()

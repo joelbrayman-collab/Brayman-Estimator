@@ -14,7 +14,6 @@ import hashlib
 import json
 import re
 import struct
-import tempfile
 from io import BytesIO
 from pathlib import Path
 
@@ -46,10 +45,10 @@ MONEY = re.compile(r"\$\s?\d|\bprice|\bpricing|\bcost|margin|markup|labour rate|
 
 
 @pytest.fixture
-def app():
+def app(tmp_path):
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
                               "SECRET_KEY": "test-site-plans", "WTF_CSRF_ENABLED": False,
-                              "PLAN_UPLOAD_ROOT": tempfile.mkdtemp(prefix="site-plans-test-")})
+                              "PLAN_UPLOAD_ROOT": str(tmp_path / "plans")})
     with application.app_context():
         db.create_all()
         yield application

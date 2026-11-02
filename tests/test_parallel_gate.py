@@ -182,3 +182,66 @@ def test_password_check_memo_gives_the_real_answer_for_every_pair():
         expected = real_check(pwhash, password)
         assert auth.verify_password(pwhash, password) is expected
         assert auth.verify_password(pwhash, password) is expected  # second answer comes from the memo
+
+
+def test_a_test_app_leaves_no_calibai_folders_behind(tmp_path, monkeypatch):
+    import gc
+    import tempfile
+
+    scratch = tmp_path / "tmp"
+    scratch.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(scratch))
+    app_ = _fresh_app()
+    made = sorted(p.name for p in scratch.iterdir())
+    assert len(made) == 11 and all(name.startswith("calibai-") for name in made), made
+    (Path(app_.config["PLAN_UPLOAD_ROOT"]) / "1").mkdir()
+    (Path(app_.config["PLAN_UPLOAD_ROOT"]) / "1" / "a.pdf").write_bytes(b"%PDF-1.4 synthetic")
+    del app_
+    gc.collect()
+    assert list(scratch.iterdir()) == []
+
+
+def test_test_app_folders_are_removed_at_process_exit_even_if_the_app_lives(tmp_path):
+    scratch = tmp_path / "tmp"
+    scratch.mkdir()
+    code = ("import sys; sys.path.insert(0, %r)\n"
+            "from app import create_app\n"
+            "KEEP = create_app({'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:', 'SECRET_KEY': 'x'})\n"
+            "import os; print(len(os.listdir(%r)))\n") % (str(ROOT), str(scratch))
+    env = {k: v for k, v in os.environ.items() if not k.startswith("PYTEST_")}
+    env["TMPDIR"] = str(scratch)
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=120)
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip().splitlines()[-1] == "11"  # they existed while it ran
+    assert list(scratch.iterdir()) == []
+
+
+def test_a_page_server_removes_its_temporary_files_when_stopped(tmp_path):
+    import signal
+    import socket
+    import time
+
+    scratch = tmp_path / "tmp"
+    scratch.mkdir()
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = probe.getsockname()[1]
+    env = {k: v for k, v in os.environ.items() if not k.startswith("PYTEST_")}
+    env.update(TMPDIR=str(scratch), CONCRETE_PAGE_PORT=str(port))
+    server = subprocess.Popen([sys.executable, str(ROOT / "tests" / "concrete_page_server.py")], cwd=ROOT, env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    try:
+        line = server.stdout.readline()
+        assert line.strip() == f"READY {port}", line
+        assert [p.name.startswith("calibai-page-server-") for p in scratch.iterdir()] == [True]
+        assert any(scratch.rglob("concrete-page-*.db"))
+        server.send_signal(signal.SIGTERM)
+        server.wait(timeout=60)
+    finally:
+        if server.poll() is None:
+            server.kill()
+            server.wait()
+    deadline = time.time() + 10
+    while list(scratch.iterdir()) and time.time() < deadline:
+        time.sleep(0.2)
+    assert list(scratch.iterdir()) == []

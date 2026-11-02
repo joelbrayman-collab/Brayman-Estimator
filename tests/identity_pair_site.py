@@ -8,6 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]; sys.path.insert(0, str(ROOT)); os.ch
 from alembic import command
 from alembic.config import Config
 from app import create_app, db
+from tests import server_cleanup
+
+server_cleanup.install()  # its temporary files go when it stops
 
 ROLE, PORT, PROV_PORT, SECRET = sys.argv[1], int(sys.argv[2]), sys.argv[3], "synthetic-pair-secret-0123456789abcdefghijk"
 OWNER = ("joel.owner@example.com", "Synthetic-Joel-prod-1", "Joel Owner (synthetic)")

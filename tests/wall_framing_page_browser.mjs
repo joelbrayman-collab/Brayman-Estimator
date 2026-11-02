@@ -117,6 +117,9 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     assert.equal(await page.locator("[data-stud-count]").innerText(), "9 studs");
     assert.equal(await page.locator("[data-top-plate-lineal]").innerText(), "30 lineal feet of top plates");
 
+    // Measure only after the result page's stylesheets have loaded. Under load (2 Nov 2026 regression) the
+    // element appeared before the CSS finished, so layout was measured unstyled (scrollWidth 2508 at 390px).
+    await page.waitForLoadState("load");
     const layout = await page.evaluate(() => {
       const elevation = document.querySelector("[data-wall-elevation]");
       const box = elevation.getBoundingClientRect();

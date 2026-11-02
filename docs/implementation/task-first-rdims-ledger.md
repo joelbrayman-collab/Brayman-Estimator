@@ -591,3 +591,21 @@ Documents library and Calendar did not).
 - Final full browser run on the branch head (all 28 files above, `--test-concurrency=1`): **324 passed, 0 failed**,
   no server or page errors in any walk.
 - Gate: `--browser-expected 324`.
+
+### Whole-branch review and fixes (2 Nov 2026, commit 5db36f30)
+- Independent review of the whole branch: 0 Critical, 2 Important, 6 Minor.
+- Important 1 (fixed): choosing what is being built filled the commercial type, and Set Up then treated that as a
+  changed setting and opened the settings on a refusal. Now the type only counts as changed when it differs from
+  the one filled from what is being built. New test
+  `test_the_commercial_type_filled_from_what_is_being_built_does_not_open_the_settings`; the density walk's refusal
+  case now picks New home and checks the settings stay closed.
+- Important 2 (fixed): the compact 28 / 32 px rows on Set Up also applied on phones. Compact heights now apply only
+  to a mouse-driven laptop (`pointer:fine`, wider than 720 px); touch and phone keep 44 px. The phone Set Up walk
+  now checks every touch target is at least 44 px.
+- Minor fixed: switching to a new customer unticks "same as customer" so the typed address comes back; header
+  labels below 1440 px are hidden visually but still read by screen readers; contextual help question and the
+  lifecycle confirm box have touch-size spacing in the compact workspace.
+- Minor left as acceptable: plan descriptions as tooltips on laptops, Price This Job order on a phone, the
+  mode switch without JavaScript (both branches still work).
+- A suggested zero-specificity wrapper (`:where(.shell-workspace)`) was tried and reverted: older app.css rules
+  won and the opened settings grew to 443 px (limit 420).

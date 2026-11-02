@@ -259,6 +259,42 @@ def labour_material_margin_price(lines, material_margin, subcontract_markup=None
             "material_margin": as_decimal(material_margin), "subcontract_markup": markup}
 
 
+def scenario_price(version, lines, material_margin, subcontract_markup=None) -> dict:
+    """labour_material_margin_price with the version's package decisions (Joel, 2 Nov 2026): a package with a client
+    budget sells for that budget (its lines, pass-throughs excepted, are left out of the method's buckets); its
+    costs are unchanged. Pass-through lines are always billed at cost (the at-cost bucket)."""
+    from app.services.package_scenario import budgets, is_passthrough, package_key_of_section
+
+    fixed = budgets(version) if version is not None else {}
+    groups, normal = {}, []
+    for line in lines:
+        section = getattr(line, "section", None)
+        key = package_key_of_section(section) if (fixed and section is not None) else None
+        if key in fixed and not is_passthrough(line):
+            groups.setdefault(key, []).append(line)
+        else:
+            normal.append(line)
+    breakdown = labour_material_margin_price(normal, material_margin, subcontract_markup)
+    breakdown["fixed"] = {}
+    for key, items in groups.items():
+        cost = as_money(sum((as_decimal(item.extended_cost) for item in items), Decimal("0")))
+        breakdown["fixed"][key] = {"budget": fixed[key], "cost": cost, "lines": items}
+        breakdown["direct"] = as_money(breakdown["direct"] + cost)
+        breakdown["pre_tax"] = as_money(breakdown["pre_tax"] + fixed[key])
+    return breakdown
+
+
+def _spread(items, total, cost) -> dict:
+    out, remaining = {}, total
+    for item in items[:-1]:
+        share = (as_money(total * as_decimal(item.extended_cost) / cost) if cost
+                 else as_money(total / Decimal(len(items))))
+        out[item.id] = share
+        remaining -= share
+    out[items[-1].id] = as_money(remaining)
+    return out
+
+
 def bucket_line_sell_prices(breakdown) -> dict:
     """{line id: sell price}: each bucket's price spread over its lines by extended cost; the last line of a bucket
     takes the remainder, so the lines add up to the bucket exactly."""
@@ -267,14 +303,10 @@ def bucket_line_sell_prices(breakdown) -> dict:
         items = breakdown["lines"][bucket]
         if not items:
             continue
-        total, cost = breakdown["sell"][bucket], breakdown["cost"][bucket]
-        remaining = total
-        for item in items[:-1]:
-            share = (as_money(total * as_decimal(item.extended_cost) / cost) if cost
-                     else as_money(total / Decimal(len(items))))
-            out[item.id] = share
-            remaining -= share
-        out[items[-1].id] = as_money(remaining)
+        out.update(_spread(items, breakdown["sell"][bucket], breakdown["cost"][bucket]))
+    for row in (breakdown.get("fixed") or {}).values():  # a client budget spread over its package's lines
+        if row["lines"]:
+            out.update(_spread(row["lines"], row["budget"], row["cost"]))
     return out
 
 
@@ -285,6 +317,9 @@ def _allocate_bucket_sell_prices(version, breakdown):
     prices = bucket_line_sell_prices(breakdown)
     for bucket in BUCKETS:
         for item in breakdown["lines"][bucket]:
+            item.sell_price = prices[item.id]
+    for row in (breakdown.get("fixed") or {}).values():
+        for item in row["lines"]:
             item.sell_price = prices[item.id]
     for section in version.sections:
         section.subtotal = builder_money(sum((as_decimal(item.sell_price) for item in section.line_items), Decimal("0")))
@@ -939,7 +974,7 @@ def apply_resolved_pricing_to_version(
             gm = policy.target_gross_margin
         markup = (policy.subcontract_markup_rate
                   if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None)
-        breakdown = labour_material_margin_price(participating_lines(version), gm, markup)
+        breakdown = scenario_price(version, participating_lines(version), gm, markup)
         if breakdown["direct"] != direct and not include_labour_snapshot_direct_cost:
             raise PricingEngineError("The approved costing does not match the estimate lines. Approve the costing again.")
         pre_tax = breakdown["pre_tax"]
@@ -1073,8 +1108,8 @@ def refresh_version_from_snapshot(version):
     if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
         from app.services.work_packages import participating_lines
 
-        breakdown = labour_material_margin_price(participating_lines(version), snapshot.target_gross_margin,
-                                                 snapshot.subcontract_markup_rate)
+        breakdown = scenario_price(version, participating_lines(version), snapshot.target_gross_margin,
+                                   snapshot.subcontract_markup_rate)
         pre_tax = breakdown["pre_tax"]
         tax_amount, customer_total = apply_tax_after_pre_tax(pre_tax, snapshot.tax_percent)
         _allocate_bucket_sell_prices(version, breakdown)

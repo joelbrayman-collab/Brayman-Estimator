@@ -161,6 +161,21 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
     return proposal
 
 
+def _file_sent_summary(version, proposal, user) -> None:
+    """Every price sent to the client is kept as a numbered revision (REV1, REV2, ...) with its Internal Project
+    Financial Summary filed in Documents (Joel, 2 Nov 2026). The send is already committed; filing never undoes it."""
+    import logging
+
+    from app.services.internal_financial_summary import file_sent_summary
+
+    try:
+        file_sent_summary(version, proposal, user=user)
+    except Exception:  # noqa: BLE001 - filing never undoes a send
+        db.session.rollback()
+        logging.getLogger(__name__).exception("Sent Internal Project Financial Summary not filed for proposal %s",
+                                              getattr(proposal, "id", None))
+
+
 def _file_internal_summary(version, approval, user) -> None:
     """File the approved Internal Project Financial Summary in the project's Documents (2 Nov 2026). The approval
     is already committed; if filing fails, the approval stands and the summary can still be opened from the frozen
@@ -244,6 +259,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
     db.session.add(link)
     _advance_stage(proposal, "Proposal Sent", event="proposal sent to the client")
     db.session.commit()
+    _file_sent_summary(version, proposal, user)
     path = proposal_link_path(lookup_key, secret)
     message = _send_mail(proposal, link, path)
     return SentProposal(link=link, path=path, mail_message=message)

@@ -154,6 +154,9 @@ class EstimateVersion(db.Model):
     # The pricing method this version is priced with, captured when it is created (2 Nov 2026). None: an estimate
     # made before pricing methods were recorded, priced as it always was (pricing_engine.version_pricing_method).
     pricing_method = db.Column(db.String(40), nullable=True)
+    # Per-package pricing decisions on this version (Joel, 2 Nov 2026: "change it on the fly"): a client budget /
+    # fixed price per work package, as JSON keyed by package (app/services/package_scenario.py). None: none set.
+    package_pricing_json = db.Column(db.Text, nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)

@@ -576,7 +576,14 @@ def _financial_summary_panel(guided, version):
     rows = crew.crew(guided.estimate)
     on_crew = {r["person"].id: r for r in rows}
     all_rows = employees(_org())
-    return {"crew": rows, "problem": crew.crew_problem(guided.estimate), "assignable": assignable_employees(_org()),
+    from app.services import package_scenario as PS
+    from app.services.internal_financial_summary import quoted_revisions
+
+    scenario = PS.scenario_rows(version, crew.crew_rates(guided.estimate))
+    db.session.rollback()  # the preview is read only
+    return {"scenario": scenario, "revisions": quoted_revisions(guided.estimate),
+            "accepted": G.accepted_proposal(guided) is not None,
+            "crew": rows, "problem": crew.crew_problem(guided.estimate), "assignable": assignable_employees(_org()),
             "on_crew": on_crew, "incomplete": [r for r in all_rows if r["person"].is_active and not r["complete"]],
             "pdf_url": url_for("guided_tasks.internal_financial_summary", project_id=guided.project_id)}
 

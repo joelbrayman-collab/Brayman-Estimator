@@ -103,11 +103,43 @@ def _packages(version):
 
 
 def _excluded_names(version):
+    return [row["name"] for row in _excluded(version, None)]
+
+
+def _quoted_price(package, version, e) -> Decimal:
+    """What Brayman had quoted for an excluded package: its selling price on the newest earlier version that priced it
+    in; otherwise its price by this estimate's pricing method (the internal price)."""
+    from app.services import work_packages as WP
+    from app.services.pricing_engine import as_money, labour_material_margin_price, true_gross_margin_pre_tax
+
+    for earlier in sorted(version.estimate.versions, key=lambda v: v.version_number, reverse=True):
+        if earlier.version_number >= version.version_number or getattr(earlier, "pricing_snapshot", None) is None:
+            continue
+        if WP.package_participates(package, earlier):
+            sold = sum((D(str(l.sell_price or 0)) for l in WP.package_lines(package, earlier)), ZERO)
+            if sold:
+                return as_money(sold)
+    lines = WP.package_lines(package, version)
+    margin = e.get("target_gross_margin") if e else None
+    if margin is None:
+        return as_money(sum((D(str(l.extended_cost or 0)) for l in lines), ZERO))
+    if (e or {}).get("pricing_method") == "LABOUR_AT_RATE_MATERIAL_MARGIN":
+        return labour_material_margin_price(lines, margin, (e or {}).get("subcontract_markup_rate"))["pre_tax"]
+    return true_gross_margin_pre_tax(sum((D(str(l.extended_cost or 0)) for l in lines), ZERO), margin)
+
+
+def _excluded(version, e) -> list:
+    """Packages of this version's scope not in Brayman's price (By Others / Owner / a named party)."""
     from app.services import work_packages as WP
 
     guided = _guided(version)
-    return [p.display_name for p in WP.packages_in(guided, version)
-            if not WP.package_participates(p, version)]
+    out = []
+    for package in WP.packages_in(guided, version):
+        if WP.package_participates(package, version) or not WP.package_lines(package, version):
+            continue
+        out.append({"name": package.display_name, "responsible": WP.responsible_label(package, version),
+                    "quoted": str(_quoted_price(package, version, e)) if e is not None else None})
+    return out
 
 
 def _line_sell_prices(version, e) -> dict:
@@ -217,13 +249,25 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
     org_id = organization_id or project.organization_id
     org = db.session.get(Organization, org_id)
     e = economics(version, org_id)
+    from app.services.package_scenario import budget_label, budgets, is_passthrough, package_key_of_section
+
     sells = _line_sell_prices(version, e)
+    fixed = budgets(version)
     by_id = {line.id: line for section in version.sections for line in section.line_items}
     orders = _takeoff(version)
     packages, ref = [], 0
     for name, _stage, lines in _packages(version):
-        pk = {"name": name, "revenue": [{"label": name, "amount": str(sum((sells.get(l.id, ZERO) for l in lines),
-                                                                          ZERO))}],
+        key = package_key_of_section(lines[0].section) if lines and lines[0].section is not None else None
+        through = [l for l in lines if is_passthrough(l)]
+        own = sum((sells.get(l.id, ZERO) for l in lines if not is_passthrough(l)), ZERO)
+        if key in fixed:
+            revenue = [{"label": f"{name} ({budget_label(version, key) or 'client budget'})", "amount": str(own)}]
+        else:
+            revenue = [{"label": name, "amount": str(own)}] if own or not through else []
+        revenue += [{"label": f"{l.description} (billed at cost)", "amount": str(sells.get(l.id, ZERO))}
+                    for l in through]
+        pk = {"name": name, "revenue": revenue, "budget": str(fixed[key]) if key in fixed else None,
+              "budget_label": budget_label(version, key) if key in fixed else None, "key": key,
               "materials": [], "labour": [], "equipment": [], "subcontracts": []}
         for line in lines:
             bucket = pricing_bucket(line)
@@ -242,10 +286,13 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
     method = e.get("pricing_method") or "TRUE_GROSS_MARGIN"
     margin = e.get("target_gross_margin")
     now = today or datetime.utcnow()
-    excluded = _excluded_names(version)
+    excluded = _excluded(version, e)
     summary_notes = []
     if excluded:
-        summary_notes.append("Not in Brayman's price (by others or excluded): " + ", ".join(excluded) + ".")
+        summary_notes.append("Excluded / by others (kept on the estimate, not in revenue or cost): " + "; ".join(
+            f"{x['name']} — {x['responsible']}, quoted {m(x['quoted'])}" for x in excluded) + ".")
+    if fixed:
+        summary_notes.append("Client budget: the package's revenue is the client's budget; its costs are as estimated.")
     if not e.get("applied"):
         summary_notes.append("Working figures: pricing is applied when the estimate is approved.")
     labour_notes = ["Hours are person-hours and include any winter time increase. Rates are quantity per person-hour."]
@@ -277,6 +324,7 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
                  for r in (rates or [])],
         "crew_problem": problem,
         "packages": packages,
+        "excluded": excluded,
         "summary_notes": summary_notes,
         "materials_notes": ["Cost is Brayman's cost for the estimate quantity (waste included); order quantities are "
                             "the supplier request's when there is one."],
@@ -491,7 +539,16 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
     row(y, cols, ["Total", m(tot["rev"]), m(tot["mat"]), m(tot["lc"] if not no_crew else tot["v"]),
                   m(tot["sub"]) if tot["sub"] else "—", m(tot["eq"]),
                   m(tot["cost"]), m(tot["profit"]), pct(tot["profit"], tot["rev"])], True, 8.8, NAVY, TOTAL, False)
-    y -= 30
+    y -= 16
+    excluded = P.get("excluded") or []
+    if excluded:
+        row(y, cols, ["EXCLUDED / BY OTHERS — kept on the estimate, not in revenue or cost"] + [""] * (len(cols) - 1),
+            True, 7.8, NAVY, BAND, False); y -= 15
+        for x in excluded:
+            row(y, cols, [_fit(x["name"], 48), "", "", "", "", "", "", "",  ""], size=8.2, color=GREY)
+            t(L + 330, y, _fit(f"{x['responsible']} · we had quoted {m(x.get('quoted'))}", 80), 8.2, False, GREY)
+            y -= 16
+    y -= 14
     nrev0 = sum(len(p["rev"]) for p in pk)
     n_left = (nrev0 if nrev0 + len(split) <= 12 else len(pk)) + max(len(split), 1) + 7 + (1 if tot["sub"] else 0)
     if y - max(15 * n_left + 30, 262) < 62:
@@ -556,9 +613,8 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
     yy -= 22; bh = 104
     c.setStrokeColor(NAVY); c.setLineWidth(0.9); c.roundRect(x2 - 6, yy - bh + 12, bw + 12, bh, 3, stroke=1, fill=0)
     t(x2, yy, "Contractor approval", 10.5, True, NAVY)
-    t(x2 + bw, yy, _fit(f"{P['project']['revision']} · {m(tot['rev'])} revenue · "
-                        f"{m(tot['profit']) if not no_crew else 'profit not available'}", 70) +
-      ("" if not no_crew else ""), 7.5, True, GREY, "r")
+    t(x2 + bw, yy, _fit(f"{m(tot['rev'])} revenue · "
+                        f"{m(tot['profit']) + ' profit' if not no_crew else 'profit not available'}", 50), 7.5, True, GREY, "r")
     t(x2, yy - 14, "I have reviewed this Internal Project Financial Summary — revenue, materials, labour, subcontractors,", 7.5)
     t(x2, yy - 24, "equipment and profit — and approve it as the estimate for this project.", 7.5)
     t(x2, yy - 42, f"Name: {A.get('name', '')}", 8.5, True); t(x2 + bw * 0.55, yy - 42, A.get("title", "Contractor"), 8.5, color=GREY)
@@ -693,6 +749,62 @@ def file_approved_summary(version, approval, *, user=None):
     if data.get("crew"):
         # The crew's Loaded Labour Rates come from their wages: like wages, only people administrators (the owner or
         # a System Administrator) may see them.
+        ingest.correct_field(document, actor, "sensitivity", SENSITIVITY_PEOPLE,
+                             "Contains the crew's loaded labour rates (wage figures): people administrators only.",
+                             allow_sensitivity=True)
+    return document
+
+
+def quoted_revisions(estimate) -> list:
+    """Every version of the estimate whose price went to the client, in the order first sent: REV1, REV2, ...
+    (Joel, 2 Nov 2026). Each is an approved, locked version (Gate 1) and never changes."""
+    from app.models import Proposal
+    from app.models.proposal_acceptance import ProposalClientLink
+
+    first_sent = {}
+    for proposal in Proposal.query.filter_by(estimate_id=estimate.id).all():
+        for link in ProposalClientLink.query.filter_by(proposal_id=proposal.id).all():
+            vid = proposal.estimate_version_id
+            if vid not in first_sent or link.sent_at < first_sent[vid][0]:
+                first_sent[vid] = (link.sent_at, proposal)
+    ordered = sorted(first_sent.items(), key=lambda kv: kv[1][0])
+    by_id = {v.id: v for v in estimate.versions}
+    return [{"number": i, "label": f"REV{i}", "version": by_id.get(vid), "sent_at": sent, "proposal": proposal}
+            for i, (vid, (sent, proposal)) in enumerate(ordered, 1)]
+
+
+def file_sent_summary(version, proposal, *, user=None):
+    """When a price goes to the client: file the summary of exactly what was quoted, numbered REVn (idempotent per
+    proposal). The figures are the ones frozen at Ben's approval of that version (Gate 1), never recalculated."""
+    from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_PEOPLE, Document, DocumentLink
+    from app.services.documents import ingest
+    from app.services.documents.contexts import resolve_context
+    from app.services.estimate_approval import approval_for
+
+    approval = approval_for(version)
+    data = frozen_data(approval)
+    if data is None:
+        return None
+    existing = (Document.query.join(DocumentLink, DocumentLink.document_id == Document.id)
+                .filter(Document.organization_id == approval.organization_id,
+                        Document.document_type == DOCUMENT_TYPE, DocumentLink.record_kind == "PROPOSAL",
+                        DocumentLink.record_id == proposal.id).first())
+    if existing is not None:
+        return existing
+    rev = next((r for r in quoted_revisions(version.estimate) if r["version"] is not None
+                and r["version"].id == version.id), None)
+    label = rev["label"] if rev is not None else "REV"
+    data = dict(data, project=dict(data["project"], revision=f"{label} · {data['project']['revision']}",
+                                   revenue_status=f"{label} sent to client"))
+    blob = ingest.prepare_upload(filename(data), render_pdf(data))
+    context = resolve_context(approval.organization_id, CONTEXT_PROJECT, version.estimate.project.id)
+    actor = ingest.Actor.of(user) if user is not None else ingest.SYSTEM
+    document = ingest.file_document(approval.organization_id, actor, blob=blob, context=context,
+                                    title=f"{TITLE} — {label} sent to client ({version.display_label})",
+                                    type_code=DOCUMENT_TYPE, record_kind="PROPOSAL", record_id=proposal.id,
+                                    description=f"What was quoted to the client as {label}. Internal contractor "
+                                                "document; not for customers, suppliers or field crew.")
+    if data.get("crew"):
         ingest.correct_field(document, actor, "sensitivity", SENSITIVITY_PEOPLE,
                              "Contains the crew's loaded labour rates (wage figures): people administrators only.",
                              allow_sensitivity=True)

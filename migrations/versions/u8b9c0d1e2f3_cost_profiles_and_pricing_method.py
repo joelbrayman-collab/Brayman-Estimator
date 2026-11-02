@@ -13,8 +13,10 @@ Joel's decisions of 2 Nov 2026 (docs/implementation/internal-project-financial-s
 * organization_pricing_policies.subcontract_markup_rate, estimate_pricing_snapshots.labour_rate and
   .subcontract_markup_rate: the "labour at rate, margin on materials" pricing method's parameters.
 * estimate_versions.pricing_method: the method a version is priced with.
+* estimate_versions.package_pricing_json: per-package client budgets / fixed prices on a version (the on-the-fly
+  scenario, Joel 2 Nov 2026).
 
-Additive only: three new tables and five new nullable columns. No existing row is written: every new column is NULL
+Additive only: three new tables and six new nullable columns. No existing row is written: every new column is NULL
 on existing rows, which the application reads as "priced as it always was" (no estimate, policy or snapshot changes).
 Downgrade refuses while any new table holds a row or any new column holds a value; recovery is then the pre-migration
 backup.
@@ -35,6 +37,7 @@ NEW_COLUMNS = (
     ("estimate_pricing_snapshots", "labour_rate", sa.Numeric(10, 2)),
     ("estimate_pricing_snapshots", "subcontract_markup_rate", sa.Numeric(10, 6)),
     ("estimate_versions", "pricing_method", sa.String(length=40)),
+    ("estimate_versions", "package_pricing_json", sa.Text()),
 )
 
 

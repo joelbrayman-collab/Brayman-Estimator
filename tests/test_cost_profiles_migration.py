@@ -24,7 +24,8 @@ NEW_TABLES = {"organization_person_cost_profiles", "organization_labour_cost_set
 NEW_COLUMNS = {("organization_pricing_policies", "subcontract_markup_rate"),
                ("estimate_pricing_snapshots", "labour_rate"),
                ("estimate_pricing_snapshots", "subcontract_markup_rate"),
-               ("estimate_versions", "pricing_method")}
+               ("estimate_versions", "pricing_method"),
+               ("estimate_versions", "package_pricing_json")}
 
 
 def _config(db_path):

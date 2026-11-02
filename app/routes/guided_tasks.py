@@ -132,3 +132,78 @@ def assign_crew(project_id):
     except EstimateCrewError as exc:
         flash(str(exc), "error")
     return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-financial-summary")
+
+
+# ------------------------------------------------------------------------------ change it on the fly (2 Nov 2026)
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/scenario", methods=["POST"])
+def save_scenario(project_id):
+    """Per package on the working version: By others (the existing exclusion) and a client budget / fixed price."""
+    from app import db
+    from app.services import package_scenario as PS
+    from app.services import work_packages as WP
+    from app.services.auth import current_actor_display_name
+
+    _require_people_admin()
+    project, guided, version = _review_version(project_id)
+    actor = current_actor_display_name(fallback="")
+    here = url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario"
+    form = request.form
+    changed = 0
+    try:
+        for package in WP.packages_in(guided, version):
+            if f"present_{package.id}" not in form:
+                continue
+            wants_out = form.get(f"by_others_{package.id}") == "1"
+            if wants_out and WP.is_included(package, version):
+                WP.exclude_work(package, actor=actor, party=form.get(f"party_{package.id}") or "BY_OTHERS",
+                                party_name=form.get(f"party_name_{package.id}", ""),
+                                reason=form.get("reason", ""), user_id=getattr(current_user, "id", None))
+                changed += 1
+            elif not wants_out and not WP.is_included(package, version):
+                WP.include_work(package, actor=actor, reason=form.get("reason", ""),
+                                user_id=getattr(current_user, "id", None))
+                changed += 1
+            db.session.expire_all()
+            version = _review_version(project_id)[2]
+            key = PS.package_key(package)
+            raw = (form.get(f"budget_{package.id}") or "").strip()
+            current = PS.budgets(version).get(key)
+            if (str(current) if current is not None else "") != raw.replace("$", "").replace(",", ""):
+                PS.set_budget(version, key, raw, actor=actor, label=form.get(f"budget_label_{package.id}", ""),
+                              reason=form.get("reason", ""))
+                changed += 1
+    except (WP.WorkPackageError, PS.PackageScenarioError) as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+        return redirect(here)
+    flash("Scenario saved: the estimate is re-priced. Approve it when you are ready." if changed
+          else "Nothing changed.", "success")
+    return redirect(here)
+
+
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/passthrough", methods=["POST"])
+def add_passthrough(project_id):
+    """A pass-through billed at cost (e.g. a lift rental) on a work package: same amount in cost and revenue."""
+    from app.services import guided_estimating as G
+    from app.services.auth import current_actor_display_name
+
+    _require_people_admin()
+    project, guided, _version = _review_version(project_id)
+    here = url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario"
+    stage = next((s for s in guided.top_stages if s.id == request.form.get("stage_id", type=int)), None)
+    if stage is None:
+        abort(404)
+    actor = current_actor_display_name(fallback="")
+    try:
+        was_complete = stage.status == G.STATUS_COMPLETE
+        G.add_manual_cost(guided, stage, kind="passthrough", description=request.form.get("description", ""),
+                          quantity="1", unit="ls", unit_cost=(request.form.get("amount") or "").replace("$", "").replace(",", ""),
+                          actor=actor, user_id=getattr(current_user, "id", None))
+        G.confirm_stage_routing(guided, stage, actor=actor, user_id=getattr(current_user, "id", None))
+        if was_complete:
+            G.complete_stage(guided, stage, actor=actor, user_id=getattr(current_user, "id", None))
+    except G.GuidedEstimatingError as exc:
+        flash(str(exc), "error")
+        return redirect(here)
+    flash(f"Pass-through added to {stage.display_name}: billed at cost.", "success")
+    return redirect(here)

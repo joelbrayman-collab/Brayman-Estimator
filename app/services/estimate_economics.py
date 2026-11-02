@@ -291,7 +291,7 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
     from app.services.pricing_engine import (
         apply_tax_after_pre_tax,
         as_money,
-        labour_material_margin_price,
+        scenario_price,
         resolve_pricing_policy,
         true_gross_margin_pre_tax,
         version_line_direct_cost,
@@ -329,12 +329,12 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
         tax_percent = Decimal(str(snapshot.tax_percent))
         if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
             markup = Decimal(str(snapshot.subcontract_markup_rate or 0))
-            breakdown = labour_material_margin_price(participating_lines(version), snapshot.target_gross_margin, markup)
+            breakdown = scenario_price(version, participating_lines(version), snapshot.target_gross_margin, markup)
     else:
         direct = version_line_direct_cost(version)
         margin = values["target_gross_margin"]
         if method == LABOUR_AT_RATE_MATERIAL_MARGIN and margin is not None:
-            breakdown = labour_material_margin_price(participating_lines(version), margin, markup)
+            breakdown = scenario_price(version, participating_lines(version), margin, markup)
             selling = breakdown["pre_tax"]
         else:
             selling = true_gross_margin_pre_tax(direct, margin) if margin is not None else None

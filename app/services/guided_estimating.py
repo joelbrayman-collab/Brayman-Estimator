@@ -219,6 +219,7 @@ COMMERCIAL_TYPE_HINT = {
 MANUAL_KINDS = (
     ("material", "Material"), ("labour", "Labour (hours)"), ("equipment", "Equipment"), ("delivery", "Delivery"),
     ("disposal", "Disposal"), ("subcontract", "Subcontract"), ("other", "Other direct cost"),
+    ("passthrough", "Billed at cost (pass-through)"),
 )
 MANUAL_KIND_LABELS = dict(MANUAL_KINDS)
 MANUAL_CODE_PREFIX = "GE-"  # manual guided lines are coded GE-<KIND>; labour hours use the existing LAB- lines

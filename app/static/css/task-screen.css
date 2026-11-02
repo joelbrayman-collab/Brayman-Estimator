@@ -16,9 +16,9 @@
 /* ---------- Screen ---------- */
 .task-screen {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--stack-gap);
     min-width: 0;
-    margin: 0 0 var(--space-6);
+    margin: 0 0 var(--space-4);
 }
 .task-screen > * { min-width: 0; }
 
@@ -28,12 +28,12 @@
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-1) var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--card-pad-y) var(--card-pad-x);
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
 }
-.ts-context-name { margin: 0; font-size: var(--text-xl); line-height: 1.25; overflow-wrap: anywhere; }
+.ts-context-name { margin: 0; font-size: 1.25rem; line-height: 1.25; overflow-wrap: anywhere; }
 .ts-context-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); }
 .ts-context-facts li { overflow-wrap: anywhere; }
 .ts-context-facts li + li::before { content: "·"; margin-right: var(--space-3); color: var(--muted); }
@@ -47,24 +47,26 @@
     font-size: var(--text-sm);
 }
 
-/* Purpose: the outcome, in contractor words, and one line of why. */
+/* Purpose: the outcome, in contractor words, and one line of why: on ONE line where it fits (2 Nov 2026), so the
+   title and its instruction do not stack into a block of their own. */
+.ts-purpose { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-3); }
 .ts-purpose h2 { margin: 0; font-size: var(--text-lg); }
-.ts-purpose p { margin: var(--space-1) 0 0; color: var(--ink-soft); }
+.ts-purpose p { margin: 0; color: var(--ink-soft); }
 
 /* The one primary action (a card that leads the screen). */
 .ts-next {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-3) var(--space-4);
-    padding: var(--space-4);
+    gap: var(--space-2) var(--space-4);
+    padding: var(--card-pad-y) var(--card-pad-x);
     background: var(--surface);
     border: 2px solid var(--gold);
     border-radius: var(--radius-md);
 }
 .ts-next-eyebrow { margin: 0; font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-ink); }
-.ts-next-title { margin: var(--space-1) 0 0; font-size: var(--text-lg); font-weight: 600; overflow-wrap: anywhere; }
-.ts-next-why { margin: var(--space-1) 0 0; color: var(--ink-soft); }
+.ts-next-title { margin: 2px 0 0; font-size: var(--text-lg); font-weight: 600; overflow-wrap: anywhere; }
+.ts-next-why { margin: 2px 0 0; color: var(--ink-soft); }
 .ts-primary {
     display: inline-flex;
     align-items: center;
@@ -83,13 +85,13 @@
 
 /* Current state: "What Calibrayt already knows". */
 .ts-state {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--card-pad-y) var(--card-pad-x);
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
 }
-.ts-state h2, .ts-attention h2 { margin: 0 0 var(--space-2); font-size: var(--text-base); }
-.ts-state-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.ts-state h2, .ts-attention h2 { margin: 0 0 var(--space-1); font-size: var(--text-base); }
+.ts-state-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .ts-state-row { display: grid; grid-template-columns: 1.5em minmax(0, 1fr); gap: var(--space-2); align-items: start; }
 .ts-state-mark { font-weight: 700; text-align: center; }
 .ts-state-row.is-done .ts-state-mark { color: var(--ok); }
@@ -100,7 +102,7 @@
 
 /* Attention / decision area. */
 .ts-attention {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--card-pad-y) var(--card-pad-x);
     background: var(--warning-soft);
     border: 1px solid var(--warning-line);
     border-radius: var(--radius-md);
@@ -121,14 +123,14 @@
     align-items: baseline;
     gap: var(--space-1) var(--space-3);
     min-height: var(--touch-target);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2) var(--card-pad-x);
     cursor: pointer;
     font-weight: 600;
     list-style-position: inside;
 }
 .ts-details > summary .ts-details-hint { font-weight: 400; color: var(--muted); overflow-wrap: anywhere; }
 .ts-details[open] > summary { border-bottom: 1px solid var(--surface-line); }
-.ts-details-body { padding: var(--space-4); min-width: 0; overflow-x: auto; }
+.ts-details-body { padding: var(--space-3) var(--card-pad-x); min-width: 0; overflow-x: auto; }
 .ts-details-group { display: grid; gap: var(--space-3); }
 
 /* Secondary actions ("More actions"). */
@@ -161,7 +163,7 @@
 .link-hub-section h2 { margin: 0 0 var(--space-1); font-size: var(--text-lg); }
 .link-hub-section > p { margin: 0 0 var(--space-3); color: var(--ink-soft); }
 .link-hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-.link-hub-grid a { display: flex; align-items: center; gap: var(--space-3); min-height: 56px; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
+.link-hub-grid a { display: flex; align-items: center; gap: var(--space-3); min-height: var(--touch-target); padding: var(--space-2) var(--space-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
 .link-hub-grid a:hover { border-color: var(--gold); }
 .link-hub-grid a[aria-current="page"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .link-hub-grid .bi { font-size: 1.25rem; color: var(--gold-ink); }
@@ -182,4 +184,106 @@
    (Company profile is under the gear) so the header never widens the page. */
 @media (max-width: 480px) {
     .shell-header .header-company { display: none; }
+}
+
+/* ==========================================================================================================
+   Viewport-first density (corrective, 2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md).
+   The reusable layout rules every primary task screen uses, so the active task fits a 1280 x 800 laptop:
+     1. Compact controls on a laptop with a mouse (--control-height); touch and phone keep 44 px targets.
+     2. Labels sit 4 px above their input; rows of fields 10 px apart (was 20 + 8 + 12 px of padding).
+     3. Closed sections sit side by side (.ts-details-grid); an opened one takes the full width.
+     4. Two working columns on a laptop (.ts-cols): the task on the left, what it is decided on at the right.
+     5. A compact form (.ts-form): fieldsets are light groups with an inline legend, not boxed cards.
+   Nothing here shrinks text below --text-sm.
+   ========================================================================================================== */
+
+/* 1-2. Shared form controls in the office workspace. */
+.shell-workspace label { margin-bottom: var(--field-gap-y); }
+.shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
+.shell-workspace select,
+.shell-workspace textarea {
+    margin-top: var(--label-gap);
+    padding: var(--control-pad-y) var(--control-pad-x);
+}
+.shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
+.shell-workspace select { min-height: var(--control-height); }
+.shell-workspace .form-grid { gap: var(--field-gap-y) var(--field-gap-x); }
+.shell-workspace .form-grid > label { margin-bottom: 0; }
+.shell-workspace .form-panel, .shell-workspace .empty-state { padding: var(--space-4) var(--space-5); }
+.shell-workspace:not(:has(> .wf, > .cal-workspace)) { padding-top: var(--workspace-pad-top); }
+.shell-workspace { padding-bottom: var(--workspace-pad-bottom); }
+@media (pointer: coarse), (max-width: 720px) {
+    .shell-workspace input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),
+    .shell-workspace select { min-height: var(--touch-target); }
+}
+@media (pointer: fine) and (min-width: 721px) {
+    .ts-details > summary { min-height: var(--control-height); padding-top: var(--space-1); padding-bottom: var(--space-1); }
+    .ts-primary { min-height: 40px; }
+}
+
+/* 3. Closed sections side by side; an opened one takes the full row. */
+.ts-details-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--space-2); align-items: start; min-width: 0; }
+.ts-details-grid > .ts-details[open] { grid-column: 1 / -1; }
+.ts-details-grid > .ts-details > summary .ts-details-hint { font-size: var(--text-sm); }
+
+/* 4. Two working columns on a laptop; one column below 1100 px. */
+.ts-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--stack-gap); align-items: start; min-width: 0; }
+.ts-cols > * { min-width: 0; }
+.ts-col { display: grid; gap: var(--stack-gap); min-width: 0; align-content: start; }
+@media (min-width: 1100px) {
+    .ts-cols { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+}
+
+/* 5. The compact form. */
+.ts-form { display: grid; gap: var(--stack-gap); }
+.ts-form fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.ts-form .ts-group { padding: var(--space-2) 0 0; border-top: 1px solid var(--surface-line); }
+.ts-form .ts-group:first-of-type { border-top: 0; padding-top: 0; }
+.ts-form .ts-group > legend { float: left; width: 100%; margin: 0 0 var(--space-1); padding: 0; font-weight: 700; font-size: var(--text-base); color: var(--text); }
+.ts-form .ts-group > legend + * { clear: both; }
+.ts-form label { margin: 0; font-size: var(--text-sm); }
+.ts-form .ts-row { display: grid; gap: var(--field-gap-y) var(--field-gap-x); grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); align-items: end; }
+.ts-form .ts-inline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); }
+.ts-form .ts-inline label { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-height); font-size: var(--text-base); font-weight: 500; }
+.ts-form .ts-optional > summary { cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); min-height: 32px; font-size: var(--text-sm); font-weight: 600; color: var(--ink-soft); }
+.ts-form .ts-optional > summary .muted-copy { font-weight: 400; }
+.ts-form .ts-optional[open] > summary { margin-bottom: var(--space-1); }
+.ts-form .ts-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin: 0; }
+.ts-form .ts-actions .muted-copy { margin: 0; font-size: var(--text-sm); }
+@media (pointer: coarse), (max-width: 720px) {
+    .ts-form .ts-inline label, .ts-form .ts-optional > summary { min-height: var(--touch-target); }
+}
+
+/* Project page (2 Nov 2026): the grid of closed parts replaces the jump strip on a laptop; the strip stays where the
+   parts stack in one column. The job's identity block is tighter. */
+@media (min-width: 900px) { .project-task-screen .project-sections { display: none; } }
+.project-context h1 { font-size: var(--text-xl); }
+.project-context .hub-operating-identity { margin-top: 2px; }
+.project-overview-grid { gap: var(--stack-gap); }
+
+/* Messages after an action: one compact line each, so a refusal does not push the task down (2 Nov 2026). */
+.shell-workspace .flash-stack { margin-bottom: var(--space-2); }
+.shell-workspace .flash-stack .alert { padding: var(--space-2) var(--space-4); margin-bottom: var(--space-1); }
+
+@media (min-width: 900px) {
+    .ts-purpose.is-title-in-header h2 { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+}
+
+/* Header chrome on a laptop (2 Nov 2026): the page title gets the room. Below 1440 px the company box and the signed-in
+   person show as icons (their names stay as the tooltip and accessible name; the company name is also at the top of
+   the menu), so a long title such as "Review This Estimate" is not cut off. */
+@media (max-width: 1439px) {
+    .shell-header .header-company-label, .shell-header .header-user-label { display: none; }
+    .shell-header .header-company { width: 38px; max-width: none; justify-content: center; padding: 0; }
+    .shell-header .header-user-btn { padding: 4px; }
+}
+
+/* A closed section in the grid keeps its hint to one line (the full hint shows when it is opened or hovered). */
+.ts-details-grid > .ts-details:not([open]) > summary { flex-wrap: nowrap; }
+.ts-details-grid > .ts-details:not([open]) > summary > span:first-child { flex: none; }
+.ts-details-grid > .ts-details:not([open]) > summary .ts-details-hint { flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* "What Calibrayt already knows" uses the width: two columns of short facts on a laptop. */
+@media (min-width: 1100px) {
+    .task-screen > .ts-state .ts-state-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
 }

@@ -15,8 +15,22 @@
    rules, the project identity rules). #}
 {% import "partials/task_screen.html" as ts with context %}
 {% set v = values or {} %}
+{# Viewport-first density (2 Nov 2026; acceptance finding UX-DENSITY-001; docs/ux/viewport-density-audit-2026-11-02.md).
+   The whole normal task on one 1280 x 800 screen: the customer on one row (with "A customer we have" the new-customer
+   fields take no space; with "A new customer" only the fields that create one, and the customer list is put away),
+   the job on one row with the role as one line of choices, the job site on one row, the plans as one row of
+   choices, then Create. Optional parts (a description, an address as written, the project settings) are closed
+   until asked for and open on their own when the screen comes back refused with something in them. Both customer
+   parts stay in the form (hidden, not removed), so what is submitted is exactly as before. #}
+{% set _mode = v.get('customer_mode') or ('existing' if clients else 'new') %}
+{% set _setting_names = ['pricing_posture', 'execution_risk', 'schedule_condition', 'site_condition', 'estimate_stage', 'delivery_model'] %}
+{% set _settings_changed = (v.get('status') and v.get('status') != 'Lead') or v.get('project_type') or v.get('justification_reason')
+   or (v.get('permit_context_class') and v.get('permit_context_class') != default_permit_context_class)
+   or (v.get('project_lead_user_id') and v.get('project_lead_user_id')|string != default_project_lead_id|string) %}
+{% for name in _setting_names %}{% if v.get(name) and v.get(name) != setting_defaults[name] %}{% set _settings_changed = True %}{% endif %}{% endfor %}
+{% set _settings_open = (settings_problem is defined and settings_problem) or _settings_changed %}
 <div class="task-screen set-up-project" data-set-up-project>
-{{ ts.purpose("Set Up This Project", "The customer, the job site and what is being built. Calibrayt fills in the rest: the Brayman Project #, the project settings and the estimate.") }}
+{{ ts.purpose("Set Up This Project", "The customer, the job site and what is being built. Calibrayt fills in the rest: the Brayman Project #, the project settings and the estimate.", title_in_header=True) }}
 {% if carry %}
 <div class="cc-carry-banner" data-carry-banner>
     <strong>Bringing your {{ carry_label }} result:</strong> {{ carry.summary }}.
@@ -24,20 +38,20 @@
     <a href="{{ carry_cancel_url }}" data-carry-cancel>Cancel and go back to the calculator</a>
 </div>
 {% endif %}
-<form method="post" class="form-panel su-form" enctype="multipart/form-data" data-set-up-form>
+<form method="post" class="form-panel su-form ts-form" enctype="multipart/form-data" data-set-up-form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% if carry %}<input type="hidden" name="carry" value="{{ carry.token }}">{% endif %}
-    {% set _mode = v.get('customer_mode') or ('existing' if clients else 'new') %}
 
-    <fieldset class="su-section" data-su-customer>
-        <legend>Customer</legend>
+    <fieldset class="su-section ts-group" data-su-customer>
+        <legend>Customer <span class="su-req" aria-hidden="true">*</span></legend>
+        <div class="su-customer-row">
         {% if clients %}
-        <div class="su-choice" role="radiogroup" aria-label="Customer">
+        <div class="su-choice ts-inline" role="radiogroup" aria-label="Customer">
             <label><input type="radio" name="customer_mode" value="existing" {% if _mode == 'existing' %}checked{% endif %} data-customer-mode> A customer we have</label>
             <label><input type="radio" name="customer_mode" value="new" {% if _mode == 'new' %}checked{% endif %} data-customer-mode> A new customer</label>
         </div>
-        <label data-su-existing>
-            Customer *
+        <label class="su-existing" data-su-existing{% if _mode == 'new' %} hidden{% endif %}>
+            <span class="visually-hidden">Customer *</span>
             <select name="client_id" data-client-select>
                 <option value="">Select a customer</option>
                 {% for client in clients %}
@@ -49,20 +63,21 @@
         {% else %}
         <input type="hidden" name="customer_mode" value="new">
         {% endif %}
-        <div class="form-grid su-new-customer" data-su-new-customer>
-            <label>New customer's name{% if not clients %} *{% endif %}
+        <div class="form-grid su-new-customer ts-row" data-su-new-customer{% if _mode != 'new' %} hidden{% endif %}>
+            <label>New customer's name *
                 <input type="text" name="new_customer_name" maxlength="200" value="{{ v.get('new_customer_name', '') }}" autocomplete="off"></label>
             <label>Email <span class="muted-copy">(optional)</span>
                 <input type="email" name="new_customer_email" maxlength="200" value="{{ v.get('new_customer_email', '') }}" autocomplete="off"></label>
             <label>Phone <span class="muted-copy">(optional)</span>
                 <input type="tel" name="new_customer_phone" maxlength="40" value="{{ v.get('new_customer_phone', '') }}" autocomplete="off"></label>
         </div>
+        </div>
     </fieldset>
 
-    <fieldset class="su-section" data-su-job data-guided-start-fields>
+    <fieldset class="su-section ts-group" data-su-job data-guided-start-fields>
         <legend>The job</legend>
-        <div class="form-grid">
-            <label>
+        <div class="form-grid ts-row su-job-row">
+            <label class="su-wide">
                 Project name *
                 <input type="text" name="name" required value="{{ v.get('name', '') }}">
             </label>
@@ -72,52 +87,51 @@
                     {% for key, label in guided_project_types.items() %}<option value="{{ key }}" data-commercial="{{ guided_commercial_hint[key] }}" {% if v.get('guided_project_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
                 </select>
             </label>
-            <fieldset class="su-roles" role="radiogroup" aria-label="Your role on this job" data-contractor-role>
-                <legend>Your role on this job</legend>
-                {% for key, label in guided_roles.items() %}
-                <label class="su-check"><input type="radio" name="contractor_role" value="{{ key }}" {% if v.get('contractor_role') == key %}checked{% endif %}> {{ label }}</label>
-                {% endfor %}
-            </fieldset>
             <label>
                 Client Project #
                 <input type="text" name="client_project_number" maxlength="80" placeholder="The client's own job number (optional)" value="{{ v.get('client_project_number', '') }}">
             </label>
         </div>
-        <p class="muted-copy" data-brayman-number>Brayman Project #: assigned automatically when the project is created.</p>
-        <label>
-            Description <span class="muted-copy">(optional)</span>
-            <textarea name="description" rows="2">{{ v.get('description', '') }}</textarea>
-        </label>
+        <fieldset class="su-roles ts-inline" role="radiogroup" aria-label="Your role on this job" data-contractor-role>
+            <legend>Your role</legend>
+            {% for key, label in guided_roles.items() %}
+            <label class="su-check"><input type="radio" name="contractor_role" value="{{ key }}" {% if v.get('contractor_role') == key %}checked{% endif %}> {{ label }}</label>
+            {% endfor %}
+        </fieldset>
+        <details class="ts-optional su-more" data-su-description{% if v.get('description') %} open{% endif %}>
+            <summary>Add a description <span class="muted-copy">(optional)</span></summary>
+            <label class="visually-hidden" for="su-description">Description (optional)</label>
+            <textarea id="su-description" name="description" rows="2">{{ v.get('description', '') }}</textarea>
+        </details>
     </fieldset>
 
-    <fieldset class="su-section" data-su-site>
-        <legend>Job site</legend>
-        {% if clients %}<label class="su-same" data-same-as-customer-label><input type="checkbox" name="same_as_customer" value="on" data-same-as-customer {% if v.get('same_as_customer') %}checked{% endif %}> Same as the customer's address</label>{% endif %}
-        <div class="form-grid">
-            <label>Street / civic address <input type="text" name="street" value="{{ v.get('street', '') }}" data-job="street"></label>
+    <fieldset class="su-section ts-group" data-su-site>
+        <legend>Job site{% if clients %} <label class="su-same" data-same-as-customer-label{% if _mode == 'new' %} hidden{% endif %}><input type="checkbox" name="same_as_customer" value="on" data-same-as-customer {% if v.get('same_as_customer') %}checked{% endif %}> Same as the customer's address</label>{% endif %}</legend>
+        <div class="form-grid ts-row su-site-row">
+            <label class="su-wide">Street / civic address <input type="text" name="street" value="{{ v.get('street', '') }}" data-job="street"></label>
             <label>City / town <input type="text" name="municipality" value="{{ v.get('municipality', '') }}" data-job="municipality"></label>
             <label>Province / state <input type="text" name="province_state" value="{{ v.get('province_state', 'Ontario') }}" data-job="province_state"></label>
             <label>Postal / ZIP <span class="muted-copy">(optional)</span> <input type="text" name="postal_zip" value="{{ v.get('postal_zip', '') }}" data-job="postal_zip"></label>
             <label>Country <input type="text" name="country" value="{{ v.get('country', 'Canada') }}" data-job="country"></label>
         </div>
-        <details class="np-more">
+        <details class="np-more ts-optional" data-su-address-as-written{% if v.get('address') %} open{% endif %}>
             <summary>Rural lot or no civic address yet?</summary>
             <label>Address as written (lot, concession, directions)
                 <input type="text" name="address" value="{{ v.get('address', '') }}" data-job="address"></label>
         </details>
     </fieldset>
 
-    <fieldset class="plan-start su-section" data-plan-start>
+    <fieldset class="plan-start su-section ts-group" data-plan-start>
         <legend>Plans and drawings</legend>
         <div class="plan-start-options">
             <input type="radio" id="plan-start-upload" name="plan_start" value="upload" {% if v.get('plan_start') == 'upload' %}checked{% endif %}>
-            <label for="plan-start-upload"><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i><strong>Upload plan</strong><span>Add the plan PDF now.</span></label>
+            <label for="plan-start-upload" title="Add the plan PDF now."><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i><strong>Upload plan</strong><span>Add the plan PDF now.</span></label>
             <input type="radio" id="plan-start-generate" name="plan_start" value="generate" {% if v.get('plan_start') == 'generate' %}checked{% endif %}>
-            <label for="plan-start-generate"><i class="bi bi-pencil-square" aria-hidden="true"></i><strong>Generate drawings</strong><span>Go straight to the drawing tools after saving.</span></label>
+            <label for="plan-start-generate" title="Go straight to the drawing tools after saving."><i class="bi bi-pencil-square" aria-hidden="true"></i><strong>Generate drawings</strong><span>Go straight to the drawing tools after saving.</span></label>
             <input type="radio" id="plan-start-none" name="plan_start" value="none" {% if v.get('plan_start') == 'none' %}checked{% endif %} data-no-drawings>
-            <label for="plan-start-none"><i class="bi bi-slash-circle" aria-hidden="true"></i><strong>No drawings needed</strong><span>Small jobs done without plans.</span></label>
+            <label for="plan-start-none" title="Small jobs done without plans."><i class="bi bi-slash-circle" aria-hidden="true"></i><strong>No drawings needed</strong><span>Small jobs done without plans.</span></label>
             <input type="radio" id="plan-start-later" name="plan_start" value="later" {% if v.get('plan_start', 'later') == 'later' %}checked{% endif %}>
-            <label for="plan-start-later"><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
+            <label for="plan-start-later" title="Add a plan from the project page."><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
         </div>
         <label class="plan-start-file" data-plan-start-file>
             Plan PDF
@@ -125,9 +139,9 @@
         </label>
     </fieldset>
 
-    {% call ts.details("Adjust project settings", "ts-project-settings", hint="Filled in from your company defaults") %}
-    <p class="muted-copy">Calibrayt fills these in. Change one only when this job is different; an exceptional choice needs a reason.</p>
-    <div class="form-grid" data-project-settings>
+    {% call ts.details("Adjust project settings", "ts-project-settings", hint="Filled in from your company defaults", open=_settings_open) %}
+    <p class="muted-copy su-settings-note">Calibrayt fills these in. Change one only when this job is different; an exceptional choice needs a reason. The Project Lead is a name on the project only: it gives no access and assigns no work.</p>
+    <div class="form-grid su-settings-grid" data-project-settings>
         <label>Status
             <select name="status">
                 {% for opt in ("Lead", "Estimating", "Proposal Sent", "Contracted", "Active", "Completed", "Archived") %}
@@ -174,32 +188,85 @@
                 {% endfor %}
             </select>
         </label>
-    </div>
-    <label>
+    <label class="su-reason">
         Reason <span class="muted-copy">(needed for an exceptional posture or risk, e.g. Premium pricing or High risk)</span>
         <textarea name="justification_reason" rows="2">{{ v.get('justification_reason', '') }}</textarea>
     </label>
+    </div>
     <label class="su-check"><input type="checkbox" name="start_guided" value="1" {% if start_guided or not v or v.get('start_guided') %}checked{% endif %} data-start-guided> Start the estimate when the project is saved</label>
-    <p class="muted-copy">The Project Lead is a name on the project only: it gives no access and assigns no work.</p>
     {% endcall %}
 
-    <div class="form-actions su-actions">
+    <div class="form-actions su-actions ts-actions">
         <button type="submit" class="ts-primary" data-create-project>Create the project</button>
         <a href="{{ carry_cancel_url if carry else url_for('projects.list_projects') }}">Cancel</a>
+        <p class="muted-copy" data-brayman-number>Brayman Project #: assigned automatically when the project is created.</p>
     </div>
 </form>
 </div>
 <style>
-.su-form{display:grid;gap:var(--space-4,16px);}
-.su-section{border:1px solid var(--line,#d9dee5);border-radius:var(--radius-md,8px);padding:var(--space-3,12px) var(--space-4,16px);margin:0;min-width:0;}
-.su-section legend{font-weight:700;padding:0 6px;}
-.su-roles{border:0;padding:0;margin:0;min-width:0;}.su-roles legend{font-weight:400;padding:0;}
-.su-choice{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);margin-bottom:8px;}
-.su-choice label,.su-same,.su-check{display:flex;gap:8px;align-items:center;min-height:var(--touch-target,44px);}
-.su-actions{display:flex;flex-wrap:wrap;gap:var(--space-4,16px);align-items:center;}
+/* Set Up This Project, viewport-first (2 Nov 2026): the shared compact form (.ts-form in task-screen.css) laid out in
+   rows that use the laptop's width; one column on a phone. */
+.su-form{padding:var(--space-3) var(--space-4);}
+.su-customer-row{display:grid;gap:var(--field-gap-y) var(--field-gap-x);grid-template-columns:minmax(0,1fr);align-items:end;}
+.su-customer-row .su-existing select{margin-top:0;}
+.su-req{color:var(--ink-soft);font-weight:600;}
+.su-customer-row [hidden]{display:none !important;}
+.su-roles{border:0;padding:0;margin:var(--field-gap-y) 0 0;min-width:0;}
+.su-roles legend{float:left;margin:0 var(--space-3) 0 0;padding:0;font-weight:600;font-size:var(--text-sm);color:var(--ink-soft);line-height:var(--control-height);}
+.su-check,.su-same{display:inline-flex;gap:8px;align-items:center;}
+.su-same{margin:0 0 0 var(--space-4);font-weight:500;font-size:var(--text-sm);}
+.su-same[hidden]{display:none;}
+.su-more,.su-form .np-more{margin-top:2px;}
+.su-form .ts-optional>summary{min-height:28px;}
+.su-form .su-roles{margin-top:6px;}
+.su-form .su-roles{gap:2px 12px;}
+.su-form .su-roles label{min-height:32px;font-size:var(--text-sm);}
+.su-form .su-roles legend{margin-right:4px;}
+.su-form .plan-start{margin:0;padding:var(--space-2) 0 0;border:0;border-top:1px solid var(--surface-line);border-radius:0;background:none;}
+.su-form .plan-start legend{font-size:var(--text-base);padding:0;}
+.su-form .plan-start-options{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-2);}
+.su-form .plan-start-options label{grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:8px;row-gap:0;padding:5px 10px;min-height:var(--control-height);line-height:1.3;}
+.su-form .plan-start-options label i{grid-row:span 2;font-size:18px;}
+.su-form .plan-start-options label span{font-size:var(--text-sm);line-height:1.3;}
+.su-settings-note{margin:0 0 var(--space-2);font-size:var(--text-sm);}
+.su-reason textarea{min-height:var(--control-height);}
+[data-project-settings]+.su-check{margin-top:var(--space-2);}
+.su-form .plan-start-file{margin:var(--space-2) 0 0;max-width:420px;}
+@media (min-width:900px){
+  .su-settings-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .su-reason{grid-column:span 2;}
+  .su-form .plan-start-options label span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  .su-form .plan-start-options label{min-height:var(--control-height);}
+  .su-customer-row{grid-template-columns:auto minmax(0,1fr);}
+  .su-form [data-su-customer].ts-group>legend{float:left;width:auto;margin:0 var(--space-4) 0 0;line-height:var(--control-height);}
+  .su-form [data-su-customer].ts-group>legend+*{clear:none;}
+  .su-form [data-su-customer]:has(.su-new-customer:not([hidden]))>legend{margin-top:22px;}
+  .su-customer-row:has(.su-new-customer:not([hidden])){align-items:end;}
+  .su-customer-row .su-new-customer{grid-column:2;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);}
+  .su-new-customer label{white-space:nowrap;}
+  .su-job-row{grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1fr);}
+  .su-site-row{grid-template-columns:minmax(0,1.8fr) minmax(0,1.1fr) minmax(0,.9fr) minmax(0,.8fr) minmax(0,.8fr);}
+}
+@media (max-width:899px){.su-form .plan-start-options{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:480px){.su-form .plan-start-options{grid-template-columns:minmax(0,1fr);}.su-same{margin:var(--space-1) 0 0;display:flex;}}
 </style>
 <script>
 (function () {
+    // The customer choice (2 Nov 2026): only the part for the chosen kind of customer takes space. Both parts stay in
+    // the form, so nothing typed is lost when the choice changes back.
+    var modes = document.querySelectorAll("[data-customer-mode]");
+    var existing = document.querySelector("[data-su-existing]");
+    var fresh = document.querySelector("[data-su-new-customer]");
+    var same = document.querySelector("[data-same-as-customer-label]");
+    var showMode = function () {
+        var picked = document.querySelector("[data-customer-mode]:checked");
+        var isNew = picked && picked.value === "new";
+        if (existing) existing.hidden = isNew;
+        if (fresh) fresh.hidden = !isNew;
+        if (same) same.hidden = isNew;
+    };
+    modes.forEach(function (radio) { radio.addEventListener("change", showMode); });
+    if (modes.length) showMode();
     var type = document.querySelector("[data-guided-project-type]");
     var commercial = document.querySelector('select[name="project_type"]');
     if (type && commercial) type.addEventListener("change", function () {

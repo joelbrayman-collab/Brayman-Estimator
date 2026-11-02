@@ -24,8 +24,10 @@
 </header>
 {%- endmacro %}
 
-{% macro purpose(title, why="") -%}
-<div class="ts-purpose" data-ts-purpose>
+{# title_in_header (2 Nov 2026): the page's top bar already shows this title, so on a laptop the screen does not
+   repeat it (it stays for screen readers and on a phone, where the bar shortens long titles). #}
+{% macro purpose(title, why="", title_in_header=False) -%}
+<div class="ts-purpose{% if title_in_header %} is-title-in-header{% endif %}" data-ts-purpose>
     <h2>{{ title }}</h2>
     {% if why %}<p>{{ why }}</p>{% endif %}
 </div>
@@ -74,7 +76,7 @@
 {# A closed section. {% call ts.details("Purchasing", "ts-purchasing", hint="2 orders") %} ... {% endcall %} #}
 {% macro details(title, id, hint="", open=False, attrs="") -%}
 <details class="ts-details" id="{{ id }}" data-ts-section="{{ id }}"{% if open %} open{% endif %} {{ attrs|safe }}>
-    <summary><span>{{ title }}</span>{% if hint %}<span class="ts-details-hint">{{ hint }}</span>{% endif %}</summary>
+    <summary><span>{{ title }}</span>{% if hint %}<span class="ts-details-hint" title="{{ hint }}">{{ hint }}</span>{% endif %}</summary>
     <div class="ts-details-body">{{ caller() }}</div>
 </details>
 {%- endmacro %}

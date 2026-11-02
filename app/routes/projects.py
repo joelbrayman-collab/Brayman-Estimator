@@ -533,9 +533,11 @@ def create_project():
     options["project_lead_people"] = lead_choices(org_id)
     options.update(_set_up_defaults(org_id, clients))
 
-    def _form_again():
-        # Set Up This Project (Slice C): show the screen again with what was typed, after a refusal.
-        return render_template("projects/form.html", clients=clients, values=request.form, **options)
+    def _form_again(settings_problem=False):
+        # Set Up This Project (Slice C): show the screen again with what was typed, after a refusal. A refusal about
+        # the project settings opens them (viewport-first, 2 Nov 2026: they are closed otherwise).
+        return render_template("projects/form.html", clients=clients, values=request.form,
+                               settings_problem=settings_problem, **options)
 
     if request.method == "POST":
         wizard_run = _wizard_run_for_create(org_id)
@@ -669,7 +671,8 @@ def create_project():
         except (CommercialContextValidationError, PermitFoundationError, ProjectLeadError, ProjectIdentityError) as e:
             db.session.rollback()
             flash(str(e), "error")
-            return _wizard_create_failed(wizard_run) or _form_again()
+            return _wizard_create_failed(wizard_run) or _form_again(
+                settings_problem=isinstance(e, (CommercialContextValidationError, ProjectLeadError)))
         except Exception as e:
             from app.services.clients import ClientError
 

@@ -62,6 +62,10 @@
 
 {# V1 refinement (Joel, 16 Oct 2026) kept every action; Task-First (31 Oct 2026): one primary (Next step above), the
    rest here, closed until asked for. #}
+{# Viewport-first (2 Nov 2026): the closed parts of the job sit side by side (three to a row on a laptop); an opened
+   one takes the full width. On a laptop the grid itself names every part, so the jump strip above is shown on
+   narrower screens only (task-screen.css). #}
+<div class="ts-details-grid project-sections-grid" data-project-sections>
 <details class="ts-details hub-more-actions" id="ts-more-actions" data-more-actions>
     <summary><span>More actions</span><span class="ts-details-hint">Drawings, scope, change order, print, close and the guided wizard</span></summary>
     <div class="ts-details-body">
@@ -99,7 +103,7 @@
 </details>
 
 
-{% call ts.details("Scope &amp; Estimate", "ts-estimate", hint=(guided_summary.done ~ " of " ~ guided_summary.included ~ " work items priced") if guided_summary and guided_summary.included else "Work, prices, calculations and estimates") %}
+{% call ts.details("Scope & Estimate", "ts-estimate", hint=(guided_summary.done ~ " of " ~ guided_summary.included ~ " work items priced") if guided_summary and guided_summary.included else "Work, prices, calculations and estimates") %}
 <p class="hub-section-label" id="hub-price">Estimates and proposals</p>
 {{ contextual_help(help_content.hub_topic("price")) }}
 <section class="dash-panels">
@@ -235,7 +239,7 @@
 </section>
 {% endcall %}
 
-{% call ts.details("Customer &amp; Contract", "ts-customer", hint="Proposals, acceptance, and the contract, which is sent for e-signature from the Contract page") %}
+{% call ts.details("Customer & Contract", "ts-customer", hint="Proposals, acceptance, and the contract, which is sent for e-signature from the Contract page") %}
 <p class="hub-section-label" id="hub-contract">Contract</p>
 {{ contextual_help(help_content.hub_topic("contract")) }}
 {% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
@@ -429,7 +433,7 @@
 </section>
 {% endcall %}
 
-{% call ts.details("Work &amp; Time", "ts-work", hint="Work items, time, labour hours and what Field sent") %}
+{% call ts.details("Work & Time", "ts-work", hint="Work items, time, labour hours and what Field sent") %}
 <p class="hub-section-label" id="hub-build">Project work</p>
 {{ contextual_help(help_content.hub_topic("build")) }}
 <section class="dash-panels">
@@ -1227,7 +1231,7 @@
 </div>
 {% endcall %}
 
-{% call ts.details("Plans &amp; Permits", "ts-plans", hint="Drawings, measurements and the permit report") %}
+{% call ts.details("Plans & Permits", "ts-plans", hint="Drawings, measurements and the permit report") %}
 <p class="hub-section-label" id="hub-plan">Plans &amp; permits</p>
 {{ contextual_help(help_content.hub_topic("plan")) }}
 <section class="dash-panels">
@@ -1474,6 +1478,7 @@
     {% endif %}
 </section>
 {% endcall %}
+</div>
 
 </div>
 {% endblock %}

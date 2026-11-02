@@ -20,7 +20,7 @@
     --sidebar-border: #2c3038;
     --sidebar-width: 248px;
     --sidebar-collapsed-width: 76px;
-    --header-height: 64px;
+    --header-height: 52px;     /* 64 px until 2 Nov 2026: the bar's 38 px controls need no more (viewport-first) */
 
     /* Surfaces and text */
     --cream: #f4f2ee;
@@ -77,6 +77,22 @@
     --radius-lg: 16px;
     --shadow-soft: 0 1px 2px rgba(20, 20, 20, 0.04), 0 8px 24px rgba(20, 20, 20, 0.04);
     --touch-target: 44px;
+
+    /* Density (viewport-first corrective, 2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md).
+       The vertical budget of a task screen at 1280 x 800. A laptop with a mouse uses the compact control height;
+       touch screens and phones keep --touch-target (see the pointer/width rules in task-screen.css). Text never
+       goes below --text-sm. */
+    --control-height: 38px;    /* inputs, selects, summary rows and buttons on a laptop */
+    --control-pad-y: 6px;
+    --control-pad-x: 10px;
+    --label-gap: 4px;          /* a label and its input */
+    --field-gap-y: 10px;       /* between rows of fields */
+    --field-gap-x: 14px;       /* between fields on one row */
+    --stack-gap: 12px;         /* between the blocks of a task screen */
+    --card-pad-y: 10px;
+    --card-pad-x: 14px;
+    --workspace-pad-top: 12px;
+    --workspace-pad-bottom: 32px;
 
     font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

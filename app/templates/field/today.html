@@ -8,7 +8,6 @@
     <a class="field-quick-action" href="{{ a.href }}" data-quick-action="{{ a.key }}">{{ a.label }}</a>
     {% endfor %}
 </nav>
-{% include "field/_texts_setup.html" %}
 {% include "field/_field_nav.html" %}
 {# Field Today (Task-First UX, Slice C, 1 Nov 2026; audit 3.13): the day first, then one clear list of today's work
    with ONE primary action (Capture on today's job, or Choose Project), then everything else closed under "More for
@@ -57,6 +56,9 @@
     {% endif %}
     </div>
 </section>
+{# Viewport-first (2 Nov 2026): the one-time "Get a text when your schedule changes?" question comes after today's work,
+   so the crew member sees the day and its primary action first on a phone. It is still asked on this screen. #}
+{% include "field/_texts_setup.html" %}
 
 {# Banked hours stay in view: crew see earned, used and remaining banked hours (owner decision, 25 Oct 2026). #}
 {% include "field/_banked_balance.html" %}

@@ -52,6 +52,12 @@
         for (var j = 0; j < boxes.length; j++) fit(boxes[j]);
       });
     }, { passive: true });
+    // Viewport-first (2 Nov 2026): what sits above the box can still change height after DOMContentLoaded (the
+    // fonts, the header's buttons and the toolbar wrapping), which left the box's bottom below the screen. Measure
+    // again once the page has fully loaded.
+    window.addEventListener("load", function () {
+      for (var j = 0; j < boxes.length; j++) fit(boxes[j]);
+    });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();

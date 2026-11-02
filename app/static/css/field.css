@@ -897,3 +897,19 @@ input:focus-visible {
 .field-panel > h1 { font-size: 1.45rem; line-height: 1.2; margin: 0 0 8px; }
 .field-panel > h2 { font-size: 1.2rem; line-height: 1.25; margin: 0 0 8px; }
 .field-body .contextual-help { margin-bottom: 12px; }
+
+/* Viewport-first (2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md): today's work and its primary action on
+   the first phone screen. Touch targets stay 44 px; nothing is hidden. The quick actions are 44 px (were 52), the
+   day's navigation is one row, and the work card is tighter. */
+.field-quick-action { min-height: 44px; padding: 6px 8px; }
+.field-quick-actions { gap: 6px; margin-bottom: 10px; }
+.field-schedule-nav { gap: 6px; margin-bottom: 10px; }
+.field-schedule-nav-link { padding: 6px 10px; white-space: nowrap; flex: 0 0 auto; }
+.field-today-work { padding: 12px 14px; }
+.field-today-work .field-schedule-card { margin-bottom: 8px; }
+.field-header { margin-bottom: 10px; }
+.field-today-work .field-schedule-group .field-muted { margin-bottom: 4px; }
+.field-today-work .field-directions, .field-today-work .field-plan-link { margin-bottom: 6px; }
+@media (max-width: 420px) {
+    .field-schedule-nav-link { padding: 6px 8px; font-size: 0.9rem; }
+}

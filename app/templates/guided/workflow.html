@@ -15,30 +15,13 @@
   {% if view.version %}{% set _facts = _facts + [guided.estimate.estimate_number ~ " · " ~ view.version.display_label ~ " (" ~ view.version.status ~ (", locked" if view.version.is_locked else "") ~ ")"] %}{% endif %}
   {% if not view.selected_work %}{% set _facts = _facts + [guided.project_type_label ~ " · " ~ guided.contractor_role_label] %}{% endif %}
   {{ ts.context(project.name, facts=_facts, attrs='data-estimate-context') }}
-  {{ ts.purpose("Price This Job", "Put a cost on each piece of work. Calibrayt brings the right calculator or quote to each one and adds it up.") }}
+  {{ ts.purpose("Price This Job", "Put a cost on each piece of work. Calibrayt brings the right calculator or quote to each one and adds it up.", title_in_header=True) }}
+  {# Viewport-first (2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md): two working columns on a laptop. Left:
+     the ONE next step, anything waiting, and the work list. Right: where the estimate stands (progress and totals).
+     The closed sections below sit side by side. Every hook and link is unchanged. #}
+  <div class="ts-cols ptj-cols">
+  <div class="ts-col">
   {{ ts.next_step(task.step, eyebrow=task.step.eyebrow or "Next step") }}
-
-  <section class="ge-card" data-progress="{{ view.done }}/{{ view.included }}">
-    {% if view.selected_work %}<h2 data-estimating-what>Estimating: {% for row in view.rows %}{{ row.stage.display_name }}{{ ", " if not loop.last }}{% endfor %}</h2>
-    <p class="ge-muted">{{ view.done }} of {{ view.included }} work item{{ '' if view.included == 1 else 's' }} complete</p>
-    {% else %}<h2>{{ view.done }} of {{ view.included }} stages complete</h2>{% endif %}
-    <div class="ge-progress" aria-label="Progress {{ view.percent }} percent"><span style="width: {{ view.percent }}%"></span></div>
-    <p class="ge-muted" style="margin-top:8px;">
-      {% for key, label in [('NOT_STARTED','Not Started'),('IN_PROGRESS','In Progress'),('WAITING_FOR_QUOTE','Waiting for Quote'),('NEEDS_REVIEW','Needs Review'),('COMPLETE','Complete'),('EXCLUDED','Excluded / N/A')] %}
-      {% if not (view.selected_work and key == 'EXCLUDED') %}<span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>{% endif %}
-      {% endfor %}
-    </p>
-    {% if task.figures %}
-    <dl class="pp-figures" data-price-totals>
-      <div><dt>Cost</dt><dd data-price-cost>{{ money(task.figures.direct_cost) }}</dd></div>
-      <div><dt>Selling price</dt><dd data-price-selling>{{ money(task.figures.selling_price) }}</dd></div>
-      <div><dt>True margin</dt><dd data-price-margin>{% if task.figures.true_gross_margin_percent is none %}—{% else %}{{ '%.1f'|format(task.figures.true_gross_margin_percent|float) }}%{% endif %}</dd></div>
-      <div><dt>Labour</dt><dd data-price-hours>{{ '%g'|format(task.figures.labour_hours|float) if task.figures.labour_hours is not none else '—' }} h</dd></div>
-    </dl>
-    {% endif %}
-    {% if view.accepted %}<p class="ge-warn">The customer accepted proposal {{ view.accepted.proposal_number }}. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>{% endif %}
-  </section>
-
   {% if view.waiting_calculations %}
   <section class="ge-card ge-warn" data-waiting-calculations>
     <h2>Calculations waiting for {{ 'a work item' if view.selected_work else 'a stage' }}</h2>
@@ -80,7 +63,32 @@
   </section>
 
   {% if job_attention %}{{ ts.attention(job_attention, heading="Needs you on this estimate") }}{% endif %}
+  </div>
+  <aside class="ts-col" aria-label="Where the estimate stands">
+  <section class="ge-card" data-progress="{{ view.done }}/{{ view.included }}">
+    {% if view.selected_work %}<h2 data-estimating-what>Estimating: {% for row in view.rows %}{{ row.stage.display_name }}{{ ", " if not loop.last }}{% endfor %}</h2>
+    <p class="ge-muted">{{ view.done }} of {{ view.included }} work item{{ '' if view.included == 1 else 's' }} complete</p>
+    {% else %}<h2>{{ view.done }} of {{ view.included }} stages complete</h2>{% endif %}
+    <div class="ge-progress" aria-label="Progress {{ view.percent }} percent"><span style="width: {{ view.percent }}%"></span></div>
+    <p class="ge-muted" style="margin-top:8px;">
+      {% for key, label in [('NOT_STARTED','Not Started'),('IN_PROGRESS','In Progress'),('WAITING_FOR_QUOTE','Waiting for Quote'),('NEEDS_REVIEW','Needs Review'),('COMPLETE','Complete'),('EXCLUDED','Excluded / N/A')] %}
+      {% if not (view.selected_work and key == 'EXCLUDED') %}<span class="ge-badge s-{{ key }}" data-count-{{ key|lower }}="{{ view.counts[key] }}">{{ label }} {{ view.counts[key] }}</span>{% endif %}
+      {% endfor %}
+    </p>
+    {% if task.figures %}
+    <dl class="pp-figures" data-price-totals>
+      <div><dt>Cost</dt><dd data-price-cost>{{ money(task.figures.direct_cost) }}</dd></div>
+      <div><dt>Selling price</dt><dd data-price-selling>{{ money(task.figures.selling_price) }}</dd></div>
+      <div><dt>True margin</dt><dd data-price-margin>{% if task.figures.true_gross_margin_percent is none %}—{% else %}{{ '%.1f'|format(task.figures.true_gross_margin_percent|float) }}%{% endif %}</dd></div>
+      <div><dt>Labour</dt><dd data-price-hours>{{ '%g'|format(task.figures.labour_hours|float) if task.figures.labour_hours is not none else '—' }} h</dd></div>
+    </dl>
+    {% endif %}
+    {% if view.accepted %}<p class="ge-warn">The customer accepted proposal {{ view.accepted.proposal_number }}. Changes now go through a <a href="{{ url_for('project_controls.list_change_orders') }}">change order</a>.</p>{% endif %}
+  </section>
+  </aside>
+  </div>
 
+  <div class="ts-details-grid" data-price-sections>
   {% call ts.details("More for this job", "ts-price-details", hint="Add work, calculators, supplier prices, line items") %}
     <div class="ge-actions">
       {% if view.resume %}<a class="ge-secondary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
@@ -118,5 +126,6 @@
     <ul>{% for e in history %}<li>{{ e.created_at|local_time("%Y-%m-%d %H:%M") }} — {{ e.actor_display_name }}: {{ e.event|replace('_',' ')|lower }}{% if e.stage %} · {{ e.stage.section_name }}{% endif %}{% if e.to_value %} → {{ responsibility_labels.get(e.to_value, e.to_value) }}{% endif %}</li>{% endfor %}</ul>
   {% endcall %}
   {% endif %}
+  </div>
 </div>
 {% endblock %}

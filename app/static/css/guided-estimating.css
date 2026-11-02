@@ -99,3 +99,20 @@
 .sw-other { display: block; margin-top: 8px; }
 .sw-other input { width: 100%; max-width: 420px; min-height: 44px; }
 @media (max-width: 600px) { .sw-resp button { flex: 1 1 0; min-width: 0; font-size: .95rem; } .sw-label { flex-basis: 100%; } .sw-choices { grid-template-columns: 1fr; } }
+
+/* Viewport-first (2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md): on the Price This Job and Review This
+   Estimate task screens the cards are working blocks, not posters. The task screen's grid gives the spacing. */
+.task-screen.ge-wrap { max-width: none; }
+.task-screen .ge-card { margin: 0; padding: var(--card-pad-y) var(--card-pad-x); box-shadow: none; border-radius: var(--radius-md); }
+.task-screen .ge-card h2 { margin: 0 0 4px; font-size: 1rem; }
+.task-screen .ge-card > .ge-muted { margin: 0 0 6px; font-size: var(--text-sm); }
+.task-screen .ge-progress { height: 8px; margin: 4px 0 6px; }
+.task-screen .ge-badge { padding: 1px 8px; font-size: 0.8125rem; }
+.task-screen .ge-steps > li { padding: 8px 12px; margin: 0 0 6px; }
+.task-screen .ge-steps > li:last-child { margin-bottom: 0; }
+.task-screen [data-progress] .ge-muted[style] { margin-top: 4px !important; display: flex; flex-wrap: wrap; gap: 4px; }
+.task-screen [data-price-totals] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 14px; margin: 8px 0 0; }
+.task-screen [data-price-totals] div { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--surface-line); }
+.task-screen [data-price-totals] dt { color: var(--muted); }
+.task-screen [data-price-totals] dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+.task-screen .ge-warn, .task-screen .ge-ok { margin: 6px 0; }

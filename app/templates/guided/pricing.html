@@ -15,7 +15,7 @@
   {% set _facts = [project.project_number, project.client.name if project.client else None] %}
   {% if version %}{% set _facts = _facts + [guided.estimate.estimate_number ~ " · " ~ version.display_label] %}{% endif %}
   {{ ts.context(project.name, facts=_facts) }}
-  {{ ts.purpose("Review This Estimate", "Check what the customer will pay, then approve it. The proposal is built from the approved estimate.") }}
+  {{ ts.purpose("Review This Estimate", "Check what the customer will pay, then approve it. The proposal is built from the approved estimate.", title_in_header=True) }}
 
   {% set f = review.figures %}
   {% if review.approved %}
@@ -53,13 +53,15 @@
   </section>
   {% endif %}
 
-  {% if review.known %}{{ ts.state(review.known) }}{% endif %}
-
   {% if version and economics %}
   {% from "estimates/_project_pricing.html" import project_pricing %}
   {{ project_pricing(economics, version, return_to, version.status == 'Draft' and not version.is_locked) }}
   {% endif %}
 
+  {% if review.known %}{{ ts.state(review.known) }}{% endif %}
+
+  {# Viewport-first (2 Nov 2026): the closed sections sit side by side; an opened one takes the full width. #}
+  <div class="ts-details-grid" data-review-sections>
   {% call ts.details("Approve in separate steps", "ts-approve-steps", hint="The costing check and the pricing, one at a time") %}
   <section class="ge-card" data-step="stages">
     <h2>1. Every stage resolved</h2>
@@ -140,5 +142,6 @@
     <a class="ge-secondary" href="{{ url_for('estimates.contractor_estimate_package', id=version.estimate_id, version_id=version.id) }}" data-contractor-package>Contractor Estimate Package (PDF)</a>{% endif %}
   </div>
   {% endcall %}
+  </div>
 </div>
 {% endblock %}

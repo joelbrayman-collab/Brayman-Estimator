@@ -6,7 +6,7 @@
 {{ docs_style() }}
 <section class="page-header" data-documents-library>
   <div>
-    <p class="page-purpose">Every document you may see, in one place: company policies, insurance, WSIB, licences, and the documents filed on projects, people, equipment, suppliers, subcontractors and customers.</p>
+    <p class="page-purpose">Every document you may see, in one place: company policies, insurance, WSIB and licences, and what is filed on projects, people, equipment, suppliers, subcontractors and customers.</p>
   </div>
   <a class="button-primary" href="{{ upload_url }}" data-documents-upload>Upload a company document</a>
 </section>
@@ -29,10 +29,17 @@
   <label>Type<select name="type"><option value="">Any type</option>{% for t in types %}<option value="{{ t.code }}"{% if filters.type_code == t.code %} selected{% endif %}>{{ t.label }}</option>{% endfor %}</select></label>
   <label>Filed on<select name="context"><option value="">Anywhere</option>{% for k in context_kinds %}<option value="{{ k }}"{% if filters.context_kind == k %} selected{% endif %}>{{ context_labels[k] }}</option>{% endfor %}</select></label>
   <label>Status<select name="status">{% for value, label in (("ACTIVE", "Active"), ("ARCHIVED", "Archived"), ("ALL", "All")) %}<option value="{{ value }}"{% if filters.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <button type="submit" class="button-secondary">Find</button>
+  {# Viewport-first (2 Nov 2026): the date filters are used less often; they are closed until asked for and open on
+     their own when one is set. Same fields, same names. #}
+  <details class="docs-more-filters" data-documents-more-filters{% if filters.expiring_within is not none or filters.uploaded_from or filters.uploaded_to %} open{% endif %}>
+    <summary>Dates</summary>
+    <div class="docs-more-filters-body">
   <label>Due within (days)<input type="number" min="0" max="3650" name="expiring" value="{{ filters.expiring_within if filters.expiring_within is not none else '' }}" style="width:7em"></label>
   <label>Uploaded from<input type="date" name="from" value="{{ filters.uploaded_from or '' }}"></label>
   <label>to<input type="date" name="to" value="{{ filters.uploaded_to or '' }}"></label>
-  <button type="submit" class="button-secondary">Find</button>
+    </div>
+  </details>
 </form>
 
 {{ document_rows(results, empty="Nothing found. Try fewer words, or upload the document.") }}

@@ -1374,3 +1374,31 @@ form.people-access-actions:not(.form-grid) > p { margin: 0; }
 .project-pricing .pp-figures dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
 .project-pricing .pp-figures .pp-total dt, .project-pricing .pp-figures .pp-total dd { font-weight: 700; color: inherit; }
 @media (max-width: 720px) { .project-pricing .pp-grid { grid-template-columns: 1fr; } .project-pricing .pp-input input { width: 100%; } }
+
+/* Project pricing, viewport-first (2 Nov 2026): the same fields in compact rows (rate, margin and HST on one row;
+   the winter settings on the next; the reason and Save on the last), the figures beside them. Ben sees the commercial
+   result and the rates it uses without scrolling past a tall stack of inputs. */
+.project-pricing { padding: var(--card-pad-y, 10px) var(--card-pad-x, 14px); margin: 0; }
+.project-pricing h2 { margin: 0 0 6px; font-size: 1rem; }
+.project-pricing .pp-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 8px 20px; }
+.project-pricing .pp-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 14px; align-items: start; }
+.project-pricing .pp-field { margin: 0; min-width: 0; }
+.project-pricing label { margin: 0 0 2px; font-size: 0.875rem; }
+.project-pricing .pp-input span { white-space: nowrap; }
+.project-pricing .pp-input input { flex: 1 1 auto; width: 100%; min-width: 0; min-height: var(--control-height, 38px); margin: 0; padding: 4px 8px; font-size: 1rem; }
+.project-pricing .pp-note { margin: 2px 0 0; font-size: 0.8125rem; line-height: 1.3; }
+.project-pricing .pp-reason { grid-column: 1 / 3; }
+.project-pricing .pp-reason input { min-height: var(--control-height, 38px); margin: 0; padding: 4px 8px; }
+.project-pricing .pp-save { align-self: end; min-height: var(--control-height, 38px); padding: 6px 12px; }
+.project-pricing .pp-check { display: flex; align-items: center; gap: 6px; min-height: var(--control-height, 38px); }
+.project-pricing [data-winter-job] .pp-note { display: none; }
+.project-pricing [data-winter-job] .pp-check { margin-top: 20px; }
+.project-pricing .pp-figures div { padding: 4px 0; }
+.project-pricing > .pp-note { margin-top: 4px; }
+@media (max-width: 720px) {
+    .project-pricing .pp-grid { grid-template-columns: 1fr; }
+    .project-pricing .pp-inputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .project-pricing .pp-reason { grid-column: 1 / -1; }
+    .project-pricing .pp-check { min-height: 44px; }
+    .project-pricing .pp-input input, .project-pricing .pp-reason input, .project-pricing .pp-save { min-height: 44px; }
+}

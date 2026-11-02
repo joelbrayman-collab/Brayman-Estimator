@@ -609,3 +609,15 @@ Documents library and Calendar did not).
   mode switch without JavaScript (both branches still work).
 - A suggested zero-specificity wrapper (`:where(.shell-workspace)`) was tried and reverted: older app.css rules
   won and the opened settings grew to 443 px (limit 420).
+- After the review fixes, on Python 3.9.6 (the Mac's version), one pytest run per file across all 334 test files:
+  **3,989 passed, 1 failed, 11 skipped**. The 11 skipped are `test_historical_ingestion.py`, which needs
+  Joel's historical estimates folder (set by the gate on the Mac). The 1 failure was
+  `test_wall_framing_calculator.py::test_contractor_wall_framing_page_in_the_browser`: at 390 px it measured
+  `scrollWidth` 2508 because it read the layout before the result page's stylesheets had loaded (it passed on
+  rerun). Root cause fixed in `tests/wall_framing_page_browser.mjs` (wait for the page's `load` before measuring);
+  passed 3 of 3 since. The 22 files that finished before the review fixes, plus wall framing, density and the
+  Python 3.9 guard, were rerun on the fixed code: **277 passed, 0 failed**.
+- One full browser run stopped with "No space left on device" in the workspace (about 287,000 temporary
+  `calibai-*` folders left behind by earlier test runs). After deleting the leftovers, the full run on the
+  branch head (all 28 walk files, `--test-concurrency=1`): **324 passed, 0 failed, 0 skipped**, no page or server
+  errors. The leftover-folder leak is handed to the faster-gate release.

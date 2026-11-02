@@ -3,7 +3,7 @@
 {% block page_title %}Employees &amp; labour cost{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
 {% block content %}
-{# Employee cost profiles (Joel, 2 Nov 2026). Owner or System Administrator only (the People & Access wall). Every
+{# Employee cost profiles (Joel, 2 Nov 2026). Owner or System Administrator only (the people-administration wall). Every
    employee needs a complete cost profile; one without cannot be put on an estimate crew. #}
 {% import "partials/task_screen.html" as ts with context %}
 {% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}

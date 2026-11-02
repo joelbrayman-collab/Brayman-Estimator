@@ -207,6 +207,9 @@
 .shell-workspace :where(input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]), select) { min-height: var(--control-height); }
 .shell-workspace :where(.form-grid) { gap: var(--field-gap-y) var(--field-gap-x); }
 .shell-workspace .form-grid > :where(label) { margin-bottom: 0; }
+/* Components whose own sizes predate the shared rules keep them (review 2 Nov 2026). */
+.shell-workspace .contextual-help-question { margin-top: 0; min-height: 44px; padding: 8px 12px; }
+.shell-workspace .lifecycle-confirm-check { margin-bottom: 24px; }
 .shell-workspace :where(.form-panel, .empty-state) { padding: var(--space-4) var(--space-5); }
 .shell-workspace:not(:has(> .wf, > .cal-workspace)) { padding-top: var(--workspace-pad-top); }
 .shell-workspace { padding-bottom: var(--workspace-pad-bottom); }
@@ -270,7 +273,8 @@
    person show as icons (their names stay as the tooltip and accessible name; the company name is also at the top of
    the menu), so a long title such as "Review This Estimate" is not cut off. */
 @media (max-width: 1439px) {
-    .shell-header .header-company-label, .shell-header .header-user-label { display: none; }
+    /* Visually hidden, not display:none, so screen readers still hear the company and the signed-in name. */
+    .shell-header .header-company-label, .shell-header .header-user-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .shell-header .header-company { width: 38px; max-width: none; justify-content: center; padding: 0; }
     .shell-header .header-user-btn { padding: 4px; }
 }

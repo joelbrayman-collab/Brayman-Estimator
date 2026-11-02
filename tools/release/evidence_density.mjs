@@ -272,6 +272,7 @@ test("Set Up This Project, refused: the screen comes back with what was typed an
   await go(pg, "/projects/new");
   await pg.check('input[name=customer_mode][value="new"]');
   await pg.fill("input[name=name]", "Refused job (synthetic)");
+  await pg.selectOption("select[name=guided_project_type]", "NEW_HOME"); // fills the commercial type: not a settings change
   await press(pg, "[data-create-project]");
   assert.equal(pathOf(pg), "/projects/new");
   assert.match(await pg.locator(".flash-stack").innerText(), /required/i);
@@ -279,6 +280,7 @@ test("Set Up This Project, refused: the screen comes back with what was typed an
     assert.equal(await pg.inputValue("input[name=name]"), "Refused job (synthetic)");
     assert.equal(await pg.locator('input[name=customer_mode][value="new"]').isChecked(), true);
     assert.equal(await pg.locator("input[name=new_customer_name]").isVisible(), true, "the missing name is in view");
+    assert.equal(await pg.locator("#ts-project-settings").evaluate((d) => d.open), false, "a routine refusal leaves the settings closed");
   }
   await measure(pg, "Set Up (refused: no customer name)", [...SET_UP_TASK, ".flash-stack", "input[name=new_customer_name]"]);
   // An exceptional setting with no reason: refused; the settings open on their own, with the reason in view.
@@ -319,6 +321,14 @@ test("Phone 390 x 844: the office screens stay one column with no sideways scrol
     ["Documents library", "/documents", ["main"]]]) {
     await go(pg, url);
     await measure(pg, `${label} (phone)`, task, { mustFit: false, reason: "phones may scroll" });
+    if (label === "Set Up" && !BASELINE) {
+      // Touch targets stay 44 px on a phone (review 2 Nov 2026): the role choices, the checkboxes, the closed parts.
+      const small = await pg.evaluate(() => [...document.querySelectorAll(
+        ".su-form .su-roles label, .su-form .su-check, .su-form .su-same, .su-form .ts-optional > summary")]
+        .filter((el) => el.offsetParent !== null && el.getBoundingClientRect().height < 44)
+        .map((el) => `${el.className || el.tagName}: ${Math.round(el.getBoundingClientRect().height)}px`));
+      assert.deepEqual(small, [], "touch targets under 44 px on a phone");
+    }
   }
   assert.deepEqual(errors, []);
   await ctx.close();

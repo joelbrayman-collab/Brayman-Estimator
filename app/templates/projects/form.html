@@ -24,7 +24,7 @@
    parts stay in the form (hidden, not removed), so what is submitted is exactly as before. #}
 {% set _mode = v.get('customer_mode') or ('existing' if clients else 'new') %}
 {% set _setting_names = ['pricing_posture', 'execution_risk', 'schedule_condition', 'site_condition', 'estimate_stage', 'delivery_model'] %}
-{% set _settings_changed = (v.get('status') and v.get('status') != 'Lead') or v.get('project_type') or v.get('justification_reason')
+{% set _settings_changed = (v.get('status') and v.get('status') != 'Lead') or (v.get('project_type') and v.get('project_type') != guided_commercial_hint.get(v.get('guided_project_type') or '', '')) or v.get('justification_reason')
    or (v.get('permit_context_class') and v.get('permit_context_class') != default_permit_context_class)
    or (v.get('project_lead_user_id') and v.get('project_lead_user_id')|string != default_project_lead_id|string) %}
 {% for name in _setting_names %}{% if v.get(name) and v.get(name) != setting_defaults[name] %}{% set _settings_changed = True %}{% endif %}{% endfor %}
@@ -217,10 +217,9 @@
 .su-same{margin:0 0 0 var(--space-4);font-weight:500;font-size:var(--text-sm);}
 .su-same[hidden]{display:none;}
 .su-more,.su-form .np-more{margin-top:2px;}
-.su-form .ts-optional>summary{min-height:28px;}
 .su-form .su-roles{margin-top:6px;}
 .su-form .su-roles{gap:2px 12px;}
-.su-form .su-roles label{min-height:32px;font-size:var(--text-sm);}
+.su-form .su-roles label{font-size:var(--text-sm);}
 .su-form .su-roles legend{margin-right:4px;}
 .su-form .plan-start{margin:0;padding:var(--space-2) 0 0;border:0;border-top:1px solid var(--surface-line);border-radius:0;background:none;}
 .su-form .plan-start legend{font-size:var(--text-base);padding:0;}
@@ -247,6 +246,14 @@
   .su-job-row{grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1fr);}
   .su-site-row{grid-template-columns:minmax(0,1.8fr) minmax(0,1.1fr) minmax(0,.9fr) minmax(0,.8fr) minmax(0,.8fr);}
 }
+/* Compact heights only with a mouse on a laptop-width screen; touch keeps the 44px targets (review 2 Nov 2026). */
+@media (pointer:fine) and (min-width:721px){
+  .su-form .ts-optional>summary{min-height:28px;}
+  .su-form .su-roles label{min-height:32px;}
+}
+@media (pointer:coarse),(max-width:720px){
+  .su-check,.su-same,.su-form .su-roles label,.su-form .ts-optional>summary{min-height:var(--touch-target,44px);}
+}
 @media (max-width:899px){.su-form .plan-start-options{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media (max-width:480px){.su-form .plan-start-options{grid-template-columns:minmax(0,1fr);}.su-same{margin:var(--space-1) 0 0;display:flex;}}
 </style>
@@ -264,6 +271,9 @@
         if (existing) existing.hidden = isNew;
         if (fresh) fresh.hidden = !isNew;
         if (same) same.hidden = isNew;
+        // A new customer has no saved address: untick "Same as the customer's address" and put back what was typed.
+        var sameBox = document.querySelector("[data-same-as-customer]");
+        if (isNew && sameBox && sameBox.checked) { sameBox.checked = false; sameBox.dispatchEvent(new Event("change")); }
     };
     modes.forEach(function (radio) { radio.addEventListener("change", showMode); });
     if (modes.length) showMode();

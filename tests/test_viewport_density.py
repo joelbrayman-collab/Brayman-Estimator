@@ -161,6 +161,24 @@ def test_a_typed_setting_that_differs_from_the_default_keeps_the_settings_open(e
     assert not _open(page, 'id="ts-project-settings"'), "defaults sent back unchanged stay closed"
 
 
+
+def test_the_commercial_type_filled_from_what_is_being_built_does_not_open_the_settings(env):
+    """Review finding (2 Nov 2026): the page fills project_type from "What is being built", so a refusal that sends
+    that hint back is not a change the user made; only a type that differs from the hint opens the settings."""
+    from app.services.guided_estimating import COMMERCIAL_TYPE_HINT
+
+    _app, d, _ben = env
+    key, hint = next(iter(COMMERCIAL_TYPE_HINT.items()))
+    page = _main(d.post("/projects/new", data={"customer_mode": "new", "name": "Refused (synthetic)",
+                                               "guided_project_type": key, "project_type": hint},
+                        status=200).get_data(as_text=True))
+    assert not _open(page, 'id="ts-project-settings"'), "the filled-in hint is not a change"
+    other = next(v for v in COMMERCIAL_TYPE_HINT.values() if v != hint)
+    page = _main(d.post("/projects/new", data={"customer_mode": "new", "name": "Refused (synthetic)",
+                                               "guided_project_type": key, "project_type": other},
+                        status=200).get_data(as_text=True))
+    assert _open(page, 'id="ts-project-settings"'), "a type the user changed keeps the settings open"
+
 # ================================================================================ Review This Estimate
 def test_review_this_estimate_keeps_the_figures_beside_the_approval(env):
     from tests.test_guided_tasks import _priced_job

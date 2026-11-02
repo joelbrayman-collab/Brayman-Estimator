@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Employees &amp; labour cost | Brayman Construction Platform{% endblock %}
+{% block page_title %}Employees &amp; labour cost{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+{# Employee cost profiles (Joel, 2 Nov 2026). Owner or System Administrator only (the People & Access wall). Every
+   employee needs a complete cost profile; one without cannot be put on an estimate crew. #}
+{% import "partials/task_screen.html" as ts with context %}
+{% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}
+<div class="task-screen" data-employees>
+  {{ ts.context("Employees", facts=[rows|length ~ " employee" ~ ("" if rows|length == 1 else "s"), "WSIB $" ~ "%.2f"|format(wsib.rate|float) ~ " per $100"]) }}
+  {{ ts.purpose("Employees & labour cost", "Every employee's real cost per hour worked (Loaded Labour Rate). Estimates use it for the crew's real labour cost.", title_in_header=True) }}
+  {% if missing %}
+  <section class="ts-next" data-next-step="cost_profile" data-cost-profile-missing="{{ missing }}" aria-label="Cost profile required">
+    <div>
+      <p class="ts-next-eyebrow">Cost profile required</p>
+      <p class="ts-next-title">{{ missing }} employee{{ "" if missing == 1 else "s" }} need{{ "s" if missing == 1 else "" }} a cost profile</p>
+      <p class="ts-next-why">An employee without a complete cost profile cannot be put on an estimate crew. Sign-in and time entry are not affected.</p>
+    </div>
+    {% set first = (rows|selectattr("complete", "equalto", false)|selectattr("person.is_active")|list)[0] %}
+    <a class="ts-primary" href="{{ url_for('people_access.employee', person_id=first.person.id) }}" data-next-step-action>Enter {{ first.person.full_name }}'s cost profile</a>
+  </section>
+  {% else %}
+  <section class="ts-next" data-next-step="add_employee" aria-label="Add an employee">
+    <div><p class="ts-next-eyebrow">Every employee has a cost profile</p><p class="ts-next-title">Add each new employee with their cost profile</p></div>
+    <a class="ts-primary" href="{{ url_for('people_access.employee_new') }}" data-next-step-action>Add an employee</a>
+  </section>
+  {% endif %}
+
+  <div class="projects-workspace" data-employee-list>
+    <div class="register-head"><span>Employee</span><span>Cost profile</span></div>
+    {% for row in rows %}
+    <a class="register-row" href="{{ url_for('people_access.employee', person_id=row.person.id) }}" data-employee="{{ row.person.id }}" data-cost-profile="{{ 'complete' if row.complete else 'required' }}">
+      <span class="projects-row-identity">
+        <span class="projects-row-name">{{ row.person.full_name }}{% if not row.person.is_active %} (inactive){% endif %}</span>
+        <span class="muted-copy">{{ money(row.person.hourly_wage) }} an hour</span>
+      </span>
+      <span class="projects-row-stage">
+        {% if row.complete %}<span class="status">Loaded labour rate {{ money(row.loaded_rate) }} / working hour</span>
+        {% else %}<span class="status status-locked" data-cost-profile-required>Cost profile required</span>{% endif %}
+      </span>
+    </a>
+    {% else %}
+    <p class="projects-empty-title">No employees yet</p>
+    {% endfor %}
+  </div>
+
+  <div class="ts-details-grid">
+  {% call ts.details("Company WSIB rate", "ts-company-wsib", hint="$" ~ "%.2f"|format(wsib.rate|float) ~ " per $100" ~ (" (default)" if wsib.is_default else "")) %}
+    <form method="post" action="{{ url_for('people_access.employees_wsib') }}" class="ts-form" data-company-wsib-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p class="muted-copy">Used for every employee unless their profile overrides it. {{ wsib.label }}</p>
+      <div class="ts-row">
+        <label>WSIB rate per $100<input name="wsib_rate_per_100" inputmode="decimal" value="{{ '%.2f'|format(wsib.rate|float) }}" required></label>
+        <label>Rate class<input name="wsib_class_label" maxlength="120" value="{{ wsib.label }}"></label>
+      </div>
+      <div class="ts-actions"><button type="submit" class="button">Save the company WSIB rate</button></div>
+    </form>
+  {% endcall %}
+  {% call ts.details("More", "ts-employees-more") %}
+    <div class="ge-actions"><a class="button-secondary" href="{{ url_for('people_access.employee_new') }}">Add an employee</a> <a href="{{ url_for('people_access.index') }}">People &amp; Access (sign-ins)</a></div>
+  {% endcall %}
+  </div>
+</div>
+{% endblock %}

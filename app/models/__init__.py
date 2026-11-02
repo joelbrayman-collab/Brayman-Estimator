@@ -87,7 +87,13 @@ from app.models.organization import (
     OrganizationSystemAdministratorEvent,
     OrganizationSystemAdministratorMembership,
 )
-from app.models.person import OrganizationPerson, OrganizationPersonWageEvent
+from app.models.person import (
+    EstimateCrewMember,
+    OrganizationLabourCostSetting,
+    OrganizationPerson,
+    OrganizationPersonCostProfile,
+    OrganizationPersonWageEvent,
+)
 from app.models.people_access_event import PeopleAccessEvent
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
@@ -412,6 +418,9 @@ __all__ = [
     "OrganizationOnboardingStep",
     "OrganizationCrewMember",
     "OrganizationPerson",
+    "OrganizationPersonCostProfile",
+    "OrganizationLabourCostSetting",
+    "EstimateCrewMember",
     "OrganizationPersonWageEvent",
     "PeopleAccessEvent",
     "Project",

@@ -94,6 +94,12 @@ def record_approval(version, *, user=None, actor_name: str = "") -> EstimateAppr
     if not name:
         raise EstimateApprovalError("A person must approve the estimate.")
     summary = approval_summary(version)
+    # The Internal Project Financial Summary's figures and the crew's Loaded Labour Rates at approval (Joel, 2 Nov
+    # 2026), kept with the record so the approved summary never changes. The fingerprint stays that of the approval
+    # summary above (verify() recomputes it); the frozen internal figures sit beside it.
+    from app.services.internal_financial_summary import freeze_for_approval
+
+    stored = dict(summary, internal_financial_summary=freeze_for_approval(version))
     previous = _approved_predecessor(version)
     record = EstimateApproval(
         organization_id=version.estimate.organization_id,
@@ -102,7 +108,7 @@ def record_approval(version, *, user=None, actor_name: str = "") -> EstimateAppr
         approved_by_user_id=getattr(user, "id", None),
         approved_by_name=name,
         approved_at=version.signed_off_at or datetime.utcnow(),
-        summary_json=json.dumps(summary, sort_keys=True),
+        summary_json=json.dumps(stored, sort_keys=True),
         fingerprint=fingerprint_of(summary),
         predecessor_version_id=previous.estimate_version_id if previous is not None else None,
     )

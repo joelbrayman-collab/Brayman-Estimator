@@ -71,6 +71,24 @@ def set_default_margin():
     return redirect(url_for("pricing_engine.index"))
 
 
+@pricing_engine_bp.route("/subcontract-markup", methods=["POST"])
+def set_subcontract_markup():
+    """The company's subcontract markup (Joel, 2 Nov 2026: 0 % unless a markup is approved)."""
+    from app.services.estimate_economics import EstimateEconomicsError, set_company_subcontract_markup
+
+    try:
+        policy = set_company_subcontract_markup(request.form.get("markup_percent", ""), actor=_actor(),
+                                                reason=request.form.get("reason", ""),
+                                                organization_id=get_current_organization_id())
+        db.session.commit()
+        flash(f"Subcontract markup is now {(policy.subcontract_markup_rate or 0) * 100:.2f}%. New pricing uses it; "
+              "priced and approved estimates keep theirs.", "success")
+    except EstimateEconomicsError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return redirect(url_for("pricing_engine.index"))
+
+
 @pricing_engine_bp.route("/policies/new", methods=["GET", "POST"])
 def create_policy():
     if request.method == "POST":
@@ -94,6 +112,7 @@ def create_policy():
                 tax_jurisdiction=request.form.get("tax_jurisdiction"),
                 tax_percent=request.form.get("tax_percent") or None,
                 provenance=request.form.get("provenance"),
+                subcontract_markup_rate=request.form.get("subcontract_markup_rate") or None,
             )
             db.session.commit()
             flash("Draft pricing policy created.", "success")

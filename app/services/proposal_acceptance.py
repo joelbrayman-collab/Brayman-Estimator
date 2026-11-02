@@ -134,7 +134,7 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
     # Gate 1 (30 Oct 2026): the immutable approval record, with the frozen summary of what was approved.
     from app.services.estimate_approval import record_approval
 
-    record_approval(version, user=user, actor_name=version.signed_off_by_name)
+    approval = record_approval(version, user=user, actor_name=version.signed_off_by_name)
     existing = (
         Proposal.query.filter(Proposal.estimate_version_id == version.id,
                               Proposal.status.in_(("Draft", "Ready")))
@@ -149,13 +149,32 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
             existing = None  # an early draft with old prices is left alone; a new proposal is built
     if existing is not None:
         db.session.commit()
+        _file_internal_summary(version, approval, user)
         return existing
     try:
-        return create_proposal(estimate=estimate, version=version, template=template,
-                               status="Ready", organization_id=org_id)
+        proposal = create_proposal(estimate=estimate, version=version, template=template,
+                                   status="Ready", organization_id=org_id)
     except ProposalServiceError:
         db.session.rollback()
         raise
+    _file_internal_summary(version, approval, user)
+    return proposal
+
+
+def _file_internal_summary(version, approval, user) -> None:
+    """File the approved Internal Project Financial Summary in the project's Documents (2 Nov 2026). The approval
+    is already committed; if filing fails, the approval stands and the summary can still be opened from the frozen
+    figures (Review This Estimate), so the failure is logged rather than undoing the approval."""
+    import logging
+
+    from app.services.internal_financial_summary import file_approved_summary
+
+    try:
+        file_approved_summary(version, approval, user=user)
+    except Exception:  # noqa: BLE001 - filing never undoes an approval
+        db.session.rollback()
+        logging.getLogger(__name__).exception("Internal Project Financial Summary not filed for version %s",
+                                              getattr(version, "id", None))
 
 
 # ---------------------------------------------------------------- 2. Send

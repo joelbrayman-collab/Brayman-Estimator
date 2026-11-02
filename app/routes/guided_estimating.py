@@ -550,13 +550,35 @@ def pricing(project_id):
     from app.services.guided_tasks import review_this_estimate
 
     review = review_this_estimate(project, guided)
+    financial = _financial_summary_panel(guided, version)
     return render_template("guided/pricing.html", project=project, guided=guided, version=version,
+                           financial=financial,
                            blockers=G.guided_blockers(guided), costing=costing,
                            issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,
                            proposals=proposals, return_to=url_for("guided.pricing", project_id=project.id),
                            economics=economics, review=review,
                            handoff=G.handoff(guided))
+
+
+def _financial_summary_panel(guided, version):
+    """Review This Estimate's Internal Project Financial Summary and crew (2 Nov 2026): people administrators only
+    (the crew's loaded rates come from wages); None for everyone else, so nothing of it is shown to them."""
+    from flask_login import current_user
+
+    from app.services.documents.access import is_people_admin
+
+    if version is None or guided.estimate is None or not is_people_admin(current_user, _org()):
+        return None
+    from app.services import estimate_crew as crew
+    from app.services.labour_cost_profile import assignable_employees, employees
+
+    rows = crew.crew(guided.estimate)
+    on_crew = {r["person"].id: r for r in rows}
+    all_rows = employees(_org())
+    return {"crew": rows, "problem": crew.crew_problem(guided.estimate), "assignable": assignable_employees(_org()),
+            "on_crew": on_crew, "incomplete": [r for r in all_rows if r["person"].is_active and not r["complete"]],
+            "pdf_url": url_for("guided_tasks.internal_financial_summary", project_id=guided.project_id)}
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/revision", methods=["POST"])

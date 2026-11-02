@@ -20,7 +20,7 @@ from app import create_app, db
 
 PREV_HEAD = "g7b8c9d0e1f2"
 S16_REVISION = "h8c9d0e1f2a3"
-GRAPH_HEAD = "t7a8b9c0d1e2"  # company documents and equipment (31 Oct 2026) follows the estimate-to-project platform (s6f7a8b9c0d1)
+GRAPH_HEAD = "u8b9c0d1e2f3"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
 NOW = "2026-09-23 12:00:00"
 
 

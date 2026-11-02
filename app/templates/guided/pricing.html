@@ -32,7 +32,7 @@
     <div>
       <p class="ts-next-eyebrow">Your decision</p>
       <p class="ts-next-title">Approve this estimate at {{ money(f.customer_total) }} including HST</p>
-      <p class="ts-next-why" data-approve-consequence>Approving confirms the costs, prices the job at {{ '%.2f'|format(f.margin_percent|float) if f.margin_percent is not none else '—' }}% margin and {{ money(f.labour_rate) }} an hour, and locks {{ version.display_label }} at {{ money(f.customer_total) }}. The proposal is built from it. An approved estimate is never unlocked; a change is a new version.</p>
+      <p class="ts-next-why" data-approve-consequence>Approving confirms the costs, prices the job at {% if f.pricing_method == "LABOUR_AT_RATE_MATERIAL_MARGIN" %}{{ money(f.labour_rate) }} an hour for labour (no margin) and {{ '%.2f'|format(f.margin_percent|float) if f.margin_percent is not none else '—' }}% margin on materials{% else %}{{ '%.2f'|format(f.margin_percent|float) if f.margin_percent is not none else '—' }}% margin and {{ money(f.labour_rate) }} an hour{% endif %}, and locks {{ version.display_label }} at {{ money(f.customer_total) }}. The proposal is built from it. An approved estimate is never unlocked; a change is a new version.</p>
     </div>
     <form method="post" action="{{ url_for('guided_tasks.approve_estimate', project_id=project.id) }}" data-approve-estimate-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -107,6 +107,33 @@
   </section>
   {% endif %}
   {% endcall %}
+
+  {% if financial %}
+  {# Internal Project Financial Summary and the estimate crew (Joel, 2 Nov 2026). People administrators only: the
+     crew's loaded rates come from wages. Internal: never on the customer proposal. #}
+  {% call ts.details("Internal Project Financial Summary (PDF)", "ts-review-financial-summary", hint=(financial.problem or ("Crew: " ~ (financial.crew|map(attribute="name")|join(", "))))) %}
+  <section class="ge-card" data-financial-summary>
+    <p><a class="ge-secondary" href="{{ financial.pdf_url }}" target="_blank" rel="noopener" data-financial-summary-pdf>Internal Project Financial Summary (PDF)</a>
+      <span class="ge-muted">Revenue, real cost and profit by work package. Internal: never shown to the customer.{% if review.approved %} The approved figures are frozen with the approval.{% endif %}</span></p>
+    {% if financial.problem %}<p class="ge-warn" data-crew-not-assigned>{{ financial.problem }}. Labour is shown at the charge rate only until the crew is assigned.</p>{% endif %}
+    <form method="post" action="{{ url_for('guided_tasks.assign_crew', project_id=project.id) }}" class="ts-form" data-crew-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <fieldset class="ts-group"><legend>Crew for this estimate (share of the hours; blank shares are equal)</legend>
+      {% if financial.assignable %}
+      <div class="ts-row">
+        {% for row in financial.assignable %}{% set on = financial.on_crew.get(row.person.id) %}
+        <label class="crew-pick"><span><input type="checkbox" name="person_id" value="{{ row.person.id }}" {{ "checked" if on }} data-crew-person="{{ row.person.id }}"> {{ row.person.full_name }} · {{ "${:,.2f}".format(row.loaded_rate|float) }}/h loaded</span>
+          <input name="share_{{ row.person.id }}" inputmode="decimal" placeholder="1" value="{{ '%g'|format(on.share|float) if on else '' }}" aria-label="Share of the hours for {{ row.person.full_name }}"></label>
+        {% endfor %}
+      </div>
+      {% else %}<p class="ge-muted">No employee has a complete cost profile yet.</p>{% endif %}
+      {% if financial.incomplete %}<p class="ge-muted" data-crew-incomplete>Cost profile required before they can be on a crew: {% for row in financial.incomplete %}<a href="{{ url_for('people_access.employee', person_id=row.person.id) }}">{{ row.person.full_name }}</a>{{ ", " if not loop.last }}{% endfor %}.</p>{% endif %}
+      </fieldset>
+      {% if not review.approved %}<div class="ts-actions"><button type="submit" class="ge-secondary" data-save-crew>Save the crew</button></div>{% endif %}
+    </form>
+  </section>
+  {% endcall %}
+  {% endif %}
 
   {% if version %}
   {% call ts.details("The customer proposal", "ts-review-proposal", hint=(proposals|length ~ " proposal" ~ ("" if proposals|length == 1 else "s")) if proposals else "Built from the approved estimate") %}

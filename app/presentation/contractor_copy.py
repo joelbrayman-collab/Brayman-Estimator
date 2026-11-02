@@ -654,6 +654,7 @@ PRICING_METHOD_LABELS = {
     "TRUE_GROSS_MARGIN": "Gross Margin Pricing",
     "COST_PLUS_MARKUP": "Cost plus markup",
     "COST_PLUS_MARKUP_STACK": "Cost plus markup (legacy stack)",
+    "LABOUR_AT_RATE_MATERIAL_MARGIN": "Labour at rate (no margin), margin on materials",
 }
 
 NO_PRICING_LOCK = (

@@ -9,7 +9,8 @@ from decimal import Decimal
 from app.models.labour_engine import EstimateLabourSnapshot
 from app.services.organizations import get_current_organization_id
 
-NAMED_CUSTOMER_METHODS = frozenset({"TRUE_GROSS_MARGIN", "COST_PLUS_MARKUP"})
+# LABOUR_AT_RATE_MATERIAL_MARGIN (2 Nov 2026) is a named method: its snapshot governs the customer price too.
+NAMED_CUSTOMER_METHODS = frozenset({"TRUE_GROSS_MARGIN", "COST_PLUS_MARKUP", "LABOUR_AT_RATE_MATERIAL_MARGIN"})
 LEGACY_STACK_METHOD = "COST_PLUS_MARKUP_STACK"
 
 

@@ -42,10 +42,16 @@ def company_defaults(organization_id: str) -> dict:
     standard = _active_org_approved_dlcrs(organization_id, None)
     policy = (OrganizationPricingPolicy.query
               .filter_by(organization_id=organization_id, approval_status="ORG_APPROVED", is_default=True).first())
+    from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
+
     margin = None
-    if policy is not None and policy.method == "TRUE_GROSS_MARGIN" and policy.target_gross_margin is not None:
+    if (policy is not None and policy.method in ("TRUE_GROSS_MARGIN", LABOUR_AT_RATE_MATERIAL_MARGIN)
+            and policy.target_gross_margin is not None):
         margin = Decimal(str(policy.target_gross_margin))
     return {
+        "pricing_method": policy.method if policy is not None else None,
+        "subcontract_markup_rate": (Decimal(str(policy.subcontract_markup_rate or 0))
+                                    if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None),
         "labour_rate": Decimal(str(standard.rate_per_man_hour)).quantize(CENT) if standard is not None else None,
         "labour_standard": standard,
         "target_gross_margin": margin,
@@ -58,11 +64,19 @@ def capture_defaults(version, organization_id: str, *, from_version=None) -> Non
     """Give a new version its project values: the previous version's (a revision keeps the project's values),
     otherwise the company defaults. Never overwrites a value the version already has."""
     defaults = None
+    if getattr(version, "pricing_method", None) is None:
+        # The method the version is priced with (2 Nov 2026): a revision keeps its version's; a new estimate takes
+        # the company's. An older version that recorded none keeps being priced as it always was.
+        if from_version is not None:
+            version.pricing_method = getattr(from_version, "pricing_method", None)
+        else:
+            defaults = company_defaults(organization_id)
+            version.pricing_method = defaults["pricing_method"]
     if version.labour_rate is None:
         if from_version is not None and from_version.labour_rate is not None:
             version.labour_rate, version.labour_rate_reason = from_version.labour_rate, from_version.labour_rate_reason
         else:
-            defaults = company_defaults(organization_id)
+            defaults = defaults or company_defaults(organization_id)
             version.labour_rate = defaults["labour_rate"]
     if version.target_gross_margin is None:
         if from_version is not None and from_version.target_gross_margin is not None:
@@ -273,13 +287,17 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
     the estimator to see before approving and applying.
     """
     from app.services.estimate_costing import current_costing_snapshot, working_matches_costing_snapshot
+    from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
     from app.services.pricing_engine import (
         apply_tax_after_pre_tax,
         as_money,
+        labour_material_margin_price,
         resolve_pricing_policy,
         true_gross_margin_pre_tax,
         version_line_direct_cost,
+        version_pricing_method,
     )
+    from app.services.work_packages import participating_lines
 
     org_id = organization_id or _org(version)
     values = project_values(version, org_id)
@@ -289,7 +307,18 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
     snapshot = getattr(version, "pricing_snapshot", None)
     costing = current_costing_snapshot(version)
     costing_current = costing is not None and working_matches_costing_snapshot(version, costing)
-    applied = (snapshot is not None and costing_current and snapshot.method == "TRUE_GROSS_MARGIN"
+    try:
+        resolved = resolve_pricing_policy(version, organization_id=org_id)
+    except Exception:  # noqa: BLE001 - a preview never blocks the page
+        resolved = {"policy": None, "method": None}
+    policy = resolved.get("policy")
+    method = version_pricing_method(version, resolved.get("method"))
+    if method != LABOUR_AT_RATE_MATERIAL_MARGIN:
+        method = "TRUE_GROSS_MARGIN"  # the review's figures: the whole-estimate true gross margin, as before
+    markup = (Decimal(str(policy.subcontract_markup_rate or 0))
+              if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else Decimal("0"))
+    breakdown = None
+    applied = (snapshot is not None and costing_current and snapshot.method == method
                and snapshot.costing_snapshot_id == costing.id
                and snapshot.target_gross_margin is not None and values["target_gross_margin"] is not None
                and Decimal(str(snapshot.target_gross_margin)) == values["target_gross_margin"])
@@ -298,14 +327,17 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
         selling = as_money(snapshot.pre_tax_selling_price)
         tax, total = as_money(snapshot.tax_amount), as_money(snapshot.customer_total)
         tax_percent = Decimal(str(snapshot.tax_percent))
+        if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+            markup = Decimal(str(snapshot.subcontract_markup_rate or 0))
+            breakdown = labour_material_margin_price(participating_lines(version), snapshot.target_gross_margin, markup)
     else:
         direct = version_line_direct_cost(version)
         margin = values["target_gross_margin"]
-        selling = true_gross_margin_pre_tax(direct, margin) if margin is not None else None
-        try:
-            policy = resolve_pricing_policy(version, organization_id=org_id).get("policy")
-        except Exception:  # noqa: BLE001 - a preview never blocks the page
-            policy = None
+        if method == LABOUR_AT_RATE_MATERIAL_MARGIN and margin is not None:
+            breakdown = labour_material_margin_price(participating_lines(version), margin, markup)
+            selling = breakdown["pre_tax"]
+        else:
+            selling = true_gross_margin_pre_tax(direct, margin) if margin is not None else None
         tax_percent = (Decimal(str(policy.tax_percent)) if policy is not None and policy.tax_percent is not None
                        else values["defaults"]["tax_percent"] or Decimal("0"))
         tax, total = apply_tax_after_pre_tax(selling, tax_percent) if selling is not None else (None, None)
@@ -323,6 +355,9 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
         "tax": tax,
         "customer_total": total,
         "applied": applied,
+        "pricing_method": method,
+        "subcontract_markup_rate": markup if method == LABOUR_AT_RATE_MATERIAL_MARGIN else None,
+        "pricing_breakdown": breakdown,
         "costing_current": costing_current,
         "has_pricing": snapshot is not None,
     }
@@ -356,7 +391,9 @@ def set_company_default_margin(margin_percent, *, actor: str, reason: str, organ
     if not (reason or "").strip():
         raise EstimateEconomicsError("Give a reason for changing the company default margin.")
     policy = company_defaults(organization_id)["pricing_policy"]
-    if policy is None or policy.method != "TRUE_GROSS_MARGIN":
+    from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
+
+    if policy is None or policy.method not in ("TRUE_GROSS_MARGIN", LABOUR_AT_RATE_MATERIAL_MARGIN):
         raise EstimateEconomicsError("The company has no approved default gross margin pricing to change. Set one up under How we price.")
     if policy.target_gross_margin is not None and Decimal(str(policy.target_gross_margin)) == value:
         return policy
@@ -369,6 +406,52 @@ def set_company_default_margin(margin_percent, *, actor: str, reason: str, organ
         record_pricing_audit("company_default_margin_change", "OrganizationPricingPolicy", new_policy.id, actor=actor,
                              detail=f"{(Decimal(str(policy.target_gross_margin)) * HUNDRED).quantize(CENT)}% -> "
                                     f"{(value * HUNDRED).quantize(CENT)}%; reason: {reason.strip()}",
+                             organization_id=organization_id)
+    except PricingEngineError as exc:
+        raise EstimateEconomicsError(str(exc)) from exc
+    db.session.flush()
+    return new_policy
+
+
+def set_company_subcontract_markup(markup_percent, *, actor: str, reason: str, organization_id: str):
+    """The company's subcontract markup (Joel, 2 Nov 2026; 0 % unless a markup is approved): the next version of the
+    default "labour at rate, margin on materials" pricing, approved and made the default in one step. New pricing
+    uses it; a priced or approved estimate keeps the markup frozen in its pricing."""
+    from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
+    from app.services.pricing_engine import (
+        PricingEngineError,
+        approve_pricing_policy,
+        record_pricing_audit,
+        set_default_pricing_policy,
+        supersede_pricing_policy,
+    )
+
+    text = ("" if markup_percent is None else str(markup_percent)).strip().replace("%", "")
+    try:
+        value = Decimal(text)
+    except InvalidOperation:
+        raise EstimateEconomicsError(f"Subcontract markup must be a percentage (you entered “{markup_percent}”).") from None
+    if not value.is_finite() or value < 0 or value >= 1000:
+        raise EstimateEconomicsError("Subcontract markup must be 0% or more.")
+    fraction = (value / HUNDRED).quantize(Decimal("0.000001"))
+    if not (reason or "").strip():
+        raise EstimateEconomicsError("Give a reason for changing the subcontract markup.")
+    policy = company_defaults(organization_id)["pricing_policy"]
+    if policy is None or policy.method != LABOUR_AT_RATE_MATERIAL_MARGIN:
+        raise EstimateEconomicsError("The subcontract markup applies to the \u201clabour at rate, margin on materials\u201d "
+                                     "pricing. Make that the company default first.")
+    if Decimal(str(policy.subcontract_markup_rate or 0)) == fraction:
+        return policy
+    try:
+        new_policy = supersede_pricing_policy(policy.id, actor=actor, organization_id=organization_id,
+                                              subcontract_markup_rate=fraction,
+                                              provenance=f"Subcontract markup {(fraction * HUNDRED).quantize(CENT)}%: "
+                                                         f"{reason.strip()}")
+        approve_pricing_policy(new_policy.id, actor=actor, organization_id=organization_id)
+        set_default_pricing_policy(new_policy.id, actor=actor, organization_id=organization_id)
+        record_pricing_audit("company_subcontract_markup_change", "OrganizationPricingPolicy", new_policy.id,
+                             actor=actor, detail=f"{(Decimal(str(policy.subcontract_markup_rate or 0)) * HUNDRED).quantize(CENT)}% -> "
+                                                 f"{(fraction * HUNDRED).quantize(CENT)}%; reason: {reason.strip()}",
                              organization_id=organization_id)
     except PricingEngineError as exc:
         raise EstimateEconomicsError(str(exc)) from exc

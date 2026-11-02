@@ -16,7 +16,7 @@ from app import create_app, db
 PRIOR = "s9f0a1b2c3d4"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "t7a8b9c0d1e2"  # company documents and equipment (31 Oct 2026) follows the estimate-to-project platform (s6f7a8b9c0d1)
+GRAPH_HEAD = "u8b9c0d1e2f3"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
 
 
 def _cfg(db_uri):

@@ -151,6 +151,9 @@ class EstimateVersion(db.Model):
     hours_per_crew_day = db.Column(db.Numeric(5, 2), nullable=False, default=Decimal("8"), server_default="8")
     default_crew_size = db.Column(db.Integer, nullable=False, default=2, server_default="2")
     target_gross_margin_reason = db.Column(db.Text, nullable=True)
+    # The pricing method this version is priced with, captured when it is created (2 Nov 2026). None: an estimate
+    # made before pricing methods were recorded, priced as it always was (pricing_engine.version_pricing_method).
+    pricing_method = db.Column(db.String(40), nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)

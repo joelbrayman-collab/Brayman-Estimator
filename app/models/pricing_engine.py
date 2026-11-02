@@ -7,10 +7,15 @@ from app import db
 from app.services.organizations import get_current_organization_id
 
 
+# Labour at the labour rate with no margin; materials at cost + true gross margin; equipment, delivery and other
+# direct costs at cost; subcontracts at cost + the subcontract markup (Joel, 2 Nov 2026).
+LABOUR_AT_RATE_MATERIAL_MARGIN = "LABOUR_AT_RATE_MATERIAL_MARGIN"
+
 PRICING_METHODS = (
     "TRUE_GROSS_MARGIN",
     "COST_PLUS_MARKUP",
     "COST_PLUS_MARKUP_STACK",
+    LABOUR_AT_RATE_MATERIAL_MARGIN,
 )
 
 POLICY_APPROVAL_STATUSES = (
@@ -104,6 +109,8 @@ class OrganizationPricingPolicy(db.Model):
     contingency_rate = db.Column(db.Numeric(10, 6), nullable=True)
     tax_jurisdiction = db.Column(db.String(80), nullable=True)
     tax_percent = db.Column(db.Numeric(8, 2), nullable=True)
+    # LABOUR_AT_RATE_MATERIAL_MARGIN: subcontracts at cost x (1 + this fraction); None is 0 (Joel, 2 Nov 2026).
+    subcontract_markup_rate = db.Column(db.Numeric(10, 6), nullable=True)
     is_default = db.Column(db.Boolean, nullable=False, default=False)
     approval_status = db.Column(db.String(20), nullable=False, default="DRAFT")
     effective_from = db.Column(db.DateTime, nullable=True)
@@ -190,6 +197,9 @@ class EstimatePricingSnapshot(db.Model):
     execution_risk = db.Column(db.String(50), nullable=True)
     tax_jurisdiction = db.Column(db.String(80), nullable=True)
     tax_percent = db.Column(db.Numeric(8, 2), nullable=False, default=Decimal("0"))
+    # LABOUR_AT_RATE_MATERIAL_MARGIN parameters, frozen with the price (2 Nov 2026).
+    labour_rate = db.Column(db.Numeric(10, 2), nullable=True)
+    subcontract_markup_rate = db.Column(db.Numeric(10, 6), nullable=True)
     pre_tax_selling_price = db.Column(
         db.Numeric(14, 2), nullable=False, default=Decimal("0")
     )

@@ -13,6 +13,7 @@ from app.models.organization import Organization
 from app.models.pricing_engine import (
     AI_ACTOR_TOKENS,
     CONTINGENCY_PRICING_TREATMENTS,
+    LABOUR_AT_RATE_MATERIAL_MARGIN,
     CONTINGENCY_VISIBILITIES,
     NO_SELECTED_COMMERCIAL_LAYER,
     OVERHEAD_TREATMENTS,
@@ -206,6 +207,101 @@ def compute_named_method_pre_tax(
     raise PricingEngineError(f"Unsupported named method '{method}'.")
 
 
+# ---------------------------------------------------------------------------------------------- labour at rate,
+# margin on materials (Joel, 2 Nov 2026)
+BUCKET_LABOUR = "labour"
+BUCKET_MATERIAL = "material"
+BUCKET_SUBCONTRACT = "subcontract"
+BUCKET_AT_COST = "at_cost"
+BUCKETS = (BUCKET_LABOUR, BUCKET_MATERIAL, BUCKET_SUBCONTRACT, BUCKET_AT_COST)
+
+
+def pricing_bucket(line) -> str:
+    """How LABOUR_AT_RATE_MATERIAL_MARGIN prices a line, from its kind (guided_estimating._line_kind): labour (LAB-
+    lines) at the labour rate with no margin; materials at cost + margin; the subcontract line at cost + the
+    subcontract markup; equipment, delivery, disposal, allowances and other direct costs at cost."""
+    from app.services.guided_estimating import _line_kind
+
+    kind = _line_kind(line)
+    if kind == "labour":
+        return BUCKET_LABOUR
+    if kind == "material":
+        return BUCKET_MATERIAL
+    if kind == "subcontract":
+        return BUCKET_SUBCONTRACT
+    return BUCKET_AT_COST
+
+
+def labour_material_margin_price(lines, material_margin, subcontract_markup=None) -> dict:
+    """Pre-tax price by bucket. Each bucket is rounded half-up to the cent once (the engine's rule):
+    labour = cost; materials = cost / (1 - margin); subcontracts = cost x (1 + markup); the rest = cost."""
+    if material_margin is None:
+        raise PricingEngineError("Labour at rate with margin on materials needs a material margin.")
+    markup = as_decimal(subcontract_markup or 0)
+    if markup < 0:
+        raise PricingEngineError("Subcontract markup cannot be negative.")
+    cost = {bucket: Decimal("0") for bucket in BUCKETS}
+    members = {bucket: [] for bucket in BUCKETS}
+    for line in lines:
+        bucket = pricing_bucket(line)
+        cost[bucket] += as_decimal(line.extended_cost)
+        members[bucket].append(line)
+    cost = {bucket: as_money(value) for bucket, value in cost.items()}
+    sell = {
+        BUCKET_LABOUR: cost[BUCKET_LABOUR],
+        BUCKET_MATERIAL: true_gross_margin_pre_tax(cost[BUCKET_MATERIAL], material_margin),
+        BUCKET_SUBCONTRACT: cost_plus_markup_pre_tax(cost[BUCKET_SUBCONTRACT], markup),
+        BUCKET_AT_COST: cost[BUCKET_AT_COST],
+    }
+    direct = as_money(sum(cost.values(), Decimal("0")))
+    pre_tax = as_money(sum(sell.values(), Decimal("0")))
+    return {"cost": cost, "sell": sell, "lines": members, "direct": direct, "pre_tax": pre_tax,
+            "material_margin": as_decimal(material_margin), "subcontract_markup": markup}
+
+
+def bucket_line_sell_prices(breakdown) -> dict:
+    """{line id: sell price}: each bucket's price spread over its lines by extended cost; the last line of a bucket
+    takes the remainder, so the lines add up to the bucket exactly."""
+    out = {}
+    for bucket in BUCKETS:
+        items = breakdown["lines"][bucket]
+        if not items:
+            continue
+        total, cost = breakdown["sell"][bucket], breakdown["cost"][bucket]
+        remaining = total
+        for item in items[:-1]:
+            share = (as_money(total * as_decimal(item.extended_cost) / cost) if cost
+                     else as_money(total / Decimal(len(items))))
+            out[item.id] = share
+            remaining -= share
+        out[items[-1].id] = as_money(remaining)
+    return out
+
+
+def _allocate_bucket_sell_prices(version, breakdown):
+    from app.services.estimate_builder import as_money as builder_money
+
+    _zero_excluded_sell_prices(version)
+    prices = bucket_line_sell_prices(breakdown)
+    for bucket in BUCKETS:
+        for item in breakdown["lines"][bucket]:
+            item.sell_price = prices[item.id]
+    for section in version.sections:
+        section.subtotal = builder_money(sum((as_decimal(item.sell_price) for item in section.line_items), Decimal("0")))
+
+
+def version_pricing_method(version, resolved_method: Optional[str]) -> str:
+    """The method a version is priced with. A version records its method when it is created (2 Nov 2026); one made
+    under another method (or before methods were recorded) keeps being priced the way it always was, so changing the
+    company's method never re-prices an existing estimate a different way."""
+    recorded = getattr(version, "pricing_method", None)
+    if recorded == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        return LABOUR_AT_RATE_MATERIAL_MARGIN
+    if resolved_method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        return "TRUE_GROSS_MARGIN"  # the whole-estimate margin every older estimate was priced with
+    return resolved_method
+
+
 def labour_engine_direct_cost_total(estimate_version, organization_id=None):
     """Read-only consumption of FG-008 Direct Labour Cost. Does not modify labour records."""
     org_id = _org_id(organization_id)
@@ -274,6 +370,7 @@ def _validate_policy_fields(
     profit_treatment,
     contingency_visibility,
     contingency_pricing_treatment,
+    subcontract_markup_rate=None,
 ):
     if method not in PRICING_METHODS:
         raise PricingEngineError("Select a valid pricing method.")
@@ -301,6 +398,16 @@ def _validate_policy_fields(
             raise PricingEngineError("COST_PLUS_MARKUP requires an explicit markup rate.")
         if as_decimal(markup_rate) < 0:
             raise PricingEngineError("Markup rate cannot be negative.")
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        if target_gross_margin is None or target_gross_margin == "":
+            raise PricingEngineError("Labour at rate with margin on materials requires the material margin.")
+        gm = as_decimal(target_gross_margin)
+        if gm < 0 or gm >= 1:
+            raise PricingEngineError("Material margin must be >= 0 and < 1.")
+        if as_decimal(subcontract_markup_rate or 0) < 0:
+            raise PricingEngineError("Subcontract markup cannot be negative.")
+        if contingency_visibility == "CUSTOMER_PRICED":
+            raise PricingEngineError("Labour at rate with margin on materials does not price a contingency.")
 
 
 def create_pricing_policy(
@@ -324,6 +431,7 @@ def create_pricing_policy(
     is_default=False,
     provenance=None,
     version_number=1,
+    subcontract_markup_rate=None,
 ):
     org_id = _org_id(organization_id)
     if not _organization_exists(org_id):
@@ -340,6 +448,7 @@ def create_pricing_policy(
         profit_treatment=profit_treatment,
         contingency_visibility=contingency_visibility,
         contingency_pricing_treatment=contingency_pricing_treatment,
+        subcontract_markup_rate=subcontract_markup_rate,
     )
     if OrganizationPricingPolicy.query.filter_by(
         organization_id=org_id, policy_code=code, version_number=version_number
@@ -364,6 +473,8 @@ def create_pricing_policy(
         contingency_rate=as_decimal(contingency_rate) if contingency_rate not in (None, "") else None,
         tax_jurisdiction=(tax_jurisdiction or "").strip() or None,
         tax_percent=as_decimal(tax_percent) if tax_percent not in (None, "") else None,
+        subcontract_markup_rate=(as_decimal(subcontract_markup_rate)
+                                 if subcontract_markup_rate not in (None, "") else None),
         is_default=False,
         approval_status="DRAFT",
         provenance=provenance,
@@ -460,6 +571,7 @@ def supersede_pricing_policy(policy_id, *, actor, organization_id=None, **create
         tax_percent=create_kwargs.get("tax_percent", current.tax_percent),
         provenance=create_kwargs.get("provenance", current.provenance),
         version_number=next_version,
+        subcontract_markup_rate=create_kwargs.get("subcontract_markup_rate", current.subcontract_markup_rate),
     )
     current.approval_status = "SUPERSEDED"
     current.is_default = False
@@ -724,6 +836,8 @@ def persist_pricing_snapshot(
         execution_risk=risk,
         tax_jurisdiction=policy.tax_jurisdiction if policy else None,
         tax_percent=version.tax_percent,
+        labour_rate=resolved.get("labour_rate"),
+        subcontract_markup_rate=resolved.get("subcontract_markup_rate"),
         pre_tax_selling_price=pre_tax,
         tax_amount=tax_amount,
         customer_total=customer_total,
@@ -814,7 +928,38 @@ def apply_resolved_pricing_to_version(
         direct = as_money(direct + labour_direct)
 
     policy = resolved["policy"]
-    method = resolved["method"]
+    method = version_pricing_method(version, resolved["method"])
+    resolved = dict(resolved, method=method)
+
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        from app.services.work_packages import participating_lines
+
+        gm = version.target_gross_margin
+        if gm is None and policy is not None:
+            gm = policy.target_gross_margin
+        markup = (policy.subcontract_markup_rate
+                  if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None)
+        breakdown = labour_material_margin_price(participating_lines(version), gm, markup)
+        if breakdown["direct"] != direct and not include_labour_snapshot_direct_cost:
+            raise PricingEngineError("The approved costing does not match the estimate lines. Approve the costing again.")
+        pre_tax = breakdown["pre_tax"]
+        tax_percent = policy.tax_percent if policy and policy.tax_percent is not None else Decimal("0")
+        version.tax_percent = tax_percent
+        version.overhead_percent = Decimal("0")
+        version.profit_percent = Decimal("0")
+        tax_amount, customer_total = apply_tax_after_pre_tax(pre_tax, tax_percent)
+        _allocate_bucket_sell_prices(version, breakdown)
+        version.subtotal = builder_money(pre_tax)
+        version.total = builder_money(customer_total)
+        resolved = dict(resolved, target_gross_margin=as_decimal(gm),
+                        subcontract_markup_rate=breakdown["subcontract_markup"],
+                        labour_rate=as_money(version.labour_rate) if version.labour_rate is not None else None)
+        snapshot = persist_pricing_snapshot(
+            version, resolved=resolved, actor=actor_name, organization_id=org_id, direct_cost=direct,
+            contingency_amount=as_money(0), pre_tax=pre_tax, tax_amount=tax_amount, customer_total=customer_total,
+            costing_snapshot_id=costing.id)
+        db.session.flush()
+        return snapshot
 
     if method == "COST_PLUS_MARKUP_STACK":
         if policy is not None:
@@ -925,6 +1070,27 @@ def refresh_version_from_snapshot(version):
         snapshot.customer_total = as_money(version.total)
         return version
 
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        from app.services.work_packages import participating_lines
+
+        breakdown = labour_material_margin_price(participating_lines(version), snapshot.target_gross_margin,
+                                                 snapshot.subcontract_markup_rate)
+        pre_tax = breakdown["pre_tax"]
+        tax_amount, customer_total = apply_tax_after_pre_tax(pre_tax, snapshot.tax_percent)
+        _allocate_bucket_sell_prices(version, breakdown)
+        version.overhead_percent = Decimal("0")
+        version.profit_percent = Decimal("0")
+        version.tax_percent = snapshot.tax_percent
+        version.subtotal = builder_money(pre_tax)
+        version.total = builder_money(customer_total)
+        if not version.is_locked:
+            snapshot.direct_cost_basis = breakdown["direct"]
+            snapshot.contingency_amount = as_money(0)
+            snapshot.pre_tax_selling_price = pre_tax
+            snapshot.tax_amount = tax_amount
+            snapshot.customer_total = customer_total
+        return version
+
     amount, _basis, pre_tax = compute_named_method_pre_tax(
         method=method,
         direct_cost=direct,
@@ -979,6 +1145,10 @@ def price_change_order_from_snapshot(change_order, snapshot=None):
 
     direct = as_money(change_order.subtotal)
     method = snapshot.method
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        # Change order items carry no labour/material kind; a change order is priced with the estimate's margin on
+        # its whole subtotal, as change orders were before (open item for Joel, 2 Nov 2026).
+        method = "TRUE_GROSS_MARGIN"
     vis = snapshot.contingency_visibility or "UNSPECIFIED"
 
     if method == "COST_PLUS_MARKUP_STACK":

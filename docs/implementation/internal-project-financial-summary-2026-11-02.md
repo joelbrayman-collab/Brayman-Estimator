@@ -193,6 +193,11 @@ Tests added: `tests/test_pricing_rulings_20261102.py` (11). Changed (own new tes
 `test_pricing_labour_material_margin.py` bucket names (`at_cost` → `equipment` / `delivery`),
 `test_cost_profiles_migration.py` (the five new columns).
 
+Sweep after the rulings (commit 53b7a72b; Python 3.9.6 venv, one file at a time, Family 05 master env set): all 167
+affected files (the earlier 150 plus every change-order / project-controls test file and
+`test_pricing_rulings_20261102.py`): **2,312 passed, 0 failed, 0 skipped**. The run was interrupted once by a container
+restart after 70 files and resumed file by file from its log.
+
 ## Open items (superseded by the rulings above where marked)
 
 - Ruled (2, 3, 4, 6, 1, 5): see above.

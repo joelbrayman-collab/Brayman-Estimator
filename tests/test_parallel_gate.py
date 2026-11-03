@@ -245,3 +245,50 @@ def test_a_page_server_removes_its_temporary_files_when_stopped(tmp_path):
     while list(scratch.iterdir()) and time.time() < deadline:
         time.sleep(0.2)
     assert list(scratch.iterdir()) == []
+
+
+def test_every_callable_create_listener_has_been_reviewed_for_the_schema_cache():
+    """Review, 3 Nov 2026: a create listener that decides its DDL at run time could make a cached copy differ from a
+    real create_all(). Each one must be reviewed and named in tests/fast_fixtures.py before the cache may copy it."""
+    from app import db
+    from tests import fast_fixtures
+
+    found = set()
+    for dispatch in [db.metadata.dispatch] + [t.dispatch for t in db.metadata.sorted_tables]:
+        for key in fast_fixtures._listener_keys(dispatch):
+            if key[1] == "callable":
+                found.add(key[2] + "." + key[3])
+    assert found == fast_fixtures.REVIEWED_CALLABLE_CREATE_LISTENERS
+
+
+def test_a_new_or_changed_create_listener_gets_a_real_create_all():
+    """The fingerprint covers every table- and metadata-level create listener (the full DDL text, or a function's
+    code), so a listener added or changed in the process is built for real, never served from an older copy."""
+    from sqlalchemy import DDL, event, inspect
+
+    from app import db
+    from tests import fast_fixtures
+
+    warm = _fresh_app()
+    with warm.app_context():
+        db.create_all()  # a template exists for the unchanged models
+    table = db.metadata.tables["document_events"]
+    for target, probe in ((table, "zz_table_listener_probe"), (db.metadata, "zz_metadata_listener_probe")):
+        listener = DDL(f"CREATE TABLE {probe} (x INTEGER)")
+        event.listen(target, "after_create", listener)
+        try:
+            app_ = _fresh_app()
+            with app_.app_context():
+                real = fast_fixtures.STATS["real"]
+                db.create_all()
+                assert fast_fixtures.STATS["real"] == real + 1, probe
+                assert probe in inspect(db.engine).get_table_names()
+        finally:
+            event.remove(target, "after_create", listener)
+    after = _fresh_app()
+    with after.app_context():
+        copied = fast_fixtures.STATS["copied"]
+        db.create_all()  # listeners removed: the original template again, without the probe tables
+        assert fast_fixtures.STATS["copied"] == copied + 1
+        names = inspect(db.engine).get_table_names()
+        assert "zz_table_listener_probe" not in names and "zz_metadata_listener_probe" not in names

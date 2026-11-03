@@ -73,11 +73,34 @@ def _metadata_fingerprint(metadata) -> tuple:
         indexes = tuple(sorted((i.name or "", tuple(col.name for col in i.columns), bool(i.unique))
                                for i in table.indexes))
         constraints = tuple(sorted(type(c).__name__ + ":" + str(c.name or "") for c in table.constraints))
-        listeners = tuple(sorted(
-            repr(fn) for name in ("before_create", "after_create")
-            for fn in getattr(table.dispatch, name)))
+        listeners = _listener_keys(table.dispatch)
         tables.append((table.name, columns, indexes, constraints, listeners))
-    return (sqlite3.sqlite_version, tuple(tables))
+    # Metadata-level create listeners too (review, 3 Nov 2026: only table-level ones were fingerprinted).
+    return (sqlite3.sqlite_version, _listener_keys(metadata.dispatch), tuple(tables))
+
+
+# Create-time listeners whose DDL is decided at run time rather than written out (reviewed 3 Nov 2026). The cached
+# copy is only correct if their decision cannot differ between two create_all() calls in one test process:
+#   app.models.documents._create_fts: creates the FTS5 table when this SQLite build has FTS5. The SQLite build is part
+#   of the fingerprint (sqlite3.sqlite_version) and cannot change inside a process.
+# tests/test_parallel_gate.py fails if a new callable create listener appears, so it is reviewed before it is cached.
+REVIEWED_CALLABLE_CREATE_LISTENERS = frozenset({"app.models.documents._create_fts"})
+
+
+def _listener_keys(dispatch) -> tuple:
+    """A stable description of every before_create/after_create listener: a DDL's full SQL and its dialect
+    condition, or a function's module, name and bytecode (so a changed or replaced listener is a new fingerprint)."""
+    keys = []
+    for name in ("before_create", "after_create"):
+        for fn in getattr(dispatch, name):
+            statement = getattr(fn, "statement", None)
+            if statement is not None:
+                keys.append((name, "ddl", str(statement), repr(getattr(fn, "dialect", None))))
+                continue
+            code = getattr(fn, "__code__", None)
+            keys.append((name, "callable", getattr(fn, "__module__", ""), getattr(fn, "__qualname__", repr(fn)),
+                         code.co_code.hex() if code is not None else repr(fn)))
+    return tuple(sorted(keys))
 
 
 def _in_memory_static(engine) -> bool:

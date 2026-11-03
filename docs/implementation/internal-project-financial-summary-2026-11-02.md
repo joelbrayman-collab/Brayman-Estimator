@@ -202,3 +202,96 @@ restart after 70 files and resumed file by file from its log.
 
 - Ruled (2, 3, 4, 6, 1, 5): see above.
 - No browser walk was added to the release gate for these screens (gate count stays 324).
+
+## CaliSIGN internal approval — the sixth signable class (Joel, 3 Nov 2026)
+
+Joel's ruling: not a special "Ben signs" feature, but a governed signable class `INTERNAL_APPROVAL` on the existing
+CaliSIGN engine. The Internal Project Financial Summary is its first document type. The Training environment is not
+touched (on the training site the existing synthetic authority / consent applies, as for change orders).
+
+Workflow, as built (`app/services/internal_approval.py`):
+1. **Freeze REVn.** Review This Estimate → Internal approval → *Freeze the working summary as the next REV*: an
+   insert-only `InternalSummaryRevision` (figures JSON + SHA-256 of the figures and of the rendered PDF) and the PDF
+   itself in signing custody (`SigningFrozenArtifact`, family `INTERNAL_APPROVAL`, `source_record_id` = the REV).
+   Refused when nothing changed since the latest frozen REV. One REV series per estimate: the prices sent to the
+   client are REVs of the same series (`origin` `SENT_TO_CLIENT`; `quoted_revisions` now reads it).
+2. **Send for internal approval.** A `SigningRequest` (family `INTERNAL_APPROVAL`, `client_id` NULL, participant
+   `APPROVER`, consent `CONSENT-BRAYMAN-INTERNAL-APPROVAL-V1-001`), approved for signature at creation, then the
+   existing `issue_customer_invitation`: one-time token (hash at rest), the normal CaliSIGN invitation email.
+3. **Review and sign** on the existing `/sign/<credential>` ceremony with no Calibrayt account: the exact frozen PDF
+   (`/document`), consent, typed signature, Sign & Accept.
+4. **Evidence**: the same events (REQUEST_CREATED, APPROVED_FOR_SIGNATURE, SENT, VIEWED, CONSENT_ACCEPTED, SIGNED,
+   EXECUTED, each with the artifact SHA), signer IP / user agent / consent time, the executed PDF with its signing
+   record page ("Internal approval", "Approver email / IP / user-agent", pre-sign SHA-256).
+5. **Filed** automatically when executed (`signing._after_executed` → `internal_approval.file_signed_copy`): the
+   executed copy in the project's Documents, type Internal financial summary, record SIGNING_REQUEST; PEOPLE when the
+   REV carries crew loaded rates, else FINANCIAL. The documents sources skip this family so it is never registered
+   again at a lower sensitivity; the review page re-files a copy whose filing failed.
+6. **Immutable.** REV rows are insert-only (model guard; trigger in the migration) and the frozen and executed
+   artifacts are content-addressed: a later change to the working summary is REV(n+1), separate and unsigned; REV n
+   keeps its PDF, figures and signature.
+
+Countersignature: per-document-type governance rule (`internal_approval.GOVERNANCE`): `approver` (the request is
+complete when the approver signs) or `approver+countersigner` (the office countersigns on Review This Estimate with
+the existing `countersign_and_execute`). The Financial Summary: approver only.
+
+Security: the link resolves only its own request (`resolve_customer_access`, signer roles CUSTOMER or APPROVER) and its
+pages read only that request's frozen / executed artifact; office pages, Documents, employee and financial screens
+redirect to sign-in. Used, expired and guessed tokens refuse (409 / 410 / 404) and guessing is rate-limited per address
+exactly as the other classes (`SIGNING_TOKEN_FAIL_LIMIT`). Freeze and send require `can_view_project_economics`; a REV
+with crew loaded rates is frozen / sent only by someone who also has `can_view_employee_cost`, otherwise the
+crew-total variant is frozen. The ceremony page shows the document title, the company and the project name only.
+
+Why `client_id` NULL-able (for this family only): an internal approval has no client party; putting the project's
+client on the request would record a party that is not one, and the evidence, mail and documents code would treat
+them as the signer's counterpart. The column is NULL-able and a new check
+`ck_signing_requests_client_required` (`client_id IS NOT NULL OR document_family = 'INTERNAL_APPROVAL'`) keeps the old
+guarantee for every other class.
+
+Existing CaliSIGN flows (contract, change order, subcontract, supplier order, supplier delivery change) are unchanged:
+the only engine change is that the link signer is "the customer or the approver" (`LINK_SIGNER_ROLES`), plus class
+labels in the mail, ceremony and executed record.
+
+Consent: `CONSENT-BRAYMAN-INTERNAL-APPROVAL-V1-001`, recorded in `docs/governance/signing-consent-register.md` as in
+use on Joel's authorization, not counsel-approved.
+
+### Migration `u8b9c0d1e2f3` — cumulative schema (unreleased; one revision from `t7a8b9c0d1e2`)
+- New tables: `organization_person_cost_profiles` (insert-only), `organization_labour_cost_settings` (insert-only),
+  `estimate_crew_members`, `internal_summary_revisions` (insert-only).
+- New nullable columns: `organization_pricing_policies.subcontract_markup_rate`, `.pricing_rules_json`;
+  `estimate_pricing_snapshots.labour_rate`, `.subcontract_markup_rate`, `.pricing_rules_json`;
+  `estimate_versions.pricing_method`, `.package_pricing_json`, `.pricing_rules_json`;
+  `estimate_line_items.pricing_treatment`; `change_order_items.cost_kind`.
+- Signing (tables rebuilt with `batch_alter_table`, rows copied unchanged): `ck_signing_frozen_artifacts_document_family`
+  and `ck_signing_requests_document_family` add `INTERNAL_APPROVAL`; `ck_signing_participants_role` adds `APPROVER`;
+  `signing_requests.client_id` NULL-able with the new `ck_signing_requests_client_required`.
+- Downgrade refuses while any new table, new column, internal approval, APPROVER participant or NULL client holds a
+  value; otherwise it restores every constraint and `client_id NOT NULL`.
+- Release-gate migration arguments: `--new-tables estimate_crew_members,internal_summary_revisions,
+  organization_labour_cost_settings,organization_person_cost_profiles --altered-tables change_order_items,
+  estimate_line_items,estimate_pricing_snapshots,estimate_versions,organization_pricing_policies,signing_requests
+  --altered-checks ck_signing_frozen_artifacts_document_family,ck_signing_participants_role`
+  (rehearsed by `tests/test_cost_profiles_migration.py::test_the_release_rehearsal_proves_every_row_identical`).
+
+### Tests and browser walk (3 Nov 2026)
+- `tests/test_internal_approval_calisign.py` (5): the full lifecycle (REV1-REV9 earlier states, REV10 frozen, sent,
+  captured email, link opened with no session, exact PDF bytes and SHA, consent, sign, executed, Documents, evidence;
+  then REV11 separate and unsigned, REV10 unchanged and signed); the link reaches only its own document (office,
+  Documents, employee, financial pages redirect; another project's link has other bytes; mixed credentials 404); used
+  409 / expired 410 / guessing 429; permissions (economics to freeze/send, employee cost for crew rates, crew-total
+  variant, no duplicate REV); the approver + countersigner rule.
+- `tests/test_cost_profiles_migration.py` (+2): signing rows in every existing class (5 requests, 25 participants
+  of every role, events, executed artifacts, access attempts) at `t7a8b9c0d1e2`, row SHA-256 identical after upgrade
+  and after downgrade, constraints proven (other classes still need a client; unknown family refused; downgrade
+  guarded); the release rehearsal with this release's arguments.
+- Browser: `tools/release/evidence_internal_approval.mjs` (8 checks, laptop 1280×800 and phone 390×844), server
+  `tests/internal_approval_page_server.py`; added to `release_gate.sh`. Gate count 324 → **332**
+  (`--browser-expected 332`).
+
+### Affected-file sweep (3 Nov 2026, Python 3.9.6 venv, Family 05 env, one file at a time)
+197 files (every file of the earlier sweeps, every CaliSIGN / signing / documents / attention / proposal-acceptance test,
+the new internal-approval and migration tests, the release-tool tests): **2,618 passed, 0 failed, 0 skipped** after one
+fix. The one failure was `tests/test_approved_master_governance.py::test_every_office_pdf_renderer_is_classified...`:
+the new `internal_financial_summary.py` renderer (from the 2 Nov commit; that file was not in the earlier sweeps) had to
+be classified. It is added to the test's `NOT_GOVERNED` list (Joel: not an Approved Master) — an existing test
+expectation changed deliberately. All existing CaliSIGN tests pass unchanged.

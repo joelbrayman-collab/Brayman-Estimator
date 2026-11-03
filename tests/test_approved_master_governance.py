@@ -183,6 +183,9 @@ NOT_GOVERNED = {
     # its layout follows the accepted Paulusse REV2 package. A subcontract is frozen for CaliSIGN like a supplier PO.
     "contractor_estimate_package.py": "internal Contractor Estimate Package (landscape; no approved master family)",
     "subcontract_signing.py": "subcontract commitment frozen for signing (Gate 3)",
+    # 2 Nov 2026 (Joel): the Internal Project Financial Summary is an internal contractor document, explicitly not one
+    # of the governed DOCX Approved Masters (families 01-08); its layout is the one Joel approved that day.
+    "internal_financial_summary.py": "internal Internal Project Financial Summary (landscape; not an Approved Master)",
 }
 
 

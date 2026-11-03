@@ -84,7 +84,12 @@ def test_gate_stops_at_ready_for_push_after_every_gate():
     positions = [code.find(marker) for marker in order]
     assert all(p >= 0 for p in positions), dict(zip(order, positions))
     assert positions == sorted(positions), dict(zip(order, positions))
-    assert code.rstrip().splitlines()[-1].startswith("echo \"== DONE")
+    # 3 Nov 2026: the gate runs as gate_main piped into its log (so the log is complete before the run is sealed).
+    # Its last statement is still the DONE line; after it the script only runs that function and exits.
+    lines = code.rstrip().splitlines()
+    done = max(i for i, line in enumerate(lines) if line.startswith('echo "== DONE'))
+    assert lines[done + 1:] == ["}", "", 'gate_main 2>&1 | tee "$LOG"', "GATE_EXIT=${PIPESTATUS[0]}",
+                                '[ "$GATE_EXIT" -eq 0 ] && [ -f "$EVID/READY_FOR_PUSH" ] || exit 1', "exit 0"]
 
 
 def test_gate_requires_exact_commits_and_refuses_bad_input():
@@ -192,7 +197,7 @@ def test_gate_and_live_apply_carry_the_named_check_constraints():
     assert '--altered-checks) ALTERED_CHECKS=$2' in gate
     assert '${ALTERED_CHECKS:+--altered-checks "$ALTERED_CHECKS"}' in gate
     assert "ALTERED_CHECKS=$ALTERED_CHECKS" in gate
-    assert 'ALTERED_CHECKS=$(val ALTERED_CHECKS "$STATE")' in migrate
+    assert 'ALTERED_CHECKS=$(val ALTERED_CHECKS "$GSTATE")' in migrate  # the gate's sealed state (3 Nov 2026)
     assert "${ALTERED_CHECKS:+ --altered-checks $ALTERED_CHECKS}" in migrate
     match = re.search(r'\[\[ "\$ALTERED_CHECKS" =~ (\S+) \]\]', gate)
     assert match, "gate must validate --altered-checks"

@@ -114,7 +114,7 @@ def _rerun(tmp_path, populated, state_lines=(), earlier=None, label="docs"):
     out = gen / f"{label}-migrate-20261101-110000"
     out.with_name(out.name + "-migrate.txt").write_text("REVISION_BEFORE=t7a8b9c0d1e2\nALREADY_MIGRATED=yes (nothing done)\n"
                                                         "MIGRATE=ok\n")
-    script = (f'set -u; GEN="{gen}"; LABEL={label}; STATE="{state}"; STATUS="{gen}/{label}-release-status.txt"; OUT="{out}"; POPULATED_TABLES="{populated}"; '
+    script = (f'set -u; GEN="{gen}"; REPORTS="{gen}"; LABEL={label}; STATE="{state}"; STATUS="{gen}/{label}-release-status.txt"; OUT="{out}"; POPULATED_TABLES="{populated}"; '
               f'MIGRATION_TO=t7a8b9c0d1e2; status() {{ echo "STATUS: $1"; }}; stop() {{ echo "STOP: $1"; exit 1; }}; '
               + _rerun_block() + '\necho "DONE"')
     r = subprocess.run(["bash", "-c", script], capture_output=True, text=True)

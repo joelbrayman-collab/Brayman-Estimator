@@ -2,13 +2,41 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Current (technical cleanup, 18 Oct 2026; local folders updated on the security branch the same day) |
-| Scripts | `tools/release/release_gate.sh`, `tools/release/postrelease_check.sh` |
+| Status | Current (technical cleanup, 18 Oct 2026; one governed command `release.sh` and immutable gate runs, 3 Nov 2026) |
+| Scripts | `tools/release/release.sh` (one command), which runs `release_gate.sh`, `release_migrate.sh` and `postrelease_check.sh` |
 | Replaces | the per-release copies in `~/Desktop/Brayman-Estimator/generated/` (`cal1_release.sh`, `v1bd_release.sh`, …), which remain there as history |
 
 Production is changed only after Joel's explicit authorization of the exact commit. Tests passing never deploys anything. Auto-deploy stays off.
 
-## Release without a database change
+## One command (3 Nov 2026)
+
+Joel runs one command in one Terminal window. It fetches nothing but the candidate's own scripts, pushes nothing and
+deploys nothing; Claude still pushes and deploys after Joel's authorization.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/joelbrayman-collab/Brayman-Estimator/<candidate>/tools/release/release.sh -o /tmp/release.sh && bash /tmp/release.sh --label <name> --candidate <sha> --branch <branch> --main-base <main sha> --live-base <live sha> --live-deploy <dep-id>
+```
+
+Add the same `--migration-to … --new-tables …` (and `--altered-*`, `--filled-columns`, `--populated-tables`) as the gate
+for a release with a migration. What it does:
+
+1. Runs the gate (every check below, unchanged) as a new run `<label>-<YYYYMMDD-HHMMSS>` in
+   `~/CalibraytAI-Office/release-work/runs/<run ID>/`. The gate's evidence is sealed when it ends (SHA-256
+   `MANIFEST.sha256`, read-only). A later run of the same label is a new folder and never truncates or replaces it.
+2. At READY_FOR_PUSH prints a block headed **SEND THIS TO CLAUDE** (run ID, commit, bases, database change, evidence
+   folder, status file) and waits, checking GitHub `main` and the live instance every 30 s for up to 180 min
+   (`--poll-seconds`, `--wait-minutes`), until both are exactly the commit. Joel sends the block with his authorization.
+3. With a migration: asks Joel to type `MIGRATE <label> <revision>` in the same window; anything else stops with nothing
+   migrated. Then `release_migrate.sh --run <run ID>` (its own backup on the instance and every check, unchanged).
+4. Runs `postrelease_check.sh --run <run ID>` and ends with **RELEASED** or **STOPPED** and the reason.
+
+Interrupted (Ctrl-C, window closed, timeout)? Run the same command again: it resumes the run that reached READY_FOR_PUSH
+for that candidate, without a second gate run or backup, and does not migrate twice. `--new-run` gates again as a new
+run (the earlier one stays). `bash /tmp/release.sh --label <name> --list` lists every run and its outcome. The three
+scripts still work on their own; `release_migrate.sh` and `postrelease_check.sh` take `--run <run ID>` or bind to the
+run whose READY_FOR_PUSH is the commit on GitHub `main`. Details: `docs/implementation/release-simplification-2026-11-03.md`.
+
+## Release without a database change (the steps release.sh runs)
 
 1. **Candidate.** The commit to release is pushed to its development branch. Claude names the full SHA, the branch, GitHub `main`, the live SHA and its deploy id.
 2. **Gate (Joel, on the Mac).** The script is fetched from GitHub at the exact candidate commit, so it does not depend on the Desktop copy of the repository (parts of the Desktop are kept in iCloud only).

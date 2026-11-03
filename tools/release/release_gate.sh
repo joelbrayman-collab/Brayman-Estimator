@@ -33,12 +33,17 @@
 #   4 READY_FOR_PUSH — stop.
 # After authorization of a release with a migration: Claude pushes and deploys; Joel runs
 # release_migrate.sh (applies the migration on the live instance after its own backup), then postrelease_check.sh.
+# Since 3 Nov 2026 tools/release/release.sh runs this gate, waits for the push and deploy, the migration (after a typed
+# confirmation) and the post-release checks in one Terminal window. Each run of this gate gets its own run ID
+# (<label>-<YYYYMMDD-HHMMSS>, or --run-id from release.sh) and folder $GEN/runs/<run ID>/; its gate/ evidence is sealed
+# (SHA-256 MANIFEST, read-only) when it ends. A second run with the same label never truncates or replaces the first.
 set -u
-usage() { sed -n '2,32p' "$0"; exit 2; }
-LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""; ALTERED_CHECKS=""; FILLED_COLUMNS=""; POPULATED_TABLES=""
+usage() { sed -n '2,39p' "$0"; exit 2; }
+RUN_ID_ARG=""; LABEL=""; SHA=""; BRANCH=""; MAIN_BASE=""; LIVE_BASE=""; LIVE_DEPLOY=""; BROWSER_EXPECTED=263; MIGRATION_TO=""; NEW_TABLES=""; ALTERED_TABLES=""; ALTERED_CHECKS=""; FILLED_COLUMNS=""; POPULATED_TABLES=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --label) LABEL=$2; shift 2;;
+    --run-id) RUN_ID_ARG=$2; shift 2;;
     --candidate) SHA=$2; shift 2;;
     --branch) BRANCH=$2; shift 2;;
     --main-base) MAIN_BASE=$2; shift 2;;
@@ -101,9 +106,6 @@ GEN="$OFFICE_LOCAL/release-work"
 HOST=srv-dar95mh42hec73df4rug@ssh.virginia.render.com
 SSH_OPTS=(-o UpdateHostKeys=no)
 BACKUPS="$OFFICE_LOCAL/office-backups"
-DEST=$HOME/Developer/Brayman-Estimator-$LABEL-release-$(date +%Y%m%d-%H%M%S)
-TS=$(date +%Y%m%d-%H%M%S); OUT="$GEN/$LABEL-release-$TS"; LOG="$OUT.log"; STATUS="$GEN/$LABEL-release-status.txt"
-STATE="$GEN/$LABEL-release-state.txt"
 if [ ! -d "$GEN" ] || [ ! -d "$BACKUPS" ]; then
   echo "STOP: $GEN or $BACKUPS does not exist. Run tools/release/relocate_local_storage.py first"
   echo "(it copies the Desktop backups and release files there and verifies them; nothing is deleted)."
@@ -120,12 +122,168 @@ fi
 echo "$LABEL pid $$ $(date)" > "$LOCKDIR/owner"
 trap 'rm -rf "$LOCKDIR"' EXIT
 
-exec > >(tee "$LOG") 2>&1
+# >>> release-runs (3 Nov 2026). Byte-identical in release.sh, release_gate.sh, release_migrate.sh and
+# postrelease_check.sh (tests/test_release_runs.py checks this), so each script still works when fetched on its own.
+# Every gate run has its own run ID (<label>-<YYYYMMDD-HHMMSS>) and folder $GEN/runs/<run ID>/; nothing in one run's
+# folder is ever truncated or rewritten by another run. A run's gate/ folder is sealed when the gate ends (a SHA-256
+# MANIFEST of every file, then every file and the folder read-only); gate/READY_FOR_PUSH marks a run that passed.
+# Plain bash 3.2 (the Mac's /bin/bash): no associative arrays, no mapfile.
+rr_sha256() { if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$@"; else sha256sum "$@"; fi; }
+rr_val() { grep "^$1=" "$2" 2>/dev/null | head -1 | cut -d= -f2-; }
+# rr_require <file> <key> <what the file is>: prints the value, or explains exactly what is missing and returns 1.
+rr_require() {
+  local f=$1 k=$2 what=${3:-file} v
+  if [ ! -e "$f" ]; then
+    echo "$what $f does not exist, so $k cannot be read"; return 1
+  fi
+  if [ ! -s "$f" ]; then
+    echo "$what $f is EMPTY (0 bytes), so $k cannot be read; it was truncated or never written (the gate run that made it did not reach READY_FOR_PUSH). Nothing was guessed. Run release.sh --label <label> --list to see every run and which one reached READY_FOR_PUSH"; return 1
+  fi
+  v=$(rr_val "$k" "$f")
+  if [ -z "$v" ]; then
+    echo "$what $f has no value for $k (line '$k=' missing or blank; $(grep -c . "$f") line(s) in the file)"; return 1
+  fi
+  printf '%s\n' "$v"
+}
+# rr_new_run <label> [<run ID>]: creates $GEN/runs/<run ID>/ atomically (mkdir, never -p on the run folder) and prints
+# the run ID. Without a run ID, <label>-<timestamp> (with -2, -3, ... if that second is already taken). An existing
+# run folder is never reused.
+rr_new_run() {
+  local label=$1 id=${2:-} base n=1
+  mkdir -p "$GEN/runs" || return 1
+  if [ -n "$id" ]; then
+    case "$id" in "$label"-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]*) ;; *)
+      echo "run ID $id is not $label-<YYYYMMDD-HHMMSS>" >&2; return 1;; esac
+    mkdir "$GEN/runs/$id" 2>/dev/null || { echo "run $id already exists in $GEN/runs; its evidence is never reused or overwritten" >&2; return 1; }
+  else
+    base="$label-$(date +%Y%m%d-%H%M%S)"; id=$base
+    until mkdir "$GEN/runs/$id" 2>/dev/null; do
+      n=$((n + 1)); id="$base-$n"; [ "$n" -lt 100 ] || { echo "could not create a run folder in $GEN/runs" >&2; return 1; }
+    done
+  fi
+  printf 'RUN_ID=%s\nLABEL=%s\nCREATED=%s\n' "$id" "$label" "$(date '+%Y-%m-%d %H:%M:%S %z')" > "$GEN/runs/$id/run.txt" \
+    && chmod a-w "$GEN/runs/$id/run.txt" && echo "$id"
+}
+# rr_seal <folder>: SHA-256 MANIFEST of every file below it, then every file and folder in it read-only. Once only.
+rr_seal() {
+  local d=$1
+  [ -d "$d" ] || { echo "cannot seal $d: no such folder"; return 1; }
+  [ -e "$d/MANIFEST.sha256" ] && { echo "$d is already sealed"; return 1; }
+  ( cd "$d" && find . -type f ! -path ./MANIFEST.sha256 | LC_ALL=C sort | while IFS= read -r f; do rr_sha256 "$f"; done \
+      > MANIFEST.sha256 ) || return 1
+  chmod -R a-w "$d"
+}
+# rr_verify <folder>: the folder is sealed, every file matches its MANIFEST line and no file was added or removed.
+rr_verify() {
+  local d=$1 listed present
+  [ -s "$d/MANIFEST.sha256" ] || { echo "$d has no MANIFEST.sha256 (not sealed)"; return 1; }
+  ( cd "$d" && rr_sha256 -c MANIFEST.sha256 >/dev/null 2>&1 ) || { echo "a file in $d differs from its MANIFEST.sha256 entry"; return 1; }
+  listed=$(sed -E 's/^[0-9a-f]{64}  //' "$d/MANIFEST.sha256" | LC_ALL=C sort)
+  present=$(cd "$d" && find . -type f ! -path ./MANIFEST.sha256 | LC_ALL=C sort)
+  [ "$listed" = "$present" ] || { echo "files were added to or removed from sealed $d"; return 1; }
+}
+# rr_runs <label>: "<run ID> <outcome> <commit>" for every run of this label, oldest first. Outcome is RELEASED,
+# READY_FOR_PUSH (passed, not yet released), STOPPED, INTERRUPTED or RUNNING (no end marker: running, or killed).
+rr_runs() {
+  local d id outcome
+  for d in "$GEN/runs/$1"-[0-9]*; do
+    [ -d "$d" ] && [ "$(rr_val LABEL "$d/run.txt")" = "$1" ] || continue
+    id=${d##*/}
+    if [ -f "$d/RELEASED" ]; then outcome=RELEASED
+    elif [ -f "$d/gate/READY_FOR_PUSH" ]; then outcome=READY_FOR_PUSH
+    elif [ -f "$d/gate/STOPPED" ]; then outcome=STOPPED
+    elif [ -f "$d/gate/INTERRUPTED" ]; then outcome=INTERRUPTED
+    else outcome=RUNNING; fi
+    echo "$id $outcome $(rr_val SHA "$d/gate/READY_FOR_PUSH" || true)"
+  done
+}
+# rr_bind <label> <commit>: the run whose READY_FOR_PUSH is exactly <commit> (the commit on GitHub main and live).
+# Several such runs: the one that already holds migration or post-release records, else the newest. A run whose gate
+# evidence fails its MANIFEST is never bound. Prints the run ID, or explains and returns 1.
+rr_bind() {
+  local label=$1 sha=$2 id outcome commit picked="" used="" all
+  [ -n "$sha" ] || { echo "no commit to bind to (the commit read from GitHub main is blank)"; return 1; }
+  all=$(rr_runs "$label")
+  while read -r id outcome commit; do
+    [ -n "$id" ] && [ "$commit" = "$sha" ] || continue
+    case "$outcome" in RELEASED|READY_FOR_PUSH) ;; *) continue;; esac
+    rr_verify "$GEN/runs/$id/gate" >/dev/null || continue
+    picked=$id
+    if [ -d "$GEN/runs/$id/migrate" ] || [ -d "$GEN/runs/$id/post" ]; then used=$id; fi
+  done <<EOF
+$all
+EOF
+  [ -n "$used" ] && picked=$used
+  if [ -z "$picked" ]; then
+    echo "no gate run of $label reached READY_FOR_PUSH for $sha (with its sealed evidence intact). Runs of $label: $(echo "$all" | grep . | tr '\n' ';' || true)"
+    [ -n "$all" ] || echo "(none in $GEN/runs)"
+    return 1
+  fi
+  echo "$picked"
+}
+# rr_resolve <label> <run ID or empty>: which run release_migrate.sh / postrelease_check.sh act on. With a run ID, that
+# run (it must be of this label, have reached READY_FOR_PUSH and have intact sealed evidence). Without one, the run
+# bound to the commit on GitHub main (rr_bind). A label with no run folders at all is a release gated before 3 Nov 2026:
+# its $GEN/<label>-release-status.txt and -state.txt are used, as before. Sets RUN_ID, RUN_DIR, STATUS, GSTATE (the
+# gate's sealed state) and STATE (where the migration adds its records); prints STOP: ... and returns 1 otherwise.
+rr_resolve() {
+  local label=$1 run=$2 main="" tries outcome
+  RUN_ID=""
+  if [ -n "$run" ]; then
+    outcome=$(rr_runs "$label" | awk -v r="$run" '$1 == r {print $2}')
+    [ -n "$outcome" ] || { echo "STOP: run $run is not a run of $label in $GEN/runs"; return 1; }
+    case "$outcome" in RELEASED|READY_FOR_PUSH) ;; *) echo "STOP: run $run did not reach READY_FOR_PUSH (its outcome: $outcome)"; return 1;; esac
+    rr_verify "$GEN/runs/$run/gate" >/dev/null || { echo "STOP: $(rr_verify "$GEN/runs/$run/gate")"; return 1; }
+    RUN_ID=$run
+  elif [ -n "$(rr_runs "$label")" ]; then
+    for tries in 1 2 3; do
+      main=$(git ls-remote "$REPO_URL" refs/heads/main | cut -f1)
+      [ -n "$main" ] && break
+      [ "$tries" -lt 3 ] && sleep 5
+    done
+    [ -n "$main" ] || { echo "STOP: GitHub main could not be read (git ls-remote returned nothing, 3 tries), so no run can be bound; check the network and run the same command again"; return 1; }
+    RUN_ID=$(rr_bind "$label" "$main") || { echo "STOP: $RUN_ID"; return 1; }
+  fi
+  if [ -n "$RUN_ID" ]; then
+    RUN_DIR="$GEN/runs/$RUN_ID"; STATUS="$RUN_DIR/status.txt"; GSTATE="$RUN_DIR/gate/state.txt"; STATE="$RUN_DIR/after-state.txt"
+    echo "== Run $RUN_ID (READY_FOR_PUSH $(rr_val SHA "$RUN_DIR/gate/READY_FOR_PUSH")); evidence $RUN_DIR"
+  else
+    RUN_DIR=""; STATUS="$GEN/$label-release-status.txt"; GSTATE="$GEN/$label-release-state.txt"; STATE=$GSTATE
+    echo "== No run folders for $label in $GEN/runs: using the pre-3 Nov 2026 files $GSTATE and $STATUS"
+  fi
+}
+# <<< release-runs
+
+# This run's own folder (3 Nov 2026). Before, every run of a label wrote $GEN/<label>-release-status.txt and
+# -state.txt and began by truncating them, so a second gate run of the same label (vd1, 3 Nov) blanked the first
+# run's READY_FOR_PUSH record. Now nothing outside this run's new folder is written, and nothing is truncated.
+RUN_ID=$(rr_new_run "$LABEL" "$RUN_ID_ARG") || { echo "STOP: could not create this run's folder (see above)"; exit 1; }
+RUN_DIR="$GEN/runs/$RUN_ID"; EVID="$RUN_DIR/gate"
+mkdir "$EVID" || { echo "STOP: could not create $EVID"; exit 1; }
+DEST=$HOME/Developer/Brayman-Estimator-$RUN_ID
+TS=${RUN_ID#"$LABEL"-}; OUT="$EVID/$LABEL"; LOG="$EVID/gate.log"; STATUS="$RUN_DIR/status.txt"
+STATE="$EVID/state.txt"
+# At the end of the run, however it ends (passed, stopped, Ctrl-C, closed window): the outcome marker, then the seal.
+finish_gate() {
+  if [ ! -f "$EVID/READY_FOR_PUSH" ] && [ ! -f "$EVID/STOPPED" ]; then
+    echo "INTERRUPTED $(date) before READY_FOR_PUSH" > "$EVID/INTERRUPTED"
+    echo "INTERRUPTED $(date): the gate did not finish; this run cannot be released. Start a new run." >> "$STATUS"
+  fi
+  rr_seal "$EVID" >/dev/null && echo "== Run $RUN_ID: evidence sealed in $EVID (MANIFEST.sha256, read-only)" \
+    || echo "WARNING: could not seal $EVID"
+  rm -rf "$LOCKDIR"
+}
+trap finish_gate EXIT
+trap 'exit 130' INT TERM HUP
+
 status() { echo "$1" >> "$STATUS"; echo "  [status] $1"; }
-stop() { status "STOPPED: $1"; echo "STOP: $1"; exit 1; }
+stop() { echo "$1" > "$EVID/STOPPED"; status "STOPPED: $1"; echo "STOP: $1"; exit 1; }
 val() { grep "^$1=" "$2" | head -1 | cut -d= -f2-; }
 REMOTE_PY='cd /opt/render/project/src && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=$(command -v python3); fi; $PY -'
-: > "$STATUS"; : > "$STATE"; status "STARTED $(date) label=$LABEL log=$LOG"
+
+# The gate itself. It runs as one function piped into the log, so the log is complete before the run is sealed.
+gate_main() {
+status "STARTED $(date) label=$LABEL run=$RUN_ID log=$LOG"
 
 echo "== 1. GitHub main, the candidate branch and the live instance, each checked separately"
 MAIN=$(git ls-remote "$REPO_URL" refs/heads/main | cut -f1)
@@ -261,7 +419,7 @@ status "BACKUP=$BPATH sha256=$BSHA $BROWS (search index $BSEARCH, not in the tot
 
 if [ -n "$MIGRATION_TO" ]; then
   echo "== 3a. Migration rehearsal on a copy of the fresh production backup (this Mac only)"
-  REHEARSAL="$GEN/$LABEL-rehearsal-$TS.db"
+  REHEARSAL="$GEN/$RUN_ID-rehearsal.db"  # outside the run folder: never sealed into the evidence
   cp "$LOCALB" "$REHEARSAL" || stop "could not copy the backup for the rehearsal"
   ./venv/bin/python tools/release/migration_check.py rehearse --db "$REHEARSAL" --from "$REVISION" \
     --to "$MIGRATION_TO" --new-tables "$NEW_TABLES" ${ALTERED_TABLES:+--altered-tables "$ALTERED_TABLES"} \
@@ -279,8 +437,13 @@ ssh "${SSH_OPTS[@]}" "$HOST" "$REMOTE_PY" < tools/release/signing_readiness.py |
 grep -q '^READINESS=ok' "$OUT-signing-readiness.txt" || stop "no ACTIVE PRODUCTION contract package on the live database"
 status "SIGNING_READINESS $(grep '^ACTIVE_PRODUCTION_PACKAGES=' "$OUT-signing-readiness.txt"); $(grep '^SIGNING_ARTIFACTS=' "$OUT-signing-readiness.txt")"
 
-cat > "$STATE" <<EOF
+# The state is written once (noclobber: an existing file is never replaced) and sealed with the rest of gate/.
+( set -o noclobber; cat > "$STATE" ) <<EOF || stop "could not write $STATE (it already exists; evidence is never overwritten)"
+RUN_ID=$RUN_ID
+LABEL=$LABEL
 SHA=$SHA
+BRANCH=$BRANCH
+MAIN_BASE=$MAIN_BASE
 LIVE_BASE=$LIVE_BASE
 LIVE_DEPLOY=$LIVE_DEPLOY
 REVISION=$REVISION
@@ -295,12 +458,23 @@ ALTERED_CHECKS=$ALTERED_CHECKS
 FILLED_COLUMNS=$FILLED_COLUMNS
 POPULATED_TABLES=$POPULATED_TABLES
 EOF
+for key in RUN_ID SHA LIVE_BASE LIVE_DEPLOY REVISION BACKUP BACKUP_ROWS BACKUP_SEARCH_INDEX CLONE; do
+  CHECKED=$(rr_require "$STATE" "$key" "release state") || stop "$CHECKED"
+done
 echo "== 4. READY_FOR_PUSH — stop here"
 if [ -n "$MIGRATION_TO" ]; then
   status "ROLLBACK_TARGET=code: redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings) — it runs unchanged with the added tables present; database: only with Joel's approval, restore the pre-migration backup release_migrate.sh takes on the instance (or $LOCALB)"
-  status "AFTER_AUTHORIZATION Claude pushes $SHA and deploys it; Joel runs release_migrate.sh --label $LABEL (migration $REVISION -> $MIGRATION_TO), then postrelease_check.sh --label $LABEL"
+  status "AFTER_AUTHORIZATION Claude pushes $SHA and deploys it; Joel runs release_migrate.sh --run $RUN_ID (migration $REVISION -> $MIGRATION_TO), then postrelease_check.sh --run $RUN_ID (release.sh --label $LABEL does both)"
 else
   status "ROLLBACK_TARGET=redeploy $LIVE_BASE ($LIVE_DEPLOY, same settings); no database change to undo; restore only with Joel's approval from $LOCALB"
 fi
-status "READY_FOR_PUSH commit=$SHA (nothing pushed, nothing deployed; production needs Joel's authorization)"
+status "READY_FOR_PUSH commit=$SHA run=$RUN_ID (nothing pushed, nothing deployed; production needs Joel's authorization)"
+cp "$STATUS" "$EVID/status-at-ready.txt" || stop "could not keep a copy of the status file in $EVID"
+printf 'SHA=%s\nRUN_ID=%s\nAT=%s\n' "$SHA" "$RUN_ID" "$(date '+%Y-%m-%d %H:%M:%S %z')" > "$EVID/READY_FOR_PUSH"
 echo "== DONE. All gates passed. Send Claude the status file: $STATUS"
+}
+
+gate_main 2>&1 | tee "$LOG"
+GATE_EXIT=${PIPESTATUS[0]}
+[ "$GATE_EXIT" -eq 0 ] && [ -f "$EVID/READY_FOR_PUSH" ] || exit 1
+exit 0

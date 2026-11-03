@@ -19,10 +19,15 @@ DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE = "SUPPLIER_DELIVERY_CHANGE"
 SUPPLIER_DOCUMENT_FAMILIES = (DOCUMENT_FAMILY_SUPPLIER_ORDER, DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE)
 # Gate 3 (Joel, 30 Oct 2026): an approved subcontract commitment is signed by the contractor and the subcontractor.
 DOCUMENT_FAMILY_SUBCONTRACT = "SUBCONTRACT"
+# Internal approval (Joel, 3 Nov 2026): an internal document (first: the Internal Project Financial Summary, frozen as
+# REVn) signed by an approver of the contractor, with an optional countersigner. No client is a party.
+DOCUMENT_FAMILY_INTERNAL_APPROVAL = "INTERNAL_APPROVAL"
 DOCUMENT_FAMILIES = ((DOCUMENT_FAMILY_CHANGE_ORDER, DOCUMENT_FAMILY_CONTRACT) + SUPPLIER_DOCUMENT_FAMILIES
-                     + (DOCUMENT_FAMILY_SUBCONTRACT,))
+                     + (DOCUMENT_FAMILY_SUBCONTRACT, DOCUMENT_FAMILY_INTERNAL_APPROVAL))
 DOCUMENT_FAMILY_CHECK = ("document_family IN ('CHANGE_ORDER', 'CONTRACT', 'SUPPLIER_ORDER', 'SUPPLIER_DELIVERY_CHANGE', "
-                         "'SUBCONTRACT')")
+                         "'SUBCONTRACT', 'INTERNAL_APPROVAL')")
+# Every family but INTERNAL_APPROVAL has a client (the customer, or the project's client).
+CLIENT_REQUIRED_CHECK = "client_id IS NOT NULL OR document_family = 'INTERNAL_APPROVAL'"
 
 AUTHORITY_SYNTHETIC_UAT = "SYNTHETIC_UAT"
 AUTHORITY_PRODUCTION = "PRODUCTION"
@@ -52,9 +57,18 @@ ROLE_ORGANIZATION_COUNTERSIGN = "ORGANIZATION_COUNTERSIGN"
 ROLE_CONTRACTOR = "CONTRACTOR"  # signs for the contractor (buyer) on a supplier document
 ROLE_SUPPLIER = "SUPPLIER"  # signs for the store on a supplier document
 ROLE_SUBCONTRACTOR = "SUBCONTRACTOR"  # signs for the subcontractor on a subcontract (30 Oct 2026)
+ROLE_APPROVER = "APPROVER"  # signs an internal approval for the contractor (3 Nov 2026)
 SIGNING_PARTICIPANT_ROLES = (ROLE_CUSTOMER, ROLE_ORGANIZATION_COUNTERSIGN, ROLE_CONTRACTOR, ROLE_SUPPLIER,
-                             ROLE_SUBCONTRACTOR)
-PARTICIPANT_ROLE_CHECK = "role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUPPLIER', 'SUBCONTRACTOR')"
+                             ROLE_SUBCONTRACTOR, ROLE_APPROVER)
+PARTICIPANT_ROLE_CHECK = ("role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUPPLIER', 'SUBCONTRACTOR', "
+                          "'APPROVER')")
+# The participant who signs through the one-time email link: the customer, or the approver of an internal approval.
+LINK_SIGNER_ROLES = (ROLE_CUSTOMER, ROLE_APPROVER)
+
+
+def link_signer(request):
+    """The request's link signer (CUSTOMER or APPROVER), or None."""
+    return next((row for row in (request.participants or []) if row.role in LINK_SIGNER_ROLES), None)
 
 EVENT_REQUEST_CREATED = "REQUEST_CREATED"
 EVENT_APPROVED_FOR_SIGNATURE = "APPROVED_FOR_SIGNATURE"
@@ -232,6 +246,7 @@ class SigningRequest(db.Model):
             "authority_class IN ('SYNTHETIC_UAT', 'PRODUCTION')",
             name="ck_signing_requests_authority_class",
         ),
+        db.CheckConstraint(CLIENT_REQUIRED_CHECK, name="ck_signing_requests_client_required"),
         db.CheckConstraint(
             "status IN ('CREATED', 'APPROVED_FOR_SIGNATURE', 'SENT', 'SIGNED', "
             "'EXECUTED', 'VOIDED', 'EXPIRED', 'DECLINED')",
@@ -260,10 +275,10 @@ class SigningRequest(db.Model):
         nullable=False,
         index=True,
     )
-    client_id = db.Column(
+    client_id = db.Column(  # NULL only for INTERNAL_APPROVAL (ck_signing_requests_client_required)
         db.Integer,
         db.ForeignKey("clients.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
     frozen_artifact_id = db.Column(

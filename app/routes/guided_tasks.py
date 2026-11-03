@@ -242,3 +242,108 @@ def allowance_treatment(project_id):
         db.session.rollback()
         flash(str(exc), "error")
     return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario")
+
+
+# ------------------------------------------------------------------------------ internal approval (CaliSIGN, 3 Nov 2026)
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/summary-revisions", methods=["POST"])
+def freeze_summary_revision(project_id):
+    """Freeze the working Internal Project Financial Summary as the next REV."""
+    from app import db
+    from app.services import internal_approval as IA
+
+    _require_project_economics()
+    project, _guided, version = _review_version(project_id)
+    try:
+        revision = IA.freeze_revision(version, user=current_user._get_current_object())
+        flash(f"{revision.label} frozen. Send it for internal approval when you are ready.", "success")
+    except IA.InternalApprovalError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-internal-approval")
+
+
+def _revision_or_404(project, revision_id):
+    from app.models.internal_summary import InternalSummaryRevision
+
+    revision = InternalSummaryRevision.query.filter_by(id=revision_id, organization_id=get_current_organization_id(),
+                                                       project_id=project.id).first()
+    if revision is None:
+        abort(404)
+    return revision
+
+
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/summary-revisions/<int:revision_id>/send", methods=["POST"])
+def send_summary_for_approval(project_id, revision_id):
+    """Send REVn for internal approval: the approver gets the normal CaliSIGN one-time email link."""
+    from app import db
+    from app.services import internal_approval as IA
+
+    _require_project_economics()
+    project, _guided, _version = _review_version(project_id)
+    revision = _revision_or_404(project, revision_id)
+    try:
+        issue = IA.send_for_internal_approval(revision, user=current_user._get_current_object(),
+                                              approver_name=request.form.get("approver_name", ""),
+                                              approver_email=request.form.get("approver_email", ""))
+        flash(f"{revision.label} sent to {issue.request.participants[0].invited_email} for internal approval "
+              f"({issue.request.request_number}).", "success")
+    except IA.InternalApprovalError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    except Exception as exc:  # noqa: BLE001 - a signing-engine refusal is shown, nothing half-done is kept
+        db.session.rollback()
+        flash(f"Not sent: {getattr(exc, 'code', exc)}", "error")
+    return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-internal-approval")
+
+
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/summary-revisions/<int:revision_id>.pdf")
+def summary_revision_pdf(project_id, revision_id):
+    """A frozen REV's exact PDF (the signed copy once approved), for the office."""
+    from flask import Response
+
+    from app.services import internal_approval as IA
+    from app.services.signing import retrieve_executed_artifact_bytes, retrieve_frozen_artifact_bytes
+
+    _require_project_economics()
+    project, _guided, _version = _review_version(project_id)
+    revision = _revision_or_404(project, revision_id)
+    if revision.employee_detail:
+        _require_employee_cost()
+    state = IA.status_of(revision)
+    if state["state"] == "approved":
+        data = retrieve_executed_artifact_bytes(state["request"].id, revision.organization_id)
+    else:
+        artifact = IA.frozen_artifact(revision)
+        if artifact is None:
+            abort(404)
+        data = retrieve_frozen_artifact_bytes(artifact)
+    return Response(data, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="Internal_Project_Financial_Summary_'
+                                                    f'{revision.label}.pdf"', "Cache-Control": "no-store"})
+
+
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/summary-revisions/<int:revision_id>/countersign",
+                       methods=["POST"])
+def countersign_summary_revision(project_id, revision_id):
+    """Approver + countersigner rule: the office countersignature completes the internal approval."""
+    from app import db
+    from app.models.signing import ACTOR_HUMAN
+    from app.services import internal_approval as IA
+    from app.services.signing import SigningServiceError, countersign_and_execute
+
+    _require_project_economics()
+    project, _guided, _version = _review_version(project_id)
+    revision = _revision_or_404(project, revision_id)
+    state = IA.status_of(revision)
+    if state["state"] != "awaiting_countersign":
+        flash(f"{revision.label} is not waiting for a countersignature.", "error")
+    else:
+        try:
+            countersign_and_execute(state["request"].id, organization_id=revision.organization_id,
+                                    actor_kind=ACTOR_HUMAN, actor_user_id=current_user.id,
+                                    actor_identifier=current_user.email)
+            flash(f"{revision.label} countersigned: the internal approval is complete.", "success")
+        except SigningServiceError as exc:
+            db.session.rollback()
+            flash(f"Not countersigned: {exc.code}", "error")
+    return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-internal-approval")

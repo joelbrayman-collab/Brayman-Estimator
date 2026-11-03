@@ -236,6 +236,41 @@
   </script>
   <style>.live-pl td, .live-pl th { padding: 3px 6px; } .live-pl .num { text-align: right; white-space: nowrap; } .live-pl tr.is-out td { color: var(--ink-soft, #6b7280); } .live-pl-total th { background: #FBF1D9; } .live-pl input[data-pl-budget] { width: 7.5em; text-align: right; }</style>
   {% endcall %}
+  {# Internal approval on CaliSIGN (Joel, 3 Nov 2026): freeze the working summary as REVn, send it to an approver by
+     the normal one-time email link; the signed copy is filed in Documents. A signed REV never changes. #}
+  {% call ts.details("Internal approval (CaliSIGN)", "ts-review-internal-approval", hint=((financial.summary_revisions[0].revision.label ~ ": " ~ financial.summary_revisions[0].status.label) if financial.summary_revisions else "Nothing frozen yet")) %}
+  <section class="ge-card" data-internal-approval>
+    <form method="post" action="{{ url_for('guided_tasks.freeze_summary_revision', project_id=project.id) }}" class="ts-inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="ge-secondary" data-freeze-revision>Freeze the working summary as the next REV</button>
+      <span class="ge-muted">{% if financial.employee_cost %}With the crew's names and loaded rates.{% else %}Crew totals only (no loaded rates).{% endif %}</span>
+    </form>
+    {% if financial.summary_revisions %}
+    <table class="ge-table" data-summary-revisions>
+      <tr><th>REV</th><th>Frozen</th><th>Status</th><th></th></tr>
+      {% for row in financial.summary_revisions %}{% set r = row.revision %}{% set st = row.status %}
+      <tr data-summary-revision="{{ r.label }}" data-revision-state="{{ st.state }}">
+        <td><a href="{{ url_for('guided_tasks.summary_revision_pdf', project_id=project.id, revision_id=r.id) }}" target="_blank" rel="noopener">{{ r.label }}</a>{% if not r.employee_detail %} <span class="ge-muted">(crew totals)</span>{% endif %}</td>
+        <td>{{ r.created_at|local_time("%b %d, %Y %H:%M") }} · {{ r.created_by_name }}</td>
+        <td>{{ st.label }}{% if st.signed_by %} by {{ st.signed_by }}{% endif %}{% if st.request %} <span class="ge-muted">{{ st.request.request_number }}</span>{% endif %}</td>
+        <td>
+          {% if st.state in ("not_sent", "voided", "expired", "declined") %}
+          <form method="post" action="{{ url_for('guided_tasks.send_summary_for_approval', project_id=project.id, revision_id=r.id) }}" class="ts-inline" data-send-approval="{{ r.label }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input name="approver_name" placeholder="Approver's name" required maxlength="150" aria-label="Approver's name for {{ r.label }}">
+            <input type="email" name="approver_email" placeholder="Approver's email" required maxlength="255" aria-label="Approver's email for {{ r.label }}">
+            <button type="submit" class="ge-secondary">Send for internal approval</button>
+          </form>
+          {% elif st.state == "awaiting_countersign" %}
+          <form method="post" action="{{ url_for('guided_tasks.countersign_summary_revision', project_id=project.id, revision_id=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="ge-secondary">Countersign</button></form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+  </section>
+  {% endcall %}
   {% endif %}
 
   {% if version %}

@@ -16,7 +16,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from app.models.signing import DOCUMENT_FAMILY_CHANGE_ORDER, ROLE_CUSTOMER
+from app.models.signing import DOCUMENT_FAMILY_CHANGE_ORDER, DOCUMENT_FAMILY_INTERNAL_APPROVAL, ROLE_CUSTOMER, link_signer
 from app.models.user import User
 
 
@@ -130,19 +130,20 @@ def assemble_executed_pdf(
     """Return new executed PDF bytes. Caller retains them separately from the freeze."""
     if not frozen_pdf_bytes:
         raise ValueError("Frozen pre-sign PDF is empty.")
-    customer = next(
-        (row for row in request.participants if row.role == ROLE_CUSTOMER),
-        None,
-    )
+    customer = link_signer(request)
+    _ = ROLE_CUSTOMER
     consent = request.consent_version
     family = request.document_family or ""
     source_label = "Change Order" if family == DOCUMENT_FAMILY_CHANGE_ORDER else "Contract"
+    who = "Customer"
+    if family == DOCUMENT_FAMILY_INTERNAL_APPROVAL:  # 3 Nov 2026: the approver of an internal document
+        source_label, who = "Internal approval", "Approver"
     customer_name = (customer.confirmed_signer_name if customer else "") or ""
     countersigner = _countersigner_name(request)
     rows = [
         ("Signed by", customer_name),
         ("Signed on", _format_day(customer.signed_at if customer else None)),
-        ("Customer email", (customer.invited_email if customer else "") or ""),
+        (f"{who} email", (customer.invited_email if customer else "") or ""),
         (
             "Countersigned by",
             countersigner if request.countersign_required else "Not required",
@@ -161,9 +162,9 @@ def assemble_executed_pdf(
         ("Signing request", request.request_number or ""),
         ("Pre-sign SHA-256", request.frozen_artifact.sha256 if request.frozen_artifact else ""),
         ("Consent version", consent.version_code if consent else ""),
-        ("Customer IP", (customer.completion_ip if customer else "") or ""),
+        (f"{who} IP", (customer.completion_ip if customer else "") or ""),
         (
-            "Customer user-agent",
+            f"{who} user-agent",
             (customer.user_agent if customer else "") or "",
         ),
     ]

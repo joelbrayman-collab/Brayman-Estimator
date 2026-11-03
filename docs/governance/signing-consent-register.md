@@ -8,6 +8,7 @@ below is copied from the code that holds it and must stay identical to it.
 |---|---|---|---|---|
 | `CONSENT-SUPPLIER-V1-001` | PRODUCTION | Supplier purchase orders and supplier delivery changes (FG-041) for real (non-demo) suppliers | Contractor/office signer and supplier/store signer, each signed in | **APPROVED — 29 OCTOBER 2026 (Joel Brayman)** |
 | `CONSENT-BRAYMAN-CHANGE-ORDER-V1-001` | PRODUCTION | Client change orders sent from the office (FG-033 SIGN-D), from the 29 Oct 2026 CaliSIGN release | Client (secure link, no account); Brayman countersigns | **In use from release — 29 Oct 2026** (Joel authorized: the contract consent with only the document named changed) |
+| `CONSENT-BRAYMAN-INTERNAL-APPROVAL-V1-001` | PRODUCTION | Internal approvals (document class INTERNAL_APPROVAL, 3 Nov 2026); first document type: the Internal Project Financial Summary REVn | Approver (secure link, no account); countersigner only where the document type's rule requires one | **In use on Joel's authorization, not counsel-approved — 3 Nov 2026** |
 | `CONSENT-BRAYMAN-V1-001` | PRODUCTION | Brayman V1 generated contracts (client signing) | Client (secure link, no account) | In use since 16 Oct 2026 (WF-04, internal V1 acceptance). Not broadened by the supplier approval. |
 | `CONSENT-SYNTHETIC-UAT-001` | SYNTHETIC_UAT | Synthetic/test requests: demo suppliers; change orders sent on the training site (`TRAINING_ENVIRONMENT`); engine tests | Test signers | Test only. No longer used for office change orders (PP-1). |
 
@@ -85,3 +86,21 @@ signing records keep the consent they pinned (synthetic), unchanged.
 Shared note (both client consents): "After you sign you can download …" — the signing link offers the completed
 document once every signature is in place (after Brayman's countersignature when required) and while the link is
 still valid (7 days by default); after that the office provides the copy (the completion email says so).
+
+
+## CONSENT-BRAYMAN-INTERNAL-APPROVAL-V1-001 — PRODUCTION — 3 NOVEMBER 2026
+
+Status: **in use on Joel's authorization, not counsel-approved.**
+
+Source: `app/services/internal_approval.py`, `CONSENT_INTERNAL_APPROVAL_V1_CODE` / `CONSENT_INTERNAL_APPROVAL_V1_BODY`.
+Created on first use (as the other consent versions are), never edited.
+
+> By ticking the box, typing your full name and selecting Sign & Accept, you approve this internal document
+> electronically. Your typed name and that selection are your signature approving it. Before you sign you can open the
+> full document above and keep a copy. After you sign you can download the signed copy with its signing record. If you
+> do not want to approve it electronically, do not continue and contact the person who sent it.
+
+Scope: the sixth signable document class, INTERNAL_APPROVAL: an internal document of the contractor (first: the
+Internal Project Financial Summary frozen as REVn) approved by an approver through the secure CaliSIGN link, with no
+Calibrayt account and no client party. The countersigner is set per document type (the Financial Summary: approver
+only). The training site keeps `CONSENT-SYNTHETIC-UAT-001`. The link exposes only the frozen document being signed.

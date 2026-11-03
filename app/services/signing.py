@@ -48,6 +48,8 @@ from app.models.signing import (
     EVENT_SIGNED,
     EVENT_VIEWED,
     EVENT_VOIDED,
+    DOCUMENT_FAMILY_INTERNAL_APPROVAL,
+    LINK_SIGNER_ROLES,
     ROLE_CUSTOMER,
     ROLE_ORGANIZATION_COUNTERSIGN,
     SIGNING_AUTHORITY_CLASSES,
@@ -704,12 +706,18 @@ def approve_signing_request(
             raise SigningServiceError(BLOCK_PRESENTATION_MASTER_SHA_MISMATCH)
         if artifact.media_type != PDF_MEDIA_TYPE:
             raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+    elif request.document_family == DOCUMENT_FAMILY_INTERNAL_APPROVAL:
+        from app.models.internal_summary import InternalSummaryRevision
+
+        revision = db.session.get(InternalSummaryRevision, request.source_record_id)
+        if revision is None or revision.organization_id != organization_id:
+            raise SigningServiceError(BLOCK_SOURCE_NOT_FOUND)
     else:
         raise SigningServiceError(BLOCK_DOCUMENT_FAMILY_INVALID)
     if not (request.participants or []):
         raise SigningServiceError(BLOCK_SIGNER_NAME_REQUIRED)
     customer = next(
-        (row for row in request.participants if row.role == ROLE_CUSTOMER),
+        (row for row in request.participants if row.role in LINK_SIGNER_ROLES),
         None,
     )
     if customer is None:
@@ -825,8 +833,9 @@ def _raise_if_rate_limited(client_ip: str, *, lookup_key: str, now: datetime) ->
 
 
 def _customer_participant(request: SigningRequest) -> SigningParticipant:
+    """The link signer: the customer, or the approver of an internal approval (3 Nov 2026)."""
     customer = next(
-        (row for row in request.participants if row.role == ROLE_CUSTOMER),
+        (row for row in request.participants if row.role in LINK_SIGNER_ROLES),
         None,
     )
     if customer is None:
@@ -865,6 +874,10 @@ def _document_reference(request: SigningRequest) -> str:
         contract = db.session.get(GeneratedProjectContract, request.source_record_id)
         if contract is not None and (getattr(contract, "contract_number", None) or "").strip():
             return contract.contract_number
+    if request.document_family == DOCUMENT_FAMILY_INTERNAL_APPROVAL:
+        from app.services.internal_approval import document_title
+
+        return document_title(request)
     project = db.session.get(Project, request.project_id)
     if project is not None and (project.name or "").strip():
         return project.name
@@ -950,9 +963,9 @@ def resolve_customer_access(
         db.session.commit()
         raise
     _raise_if_rate_limited(client_ip, lookup_key=lookup_key, now=now)
-    participant = SigningParticipant.query.filter_by(
-        lookup_key=lookup_key,
-        role=ROLE_CUSTOMER,
+    participant = SigningParticipant.query.filter(
+        SigningParticipant.lookup_key == lookup_key,
+        SigningParticipant.role.in_(LINK_SIGNER_ROLES),
     ).first()
     expected = (participant.token_hash if participant is not None else "") or ""
     presented = hash_invitation_secret(secret)
@@ -1116,8 +1129,23 @@ def accept_and_sign(
             pass
     db.session.commit()
     if request.status == STATUS_EXECUTED:
+        _after_executed(request)
         send_signing_complete_message(request)
     return request
+
+
+def _after_executed(request: SigningRequest) -> None:
+    """Once a request is executed (and committed): an internal approval's signed copy is filed in the project's
+    Documents (3 Nov 2026). Other families are filed by the documents sources, as before. Filing never undoes it."""
+    if request.document_family != DOCUMENT_FAMILY_INTERNAL_APPROVAL:
+        return
+    try:
+        from app.services.internal_approval import file_signed_copy
+
+        file_signed_copy(request)
+    except Exception:  # noqa: BLE001 - the signature stands; filing is retried when the review page opens
+        db.session.rollback()
+        current_app.logger.exception("Internal approval %s: signed copy not filed", request.id)
 
 
 def _expire_request_once(
@@ -1266,6 +1294,7 @@ def countersign_and_execute(
         raise
     executed = get_signing_request(request_id, organization_id)
     if executed.status == STATUS_EXECUTED:
+        _after_executed(executed)
         send_signing_complete_message(executed)
     return executed
 
@@ -1306,6 +1335,7 @@ def execute_signed_request(
         raise
     executed = get_signing_request(request_id, organization_id)
     if executed.status == STATUS_EXECUTED:
+        _after_executed(executed)
         send_signing_complete_message(executed)
     return executed
 

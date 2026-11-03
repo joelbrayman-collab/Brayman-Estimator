@@ -1014,13 +1014,15 @@ def _calisign(ctx):
 
     names = {DOCUMENT_FAMILY_CONTRACT: "Contract", DOCUMENT_FAMILY_CHANGE_ORDER: "Change order",
              DOCUMENT_FAMILY_SUPPLIER_ORDER: "Purchase order", DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE: "Delivery change",
-             DOCUMENT_FAMILY_SUBCONTRACT: "Subcontract"}
+             DOCUMENT_FAMILY_SUBCONTRACT: "Subcontract", "INTERNAL_APPROVAL": "Internal approval"}
 
     def href(req):
         if req.document_family == DOCUMENT_FAMILY_CONTRACT:
             return _link("projects.review_contract", id=req.project_id)
         if req.document_family == DOCUMENT_FAMILY_CHANGE_ORDER:
             return _link("project_controls.view_change_order", id=req.source_record_id)
+        if req.document_family == "INTERNAL_APPROVAL":
+            return _link("guided.pricing", project_id=req.project_id, _anchor="ts-review-scenario")
         if req.document_family == DOCUMENT_FAMILY_SUBCONTRACT:
             return _link("supplier_office.commitments", project_id=req.project_id, _anchor="subcontracts")
         return _link("supplier_office.project_requests", project_id=req.project_id)

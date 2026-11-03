@@ -17,6 +17,7 @@ from app.models.signing import (
     DOCUMENT_FAMILY_CHANGE_ORDER,
     DOCUMENT_FAMILY_CONTRACT,
     ROLE_CUSTOMER,
+    link_signer,
     SigningRequest,
 )
 from app.models.transactional_message import (
@@ -97,6 +98,8 @@ def _document_kind(request: SigningRequest) -> str:
         return "Change Order"
     if request.document_family == DOCUMENT_FAMILY_CONTRACT:
         return "Contract"
+    if request.document_family == "INTERNAL_APPROVAL":
+        return "document for internal approval"
     return "document"
 
 
@@ -114,6 +117,10 @@ def _document_label(request: SigningRequest) -> str:
         contract = db.session.get(GeneratedProjectContract, request.source_record_id)
         if contract is not None and (getattr(contract, "contract_number", None) or "").strip():
             return contract.contract_number
+    if request.document_family == "INTERNAL_APPROVAL":
+        from app.services.internal_approval import document_title
+
+        return document_title(request)
     project = db.session.get(Project, request.project_id)
     if project is not None and (project.name or "").strip():
         return project.name
@@ -131,7 +138,7 @@ def _expires_display(request: SigningRequest) -> str:
 
 def _context_variables(request: SigningRequest, *, invitation_url: Optional[str] = None) -> dict:
     project = db.session.get(Project, request.project_id)
-    signer = next((p for p in request.participants if p.role == ROLE_CUSTOMER), None)
+    signer = link_signer(request)  # the customer, or an internal approval's approver
     variables = {
         "organization_name": _organization_name(request.organization_id),
         "document_kind": _document_kind(request),
@@ -148,10 +155,10 @@ def _context_variables(request: SigningRequest, *, invitation_url: Optional[str]
 
 
 def _customer_email(request: SigningRequest) -> Optional[str]:
-    for participant in request.participants:
-        if participant.role == ROLE_CUSTOMER:
-            email = (participant.invited_email or "").strip().lower()
-            return email or None
+    participant = link_signer(request)
+    if participant is not None:
+        email = (participant.invited_email or "").strip().lower()
+        return email or None
     return None
 
 

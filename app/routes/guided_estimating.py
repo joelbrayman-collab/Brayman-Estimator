@@ -582,7 +582,19 @@ def _financial_summary_panel(guided, version):
     all_rows = employees(_org()) if employee_cost else []
     scenario = PS.scenario_rows(version, crew.crew_rates(guided.estimate))
     db.session.rollback()  # the preview is read only
+    from app.services import internal_approval as IA
+
+    summary_revisions = [{"revision": r, "status": IA.status_of(r)}
+                         for r in reversed(IA.revisions(guided.estimate)) if r.origin == "FROZEN"]
+    for row in summary_revisions:  # a signed copy not filed yet (e.g. filing failed at signing) is filed now
+        req = row["status"].get("request")
+        if row["status"]["state"] == "approved" and req is not None and IA.signed_document(req) is None:
+            try:
+                IA.file_signed_copy(req)
+            except Exception:  # noqa: BLE001 - the review page never fails on filing
+                db.session.rollback()
     return {"scenario": scenario, "revisions": quoted_revisions(guided.estimate),
+            "summary_revisions": summary_revisions,
             "accepted": G.accepted_proposal(guided) is not None, "employee_cost": employee_cost,
             "crew": rows, "problem": crew.crew_problem(guided.estimate),
             "assignable": assignable_employees(_org()) if employee_cost else [],

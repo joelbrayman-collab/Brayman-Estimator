@@ -778,30 +778,29 @@ def file_approved_summary(version, approval, *, user=None):
 
 
 def quoted_revisions(estimate) -> list:
-    """Every version of the estimate whose price went to the client, in the order first sent: REV1, REV2, ...
-    (Joel, 2 Nov 2026). Each is an approved, locked version (Gate 1) and never changes."""
+    """Every price sent to the client, as the summary's REVs in the order sent (Joel, 2-3 Nov 2026). One REV series
+    per estimate (app/models/internal_summary.py): the client's REVs and the REVs frozen for internal approval share
+    it. Each is an approved, locked version (Gate 1) and never changes."""
     from app.models import Proposal
-    from app.models.proposal_acceptance import ProposalClientLink
+    from app.models.internal_summary import ORIGIN_SENT_TO_CLIENT, InternalSummaryRevision
 
-    first_sent = {}
-    for proposal in Proposal.query.filter_by(estimate_id=estimate.id).all():
-        for link in ProposalClientLink.query.filter_by(proposal_id=proposal.id).all():
-            vid = proposal.estimate_version_id
-            if vid not in first_sent or link.sent_at < first_sent[vid][0]:
-                first_sent[vid] = (link.sent_at, proposal)
-    ordered = sorted(first_sent.items(), key=lambda kv: kv[1][0])
+    rows = (InternalSummaryRevision.query.filter_by(estimate_id=estimate.id, origin=ORIGIN_SENT_TO_CLIENT)
+            .order_by(InternalSummaryRevision.revision_number.asc()).all())
     by_id = {v.id: v for v in estimate.versions}
-    return [{"number": i, "label": f"REV{i}", "version": by_id.get(vid), "sent_at": sent, "proposal": proposal}
-            for i, (vid, (sent, proposal)) in enumerate(ordered, 1)]
+    return [{"number": r.revision_number, "label": r.label, "version": by_id.get(r.estimate_version_id),
+             "sent_at": r.created_at, "proposal": db.session.get(Proposal, r.proposal_id) if r.proposal_id else None,
+             "revision": r} for r in rows]
 
 
 def file_sent_summary(version, proposal, *, user=None):
-    """When a price goes to the client: file the summary of exactly what was quoted, numbered REVn (idempotent per
-    proposal). The figures are the ones frozen at Ben's approval of that version (Gate 1), never recalculated."""
+    """When a price goes to the client: record it as the summary's next REV (its figures frozen at Ben's approval of
+    that version, Gate 1, never recalculated) and file that REV's PDF in Documents. Idempotent per proposal."""
     from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_PEOPLE, Document, DocumentLink
+    from app.models.internal_summary import ORIGIN_SENT_TO_CLIENT, InternalSummaryRevision
     from app.services.documents import ingest
     from app.services.documents.contexts import resolve_context
     from app.services.estimate_approval import approval_for
+    from app.services.internal_approval import record_sent_revision
 
     approval = approval_for(version)
     data = frozen_data(approval)
@@ -813,20 +812,20 @@ def file_sent_summary(version, proposal, *, user=None):
                         DocumentLink.record_id == proposal.id).first())
     if existing is not None:
         return existing
-    rev = next((r for r in quoted_revisions(version.estimate) if r["version"] is not None
-                and r["version"].id == version.id), None)
-    label = rev["label"] if rev is not None else "REV"
-    data = dict(data, project=dict(data["project"], revision=f"{label} · {data['project']['revision']}",
-                                   revenue_status=f"{label} sent to client"))
-    blob = ingest.prepare_upload(filename(data), render_pdf(data))
+    revision = InternalSummaryRevision.query.filter_by(estimate_id=version.estimate_id, proposal_id=proposal.id,
+                                                       origin=ORIGIN_SENT_TO_CLIENT).first()
+    if revision is None:
+        revision = record_sent_revision(version, proposal, data, user=user)
+    labelled = revision.data
+    blob = ingest.prepare_upload(filename(labelled), render_pdf(labelled))
     context = resolve_context(approval.organization_id, CONTEXT_PROJECT, version.estimate.project.id)
     actor = ingest.Actor.of(user) if user is not None else ingest.SYSTEM
     document = ingest.file_document(approval.organization_id, actor, blob=blob, context=context,
-                                    title=f"{TITLE} — {label} sent to client ({version.display_label})",
+                                    title=f"{TITLE} — {revision.label} sent to client ({version.display_label})",
                                     type_code=DOCUMENT_TYPE, record_kind="PROPOSAL", record_id=proposal.id,
-                                    description=f"What was quoted to the client as {label}. Internal contractor "
-                                                "document; not for customers, suppliers or field crew.")
-    if data.get("crew"):
+                                    description=f"What was quoted to the client as {revision.label}. Internal "
+                                                "contractor document; not for customers, suppliers or field crew.")
+    if labelled.get("crew"):
         ingest.correct_field(document, actor, "sensitivity", SENSITIVITY_PEOPLE,
                              "Contains the crew's loaded labour rates (wage figures): people administrators only.",
                              allow_sensitivity=True)

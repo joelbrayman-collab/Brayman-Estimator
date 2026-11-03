@@ -27,7 +27,7 @@
         <dd data-default-pricing-method>{{ contractor_copy.pricing_method_label(company_defaults.pricing_method) or "none approved" }}</dd>
         {% if company_defaults.pricing_method == "LABOUR_AT_RATE_MATERIAL_MARGIN" %}
         <dt>Subcontract markup</dt>
-        <dd data-default-subcontract-markup>{{ "%.2f"|format(company_defaults.subcontract_markup_rate * 100) }}% · equipment, delivery and other direct costs at cost; labour at the labour rate with no margin</dd>
+        <dd data-default-subcontract-markup>{{ "%.2f"|format(company_defaults.subcontract_markup_rate * 100) }}% · equipment {{ "%.2f"|format(company_defaults.pricing_rules.equipment_markup * 100) }}%, delivery {{ "%.2f"|format(company_defaults.pricing_rules.delivery_markup * 100) }}%, other {{ "%.2f"|format(company_defaults.pricing_rules.other_markup * 100) }}%; labour at the labour rate with no margin</dd>
         {% endif %}
     </dl>
     {% if company_defaults.target_gross_margin is not none %}
@@ -41,13 +41,19 @@
     </form>
     {% endif %}
     {% if company_defaults.pricing_method == "LABOUR_AT_RATE_MATERIAL_MARGIN" %}
-    <form method="post" action="{{ url_for('pricing_engine.set_subcontract_markup') }}" class="pricing-form" data-subcontract-markup-form>
+    {% set r = company_defaults.pricing_rules %}
+    <form method="post" action="{{ url_for('pricing_engine.set_pricing_rules') }}" class="pricing-form" data-pricing-rules-form>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p>Pricing rules by cost type. Labour is charged at the labour rate with no margin; materials take the margin above.</p>
         <div class="form-grid">
-            <label>Subcontract markup (%)<input name="markup_percent" inputmode="decimal" required value="{{ '%.2f'|format(company_defaults.subcontract_markup_rate * 100) }}"></label>
+            <label>Subcontract markup (%)<input name="subcontract_markup" inputmode="decimal" required value="{{ '%.2f'|format(r.subcontract_markup * 100) }}" data-rule="subcontract_markup"></label>
+            <label>Equipment markup (%)<input name="equipment_markup" inputmode="decimal" required value="{{ '%.2f'|format(r.equipment_markup * 100) }}" data-rule="equipment_markup"></label>
+            <label>Delivery markup (%)<input name="delivery_markup" inputmode="decimal" required value="{{ '%.2f'|format(r.delivery_markup * 100) }}" data-rule="delivery_markup"></label>
+            <label>Other direct cost markup (%)<input name="other_markup" inputmode="decimal" required value="{{ '%.2f'|format(r.other_markup * 100) }}" data-rule="other_markup"></label>
+            <label>Unclassified change-order item markup (%, blank = the material margin)<input name="unclassified_markup" inputmode="decimal" value="{{ '%.2f'|format(r.unclassified_markup * 100) if r.unclassified_markup is not none else '' }}" data-rule="unclassified_markup"></label>
             <label>Reason<input name="reason" required maxlength="300"></label>
         </div>
-        <button type="submit" data-save-subcontract-markup>Approve the subcontract markup</button>
+        <button type="submit" data-save-pricing-rules>Approve the pricing rules</button>
     </form>
     {% endif %}
 </section>

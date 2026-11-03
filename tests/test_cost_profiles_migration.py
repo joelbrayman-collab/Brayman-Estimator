@@ -25,7 +25,12 @@ NEW_COLUMNS = {("organization_pricing_policies", "subcontract_markup_rate"),
                ("estimate_pricing_snapshots", "labour_rate"),
                ("estimate_pricing_snapshots", "subcontract_markup_rate"),
                ("estimate_versions", "pricing_method"),
-               ("estimate_versions", "package_pricing_json")}
+               ("estimate_versions", "package_pricing_json"),
+               ("estimate_versions", "pricing_rules_json"),
+               ("organization_pricing_policies", "pricing_rules_json"),
+               ("estimate_pricing_snapshots", "pricing_rules_json"),
+               ("estimate_line_items", "pricing_treatment"),
+               ("change_order_items", "cost_kind")}
 
 
 def _config(db_path):
@@ -100,7 +105,7 @@ def test_upgrade_is_additive_and_downgrade_is_guarded_and_reversible(tmp_path):
         after = _snapshot(engine, before_tables)
         # Existing rows are unchanged apart from the new NULL columns (no backfill, no rewrite).
         assert after["clients"] == before["clients"] and after["organizations"] == before["organizations"]
-        assert after["organization_pricing_policies"] == [r + ("None",) for r in before["organization_pricing_policies"]]
+        assert after["organization_pricing_policies"] == [r + ("None", "None") for r in before["organization_pricing_policies"]]
         with engine.connect() as conn:
             assert conn.execute(sa.text("PRAGMA integrity_check")).scalar() == "ok"
             assert conn.execute(sa.text("SELECT version_num FROM alembic_version")).scalar() == REVISION

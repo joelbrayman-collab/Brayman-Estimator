@@ -102,6 +102,10 @@ def _packages(version):
     return out
 
 
+RULE_OF_BUCKET = {"equipment": "equipment_markup", "delivery": "delivery_markup", "other": "other_markup",
+                  "unclassified": "unclassified_markup"}
+
+
 def _excluded_names(version):
     return [row["name"] for row in _excluded(version, None)]
 
@@ -124,7 +128,7 @@ def _quoted_price(package, version, e) -> Decimal:
     if margin is None:
         return as_money(sum((D(str(l.extended_cost or 0)) for l in lines), ZERO))
     if (e or {}).get("pricing_method") == "LABOUR_AT_RATE_MATERIAL_MARGIN":
-        return labour_material_margin_price(lines, margin, (e or {}).get("subcontract_markup_rate"))["pre_tax"]
+        return labour_material_margin_price(lines, margin, None, (e or {}).get("pricing_rules"))["pre_tax"]
     return true_gross_margin_pre_tax(sum((D(str(l.extended_cost or 0)) for l in lines), ZERO), margin)
 
 
@@ -253,6 +257,7 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
 
     sells = _line_sell_prices(version, e)
     fixed = budgets(version)
+    rules = e.get("pricing_rules") or {}
     by_id = {line.id: line for section in version.sections for line in section.line_items}
     orders = _takeoff(version)
     packages, ref = [], 0
@@ -279,7 +284,10 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
             elif bucket == BUCKET_SUBCONTRACT:
                 pk["subcontracts"].append(_subcontract_row(line, name))
             else:
-                pk["equipment"].append({"item": line.description, "cost": str(q(line.extended_cost or 0))})
+                cost = q(line.extended_cost or 0)
+                rule = rules.get(RULE_OF_BUCKET.get(bucket, ""), None) if rules else None
+                pk["equipment"].append({"item": line.description, "cost": str(cost),
+                                        "ip": str(q(cost * (1 + D(str(rule))))) if rule else str(cost)})
         packages.append(pk)
     rates = crew_rates if crew_rates is not None else current_crew_rates(version.estimate)
     problem = None if rates else crew_problem(version.estimate)
@@ -319,6 +327,9 @@ def build_data(version, *, organization_id: Optional[str] = None, approval=None,
             "subcontract_markup": _s(e.get("subcontract_markup_rate")) or "0",
             "selling_price": _s(e.get("selling_price")),
             "direct_cost": _s(e.get("direct_cost")),
+            # The pricing basis used (ruling 7): the labour SELLING rate above is never an employee's cost; the
+            # crew's loaded COST rates are below. Both are frozen with the approval.
+            "pricing_rules": {k: _s(v) for k, v in rules.items()} if rules else None,
         },
         "crew": [{"name": r["name"], "loaded_rate": str(r["loaded_rate"]), "share": str(r["share"])}
                  for r in (rates or [])],
@@ -383,6 +394,8 @@ def compute(data: dict):
             r["v"] = D(r["value"]) if r.get("value") is not None else q(r["hours"] * S["labour_rate"])
             r["lc"] = q(r["hours"] * blend) if blend is not None else None
         eqs = [dict(r, cost=D(r["cost"])) for r in k.get("equipment", [])]
+        for r in eqs:
+            r["ip"] = D(r.get("ip") or r["cost"])
         subs = [dict(r, cost=D(r["cost"])) for r in k.get("subcontracts", [])]
         for r in subs:
             r["ip"] = q(r["cost"] * (1 + S["sub_markup"]))
@@ -391,14 +404,15 @@ def compute(data: dict):
                  mk=sum((r["mk"] for r in mats), ZERO), h=sum((r["hours"] for r in labs), ZERO),
                  v=sum((r["v"] for r in labs), ZERO),
                  lc=sum((r["lc"] for r in labs), ZERO) if blend is not None else None,
-                 eq=sum((r["cost"] for r in eqs), ZERO), sub=sum((r["cost"] for r in subs), ZERO),
+                 eq=sum((r["cost"] for r in eqs), ZERO), eqip=sum((r["ip"] for r in eqs), ZERO),
+                 sub=sum((r["cost"] for r in subs), ZERO),
                  subip=sum((r["ip"] for r in subs), ZERO))
         known = T["mat"] + T["eq"] + T["sub"]
         T["cost"] = known + T["lc"] if T["lc"] is not None else None
         T["profit"] = T["rev"] - T["cost"] if T["cost"] is not None else None
-        T["ip"] = T["mk"] + T["v"] + T["eq"] + T["subip"]
+        T["ip"] = T["mk"] + T["v"] + T["eqip"] + T["subip"]
         pk.append(dict(k, mats=mats, labs=labs, eqs=eqs, subs=subs, rev=rev, T=T))
-    keys = ("rev", "mat", "mk", "h", "v", "lc", "eq", "sub", "subip", "cost", "profit", "ip")
+    keys = ("rev", "mat", "mk", "h", "v", "lc", "eq", "eqip", "sub", "subip", "cost", "profit", "ip")
     tot = {}
     for key in keys:
         values = [p["T"][key] for p in pk]
@@ -466,6 +480,8 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
     crew_text = P.get("crew_problem") or "Crew not assigned — real labour cost not available"
     no_crew = blend is None
     new_method = S.get("pricing_method") == "LABOUR_AT_RATE_MATERIAL_MARGIN"
+    # Ruling 1: a viewer who may see project economics but not employee cost gets no crew names or loaded rates.
+    detail = P.get("employee_detail", True) is not False
 
     def start(section, notes=()):
         if page_no[0]:
@@ -566,8 +582,11 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
     lines += [("Total revenue", m(tot["rev"]), "bold"), ("COSTS", "", "head"), ("Materials (all)", m(tot["mat"]), "")]
     if no_crew:
         lines.append((_fit("Labour: " + crew_text, 70), "—", "warn"))
-    for cm in split:
-        lines.append((f"Labour: {cm['name']}, {cm['hours']:.2f} h at ${D(cm['loaded_rate']):.2f} loaded", m(cm["cost"]), ""))
+    if detail:
+        for cm in split:
+            lines.append((f"Labour: {cm['name']}, {cm['hours']:.2f} h at ${D(cm['loaded_rate']):.2f} loaded", m(cm["cost"]), ""))
+    elif split:
+        lines.append((f"Labour (crew), {tot['h']:.2f} h", m(tot["lc"]), ""))
     if tot["sub"]:
         lines.append(("Subcontractors", m(tot["sub"]), ""))
     lines += [("Equipment", m(tot["eq"]), ""), ("Total cost", m(tot["cost"]), "bold"),
@@ -589,7 +608,8 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
               (f"Labour, {tot['h']:.2f} h at ${S['labour_rate']:.2f} (no margin)", m(tot["v"]), False)]
         if tot["sub"]:
             ip.append((f"Subcontractors + {S['sub_markup'] * 100:.0f}%", m(tot["subip"]), False))
-        ip += [("Equipment at cost", m(tot["eq"]), False), ("Internal price", m(tot["ip"]), True)]
+        ip += [("Equipment at cost" if tot["eqip"] == tot["eq"] else "Equipment, delivery & other (company rules)",
+                m(tot["eqip"]), False), ("Internal price", m(tot["ip"]), True)]
         internal = tot["ip"]
     else:
         direct = D(S.get("direct_cost") or (tot["mat"] + tot["v"] + tot["eq"] + tot["sub"]))
@@ -604,8 +624,9 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
         c.setStrokeColor(RULE); c.line(x2, yy - 5, x2 + bw, yy - 5); yy -= 15
     yy -= 4
     if split:
+        crew_names = " and ".join(cm["name"] for cm in split) if detail else f"a crew of {len(split)}"
         t(x2, yy, _fit(f"Crew hours {tot['h']:.2f} · about {q(tot['h'] / (8 * len(split))):.1f} working days for "
-                       f"{' and '.join(cm['name'] for cm in split)} together", 105), 7.5, color=GREY)
+                       f"{crew_names} together", 105), 7.5, color=GREY)
     else:
         t(x2, yy, _fit(f"Crew hours {tot['h']:.2f} · {crew_text}", 105), 7.5, True, RED)
 
@@ -663,7 +684,8 @@ def _build(P, S, pk, tot, split, blend, out, total_pages=None) -> int:
     if no_crew:
         rows3 = [(crew_text, "—", True), (f"Labour value at ${S['labour_rate']:.2f}/h ({tot['h']:.2f} h)", m(tot["v"]), False)]
     else:
-        rows3 = ([(f"{cm['name']} — {cm['hours']:.2f} h at ${D(cm['loaded_rate']):.2f}/h loaded", m(cm["cost"]), False) for cm in split] +
+        rows3 = ([(f"{cm['name']} — {cm['hours']:.2f} h at ${D(cm['loaded_rate']):.2f}/h loaded", m(cm["cost"]), False)
+                  for cm in split if detail] +
                  [("Labour cost", m(tot["lc"]), True), (f"Labour value at ${S['labour_rate']:.2f}/h ({tot['h']:.2f} h)", m(tot["v"]), False),
                   ("Labour margin over loaded cost", m(tot["v"] - tot["lc"]), True)])
     for lab, val, b in rows3:
@@ -689,7 +711,7 @@ def render_pdf(data: dict) -> bytes:
     P, S, pk, tot, split, blend = compute(data)
     if not pk:
         pk = [dict(name="No work in Brayman's price yet", mats=[], labs=[], eqs=[], subs=[], rev=[],
-                   T={k: ZERO for k in ("rev", "mat", "mk", "h", "v", "eq", "sub", "subip", "ip")}
+                   T={k: ZERO for k in ("rev", "mat", "mk", "h", "v", "eq", "eqip", "sub", "subip", "ip")}
                    | {"lc": ZERO if blend is not None else None, "cost": ZERO if blend is not None else None,
                       "profit": ZERO if blend is not None else None})]
     counter = BytesIO()

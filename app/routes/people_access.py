@@ -534,6 +534,21 @@ COST_FIELDS = ("hourly_wage", "paid_hours_per_year", "vacation_weeks", "paid_hol
 IDENTITY_FIELDS = ("full_name", "address", "mobile_number", "email_address")
 
 
+def _require_employee_cost():
+    """Ruling 1 (2 Nov 2026): compensation and loaded labour rates are their own permission (financial_access),
+    checked here as well as by this blueprint's owner / System Administrator wall."""
+    from app.services.financial_access import can_view_employee_cost
+
+    if not can_view_employee_cost(current_user, _org()):
+        abort(403)
+
+
+@people_access_bp.before_request
+def _employee_cost_pages():
+    if (request.endpoint or "").startswith("people_access.employee"):
+        _require_employee_cost()
+
+
 def _employee_or_404(person_id):
     from app.models.person import OrganizationPerson
 

@@ -155,11 +155,12 @@ def scenario_rows(version, crew_rates=None) -> dict:
     from app.services import work_packages as WP
     from app.services.estimate_economics import economics
     from app.services.pricing_engine import (
-        BUCKET_AT_COST,
+        AT_COST_BUCKETS,
         BUCKET_LABOUR,
         BUCKET_MATERIAL,
         BUCKET_SUBCONTRACT,
         as_money,
+        labour_material_margin_price,
         pricing_bucket,
     )
 
@@ -202,9 +203,10 @@ def scenario_rows(version, crew_rates=None) -> dict:
                 mat += cost
             elif bucket == BUCKET_SUBCONTRACT:
                 sub += cost
-            elif bucket == BUCKET_AT_COST:
+            elif bucket in AT_COST_BUCKETS:
                 at_cost += cost
-        internal = (as_money(mat / (1 - margin)) if margin < 1 else mat) + labour_value + at_cost + as_money(sub * (1 + markup))
+        # The internal price is the pricing method on the package's own lines (the same engine and company rules).
+        internal = labour_material_margin_price(lines, margin, None, e.get("pricing_rules"))["pre_tax"]
         budget = fixed.get(key)
         revenue = (budget + through if budget is not None else internal) if included else Decimal("0")
         cost = (mat + (labour_cost if blend is not None else Decimal("0")) + at_cost + sub) if included else Decimal("0")
@@ -222,7 +224,46 @@ def scenario_rows(version, crew_rates=None) -> dict:
     inc = [r for r in rows if r["included"]]
     revenue = sum((r["revenue"] for r in inc), Decimal("0"))
     cost = sum((r["cost"] for r in inc), Decimal("0")) if blend is not None else None
+    from app.services.pricing_engine import allowance_treatment
+
+    allowances = [{"line": l, "treatment": allowance_treatment(l)} for l in allowance_lines(version)]
     return {"rows": rows, "blend": blend, "labour_rate": rate, "margin": margin, "markup": markup,
+            "allowances": allowances,
             "revenue": as_money(revenue), "cost": as_money(cost) if cost is not None else None,
             "profit": as_money(revenue - cost) if cost is not None else None,
             "editable": version.status == "Draft" and not version.is_locked}
+
+
+# ---------------------------------------------------------------------------------------------- allowances (ruling 2)
+def allowance_lines(version) -> list:
+    from app.services.guided_estimating import _line_kind
+
+    return [line for section in version.sections for line in section.line_items if _line_kind(line) == "allowance"]
+
+
+def set_allowance_treatment(version, line, treatment: str, *, actor: str, organization_id: Optional[str] = None) -> str:
+    """An allowance is either a pass-through (at cost, no markup: the default) or priced like materials (the material
+    margin) — Joel's ruling 2, 2 Nov 2026. Only on an editable version; audited; re-prices when pricing was applied."""
+    from app.services.guided_estimating import _line_kind
+    from app.services.pricing_engine import ALLOWANCE_TREATMENTS, allowance_treatment, record_pricing_audit
+
+    name = (actor or "").strip()[:150]
+    if not name:
+        raise PackageScenarioError("A person must set how an allowance is priced.")
+    _require_editable(version)
+    if line is None or line.section is None or line.section.estimate_version_id != version.id or \
+            _line_kind(line) != "allowance":
+        raise PackageScenarioError("Choose an allowance on this estimate.")
+    value = (treatment or "").strip().upper()
+    if value not in ALLOWANCE_TREATMENTS:
+        raise PackageScenarioError("Choose pass-through (at cost) or priced (the material margin).")
+    before = allowance_treatment(line)
+    if before == value and line.pricing_treatment == value:
+        return value
+    line.pricing_treatment = value
+    record_pricing_audit("allowance_pricing_treatment", "EstimateLineItem", line.id, actor=name,
+                         detail=f"{line.description}: {before} -> {value}",
+                         organization_id=organization_id or version.estimate.project.organization_id)
+    _reprice(version, name)
+    db.session.commit()
+    return value

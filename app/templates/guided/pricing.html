@@ -111,11 +111,12 @@
   {% if financial %}
   {# Internal Project Financial Summary and the estimate crew (Joel, 2 Nov 2026). People administrators only: the
      crew's loaded rates come from wages. Internal: never on the customer proposal. #}
-  {% call ts.details("Internal Project Financial Summary (PDF)", "ts-review-financial-summary", hint=(financial.problem or ("Crew: " ~ (financial.crew|map(attribute="name")|join(", "))))) %}
+  {% call ts.details("Internal Project Financial Summary (PDF)", "ts-review-financial-summary", hint=(financial.problem or (("Crew: " ~ (financial.crew|map(attribute="name")|join(", "))) if financial.employee_cost else "Crew assigned"))) %}
   <section class="ge-card" data-financial-summary>
     <p><a class="ge-secondary" href="{{ financial.pdf_url }}" target="_blank" rel="noopener" data-financial-summary-pdf>Internal Project Financial Summary (PDF)</a>
       <span class="ge-muted">Revenue, real cost and profit by work package. Internal: never shown to the customer.{% if review.approved %} The approved figures are frozen with the approval.{% endif %}</span></p>
     {% if financial.problem %}<p class="ge-warn" data-crew-not-assigned>{{ financial.problem }}. Labour is shown at the charge rate only until the crew is assigned.</p>{% endif %}
+    {% if financial.employee_cost %}
     <form method="post" action="{{ url_for('guided_tasks.assign_crew', project_id=project.id) }}" class="ts-form" data-crew-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <fieldset class="ts-group"><legend>Crew for this estimate (share of the hours; blank shares are equal)</legend>
@@ -131,6 +132,7 @@
       </fieldset>
       {% if not review.approved %}<div class="ts-actions"><button type="submit" class="ge-secondary" data-save-crew>Save the crew</button></div>{% endif %}
     </form>
+    {% endif %}
   </section>
   {% endcall %}
 
@@ -146,7 +148,7 @@
         <thead><tr><th>Work package</th><th>By others</th><th class="num">Internal price</th><th class="num">Client budget</th><th class="num">Revenue</th><th class="num">Real cost</th><th class="num">Profit</th><th class="num">Margin</th></tr></thead>
         <tbody>
         {% for r in sc.rows %}
-        <tr data-pl-row="{{ r.key }}" data-materials="{{ r.materials }}" data-hours="{{ r.hours }}" data-at-cost="{{ r.at_cost }}" data-sub="{{ r.subcontracts }}" data-passthrough="{{ r.passthrough }}" data-internal="{{ r.internal_price }}" class="{{ '' if r.included else 'is-out' }}">
+        <tr data-pl-row="{{ r.key }}" data-materials="{{ r.materials }}" data-hours="{{ r.hours }}" data-at-cost="{{ r.at_cost }}" data-sub="{{ r.subcontracts }}" data-passthrough="{{ r.passthrough }}" data-internal="{{ r.internal_price }}" data-labour-cost="{{ r.labour_cost if r.labour_cost is not none else '' }}" class="{{ '' if r.included else 'is-out' }}">
           <td>{{ r.name }}{% if r.passthrough %}<br><span class="ge-muted">incl. {{ money(r.passthrough) }} billed at cost</span>{% endif %}{% if not r.included %}<br><span class="ge-muted" data-pl-responsible>{{ r.responsible }}</span>{% endif %}</td>
           <td>{% if r.stage_id %}<input type="hidden" name="present_{{ r.stage_id }}" value="1"><label><input type="checkbox" name="by_others_{{ r.stage_id }}" value="1" {{ "checked" if not r.included }} {{ "disabled" if not sc.editable }} data-pl-by-others> By others</label>{% else %}—{% endif %}</td>
           <td class="num" data-pl-internal>{{ money(r.internal_price) }}</td>
@@ -177,6 +179,17 @@
     {% else %}
     <p class="ge-muted" data-scenario-locked>{{ version.display_label }} is approved{% if financial.revisions %} and was sent to the client{% endif %}: it never changes.{% if not financial.accepted %} To answer a counter-offer, start the next revision (it keeps these decisions) from Price This Job.{% else %} The client accepted: changes go through change orders.{% endif %}</p>
     {% endif %}
+    {% if sc.allowances %}
+    <div data-allowance-treatments><p class="ge-muted">Allowances: a pass-through is billed at cost; a priced allowance takes the material margin.</p>
+    {% for a in sc.allowances %}
+    <form method="post" action="{{ url_for('guided_tasks.allowance_treatment', project_id=project.id) }}" class="ts-inline" data-allowance="{{ a.line.id }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="line_id" value="{{ a.line.id }}">
+      <span>{{ a.line.description }} · {{ money(a.line.extended_cost) }}</span>
+      <select name="treatment" {{ "disabled" if not sc.editable }}><option value="PASS_THROUGH" {{ "selected" if a.treatment == "PASS_THROUGH" }}>Pass-through (at cost)</option><option value="PRICED" {{ "selected" if a.treatment == "PRICED" }}>Priced (material margin)</option></select>
+      {% if sc.editable %}<button type="submit" class="ge-secondary">Save</button>{% endif %}
+    </form>
+    {% endfor %}</div>
+    {% endif %}
     {% if financial.revisions %}
     <p class="ge-muted" data-quoted-revisions>Sent to the client: {% for r in financial.revisions %}{{ r.label }} ({{ r.version.display_label if r.version else '' }}, {{ r.sent_at|local_time("%b %d, %Y") }}){{ "; " if not loop.last }}{% endfor %}. Each is kept unchanged with its summary in Documents.</p>
     {% endif %}
@@ -189,6 +202,7 @@
     function cents(v) { return Math.round(v * 100) / 100; }
     function blend() {
       var picks = document.querySelectorAll("[data-crew-person]"), total = 0, w = 0;
+      if (!picks.length) return undefined;  // no crew detail on this page: use the server's real labour cost
       picks.forEach(function (p) { if (!p.checked) return; var s = document.querySelector('[data-crew-share="' + p.value + '"]'); var share = parseFloat(s && s.value) || 1; total += parseFloat(p.dataset.llr) * share; w += share; });
       return w ? total / w : null;
     }
@@ -200,7 +214,8 @@
         var internal = parseFloat(d.internal), pt = parseFloat(d.passthrough);
         var bv = budget && budget.value.trim() !== "" ? parseFloat(budget.value.replace(/[$,]/g, "")) : null;
         var rev = included ? (bv !== null && !isNaN(bv) ? bv + pt : internal) : 0;
-        var cost = b === null ? null : (included ? parseFloat(d.materials) + cents(parseFloat(d.hours) * b) + parseFloat(d.atCost) + parseFloat(d.sub) : 0);
+        var lab = b === undefined ? (d.labourCost === "" ? null : parseFloat(d.labourCost)) : (b === null ? null : cents(parseFloat(d.hours) * b));
+        var cost = lab === null ? null : (included ? parseFloat(d.materials) + lab + parseFloat(d.atCost) + parseFloat(d.sub) : 0);
         row.classList.toggle("is-out", !included);
         row.querySelector("[data-pl-revenue]").textContent = money(rev);
         row.querySelector("[data-pl-cost]").textContent = money(cost);
@@ -209,9 +224,10 @@
         R += rev; if (cost !== null) C += cost;
       });
       box.querySelector("[data-pl-total-revenue]").textContent = money(R);
-      box.querySelector("[data-pl-total-cost]").textContent = b === null ? "—" : money(C);
-      box.querySelector("[data-pl-total-profit]").textContent = b === null ? "—" : money(R - C);
-      box.querySelector("[data-pl-total-margin]").textContent = b === null || !R ? "—" : ((R - C) / R * 100).toFixed(1) + "%";
+      var none = b === null || (b === undefined && box.querySelector("[data-pl-no-crew]"));
+      box.querySelector("[data-pl-total-cost]").textContent = none ? "—" : money(C);
+      box.querySelector("[data-pl-total-profit]").textContent = none ? "—" : money(R - C);
+      box.querySelector("[data-pl-total-margin]").textContent = none || !R ? "—" : ((R - C) / R * 100).toFixed(1) + "%";
     }
     document.addEventListener("input", function (e) { if (e.target.closest("[data-live-pl], [data-crew-form]")) recalc(); });
     document.addEventListener("change", function (e) { if (e.target.closest("[data-live-pl], [data-crew-form]")) recalc(); });

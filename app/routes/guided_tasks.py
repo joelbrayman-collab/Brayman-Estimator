@@ -71,10 +71,20 @@ def approve_estimate(project_id):
 # (Joel, 2 Nov 2026). An internal contractor document with the crew's Loaded Labour Rates (from wages), so only the
 # people who may see wages (the owner or a System Administrator) open it or assign the crew. Field crew never reach
 # office pages; suppliers and customers never pass the office wall.
-def _require_people_admin():
-    from app.services.documents.access import is_people_admin
+def _require_employee_cost():
+    """Compensation and loaded labour rates (ruling 1): Owner or System Administrator."""
+    from app.services.financial_access import can_view_employee_cost
 
-    if not is_people_admin(current_user, get_current_organization_id()):
+    if not can_view_employee_cost(current_user, get_current_organization_id()):
+        abort(403)
+
+
+def _require_project_economics():
+    """Project-level cost, price and profit (ruling 1): today Owner or System Administrator; a separate check so a
+    future project-performance grant can widen it without widening employee cost detail."""
+    from app.services.financial_access import can_view_project_economics
+
+    if not can_view_project_economics(current_user, get_current_organization_id()):
         abort(403)
 
 
@@ -105,9 +115,13 @@ def internal_financial_summary(project_id):
     from app import db
     from app.services import internal_financial_summary as IFS
 
-    _require_people_admin()
+    from app.services.financial_access import can_view_employee_cost
+
+    _require_project_economics()
     _project, _guided, version = _review_version(project_id)
     data = IFS.data_for(version)
+    if not can_view_employee_cost(current_user, get_current_organization_id()):
+        data = dict(data, employee_detail=False)
     db.session.rollback()  # read only: nothing the calculation touched is kept
     pdf = IFS.render_pdf(data)
     return Response(pdf, mimetype="application/pdf",
@@ -120,7 +134,7 @@ def assign_crew(project_id):
     from app.services.auth import current_actor_display_name
     from app.services.estimate_crew import EstimateCrewError, set_crew
 
-    _require_people_admin()
+    _require_employee_cost()
     project, guided, _version = _review_version(project_id)
     person_ids = request.form.getlist("person_id")
     shares = {pid: request.form.get(f"share_{pid}", "") for pid in person_ids}
@@ -143,7 +157,7 @@ def save_scenario(project_id):
     from app.services import work_packages as WP
     from app.services.auth import current_actor_display_name
 
-    _require_people_admin()
+    _require_project_economics()
     project, guided, version = _review_version(project_id)
     actor = current_actor_display_name(fallback="")
     here = url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario"
@@ -187,7 +201,7 @@ def add_passthrough(project_id):
     from app.services import guided_estimating as G
     from app.services.auth import current_actor_display_name
 
-    _require_people_admin()
+    _require_project_economics()
     project, guided, _version = _review_version(project_id)
     here = url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario"
     stage = next((s for s in guided.top_stages if s.id == request.form.get("stage_id", type=int)), None)
@@ -207,3 +221,24 @@ def add_passthrough(project_id):
         return redirect(here)
     flash(f"Pass-through added to {stage.display_name}: billed at cost.", "success")
     return redirect(here)
+
+
+@guided_tasks_bp.route("/projects/<int:project_id>/guided/allowance-treatment", methods=["POST"])
+def allowance_treatment(project_id):
+    """An allowance priced as a pass-through (at cost) or with the material margin (ruling 2, 2 Nov 2026)."""
+    from app import db
+    from app.models import EstimateLineItem
+    from app.services import package_scenario as PS
+    from app.services.auth import current_actor_display_name
+
+    _require_project_economics()
+    project, _guided, version = _review_version(project_id)
+    line = db.session.get(EstimateLineItem, request.form.get("line_id", type=int) or 0)
+    try:
+        PS.set_allowance_treatment(version, line, request.form.get("treatment", ""),
+                                   actor=current_actor_display_name(fallback=""))
+        flash("Allowance pricing saved.", "success")
+    except PS.PackageScenarioError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return redirect(url_for("guided.pricing", project_id=project.id) + "#ts-review-scenario")

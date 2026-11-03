@@ -119,7 +119,7 @@ def test_brayman_pricing_reproduces_joels_figures(app):
     b = e["pricing_breakdown"]
     assert b["cost"]["material"] == D("14944.60") and b["sell"]["material"] == D("17581.88")  # 14,944.60 / 0.85
     assert b["cost"]["labour"] == D("20036.80") and b["sell"]["labour"] == D("20036.80")  # 250.46 h x $80, no margin
-    assert b["sell"]["at_cost"] == D("650.00") and b["sell"]["subcontract"] == D("5200.00")
+    assert b["sell"]["equipment"] == D("650.00") and b["sell"]["subcontract"] == D("5200.00")
     assert e["selling_price"] == D("43468.68") and e["tax"] == D("5650.93") and e["customer_total"] == D("49119.61")
     assert snapshot.pre_tax_selling_price == D("43468.68") and snapshot.customer_total == D("49119.61")
     # The lines carry the price: labour, equipment and the subcontract at cost; materials add up to their bucket.
@@ -127,7 +127,7 @@ def test_brayman_pricing_reproduces_joels_figures(app):
     by_bucket = {}
     for line in lines:
         by_bucket.setdefault(pricing_bucket(line), []).append(line)
-    for line in by_bucket["labour"] + by_bucket["at_cost"] + by_bucket["subcontract"]:
+    for line in by_bucket["labour"] + by_bucket["equipment"] + by_bucket["subcontract"]:
         assert line.sell_price == line.extended_cost, line.description
     assert sum(l.sell_price for l in by_bucket["material"]) == D("17581.88")
     assert sum(l.sell_price for l in lines) == D("43468.68") and version.subtotal == D("43468.68")
@@ -253,4 +253,4 @@ def test_bucket_pricing_rounds_each_bucket_once_half_up():
     b = labour_material_margin_price(lines, D("0.15"), D("0.05"))
     assert b["sell"]["material"] == D("17581.88")
     assert b["sell"]["subcontract"] == D("1049.99")  # 999.99 x 1.05 = 1,049.9895, half-up
-    assert b["sell"]["at_cost"] == D("120.00") and b["pre_tax"] == D("38788.67")
+    assert b["sell"]["delivery"] == D("120.00") and b["pre_tax"] == D("38788.67")

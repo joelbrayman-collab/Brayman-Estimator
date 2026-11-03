@@ -145,14 +145,55 @@ Working → Sent → Agreed, with the smallest change that keeps the guarantees:
   reference totals ($56,193.52 / $41,522.92 / $14,670.60); the Paulusse REV9 mirror renders $40,693.52 / $28,192.12 /
   $12,501.40 with the Excluded / by others block.
 
-## Open items for Joel
+## Joel's rulings on the open questions (2 Nov 2026), as built
 
-- Equipment / delivery / allowances at cost (no margin): confirm allowances belong at cost.
-- Subcontract markup defaults to 0 %: confirm, or set it on How we price.
-- Change orders under labour-at-rate price the whole CO subtotal at the margin (items have no labour/material kind).
-- Fixed-price packages: built (client budget per package); a whole-estimate fixed price is not.
-- The summary PDF and live P&L are people-administrator only (LLRs are wage figures); an estimator who is not an owner
-  / System Administrator approves without seeing them. Relax if Joel wants office staff to see it.
-- A version made before this release keeps the whole-margin method even on revision; switching an existing estimate to
-  labour-at-rate needs a new estimate (or a later "switch method" control).
+1. **Visibility.** Two separate checks in `app/services/financial_access.py`: `can_view_employee_cost` (compensation
+   components and loaded labour rates; Owner / System Administrator) and `can_view_project_economics` (project cost,
+   price and profit; today also Owner / System Administrator). Employees pages and the crew form check employee cost;
+   the summary PDF, live P&L, scenario, pass-through and allowance routes check project economics. A viewer with
+   project economics but not employee cost (the future PM "project performance" grant, not built) gets the summary
+   without crew names or loaded rates ("Labour (crew)" totals only) and the live P&L without the crew form. No access
+   was broadened.
+2. **Equipment / delivery / other / allowances.** Configurable company rules (`OrganizationPricingPolicy.
+   pricing_rules_json`, edited on How we price → Company pricing rules): equipment, delivery and other direct cost
+   markups (Brayman 0 %). Allowances: **full configurability chosen** — `estimate_line_items.pricing_treatment` is
+   `PASS_THROUGH` (at cost, no markup) or `PRICED` (the material margin), set per allowance on Review This Estimate
+   (`package_scenario.set_allowance_treatment`, audited). Existing allowances (NULL) default conservatively to
+   pass-through, which is what this branch already did.
+3. **Subcontractors.** A company value (`subcontract_markup_rate` on the policy, also in the rules form), Brayman 0 %;
+   `DEFAULT_RULES` are only the starting values. Test: a configured 10 % gives $5,200 → $5,720 and is frozen on the
+   snapshot.
+4. **Change orders.** The blanket margin on the whole change-order subtotal is removed for labour-at-rate estimates.
+   `change_order_items.cost_kind` (labour, material, subcontract, equipment, delivery, other, passthrough; blank =
+   unclassified) and `pricing_engine.change_order_line_prices` price each item with the same
+   `labour_material_margin_price` engine and the rules frozen on the estimate's pricing snapshot: labour = hours ×
+   the frozen labour selling rate (no margin), materials at the material margin, subcontract / equipment / delivery /
+   other at their rules, pass-throughs at cost, unclassified items at the company's generic change-order rule (blank:
+   the material margin). Lines copied from the estimate keep their cost type. Estimates under the earlier method keep
+   pricing change orders as before (that is the same engine for that method). The accepted version is never touched;
+   the change order holds only the incremental items.
+5. **Legacy.** Each version now also captures the company rules at creation (`estimate_versions.pricing_rules_json`)
+   besides its labour rate, margin and method; the snapshot freezes them (`estimate_pricing_snapshots.
+   pricing_rules_json`). Test: changing the company labour rate, margin and rules leaves a priced estimate and an
+   unpriced draft at the same figures (the draft also when it is priced afterwards); only new estimates change. No
+   reprice control.
+6. **Fixed price.** Per package only (as built).
+7. **Cost vs selling rate.** Loaded cost lives only in the cost profiles; the selling rate only on the estimate
+   (version labour rate / snapshot). Tests: a profile change moves labour cost and profit but not the selling rate or
+   price; a selling-rate change (project or company) leaves every cost-profile row unchanged; the approval's frozen
+   summary keeps `settings.labour_rate` (selling), each crew member's `loaded_rate` and the pricing rules, so later
+   profile, rate or rule changes do not change the approved report.
+
+Schema added for the rulings (folded into `u8b9c0d1e2f3`, all nullable, downgrade guard extended):
+`organization_pricing_policies.pricing_rules_json`, `estimate_versions.pricing_rules_json`,
+`estimate_pricing_snapshots.pricing_rules_json`, `estimate_line_items.pricing_treatment`,
+`change_order_items.cost_kind`.
+
+Tests added: `tests/test_pricing_rulings_20261102.py` (11). Changed (own new tests from this branch):
+`test_pricing_labour_material_margin.py` bucket names (`at_cost` → `equipment` / `delivery`),
+`test_cost_profiles_migration.py` (the five new columns).
+
+## Open items (superseded by the rulings above where marked)
+
+- Ruled (2, 3, 4, 6, 1, 5): see above.
 - No browser walk was added to the release gate for these screens (gate count stays 324).

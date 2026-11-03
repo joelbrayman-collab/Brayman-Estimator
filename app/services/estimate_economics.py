@@ -50,6 +50,8 @@ def company_defaults(organization_id: str) -> dict:
         margin = Decimal(str(policy.target_gross_margin))
     return {
         "pricing_method": policy.method if policy is not None else None,
+        "pricing_rules": (__import__("app.services.pricing_engine", fromlist=["policy_rules"]).policy_rules(policy)
+                          if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None),
         "subcontract_markup_rate": (Decimal(str(policy.subcontract_markup_rate or 0))
                                     if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None),
         "labour_rate": Decimal(str(standard.rate_per_man_hour)).quantize(CENT) if standard is not None else None,
@@ -72,6 +74,18 @@ def capture_defaults(version, organization_id: str, *, from_version=None) -> Non
         else:
             defaults = company_defaults(organization_id)
             version.pricing_method = defaults["pricing_method"]
+    if getattr(version, "pricing_rules_json", None) is None:
+        # The company's cost-type rules, captured so a later company change never re-prices this version (ruling 5).
+        if from_version is not None:
+            version.pricing_rules_json = getattr(from_version, "pricing_rules_json", None)
+        else:
+            from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
+            from app.services.pricing_engine import policy_rules, rules_json
+
+            defaults = defaults or company_defaults(organization_id)
+            policy = defaults["pricing_policy"]
+            if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+                version.pricing_rules_json = rules_json(policy_rules(policy))
     if version.labour_rate is None:
         if from_version is not None and from_version.labour_rate is not None:
             version.labour_rate, version.labour_rate_reason = from_version.labour_rate, from_version.labour_rate_reason
@@ -315,8 +329,10 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
     method = version_pricing_method(version, resolved.get("method"))
     if method != LABOUR_AT_RATE_MATERIAL_MARGIN:
         method = "TRUE_GROSS_MARGIN"  # the review's figures: the whole-estimate true gross margin, as before
-    markup = (Decimal(str(policy.subcontract_markup_rate or 0))
-              if policy is not None and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else Decimal("0"))
+    from app.services.pricing_engine import snapshot_rules, version_rules
+
+    rules = version_rules(version, policy if policy is not None
+                          and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None)
     breakdown = None
     applied = (snapshot is not None and costing_current and snapshot.method == method
                and snapshot.costing_snapshot_id == costing.id
@@ -328,13 +344,13 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
         tax, total = as_money(snapshot.tax_amount), as_money(snapshot.customer_total)
         tax_percent = Decimal(str(snapshot.tax_percent))
         if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
-            markup = Decimal(str(snapshot.subcontract_markup_rate or 0))
-            breakdown = scenario_price(version, participating_lines(version), snapshot.target_gross_margin, markup)
+            rules = snapshot_rules(snapshot)
+            breakdown = scenario_price(version, participating_lines(version), snapshot.target_gross_margin, None, rules)
     else:
         direct = version_line_direct_cost(version)
         margin = values["target_gross_margin"]
         if method == LABOUR_AT_RATE_MATERIAL_MARGIN and margin is not None:
-            breakdown = scenario_price(version, participating_lines(version), margin, markup)
+            breakdown = scenario_price(version, participating_lines(version), margin, None, rules)
             selling = breakdown["pre_tax"]
         else:
             selling = true_gross_margin_pre_tax(direct, margin) if margin is not None else None
@@ -356,7 +372,8 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
         "customer_total": total,
         "applied": applied,
         "pricing_method": method,
-        "subcontract_markup_rate": markup if method == LABOUR_AT_RATE_MATERIAL_MARGIN else None,
+        "subcontract_markup_rate": rules["subcontract_markup"] if method == LABOUR_AT_RATE_MATERIAL_MARGIN else None,
+        "pricing_rules": rules if method == LABOUR_AT_RATE_MATERIAL_MARGIN else None,
         "pricing_breakdown": breakdown,
         "costing_current": costing_current,
         "has_pricing": snapshot is not None,
@@ -407,6 +424,74 @@ def set_company_default_margin(margin_percent, *, actor: str, reason: str, organ
                              detail=f"{(Decimal(str(policy.target_gross_margin)) * HUNDRED).quantize(CENT)}% -> "
                                     f"{(value * HUNDRED).quantize(CENT)}%; reason: {reason.strip()}",
                              organization_id=organization_id)
+    except PricingEngineError as exc:
+        raise EstimateEconomicsError(str(exc)) from exc
+    db.session.flush()
+    return new_policy
+
+
+def _percent_fraction(raw, label):
+    text = ("" if raw is None else str(raw)).strip().replace("%", "")
+    try:
+        value = Decimal(text)
+    except InvalidOperation:
+        raise EstimateEconomicsError(f"{label} must be a percentage (you entered “{raw}”).") from None
+    if not value.is_finite() or value < 0 or value >= 1000:
+        raise EstimateEconomicsError(f"{label} must be 0% or more.")
+    return (value / HUNDRED).quantize(Decimal("0.000001"))
+
+
+RULE_LABELS = {"subcontract_markup": "Subcontract markup", "equipment_markup": "Equipment markup",
+               "delivery_markup": "Delivery markup", "other_markup": "Other direct cost markup",
+               "unclassified_markup": "Unclassified change-order item markup"}
+
+
+def set_company_pricing_rules(values: dict, *, actor: str, reason: str, organization_id: str):
+    """The company's cost-type pricing rules (Joel's rulings, 2 Nov 2026): subcontract, equipment, delivery and other
+    direct cost markups and the generic rule for unclassified change-order items (blank: the material margin). The
+    next version of the default "labour at rate, margin on materials" policy, approved and made the default in one
+    step. New estimates capture it; existing estimates keep the rules they captured."""
+    from app.models.pricing_engine import LABOUR_AT_RATE_MATERIAL_MARGIN
+    from app.services.pricing_engine import (
+        PricingEngineError,
+        approve_pricing_policy,
+        policy_rules,
+        record_pricing_audit,
+        rules_json,
+        set_default_pricing_policy,
+        supersede_pricing_policy,
+    )
+
+    if not (reason or "").strip():
+        raise EstimateEconomicsError("Give a reason for changing the company pricing rules.")
+    policy = company_defaults(organization_id)["pricing_policy"]
+    if policy is None or policy.method != LABOUR_AT_RATE_MATERIAL_MARGIN:
+        raise EstimateEconomicsError("These rules apply to the \u201clabour at rate, margin on materials\u201d pricing. "
+                                     "Make that the company default first.")
+    before = policy_rules(policy)
+    after = dict(before)
+    for key, label in RULE_LABELS.items():
+        if key not in values:
+            continue
+        raw = values[key]
+        if key == "unclassified_markup" and (raw is None or str(raw).strip() == ""):
+            after[key] = None
+        else:
+            after[key] = _percent_fraction(raw, label)
+    if after == before:
+        return policy
+    try:
+        new_policy = supersede_pricing_policy(policy.id, actor=actor, organization_id=organization_id,
+                                              subcontract_markup_rate=after["subcontract_markup"],
+                                              pricing_rules_json=rules_json(after),
+                                              provenance=f"Company pricing rules: {reason.strip()}")
+        approve_pricing_policy(new_policy.id, actor=actor, organization_id=organization_id)
+        set_default_pricing_policy(new_policy.id, actor=actor, organization_id=organization_id)
+        changes = "; ".join(f"{RULE_LABELS[k]} {before[k] if before[k] is not None else 'material margin'} -> "
+                            f"{after[k] if after[k] is not None else 'material margin'}"
+                            for k in RULE_LABELS if before[k] != after[k])
+        record_pricing_audit("company_pricing_rules_change", "OrganizationPricingPolicy", new_policy.id, actor=actor,
+                             detail=f"{changes}; reason: {reason.strip()}", organization_id=organization_id)
     except PricingEngineError as exc:
         raise EstimateEconomicsError(str(exc)) from exc
     db.session.flush()

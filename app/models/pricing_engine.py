@@ -111,6 +111,10 @@ class OrganizationPricingPolicy(db.Model):
     tax_percent = db.Column(db.Numeric(8, 2), nullable=True)
     # LABOUR_AT_RATE_MATERIAL_MARGIN: subcontracts at cost x (1 + this fraction); None is 0 (Joel, 2 Nov 2026).
     subcontract_markup_rate = db.Column(db.Numeric(10, 6), nullable=True)
+    # Company pricing rules by cost type (Joel, 2 Nov 2026 rulings): equipment, delivery, other direct cost and
+    # unclassified change-order item markups, as JSON (pricing_engine.policy_rules). None: the defaults (0 %; an
+    # unclassified item takes the material margin).
+    pricing_rules_json = db.Column(db.Text, nullable=True)
     is_default = db.Column(db.Boolean, nullable=False, default=False)
     approval_status = db.Column(db.String(20), nullable=False, default="DRAFT")
     effective_from = db.Column(db.DateTime, nullable=True)
@@ -200,6 +204,7 @@ class EstimatePricingSnapshot(db.Model):
     # LABOUR_AT_RATE_MATERIAL_MARGIN parameters, frozen with the price (2 Nov 2026).
     labour_rate = db.Column(db.Numeric(10, 2), nullable=True)
     subcontract_markup_rate = db.Column(db.Numeric(10, 6), nullable=True)
+    pricing_rules_json = db.Column(db.Text, nullable=True)  # the cost-type rules used, frozen with the price
     pre_tax_selling_price = db.Column(
         db.Numeric(14, 2), nullable=False, default=Decimal("0")
     )

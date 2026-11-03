@@ -562,28 +562,30 @@ def pricing(project_id):
 
 
 def _financial_summary_panel(guided, version):
-    """Review This Estimate's Internal Project Financial Summary and crew (2 Nov 2026): people administrators only
-    (the crew's loaded rates come from wages); None for everyone else, so nothing of it is shown to them."""
+    """Review This Estimate's Internal Project Financial Summary, live P&L and crew (2 Nov 2026). Two permissions
+    (ruling 1, app/services/financial_access.py): project economics for the summary and the live P&L; employee cost
+    for the crew and its loaded rates. None for anyone with neither, so nothing of it is shown to them."""
     from flask_login import current_user
 
-    from app.services.documents.access import is_people_admin
+    from app.services.financial_access import can_view_employee_cost, can_view_project_economics
 
-    if version is None or guided.estimate is None or not is_people_admin(current_user, _org()):
+    if version is None or guided.estimate is None or not can_view_project_economics(current_user, _org()):
         return None
     from app.services import estimate_crew as crew
-    from app.services.labour_cost_profile import assignable_employees, employees
-
-    rows = crew.crew(guided.estimate)
-    on_crew = {r["person"].id: r for r in rows}
-    all_rows = employees(_org())
     from app.services import package_scenario as PS
     from app.services.internal_financial_summary import quoted_revisions
+    from app.services.labour_cost_profile import assignable_employees, employees
 
+    employee_cost = can_view_employee_cost(current_user, _org())
+    rows = crew.crew(guided.estimate) if employee_cost else []
+    on_crew = {r["person"].id: r for r in rows}
+    all_rows = employees(_org()) if employee_cost else []
     scenario = PS.scenario_rows(version, crew.crew_rates(guided.estimate))
     db.session.rollback()  # the preview is read only
     return {"scenario": scenario, "revisions": quoted_revisions(guided.estimate),
-            "accepted": G.accepted_proposal(guided) is not None,
-            "crew": rows, "problem": crew.crew_problem(guided.estimate), "assignable": assignable_employees(_org()),
+            "accepted": G.accepted_proposal(guided) is not None, "employee_cost": employee_cost,
+            "crew": rows, "problem": crew.crew_problem(guided.estimate),
+            "assignable": assignable_employees(_org()) if employee_cost else [],
             "on_crew": on_crew, "incomplete": [r for r in all_rows if r["person"].is_active and not r["complete"]],
             "pdf_url": url_for("guided_tasks.internal_financial_summary", project_id=guided.project_id)}
 

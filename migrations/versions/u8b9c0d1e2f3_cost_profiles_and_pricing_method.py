@@ -15,8 +15,12 @@ Joel's decisions of 2 Nov 2026 (docs/implementation/internal-project-financial-s
 * estimate_versions.pricing_method: the method a version is priced with.
 * estimate_versions.package_pricing_json: per-package client budgets / fixed prices on a version (the on-the-fly
   scenario, Joel 2 Nov 2026).
+* Pricing rules by cost type (Joel's rulings, 2 Nov 2026): organization_pricing_policies.pricing_rules_json (company
+  equipment / delivery / other / unclassified change-order markups), estimate_versions.pricing_rules_json (captured at
+  creation), estimate_pricing_snapshots.pricing_rules_json (frozen with the price),
+  estimate_line_items.pricing_treatment (an allowance: PASS_THROUGH or PRICED) and change_order_items.cost_kind.
 
-Additive only: three new tables and six new nullable columns. No existing row is written: every new column is NULL
+Additive only: three new tables and eleven new nullable columns. No existing row is written: every new column is NULL
 on existing rows, which the application reads as "priced as it always was" (no estimate, policy or snapshot changes).
 Downgrade refuses while any new table holds a row or any new column holds a value; recovery is then the pre-migration
 backup.
@@ -38,6 +42,11 @@ NEW_COLUMNS = (
     ("estimate_pricing_snapshots", "subcontract_markup_rate", sa.Numeric(10, 6)),
     ("estimate_versions", "pricing_method", sa.String(length=40)),
     ("estimate_versions", "package_pricing_json", sa.Text()),
+    ("estimate_versions", "pricing_rules_json", sa.Text()),
+    ("organization_pricing_policies", "pricing_rules_json", sa.Text()),
+    ("estimate_pricing_snapshots", "pricing_rules_json", sa.Text()),
+    ("estimate_line_items", "pricing_treatment", sa.String(length=20)),
+    ("change_order_items", "cost_kind", sa.String(length=20)),
 )
 
 

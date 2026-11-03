@@ -71,18 +71,19 @@ def set_default_margin():
     return redirect(url_for("pricing_engine.index"))
 
 
-@pricing_engine_bp.route("/subcontract-markup", methods=["POST"])
-def set_subcontract_markup():
-    """The company's subcontract markup (Joel, 2 Nov 2026: 0 % unless a markup is approved)."""
-    from app.services.estimate_economics import EstimateEconomicsError, set_company_subcontract_markup
+@pricing_engine_bp.route("/pricing-rules", methods=["POST"])
+def set_pricing_rules():
+    """The company's pricing rules by cost type (Joel's rulings, 2 Nov 2026): subcontract, equipment, delivery and
+    other direct cost markups (Brayman: 0 %) and the generic rule for unclassified change-order items."""
+    from app.services.estimate_economics import RULE_LABELS, EstimateEconomicsError, set_company_pricing_rules
 
     try:
-        policy = set_company_subcontract_markup(request.form.get("markup_percent", ""), actor=_actor(),
-                                                reason=request.form.get("reason", ""),
-                                                organization_id=get_current_organization_id())
+        set_company_pricing_rules({k: request.form.get(k, "") for k in RULE_LABELS if k in request.form},
+                                  actor=_actor(), reason=request.form.get("reason", ""),
+                                  organization_id=get_current_organization_id())
         db.session.commit()
-        flash(f"Subcontract markup is now {(policy.subcontract_markup_rate or 0) * 100:.2f}%. New pricing uses it; "
-              "priced and approved estimates keep theirs.", "success")
+        flash("Company pricing rules saved. New estimates use them; existing estimates keep the rules they were "
+              "made with.", "success")
     except EstimateEconomicsError as exc:
         db.session.rollback()
         flash(str(exc), "error")

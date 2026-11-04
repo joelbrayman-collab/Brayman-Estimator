@@ -375,6 +375,14 @@ def test_a_customer_estimate_revision_is_frozen_and_never_carries_wages(tmp_path
             index = conn.execute(sa.text("SELECT sql FROM sqlite_master WHERE name = "
                                          "'uq_internal_summary_revisions_series'")).scalar()
         assert "UNIQUE INDEX" in index and "WHERE paired_revision_id IS NULL" in index  # review m1
+        with engine.connect() as conn:
+            trigger = conn.execute(sa.text("SELECT sql FROM sqlite_master WHERE type = 'trigger' AND name = "
+                                           "'internal_summary_revisions_pairing'")).scalar()
+        assert trigger and "CUSTOMER_ESTIMATE" in trigger and "NEW.revision_number" in trigger  # review m-iii
+        command.downgrade(cfg, PRIOR)
+        with engine.connect() as conn:
+            assert conn.execute(sa.text("SELECT COUNT(*) FROM sqlite_master WHERE type = 'trigger' AND name = "
+                                        "'internal_summary_revisions_pairing'")).scalar() == 0
         engine.dispose()
 
 

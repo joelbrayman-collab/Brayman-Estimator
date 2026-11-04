@@ -78,38 +78,56 @@ def test_sf1_the_client_receives_exactly_the_approved_bytes(env, validity_days):
     assert IA.revision_validity(rev) == expected  # Ben approved the date the client reads
     link = ProposalClientLink.query.filter_by(proposal_id=proposal.id, revoked_at=None).one()
     assert local_date(link.expires_at) == expected  # the link carries the approved date
-    assert any("the date in the estimate approved as" in m for m in flashes), flashes
+    assert any(m.startswith("You asked for a 14-day link; the link applied is") and "approved as" in m
+               for m in flashes), flashes
     status = IA.customer_issue_status(db.session.get(Proposal, proposal.id), fresh=True)
     assert status["state"] == "authorized" and status["valid_until"] == expected
     assert any("authorized for customer issue." in m and m.startswith("Customer issue: ") for m in flashes)
 
 
-def test_sf1_when_the_approved_date_cannot_be_kept_the_office_is_told_it_is_not_authorized(env):
+def test_mi_a_frozen_date_is_capped_at_what_a_link_can_carry(env):
+    """Review m-i: a proposal valid for 120 days is frozen with the date a link can carry (today + 90), so what Ben
+    approves is what the client reads; the offer never outlives the link. (Corrects the earlier helper use that
+    called a 120-day REV "authorized".)"""
     app, c, _users = env
-    _project, _guided, proposal = _rev10_job(c, "Synthetic SF1 long validity job")
-    far = local_today() + timedelta(days=120)  # beyond the longest client link (90 days)
-    _set_validity(proposal, far)
-    rev = _approved(app, c, proposal)
+    _project, _guided, proposal = _rev10_job(c, "Synthetic m-i long validity job")
+    _set_validity(proposal, local_today() + timedelta(days=120))
+    reachable = local_today() + timedelta(days=IA.MAX_LINK_DAYS)
+    rev = _freeze(c, proposal)
+    assert IA.revision_validity(rev) == reachable
+    _send(c, proposal, rev)
+    _sign(c, _link(_mail(app)[-1]))
+    assert IA.customer_issue_status(db.session.get(Proposal, proposal.id))["state"] == "authorized"
     frozen = retrieve_frozen_artifact_bytes(IA.frozen_artifact(rev))
     path, flashes = _send_to_client(c, proposal, 14)
     link = ProposalClientLink.query.filter_by(proposal_id=proposal.id, revoked_at=None).one()
-    seen = local_date(link.expires_at)
-    assert seen < far  # the client's offer never outlives the link
+    assert local_date(link.expires_at) == reachable
+    assert _client_pdf(c, path) == frozen
+    # m-ii: the requested and the applied link length, plainly.
+    assert any(m.startswith("You asked for a 14-day link; the link applied is 90 days, valid until") for m in flashes), \
+        flashes
+
+
+def test_mi_a_lapsed_date_is_not_authorized_before_sending(env, monkeypatch):
+    app, c, _users = env
+    _project, _guided, proposal = _rev10_job(c, "Synthetic m-i lapsed job")
+    rev = _approved(app, c, proposal)  # no validity date: frozen with today + 30
+    assert IA.revision_validity(rev) == local_today() + timedelta(days=30)
+    from app.services import local_time
+
+    later = local_today() + timedelta(days=31)
+    monkeypatch.setattr(local_time, "local_today", lambda: later)  # sent a month later: the date has lapsed
     status = IA.customer_issue_status(db.session.get(Proposal, proposal.id))
-    assert status["state"] == "validity_differs" and not status["authorized"]
-    assert "the validity date differs" in status["label"] and "freeze a new REV" in status["label"]
-    assert any(m.startswith("Customer issue: Not authorized for customer issue: the validity date differs")
-               for m in flashes), flashes
-    assert _client_pdf(c, path) != frozen  # not the approved bytes, and the office is told so
+    assert status["state"] == "validity_unachievable" and not status["authorized"]
+    assert status["label"] == "Not authorized for customer issue: validity date cannot be honoured; freeze a new REV"
     page = c["owner"].get(f"/proposals/{proposal.id}")
-    assert 'data-customer-issue-state="validity_differs"' in page
-    # A new REV frozen now carries the date the client reads; once approved it is authorized and served exactly.
-    rev2 = _freeze(c, proposal)
-    assert IA.revision_validity(rev2) == seen
+    assert 'data-customer-issue-state="validity_unachievable"' in page and "data-freeze-customer-estimate" in page
+    rev2 = _freeze(c, proposal)  # a new REV with a date a link can carry, approved on its own
+    assert IA.revision_validity(rev2) == later + timedelta(days=30)
     _send(c, proposal, rev2)
     _sign(c, _link(_mail(app)[-1]))
-    assert IA.customer_issue_status(db.session.get(Proposal, proposal.id), fresh=True)["state"] == "authorized"
-    assert _client_pdf(c, path) == retrieve_frozen_artifact_bytes(IA.frozen_artifact(rev2))
+    status = IA.customer_issue_status(db.session.get(Proposal, proposal.id))
+    assert status["state"] == "authorized" and status["revision"].id == rev2.id
 
 
 # ================================================================================================ SF2
@@ -266,3 +284,25 @@ def test_m3_needs_attention_shows_internal_approvals_only_to_those_who_may_act(e
     estimate_number = IA.requests_for(estimate_rev)[0].request_number
     assert estimate_number in _attention_titles(users["staff"])  # the estimate rule: office members
     assert number not in _attention_titles(users["staff"])
+
+
+# ================================================================================================ m-iii
+def test_miii_the_database_refuses_a_pairing_that_is_not_the_authorized_estimate_rev(env):
+    app, c, _users = env
+    _project, _guided, proposal = _rev10_job(c, "Synthetic m-iii job")
+    rev = _approved(app, c, proposal)
+    _send_to_client(c, proposal, 30)
+    sent = InternalSummaryRevision.query.filter_by(origin="SENT_TO_CLIENT").one()
+    assert sent.paired_revision_id == rev.id  # the real pairing went in
+    row = dict(organization_id=sent.organization_id, project_id=sent.project_id, estimate_id=sent.estimate_id,
+               estimate_version_id=sent.estimate_version_id, origin="SENT_TO_CLIENT", proposal_id=sent.proposal_id,
+               document_type=DOCUMENT_TYPE_FINANCIAL_SUMMARY, employee_detail=False, data_json="{}",
+               figures_sha256="0" * 64, pdf_sha256="0" * 64, created_by_name="Synthetic")
+    from sqlalchemy.exc import DatabaseError
+
+    for bad in ({"revision_number": rev.revision_number + 5, "paired_revision_id": rev.id},  # another number
+                {"revision_number": sent.revision_number + 6, "paired_revision_id": sent.id}):  # not an estimate REV
+        with pytest.raises(DatabaseError, match="paired revision must name"):
+            db.session.add(InternalSummaryRevision(**row, **bad))
+            db.session.commit()
+        db.session.rollback()

@@ -26,7 +26,7 @@ Joel's decisions of 2 Nov 2026 (docs/implementation/internal-project-financial-s
   internal_summary_revisions table (REV1, REV2, ... per estimate), whose document_type is the Internal Project Financial
   Summary or (Joel, 3 Nov 2026) the CUSTOMER_ESTIMATE frozen for Ben's approval before customer issue; one
   collision-proof REV series per estimate (partial unique index uq_internal_summary_revisions_series), shared only by
-  the intended pairing (paired_revision_id).
+  the intended pairing (paired_revision_id, checked by the trigger internal_summary_revisions_pairing).
 * Internal project economics in Documents (review B2, 3 Nov 2026): documents.sensitivity gains ECONOMICS and
   EMPLOYEE_COST (ck_documents_sensitivity widened; the documents table rebuilt, rows copied unchanged).
 
@@ -57,6 +57,15 @@ _ROLE_OLD = "role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUP
 _ROLE_NEW = ("role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUPPLIER', 'SUBCONTRACTOR', "
              "'APPROVER')")
 CLIENT_REQUIRED = "client_id IS NOT NULL OR document_family = 'INTERNAL_APPROVAL'"
+# Review m-iii: a paired row must name the customer estimate REV of the same estimate with the same number (a copy of
+# app/models/internal_summary.PAIRING_TRIGGER_SQL; migrations never import the models).
+PAIRING_TRIGGER = (
+    "CREATE TRIGGER IF NOT EXISTS internal_summary_revisions_pairing BEFORE INSERT ON internal_summary_revisions "
+    "WHEN NEW.paired_revision_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM internal_summary_revisions p "
+    "WHERE p.id = NEW.paired_revision_id AND p.document_type = 'CUSTOMER_ESTIMATE' "
+    "AND p.estimate_id = NEW.estimate_id AND p.revision_number = NEW.revision_number) "
+    "BEGIN SELECT RAISE(ABORT, 'a paired revision must name the customer estimate REV with the same number'); END"
+)
 _SENSITIVITY_OLD = "sensitivity IN ('STANDARD', 'PEOPLE', 'FINANCIAL')"
 _SENSITIVITY_NEW = "sensitivity IN ('STANDARD', 'PEOPLE', 'FINANCIAL', 'ECONOMICS', 'EMPLOYEE_COST')"
 
@@ -207,6 +216,7 @@ def upgrade():
                     sqlite_where=sa.text("paired_revision_id IS NULL"),
                     postgresql_where=sa.text("paired_revision_id IS NULL"))
 
+    op.execute(PAIRING_TRIGGER)
     for table in INSERT_ONLY:
         op.execute(f"CREATE TRIGGER IF NOT EXISTS {table}_no_update BEFORE UPDATE ON {table} "
                    f"BEGIN SELECT RAISE(ABORT, '{table} is insert-only'); END")
@@ -235,6 +245,7 @@ def downgrade():
                            "pre-migration backup instead of downgrading.")
     _swap("documents", "ck_documents_sensitivity", _SENSITIVITY_OLD)
     _signing_downgrade()
+    op.execute("DROP TRIGGER IF EXISTS internal_summary_revisions_pairing")
     for table in INSERT_ONLY:
         op.execute(f"DROP TRIGGER IF EXISTS {table}_no_update")
         op.execute(f"DROP TRIGGER IF EXISTS {table}_no_delete")

@@ -421,3 +421,21 @@ Tests: `tests/test_customer_estimate_rereview_fixes.py` (8).
   server past its fixed 20-second start limit ("office page did not start",
   `calculation-engines/*/tests/office-page-browser.mjs`); not a defect in this change. Both files pass when run
   without that extra load (11 passed), also with the two run side by side and with one browser walk alongside.
+
+## Re-review of 4203c7f9 (verdict CLEAR): minor items (4 Nov 2026)
+- m-i (defect, fixed): a REV could be frozen with a validity date no link can carry. `issue_validity_date` now caps the
+  frozen date at today + 90 (the longest client link), and `validity_can_be_honoured` (also used by
+  `issue_link_expiry`) is checked by `customer_issue_status` before sending: a REV whose date lapsed or cannot be
+  carried shows "Not authorized for customer issue: validity date cannot be honoured; freeze a new REV" (state
+  `validity_unachievable`), never "authorized". Validity still never exceeds the link's expiry. Tests:
+  `test_mi_a_frozen_date_is_capped_at_what_a_link_can_carry` (replaces the earlier 120-day case that treated such a
+  REV as authorized), `test_mi_a_lapsed_date_is_not_authorized_before_sending`.
+- m-ii — **decision for Joel**: when the estimate is authorized, sending sets the client link's length so the client
+  reads the approved date, whatever length the office typed (it can lengthen or shorten the link, within 1-90 days).
+  Behaviour unchanged; the message now says it plainly: "You asked for a 14-day link; the link applied is 58 days,
+  valid until …, the date in the estimate approved as REVn, so the client receives exactly the approved estimate."
+  Alternative for Joel: keep the typed length and show "not authorized: validity date differs" instead.
+- m-iii (hardening, fixed): trigger `internal_summary_revisions_pairing` (in `u8b9c0d1e2f3`, new table only) refuses
+  a row whose `paired_revision_id` does not name a CUSTOMER_ESTIMATE REV of the same estimate with the same number.
+  Tests: `test_miii_the_database_refuses_a_pairing_that_is_not_the_authorized_estimate_rev`; the migration proof checks
+  the trigger after upgrade and its removal on downgrade.

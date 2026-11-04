@@ -89,5 +89,18 @@ def _refuse_change(mapper, connection, target):
     raise ValueError("A summary revision never changes: freeze the next revision instead.")
 
 
+# Review m-iii (3 Nov 2026): the database itself checks the one pairing that may share a REV number: a row that names
+# paired_revision_id must point at a customer estimate REV of the same estimate with the same number.
+PAIRING_TRIGGER_NAME = "internal_summary_revisions_pairing"
+PAIRING_TRIGGER_SQL = (
+    f"CREATE TRIGGER IF NOT EXISTS {PAIRING_TRIGGER_NAME} BEFORE INSERT ON internal_summary_revisions "
+    "WHEN NEW.paired_revision_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM internal_summary_revisions p "
+    "WHERE p.id = NEW.paired_revision_id AND p.document_type = 'CUSTOMER_ESTIMATE' "
+    "AND p.estimate_id = NEW.estimate_id AND p.revision_number = NEW.revision_number) "
+    "BEGIN SELECT RAISE(ABORT, 'a paired revision must name the customer estimate REV with the same number'); END"
+)
+db.event.listen(InternalSummaryRevision.__table__, "after_create",
+                db.DDL(PAIRING_TRIGGER_SQL).execute_if(dialect="sqlite"))
+
 db.event.listen(InternalSummaryRevision, "before_update", _refuse_change)
 db.event.listen(InternalSummaryRevision, "before_delete", _refuse_change)

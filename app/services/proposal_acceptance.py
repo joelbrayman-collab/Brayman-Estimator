@@ -236,7 +236,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
         raise ProposalAcceptanceError("The proposal cannot be sent yet. " + " ".join(blockers))
     authorization = _customer_issue_status(proposal)  # read before anything changes; never a block
     days = days if isinstance(days, int) and 1 <= days <= 90 else DEFAULT_LINK_DAYS
-    expires_at, validity_note = _issue_expiry(proposal, authorization, datetime.utcnow() + timedelta(days=days))
+    expires_at, validity_note = _issue_expiry(proposal, authorization, datetime.utcnow() + timedelta(days=days), days)
     if proposal.status != "Issued":
         update_proposal(proposal, status="Issued")
     version = proposal.estimate_version
@@ -276,7 +276,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
                         validity_note=validity_note if authorization and authorization.get("authorized") else "")
 
 
-def _issue_expiry(proposal, authorization, requested):
+def _issue_expiry(proposal, authorization, requested, requested_days=None):
     """Review SF1: when the estimate is authorized, the link's expiry that makes the client read exactly the approved
     validity date (internal_approval.issue_link_expiry); otherwise the expiry asked for. Never blocks a send."""
     import logging
@@ -294,8 +294,14 @@ def _issue_expiry(proposal, authorization, requested):
         return requested, ""
     note = ""
     if adjusted:
-        note = (f"The client link is valid until {approved.strftime('%B %d, %Y').replace(' 0', ' ')}, the date in "
-                f"the estimate approved as {revision.label}.")
+        # Review m-ii (a decision for Joel): the requested and the applied link length, plainly.
+        from app.services.local_time import local_date, local_today
+
+        applied_days = (local_date(expires_at) - local_today()).days
+        asked = f"a {requested_days}-day link" if requested_days else "a link"
+        note = (f"You asked for {asked}; the link applied is {applied_days} day{'s' if applied_days != 1 else ''}, "
+                f"valid until {approved.strftime('%B %d, %Y').replace(' 0', ' ')}, the date in the estimate approved "
+                f"as {revision.label}, so the client receives exactly the approved estimate.")
     return expires_at, note
 
 

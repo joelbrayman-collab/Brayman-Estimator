@@ -480,15 +480,18 @@ def _sha(data: bytes) -> str:
 def issue_validity_date(proposal):
     """The "Valid until" date the client reads when this proposal is issued now (review SF1, 3 Nov 2026): with a live
     client link, exactly what that link shows (client_valid_until: the earlier of the proposal's date and the link's
-    expiry); before sending, the proposal's own date, or else the expiry of a link of the default length from today.
-    Frozen into the REV so Ben approves the date the client will see."""
+    expiry); before sending, the proposal's own date, or else the expiry of a link of the default length from today,
+    never later than the longest link can carry (review m-i: today + 90 days, since the client never reads a date
+    after the link's expiry). Frozen into the REV so Ben approves the date the client will see."""
     from app.services.local_time import local_today
     from app.services.proposal_acceptance import DEFAULT_LINK_DAYS, client_valid_until, current_link
 
     link = current_link(proposal)
     if link is not None:
         return client_valid_until(proposal, link)
-    return proposal.valid_until or (local_today() + timedelta(days=DEFAULT_LINK_DAYS))
+    today = local_today()
+    value = proposal.valid_until or (today + timedelta(days=DEFAULT_LINK_DAYS))
+    return min(value, today + timedelta(days=MAX_LINK_DAYS))
 
 
 def revision_validity(revision):
@@ -512,6 +515,23 @@ def client_validity_date(proposal, approved_validity):
 
 
 MAX_LINK_DAYS = 90
+CANNOT_BE_HONOURED = "Not authorized for customer issue: validity date cannot be honoured; freeze a new REV"
+
+
+def validity_can_be_honoured(proposal, approved_validity) -> bool:
+    """Review m-i: whether a client link sent today can make the client read exactly ``approved_validity``. The client
+    reads the earlier of the proposal's date and the link's expiry, and a link runs 1 to 90 days from today; so the
+    date must be today .. today + 90 and not after the proposal's own date (or be the proposal's own date)."""
+    from app.services.local_time import local_today
+
+    if approved_validity is None:
+        return False
+    if proposal.valid_until is not None and proposal.valid_until == approved_validity and approved_validity < local_today():
+        return True  # the proposal's own (past) date: every link shows it
+    today = local_today()
+    if approved_validity < today or (approved_validity - today).days > MAX_LINK_DAYS:
+        return False
+    return proposal.valid_until is None or proposal.valid_until >= approved_validity
 
 
 def issue_link_expiry(proposal, approved_validity, requested):
@@ -524,12 +544,10 @@ def issue_link_expiry(proposal, approved_validity, requested):
 
     from app.services.local_time import company_timezone, local_date, local_today
 
-    today = local_today()
-    if approved_validity is None or approved_validity < today or (approved_validity - today).days > MAX_LINK_DAYS:
+    if not validity_can_be_honoured(proposal, approved_validity):
         return requested, False
-    if proposal.valid_until is not None and proposal.valid_until < approved_validity:
-        return requested, False
-    if proposal.valid_until == approved_validity and local_date(requested) >= approved_validity:
+    if proposal.valid_until == approved_validity and (local_date(requested) >= approved_validity
+                                                      or approved_validity < local_today()):
         return requested, False  # the proposal's own date governs; the link may run as long as asked
     end = datetime.combine(approved_validity, time(23, 59, 59), tzinfo=company_timezone())
     return end.astimezone(timezone.utc).replace(tzinfo=None), True
@@ -679,6 +697,15 @@ def customer_issue_status(proposal, *, fresh: bool = False) -> dict:
             current, client_date = rev, date_now
             break
     current_state = status_of(current) if current is not None else None
+    from app.services.proposal_acceptance import current_link
+
+    if current is not None and current_link(proposal) is None and not validity_can_be_honoured(
+            proposal, revision_validity(current)):
+        # Review m-i: before sending, a REV whose date no link can carry (lapsed, or beyond the longest link) is
+        # never "authorized".
+        return {"state": "validity_unachievable", "authorized": False, "revision": None,
+                "approved": current if current_state["state"] == "approved" else None, "status": current_state,
+                "valid_until": revision_validity(current), "label": CANNOT_BE_HONOURED}
     if current is not None and current_state["state"] == "approved":
         return {"state": "authorized", "authorized": True, "revision": current, "approved": current,
                 "status": current_state, "sha256": current.pdf_sha256, "valid_until": client_date,

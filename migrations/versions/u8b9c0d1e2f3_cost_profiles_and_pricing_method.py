@@ -24,7 +24,9 @@ Joel's decisions of 2 Nov 2026 (docs/implementation/internal-project-financial-s
   role APPROVER (the three check constraints widened, as a4d5e6f7a8b9 and s6f7a8b9c0d1 did); signing_requests.client_id
   becomes NULL-able for INTERNAL_APPROVAL only (new check ck_signing_requests_client_required); the insert-only
   internal_summary_revisions table (REV1, REV2, ... per estimate), whose document_type is the Internal Project Financial
-  Summary or (Joel, 3 Nov 2026) the CUSTOMER_ESTIMATE frozen for Ben's approval before customer issue.
+  Summary or (Joel, 3 Nov 2026) the CUSTOMER_ESTIMATE frozen for Ben's approval before customer issue; one
+  collision-proof REV series per estimate (partial unique index uq_internal_summary_revisions_series), shared only by
+  the intended pairing (paired_revision_id).
 * Internal project economics in Documents (review B2, 3 Nov 2026): documents.sensitivity gains ECONOMICS and
   EMPLOYEE_COST (ck_documents_sensitivity widened; the documents table rebuilt, rows copied unchanged).
 
@@ -178,6 +180,8 @@ def upgrade():
         sa.Column("document_type", sa.String(length=40), nullable=False),
         sa.Column("origin", sa.String(length=20), nullable=False),
         sa.Column("proposal_id", sa.Integer(), nullable=True),
+        sa.Column("paired_revision_id", sa.Integer(),
+                  sa.ForeignKey("internal_summary_revisions.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("employee_detail", sa.Boolean(), nullable=False),
         sa.Column("data_json", sa.Text(), nullable=False),
         sa.Column("figures_sha256", sa.String(length=64), nullable=False),
@@ -193,9 +197,15 @@ def upgrade():
         sa.CheckConstraint("document_type = 'INTERNAL_FINANCIAL_SUMMARY' OR (origin = 'FROZEN' AND NOT employee_detail)",
                            name="ck_internal_summary_revisions_customer_estimate"),
         sa.CheckConstraint("revision_number > 0", name="ck_internal_summary_revisions_number_positive"),
+        sa.CheckConstraint("paired_revision_id IS NULL OR (document_type = 'INTERNAL_FINANCIAL_SUMMARY' AND "
+                           "origin = 'SENT_TO_CLIENT')", name="ck_internal_summary_revisions_pairing"),
     )
     op.create_index("ix_internal_summary_revisions_org_project", "internal_summary_revisions",
                     ["organization_id", "project_id"])
+    op.create_index("uq_internal_summary_revisions_series", "internal_summary_revisions",
+                    ["estimate_id", "revision_number"], unique=True,
+                    sqlite_where=sa.text("paired_revision_id IS NULL"),
+                    postgresql_where=sa.text("paired_revision_id IS NULL"))
 
     for table in INSERT_ONLY:
         op.execute(f"CREATE TRIGGER IF NOT EXISTS {table}_no_update BEFORE UPDATE ON {table} "
@@ -231,6 +241,7 @@ def downgrade():
     for table, column, _kind in reversed(NEW_COLUMNS):
         with op.batch_alter_table(table) as batch_op:
             batch_op.drop_column(column)
+    op.drop_index("uq_internal_summary_revisions_series", table_name="internal_summary_revisions")
     op.drop_index("ix_internal_summary_revisions_org_project", table_name="internal_summary_revisions")
     op.drop_table("internal_summary_revisions")
     op.drop_index("ix_estimate_crew_members_estimate", table_name="estimate_crew_members")

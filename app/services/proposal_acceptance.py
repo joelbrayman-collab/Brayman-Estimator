@@ -61,6 +61,8 @@ class SentProposal:
     # Ben's approval for customer issue at the moment of sending (internal_approval.customer_issue_status), shown to
     # the office; informational only (no block: Joel has not made that rule). None when it could not be read.
     authorization: Optional[dict] = None
+    # Set when the link's expiry was set to the approved estimate's validity date (review SF1), in words.
+    validity_note: str = ""
 
 
 def _hash(secret: str) -> str:
@@ -234,6 +236,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
         raise ProposalAcceptanceError("The proposal cannot be sent yet. " + " ".join(blockers))
     authorization = _customer_issue_status(proposal)  # read before anything changes; never a block
     days = days if isinstance(days, int) and 1 <= days <= 90 else DEFAULT_LINK_DAYS
+    expires_at, validity_note = _issue_expiry(proposal, authorization, datetime.utcnow() + timedelta(days=days))
     if proposal.status != "Issued":
         update_proposal(proposal, status="Issued")
     version = proposal.estimate_version
@@ -257,27 +260,53 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
         sent_by_user_id=getattr(user, "id", None),
         sent_by_name=((getattr(user, "display_name", None) or getattr(user, "email", "")) or "Office").strip()[:160],
         sent_at=now,
-        expires_at=now + timedelta(days=days),
+        expires_at=expires_at,
         view_count=0,
     )
     db.session.add(link)
     _advance_stage(proposal, "Proposal Sent", event="proposal sent to the client")
     db.session.commit()
+    # What the client receives now, against what Ben approved (re-rendered, never cached).
+    authorization = _customer_issue_status(proposal, fresh=True)
     paired = authorization["revision"].revision_number if authorization and authorization.get("authorized") else None
     _file_sent_summary(version, proposal, user, number=paired)
     path = proposal_link_path(lookup_key, secret)
     message = _send_mail(proposal, link, path)
-    return SentProposal(link=link, path=path, mail_message=message, authorization=authorization)
+    return SentProposal(link=link, path=path, mail_message=message, authorization=authorization,
+                        validity_note=validity_note if authorization and authorization.get("authorized") else "")
 
 
-def _customer_issue_status(proposal):
+def _issue_expiry(proposal, authorization, requested):
+    """Review SF1: when the estimate is authorized, the link's expiry that makes the client read exactly the approved
+    validity date (internal_approval.issue_link_expiry); otherwise the expiry asked for. Never blocks a send."""
+    import logging
+
+    if not authorization or not authorization.get("authorized"):
+        return requested, ""
+    from app.services.internal_approval import issue_link_expiry, revision_validity
+
+    try:
+        revision = authorization["revision"]
+        approved = revision_validity(revision)
+        expires_at, adjusted = issue_link_expiry(proposal, approved, requested)
+    except Exception:  # noqa: BLE001 - the send goes ahead as asked; the status then reports any difference
+        logging.getLogger(__name__).exception("Approved validity date not applied for proposal %s", proposal.id)
+        return requested, ""
+    note = ""
+    if adjusted:
+        note = (f"The client link is valid until {approved.strftime('%B %d, %Y').replace(' 0', ' ')}, the date in "
+                f"the estimate approved as {revision.label}.")
+    return expires_at, note
+
+
+def _customer_issue_status(proposal, fresh=False):
     """Ben's approval for customer issue (3 Nov 2026), or None if it cannot be read. Never blocks a send."""
     import logging
 
     from app.services.internal_approval import customer_issue_status
 
     try:
-        return customer_issue_status(proposal)
+        return customer_issue_status(proposal, fresh=fresh)
     except Exception:  # noqa: BLE001 - the status is information; the send goes ahead as it always did
         logging.getLogger(__name__).exception("Customer issue status not read for proposal %s", proposal.id)
         return None

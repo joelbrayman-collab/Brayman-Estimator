@@ -370,6 +370,11 @@ def test_a_customer_estimate_revision_is_frozen_and_never_carries_wages(tmp_path
         assert "ck_internal_summary_revisions_document_type" in sql
         assert "ck_internal_summary_revisions_customer_estimate" in sql
         assert 'UNIQUE (estimate_id, document_type, revision_number)' in sql
+        assert "ck_internal_summary_revisions_pairing" in sql and "paired_revision_id" in sql
+        with engine.connect() as conn:
+            index = conn.execute(sa.text("SELECT sql FROM sqlite_master WHERE name = "
+                                         "'uq_internal_summary_revisions_series'")).scalar()
+        assert "UNIQUE INDEX" in index and "WHERE paired_revision_id IS NULL" in index  # review m1
         engine.dispose()
 
 

@@ -297,6 +297,24 @@ test("11: authorized for customer issue on the proposal (and its send form), est
   assert.match(phone.url(), /\/login/);
 });
 
+test("12: sent to the client with a 14-day link, the client's PDF is exactly the bytes Ben approved", async () => {
+  const { pg } = await office();
+  await go(pg, proposalPage());
+  const form = pg.locator("[data-proposal-send]");
+  await form.locator("[name=valid_days]").fill("14");
+  await Promise.all([pg.waitForNavigation(), form.locator("button[type=submit]").click()]);
+  assert.match(await pg.locator("body").innerText(), /authorized for customer issue/);
+  const url = await pg.locator("[data-proposal-link-url]").inputValue();
+  const ctx = await browser.newContext({ viewport: { width: PHONE[0], height: PHONE[1] } });
+  const client = await ctx.newPage();
+  watch(client);
+  sessions.client = { ctx, pg: client };
+  const pdf = await client.context().request.get(url.replace(/^https?:\/\/[^/]+/, base) + "/pdf");
+  assert.equal(pdf.status(), 200);
+  assert.ok(Buffer.compare(await pdf.body(), W.estimatePdf) === 0, "the client receives the approved bytes exactly");
+  await screen(pg, "office-estimate-sent-authorized-1280");
+});
+
 test("no server errors and no page script errors during the walk", async () => {
   assert.deepEqual(serverErrors, []);
   assert.deepEqual(pageErrors, []);

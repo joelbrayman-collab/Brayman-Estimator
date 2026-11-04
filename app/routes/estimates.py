@@ -190,8 +190,13 @@ def _render_builder(estimate, version, **extra):
 
 def _customer_issue(estimate):
     """Ben's approval of the customer estimate for issue (3 Nov 2026); None when there is nothing to show."""
-    from app.services.internal_approval import customer_issue_status_for_estimate
+    from app.services.internal_approval import (
+        customer_estimate_revisions,
+        customer_issue_status_for_estimate,
+        file_missing_signed_copies,
+    )
 
+    file_missing_signed_copies(customer_estimate_revisions(estimate))  # review SF2
     return customer_issue_status_for_estimate(estimate)
 
 

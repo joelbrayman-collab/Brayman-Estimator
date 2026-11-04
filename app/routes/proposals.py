@@ -213,6 +213,8 @@ def _customer_issue_context(proposal):
     from app.services.financial_access import can_issue_customer_estimate
 
     org_id = get_current_organization_id()
+    if proposal.estimate is not None:  # review SF2: a signed copy whose filing failed is filed now
+        IA.file_missing_signed_copies(IA.customer_estimate_revisions(proposal.estimate))
     status = None
     try:
         status = IA.customer_issue_status(proposal)
@@ -697,6 +699,8 @@ def send_to_client(id):
     session["proposal_link_for"] = proposal.id
     session["proposal_link_url"] = public_signing_url(sent.path)
     flash(f"Proposal sent to {sent.link.sent_to_name} ({sent.link.sent_to_email}).", "success")
+    if sent.validity_note:
+        flash(sent.validity_note, "success")
     if sent.authorization is not None:
         flash(f"Customer issue: {sent.authorization['label']}.",
               "success" if sent.authorization.get("authorized") else "warning")

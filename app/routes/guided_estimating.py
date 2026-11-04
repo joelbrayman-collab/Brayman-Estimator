@@ -589,13 +589,9 @@ def _financial_summary_panel(guided, version):
 
     summary_revisions = [{"revision": r, "status": IA.status_of(r)}
                          for r in reversed(IA.revisions(guided.estimate)) if r.origin == "FROZEN"]
-    for row in summary_revisions:  # a signed copy not filed yet (e.g. filing failed at signing) is filed now
-        req = row["status"].get("request")
-        if row["status"]["state"] == "approved" and req is not None and IA.signed_document(req) is None:
-            try:
-                IA.file_signed_copy(req)
-            except Exception:  # noqa: BLE001 - the review page never fails on filing
-                db.session.rollback()
+    # A signed copy not filed yet (e.g. filing failed at signing) is filed now, for both document types (SF2).
+    IA.file_missing_signed_copies([row["revision"] for row in summary_revisions])
+    IA.file_missing_signed_copies(IA.customer_estimate_revisions(guided.estimate))
     return {"scenario": scenario, "revisions": quoted_revisions(guided.estimate),
             "summary_revisions": summary_revisions,
             "accepted": G.accepted_proposal(guided) is not None, "employee_cost": employee_cost,

@@ -1041,6 +1041,12 @@ def _calisign(ctx):
         project = ctx.projects.get(req.project_id)
         if not _open(project):
             continue
+        if req.document_family == "INTERNAL_APPROVAL":
+            # Review m3 (3 Nov 2026): only for someone who may act on that document type.
+            from app.services.internal_approval import may_manage
+
+            if not may_manage(ctx.viewer, req):
+                continue
         doc = names.get(req.document_family, "Document")
         expires = local_date(req.expires_at) if req.expires_at else None
         common = dict(project_id=req.project_id)

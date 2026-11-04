@@ -262,8 +262,8 @@ def test_other_bytes_for_the_same_estimate_version_are_not_authorized(env, monke
     _sign(c, _link(_mail(app)[0]))
     assert IA.customer_issue_status(proposal)["state"] == "authorized"
     original = IA.customer_estimate_pdf
-    monkeypatch.setattr(IA, "customer_estimate_pdf", lambda p: original(p) + b"\n% other bytes\n")
-    status = IA.customer_issue_status(proposal)
+    monkeypatch.setattr(IA, "customer_estimate_pdf", lambda p, v=None: original(p, v) + b"\n% other bytes\n")
+    status = IA.customer_issue_status(proposal, fresh=True)  # a renderer change: re-rendered, never cached
     assert status["state"] == "stale" and status["label"] == f"Approved {rev.label}; current estimate differs, not authorized"
     # A change to the proposal's content (same estimate version) is a new REV that needs its own approval.
     monkeypatch.setattr(IA, "customer_estimate_pdf", original)

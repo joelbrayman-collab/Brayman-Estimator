@@ -39,6 +39,14 @@ class InternalSummaryRevision(db.Model):
         db.CheckConstraint("document_type = 'INTERNAL_FINANCIAL_SUMMARY' OR (origin = 'FROZEN' AND NOT employee_detail)",
                            name="ck_internal_summary_revisions_customer_estimate"),
         db.CheckConstraint("revision_number > 0", name="ck_internal_summary_revisions_number_positive"),
+        # Review m1 (3 Nov 2026): one shared REV series per estimate, collision-proof. A number belongs to one row,
+        # except the one intended pairing: the summary's sent-to-client record of the customer estimate REVn Ben
+        # authorized (paired_revision_id = that REV), which carries the same number.
+        db.CheckConstraint("paired_revision_id IS NULL OR (document_type = 'INTERNAL_FINANCIAL_SUMMARY' AND "
+                           "origin = 'SENT_TO_CLIENT')", name="ck_internal_summary_revisions_pairing"),
+        db.Index("uq_internal_summary_revisions_series", "estimate_id", "revision_number", unique=True,
+                 sqlite_where=db.text("paired_revision_id IS NULL"),
+                 postgresql_where=db.text("paired_revision_id IS NULL")),
         db.Index("ix_internal_summary_revisions_org_project", "organization_id", "project_id"),
     )
 
@@ -52,6 +60,8 @@ class InternalSummaryRevision(db.Model):
     document_type = db.Column(db.String(40), nullable=False, default=DOCUMENT_TYPE_FINANCIAL_SUMMARY)
     origin = db.Column(db.String(20), nullable=False)
     proposal_id = db.Column(db.Integer, nullable=True)
+    paired_revision_id = db.Column(db.Integer, db.ForeignKey("internal_summary_revisions.id", ondelete="RESTRICT"),
+                                   nullable=True)
     employee_detail = db.Column(db.Boolean, nullable=False)
     data_json = db.Column(db.Text, nullable=False)
     figures_sha256 = db.Column(db.String(64), nullable=False)

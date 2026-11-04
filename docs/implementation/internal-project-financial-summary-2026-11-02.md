@@ -383,3 +383,41 @@ estimate, estimate-output, pricing, signing / CaliSIGN, documents, attention, ac
 that touches the changed surfaces. First run: 2,933 passed, 1 failed (the S2 explicit-override case above, fixed);
 the pricing files and every test touching estimate overrides / commercial context / economics were then re-run green.
 No skips.
+
+## Re-review of 8e77af09 (3–4 Nov 2026): fixes, each with a test that fails on 8e77af09
+Tests: `tests/test_customer_estimate_rereview_fixes.py` (8).
+- SF1 (the customer receives exactly what Ben approved). The REV now freezes the validity date the client will read
+  (`issue_validity_date`: a live link's `client_valid_until`, else the proposal's date, else today + the default 30-day
+  link) and renders at it. When the estimate is authorized, Send to client sets the link's expiry so the client reads
+  that date (`issue_link_expiry`: the requested expiry when it already gives the date, else the end of the approved
+  date on the company calendar; the offer never outlives the link: `client_valid_until` is unchanged), the office is
+  told, and the client link serves the approved frozen bytes (`approved_client_copy`, re-rendered and SHA-checked).
+  When the approved date cannot be kept (past, more than 90 days away, or after the proposal's own date) nothing is
+  blocked: the status is `validity_differs` — "Not authorized for customer issue: the validity date differs (the
+  customer sees …; REVn was approved with …); freeze a new REV" — and the link renders as before. Tests:
+  `test_sf1_the_client_receives_exactly_the_approved_bytes` (validity date after a 14-day link; no validity date),
+  `test_sf1_when_the_approved_date_cannot_be_kept_…`.
+- SF2: `file_missing_signed_copies` (idempotent) runs on the proposal page, the estimate pages and the pricing page
+  for customer-estimate REVs as well as summary REVs. Test: `test_sf2_…` (filing fails once at signing; later views
+  file the signed copy and the exact PDF exactly once, Estimate / STANDARD).
+- m1: `internal_summary_revisions.paired_revision_id` (FK to the authorized customer estimate REV) and the partial unique
+  index `uq_internal_summary_revisions_series` on (estimate_id, revision_number) WHERE paired_revision_id IS NULL;
+  check `ck_internal_summary_revisions_pairing` (only a summary sent-to-client row may pair). Numbers are allocated
+  in a savepoint with retry on IntegrityError (`_allocate`). Tests: `test_m1_two_documents_can_never_share_a_number_…`
+  (DB refusal and a simulated race), `test_m1_the_intended_pairing_shares_the_authorized_number`.
+- m2: `customer_estimate_sha` caches the hash per key of every renderer input (proposal row, sections, lines, brand,
+  project reference line, validity date, renderer sources, ReportLab version); a key that cannot be built re-renders;
+  the send and the client link always re-render (`fresh=True`). Test: `test_m2_…` (no re-render for identical inputs;
+  a line or brand change re-renders and is not authorized).
+- m3: Needs Attention lists an INTERNAL_APPROVAL only for a viewer who `may_manage` it. Test: `test_m3_…`.
+- Schema (still `u8b9c0d1e2f3`, new table only): `paired_revision_id`, the partial unique index and the pairing check.
+  Migration proofs re-run green; release-gate arguments unchanged.
+- Browser: `evidence_internal_approval.mjs` 12 → 13 checks (sent with a 14-day link, the client's PDF is the approved
+  bytes). Gate count 336 → **337**.
+- Sweep (4 Nov 2026, Python 3.9.6, Family 05 env, one file at a time, three runners): 232 files, 2,940 passed, 2 failed:
+  `test_concrete_calculator_access.py::test_contractor_page_calculate_matches_the_original_fixtures` and
+  `test_stair_calculator_access.py::test_recovered_stair_engine_diagram_and_page_tests`. Root cause, reproduced: on this
+  2-CPU container, three parallel pytest runners plus a browser walk delay the calculator packages' own office
+  server past its fixed 20-second start limit ("office page did not start",
+  `calculation-engines/*/tests/office-page-browser.mjs`); not a defect in this change. Both files pass when run
+  without that extra load (11 passed), also with the two run side by side and with one browser walk alongside.

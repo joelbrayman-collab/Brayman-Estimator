@@ -341,7 +341,9 @@ for pkg in calculation-engines/concrete-slab-1.0.0 calculation-engines/stair-ont
   ( cd "$pkg" && npm ci --no-audit --no-fund >/dev/null 2>&1 ) || stop "npm ci failed in $pkg"
 done
 bash tools/setup_test_environment.sh --check || stop "test environment check failed"
-PYTEST="./venv/bin/python -u -X faulthandler -m pytest -p no:cacheprovider -o faulthandler_timeout=180"
+# tmp_path folders of passed tests are removed (3 Nov 2026: a full run kept ~1.3 GB, and pytest keeps three runs);
+# a failed test keeps its folder for diagnosis. Which tests run and what they assert is unchanged.
+PYTEST="./venv/bin/python -u -X faulthandler -m pytest -p no:cacheprovider -o faulthandler_timeout=180 -o tmp_path_retention_policy=failed"
 # Faster gate (2 Nov 2026): the same complete suite, spread over one pytest-xdist worker per CPU core. --dist loadfile
 # keeps each test file on one worker, in file order, exactly as a serial run sees it. The junit XML still lists every
 # test case (the no-skip, end-to-end and Cal checks below read it unchanged, and the count check compares it with the

@@ -292,3 +292,16 @@ def test_a_new_or_changed_create_listener_gets_a_real_create_all():
         assert fast_fixtures.STATS["copied"] == copied + 1
         names = inspect(db.engine).get_table_names()
         assert "zz_table_listener_probe" not in names and "zz_metadata_listener_probe" not in names
+
+
+def test_browser_scripts_stop_their_page_server_with_sigterm_and_wait():
+    """3 Nov 2026 review: two browser scripts stopped the page server with an immediate SIGKILL, which cannot run
+    its cleanup, so every run left a calibai-page-server-* folder (database and app folders) in the temporary
+    folder. SIGKILL is allowed only as the delayed fallback after SIGTERM."""
+    scripts = [*(ROOT / "tests").glob("*.mjs"), *(ROOT / "tools" / "release").glob("*.mjs"),
+               *(ROOT / "calculation-engines").glob("*/tests/*.mjs")]
+    assert len(scripts) >= 30
+    for script in scripts:
+        for line in script.read_text().splitlines():
+            if 'kill("SIGKILL")' in line:
+                assert "setTimeout" in line, f"{script.relative_to(ROOT)}: {line.strip()}"

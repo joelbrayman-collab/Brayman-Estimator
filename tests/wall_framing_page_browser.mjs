@@ -7,6 +7,18 @@ import { fileURLToPath } from "node:url";
 
 import { chromium } from "../calculation-engines/concrete-slab-1.0.0/node_modules/playwright/index.mjs";
 
+// Stop the page server with SIGTERM so it removes its private temporary folder (tests/server_cleanup.py), and wait
+// for it; SIGKILL only if it has not exited within 10 s. (3 Nov 2026: an immediate SIGKILL left a
+// calibai-page-server-* folder with its database behind on every run.)
+function stopOffice(child) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return new Promise((resolve) => {
+    const force = setTimeout(() => child.kill("SIGKILL"), 10000);
+    child.once("exit", () => { clearTimeout(force); resolve(); });
+    child.kill("SIGTERM");
+  });
+}
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const python = path.join(repoRoot, "venv/bin/python");
 const serverScript = path.join(repoRoot, "tests/concrete_page_server.py");
@@ -237,6 +249,9 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     assert.match(await page.locator("[data-corner]").innerText(), /16 ft/);
     assert.match(await page.locator("[data-extra-member]").first().innerText(), /King studs/);
 
+    // The same wait before the second phone measurement (3 Nov 2026 review: under load it still measured the
+    // unstyled result page here, scrollWidth 2508 at 390px, 1 run in 3 with two xdist workers).
+    await page.waitForLoadState("load");
     const extended = await page.evaluate(() => {
       const elevation = document.querySelector("[data-wall-elevation]");
       const box = elevation.getBoundingClientRect();
@@ -255,7 +270,7 @@ test("the contractor calculates a straight wall and sees the elevation", async (
     console.error(JSON.stringify(extended));
   } finally {
     if (browser) await browser.close();
-    office.child.kill("SIGKILL");
+    await stopOffice(office.child);
     office.child.stdout.destroy();
     office.child.stderr.destroy();
   }

@@ -7,6 +7,18 @@ import { fileURLToPath } from "node:url";
 
 import { chromium } from "../../concrete-slab-1.0.0/node_modules/playwright/index.mjs";
 
+// Stop the page server with SIGTERM so it removes its private temporary folder (tests/server_cleanup.py), and wait
+// for it; SIGKILL only if it has not exited within 10 s. (3 Nov 2026: an immediate SIGKILL left a
+// calibai-page-server-* folder with its database behind on every run.)
+function stopOffice(child) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return new Promise((resolve) => {
+    const force = setTimeout(() => child.kill("SIGKILL"), 10000);
+    child.once("exit", () => { clearTimeout(force); resolve(); });
+    child.kill("SIGTERM");
+  });
+}
+
 const packageRoot = fileURLToPath(new URL("..", import.meta.url));
 const repoRoot = path.resolve(packageRoot, "../..");
 const python = path.join(repoRoot, "venv/bin/python");
@@ -188,7 +200,7 @@ test("the contractor page runs the preserved comparison", async () => {
     assert.deepEqual(pageErrors, []);
   } finally {
     if (browser) await browser.close();
-    office.child.kill("SIGKILL");
+    await stopOffice(office.child);
     office.child.stdout.destroy();
     office.child.stderr.destroy();
   }

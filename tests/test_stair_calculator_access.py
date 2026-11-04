@@ -15,6 +15,9 @@ from tests.auth_fixtures import ensure_office_user, login_office_user
 from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
+# Outer limit for the Node browser run (3 Nov 2026): above the page server's 120 s start limit plus the walk, so the
+# script's own failure, with the server's output, is reported rather than a bare timeout.
+BROWSER_RUN_TIMEOUT = 300
 SOURCE = ROOT / "calculation-engines" / "stair-ontario-residential-v1" / "website-source"
 PRESERVED = {
     # Updated deliberately: Joel, 21 Oct 2026, authorized correcting the reported stair angle to
@@ -133,6 +136,6 @@ def test_recovered_stair_engine_diagram_and_page_tests():
     browser = run_node_browser_test(
         [node, "--test", "--test-force-exit", str(package / "tests" / "office-page-browser.mjs")],
         cwd=package,
-        timeout=120,
+        timeout=BROWSER_RUN_TIMEOUT,
     )
     assert browser.returncode == 0, browser.stdout + browser.stderr

@@ -20,6 +20,9 @@ from tests.auth_fixtures import ensure_office_user, login_office_user
 from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
+# Outer limit for the Node browser run (3 Nov 2026): above the page server's 120 s start limit plus the walk, so the
+# script's own failure, with the server's output, is reported rather than a bare timeout.
+BROWSER_RUN_TIMEOUT = 300
 ENGINE = ROOT / "app" / "services" / "icf_quantity.py"
 PROFILES = ROOT / "app" / "data" / "icf_manufacturer_profiles_v1.json"
 WALL_ROUTE = ROOT / "app" / "routes" / "calculation_mapping.py"
@@ -213,7 +216,7 @@ def test_contractor_icf_page_in_the_browser():
     completed = run_node_browser_test(
         [node, "--test", str(script)],
         cwd=ROOT,
-        timeout=120,
+        timeout=BROWSER_RUN_TIMEOUT,
         env=os.environ.copy(),
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr

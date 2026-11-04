@@ -7,6 +7,11 @@ import { fileURLToPath } from "node:url";
 
 import { chromium } from "../calculation-engines/concrete-slab-1.0.0/node_modules/playwright/index.mjs";
 
+// Page server start limit (3 Nov 2026): readiness is the server's "READY <port>" line, polled every 50 ms; a server
+// that exits fails at once with its output. The overall limit is generous because a loaded machine (parallel gate:
+// several pytest workers plus a browser walk on 2 CPUs) took more than the former fixed 20 s to import the app.
+const OFFICE_START_LIMIT_MS = 120000;
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const python = path.join(repoRoot, "venv/bin/python");
 const serverScript = path.join(repoRoot, "tests/concrete_page_server.py");
@@ -35,7 +40,12 @@ function startOffice(port) {
   child.stdout.on("data", watch);
   child.stderr.on("data", watch);
   const ready = new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`office page did not start\n${output}`)), 20000);
+    const started = Date.now();
+    const timer = setTimeout(() => {
+      child.kill("SIGTERM");
+      reject(new Error(`office page did not print READY ${port} within ${OFFICE_START_LIMIT_MS / 1000} s `
+        + `(still running after ${Math.round((Date.now() - started) / 1000)} s; stopped)\nserver output:\n${output}`));
+    }, OFFICE_START_LIMIT_MS);
     const poll = () => {
       if (output.includes(`READY ${port}`)) {
         clearTimeout(timer);

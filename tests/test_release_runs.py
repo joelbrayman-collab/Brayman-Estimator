@@ -106,10 +106,7 @@ def test_the_shared_block_is_identical_in_every_release_script_and_parses():
     for script in SCRIPTS:
         assert _block(script) == block, script.name
         assert subprocess.run(["bash", "-n", str(script)], capture_output=True).returncode == 0, script.name
-    # Bash 3.2 (the Mac's /bin/bash): none of the bash 4 features.
-    for feature in ("declare -A", "mapfile", "readarray", ",,}", "^^}", "&>>", "|&"):
-        for script in SCRIPTS:
-            assert feature not in _code(script), (feature, script.name)
+    # Bash 3.2 compatibility: test_release_scripts_use_only_bash_3_2_constructs below.
 
 
 def test_run_ids_are_unique_even_within_one_second_and_a_run_folder_is_never_reused(tmp_path):
@@ -585,3 +582,75 @@ def test_every_release_script_keeps_its_files_outside_the_icloud_desktop(script)
     code = _code(script)
     assert '"$OFFICE_LOCAL/release-work"' in code
     assert "/Desktop" not in code and "Desktop/" not in code
+
+
+# Bash 4+ constructs that /bin/bash 3.2 (macOS, where every release script runs) does not have.
+BASH4_ONLY = {
+    r"\b(declare|local|typeset)\s+-[a-zA-Z]*A": "associative array (4.0)",
+    r"\b(declare|local|typeset)\s+-[a-zA-Z]*n\b": "nameref (4.3)",
+    r"\b(declare|typeset)\s+-[a-zA-Z]*g": "declare -g (4.2)",
+    r"\b(mapfile|readarray)\b": "mapfile/readarray (4.0)",
+    r"\$\{[A-Za-z_][A-Za-z0-9_]*(\[[^]]*\])?(\^\^?|,,?)[^}]*\}": "case conversion ${v^^} ${v,,} (4.0)",
+    r"\$\{[A-Za-z_][A-Za-z0-9_]*@[QEPAaUuLK]\}": "${v@op} transformation (4.4)",
+    r"\$\{[A-Za-z_][A-Za-z0-9_]*\[-[0-9]+\]\}": "negative array index (4.3)",
+    r"\[\[\s+-v\b": "[[ -v ]] (4.2)",
+    r"\btest\s+-v\b": "test -v (4.2)",
+    r"\|&": "|& (4.0)",
+    r"&>>": "&>> (4.0)",
+    r"\bcoproc\b": "coproc (4.0)",
+    r"\bshopt\s+-s\s+(globstar|lastpipe|autocd|direxpand|checkjobs)\b": "shopt option (4.x)",
+    r"\$\{?(BASHPID|EPOCHSECONDS|EPOCHREALTIME|BASH_ARGV0|SRANDOM)\b": "variable (4.0+)",
+    r"\bwait\s+-n\b": "wait -n (4.3)",
+    r";;&|;&\s*$": "case fall-through ;& ;;& (4.0)",
+    r"\{[A-Za-z_][A-Za-z0-9_]*\}\s*[<>]": "{fd}> redirection (4.1)",
+    r"printf\s+['\"]?%\(": "printf %(...)T (4.2)",
+    r"printf\s+-v\s+[A-Za-z_][A-Za-z0-9_]*\[": "printf -v into an array element (4.1)",
+    r"\bread\s+(-[a-zA-Z]+\s+)*-t\s+[0-9]*\.": "fractional read -t (4.0)",
+    r"\$'[^']*\\u[0-9a-fA-F]": "$'\\u' escape (4.2)",
+    r"\bdeclare\s+-[a-zA-Z]*[lu]\b": "declare -l/-u (4.0)",
+}
+
+
+def _shell_lines(path: Path):
+    """(line number, text) of shell code only: comment lines and heredoc bodies (embedded Python) left out."""
+    import re as _re
+
+    lines, end = [], None
+    for number, line in enumerate(path.read_text().splitlines(), 1):
+        if end is not None:
+            if line.strip() == end:
+                end = None
+            continue
+        if line.lstrip().startswith("#"):
+            continue
+        lines.append((number, line))
+        match = _re.search(r"<<-?\s*['\"]?([A-Za-z_][A-Za-z0-9_]*)['\"]?", line)
+        if match and "<<<" not in line:
+            end = match.group(1)
+    return lines
+
+
+def test_release_scripts_use_only_bash_3_2_constructs():
+    """The Mac runs /bin/bash 3.2. Static check of release.sh and the scripts it runs (3 Nov 2026)."""
+    found = []
+    for script in (*SCRIPTS, ROOT / "tools" / "setup_test_environment.sh"):
+        for number, line in _shell_lines(script):
+            for pattern, what in BASH4_ONLY.items():
+                if re.search(pattern, line):
+                    found.append(f"{script.name}:{number}: {what}: {line.strip()}")
+    assert found == []
+    # Bash < 4.4 under set -u treats "${a[@]}" of an empty array as unbound: every expanded array starts non-empty.
+    for script in SCRIPTS:
+        text = "\n".join(line for _, line in _shell_lines(script))
+        for name in set(re.findall(r'"\$\{([A-Za-z_][A-Za-z0-9_]*)\[@\]\}"', text)):
+            assert re.search(rf"\b{name}=\(\S", text), (script.name, name)
+
+
+def test_the_bash_3_2_check_catches_each_construct(tmp_path):
+    samples = ["declare -A m", "local -n ref=x", 'echo "${v,,}"', 'echo "${v^^}"', "mapfile -t a < f",
+               'echo "${a[-1]}"', "[[ -v X ]]", "cmd |& tee", "cmd &>> log", "coproc x", "wait -n",
+               "exec {fd}>file", "printf '%(%s)T' -1", "read -t 0.5 x", 'echo "${v@Q}"', "shopt -s globstar"]
+    script = tmp_path / "s.sh"
+    script.write_text("\n".join(samples) + "\ncat <<'PY'\nx = a[-1]\nPY\n# declare -A in a comment\n")
+    hits = [n for n, line in _shell_lines(script) if any(re.search(p, line) for p in BASH4_ONLY)]
+    assert hits == list(range(1, len(samples) + 1))

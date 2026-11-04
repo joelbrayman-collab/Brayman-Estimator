@@ -305,3 +305,40 @@ def test_browser_scripts_stop_their_page_server_with_sigterm_and_wait():
         for line in script.read_text().splitlines():
             if 'kill("SIGKILL")' in line:
                 assert "setTimeout" in line, f"{script.relative_to(ROOT)}: {line.strip()}"
+
+
+PAGE_SERVER_BROWSER_SCRIPTS = {
+    # Node browser script that starts tests/concrete_page_server.py: the Python test that runs it.
+    "calculation-engines/concrete-slab-1.0.0/tests/office-page-browser.mjs": "tests/test_concrete_calculator_access.py",
+    "calculation-engines/stair-ontario-residential-v1/tests/office-page-browser.mjs": "tests/test_stair_calculator_access.py",
+    "calculation-engines/employment-vs-entrepreneurship/tests/office-page-browser.mjs":
+        "tests/test_employment_calculator_access.py",
+    "tests/icf_wall_page_browser.mjs": "tests/test_icf_wall_calculator_access.py",
+    "tests/wall_framing_page_browser.mjs": "tests/test_wall_framing_calculator.py",
+}
+
+
+def test_page_server_start_is_robust_under_load_and_still_fails_clearly():
+    """3 Nov 2026: the concrete-slab and stair page tests failed with "office page did not start" on a loaded machine
+    (three pytest runners and a browser walk on 2 CPUs) because the page server had a fixed 20 s start limit. Each
+    script now waits for the server's READY line with a 120 s overall limit, still fails at once if the server exits,
+    stops the server and prints its output on a timeout; the Python test's own limit is above that, so the script's
+    explanation is what is reported."""
+    import re
+
+    found = {str(p.relative_to(ROOT)) for p in [*(ROOT / "tests").glob("*.mjs"),
+                                                *(ROOT / "calculation-engines").glob("*/tests/*.mjs")]
+             if "concrete_page_server.py" in p.read_text()}
+    assert found == set(PAGE_SERVER_BROWSER_SCRIPTS)
+    for script, runner in PAGE_SERVER_BROWSER_SCRIPTS.items():
+        text = (ROOT / script).read_text()
+        limit = re.search(r"const OFFICE_START_LIMIT_MS = (\d+);", text)
+        assert limit and int(limit.group(1)) >= 120000, script
+        assert "}, OFFICE_START_LIMIT_MS);" in text, script
+        assert not re.search(r"did not start[^\n]*\n?[^\n]*\b20000\b", text), script
+        assert "output.includes(`READY ${port}`)" in text, script  # the readiness signal
+        assert "if (child.exitCode !== null)" in text and "office page exited ${child.exitCode}" in text, script
+        assert 'child.kill("SIGTERM");' in text and "server output:\\n${output}" in text, script
+        outer = re.search(r"^BROWSER_RUN_TIMEOUT = (\d+)$", (ROOT / runner).read_text(), re.M)
+        assert outer and int(outer.group(1)) > int(limit.group(1)) / 1000 + 60, runner
+        assert "timeout=BROWSER_RUN_TIMEOUT" in (ROOT / runner).read_text(), runner

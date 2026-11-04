@@ -17,6 +17,9 @@ from tests.auth_fixtures import ensure_office_user, login_office_user
 from tests.browser_process import run_node_browser_test
 
 ROOT = Path(__file__).resolve().parents[1]
+# Outer limit for the Node browser run (3 Nov 2026): above the page server's 120 s start limit plus the walk, so the
+# script's own failure, with the server's output, is reported rather than a bare timeout.
+BROWSER_RUN_TIMEOUT = 300
 PACKAGE = ROOT / "calculation-engines" / "employment-vs-entrepreneurship"
 PAGE = (
     PACKAGE
@@ -126,6 +129,6 @@ def test_recovered_employment_calculator_tests():
     browser = run_node_browser_test(
         [node, "--test", "--test-force-exit", str(PACKAGE / "tests" / "office-page-browser.mjs")],
         cwd=PACKAGE,
-        timeout=180,
+        timeout=BROWSER_RUN_TIMEOUT,
     )
     assert browser.returncode == 0, browser.stdout + browser.stderr

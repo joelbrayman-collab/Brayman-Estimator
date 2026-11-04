@@ -274,13 +274,14 @@
   {% endif %}
 
   {% if version %}
-  {% call ts.details("The customer proposal", "ts-review-proposal", hint=(proposals|length ~ " proposal" ~ ("" if proposals|length == 1 else "s")) if proposals else "Built from the approved estimate") %}
+  {% call ts.details("The customer proposal", "ts-review-proposal", hint=(customer_issue.label if (customer_issue and customer_issue.state != "not_frozen") else ((proposals|length ~ " proposal" ~ ("" if proposals|length == 1 else "s")) if proposals else "Built from the approved estimate"))) %}
   <section class="ge-card" data-step="proposal">
     <h2>4. Prepare the customer proposal</h2>
     <p class="ge-muted">The proposal shows the scope, inclusions, exclusions, allowances and the selling price. It never shows your internal costs, rates, supplier prices or margin.</p>
     {% if issue_blockers %}<div class="ge-warn" data-issue-blockers><p>The proposal cannot be issued yet:</p><ul>{% for b in issue_blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>{% endif %}
     {% if not blockers %}<a class="ge-secondary" data-create-proposal href="{{ url_for('proposals.create_proposal_route', estimate_id=version.estimate_id, version_id=version.id) }}">Prepare the proposal</a>{% endif %}
     {% if proposals %}<ul>{% for p in proposals %}<li><a href="{{ url_for('proposals.view_proposal', id=p.id) }}" data-proposal="{{ p.id }}">{{ p.proposal_number }}</a> — {{ p.status }}</li>{% endfor %}</ul>{% endif %}
+    {% if customer_issue %}<p data-customer-issue-status="{{ customer_issue.state }}">Approval for customer issue: <strong>{{ customer_issue.label }}.</strong>{% if customer_issue.proposal %} <a href="{{ url_for('proposals.view_proposal', id=customer_issue.proposal.id) }}#customer-issue-approval">Freeze, send or open it on the proposal</a>{% endif %}</p>{% endif %}
   </section>
   {% endcall %}
 

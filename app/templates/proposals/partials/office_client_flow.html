@@ -31,6 +31,9 @@
     {% endif %}
     {% endif %}
 
+    {% if customer_issue and not acceptance and not decline %}
+    <p data-send-customer-issue="{{ customer_issue.state }}">Approval for customer issue: <strong>{{ customer_issue.label }}.</strong></p>
+    {% endif %}
     {% if send_blockers %}
     <p class="muted-copy" data-proposal-send-blocked="true">To send this proposal: {{ send_blockers|join(" ") }}</p>
     {% else %}

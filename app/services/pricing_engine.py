@@ -427,16 +427,41 @@ def _allocate_bucket_sell_prices(version, breakdown):
         section.subtotal = builder_money(sum((as_decimal(item.sell_price) for item in section.line_items), Decimal("0")))
 
 
-def version_pricing_method(version, resolved_method: Optional[str]) -> str:
+EXPLICIT_POLICY_SOURCES = ("ESTIMATE_OVERRIDE", "COMMERCIAL_CONTEXT")
+
+
+def version_pricing_method(version, resolved_method: Optional[str], source: Optional[str] = None) -> str:
     """The method a version is priced with. A version records its method when it is created (2 Nov 2026); one made
     under another method (or before methods were recorded) keeps being priced the way it always was, so changing the
     company's method never re-prices an existing estimate a different way."""
     recorded = getattr(version, "pricing_method", None)
-    if recorded == LABOUR_AT_RATE_MATERIAL_MARGIN:
-        return LABOUR_AT_RATE_MATERIAL_MARGIN
+    if recorded in PRICING_METHODS and source in EXPLICIT_POLICY_SOURCES and resolved_method:
+        return resolved_method  # a policy chosen for this estimate itself (override, commercial context) governs
+    if recorded in PRICING_METHODS:
+        return recorded  # review S2 (3 Nov 2026): a recorded method is always honoured, whatever the company's now
     if resolved_method == LABOUR_AT_RATE_MATERIAL_MARGIN:
         return "TRUE_GROSS_MARGIN"  # the whole-estimate margin every older estimate was priced with
     return resolved_method
+
+
+def recorded_method_policy(version, method: str, organization_id: str, current_policy=None):
+    """The policy whose parameters price a version whose recorded method is not the company's current one (review S2,
+    ruling 5): the policy it was last priced with, when that used the same method; otherwise the newest approved (or
+    since superseded) policy of that method that existed when the version was created. None when there is none."""
+    if current_policy is not None and current_policy.method == method:
+        return current_policy
+    snapshot = EstimatePricingSnapshot.query.filter_by(estimate_version_id=version.id).first()
+    if snapshot is not None and snapshot.method == method and snapshot.policy_id:
+        policy = db.session.get(OrganizationPricingPolicy, snapshot.policy_id)
+        if policy is not None and policy.organization_id == organization_id:
+            return policy
+    query = OrganizationPricingPolicy.query.filter(
+        OrganizationPricingPolicy.organization_id == organization_id, OrganizationPricingPolicy.method == method,
+        OrganizationPricingPolicy.approval_status.in_(("ORG_APPROVED", "SUPERSEDED")))
+    created = getattr(version, "created_at", None)
+    if created is not None:
+        query = query.filter(OrganizationPricingPolicy.created_at <= created)
+    return query.order_by(OrganizationPricingPolicy.id.desc()).first()
 
 
 def labour_engine_direct_cost_total(estimate_version, organization_id=None):
@@ -1069,8 +1094,15 @@ def apply_resolved_pricing_to_version(
         direct = as_money(direct + labour_direct)
 
     policy = resolved["policy"]
-    method = version_pricing_method(version, resolved["method"])
-    resolved = dict(resolved, method=method)
+    method = version_pricing_method(version, resolved["method"], resolved.get("source"))
+    if getattr(version, "pricing_method", None) in PRICING_METHODS and method != resolved["method"]:
+        # Review S2: the company's method changed since this version was created; price it with its own method and
+        # that method's parameters, never the new company policy's.
+        policy = recorded_method_policy(version, method, org_id, policy)
+        if policy is None and method in ("COST_PLUS_MARKUP", "COST_PLUS_MARKUP_STACK"):
+            raise PricingEngineError(f"This estimate is priced {method.replace('_', ' ').lower()}, and no such company "
+                                     "policy is on record. Ask an administrator to restore it.")
+    resolved = dict(resolved, method=method, policy=policy)
 
     if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
         from app.services.work_packages import participating_lines

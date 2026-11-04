@@ -551,8 +551,11 @@ def pricing(project_id):
 
     review = review_this_estimate(project, guided)
     financial = _financial_summary_panel(guided, version)
+    from app.services.internal_approval import customer_issue_status_for_estimate
+
+    customer_issue = customer_issue_status_for_estimate(guided.estimate) if guided.estimate is not None else None
     return render_template("guided/pricing.html", project=project, guided=guided, version=version,
-                           financial=financial,
+                           financial=financial, customer_issue=customer_issue,
                            blockers=G.guided_blockers(guided), costing=costing,
                            issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,

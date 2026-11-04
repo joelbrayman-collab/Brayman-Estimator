@@ -33,3 +33,17 @@ def can_view_employee_cost(user, organization_id: Optional[str]) -> bool:
 def can_view_project_economics(user, organization_id: Optional[str]) -> bool:
     # Future: or the user holds an explicit project-performance grant (not built).
     return _is_owner_or_system_administrator(user, organization_id)
+
+
+def can_issue_customer_estimate(user, organization_id: Optional[str]) -> bool:
+    """Who may freeze the customer estimate for Ben's approval and send it to him (3 Nov 2026).
+
+    The customer estimate holds no wage or internal-economics figures, so this is exactly the rule that governs
+    estimate sign-off and sending the proposal to the client today: an active office member of the organization
+    (the office wall plus the field-only refusal; access_domains.has_office_scheduling_authority). Neither broader
+    nor narrower than that."""
+    from app.services.access_domains import has_office_scheduling_authority
+
+    if user is None or not getattr(user, "is_authenticated", True) or not organization_id:
+        return False
+    return has_office_scheduling_authority(user, organization_id)

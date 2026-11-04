@@ -295,3 +295,91 @@ fix. The one failure was `tests/test_approved_master_governance.py::test_every_o
 the new `internal_financial_summary.py` renderer (from the 2 Nov commit; that file was not in the earlier sweeps) had to
 be classified. It is added to the test's `NOT_GOVERNED` list (Joel: not an Approved Master) — an existing test
 expectation changed deliberately. All existing CaliSIGN tests pass unchanged.
+
+## Customer estimate approval for customer issue, and the f98ec33d review fixes (Joel, 3 Nov 2026)
+
+### Which PDF is frozen
+The customer-facing document is the proposal's **CONSTRUCTION ESTIMATE** (`app/services/proposal_pdf.generate_proposal_pdf`):
+the renderer the client's proposal link serves (`/proposal/<credential>/pdf`) and the office downloads. The Contractor
+Estimate Package (`contractor_estimate_package.py`) is not it: it is stamped "INTERNAL — CONTRACTOR COPY … Not for the
+customer". The frozen bytes are `internal_approval.customer_estimate_pdf(proposal)`: `generate_proposal_pdf` at the
+proposal's own validity date, without the office-copy stamp or appended drawings (exactly what the client link renders),
+with a new opt-in `invariant=True` (no creation time / random document id), so the same content always renders the
+same bytes and any change renders other bytes. Every other caller still gets the file it always did.
+Known difference, reported to Joel: the client's link copy shows "Valid until" as the earlier of the proposal's date
+and the link's expiry, which is only known at send; the client link still renders live (option: serve the approved
+frozen bytes to the client when the proposal is authorized).
+
+### Workflow (same INTERNAL_APPROVAL architecture; no separate estimate-signing mechanism)
+`GOVERNANCE["CUSTOMER_ESTIMATE"]` = approver only (`SIGNERS_APPROVER_ONLY`), 7-day link. On the proposal page
+(Approval for customer issue): Freeze → an insert-only `internal_summary_revisions` row (`document_type =
+CUSTOMER_ESTIMATE`, origin FROZEN, `proposal_id`, `estimate_version_id`, `pdf_sha256`) and its PDF in signing custody →
+Send → `send_for_internal_approval` (APPROVER participant, no client, normal one-time token and CaliSIGN email) → Ben
+signs signed out on `/sign/` → executed → filed in the project's Documents (the executed copy, and the exact frozen PDF
+as its own document; type Estimate, STANDARD: normal estimate access) → **authorized for customer issue**.
+`customer_issue_status(proposal)` is authorized only when an executed approval exists for a REV of *this* proposal with
+*this* estimate version and exactly the bytes the proposal renders now; otherwise "Approved REVn; current estimate
+differs, not authorized" (stale), "REVn awaiting the approver …", or not frozen. Approval never carries forward.
+Shown on the proposal page (panel and at the Send to client form), the estimate and estimate-version pages, the
+guided pricing page, and as a flash when the proposal is sent. **No hard block** on sending without it (Joel has not
+made that rule; it is an option for him). Ben's approval never reads or writes proposal status, `ProposalAcceptance` or
+client links, and customer acceptance is never read by the status.
+
+### REV series decision
+One series per estimate shared by both document types (`_next_number` = max over all types + 1). Reason: Joel names a
+revision of the job's price ("REV10 estimate"), and the price sent to the client was already a REV of the summary's
+series; two series would let "REV10" mean two different states of the same job. When the client is sent a proposal
+whose customer estimate is authorized as REVn, the summary's sent-to-client record takes the same REVn (one revision,
+two documents), so the unique key is (`estimate_id`, `document_type`, `revision_number`). An unauthorized send takes
+the next number as before.
+
+### Permission chosen
+`financial_access.can_issue_customer_estimate` = `has_office_scheduling_authority`: an active office member, never
+field-only. That is exactly what governs estimate sign-off and Send to client today (the office wall plus the
+field-only refusal); nothing is broadened or narrowed. The customer estimate carries no wage or internal-economics
+figures. The Financial Summary keeps `can_view_project_economics` (+ `can_view_employee_cost` for a wage REV).
+
+### Review findings (f98ec33d), each with its regression test (fails on f98ec33d, passes now)
+- B1: `signing_office_bp.before_request` refuses (403) any `/signing-requests/<id>/…` route on an INTERNAL_APPROVAL
+  unless `internal_approval.may_manage` (the document type's freeze/send rule), before any route code runs; other
+  families untouched; `_redirect_for_request` sends internal approvals to their page. Tests:
+  `test_internal_approval_review_fixes.py::test_b1_*` (DB snapshot of signing, mail and document tables unchanged
+  after every refused route).
+- B2: new sensitivities ECONOMICS and EMPLOYEE_COST (`ck_documents_sensitivity` widened in `u8b9c0d1e2f3`).
+  `documents.access.office_scope` grants ECONOMICS with `can_view_project_economics` and EMPLOYEE_COST with that and
+  `can_view_employee_cost`; FINANCIAL no longer reaches the summary. All list / search / attention / preview /
+  download paths filter through `scope_filter`. A type change never lowers them; a person link keeps them (scope
+  then also requires people administrator). Tests: `test_b2_*`.
+- S1: `ingest.file_document(sensitivity=…)` sets the final level before flush, indexing and the first commit (the
+  CREATED event records it); the post-step `correct_field` calls are gone. Test: `test_s1_*`.
+- S2: `version_pricing_method` honours any recorded method; re-pricing a version whose method differs from the
+  company's uses `recorded_method_policy` (the policy it was priced with, else the newest approved/superseded policy of
+  that method that existed when the version was created). Unrecorded versions unchanged. A policy chosen for the
+  estimate itself (an estimate pricing override or its commercial context) still governs a recorded version, as
+  before: ruling 5 is about company default changes (the sweep's one failure,
+  `test_pricing_engine.py::test_change_order_override_requires_human_reason_and_preserves_method`, root-caused to
+  this and fixed in `version_pricing_method`). Test: `test_s2_*` (4 methods) and that existing test.
+- M1: one rule `internal_financial_summary.carries_wages` for the REV's `employee_detail` and for filing. Test: `test_m1_*`.
+- M2: migration docstring now says ten new nullable columns (and four new tables). Test: `test_m2_*`.
+
+### Migration `u8b9c0d1e2f3` — additions in this pass
+`internal_summary_revisions.document_type` (NOT NULL; new table), unique (`estimate_id`, `document_type`,
+`revision_number`), checks `ck_internal_summary_revisions_document_type` and
+`ck_internal_summary_revisions_customer_estimate` (a customer estimate REV is FROZEN with no employee detail);
+`documents` rebuilt for `ck_documents_sensitivity` (+ECONOMICS, EMPLOYEE_COST). Downgrade also refuses while a document
+holds a new sensitivity. Release-gate arguments now: `--altered-checks ck_documents_sensitivity,
+ck_signing_frozen_artifacts_document_family,ck_signing_participants_role` (new tables and altered tables unchanged).
+Proofs: `test_documents_survive_the_sensitivity_widening_and_its_downgrade_byte_for_byte`, the signing proof, and the
+rehearsal (`MIGRATION_REHEARSAL=ok`, three ALTERED_CHECK lines, every row identical).
+
+### Browser
+`tools/release/evidence_internal_approval.mjs` 8 → 12 checks (freeze and send on the proposal page at 1280×800; Ben
+reviews the exact bytes signed out on a laptop and nothing else opens; signs on a 390 px phone; authorized on the
+proposal, send form, estimate and pricing pages, filed in Documents). Gate count 332 → **336**.
+
+### Affected-file sweep (3 Nov 2026, second pass, Python 3.9.6 venv, Family 05 env, one file at a time)
+231 files: every file of the 197-file sweep plus the new customer-estimate and review-fix tests, every proposal,
+estimate, estimate-output, pricing, signing / CaliSIGN, documents, attention, access and security test, and every test
+that touches the changed surfaces. First run: 2,933 passed, 1 failed (the S2 explicit-override case above, fixed);
+the pricing files and every test touching estimate overrides / commercial context / economics were then re-run green.
+No skips.

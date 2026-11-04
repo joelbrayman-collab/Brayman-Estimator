@@ -24,6 +24,7 @@ from app.models.documents import (
     DATE_INSPECTION_DUE,
     DATE_RENEWAL_DUE,
     DATE_WARRANTY_ENDS,
+    SENSITIVITY_ECONOMICS,
     SENSITIVITY_FINANCIAL,
     SENSITIVITY_PEOPLE,
     SENSITIVITY_STANDARD,
@@ -106,10 +107,11 @@ REGISTRY = (
     _t("PURCHASE_ORDER", "Purchase order", "Project", {PR, SU}, (), (("purchase", "order"), ("po",))),
     _t("SUBCONTRACT", "Subcontract", "Project", {PR, SC}, (), (("subcontract",), ("sub", "agreement"))),
     _t("SCHEDULE", "Schedule", "Project", {PR}, (), (("schedule",), ("gantt",), ("lookahead",))),
-    # Internal contractor document (Joel, 2 Nov 2026): filed when an estimate is approved. FINANCIAL: office members
-    # with financial access only; never field crew, suppliers or customers.
+    # Internal contractor document (Joel, 2 Nov 2026): filed when an estimate is approved. ECONOMICS (review B2,
+    # 3 Nov 2026): only those who may see project economics (EMPLOYEE_COST when it shows the crew's loaded rates);
+    # never other office members, field crew, suppliers or customers.
     _t("INTERNAL_FINANCIAL_SUMMARY", "Internal financial summary", "Project", {PR}, (),
-       (("internal", "financial", "summary"),), sensitivity=SENSITIVITY_FINANCIAL),
+       (("internal", "financial", "summary"),), sensitivity=SENSITIVITY_ECONOMICS),
     _t("INVOICE", "Invoice", "Project", {PR, SU, SC, CU}, (), (("invoice",), ("bill",)),
        sensitivity=SENSITIVITY_FINANCIAL),
     _t("PHOTO", "Photo", "Project", {PR, EQ, CU}, (), (("photo",), ("img",)),

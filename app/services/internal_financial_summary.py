@@ -743,8 +743,9 @@ def freeze_for_approval(version) -> dict:
 
 
 def file_approved_summary(version, approval, *, user=None):
-    """File the approved summary in the project's Documents (Internal financial summary, FINANCIAL). Idempotent."""
-    from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_PEOPLE, Document, DocumentLink
+    """File the approved summary in the project's Documents (Internal financial summary; ECONOMICS, or EMPLOYEE_COST
+    when it shows the crew's loaded rates). Idempotent."""
+    from app.models.documents import CONTEXT_PROJECT, Document, DocumentLink
     from app.services.documents import ingest
     from app.services.documents.contexts import resolve_context
 
@@ -767,14 +768,30 @@ def file_approved_summary(version, approval, *, user=None):
                                     title=f"{TITLE} — {data['project']['revision']} (approved)",
                                     type_code=DOCUMENT_TYPE, record_kind="ESTIMATE_VERSION", record_id=version.id,
                                     description="Internal contractor document: costs, margins and crew loaded rates. "
-                                                "Not for customers, suppliers or field crew.")
-    if data.get("crew"):
-        # The crew's Loaded Labour Rates come from their wages: like wages, only people administrators (the owner or
-        # a System Administrator) may see them.
-        ingest.correct_field(document, actor, "sensitivity", SENSITIVITY_PEOPLE,
-                             "Contains the crew's loaded labour rates (wage figures): people administrators only.",
-                             allow_sensitivity=True)
+                                                "Not for customers, suppliers or field crew.",
+                                    sensitivity=document_sensitivity(data), sensitivity_reason=sensitivity_reason(data))
     return document
+
+
+def carries_wages(data: dict) -> bool:
+    """Whether this summary shows the crew's names and Loaded Labour Rates (wage figures). One rule for the REV record
+    and for filing (review M1, 3 Nov 2026): a crew is assigned and it is not the crew-total variant."""
+    return bool(data.get("crew")) and data.get("employee_detail", True) is not False
+
+
+def document_sensitivity(data: dict) -> str:
+    """Who may read a filed copy (review B2/S1, 3 Nov 2026): EMPLOYEE_COST when it shows the crew's loaded rates,
+    otherwise ECONOMICS. Set when the document is created, before it is indexed or committed."""
+    from app.models.documents import SENSITIVITY_ECONOMICS, SENSITIVITY_EMPLOYEE_COST
+
+    return SENSITIVITY_EMPLOYEE_COST if carries_wages(data) else SENSITIVITY_ECONOMICS
+
+
+def sensitivity_reason(data: dict) -> str:
+    if carries_wages(data):
+        return ("Contains project economics and the crew's loaded labour rates (wage figures): project economics and "
+                "employee cost access only.")
+    return "Contains project economics (cost, price, margin): project economics access only."
 
 
 def quoted_revisions(estimate) -> list:
@@ -792,11 +809,14 @@ def quoted_revisions(estimate) -> list:
              "revision": r} for r in rows]
 
 
-def file_sent_summary(version, proposal, *, user=None):
+def file_sent_summary(version, proposal, *, user=None, number=None):
     """When a price goes to the client: record it as the summary's next REV (its figures frozen at Ben's approval of
-    that version, Gate 1, never recalculated) and file that REV's PDF in Documents. Idempotent per proposal."""
-    from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_PEOPLE, Document, DocumentLink
-    from app.models.internal_summary import ORIGIN_SENT_TO_CLIENT, InternalSummaryRevision
+    that version, Gate 1, never recalculated) and file that REV's PDF in Documents. Idempotent per proposal.
+
+    ``number``: when the customer estimate sent is the one Ben authorized for issue (customer estimate REVn), the
+    summary's sent-to-client record is that same REVn (one revision, two documents); otherwise the next number."""
+    from app.models.documents import CONTEXT_PROJECT, Document, DocumentLink
+    from app.models.internal_summary import DOCUMENT_TYPE_FINANCIAL_SUMMARY, ORIGIN_SENT_TO_CLIENT, InternalSummaryRevision
     from app.services.documents import ingest
     from app.services.documents.contexts import resolve_context
     from app.services.estimate_approval import approval_for
@@ -813,9 +833,10 @@ def file_sent_summary(version, proposal, *, user=None):
     if existing is not None:
         return existing
     revision = InternalSummaryRevision.query.filter_by(estimate_id=version.estimate_id, proposal_id=proposal.id,
-                                                       origin=ORIGIN_SENT_TO_CLIENT).first()
+                                                       origin=ORIGIN_SENT_TO_CLIENT,
+                                                       document_type=DOCUMENT_TYPE_FINANCIAL_SUMMARY).first()
     if revision is None:
-        revision = record_sent_revision(version, proposal, data, user=user)
+        revision = record_sent_revision(version, proposal, data, user=user, number=number)
     labelled = revision.data
     blob = ingest.prepare_upload(filename(labelled), render_pdf(labelled))
     context = resolve_context(approval.organization_id, CONTEXT_PROJECT, version.estimate.project.id)
@@ -824,11 +845,9 @@ def file_sent_summary(version, proposal, *, user=None):
                                     title=f"{TITLE} — {revision.label} sent to client ({version.display_label})",
                                     type_code=DOCUMENT_TYPE, record_kind="PROPOSAL", record_id=proposal.id,
                                     description=f"What was quoted to the client as {revision.label}. Internal "
-                                                "contractor document; not for customers, suppliers or field crew.")
-    if labelled.get("crew"):
-        ingest.correct_field(document, actor, "sensitivity", SENSITIVITY_PEOPLE,
-                             "Contains the crew's loaded labour rates (wage figures): people administrators only.",
-                             allow_sensitivity=True)
+                                                "contractor document; not for customers, suppliers or field crew.",
+                                    sensitivity=document_sensitivity(labelled),
+                                    sensitivity_reason=sensitivity_reason(labelled))
     return document
 
 

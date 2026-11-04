@@ -3,6 +3,9 @@
 // Internal Project Financial Summary as REV1 and sends it for internal approval on the page; the approver reads the
 // link from the captured email and signs signed out (no Calibrayt account) on a laptop; a second REV is signed on a
 // 390 px phone; the signed copies are in the project's Documents; the link opens nothing but its own document.
+// The customer estimate (3 Nov 2026): the office freezes the exact customer estimate PDF on the proposal page and
+// sends it to Ben; Ben reviews it signed out on a laptop and signs on a 390 px phone; the estimate is then
+// "authorized for customer issue" on the proposal (at the send form), the estimate and the pricing pages.
 //
 // EVIDENCE_SHOTS=<folder> saves each screen.
 import assert from "node:assert/strict";
@@ -203,6 +206,95 @@ test("7: a change becomes REV2, sent and signed on a 390 px phone; REV1 stays ap
   await go(pg, review());
   assert.equal(await pg.locator("[data-summary-revision=REV2]").getAttribute("data-revision-state"), "approved");
   assert.equal(await pg.locator("[data-summary-revision=REV1]").getAttribute("data-revision-state"), "approved");
+});
+
+const proposalPage = () => `/proposals/${facts.proposal_id}`;
+async function sign_as(pg, link, name) {
+  await go(pg, link);
+  assert.equal(await pg.locator("body").getAttribute("data-sign-family"), "internal-approval");
+  assert.equal(await pg.locator("[name=consent_accepted]").isChecked(), false, "consent is not preselected");
+  await pg.locator("#confirmed_signer_name").fill(name);
+  await pg.locator("[name=consent_accepted]").check();
+  await Promise.all([pg.waitForNavigation(), pg.locator("[data-sign-submit]").click()]);
+  await pg.waitForSelector("[data-sign-complete]");
+}
+
+test("8: the office freezes the exact customer estimate and sends it to Ben from the proposal page (1280×800)", async () => {
+  const { pg } = await office();
+  await go(pg, proposalPage());
+  assert.equal(await pg.locator("[data-customer-issue-state]").getAttribute("data-customer-issue-state"), "not_frozen");
+  await Promise.all([pg.waitForNavigation(), pg.locator("[data-freeze-customer-estimate] button").click()]);
+  const row = pg.locator("[data-customer-estimate-revision=REV1]");
+  assert.equal(await row.getAttribute("data-revision-state"), "not_sent");
+  const frozen = await pg.context().request.get(base + await row.locator("a").getAttribute("href"));
+  W.estimatePdf = await frozen.body();
+  assert.equal(W.estimatePdf.subarray(0, 5).toString(), "%PDF-");
+  const form = pg.locator("[data-send-customer-estimate=REV1]");
+  await form.locator("[name=approver_name]").fill(facts.ben[0]);
+  await form.locator("[name=approver_email]").fill(facts.ben[1]);
+  await Promise.all([pg.waitForNavigation(), form.locator("button[type=submit]").click()]);
+  assert.equal(await pg.locator("[data-customer-issue-state]").getAttribute("data-customer-issue-state"), "awaiting");
+  assert.equal(await pg.locator("[data-send-customer-issue]").getAttribute("data-send-customer-issue"), "awaiting");
+  await noSideways(pg, "proposal approval sent");
+  await screen(pg, "office-estimate-rev1-sent-1280");
+});
+
+test("9: signed out on a laptop, Ben reviews the exact frozen estimate PDF; the link opens nothing else (1280×800)", async () => {
+  const mail = invitation(facts.ben[1], 1);
+  assert.match(mail.text, /Customer estimate REV1/);
+  W.estimateLink = mail.link;
+  const ctx = await browser.newContext({ viewport: { width: LAPTOP[0], height: LAPTOP[1] } });
+  const pg = await ctx.newPage();
+  watch(pg);
+  sessions.benLaptop = { ctx, pg };
+  await go(pg, W.estimateLink);
+  const body = await pg.locator("body").innerText();
+  assert.match(body, /Customer estimate REV1/);
+  assert.ok(!/\$55\.77|margin|Worker A/i.test(body), "no internal figures on the ceremony page");
+  const doc = await pg.context().request.get(W.estimateLink + "/document");
+  assert.equal(doc.status(), 200);
+  assert.ok(Buffer.compare(await doc.body(), W.estimatePdf) === 0, "the exact frozen PDF, byte for byte");
+  await noSideways(pg, "estimate ceremony laptop");
+  await screen(pg, "ben-estimate-ceremony-1280", { full: false });
+  for (const p of [proposalPage(), `/estimates/${facts.estimate_id}`, `/projects/${facts.estimate_project_id}/documents`,
+    `/projects/${facts.estimate_project_id}/guided/pricing`, `${proposalPage()}/pdf`]) {
+    await go(pg, p);
+    assert.match(pg.url(), /\/login/, `${p} is not reachable with the signing link`);
+  }
+});
+
+test("10: Ben signs on a 390 px phone", async () => {
+  const ctx = await browser.newContext({ viewport: { width: PHONE[0], height: PHONE[1] } });
+  const pg = await ctx.newPage();
+  watch(pg);
+  sessions.benPhone = { ctx, pg };
+  await go(pg, W.estimateLink);
+  await noSideways(pg, "estimate ceremony phone");
+  const submit = await pg.locator("[data-sign-submit]").boundingBox();
+  assert.ok(submit.height >= 44, "Sign & Accept is a full touch target");
+  await screen(pg, "ben-estimate-ceremony-390");
+  await sign_as(pg, W.estimateLink, facts.ben[0]);
+  await noSideways(pg, "estimate signed phone");
+  await screen(pg, "ben-estimate-signed-390");
+});
+
+test("11: authorized for customer issue on the proposal (and its send form), estimate and pricing pages; filed in Documents", async () => {
+  const { pg } = await office();
+  await go(pg, proposalPage());
+  assert.equal(await pg.locator("[data-customer-issue-state]").getAttribute("data-customer-issue-state"), "authorized");
+  assert.match(await pg.locator("[data-send-customer-issue]").innerText(), /authorized for customer issue/);
+  assert.equal(await pg.locator("[data-proposal-acceptance]").count(), 0, "Ben's approval is not the client's acceptance");
+  await screen(pg, "office-estimate-authorized-1280");
+  await go(pg, `/estimates/${facts.estimate_id}`);
+  assert.equal(await pg.locator("[data-customer-issue-status]").getAttribute("data-customer-issue-status"), "authorized");
+  await go(pg, `/projects/${facts.estimate_project_id}/guided/pricing`);
+  assert.equal(await pg.locator("[data-customer-issue-status]").getAttribute("data-customer-issue-status"), "authorized");
+  await go(pg, `/projects/${facts.estimate_project_id}/documents`);
+  assert.match(await pg.locator("body").innerText(), /Customer estimate REV1 .* approved for customer issue by Ben Approver Synthetic/);
+  await screen(pg, "office-estimate-documents-1280");
+  const phone = (await approverPhone()).pg;  // a phone with no office session still reaches nothing
+  await go(phone, proposalPage());
+  assert.match(phone.url(), /\/login/);
 });
 
 test("no server errors and no page script errors during the walk", async () => {

@@ -58,6 +58,9 @@ class SentProposal:
     link: ProposalClientLink
     path: str
     mail_message: object
+    # Ben's approval for customer issue at the moment of sending (internal_approval.customer_issue_status), shown to
+    # the office; informational only (no block: Joel has not made that rule). None when it could not be read.
+    authorization: Optional[dict] = None
 
 
 def _hash(secret: str) -> str:
@@ -161,7 +164,7 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
     return proposal
 
 
-def _file_sent_summary(version, proposal, user) -> None:
+def _file_sent_summary(version, proposal, user, number=None) -> None:
     """Every price sent to the client is kept as a numbered revision (REV1, REV2, ...) with its Internal Project
     Financial Summary filed in Documents (Joel, 2 Nov 2026). The send is already committed; filing never undoes it."""
     import logging
@@ -169,7 +172,7 @@ def _file_sent_summary(version, proposal, user) -> None:
     from app.services.internal_financial_summary import file_sent_summary
 
     try:
-        file_sent_summary(version, proposal, user=user)
+        file_sent_summary(version, proposal, user=user, number=number)
     except Exception:  # noqa: BLE001 - filing never undoes a send
         db.session.rollback()
         logging.getLogger(__name__).exception("Sent Internal Project Financial Summary not filed for proposal %s",
@@ -229,6 +232,7 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
     blockers = proposal_send_blockers(proposal)
     if blockers:
         raise ProposalAcceptanceError("The proposal cannot be sent yet. " + " ".join(blockers))
+    authorization = _customer_issue_status(proposal)  # read before anything changes; never a block
     days = days if isinstance(days, int) and 1 <= days <= 90 else DEFAULT_LINK_DAYS
     if proposal.status != "Issued":
         update_proposal(proposal, status="Issued")
@@ -259,10 +263,24 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
     db.session.add(link)
     _advance_stage(proposal, "Proposal Sent", event="proposal sent to the client")
     db.session.commit()
-    _file_sent_summary(version, proposal, user)
+    paired = authorization["revision"].revision_number if authorization and authorization.get("authorized") else None
+    _file_sent_summary(version, proposal, user, number=paired)
     path = proposal_link_path(lookup_key, secret)
     message = _send_mail(proposal, link, path)
-    return SentProposal(link=link, path=path, mail_message=message)
+    return SentProposal(link=link, path=path, mail_message=message, authorization=authorization)
+
+
+def _customer_issue_status(proposal):
+    """Ben's approval for customer issue (3 Nov 2026), or None if it cannot be read. Never blocks a send."""
+    import logging
+
+    from app.services.internal_approval import customer_issue_status
+
+    try:
+        return customer_issue_status(proposal)
+    except Exception:  # noqa: BLE001 - the status is information; the send goes ahead as it always did
+        logging.getLogger(__name__).exception("Customer issue status not read for proposal %s", proposal.id)
+        return None
 
 
 def _send_mail(proposal, link, path):

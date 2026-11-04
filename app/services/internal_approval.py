@@ -15,6 +15,15 @@ No client is a party, so the request's client_id is NULL (allowed for this famil
 ck_signing_requests_client_required). The link exposes only the frozen artifact being signed (the /sign/* pages read
 nothing else). Who may freeze or send: can_view_project_economics; a REV with the crew's loaded rates may be frozen or
 sent only by someone who also has can_view_employee_cost (otherwise the crew-total variant).
+
+Second document type (Joel, 3 Nov 2026): the CUSTOMER ESTIMATE, the PDF the customer receives (the proposal's
+"CONSTRUCTION ESTIMATE", app/services/proposal_pdf.generate_proposal_pdf; the Contractor Estimate Package is the
+internal contractor copy and is not it). The office freezes the exact PDF for a proposal as estimate REVn and sends it
+to Ben by the same CaliSIGN internal approval; once Ben signs, that REV is "authorized for customer issue" for as long
+as the proposal still renders those exact bytes from the same estimate version. Any change (another version, or other
+bytes) is the next REV and needs its own approval: approval never carries forward. Ben's approval is not the
+customer's: nothing here reads or writes proposal acceptance, and customer acceptance never counts as Ben's approval.
+Who may freeze or send it: can_issue_customer_estimate (the rule for sending the proposal to the client today).
 """
 
 from __future__ import annotations
@@ -25,7 +34,13 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from app import db
-from app.models.internal_summary import ORIGIN_FROZEN, ORIGIN_SENT_TO_CLIENT, InternalSummaryRevision
+from app.models.internal_summary import (
+    DOCUMENT_TYPE_CUSTOMER_ESTIMATE,
+    DOCUMENT_TYPE_FINANCIAL_SUMMARY,
+    ORIGIN_FROZEN,
+    ORIGIN_SENT_TO_CLIENT,
+    InternalSummaryRevision,
+)
 from app.models.signing import (
     ACTOR_HUMAN,
     DOCUMENT_FAMILY_INTERNAL_APPROVAL,
@@ -50,11 +65,13 @@ from app.models.signing import (
 # (the existing countersign step) completes it.
 SIGNERS_APPROVER_ONLY = "approver"
 SIGNERS_APPROVER_AND_COUNTERSIGNER = "approver+countersigner"
-DOCUMENT_TYPE_FINANCIAL_SUMMARY = "INTERNAL_FINANCIAL_SUMMARY"
 GOVERNANCE = {
     DOCUMENT_TYPE_FINANCIAL_SUMMARY: {"label": "Internal Project Financial Summary", "signers": SIGNERS_APPROVER_ONLY,
                                       "invitation_days": 7},
+    DOCUMENT_TYPE_CUSTOMER_ESTIMATE: {"label": "Customer estimate", "signers": SIGNERS_APPROVER_ONLY,
+                                      "invitation_days": 7},
 }
+AUTHORIZED_FOR_CUSTOMER_ISSUE = "Authorized for customer issue"
 _ACTIVE = frozenset({STATUS_APPROVED_FOR_SIGNATURE, "SENT", STATUS_SIGNED})
 _NOT_ACTIVE = frozenset({STATUS_VOIDED, STATUS_EXPIRED, STATUS_DECLINED})
 
@@ -111,6 +128,43 @@ def _require_economics(user, organization_id):
                                     "Internal Project Financial Summary.")
 
 
+def _require_customer_estimate(user, organization_id):
+    from app.services.financial_access import can_issue_customer_estimate
+
+    if not can_issue_customer_estimate(user, organization_id):
+        raise InternalApprovalError("Only an office member who may send this estimate to the client can freeze it or "
+                                    "send it for approval.")
+
+
+def may_manage(user, request: SigningRequest) -> bool:
+    """Whether this office user may act on an INTERNAL_APPROVAL request (send, resend, void, countersign, download).
+
+    The same rule as freezing and sending its document type (review B1, 3 Nov 2026): the Financial Summary needs
+    can_view_project_economics, and can_view_employee_cost too when the REV shows the crew's loaded rates; the customer
+    estimate needs can_issue_customer_estimate. Checked before anything changes."""
+    if request is None or request.document_family != DOCUMENT_FAMILY_INTERNAL_APPROVAL:
+        return False
+    revision = db.session.get(InternalSummaryRevision, request.source_record_id)
+    if revision is None or revision.organization_id != request.organization_id:
+        return False
+    try:
+        require_revision_access(user, revision)
+    except InternalApprovalError:
+        return False
+    return True
+
+
+def require_revision_access(user, revision) -> None:
+    """Refuses (InternalApprovalError) unless ``user`` may see and act on this REV of its document type."""
+    if revision.is_customer_estimate:
+        _require_customer_estimate(user, revision.organization_id)
+        return
+    _require_economics(user, revision.organization_id)
+    if revision.employee_detail and not _employee_detail_allowed(user, revision.organization_id):
+        raise InternalApprovalError(f"{revision.label} shows the crew's loaded rates. Only someone who may see "
+                                    "employee cost can open or act on it.")
+
+
 def _employee_detail_allowed(user, organization_id) -> bool:
     from app.services.financial_access import can_view_employee_cost
 
@@ -122,12 +176,13 @@ def _actor_name(user) -> str:
 
 
 # ---------------------------------------------------------------------------------------------- revisions
-def revisions(estimate) -> List[InternalSummaryRevision]:
-    return (InternalSummaryRevision.query.filter_by(estimate_id=estimate.id)
-            .order_by(InternalSummaryRevision.revision_number.asc()).all())
+def revisions(estimate, document_type: str = DOCUMENT_TYPE_FINANCIAL_SUMMARY) -> List[InternalSummaryRevision]:
+    return (InternalSummaryRevision.query.filter_by(estimate_id=estimate.id, document_type=document_type)
+            .order_by(InternalSummaryRevision.revision_number.asc(), InternalSummaryRevision.id.asc()).all())
 
 
 def _next_number(estimate) -> int:
+    """One REV series per estimate, shared by every document type (ledger, "REV series")."""
     latest = (InternalSummaryRevision.query.filter_by(estimate_id=estimate.id)
               .order_by(InternalSummaryRevision.revision_number.desc()).first())
     return (latest.revision_number if latest is not None else 0) + 1
@@ -149,16 +204,17 @@ def _labelled(data: dict, number: int, suffix: str = "") -> dict:
     return dict(data, project=project)
 
 
-def _record(version, *, data: dict, origin: str, user=None, proposal_id=None, name: str = "") -> InternalSummaryRevision:
-    from app.services.internal_financial_summary import render_pdf
+def _record(version, *, data: dict, origin: str, user=None, proposal_id=None, name: str = "",
+            number: Optional[int] = None) -> InternalSummaryRevision:
+    from app.services.internal_financial_summary import carries_wages, render_pdf
 
-    number = _next_number(version.estimate)
+    number = number or _next_number(version.estimate)
     labelled = _labelled(data, number, "" if origin == ORIGIN_FROZEN else f"REV{number} sent to client")
     pdf = render_pdf(labelled)
     revision = InternalSummaryRevision(
         organization_id=version.estimate.project.organization_id, project_id=version.estimate.project_id,
         estimate_id=version.estimate_id, estimate_version_id=version.id, revision_number=number, origin=origin,
-        proposal_id=proposal_id, employee_detail=labelled.get("employee_detail", True) is not False,
+        document_type=DOCUMENT_TYPE_FINANCIAL_SUMMARY, proposal_id=proposal_id, employee_detail=carries_wages(labelled),
         data_json=json.dumps(labelled, sort_keys=True), figures_sha256=_figures(data),
         pdf_sha256=hashlib.sha256(pdf).hexdigest(), created_at=datetime.utcnow(),
         created_by_user_id=getattr(user, "id", None), created_by_name=(name or _actor_name(user) or "Calibrayt")[:150])
@@ -180,7 +236,8 @@ def freeze_revision(version, *, user) -> InternalSummaryRevision:
     data = IFS.data_for(version)
     if not _employee_detail_allowed(user, organization_id):
         data = dict(data, employee_detail=False)
-    latest = (InternalSummaryRevision.query.filter_by(estimate_id=version.estimate_id, origin=ORIGIN_FROZEN)
+    latest = (InternalSummaryRevision.query.filter_by(estimate_id=version.estimate_id, origin=ORIGIN_FROZEN,
+                                                      document_type=DOCUMENT_TYPE_FINANCIAL_SUMMARY)
               .order_by(InternalSummaryRevision.revision_number.desc()).first())
     if latest is not None and latest.figures_sha256 == _figures(data):
         raise InternalApprovalError(f"Nothing changed since {latest.label}: there is nothing new to freeze.")
@@ -193,10 +250,15 @@ def freeze_revision(version, *, user) -> InternalSummaryRevision:
     return revision
 
 
-def record_sent_revision(version, proposal, data: dict, *, user=None) -> InternalSummaryRevision:
-    """The price sent to the client is also a REV of the summary (its figures frozen at Gate 1)."""
+def record_sent_revision(version, proposal, data: dict, *, user=None, number: Optional[int] = None) -> InternalSummaryRevision:
+    """The price sent to the client is also a REV of the summary (its figures frozen at Gate 1). ``number``: the
+    customer estimate REV Ben authorized for issue, when that is what was sent (the same revision)."""
+    if number is not None and InternalSummaryRevision.query.filter_by(
+            estimate_id=version.estimate_id, document_type=DOCUMENT_TYPE_FINANCIAL_SUMMARY,
+            revision_number=number).first() is not None:
+        number = None  # already used by the summary: the next number instead
     revision, _pdf = _record(version, data=data, origin=ORIGIN_SENT_TO_CLIENT, user=user, proposal_id=proposal.id,
-                             name=_actor_name(user) or "Calibrayt (sent to client)")
+                             name=_actor_name(user) or "Calibrayt (sent to client)", number=number)
     return revision
 
 
@@ -233,12 +295,14 @@ def document_title(request: SigningRequest) -> str:
     revision = db.session.get(InternalSummaryRevision, request.source_record_id)
     if revision is None:
         return request.request_number
+    if revision.is_customer_estimate:
+        data = revision.data
+        return f"Customer estimate {revision.label} ({data.get('proposal_number', '')})".replace(" ()", "")
     return f"Internal Project Financial Summary {revision.label}"
 
 
 # ---------------------------------------------------------------------------------------------- sending
-def send_for_internal_approval(revision, *, user, approver_name: str, approver_email: str,
-                               document_type: str = DOCUMENT_TYPE_FINANCIAL_SUMMARY):
+def send_for_internal_approval(revision, *, user, approver_name: str, approver_email: str):
     """Open REVn on CaliSIGN as an INTERNAL_APPROVAL and email the approver the one-time link (the existing
     invitation step). Returns the existing InvitationIssue (request, path, mail message)."""
     from app.services.signing import (
@@ -250,7 +314,11 @@ def send_for_internal_approval(revision, *, user, approver_name: str, approver_e
     )
 
     organization_id = revision.organization_id
-    _require_economics(user, organization_id)
+    document_type = revision.document_type
+    if revision.is_customer_estimate:
+        _require_customer_estimate(user, organization_id)
+    else:
+        _require_economics(user, organization_id)
     if revision.origin != ORIGIN_FROZEN:
         raise InternalApprovalError("Freeze the working summary first; the price sent to the client is a record only.")
     if revision.employee_detail and not _employee_detail_allowed(user, organization_id):
@@ -309,9 +377,12 @@ def signed_document(request):
 
 
 def file_signed_copy(request):
-    """File the executed (signed) copy against the project in Documents. Idempotent. PEOPLE when the REV carries the
-    crew's loaded rates (people administrators only), otherwise FINANCIAL."""
-    from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_PEOPLE
+    """File the executed (signed) copy against the project in Documents. Idempotent.
+
+    Financial Summary: EMPLOYEE_COST when the REV shows the crew's loaded rates, otherwise ECONOMICS, set when the
+    document is created (review S1). Customer estimate: an Estimate document at the normal estimate access (STANDARD:
+    office members; never field crew), since it is the customer-facing content."""
+    from app.models.documents import CONTEXT_PROJECT, SENSITIVITY_ECONOMICS, SENSITIVITY_EMPLOYEE_COST
     from app.services.documents import ingest
     from app.services.documents.contexts import resolve_context
     from app.services.internal_financial_summary import DOCUMENT_TYPE
@@ -323,6 +394,8 @@ def file_signed_copy(request):
     if existing is not None:
         return existing
     revision = db.session.get(InternalSummaryRevision, request.source_record_id)
+    if revision.is_customer_estimate:
+        return _file_signed_customer_estimate(request, revision)
     data = retrieve_executed_artifact_bytes(request.id, request.organization_id)
     blob = ingest.prepare_upload(f"Internal_Project_Financial_Summary_{revision.label}_signed_{request.request_number}.pdf",
                                  data)
@@ -334,11 +407,194 @@ def file_signed_copy(request):
               f"{(signer.confirmed_signer_name if signer else '') or 'the approver'}",
         type_code=DOCUMENT_TYPE, record_kind="SIGNING_REQUEST", record_id=request.id,
         description=f"Signed internal approval {request.request_number} (CaliSIGN). Internal contractor document: "
-                    "not for customers, suppliers or field crew.")
-    if revision.employee_detail:
-        ingest.correct_field(document, ingest.SYSTEM, "sensitivity", SENSITIVITY_PEOPLE,
-                             "Contains the crew's loaded labour rates (wage figures): people administrators only.",
-                             allow_sensitivity=True)
+                    "not for customers, suppliers or field crew.",
+        sensitivity=SENSITIVITY_EMPLOYEE_COST if revision.employee_detail else SENSITIVITY_ECONOMICS,
+        sensitivity_reason=("Contains project economics and the crew's loaded labour rates." if revision.employee_detail
+                            else "Contains project economics (cost, price, margin)."))
     return document
 
 
+
+
+# ---------------------------------------------------------------------------------------------- the customer estimate
+CUSTOMER_ESTIMATE_FREEZABLE = ("Draft", "Ready", "Issued")
+
+
+def customer_estimate_pdf(proposal) -> bytes:
+    """The customer estimate exactly as the client receives it: the proposal's CONSTRUCTION ESTIMATE PDF (the same
+    renderer the client's proposal link serves, at the proposal's own validity date), rendered invariantly so the same
+    content always gives the same bytes and SHA-256, and any change gives other bytes."""
+    from app.services.proposal_pdf import generate_proposal_pdf
+
+    return generate_proposal_pdf(proposal, invariant=True).getvalue()
+
+
+def _sha(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def customer_estimate_revisions(estimate) -> List[InternalSummaryRevision]:
+    return revisions(estimate, DOCUMENT_TYPE_CUSTOMER_ESTIMATE)
+
+
+def _proposal_parts(proposal):
+    estimate = proposal.estimate
+    version = proposal.estimate_version
+    if estimate is None or version is None or estimate.project is None:
+        raise InternalApprovalError("This proposal is not on a project's estimate.")
+    return estimate, version
+
+
+def freeze_customer_estimate(proposal, *, user) -> InternalSummaryRevision:
+    """Freeze the exact customer estimate PDF of this proposal as the estimate's next REV, its bytes kept in signing
+    custody. Refused when the proposal's estimate version and PDF bytes are those of its latest REV already."""
+    from app.services.signing import PDF_MEDIA_TYPE, _store_frozen
+
+    estimate, version = _proposal_parts(proposal)
+    organization_id = estimate.project.organization_id
+    _require_customer_estimate(user, organization_id)
+    if proposal.status not in CUSTOMER_ESTIMATE_FREEZABLE:
+        raise InternalApprovalError(f"A {proposal.status.lower()} proposal is not issued to the customer.")
+    pdf = customer_estimate_pdf(proposal)
+    sha = _sha(pdf)
+    latest = (InternalSummaryRevision.query.filter_by(estimate_id=estimate.id, proposal_id=proposal.id,
+                                                      document_type=DOCUMENT_TYPE_CUSTOMER_ESTIMATE)
+              .order_by(InternalSummaryRevision.revision_number.desc()).first())
+    if latest is not None and latest.estimate_version_id == version.id and latest.pdf_sha256 == sha:
+        raise InternalApprovalError(f"Nothing changed since {latest.label}: there is nothing new to freeze.")
+    data = {"document_type": DOCUMENT_TYPE_CUSTOMER_ESTIMATE, "proposal_id": proposal.id,
+            "proposal_number": proposal.proposal_number, "proposal_title": proposal.title,
+            "client_name": proposal.client_name, "estimate_number": estimate.estimate_number,
+            "estimate_version_id": version.id, "version_label": version.display_label,
+            "subtotal": str(proposal.subtotal), "tax_amount": str(proposal.tax_amount), "total": str(proposal.total)}
+    revision = InternalSummaryRevision(
+        organization_id=organization_id, project_id=estimate.project_id, estimate_id=estimate.id,
+        estimate_version_id=version.id, revision_number=_next_number(estimate), origin=ORIGIN_FROZEN,
+        document_type=DOCUMENT_TYPE_CUSTOMER_ESTIMATE, proposal_id=proposal.id, employee_detail=False,
+        data_json=json.dumps(data, sort_keys=True), figures_sha256=sha, pdf_sha256=sha, created_at=datetime.utcnow(),
+        created_by_user_id=getattr(user, "id", None), created_by_name=(_actor_name(user) or "Calibrayt")[:150])
+    db.session.add(revision)
+    db.session.flush()
+    artifact = _store_frozen(organization_id=organization_id, document_family=DOCUMENT_FAMILY_INTERNAL_APPROVAL,
+                             source_record_id=revision.id, data=pdf, extension=".pdf", media_type=PDF_MEDIA_TYPE)
+    if artifact.sha256 != sha:
+        raise InternalApprovalError("The frozen PDF did not match its record. Nothing was frozen.")
+    db.session.commit()
+    return revision
+
+
+def customer_issue_status(proposal) -> dict:
+    """Whether this proposal's customer estimate is authorized for customer issue (Ben's approval), in words.
+
+    Authorized only by an executed INTERNAL_APPROVAL of a customer-estimate REV of this proposal whose estimate version
+    is the proposal's and whose frozen bytes are exactly what the proposal renders now. Customer acceptance is never
+    read here. States: authorized, awaiting (current REV out for approval), not_sent (current REV frozen, not sent),
+    stale (an earlier REV approved; the estimate differs now), not_frozen."""
+    estimate = proposal.estimate
+    if estimate is None or proposal.estimate_version_id is None:
+        return {"state": "not_frozen", "authorized": False, "revision": None, "approved": None,
+                "label": "Not authorized for customer issue: this proposal is not on an estimate."}
+    rows = list(reversed(customer_estimate_revisions(estimate)))  # newest first
+    if not rows:
+        return {"state": "not_frozen", "authorized": False, "revision": None, "approved": None,
+                "label": "Not authorized for customer issue: freeze the customer estimate and send it for approval"}
+    sha = _sha(customer_estimate_pdf(proposal))
+    current = next((r for r in rows if r.proposal_id == proposal.id and r.estimate_version_id == proposal.estimate_version_id
+                    and r.pdf_sha256 == sha), None)
+    current_state = status_of(current) if current is not None else None
+    if current is not None and current_state["state"] == "approved":
+        return {"state": "authorized", "authorized": True, "revision": current, "approved": current,
+                "status": current_state, "sha256": sha,
+                "label": f"{current.label} approved by {current_state['signed_by'] or 'the approver'}: "
+                         f"{AUTHORIZED_FOR_CUSTOMER_ISSUE.lower()}"}
+    approved = next((r for r in rows if status_of(r)["state"] == "approved"), None)
+    if approved is not None:
+        label = f"Approved {approved.label}; current estimate differs, not authorized"
+        if current is not None:
+            label += f" ({current.label}: {current_state['label'].lower()})"
+        return {"state": "stale", "authorized": False, "revision": current, "approved": approved, "sha256": sha,
+                "status": current_state, "label": label}
+    if current is not None:
+        state = "awaiting" if current_state["state"] in ("awaiting_approver", "awaiting_countersign") else "not_sent"
+        return {"state": state, "authorized": False, "revision": current, "approved": None, "sha256": sha,
+                "status": current_state,
+                "label": f"{current.label} {current_state['label'].lower()}: not authorized for customer issue yet"}
+    label = (f"Not authorized for customer issue: {rows[0].label} does not match the current estimate; "
+             "freeze the current estimate")
+    return {"state": "not_frozen", "authorized": False, "revision": None, "approved": None, "sha256": sha,
+            "label": label}
+
+
+def current_proposal(estimate):
+    """The proposal the customer would be sent now: the newest one (not rejected) for the estimate's current version;
+    None when the current version has none yet."""
+    from app.models import Proposal
+
+    version = getattr(estimate, "current_version", None) if estimate is not None else None
+    if version is None:
+        return None
+    return (Proposal.query.filter(Proposal.estimate_id == estimate.id, Proposal.estimate_version_id == version.id,
+                                  Proposal.status != "Rejected").order_by(Proposal.id.desc()).first())
+
+
+def customer_issue_status_for_estimate(estimate) -> Optional[dict]:
+    """The status line for the estimate and pricing pages: the current version's proposal's status; when the current
+    version has no proposal yet, an earlier approval is shown as stale (it never carries forward). None when there
+    is nothing to say (no proposal and no customer estimate REV)."""
+    try:
+        proposal = current_proposal(estimate)
+        if proposal is not None:
+            return dict(customer_issue_status(proposal), proposal=proposal)
+        rows = list(reversed(customer_estimate_revisions(estimate))) if estimate is not None else []
+        if not rows:
+            return None
+        approved = next((r for r in rows if status_of(r)["state"] == "approved"), None)
+        if approved is not None:
+            return {"state": "stale", "authorized": False, "revision": None, "approved": approved, "proposal": None,
+                    "label": f"Approved {approved.label}; current estimate differs, not authorized"}
+        return {"state": "not_frozen", "authorized": False, "revision": None, "approved": None, "proposal": None,
+                "label": "Not authorized for customer issue: the current estimate has no customer estimate yet"}
+    except Exception:  # noqa: BLE001 - a status line never breaks the page it is on
+        import logging
+
+        logging.getLogger(__name__).exception("Customer issue status not available for estimate %s",
+                                              getattr(estimate, "id", None))
+        db.session.rollback()
+        return None
+
+
+def _file_signed_customer_estimate(request, revision):
+    """The signed approval (the executed copy: the exact frozen estimate pages and the signing record) and the exact
+    frozen PDF itself, each filed against the project as an Estimate at the normal estimate access."""
+    from app.models.documents import CONTEXT_PROJECT, Document, DocumentLink, DocumentVersion
+    from app.services.documents import ingest
+    from app.services.documents.contexts import resolve_context
+    from app.services.signing import retrieve_executed_artifact_bytes, retrieve_frozen_artifact_bytes
+
+    info = revision.data
+    number = info.get("proposal_number") or ""
+    signer = next((p for p in request.participants if p.role == ROLE_APPROVER), None)
+    who = (signer.confirmed_signer_name if signer else "") or "the approver"
+    context = resolve_context(request.organization_id, CONTEXT_PROJECT, request.project_id)
+    frozen = request.frozen_artifact
+    exact = (Document.query.join(DocumentLink, DocumentLink.document_id == Document.id)
+             .join(DocumentVersion, DocumentVersion.document_id == Document.id)
+             .filter(Document.organization_id == request.organization_id, DocumentLink.record_kind == "PROPOSAL",
+                     DocumentLink.record_id == revision.proposal_id, DocumentVersion.sha256 == frozen.sha256).first())
+    if exact is None:
+        ingest.file_document(
+            request.organization_id, ingest.SYSTEM,
+            blob=ingest.prepare_upload(f"Customer_Estimate_{revision.label}_{number}.pdf",
+                                       retrieve_frozen_artifact_bytes(frozen)),
+            context=context, title=f"Customer estimate {revision.label} {number} — exact PDF approved for customer issue",
+            type_code="ESTIMATE", record_kind="PROPOSAL", record_id=revision.proposal_id,
+            description=f"The exact customer estimate PDF ({revision.label}, SHA-256 {frozen.sha256}) that {who} "
+                        f"approved for issue to the customer (CaliSIGN {request.request_number}).")
+    return ingest.file_document(
+        request.organization_id, ingest.SYSTEM,
+        blob=ingest.prepare_upload(f"Customer_Estimate_{revision.label}_{number}_approved_{request.request_number}.pdf",
+                                   retrieve_executed_artifact_bytes(request.id, request.organization_id)),
+        context=context, title=f"Customer estimate {revision.label} {number} — approved for customer issue by {who}",
+        type_code="ESTIMATE", record_kind="SIGNING_REQUEST", record_id=request.id,
+        description=f"Signed internal approval {request.request_number} (CaliSIGN): {who}'s approval to issue this "
+                    "estimate to the customer. It is not the customer's acceptance.")

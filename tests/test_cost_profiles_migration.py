@@ -283,9 +283,94 @@ def test_signing_rows_in_every_class_survive_upgrade_and_downgrade_byte_for_byte
 
 RELEASE_ARGS = ["--new-tables", "estimate_crew_members,internal_summary_revisions,organization_labour_cost_settings,"
                 "organization_person_cost_profiles",
-                "--altered-tables", "change_order_items,estimate_line_items,estimate_pricing_snapshots,estimate_versions,"
-                "organization_pricing_policies,signing_requests",
-                "--altered-checks", "ck_signing_frozen_artifacts_document_family,ck_signing_participants_role"]
+                "--altered-tables", "change_order_items,estimate_line_items,estimate_pricing_snapshots,"
+                "estimate_versions,organization_pricing_policies,signing_requests",
+                "--altered-checks", "ck_documents_sensitivity,ck_signing_frozen_artifacts_document_family,"
+                "ck_signing_participants_role"]
+
+
+# ================================================================================ Documents sensitivities (review B2)
+DOCUMENT_TABLES = ("documents", "document_versions", "document_links", "document_events")
+
+
+def _seed_documents(engine):
+    """A document at every sensitivity that exists at t7a8b9c0d1e2, with a version, a link and an event."""
+    with engine.begin() as conn:
+        for n, sensitivity in enumerate(("STANDARD", "PEOPLE", "FINANCIAL"), 1):
+            conn.execute(sa.text(
+                "INSERT INTO documents (public_id, organization_id, title, document_type, type_basis, status, "
+                "sensitivity, origin, created_by_name, created_at, updated_at) VALUES (:p, 'ORG-001', :t, 'OTHER', "
+                "'CONFIRMED', 'ACTIVE', :s, 'UPLOAD', 'Owner Synthetic', '2026-10-01 00:00:00', '2026-10-01 00:00:00')"),
+                {"p": f"{n:032x}", "t": f"Synthetic document {n}", "s": sensitivity})
+            conn.execute(sa.text(
+                "INSERT INTO document_versions (organization_id, document_id, version_number, is_current, source_kind, "
+                "storage_key, sha256, byte_size, media_type, original_filename, availability, created_by_name, created_at) "
+                "VALUES ('ORG-001', :n, 1, 1, 'UPLOAD', 'ORG-001/synthetic.pdf', :sha, 10, 'application/pdf', 'synthetic.pdf', 'AVAILABLE', "
+                "'Owner Synthetic', '2026-10-01 00:00:00')"), {"n": n, "sha": f"{n}" * 64})
+            conn.execute(sa.text(
+                "INSERT INTO document_links (organization_id, document_id, context_kind, is_primary, linked_by_name, "
+                "linked_at) VALUES ('ORG-001', :n, 'COMPANY', 1, 'Owner Synthetic', '2026-10-01 00:00:00')"), {"n": n})
+            conn.execute(sa.text(
+                "INSERT INTO document_events (organization_id, document_id, event_type, actor_name, at) VALUES "
+                "('ORG-001', :n, 'CREATED', 'Owner Synthetic', '2026-10-01 00:00:00')"), {"n": n})
+
+
+def test_documents_survive_the_sensitivity_widening_and_its_downgrade_byte_for_byte(tmp_path):
+    db_path = tmp_path / "documents.db"
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
+    with application.app_context():
+        cfg = _config(db_path)
+        command.upgrade(cfg, PRIOR)
+        engine = sa.create_engine(f"sqlite:///{db_path}")
+        _seed(engine)
+        _seed_documents(engine)
+        before = {t: _rows_sha(engine, t) for t in DOCUMENT_TABLES}
+        assert before["documents"][0] == 3
+        before_shape = _columns(engine, DOCUMENT_TABLES)
+        command.upgrade(cfg, REVISION)
+        assert {t: _rows_sha(engine, t) for t in DOCUMENT_TABLES} == before
+        assert _columns(engine, DOCUMENT_TABLES) == before_shape
+        with engine.connect() as conn:
+            assert conn.execute(sa.text("PRAGMA integrity_check")).scalar() == "ok"
+            assert conn.execute(sa.text("PRAGMA foreign_key_check")).fetchall() == []
+        update = sa.text("UPDATE documents SET sensitivity = :s WHERE id = 3")
+        with pytest.raises(sa.exc.IntegrityError):
+            with engine.begin() as conn:
+                conn.execute(update, {"s": "SOMETHING"})
+        with engine.begin() as conn:
+            conn.execute(update, {"s": "ECONOMICS"})
+        with pytest.raises(RuntimeError, match="restore the pre-migration backup"):
+            command.downgrade(cfg, PRIOR)
+        with engine.begin() as conn:
+            conn.execute(update, {"s": "EMPLOYEE_COST"})
+        with pytest.raises(RuntimeError, match="restore the pre-migration backup"):
+            command.downgrade(cfg, PRIOR)
+        with engine.begin() as conn:
+            conn.execute(update, {"s": "FINANCIAL"})
+        command.downgrade(cfg, PRIOR)
+        assert {t: _rows_sha(engine, t) for t in DOCUMENT_TABLES} == before
+        assert _columns(engine, DOCUMENT_TABLES) == before_shape
+        with pytest.raises(sa.exc.IntegrityError):
+            with engine.begin() as conn:
+                conn.execute(update, {"s": "ECONOMICS"})
+        engine.dispose()
+
+
+def test_a_customer_estimate_revision_is_frozen_and_never_carries_wages(tmp_path):
+    db_path = tmp_path / "revisions.db"
+    application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}"})
+    with application.app_context():
+        cfg = _config(db_path)
+        command.upgrade(cfg, REVISION)
+        engine = sa.create_engine(f"sqlite:///{db_path}")
+        cols = [c[0] for c in _columns(engine, ("internal_summary_revisions",))["internal_summary_revisions"]]
+        assert "document_type" in cols
+        with engine.connect() as conn:
+            sql = conn.execute(sa.text("SELECT sql FROM sqlite_master WHERE name = 'internal_summary_revisions'")).scalar()
+        assert "ck_internal_summary_revisions_document_type" in sql
+        assert "ck_internal_summary_revisions_customer_estimate" in sql
+        assert 'UNIQUE (estimate_id, document_type, revision_number)' in sql
+        engine.dispose()
 
 
 def test_the_release_rehearsal_proves_every_row_identical(tmp_path):
@@ -303,10 +388,12 @@ def test_the_release_rehearsal_proves_every_row_identical(tmp_path):
         engine = sa.create_engine(f"sqlite:///{db_path}")
         _seed(engine)
         _seed_signing_rows(engine)
+        _seed_documents(engine)
         engine.dispose()
     result = subprocess.run([sys.executable, str(root / "tools" / "release" / "migration_check.py"), "rehearse",
                              "--db", str(db_path), "--from", PRIOR, "--to", REVISION] + RELEASE_ARGS,
                             cwd=root, capture_output=True, text=True, timeout=300)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "MIGRATION_REHEARSAL=ok" in result.stdout and "every row identical" in result.stdout
-    assert result.stdout.count("ALTERED_CHECK=") == 2 and "INTERNAL_APPROVAL" in result.stdout
+    assert result.stdout.count("ALTERED_CHECK=") == 3 and "INTERNAL_APPROVAL" in result.stdout
+    assert "ECONOMICS" in result.stdout

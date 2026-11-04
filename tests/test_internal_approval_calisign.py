@@ -175,7 +175,7 @@ def test_the_full_internal_approval_lifecycle_rev10_signed_rev11_separate(env):
     doc = (Document.query.join(DocumentLink, DocumentLink.document_id == Document.id)
            .filter(DocumentLink.record_kind == "SIGNING_REQUEST", DocumentLink.record_id == request.id,
                    DocumentLink.project_id == project.id).one())
-    assert doc.document_type == "INTERNAL_FINANCIAL_SUMMARY" and doc.sensitivity == "PEOPLE"
+    assert doc.document_type == "INTERNAL_FINANCIAL_SUMMARY" and doc.sensitivity == "EMPLOYEE_COST"
     from app.models.documents import DocumentVersion
 
     filed = DocumentVersion.query.filter_by(document_id=doc.id, is_current=True).one()

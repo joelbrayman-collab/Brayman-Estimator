@@ -326,7 +326,7 @@ def economics(version, organization_id: Optional[str] = None) -> dict:
     except Exception:  # noqa: BLE001 - a preview never blocks the page
         resolved = {"policy": None, "method": None}
     policy = resolved.get("policy")
-    method = version_pricing_method(version, resolved.get("method"))
+    method = version_pricing_method(version, resolved.get("method"), resolved.get("source"))
     if method != LABOUR_AT_RATE_MATERIAL_MARGIN:
         method = "TRUE_GROSS_MARGIN"  # the review's figures: the whole-estimate true gross margin, as before
     from app.services.pricing_engine import snapshot_rules, version_rules

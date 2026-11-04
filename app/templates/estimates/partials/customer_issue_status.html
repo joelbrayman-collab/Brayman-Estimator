@@ -1,0 +1,7 @@
+{# Ben's approval of the customer estimate for issue (CaliSIGN internal approval, 3 Nov 2026). Not the client's acceptance. #}
+{% if customer_issue %}
+<section class="form-panel" data-customer-issue-status="{{ customer_issue.state }}" style="margin-bottom: 16px;">
+    <p><span class="eyebrow">Approval for customer issue</span><br><strong>{{ customer_issue.label }}.</strong>
+    {% if customer_issue.proposal %} <a href="{{ url_for('proposals.view_proposal', id=customer_issue.proposal.id) }}#customer-issue-approval">Open the proposal</a>{% endif %}</p>
+</section>
+{% endif %}

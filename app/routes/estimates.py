@@ -183,8 +183,16 @@ def _project_economics(version):
 def _render_builder(estimate, version, **extra):
     return render_template(
         "estimates/version_detail.html",
+        customer_issue=_customer_issue(estimate),
         **_builder_context(estimate, version, **extra),
     )
+
+
+def _customer_issue(estimate):
+    """Ben's approval of the customer estimate for issue (3 Nov 2026); None when there is nothing to show."""
+    from app.services.internal_approval import customer_issue_status_for_estimate
+
+    return customer_issue_status_for_estimate(estimate)
 
 
 def _estimate_form_values(estimate=None, suggested_number=None):
@@ -374,6 +382,7 @@ def view_estimate(id):
         current_named_method_governs=named_method_governs(current_snapshot),
         current_pricing_snapshot=current_snapshot,
         work_panel=_work_panel(estimate),
+        customer_issue=_customer_issue(estimate),
     )
 
 

@@ -1022,6 +1022,11 @@ def _calisign(ctx):
         if req.document_family == DOCUMENT_FAMILY_CHANGE_ORDER:
             return _link("project_controls.view_change_order", id=req.source_record_id)
         if req.document_family == "INTERNAL_APPROVAL":
+            from app.models.internal_summary import InternalSummaryRevision
+
+            revision = db.session.get(InternalSummaryRevision, req.source_record_id)
+            if revision is not None and revision.is_customer_estimate and revision.proposal_id:
+                return _link("proposals.view_proposal", id=revision.proposal_id, _anchor="customer-issue-approval")
             return _link("guided.pricing", project_id=req.project_id, _anchor="ts-review-scenario")
         if req.document_family == DOCUMENT_FAMILY_SUBCONTRACT:
             return _link("supplier_office.commitments", project_id=req.project_id, _anchor="subcontracts")

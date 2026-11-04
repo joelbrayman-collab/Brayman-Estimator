@@ -23,10 +23,13 @@ Joel's decisions of 2 Nov 2026 (docs/implementation/internal-project-financial-s
 * CaliSIGN internal approval (Joel, 3 Nov 2026): a sixth signable document class INTERNAL_APPROVAL and a participant
   role APPROVER (the three check constraints widened, as a4d5e6f7a8b9 and s6f7a8b9c0d1 did); signing_requests.client_id
   becomes NULL-able for INTERNAL_APPROVAL only (new check ck_signing_requests_client_required); the insert-only
-  internal_summary_revisions table (the summary's REV1, REV2, ...).
+  internal_summary_revisions table (REV1, REV2, ... per estimate), whose document_type is the Internal Project Financial
+  Summary or (Joel, 3 Nov 2026) the CUSTOMER_ESTIMATE frozen for Ben's approval before customer issue.
+* Internal project economics in Documents (review B2, 3 Nov 2026): documents.sensitivity gains ECONOMICS and
+  EMPLOYEE_COST (ck_documents_sensitivity widened; the documents table rebuilt, rows copied unchanged).
 
-Additive: four new tables and eleven new nullable columns; three signing tables rebuilt (rows copied unchanged) to
-widen their check constraints, and signing_requests also for the client rule. No existing row is written: every new column is NULL
+Additive: four new tables and ten new nullable columns (NEW_COLUMNS); three signing tables and the documents table
+rebuilt (rows copied unchanged) to widen their check constraints, and signing_requests also for the client rule. No existing row is written: every new column is NULL
 on existing rows, which the application reads as "priced as it always was" (no estimate, policy or snapshot changes).
 Downgrade refuses while any new table holds a row or any new column holds a value; recovery is then the pre-migration
 backup.
@@ -52,6 +55,8 @@ _ROLE_OLD = "role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUP
 _ROLE_NEW = ("role IN ('CUSTOMER', 'ORGANIZATION_COUNTERSIGN', 'CONTRACTOR', 'SUPPLIER', 'SUBCONTRACTOR', "
              "'APPROVER')")
 CLIENT_REQUIRED = "client_id IS NOT NULL OR document_family = 'INTERNAL_APPROVAL'"
+_SENSITIVITY_OLD = "sensitivity IN ('STANDARD', 'PEOPLE', 'FINANCIAL')"
+_SENSITIVITY_NEW = "sensitivity IN ('STANDARD', 'PEOPLE', 'FINANCIAL', 'ECONOMICS', 'EMPLOYEE_COST')"
 
 
 def _swap(table, name, condition):
@@ -170,6 +175,7 @@ def upgrade():
         sa.Column("estimate_version_id", sa.Integer(), sa.ForeignKey("estimate_versions.id", ondelete="RESTRICT"),
                   nullable=False),
         sa.Column("revision_number", sa.Integer(), nullable=False),
+        sa.Column("document_type", sa.String(length=40), nullable=False),
         sa.Column("origin", sa.String(length=20), nullable=False),
         sa.Column("proposal_id", sa.Integer(), nullable=True),
         sa.Column("employee_detail", sa.Boolean(), nullable=False),
@@ -179,8 +185,13 @@ def upgrade():
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("created_by_user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True),
         sa.Column("created_by_name", sa.String(length=150), nullable=False),
-        sa.UniqueConstraint("estimate_id", "revision_number", name="uq_internal_summary_revisions_number"),
+        sa.UniqueConstraint("estimate_id", "document_type", "revision_number",
+                            name="uq_internal_summary_revisions_number"),
         sa.CheckConstraint("origin IN ('FROZEN', 'SENT_TO_CLIENT')", name="ck_internal_summary_revisions_origin"),
+        sa.CheckConstraint("document_type IN ('INTERNAL_FINANCIAL_SUMMARY', 'CUSTOMER_ESTIMATE')",
+                           name="ck_internal_summary_revisions_document_type"),
+        sa.CheckConstraint("document_type = 'INTERNAL_FINANCIAL_SUMMARY' OR (origin = 'FROZEN' AND NOT employee_detail)",
+                           name="ck_internal_summary_revisions_customer_estimate"),
         sa.CheckConstraint("revision_number > 0", name="ck_internal_summary_revisions_number_positive"),
     )
     op.create_index("ix_internal_summary_revisions_org_project", "internal_summary_revisions",
@@ -196,6 +207,7 @@ def upgrade():
         op.add_column(table, sa.Column(column, kind, nullable=True))
 
     _signing_upgrade()
+    _swap("documents", "ck_documents_sensitivity", _SENSITIVITY_NEW)
 
 
 def downgrade():
@@ -206,10 +218,12 @@ def downgrade():
     held += bind.execute(sa.text(
         "SELECT (SELECT COUNT(*) FROM signing_requests WHERE document_family = 'INTERNAL_APPROVAL' OR client_id IS NULL)"
         " + (SELECT COUNT(*) FROM signing_frozen_artifacts WHERE document_family = 'INTERNAL_APPROVAL')"
-        " + (SELECT COUNT(*) FROM signing_participants WHERE role = 'APPROVER')")).scalar()
+        " + (SELECT COUNT(*) FROM signing_participants WHERE role = 'APPROVER')"
+        " + (SELECT COUNT(*) FROM documents WHERE sensitivity IN ('ECONOMICS', 'EMPLOYEE_COST'))")).scalar()
     if held:
         raise RuntimeError("Cost profiles, crews, pricing-method values or internal approvals are held; restore the "
                            "pre-migration backup instead of downgrading.")
+    _swap("documents", "ck_documents_sensitivity", _SENSITIVITY_OLD)
     _signing_downgrade()
     for table in INSERT_ONLY:
         op.execute(f"DROP TRIGGER IF EXISTS {table}_no_update")

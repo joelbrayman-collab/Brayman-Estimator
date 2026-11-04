@@ -330,7 +330,7 @@ def test_approval_freezes_the_figures_and_files_the_pdf_in_the_project_documents
     doc = (Document.query.join(DocumentLink, DocumentLink.document_id == Document.id)
            .filter(Document.document_type == "INTERNAL_FINANCIAL_SUMMARY", DocumentLink.project_id == project.id,
                    DocumentLink.record_kind == "ESTIMATE_VERSION", DocumentLink.record_id == version.id).one())
-    assert doc.sensitivity == "PEOPLE"  # carries the crew's loaded rates: people administrators only
+    assert doc.sensitivity == "EMPLOYEE_COST"  # carries the crew's loaded rates: economics + employee cost only
     # A later wage change does not move the approved summary.
     c["owner"].post(f"/settings/people/employees/{a.id}", data=dict(WORKER_A, hourly_wage="40", action="save"))
     data = IFS.data_for(version)
@@ -355,7 +355,7 @@ def test_approval_without_a_crew_files_a_financial_document_with_no_invented_cos
     frozen = approval.summary["internal_financial_summary"]
     assert frozen["crew"] == [] and frozen["crew_problem"] == CREW_NOT_ASSIGNED
     doc = Document.query.filter_by(document_type="INTERNAL_FINANCIAL_SUMMARY").one()
-    assert doc.sensitivity == "FINANCIAL"
+    assert doc.sensitivity == "ECONOMICS"
 
 
 # ================================================================================================ who sees it

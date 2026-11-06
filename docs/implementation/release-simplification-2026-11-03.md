@@ -60,10 +60,23 @@ Not affected by the review, confirmed:
   the real one; reset tests still see a new hash and the old password refused; `hash_password` is untouched.
 * **Python 3.9**: every run above used `/home/claude/venv39` (3.9.6, pytest 8.4.2, xdist 3.8.0).
 
-### Outstanding, on the coordinator's word when the machine is free
+### Verification on the final head (6 Nov 2026, after merging release 1 at `9985330f`)
 
-Clean full run; a second full run with `--dist load` (order and isolation); serial vs parallel wall time on a 565-test
-subset (every 7th test file, 47 files) with extrapolation to the Mac's 61-minute serial run.
+| Check | Result |
+|---|---|
+| (a) full run, `-n 2 --dist loadfile`, Python 3.9.6 (head `47de1018`) | 4,124 passed, 0 failed, 11 skipped (all `test_historical_ingestion.py`, the Mac's real workbooks), 2,549 s; junit lists 4,124 passed; e2e walk and Cal tests passed; no `calibai-*` folder left |
+| (b) full run, `--dist load` (head `545df492`) | 4,122 passed, 0 failed, 11 skipped (same file), 2,905 s |
+| (c) 659-test subset (every 7th of 348 files), same head | serial 793 s, `-n 2` 482 s: 1.65x; full suite: 5,038 s of test time ran in 2,559 s wall at `-n 2` (1.97x) |
+| (d) gate browser walks, 29 files, `--test-concurrency=1` | 337 of 337 passed, 2,244 s; `--browser-expected 337` for this branch |
+
+Extrapolation for the Mac: wall time ~ T_serial / (0.8 x N) + ~1 min start, never below the longest test file
+(`test_session_idle_timeout_browser.py`, ~3.6 min) because `--dist loadfile` keeps a file on one worker. With the Mac's
+61-minute serial run and N = 8 cores: about 61 / 6.4 + 1 = ~10.5 min; N = 10: ~8.6 min.
+
+Found and fixed during this verification: field.js lost a wake-up during a sync (receipt walk), password-reveal.js
+dropped the focus of a field it wrapped (training sign-in walk), the internal-approval page server and the identity
+walk left temporary files, and three calculator test files leaked a pushed app context into later tests of the same
+xdist worker (the 44 `calibai-*` folders every full run left).
 
 ## 3. Release design
 
@@ -150,7 +163,6 @@ The one array expansion (`"${GATE_ARGS[@]}"`) is never empty (bash < 4.4 treats 
 * The gate's own code changed (run folders, sealing, the gate now runs as a function piped to its log). Every check is
   kept and the existing safeguard tests pass, but the old `release_gate.sh` flow has more real-world history.
 * Sealed run folders are read-only: deleting an old one needs `chmod -R u+w` first.
-* No clean full regression yet on the final head; the `--dist load` run and the timing comparison are outstanding.
 * `tools/release/evidence_common.mjs` still has a 30 s page-server start limit. It is byte-pinned as a proven helper
   (`tests/test_release_tools.py`), so it was left unchanged; it is used by the gate's browser walks, which run one at a
   time after pytest, not under pytest load.

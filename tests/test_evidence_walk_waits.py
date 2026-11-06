@@ -49,16 +49,18 @@ def test_training_sign_in_waits_for_the_sign_in_page_and_checks_the_password_was
     assert "comes back to the Training Centre (${refused})" in body  # a refusal is reported with the site's message
 
 
-def test_receipt_walk_waits_for_each_retry_it_starts_to_end():
+def test_receipt_walk_sends_online_during_a_retry_and_proves_one_more_try_and_one_receipt():
+    """The walk keeps the 9985330f race as a permanent step: the registration answer is held, a second "online" is
+    sent while that retry is in flight, then the answer is lost. field.js must try once more (saving, needs_retry,
+    saving, saved) and the office must hold exactly one receipt."""
     text = (ROOT / "tools" / "release" / "evidence_magnificent_seven.mjs").read_text()
     start = text.index('step("Add Receipt on the iPhone')
-    body = text[start:text.index('await go(pg, "/field/receipt");', start)]
-    onlines = [m.start() for m in re.finditer(r'dispatchEvent\(new Event\("online"\)\)', body)]
-    assert len(onlines) == 2
-    for position, end in zip(onlines, ("needs_retry", "saved")):
-        after = body[position:position + 200]
-        # The next wait after an "online" is for the retry it started to reach its end, not for a state already shown.
-        assert re.match(r'[^\n]*\n(\s*await registerLost;\n)?\s*await retryEnded\(pg, "%s"\);' % end, after), after
-    assert 'waitForEvent("requestfailed"' in body and "await trackFeedback(pg);" in body
+    body = text[start:text.index('// A Shop / Company Expense receipt.', start)]
+    order = ["await answerHeld;", 'dispatchEvent(new Event("online"))', "await registering;",
+             'dispatchEvent(new Event("online"))', "loseAnswer();", "await registerLost;", 'await retryEnded(pg, "saved");',
+             '["saving", "needs_retry", "saving", "saved"]', 'assert.equal(mine.length, 1, "one receipt, not two");']
+    position = 0
+    for marker in order:
+        position = body.index(marker, position) + len(marker)
     helper = text[text.index("async function retryEnded("):text.index("function step(")]
     assert 'seen.indexOf("saving")' in helper and "seen.indexOf(want, started) > started" in helper

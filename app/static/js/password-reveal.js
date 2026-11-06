@@ -6,8 +6,29 @@
   document.querySelectorAll("input[data-password-reveal]").forEach(function (input) {
     var wrap = document.createElement("span");
     wrap.className = "password-reveal";
+    // Moving the field into its wrapper takes the focus from it. Someone already typing there (the page still loading)
+    // keeps the focus and the cursor or selection (6 Nov 2026: the keys typed next went nowhere).
+    var focused = document.activeElement === input;
+    var start = null, end = null, direction = null;
+    if (focused) {
+      try {
+        start = input.selectionStart; end = input.selectionEnd; direction = input.selectionDirection;
+      } catch (err) {
+        /* no selection on this field type */
+      }
+    }
     input.parentNode.insertBefore(wrap, input);
     wrap.appendChild(input);
+    if (focused && document.activeElement !== input) {
+      input.focus();
+      if (start !== null && end !== null) {
+        try {
+          input.setSelectionRange(start, end, direction || "none");
+        } catch (err) {
+          /* no selection on this field type */
+        }
+      }
+    }
     var button = document.createElement("button");
     button.type = "button";
     button.className = "password-reveal-toggle";

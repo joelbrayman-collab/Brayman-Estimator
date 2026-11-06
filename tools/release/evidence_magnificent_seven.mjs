@@ -71,7 +71,11 @@ async function trackFeedback(pg) {
   await pg.evaluate(() => {
     const node = document.getElementById("field-feedback");
     window.__feedbackStates = [];
-    new MutationObserver(() => window.__feedbackStates.push(node.getAttribute("data-state")))
+    window.__feedbackLog = [];
+    new MutationObserver(() => {
+      window.__feedbackStates.push(node.getAttribute("data-state"));
+      window.__feedbackLog.push(node.getAttribute("data-state"));
+    })
       .observe(node, { attributes: true, attributeFilter: ["data-state"] });
   });
 }
@@ -219,7 +223,7 @@ step("Field Today on the iPhone: the seven quick actions, large and above the fo
 });
 
 // ------------------------------------------------------------------ Receipt: capture with interrupted upload
-step("Add Receipt on the iPhone: the upload is interrupted twice and recovers from the phone, one receipt", async () => {
+step("Add Receipt on the iPhone: the upload is interrupted twice, back online during a retry, recovers, one receipt", async () => {
   const { pg, errors } = await person("kevin", PHONE);
   await go(pg, "/field/today");
   await submit(pg, pg.locator('[data-quick-action="receipt"]'));
@@ -237,19 +241,26 @@ step("Add Receipt on the iPhone: the upload is interrupted twice and recovers fr
   await pg.locator("#field-feedback[data-state=needs_retry]").waitFor();
   assert.match(await pg.locator("#field-feedback").innerText(), /still on this phone/);
   await pg.unroute("**/originals");
-  // 2) The photo goes, but the answer to the receipt's registration is lost.
-  // Each "online" below waits for the retry it starts to run to its end (6 Nov 2026 root cause). Before, step 2 waited
-  // for data-state=needs_retry, which was still showing from step 1, so it returned at once and step 3's "online" could
-  // arrive while step 2's retry was still sending; the phone ignored it (one retry at a time) and the walk timed out.
+  // 2) The photo goes, but the answer to the receipt's registration is lost, and 3) the phone comes back online while
+  // that retry is still waiting for it (6 Nov 2026: the gate run of 9985330f stopped here; field.js ignored an
+  // "online" that arrived during a retry, so after the failed retry nothing tried again). The second "online" is
+  // remembered and the phone tries once more when the failed retry ends: the office answers with the one receipt.
   await trackFeedback(pg);
-  await pg.route("**/field/receipts/register", (route) => route.abort("connectionreset"), { times: 1 });
+  let loseAnswer;
+  const answerHeld = new Promise((resolve) => (loseAnswer = resolve));
+  await pg.route("**/field/receipts/register", async (route) => { await answerHeld; await route.abort("connectionreset"); },
+    { times: 1 });
+  const registering = pg.waitForRequest((r) => r.url().endsWith("/field/receipts/register"));
   const registerLost = pg.waitForEvent("requestfailed", (r) => r.url().endsWith("/field/receipts/register"));
   await pg.evaluate(() => window.dispatchEvent(new Event("online")));
+  await registering;                                                      // the retry is in flight
+  await pg.evaluate(() => window.dispatchEvent(new Event("online")));     // back online again, during it
+  loseAnswer();
   await registerLost;
-  await retryEnded(pg, "needs_retry");
-  // 3) Back online: the phone sends what is left; the office answers with the one receipt.
-  await pg.evaluate(() => window.dispatchEvent(new Event("online")));
   await retryEnded(pg, "saved");
+  const states = await pg.evaluate(() => window.__feedbackLog);
+  assert.deepEqual(states.filter((v, i) => v !== states[i - 1]), ["saving", "needs_retry", "saving", "saved"],
+    "the failed retry is followed by one more, which saves");
   await pg.locator("#field-feedback[data-state=saved]").waitFor();
   assert.match(await pg.locator("#field-feedback").innerText(), /Receipt R-\d+ saved/);
   await go(pg, "/field/receipt");

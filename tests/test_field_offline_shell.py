@@ -139,3 +139,18 @@ def test_a_confirmed_upload_redraws_the_pending_panel():
     # finishCapture removes the capture from the phone's store before the panel is redrawn.
     finish_body = FIELD_JS[FIELD_JS.index("function finishCapture("):FIELD_JS.index("function failureStatus(")]
     assert 'deleteStore("pending_captures", capture.client_capture_uuid)' in finish_body
+
+
+def test_a_wake_up_during_a_sync_runs_the_sync_once_more_never_two_at_once():
+    """6 Nov 2026: an "online" that arrived while a sync ran was dropped; if that sync failed, the capture stayed on the
+    phone until the next wake-up. It is now remembered and the sync runs once more when the current one ends. One sync
+    at a time is kept; the office keys every capture by its client id (no duplicate). The browser proof is the receipt
+    step of tools/release/evidence_magnificent_seven.mjs (second "online" during a held registration)."""
+    start = FIELD_JS.index("function syncAllPending(")
+    body = FIELD_JS[start:FIELD_JS.index("function receiptMode(")]
+    guard = body.index("if (syncing) {")
+    assert body.index("syncAgain = true;", guard) < body.index("return Promise.resolve();", guard) < body.index("syncing = true;")
+    tail = body[body.rindex("syncing = false;"):]
+    assert "var again = syncAgain;" in tail and "if (again) return syncAllPending();" in tail
+    assert body.count("syncing = false;") == 1  # released in one place, after success or failure, before the rerun
+    assert "var syncAgain = false;" in FIELD_JS

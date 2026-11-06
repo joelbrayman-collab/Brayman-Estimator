@@ -817,9 +817,20 @@
       });
   }
 
+  // One sync at a time, and no wake-up is lost (6 Nov 2026). A wake-up (back online, a save, opening the page) that
+  // arrives while a sync runs used to be dropped: if that sync then failed, the capture stayed "still on this phone"
+  // until the next one. Now it is remembered and the sync runs once more when the current one ends. Captures already
+  // acknowledged are gone from the phone's queue by then, and the office keys every capture by its client id, so a
+  // second pass never sends anything twice.
+  var syncAgain = false;
   function syncAllPending() {
-    if (syncing || !navigator.onLine) return Promise.resolve();
+    if (!navigator.onLine) return Promise.resolve();
+    if (syncing) {
+      syncAgain = true;
+      return Promise.resolve();
+    }
     syncing = true;
+    syncAgain = false;
     return openDb()
       .then(function () {
         persistenceReady = true;
@@ -840,13 +851,16 @@
           return chain;
         });
       })
+      .catch(function () {
+        /* each capture records its own failure; the queue is shown below */
+      })
       .then(function () {
         syncing = false;
-        return updateRetryPanel();
-      })
-      .catch(function () {
-        syncing = false;
-        return updateRetryPanel();
+        var again = syncAgain;
+        syncAgain = false;
+        return updateRetryPanel().then(function () {
+          if (again) return syncAllPending();
+        });
       });
   }
 

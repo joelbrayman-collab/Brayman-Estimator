@@ -342,3 +342,18 @@ def test_page_server_start_is_robust_under_load_and_still_fails_clearly():
         outer = re.search(r"^BROWSER_RUN_TIMEOUT = (\d+)$", (ROOT / runner).read_text(), re.M)
         assert outer and int(outer.group(1)) > int(limit.group(1)) / 1000 + 60, runner
         assert "timeout=BROWSER_RUN_TIMEOUT" in (ROOT / runner).read_text(), runner
+
+
+def test_every_page_server_removes_its_temporary_files_when_stopped():
+    """6 Nov 2026: the internal-approval page server (merged from the first release) had no cleanup, so each gate
+    browser run left its database and eleven calibai-* folders in the temporary folder."""
+    servers = sorted([*(ROOT / "tests").glob("*_server.py"), ROOT / "tests" / "identity_pair_site.py"])
+    assert len(servers) >= 20
+    for server in servers:
+        text = server.read_text()
+        assert "server_cleanup.install()" in text, server.name
+        if 'if __name__ == "__main__":' in text:  # identity_pair_site.py installs it at import, before its app
+            main = text[text.index('if __name__ == "__main__":'):]
+            assert main.index("server_cleanup.install()") < main.index("main()"), server.name
+        else:
+            assert text.index("server_cleanup.install()") < text.index("create_app("), server.name

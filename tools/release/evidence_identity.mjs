@@ -48,6 +48,8 @@ after(async () => {
   for (const c of contexts) await c.close().catch(() => {});
   await browser?.close();
   for (const s of servers) s.kill();
+  // The two captured-mail folders this walk made (6 Nov 2026: they were left in the temporary folder every run).
+  for (const dir of [mailP, mailT]) if (dir) fs.rmSync(dir, { recursive: true, force: true });
 });
 
 let broken = "";

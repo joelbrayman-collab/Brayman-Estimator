@@ -14,7 +14,7 @@
         <tr data-customer-estimate-revision="{{ row.revision.label }}" data-revision-state="{{ row.status.state }}">
             <td>{{ row.revision.label }}</td>
             <td>{{ row.status.label }}{% if row.status.signed_by %} — {{ row.status.signed_by }}{% endif %}</td>
-            <td>{{ row.revision.created_at.strftime("%B %d, %Y %H:%M") }} UTC by {{ row.revision.created_by_name }}</td>
+            <td>{{ row.revision.created_at|local_time("%B %d, %Y %H:%M") }} by {{ row.revision.created_by_name }}</td>
             <td>{% if customer_issue_can_act %}<a href="{{ url_for('proposals.customer_estimate_revision_pdf', id=proposal.id, revision_id=row.revision.id) }}">{{ "Signed copy" if row.status.state == "approved" else "Frozen PDF" }}</a>{% endif %}</td>
         </tr>
         {% if customer_issue_can_act and row.status.state in ("not_sent", "voided", "expired", "declined") and customer_issue and customer_issue.revision and customer_issue.revision.id == row.revision.id %}

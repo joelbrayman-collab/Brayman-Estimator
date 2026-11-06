@@ -328,3 +328,33 @@ def test_the_approver_plus_countersigner_rule(env, monkeypatch):
     request = db.session.get(SigningRequest, request.id)
     assert request.status == STATUS_EXECUTED and request.countersigned_by_user_id == users["owner"].id
     assert IA.signed_document(request) is not None
+
+
+def test_the_guided_countersign_route_refuses_a_crew_rates_rev_without_employee_cost(env, monkeypatch):
+    """6 Nov 2026 sweep F1: the guided countersign route checked project economics only. Someone with economics but
+    not employee cost must not complete the approval of a REV that shows the crew's loaded rates; nothing changes."""
+    app, c, users = env
+    project, _guided = _job(c)
+    monkeypatch.setitem(IA.GOVERNANCE, IA.DOCUMENT_TYPE_FINANCIAL_SUMMARY,
+                        dict(IA.GOVERNANCE[IA.DOCUMENT_TYPE_FINANCIAL_SUMMARY],
+                             signers=IA.SIGNERS_APPROVER_AND_COUNTERSIGNER))
+    rev = _freeze(c, project)
+    assert rev.employee_detail
+    c["owner"].post(f"/projects/{project.id}/guided/summary-revisions/{rev.id}/send",
+                    data={"approver_name": APPROVER[0], "approver_email": APPROVER[1]})
+    request = IA.requests_for(rev)[0]
+    link = _link(_mail(app)[0])
+    c["public"].post(link + "/sign", data={"consent_accepted": "yes", "confirmed_signer_name": APPROVER[0]}, status=200)
+    db.session.expire_all()
+    assert IA.status_of(rev)["state"] == "awaiting_countersign"
+    from app.services import financial_access
+
+    monkeypatch.setattr(financial_access, "can_view_project_economics", lambda user, org: True)
+    c["staff"].post(f"/projects/{project.id}/guided/summary-revisions/{rev.id}/countersign", status=403)
+    db.session.expire_all()
+    request = db.session.get(SigningRequest, request.id)
+    assert request.status == STATUS_SIGNED and request.countersigned_by_user_id is None
+    assert IA.signed_document(request) is None
+    c["owner"].post(f"/projects/{project.id}/guided/summary-revisions/{rev.id}/countersign")
+    db.session.expire_all()
+    assert db.session.get(SigningRequest, request.id).status == STATUS_EXECUTED

@@ -334,6 +334,12 @@ def countersign_summary_revision(project_id, revision_id):
     _require_project_economics()
     project, _guided, _version = _review_version(project_id)
     revision = _revision_or_404(project, revision_id)
+    try:
+        # A REV that shows the crew's loaded rates may be countersigned only by someone who may see employee cost
+        # (6 Nov 2026 sweep F1: this route checked project economics only; the generic route already refused).
+        IA.require_revision_access(current_user._get_current_object(), revision)
+    except IA.InternalApprovalError:
+        abort(403)
     state = IA.status_of(revision)
     if state["state"] != "awaiting_countersign":
         flash(f"{revision.label} is not waiting for a countersignature.", "error")

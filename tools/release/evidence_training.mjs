@@ -97,11 +97,20 @@ async function signIn(key, viewport) {
   await s.pg.goto(`${base}/training`);
   assert.match(new URL(s.pg.url()).pathname, /\/training\/signin$/);
   const supplier = person.role === "SUPPLIER";
-  await Promise.all([s.pg.waitForLoadState(), s.pg.click(`[data-signin="${supplier ? "supplier" : "contractor"}"]`)]);
+  // Fill the sign-in form only once its page has loaded (6 Nov 2026 root cause). The former load-state wait here resolved
+  // at once, on the already-loaded Training Centre page, so the walk could type into the sign-in form while that page's
+  // own scripts were still running: password-reveal.js moves the password field into a wrapper, which drops the
+  // field's focus, and Playwright's fill is "focus, then type into whatever is focused". The password was lost, the
+  // site answered "Invalid email or password" on /login, and every later test in this file failed with it.
+  const signInPage = supplier ? /\/supplier\/login(\?|$)/ : /\/login(\?|$)/;
+  await Promise.all([s.pg.waitForURL(signInPage, { waitUntil: "load" }),
+    s.pg.click(`[data-signin="${supplier ? "supplier" : "contractor"}"]`)]);
   await s.pg.fill("input[name=email]", person.email);
   await s.pg.fill("input[name=password]", person.password);
+  assert.equal(await s.pg.inputValue("input[name=password]"), person.password, `${key}: the password is in the form`);
   await Promise.all([s.pg.waitForNavigation(), s.pg.locator("form button[type=submit]").first().click()]);
-  assert.match(new URL(s.pg.url()).pathname, /^\/training$/, `${key} comes back to the Training Centre`);
+  const refused = (await s.pg.locator(".flash, .alert, [role=alert]").allInnerTexts()).join(" | ");
+  assert.match(new URL(s.pg.url()).pathname, /^\/training$/, `${key} comes back to the Training Centre (${refused})`);
   sessions[key] = s;
   return s;
 }

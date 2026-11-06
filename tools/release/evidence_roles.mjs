@@ -380,10 +380,12 @@ test("30 minutes without activity signs the office and a supplier out (office cl
 test("password recovery end to end with the captured email; the link works once; an unknown address looks the same", async () => {
   const s = await context(PHONE);
   await go(s.pg, "/login");
-  await Promise.all([s.pg.waitForLoadState(), s.pg.locator(".login-forgot-link").click()]);
+  // Wait for each new page itself (6 Nov 2026): a load-state wait started on the page already shown returns at once,
+  // so the walk could measure and type into the sign-in page instead of the Forgot password page.
+  await Promise.all([s.pg.waitForURL(/\/forgot-password(\?|$)/, { waitUntil: "load" }), s.pg.locator(".login-forgot-link").click()]);
   await noSideways(s.pg, "forgot password");
   await s.pg.fill("[name=email]", facts.bea[0]);
-  await Promise.all([s.pg.waitForLoadState(), s.pg.locator("form button[type=submit]").click()]);
+  await Promise.all([s.pg.waitForURL(/\/forgot-password\/sent/, { waitUntil: "load" }), s.pg.locator("form button[type=submit]").click()]);
   assert.match(s.pg.url(), /\/forgot-password\/sent/);
   const sentText = await s.pg.locator("body").innerText();
   const mail = newestMail("PASSWORD_RESET", facts.bea[0]);

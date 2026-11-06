@@ -65,6 +65,25 @@ after(async () => {
 });
 
 let broken = "";
+// The Field capture's retry, seen from the page (6 Nov 2026): every data-state the feedback line takes is recorded, so a
+// step can wait for the retry it started ("saving") to reach its end state, never for a state left by an earlier one.
+async function trackFeedback(pg) {
+  await pg.evaluate(() => {
+    const node = document.getElementById("field-feedback");
+    window.__feedbackStates = [];
+    new MutationObserver(() => window.__feedbackStates.push(node.getAttribute("data-state")))
+      .observe(node, { attributes: true, attributeFilter: ["data-state"] });
+  });
+}
+async function retryEnded(pg, end) {
+  await pg.waitForFunction((want) => {
+    const seen = window.__feedbackStates;
+    const started = seen.indexOf("saving");
+    const done = started >= 0 && seen.indexOf(want, started) > started;
+    if (done) window.__feedbackStates = [];
+    return done;
+  }, end, { polling: 50 });
+}
 function step(name, fn) {
   test(name, async (t) => {
     if (broken) { t.skip(`after "${broken}" failed`); return; }
@@ -219,11 +238,18 @@ step("Add Receipt on the iPhone: the upload is interrupted twice and recovers fr
   assert.match(await pg.locator("#field-feedback").innerText(), /still on this phone/);
   await pg.unroute("**/originals");
   // 2) The photo goes, but the answer to the receipt's registration is lost.
+  // Each "online" below waits for the retry it starts to run to its end (6 Nov 2026 root cause). Before, step 2 waited
+  // for data-state=needs_retry, which was still showing from step 1, so it returned at once and step 3's "online" could
+  // arrive while step 2's retry was still sending; the phone ignored it (one retry at a time) and the walk timed out.
+  await trackFeedback(pg);
   await pg.route("**/field/receipts/register", (route) => route.abort("connectionreset"), { times: 1 });
+  const registerLost = pg.waitForEvent("requestfailed", (r) => r.url().endsWith("/field/receipts/register"));
   await pg.evaluate(() => window.dispatchEvent(new Event("online")));
-  await pg.locator("#field-feedback[data-state=needs_retry]").waitFor();
+  await registerLost;
+  await retryEnded(pg, "needs_retry");
   // 3) Back online: the phone sends what is left; the office answers with the one receipt.
   await pg.evaluate(() => window.dispatchEvent(new Event("online")));
+  await retryEnded(pg, "saved");
   await pg.locator("#field-feedback[data-state=saved]").waitFor();
   assert.match(await pg.locator("#field-feedback").innerText(), /Receipt R-\d+ saved/);
   await go(pg, "/field/receipt");

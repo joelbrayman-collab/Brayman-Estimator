@@ -38,6 +38,7 @@ from app.models.documents import (
     MISSING,
     ORIGIN_UPLOAD,
     RECORD_KINDS,
+    ECONOMICS_SENSITIVITIES,
     SENSITIVITIES,
     SENSITIVITY_PEOPLE,
     SOURCE_UPLOAD,
@@ -202,8 +203,12 @@ PERSON_LINK_REASON = "Linked to a person: documents on a person's page are for p
 
 
 def _raise_to_people(document, actor: Actor, *, at=None) -> None:
-    """Review fix I1 (1 Nov 2026): a document with a person link is a PEOPLE document (audited, never silently)."""
-    if document.sensitivity == SENSITIVITY_PEOPLE:
+    """Review fix I1 (1 Nov 2026): a document with a person link is a PEOPLE document (audited, never silently).
+
+    An internal-economics document (ECONOMICS / EMPLOYEE_COST) keeps its level: lowering it to PEOPLE would drop the
+    project-economics requirement, and scope_filter already limits any person-linked document to people
+    administrators, so it then needs both."""
+    if document.sensitivity == SENSITIVITY_PEOPLE or document.sensitivity in ECONOMICS_SENSITIVITIES:
         return
     previous = document.sensitivity
     document.sensitivity = SENSITIVITY_PEOPLE
@@ -266,8 +271,13 @@ def _clean(value, limit):
 def file_document(organization_id: str, actor: Actor, *, blob: UploadBlob, context: Context, title=None,
                   type_code=None, type_confirmed=True, reference_number=None, counterparty=None, description=None,
                   keywords=None, record_kind=None, record_id=None, today: Optional[date] = None,
-                  extra_contexts=()) -> Document:
-    """Store the file and create the document, its first version and its link, with audit events. Commits."""
+                  extra_contexts=(), sensitivity=None, sensitivity_reason=None) -> Document:
+    """Store the file and create the document, its first version and its link, with audit events. Commits.
+
+    ``sensitivity`` (review S1, 3 Nov 2026): a system filing that knows who may see the document sets it here, so the
+    document is created, indexed and committed at that level; it is never first readable at the type's default."""
+    if sensitivity is not None and sensitivity not in SENSITIVITIES:
+        raise DocumentError("Choose who may see this document.")
     try:
         key, digest = storage.store_bytes(organization_id, blob.data, blob.ext)
     except storage.DocumentStorageError as exc:
@@ -283,7 +293,8 @@ def file_document(organization_id: str, actor: Actor, *, blob: UploadBlob, conte
     document = Document(organization_id=organization_id,
                         title=_clean(title, MAX_TITLE) or _title_from(blob.filename),
                         document_type=chosen, type_basis=basis, type_rule=rule if chosen == suggested else None,
-                        status=STATUS_ACTIVE, sensitivity=default_sensitivity(chosen, context.kind), origin=ORIGIN_UPLOAD,
+                        status=STATUS_ACTIVE, sensitivity=sensitivity or default_sensitivity(chosen, context.kind),
+                        origin=ORIGIN_UPLOAD,
                         reference_number=_clean(reference_number, 120), counterparty=_clean(counterparty, 200),
                         description=_clean(description, 5000), keywords=_clean(keywords, 500),
                         created_by_user_id=actor.user_id, created_by_name=actor.name, created_at=now, updated_at=now)
@@ -297,7 +308,9 @@ def file_document(organization_id: str, actor: Actor, *, blob: UploadBlob, conte
     db.session.add(version)
     db.session.flush()
     _event(document, actor, "CREATED", version=version,
-           detail={"type": chosen, "type_basis": basis, "rule": rule, "context": context.kind})
+           detail={"type": chosen, "type_basis": basis, "rule": rule, "context": context.kind,
+                   **({"sensitivity": sensitivity, "sensitivity_reason": (sensitivity_reason or "")[:300]}
+                      if sensitivity is not None else {})})
     _event(document, actor, "VERSION_ADDED", version=version, detail={"version": 1, "sha256": digest,
                                                                       "byte_size": blob.size})
     add_link(document, actor, context, primary=True, record_kind=record_kind, record_id=record_id)
@@ -598,6 +611,8 @@ def _sensitivity_follows_type(document, actor: Actor, old_type, new_type) -> Non
         return
     primary = DocumentLink.query.filter_by(document_id=document.id, is_primary=True, unlinked_at=None).first()
     kind = primary.context_kind if primary else CONTEXT_COMPANY
+    if document.sensitivity in ECONOMICS_SENSITIVITIES:
+        return  # review B2: internal economics is never lowered by a type change
     if document.sensitivity != default_sensitivity(old_type, kind):
         return
     target = default_sensitivity(new_type, kind)

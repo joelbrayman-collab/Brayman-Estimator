@@ -13,6 +13,7 @@ from app.models.organization import Organization
 from app.models.pricing_engine import (
     AI_ACTOR_TOKENS,
     CONTINGENCY_PRICING_TREATMENTS,
+    LABOUR_AT_RATE_MATERIAL_MARGIN,
     CONTINGENCY_VISIBILITIES,
     NO_SELECTED_COMMERCIAL_LAYER,
     OVERHEAD_TREATMENTS,
@@ -206,6 +207,263 @@ def compute_named_method_pre_tax(
     raise PricingEngineError(f"Unsupported named method '{method}'.")
 
 
+# ---------------------------------------------------------------------------------------------- labour at rate,
+# margin on materials (Joel, 2 Nov 2026)
+BUCKET_LABOUR = "labour"
+BUCKET_MATERIAL = "material"
+BUCKET_SUBCONTRACT = "subcontract"
+BUCKET_EQUIPMENT = "equipment"
+BUCKET_DELIVERY = "delivery"
+BUCKET_OTHER = "other"  # disposal and other direct costs
+BUCKET_PASSTHROUGH = "passthrough"  # explicitly designated pass-throughs and pass-through allowances: at cost
+BUCKET_UNCLASSIFIED = "unclassified"  # change-order items with no cost type: the generic change-order rule
+BUCKETS = (BUCKET_LABOUR, BUCKET_MATERIAL, BUCKET_SUBCONTRACT, BUCKET_EQUIPMENT, BUCKET_DELIVERY, BUCKET_OTHER,
+           BUCKET_PASSTHROUGH, BUCKET_UNCLASSIFIED)
+# The buckets the summary shows together as "equipment, delivery and other direct costs".
+AT_COST_BUCKETS = (BUCKET_EQUIPMENT, BUCKET_DELIVERY, BUCKET_OTHER, BUCKET_PASSTHROUGH, BUCKET_UNCLASSIFIED)
+COST_KINDS = (BUCKET_LABOUR, BUCKET_MATERIAL, BUCKET_SUBCONTRACT, BUCKET_EQUIPMENT, BUCKET_DELIVERY, BUCKET_OTHER,
+              BUCKET_PASSTHROUGH)
+COST_KIND_LABELS = {BUCKET_LABOUR: "Brayman labour (hours)", BUCKET_MATERIAL: "Material", BUCKET_SUBCONTRACT: "Subcontract",
+                    BUCKET_EQUIPMENT: "Equipment", BUCKET_DELIVERY: "Delivery", BUCKET_OTHER: "Other direct cost",
+                    BUCKET_PASSTHROUGH: "Pass-through (at cost)"}
+
+ALLOWANCE_PASS_THROUGH = "PASS_THROUGH"
+ALLOWANCE_PRICED = "PRICED"
+ALLOWANCE_TREATMENTS = (ALLOWANCE_PASS_THROUGH, ALLOWANCE_PRICED)
+
+# Company pricing rules by cost type (Joel's rulings, 2 Nov 2026). Configurable per company (policy_rules); Brayman's
+# current values are these defaults: equipment, delivery and other direct costs at cost (0 %), subcontracts 0 %.
+# unclassified_markup None: an unclassified change-order item takes the material margin (true gross margin).
+RULE_KEYS = ("subcontract_markup", "equipment_markup", "delivery_markup", "other_markup", "unclassified_markup")
+DEFAULT_RULES = {"subcontract_markup": Decimal("0"), "equipment_markup": Decimal("0"), "delivery_markup": Decimal("0"),
+                 "other_markup": Decimal("0"), "unclassified_markup": None}
+
+
+def _rules_from_json(text, base=None) -> dict:
+    import json
+
+    rules = dict(base or DEFAULT_RULES)
+    try:
+        raw = json.loads(text) if text else {}
+    except ValueError:
+        raw = {}
+    for key in RULE_KEYS:
+        if key in raw:
+            rules[key] = None if raw[key] in (None, "") else as_decimal(raw[key])
+    return rules
+
+
+def rules_json(rules) -> str:
+    import json
+
+    return json.dumps({k: (None if rules.get(k) is None else str(rules[k])) for k in RULE_KEYS}, sort_keys=True)
+
+
+def policy_rules(policy) -> dict:
+    """The company's cost-type rules from its pricing policy (defaults where none is set)."""
+    rules = dict(DEFAULT_RULES)
+    if policy is None:
+        return rules
+    rules = _rules_from_json(getattr(policy, "pricing_rules_json", None), rules)
+    if getattr(policy, "subcontract_markup_rate", None) is not None:
+        rules["subcontract_markup"] = as_decimal(policy.subcontract_markup_rate)
+    return rules
+
+
+def version_rules(version, policy=None) -> dict:
+    """The rules a version is priced with: those captured on it at creation (ruling 5: a later company change never
+    re-prices it); an older version without any uses the policy's."""
+    captured = getattr(version, "pricing_rules_json", None)
+    if captured:
+        return _rules_from_json(captured)
+    return policy_rules(policy)
+
+
+def snapshot_rules(snapshot) -> dict:
+    rules = _rules_from_json(getattr(snapshot, "pricing_rules_json", None))
+    if getattr(snapshot, "subcontract_markup_rate", None) is not None:
+        rules["subcontract_markup"] = as_decimal(snapshot.subcontract_markup_rate)
+    return rules
+
+
+def allowance_treatment(line) -> str:
+    value = (getattr(line, "pricing_treatment", None) or "").upper()
+    return value if value in ALLOWANCE_TREATMENTS else ALLOWANCE_PASS_THROUGH
+
+
+def bucket_for_kind(kind, line=None) -> str:
+    kind = (kind or "").lower()
+    if kind in ("labour", "material", "subcontract", "equipment", "delivery", "passthrough"):
+        return kind
+    if kind in ("disposal", "other"):
+        return BUCKET_OTHER
+    if kind == "allowance":
+        return BUCKET_MATERIAL if line is not None and allowance_treatment(line) == ALLOWANCE_PRICED else BUCKET_PASSTHROUGH
+    if kind == "unclassified":
+        return BUCKET_UNCLASSIFIED
+    return BUCKET_MATERIAL
+
+
+def pricing_bucket(line) -> str:
+    """How LABOUR_AT_RATE_MATERIAL_MARGIN prices a line, from its kind (guided_estimating._line_kind, or a change-order
+    item's cost_kind): labour at the labour rate with no margin; materials at cost + margin; subcontract, equipment,
+    delivery and other direct costs at cost + the company's rule for each; pass-throughs at cost; an allowance by its
+    treatment (pass-through, or priced as material)."""
+    override = getattr(line, "pricing_kind", None)
+    if override:
+        return bucket_for_kind(override, line)
+    from app.services.guided_estimating import _line_kind
+
+    return bucket_for_kind(_line_kind(line), line)
+
+
+def _markup(rules, key) -> Decimal:
+    value = as_decimal((rules or {}).get(key) or 0)
+    if value < 0:
+        raise PricingEngineError("A pricing markup cannot be negative.")
+    return value
+
+
+def labour_material_margin_price(lines, material_margin, subcontract_markup=None, rules=None) -> dict:
+    """Pre-tax price by cost type. Each bucket is rounded half-up to the cent once (the engine's rule):
+    labour = cost (hours x the labour selling rate); materials = cost / (1 - margin); subcontract, equipment, delivery
+    and other = cost x (1 + the company's markup for it); pass-throughs = cost; unclassified change-order items = cost
+    x (1 + the generic rule), or the material margin when the company sets none."""
+    if material_margin is None:
+        raise PricingEngineError("Labour at rate with margin on materials needs a material margin.")
+    rules = dict(DEFAULT_RULES, **(rules or {}))
+    if subcontract_markup is not None:
+        rules["subcontract_markup"] = as_decimal(subcontract_markup)
+    markup = _markup(rules, "subcontract_markup")
+    cost = {bucket: Decimal("0") for bucket in BUCKETS}
+    members = {bucket: [] for bucket in BUCKETS}
+    for line in lines:
+        bucket = pricing_bucket(line)
+        cost[bucket] += as_decimal(line.extended_cost)
+        members[bucket].append(line)
+    cost = {bucket: as_money(value) for bucket, value in cost.items()}
+    unclassified = rules.get("unclassified_markup")
+    sell = {
+        BUCKET_LABOUR: cost[BUCKET_LABOUR],
+        BUCKET_MATERIAL: true_gross_margin_pre_tax(cost[BUCKET_MATERIAL], material_margin),
+        BUCKET_SUBCONTRACT: cost_plus_markup_pre_tax(cost[BUCKET_SUBCONTRACT], markup),
+        BUCKET_EQUIPMENT: cost_plus_markup_pre_tax(cost[BUCKET_EQUIPMENT], _markup(rules, "equipment_markup")),
+        BUCKET_DELIVERY: cost_plus_markup_pre_tax(cost[BUCKET_DELIVERY], _markup(rules, "delivery_markup")),
+        BUCKET_OTHER: cost_plus_markup_pre_tax(cost[BUCKET_OTHER], _markup(rules, "other_markup")),
+        BUCKET_PASSTHROUGH: cost[BUCKET_PASSTHROUGH],
+        BUCKET_UNCLASSIFIED: (cost_plus_markup_pre_tax(cost[BUCKET_UNCLASSIFIED], _markup(rules, "unclassified_markup"))
+                              if unclassified is not None
+                              else true_gross_margin_pre_tax(cost[BUCKET_UNCLASSIFIED], material_margin)),
+    }
+    direct = as_money(sum(cost.values(), Decimal("0")))
+    pre_tax = as_money(sum(sell.values(), Decimal("0")))
+    return {"cost": cost, "sell": sell, "lines": members, "direct": direct, "pre_tax": pre_tax,
+            "material_margin": as_decimal(material_margin), "subcontract_markup": markup, "rules": rules}
+
+
+def scenario_price(version, lines, material_margin, subcontract_markup=None, rules=None) -> dict:
+    """labour_material_margin_price with the version's package decisions (Joel, 2 Nov 2026): a package with a client
+    budget sells for that budget (its lines, pass-throughs excepted, are left out of the method's buckets); its
+    costs are unchanged. Pass-through lines are always billed at cost (the at-cost bucket)."""
+    from app.services.package_scenario import budgets, is_passthrough, package_key_of_section
+
+    fixed = budgets(version) if version is not None else {}
+    groups, normal = {}, []
+    for line in lines:
+        section = getattr(line, "section", None)
+        key = package_key_of_section(section) if (fixed and section is not None) else None
+        if key in fixed and not is_passthrough(line):
+            groups.setdefault(key, []).append(line)
+        else:
+            normal.append(line)
+    breakdown = labour_material_margin_price(normal, material_margin, subcontract_markup, rules)
+    breakdown["fixed"] = {}
+    for key, items in groups.items():
+        cost = as_money(sum((as_decimal(item.extended_cost) for item in items), Decimal("0")))
+        breakdown["fixed"][key] = {"budget": fixed[key], "cost": cost, "lines": items}
+        breakdown["direct"] = as_money(breakdown["direct"] + cost)
+        breakdown["pre_tax"] = as_money(breakdown["pre_tax"] + fixed[key])
+    return breakdown
+
+
+def _spread(items, total, cost) -> dict:
+    out, remaining = {}, total
+    for item in items[:-1]:
+        share = (as_money(total * as_decimal(item.extended_cost) / cost) if cost
+                 else as_money(total / Decimal(len(items))))
+        out[item.id] = share
+        remaining -= share
+    out[items[-1].id] = as_money(remaining)
+    return out
+
+
+def bucket_line_sell_prices(breakdown) -> dict:
+    """{line id: sell price}: each bucket's price spread over its lines by extended cost; the last line of a bucket
+    takes the remainder, so the lines add up to the bucket exactly."""
+    out = {}
+    for bucket in BUCKETS:
+        items = breakdown["lines"][bucket]
+        if not items:
+            continue
+        out.update(_spread(items, breakdown["sell"][bucket], breakdown["cost"][bucket]))
+    for row in (breakdown.get("fixed") or {}).values():  # a client budget spread over its package's lines
+        if row["lines"]:
+            out.update(_spread(row["lines"], row["budget"], row["cost"]))
+    return out
+
+
+def _allocate_bucket_sell_prices(version, breakdown):
+    from app.services.estimate_builder import as_money as builder_money
+
+    _zero_excluded_sell_prices(version)
+    prices = bucket_line_sell_prices(breakdown)
+    for bucket in BUCKETS:
+        for item in breakdown["lines"][bucket]:
+            item.sell_price = prices[item.id]
+    for row in (breakdown.get("fixed") or {}).values():
+        for item in row["lines"]:
+            item.sell_price = prices[item.id]
+    for section in version.sections:
+        section.subtotal = builder_money(sum((as_decimal(item.sell_price) for item in section.line_items), Decimal("0")))
+
+
+EXPLICIT_POLICY_SOURCES = ("ESTIMATE_OVERRIDE", "COMMERCIAL_CONTEXT")
+
+
+def version_pricing_method(version, resolved_method: Optional[str], source: Optional[str] = None) -> str:
+    """The method a version is priced with. A version records its method when it is created (2 Nov 2026); one made
+    under another method (or before methods were recorded) keeps being priced the way it always was, so changing the
+    company's method never re-prices an existing estimate a different way."""
+    recorded = getattr(version, "pricing_method", None)
+    if recorded in PRICING_METHODS and source in EXPLICIT_POLICY_SOURCES and resolved_method:
+        return resolved_method  # a policy chosen for this estimate itself (override, commercial context) governs
+    if recorded in PRICING_METHODS:
+        return recorded  # review S2 (3 Nov 2026): a recorded method is always honoured, whatever the company's now
+    if resolved_method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        return "TRUE_GROSS_MARGIN"  # the whole-estimate margin every older estimate was priced with
+    return resolved_method
+
+
+def recorded_method_policy(version, method: str, organization_id: str, current_policy=None):
+    """The policy whose parameters price a version whose recorded method is not the company's current one (review S2,
+    ruling 5): the policy it was last priced with, when that used the same method; otherwise the newest approved (or
+    since superseded) policy of that method that existed when the version was created. None when there is none."""
+    if current_policy is not None and current_policy.method == method:
+        return current_policy
+    snapshot = EstimatePricingSnapshot.query.filter_by(estimate_version_id=version.id).first()
+    if snapshot is not None and snapshot.method == method and snapshot.policy_id:
+        policy = db.session.get(OrganizationPricingPolicy, snapshot.policy_id)
+        if policy is not None and policy.organization_id == organization_id:
+            return policy
+    query = OrganizationPricingPolicy.query.filter(
+        OrganizationPricingPolicy.organization_id == organization_id, OrganizationPricingPolicy.method == method,
+        OrganizationPricingPolicy.approval_status.in_(("ORG_APPROVED", "SUPERSEDED")))
+    created = getattr(version, "created_at", None)
+    if created is not None:
+        query = query.filter(OrganizationPricingPolicy.created_at <= created)
+    return query.order_by(OrganizationPricingPolicy.id.desc()).first()
+
+
 def labour_engine_direct_cost_total(estimate_version, organization_id=None):
     """Read-only consumption of FG-008 Direct Labour Cost. Does not modify labour records."""
     org_id = _org_id(organization_id)
@@ -274,6 +532,7 @@ def _validate_policy_fields(
     profit_treatment,
     contingency_visibility,
     contingency_pricing_treatment,
+    subcontract_markup_rate=None,
 ):
     if method not in PRICING_METHODS:
         raise PricingEngineError("Select a valid pricing method.")
@@ -301,6 +560,16 @@ def _validate_policy_fields(
             raise PricingEngineError("COST_PLUS_MARKUP requires an explicit markup rate.")
         if as_decimal(markup_rate) < 0:
             raise PricingEngineError("Markup rate cannot be negative.")
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        if target_gross_margin is None or target_gross_margin == "":
+            raise PricingEngineError("Labour at rate with margin on materials requires the material margin.")
+        gm = as_decimal(target_gross_margin)
+        if gm < 0 or gm >= 1:
+            raise PricingEngineError("Material margin must be >= 0 and < 1.")
+        if as_decimal(subcontract_markup_rate or 0) < 0:
+            raise PricingEngineError("Subcontract markup cannot be negative.")
+        if contingency_visibility == "CUSTOMER_PRICED":
+            raise PricingEngineError("Labour at rate with margin on materials does not price a contingency.")
 
 
 def create_pricing_policy(
@@ -324,6 +593,8 @@ def create_pricing_policy(
     is_default=False,
     provenance=None,
     version_number=1,
+    subcontract_markup_rate=None,
+    pricing_rules_json=None,
 ):
     org_id = _org_id(organization_id)
     if not _organization_exists(org_id):
@@ -340,6 +611,7 @@ def create_pricing_policy(
         profit_treatment=profit_treatment,
         contingency_visibility=contingency_visibility,
         contingency_pricing_treatment=contingency_pricing_treatment,
+        subcontract_markup_rate=subcontract_markup_rate,
     )
     if OrganizationPricingPolicy.query.filter_by(
         organization_id=org_id, policy_code=code, version_number=version_number
@@ -364,6 +636,9 @@ def create_pricing_policy(
         contingency_rate=as_decimal(contingency_rate) if contingency_rate not in (None, "") else None,
         tax_jurisdiction=(tax_jurisdiction or "").strip() or None,
         tax_percent=as_decimal(tax_percent) if tax_percent not in (None, "") else None,
+        subcontract_markup_rate=(as_decimal(subcontract_markup_rate)
+                                 if subcontract_markup_rate not in (None, "") else None),
+        pricing_rules_json=pricing_rules_json or None,
         is_default=False,
         approval_status="DRAFT",
         provenance=provenance,
@@ -460,6 +735,8 @@ def supersede_pricing_policy(policy_id, *, actor, organization_id=None, **create
         tax_percent=create_kwargs.get("tax_percent", current.tax_percent),
         provenance=create_kwargs.get("provenance", current.provenance),
         version_number=next_version,
+        subcontract_markup_rate=create_kwargs.get("subcontract_markup_rate", current.subcontract_markup_rate),
+        pricing_rules_json=create_kwargs.get("pricing_rules_json", current.pricing_rules_json),
     )
     current.approval_status = "SUPERSEDED"
     current.is_default = False
@@ -724,6 +1001,9 @@ def persist_pricing_snapshot(
         execution_risk=risk,
         tax_jurisdiction=policy.tax_jurisdiction if policy else None,
         tax_percent=version.tax_percent,
+        labour_rate=resolved.get("labour_rate"),
+        subcontract_markup_rate=resolved.get("subcontract_markup_rate"),
+        pricing_rules_json=resolved.get("pricing_rules_json"),
         pre_tax_selling_price=pre_tax,
         tax_amount=tax_amount,
         customer_total=customer_total,
@@ -814,7 +1094,46 @@ def apply_resolved_pricing_to_version(
         direct = as_money(direct + labour_direct)
 
     policy = resolved["policy"]
-    method = resolved["method"]
+    method = version_pricing_method(version, resolved["method"], resolved.get("source"))
+    if getattr(version, "pricing_method", None) in PRICING_METHODS and method != resolved["method"]:
+        # Review S2: the company's method changed since this version was created; price it with its own method and
+        # that method's parameters, never the new company policy's.
+        policy = recorded_method_policy(version, method, org_id, policy)
+        if policy is None and method in ("COST_PLUS_MARKUP", "COST_PLUS_MARKUP_STACK"):
+            raise PricingEngineError(f"This estimate is priced {method.replace('_', ' ').lower()}, and no such company "
+                                     "policy is on record. Ask an administrator to restore it.")
+    resolved = dict(resolved, method=method, policy=policy)
+
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        from app.services.work_packages import participating_lines
+
+        gm = version.target_gross_margin
+        if gm is None and policy is not None:
+            gm = policy.target_gross_margin
+        rules = version_rules(version, policy if policy is not None
+                              and policy.method == LABOUR_AT_RATE_MATERIAL_MARGIN else None)
+        breakdown = scenario_price(version, participating_lines(version), gm, None, rules)
+        if breakdown["direct"] != direct and not include_labour_snapshot_direct_cost:
+            raise PricingEngineError("The approved costing does not match the estimate lines. Approve the costing again.")
+        pre_tax = breakdown["pre_tax"]
+        tax_percent = policy.tax_percent if policy and policy.tax_percent is not None else Decimal("0")
+        version.tax_percent = tax_percent
+        version.overhead_percent = Decimal("0")
+        version.profit_percent = Decimal("0")
+        tax_amount, customer_total = apply_tax_after_pre_tax(pre_tax, tax_percent)
+        _allocate_bucket_sell_prices(version, breakdown)
+        version.subtotal = builder_money(pre_tax)
+        version.total = builder_money(customer_total)
+        resolved = dict(resolved, target_gross_margin=as_decimal(gm),
+                        subcontract_markup_rate=breakdown["subcontract_markup"],
+                        pricing_rules_json=rules_json(breakdown["rules"]),
+                        labour_rate=as_money(version.labour_rate) if version.labour_rate is not None else None)
+        snapshot = persist_pricing_snapshot(
+            version, resolved=resolved, actor=actor_name, organization_id=org_id, direct_cost=direct,
+            contingency_amount=as_money(0), pre_tax=pre_tax, tax_amount=tax_amount, customer_total=customer_total,
+            costing_snapshot_id=costing.id)
+        db.session.flush()
+        return snapshot
 
     if method == "COST_PLUS_MARKUP_STACK":
         if policy is not None:
@@ -925,6 +1244,27 @@ def refresh_version_from_snapshot(version):
         snapshot.customer_total = as_money(version.total)
         return version
 
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        from app.services.work_packages import participating_lines
+
+        breakdown = scenario_price(version, participating_lines(version), snapshot.target_gross_margin, None,
+                                   snapshot_rules(snapshot))
+        pre_tax = breakdown["pre_tax"]
+        tax_amount, customer_total = apply_tax_after_pre_tax(pre_tax, snapshot.tax_percent)
+        _allocate_bucket_sell_prices(version, breakdown)
+        version.overhead_percent = Decimal("0")
+        version.profit_percent = Decimal("0")
+        version.tax_percent = snapshot.tax_percent
+        version.subtotal = builder_money(pre_tax)
+        version.total = builder_money(customer_total)
+        if not version.is_locked:
+            snapshot.direct_cost_basis = breakdown["direct"]
+            snapshot.contingency_amount = as_money(0)
+            snapshot.pre_tax_selling_price = pre_tax
+            snapshot.tax_amount = tax_amount
+            snapshot.customer_total = customer_total
+        return version
+
     amount, _basis, pre_tax = compute_named_method_pre_tax(
         method=method,
         direct_cost=direct,
@@ -959,6 +1299,49 @@ def _change_order_organization_id(change_order):
     return project.organization_id
 
 
+class _ChangeOrderLine:
+    """A change-order item as the estimate engine sees a line: its cost and its cost type."""
+
+    def __init__(self, item, index):
+        self.id = item.id if item.id is not None else -(index + 1)
+        self.extended_cost = as_money(item.total)
+        self.pricing_kind = (item.cost_kind or "unclassified")
+        self.code, self.line_type, self.unit, self.pricing_treatment = "", "", item.unit or "", None
+        self.item = item
+
+
+def change_order_line_prices(change_order, snapshot) -> dict:
+    """Each change-order item priced by the SAME engine and rules as the estimate it changes (ruling 4, 2 Nov 2026):
+    labour at the frozen labour selling rate (no margin); materials at the material margin; subcontract, equipment,
+    delivery and other at the frozen company rules; pass-throughs at cost; unclassified items at the generic rule.
+    Returns the breakdown with ``prices`` {item id: sell price}. The accepted estimate is not touched."""
+    from app.project_controls.services import apply_item_calculations
+
+    rate = getattr(snapshot, "labour_rate", None)
+    for item in change_order.items:
+        if (item.cost_kind or "") == BUCKET_LABOUR and rate is not None:
+            item.unit_price = as_decimal(rate)  # hours x the labour selling rate, as on the estimate's labour lines
+            apply_item_calculations(item)
+    lines = [_ChangeOrderLine(item, i) for i, item in enumerate(change_order.items)]
+    breakdown = labour_material_margin_price(lines, snapshot.target_gross_margin, None, snapshot_rules(snapshot))
+    breakdown["prices"] = bucket_line_sell_prices(breakdown)
+    return breakdown
+
+
+def _price_change_order_by_cost_type(change_order, snapshot):
+    breakdown = change_order_line_prices(change_order, snapshot)
+    direct = breakdown["direct"]
+    change_order.subtotal = direct
+    pre_tax = breakdown["pre_tax"]
+    change_order.markup_percent = Decimal("0")  # method identity: never a flattened markup percent
+    change_order.markup = as_money(pre_tax - direct)
+    tax, total = apply_tax_after_pre_tax(pre_tax, snapshot.tax_percent or 0)
+    change_order.tax_percent = as_decimal(snapshot.tax_percent or 0)
+    change_order.tax = tax
+    change_order.total = total
+    return change_order
+
+
 def price_change_order_from_snapshot(change_order, snapshot=None):
     """Price a FG-009-aware Change Order using the attached snapshot's method.
 
@@ -977,8 +1360,10 @@ def price_change_order_from_snapshot(change_order, snapshot=None):
     if snapshot.organization_id != co_org:
         raise PricingEngineError("Snapshot does not belong to this organization.")
 
-    direct = as_money(change_order.subtotal)
     method = snapshot.method
+    if method == LABOUR_AT_RATE_MATERIAL_MARGIN:
+        return _price_change_order_by_cost_type(change_order, snapshot)
+    direct = as_money(change_order.subtotal)
     vis = snapshot.contingency_visibility or "UNSPECIFIED"
 
     if method == "COST_PLUS_MARKUP_STACK":

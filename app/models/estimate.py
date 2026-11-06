@@ -151,6 +151,15 @@ class EstimateVersion(db.Model):
     hours_per_crew_day = db.Column(db.Numeric(5, 2), nullable=False, default=Decimal("8"), server_default="8")
     default_crew_size = db.Column(db.Integer, nullable=False, default=2, server_default="2")
     target_gross_margin_reason = db.Column(db.Text, nullable=True)
+    # The pricing method this version is priced with, captured when it is created (2 Nov 2026). None: an estimate
+    # made before pricing methods were recorded, priced as it always was (pricing_engine.version_pricing_method).
+    pricing_method = db.Column(db.String(40), nullable=True)
+    # Per-package pricing decisions on this version (Joel, 2 Nov 2026: "change it on the fly"): a client budget /
+    # fixed price per work package, as JSON keyed by package (app/services/package_scenario.py). None: none set.
+    package_pricing_json = db.Column(db.Text, nullable=True)
+    # The company pricing rules (subcontract, equipment, delivery, other, unclassified) captured when the version is
+    # created, so a later company change never silently re-prices it (ruling 5, 2 Nov 2026). None: an older version.
+    pricing_rules_json = db.Column(db.Text, nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)
@@ -338,6 +347,9 @@ class EstimateLineItem(db.Model):
     )
     notes = db.Column(db.Text)
     costing_source_kind = db.Column(db.String(40), nullable=True)
+    # An allowance's pricing treatment (ruling 2): PASS_THROUGH (at cost, no markup) or PRICED (the material rule).
+    # None on an allowance is PASS_THROUGH (the conservative default). Ignored on other lines.
+    pricing_treatment = db.Column(db.String(20), nullable=True)
     library_unit_cost_reference = db.Column(db.Numeric(14, 4), nullable=True)
     costing_override_reason = db.Column(db.Text, nullable=True)
     costing_override_by = db.Column(db.String(150), nullable=True)

@@ -58,6 +58,11 @@ class SentProposal:
     link: ProposalClientLink
     path: str
     mail_message: object
+    # Ben's approval for customer issue at the moment of sending (internal_approval.customer_issue_status), shown to
+    # the office; informational only (no block: Joel has not made that rule). None when it could not be read.
+    authorization: Optional[dict] = None
+    # Set when the link's expiry was set to the approved estimate's validity date (review SF1), in words.
+    validity_note: str = ""
 
 
 def _hash(secret: str) -> str:
@@ -134,7 +139,7 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
     # Gate 1 (30 Oct 2026): the immutable approval record, with the frozen summary of what was approved.
     from app.services.estimate_approval import record_approval
 
-    record_approval(version, user=user, actor_name=version.signed_off_by_name)
+    approval = record_approval(version, user=user, actor_name=version.signed_off_by_name)
     existing = (
         Proposal.query.filter(Proposal.estimate_version_id == version.id,
                               Proposal.status.in_(("Draft", "Ready")))
@@ -149,13 +154,47 @@ def sign_off_estimate(version: EstimateVersion, *, user) -> Proposal:
             existing = None  # an early draft with old prices is left alone; a new proposal is built
     if existing is not None:
         db.session.commit()
+        _file_internal_summary(version, approval, user)
         return existing
     try:
-        return create_proposal(estimate=estimate, version=version, template=template,
-                               status="Ready", organization_id=org_id)
+        proposal = create_proposal(estimate=estimate, version=version, template=template,
+                                   status="Ready", organization_id=org_id)
     except ProposalServiceError:
         db.session.rollback()
         raise
+    _file_internal_summary(version, approval, user)
+    return proposal
+
+
+def _file_sent_summary(version, proposal, user, number=None) -> None:
+    """Every price sent to the client is kept as a numbered revision (REV1, REV2, ...) with its Internal Project
+    Financial Summary filed in Documents (Joel, 2 Nov 2026). The send is already committed; filing never undoes it."""
+    import logging
+
+    from app.services.internal_financial_summary import file_sent_summary
+
+    try:
+        file_sent_summary(version, proposal, user=user, number=number)
+    except Exception:  # noqa: BLE001 - filing never undoes a send
+        db.session.rollback()
+        logging.getLogger(__name__).exception("Sent Internal Project Financial Summary not filed for proposal %s",
+                                              getattr(proposal, "id", None))
+
+
+def _file_internal_summary(version, approval, user) -> None:
+    """File the approved Internal Project Financial Summary in the project's Documents (2 Nov 2026). The approval
+    is already committed; if filing fails, the approval stands and the summary can still be opened from the frozen
+    figures (Review This Estimate), so the failure is logged rather than undoing the approval."""
+    import logging
+
+    from app.services.internal_financial_summary import file_approved_summary
+
+    try:
+        file_approved_summary(version, approval, user=user)
+    except Exception:  # noqa: BLE001 - filing never undoes an approval
+        db.session.rollback()
+        logging.getLogger(__name__).exception("Internal Project Financial Summary not filed for version %s",
+                                              getattr(version, "id", None))
 
 
 # ---------------------------------------------------------------- 2. Send
@@ -195,7 +234,9 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
     blockers = proposal_send_blockers(proposal)
     if blockers:
         raise ProposalAcceptanceError("The proposal cannot be sent yet. " + " ".join(blockers))
+    authorization = _customer_issue_status(proposal)  # read before anything changes; never a block
     days = days if isinstance(days, int) and 1 <= days <= 90 else DEFAULT_LINK_DAYS
+    expires_at, validity_note = _issue_expiry(proposal, authorization, datetime.utcnow() + timedelta(days=days), days)
     if proposal.status != "Issued":
         update_proposal(proposal, status="Issued")
     version = proposal.estimate_version
@@ -219,15 +260,62 @@ def send_proposal_to_client(proposal: Proposal, *, user, client_name: str, clien
         sent_by_user_id=getattr(user, "id", None),
         sent_by_name=((getattr(user, "display_name", None) or getattr(user, "email", "")) or "Office").strip()[:160],
         sent_at=now,
-        expires_at=now + timedelta(days=days),
+        expires_at=expires_at,
         view_count=0,
     )
     db.session.add(link)
     _advance_stage(proposal, "Proposal Sent", event="proposal sent to the client")
     db.session.commit()
+    # What the client receives now, against what Ben approved (re-rendered, never cached).
+    authorization = _customer_issue_status(proposal, fresh=True)
+    paired = authorization["revision"].revision_number if authorization and authorization.get("authorized") else None
+    _file_sent_summary(version, proposal, user, number=paired)
     path = proposal_link_path(lookup_key, secret)
     message = _send_mail(proposal, link, path)
-    return SentProposal(link=link, path=path, mail_message=message)
+    return SentProposal(link=link, path=path, mail_message=message, authorization=authorization,
+                        validity_note=validity_note if authorization and authorization.get("authorized") else "")
+
+
+def _issue_expiry(proposal, authorization, requested, requested_days=None):
+    """Review SF1: when the estimate is authorized, the link's expiry that makes the client read exactly the approved
+    validity date (internal_approval.issue_link_expiry); otherwise the expiry asked for. Never blocks a send."""
+    import logging
+
+    if not authorization or not authorization.get("authorized"):
+        return requested, ""
+    from app.services.internal_approval import issue_link_expiry, revision_validity
+
+    try:
+        revision = authorization["revision"]
+        approved = revision_validity(revision)
+        expires_at, adjusted = issue_link_expiry(proposal, approved, requested)
+    except Exception:  # noqa: BLE001 - the send goes ahead as asked; the status then reports any difference
+        logging.getLogger(__name__).exception("Approved validity date not applied for proposal %s", proposal.id)
+        return requested, ""
+    note = ""
+    if adjusted:
+        # Review m-ii (a decision for Joel): the requested and the applied link length, plainly.
+        from app.services.local_time import local_date, local_today
+
+        applied_days = (local_date(expires_at) - local_today()).days
+        asked = f"a {requested_days}-day link" if requested_days else "a link"
+        note = (f"You asked for {asked}; the link applied is {applied_days} day{'s' if applied_days != 1 else ''}, "
+                f"valid until {approved.strftime('%B %d, %Y').replace(' 0', ' ')}, the date in the estimate approved "
+                f"as {revision.label}, so the client receives exactly the approved estimate.")
+    return expires_at, note
+
+
+def _customer_issue_status(proposal, fresh=False):
+    """Ben's approval for customer issue (3 Nov 2026), or None if it cannot be read. Never blocks a send."""
+    import logging
+
+    from app.services.internal_approval import customer_issue_status
+
+    try:
+        return customer_issue_status(proposal, fresh=fresh)
+    except Exception:  # noqa: BLE001 - the status is information; the send goes ahead as it always did
+        logging.getLogger(__name__).exception("Customer issue status not read for proposal %s", proposal.id)
+        return None
 
 
 def _send_mail(proposal, link, path):

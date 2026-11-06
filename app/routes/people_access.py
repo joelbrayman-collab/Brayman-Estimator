@@ -341,11 +341,16 @@ def _texts_of(membership_id):
 
 @people_access_bp.route("")
 def index():
+    from app.services.labour_cost_profile import employees as cost_rows
+
     people = list_people_access(organization_id=_org(), actor=current_user)
+    rows = cost_rows(_org())
+    missing = sum(1 for r in rows if r["person"].is_active and not r["complete"])
     return render_template(
         "settings/people/index.html",
         people=people,
         domain_labels=ACCESS_DOMAIN_LABELS,
+        employee_cost_state=lambda: {"missing": missing, "count": len(rows)},
     )
 
 
@@ -517,3 +522,137 @@ def field_only(membership_id):
                 if marked else "Field only removed: office access as before.")
 
     return _act(membership_id, run)
+
+
+# ================================================================================================ Employees
+# Employee cost profiles and Loaded Labour Rates (Joel, 2 Nov 2026). The same owner / System Administrator wall as
+# the rest of People & Access (wages are theirs only). Every employee must have a complete cost profile; one without
+# cannot be put on an estimate crew. Sign-in and time entry are not affected.
+COST_FIELDS = ("hourly_wage", "paid_hours_per_year", "vacation_weeks", "paid_holidays", "truck_monthly",
+               "fuel_monthly", "tool_allowance_annual", "rrsp_percent", "health_premium_monthly",
+               "wsib_rate_per_100")
+IDENTITY_FIELDS = ("full_name", "address", "mobile_number", "email_address")
+
+
+def _require_employee_cost():
+    """Ruling 1 (2 Nov 2026): compensation and loaded labour rates are their own permission (financial_access),
+    checked here as well as by this blueprint's owner / System Administrator wall."""
+    from app.services.financial_access import can_view_employee_cost
+
+    if not can_view_employee_cost(current_user, _org()):
+        abort(403)
+
+
+@people_access_bp.before_request
+def _employee_cost_pages():
+    if (request.endpoint or "").startswith("people_access.employee"):
+        _require_employee_cost()
+
+
+def _employee_or_404(person_id):
+    from app.models.person import OrganizationPerson
+
+    person = OrganizationPerson.query.filter_by(id=person_id, organization_id=_org()).first()
+    if person is None:
+        abort(404)
+    return person
+
+
+def _profile_values(profile):
+    if profile is None:
+        return {}
+    values = {f: str(getattr(profile, f)) for f in COST_FIELDS if f != "wsib_rate_per_100"}
+    values["wsib_rate_per_100"] = str(profile.wsib_rate_per_100) if profile.wsib_is_override else ""
+    return values
+
+
+@people_access_bp.route("/employees")
+def employees():
+    from app.services import labour_cost_profile as LCP
+
+    rows = LCP.employees(_org())
+    return render_template("settings/people/employees.html", rows=rows, wsib=LCP.company_wsib(_org()),
+                           missing=sum(1 for r in rows if r["person"].is_active and not r["complete"]))
+
+
+@people_access_bp.route("/employees/wsib", methods=["POST"])
+def employees_wsib():
+    from app.services import labour_cost_profile as LCP
+
+    try:
+        LCP.set_company_wsib(_org(), rate=request.form.get("wsib_rate_per_100"),
+                             label=request.form.get("wsib_class_label", ""), actor_user=current_user)
+        flash("Company WSIB rate saved. Each employee's loaded rate uses it the next time their cost profile is saved.",
+              "success")
+    except LCP.CostProfileError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("people_access.employees"))
+
+
+def _employee_form(person=None, *, values=None, preview=None, status=200):
+    from app.services import labour_cost_profile as LCP
+
+    profile = LCP.current_profile(person.id) if person is not None else None
+    current = LCP.calculate(LCP.inputs_of(profile)) if profile is not None else None
+    if values is None:
+        values = _profile_values(profile)
+        if person is not None and not values.get("hourly_wage"):
+            values["hourly_wage"] = str(person.hourly_wage)
+    page = render_template("settings/people/employee.html", person=person, values=values, preview=preview,
+                           profile=profile, current=current, complete=LCP.is_complete(profile, person),
+                           history=LCP.profile_history(person.id) if person is not None else [],
+                           wsib=LCP.company_wsib(_org()), defaults=LCP.DEFAULTS)
+    return page, status
+
+
+@people_access_bp.route("/employees/new", methods=["GET", "POST"])
+def employee_new():
+    from app.services import labour_cost_profile as LCP
+    from app.services.organization_people import PersonAuthorityError, create_person
+
+    if request.method == "GET":
+        return _employee_form(values={})
+    values = {f: (request.form.get(f) or "").strip() for f in COST_FIELDS + IDENTITY_FIELDS}
+    try:
+        inputs = LCP.parse_inputs(values, company_wsib=LCP.company_wsib(_org())["rate"])
+    except LCP.CostProfileError as exc:
+        flash(str(exc), "error")
+        return _employee_form(values=values, status=400)
+    if request.form.get("action") == "calculate":
+        return _employee_form(values=values, preview=LCP.calculate(inputs))
+    try:
+        identity = create_person(organization_id=_org(), actor=current_user, full_name=values["full_name"],
+                                 address=values["address"], mobile_number=values["mobile_number"],
+                                 email_address=values["email_address"], hourly_wage=inputs.hourly_wage)
+    except PersonAuthorityError as exc:
+        flash(str(exc), "error")
+        return _employee_form(values=values, preview=LCP.calculate(inputs), status=400)
+    person = _employee_or_404(identity.id)
+    LCP.save_profile(person, inputs, actor_user=current_user, wsib_override=bool(values["wsib_rate_per_100"]),
+                     reason="First cost profile")
+    flash(f"{person.full_name} added. Loaded labour rate {LCP._money(LCP.calculate(inputs)['loaded_rate'])} per "
+          "working hour.", "success")
+    return redirect(url_for("people_access.employee", person_id=person.id))
+
+
+@people_access_bp.route("/employees/<int:person_id>", methods=["GET", "POST"])
+def employee(person_id):
+    from app.services import labour_cost_profile as LCP
+
+    person = _employee_or_404(person_id)
+    if request.method == "GET":
+        return _employee_form(person)
+    values = {f: (request.form.get(f) or "").strip() for f in COST_FIELDS}
+    try:
+        inputs = LCP.parse_inputs(values, company_wsib=LCP.company_wsib(_org())["rate"])
+    except LCP.CostProfileError as exc:
+        flash(str(exc), "error")
+        return _employee_form(person, values=values, status=400)
+    if request.form.get("action") == "calculate":
+        return _employee_form(person, values=values, preview=LCP.calculate(inputs))
+    _profile, result = LCP.save_profile(person, inputs, actor_user=current_user,
+                                        wsib_override=bool(values["wsib_rate_per_100"]),
+                                        reason=request.form.get("reason", ""))
+    flash(f"Cost profile saved for {person.full_name}: loaded labour rate {LCP._money(result['loaded_rate'])} per "
+          "working hour. The earlier profile is kept in the history.", "success")
+    return redirect(url_for("people_access.employee", person_id=person.id))

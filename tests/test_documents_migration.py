@@ -62,7 +62,9 @@ def test_graph_head_is_the_documents_revision():
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
-        assert script.get_heads() == [REVISION]
+        # Cost profiles and pricing method (u8b9c0d1e2f3, 2 Nov 2026) follow this revision.
+        assert script.get_heads() == ["u8b9c0d1e2f3"]
+        assert script.get_revision("u8b9c0d1e2f3").down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 
 

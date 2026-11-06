@@ -86,6 +86,26 @@ def _status_is_authorizing(status) -> bool:
     return status in SCOPE_AUTHORIZING_CHANGE_ORDER_STATUSES
 
 
+def _cost_kind(value):
+    """A change-order item's cost type (ruling 4, 2 Nov 2026); blank is unclassified."""
+    from app.services.pricing_engine import COST_KINDS
+
+    text = (value or "").strip().lower()
+    if not text:
+        return None
+    if text not in COST_KINDS:
+        raise ChangeOrderServiceError("Choose the kind of cost for the line (or leave it unclassified).")
+    return text
+
+
+def _kind_of_estimate_line(line):
+    """The cost type of an estimate line copied into a change order: the engine's own bucket for it."""
+    from app.services.pricing_engine import BUCKET_UNCLASSIFIED, pricing_bucket
+
+    bucket = pricing_bucket(line)
+    return None if bucket == BUCKET_UNCLASSIFIED else bucket
+
+
 def apply_item_calculations(item):
     quantity = as_decimal(item.quantity)
     unit_price = as_decimal(item.unit_price)
@@ -297,6 +317,7 @@ def create_change_order(
                     unit=line.unit,
                     unit_price=unit_price,
                     sort_order=sort_order,
+                    cost_kind=_kind_of_estimate_line(line),
                 )
                 apply_item_calculations(item)
                 change_order.items.append(item)
@@ -480,6 +501,7 @@ def add_change_order_item(
     unit_price=0,
     organization_id=None,
     guided_stage_id=None,
+    cost_kind=None,
 ):
     change_order = require_organization_change_order(
         change_order,
@@ -516,6 +538,7 @@ def add_change_order_item(
         unit_price=as_decimal(unit_price),
         sort_order=sort_order,
         guided_stage_id=package_id,
+        cost_kind=_cost_kind(cost_kind),
     )
     apply_item_calculations(item)
     change_order.items.append(item)
@@ -532,6 +555,7 @@ def update_change_order_item(
     unit=None,
     unit_price=None,
     organization_id=None,
+    cost_kind=Ellipsis,
 ):
     org_id = acting_organization_id(organization_id)
     item = require_organization_change_order_item(
@@ -561,6 +585,8 @@ def update_change_order_item(
         if price < 0:
             raise ChangeOrderServiceError("Unit price cannot be negative.")
         item.unit_price = price
+    if cost_kind is not Ellipsis:
+        item.cost_kind = _cost_kind(cost_kind)
 
     apply_item_calculations(item)
     recalculate_change_order(item.change_order)

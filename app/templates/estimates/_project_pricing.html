@@ -15,7 +15,7 @@
         {% elif econ.labour_rate_default is not none %}<p class="pp-note">Company default</p>{% endif %}
       </div>
       <div class="pp-field">
-        <label for="pp-margin">Target gross margin</label>
+        <label for="pp-margin">{% if econ.pricing_method == "LABOUR_AT_RATE_MATERIAL_MARGIN" %}Margin on materials{% else %}Target gross margin{% endif %}</label>
         <div class="pp-input"><input id="pp-margin" name="margin_percent" inputmode="decimal" value="{{ '%.2f'|format(econ.margin_percent|float) if econ.margin_percent is not none else '' }}" {% if not editable %}disabled{% endif %} data-margin><span>%</span></div>
         {% if econ.margin_is_override %}<p class="pp-note" data-margin-override>Project override · Company default {{ '%.2f'|format(econ.margin_default_percent|float) }}%</p>
         {% elif econ.margin_default_percent is not none %}<p class="pp-note">Company default</p>{% endif %}

@@ -1014,13 +1014,20 @@ def _calisign(ctx):
 
     names = {DOCUMENT_FAMILY_CONTRACT: "Contract", DOCUMENT_FAMILY_CHANGE_ORDER: "Change order",
              DOCUMENT_FAMILY_SUPPLIER_ORDER: "Purchase order", DOCUMENT_FAMILY_SUPPLIER_DELIVERY_CHANGE: "Delivery change",
-             DOCUMENT_FAMILY_SUBCONTRACT: "Subcontract"}
+             DOCUMENT_FAMILY_SUBCONTRACT: "Subcontract", "INTERNAL_APPROVAL": "Internal approval"}
 
     def href(req):
         if req.document_family == DOCUMENT_FAMILY_CONTRACT:
             return _link("projects.review_contract", id=req.project_id)
         if req.document_family == DOCUMENT_FAMILY_CHANGE_ORDER:
             return _link("project_controls.view_change_order", id=req.source_record_id)
+        if req.document_family == "INTERNAL_APPROVAL":
+            from app.models.internal_summary import InternalSummaryRevision
+
+            revision = db.session.get(InternalSummaryRevision, req.source_record_id)
+            if revision is not None and revision.is_customer_estimate and revision.proposal_id:
+                return _link("proposals.view_proposal", id=revision.proposal_id, _anchor="customer-issue-approval")
+            return _link("guided.pricing", project_id=req.project_id, _anchor="ts-review-scenario")
         if req.document_family == DOCUMENT_FAMILY_SUBCONTRACT:
             return _link("supplier_office.commitments", project_id=req.project_id, _anchor="subcontracts")
         return _link("supplier_office.project_requests", project_id=req.project_id)
@@ -1034,6 +1041,12 @@ def _calisign(ctx):
         project = ctx.projects.get(req.project_id)
         if not _open(project):
             continue
+        if req.document_family == "INTERNAL_APPROVAL":
+            # Review m3 (3 Nov 2026): only for someone who may act on that document type.
+            from app.services.internal_approval import may_manage
+
+            if not may_manage(ctx.viewer, req):
+                continue
         doc = names.get(req.document_family, "Document")
         expires = local_date(req.expires_at) if req.expires_at else None
         common = dict(project_id=req.project_id)

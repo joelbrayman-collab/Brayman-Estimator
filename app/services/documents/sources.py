@@ -291,6 +291,9 @@ def _signed(organization_id, report, project_id):
         SigningExecutedArtifact.organization_id == organization_id, SigningRequest.organization_id == organization_id)
     if project_id is not None:
         query = query.filter(SigningRequest.project_id == project_id)
+    # Internal approvals (3 Nov 2026) are filed when they are executed, with their own sensitivity (crew loaded
+    # rates are people-administrator only): never registered again here at a lower sensitivity.
+    query = query.filter(SigningRequest.document_family != "INTERNAL_APPROVAL")
     suppliers = supplier_ids_for_org(organization_id)
 
     def one(executed):

@@ -1,0 +1,40 @@
+{# Ben's approval of the customer estimate before it is issued (CaliSIGN internal approval, Joel 3 Nov 2026).
+   Distinct from the client's acceptance below: it never sets or implies it. #}
+<section class="form-panel" id="customer-issue-approval" data-customer-issue-approval="true" style="margin-bottom: 24px;">
+    <h2>Approval for customer issue</h2>
+    {% if customer_issue %}
+    <p data-customer-issue-state="{{ customer_issue.state }}"><strong>{{ customer_issue.label }}.</strong></p>
+    {% endif %}
+    <p class="muted-copy">The exact customer estimate PDF is frozen as a REV and signed by the approver through a CaliSIGN link. This is the company's internal approval to issue it; it is not the client's acceptance.</p>
+    {% if customer_issue_revisions %}
+    <table class="data-table">
+        <thead><tr><th>REV</th><th>Status</th><th>Frozen</th><th>PDF</th></tr></thead>
+        <tbody>
+        {% for row in customer_issue_revisions %}
+        <tr data-customer-estimate-revision="{{ row.revision.label }}" data-revision-state="{{ row.status.state }}">
+            <td>{{ row.revision.label }}</td>
+            <td>{{ row.status.label }}{% if row.status.signed_by %} — {{ row.status.signed_by }}{% endif %}</td>
+            <td>{{ row.revision.created_at|local_time("%B %d, %Y %H:%M") }} by {{ row.revision.created_by_name }}</td>
+            <td>{% if customer_issue_can_act %}<a href="{{ url_for('proposals.customer_estimate_revision_pdf', id=proposal.id, revision_id=row.revision.id) }}">{{ "Signed copy" if row.status.state == "approved" else "Frozen PDF" }}</a>{% endif %}</td>
+        </tr>
+        {% if customer_issue_can_act and row.status.state in ("not_sent", "voided", "expired", "declined") and customer_issue and customer_issue.revision and customer_issue.revision.id == row.revision.id %}
+        <tr><td colspan="4">
+            <form method="post" action="{{ url_for('proposals.send_customer_estimate_for_approval', id=proposal.id, revision_id=row.revision.id) }}" class="form-grid" data-send-customer-estimate="{{ row.revision.label }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Approver name <input type="text" name="approver_name" required></label>
+                <label>Approver email <input type="email" name="approver_email" required></label>
+                <div class="form-actions"><button type="submit" class="button is-primary">Send {{ row.revision.label }} for approval</button></div>
+            </form>
+        </td></tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    {% if customer_issue_can_act and customer_issue_freezable and not (customer_issue and customer_issue.revision) %}
+    <form method="post" action="{{ url_for('proposals.freeze_customer_estimate_route', id=proposal.id) }}" data-freeze-customer-estimate="true">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button">Freeze this customer estimate for approval</button>
+    </form>
+    {% endif %}
+</section>

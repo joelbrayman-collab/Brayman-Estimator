@@ -17,6 +17,8 @@
     </div>
 </div>
 
+{% include "estimates/partials/customer_issue_status.html" %}
+
 <section class="form-panel {% if estimate.current_version_id == version.id %}version-current{% endif %}{% if version.is_locked %} version-locked{% endif %}" style="margin-bottom: 24px;">
     <div class="form-actions" style="margin-bottom: 20px;">
         {% if estimate.current_version_id == version.id %}

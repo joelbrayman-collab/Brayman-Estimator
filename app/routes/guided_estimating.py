@@ -550,13 +550,55 @@ def pricing(project_id):
     from app.services.guided_tasks import review_this_estimate
 
     review = review_this_estimate(project, guided)
+    financial = _financial_summary_panel(guided, version)
+    from app.services.internal_approval import customer_issue_status_for_estimate
+
+    customer_issue = customer_issue_status_for_estimate(guided.estimate) if guided.estimate is not None else None
     return render_template("guided/pricing.html", project=project, guided=guided, version=version,
+                           financial=financial, customer_issue=customer_issue,
                            blockers=G.guided_blockers(guided), costing=costing,
                            issue_blockers=issue,
                            snapshot=getattr(version, "pricing_snapshot", None) if version is not None else None,
                            proposals=proposals, return_to=url_for("guided.pricing", project_id=project.id),
                            economics=economics, review=review,
                            handoff=G.handoff(guided))
+
+
+def _financial_summary_panel(guided, version):
+    """Review This Estimate's Internal Project Financial Summary, live P&L and crew (2 Nov 2026). Two permissions
+    (ruling 1, app/services/financial_access.py): project economics for the summary and the live P&L; employee cost
+    for the crew and its loaded rates. None for anyone with neither, so nothing of it is shown to them."""
+    from flask_login import current_user
+
+    from app.services.financial_access import can_view_employee_cost, can_view_project_economics
+
+    if version is None or guided.estimate is None or not can_view_project_economics(current_user, _org()):
+        return None
+    from app.services import estimate_crew as crew
+    from app.services import package_scenario as PS
+    from app.services.internal_financial_summary import quoted_revisions
+    from app.services.labour_cost_profile import assignable_employees, employees
+
+    employee_cost = can_view_employee_cost(current_user, _org())
+    rows = crew.crew(guided.estimate) if employee_cost else []
+    on_crew = {r["person"].id: r for r in rows}
+    all_rows = employees(_org()) if employee_cost else []
+    scenario = PS.scenario_rows(version, crew.crew_rates(guided.estimate))
+    db.session.rollback()  # the preview is read only
+    from app.services import internal_approval as IA
+
+    summary_revisions = [{"revision": r, "status": IA.status_of(r)}
+                         for r in reversed(IA.revisions(guided.estimate)) if r.origin == "FROZEN"]
+    # A signed copy not filed yet (e.g. filing failed at signing) is filed now, for both document types (SF2).
+    IA.file_missing_signed_copies([row["revision"] for row in summary_revisions])
+    IA.file_missing_signed_copies(IA.customer_estimate_revisions(guided.estimate))
+    return {"scenario": scenario, "revisions": quoted_revisions(guided.estimate),
+            "summary_revisions": summary_revisions,
+            "accepted": G.accepted_proposal(guided) is not None, "employee_cost": employee_cost,
+            "crew": rows, "problem": crew.crew_problem(guided.estimate),
+            "assignable": assignable_employees(_org()) if employee_cost else [],
+            "on_crew": on_crew, "incomplete": [r for r in all_rows if r["person"].is_active and not r["complete"]],
+            "pdf_url": url_for("guided_tasks.internal_financial_summary", project_id=guided.project_id)}
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/revision", methods=["POST"])

@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, Response, abort, flash, g, redirect, request, session, url_for
 from flask_login import current_user
 
+from app import db
 from app.models.signing import ACTOR_HUMAN
 from app.project_controls.repository import get_change_order
 from app.presentation.contractor_copy import (
@@ -53,6 +54,30 @@ from app.services.signing import (
 from app.services.signing_mail import office_email_delivery_label
 
 signing_office_bp = Blueprint("signing_office", __name__)
+
+
+@signing_office_bp.before_request
+def _internal_approval_permission():
+    """Review B1 (3 Nov 2026): an INTERNAL_APPROVAL request is acted on here (invite, resend, void, countersign,
+    approve, execute, download the executed copy) only by someone who may freeze and send its document type
+    (internal_approval.may_manage), checked before any route runs, so a refusal changes nothing. Every other family
+    is untouched (organization scoping as before)."""
+    request_id = (request.view_args or {}).get("request_id")
+    if request_id is None:
+        return None
+    organization_id = getattr(g, "organization_id", None)
+    if not organization_id:
+        return None  # the route's own _organization_id() refuses
+    from app.models.signing import DOCUMENT_FAMILY_INTERNAL_APPROVAL, SigningRequest
+
+    row = SigningRequest.query.filter_by(id=request_id, organization_id=organization_id).first()
+    if row is None or row.document_family != DOCUMENT_FAMILY_INTERNAL_APPROVAL:
+        return None
+    from app.services.internal_approval import may_manage
+
+    if not may_manage(current_user, row):
+        abort(403)
+    return None
 
 _OFFICE_ERROR_COPY = {
     BLOCK_CHANGE_ORDER_NOT_APPROVED: (
@@ -120,6 +145,8 @@ def _redirect_for_request(request_id: int, organization_id: str):
         signing_request = get_signing_request(request_id, organization_id)
     except SigningServiceError:
         abort(404)
+    if signing_request.document_family == "INTERNAL_APPROVAL":
+        return redirect(_internal_approval_url(signing_request))
     if signing_request.document_family == "CONTRACT":
         return redirect(
             url_for("projects.review_contract", id=signing_request.project_id,
@@ -128,6 +155,15 @@ def _redirect_for_request(request_id: int, organization_id: str):
     if signing_request.document_family != "CHANGE_ORDER":
         abort(404)
     return redirect(_co_url(signing_request.source_record_id))
+
+
+def _internal_approval_url(signing_request) -> str:
+    from app.models.internal_summary import InternalSummaryRevision
+
+    revision = db.session.get(InternalSummaryRevision, signing_request.source_record_id)
+    if revision is not None and revision.is_customer_estimate and revision.proposal_id:
+        return url_for("proposals.view_proposal", id=revision.proposal_id, _anchor="customer-issue-approval")
+    return url_for("guided.pricing", project_id=signing_request.project_id, _anchor="ts-review-internal-approval")
 
 
 def _store_invitation(issue) -> str:

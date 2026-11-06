@@ -133,9 +133,29 @@ def pdf(credential):
     from app.services.proposal_pdf import generate_proposal_pdf, sanitize_pdf_filename
 
     proposal = link.proposal
+    approved = _approved_copy(proposal)
+    if approved is not None:  # review SF1: exactly the bytes Ben approved for customer issue
+        from io import BytesIO
+
+        return send_file(BytesIO(approved), mimetype="application/pdf", as_attachment=True,
+                         download_name=sanitize_pdf_filename(proposal))
     buffer = generate_proposal_pdf(proposal, valid_until=client_valid_until(proposal, link))
     return send_file(buffer, mimetype="application/pdf", as_attachment=True,
                      download_name=sanitize_pdf_filename(proposal))
+
+
+def _approved_copy(proposal):
+    """The approved customer estimate bytes when this proposal is authorized for customer issue and they are exactly
+    what this client would be shown (internal_approval.approved_client_copy); otherwise None (rendered as before)."""
+    from flask import current_app
+
+    from app.services.internal_approval import approved_client_copy
+
+    try:
+        return approved_client_copy(proposal)
+    except Exception:  # noqa: BLE001 - the client always gets their document
+        current_app.logger.exception("Approved customer estimate not served for proposal %s", proposal.id)
+        return None
 
 
 @proposal_link_bp.route("/<credential>/logo", methods=["GET"])

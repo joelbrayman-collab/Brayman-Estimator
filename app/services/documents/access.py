@@ -7,6 +7,10 @@
   specifications, instructions, safety) with STANDARD sensitivity, and nothing else.
 * Office members see STANDARD documents and, with has_office_financial_access, FINANCIAL ones.
 * People administrators (instance owner or System Administrator) also see PEOPLE documents and person pages.
+* Internal project economics (review B2, 3 Nov 2026) is its own grant, never part of FINANCIAL: ECONOMICS documents
+  (the Internal Project Financial Summary's copies) need can_view_project_economics; EMPLOYEE_COST documents (a copy
+  that shows the crew's loaded labour rates) need can_view_project_economics and can_view_employee_cost. A future
+  project-performance grant widens can_view_project_economics only, so it reaches ECONOMICS and never EMPLOYEE_COST.
 * Any document with an active link to a person is for people administrators only, whatever its sensitivity (review
   fix I1, 1 Nov 2026: linking raises it to PEOPLE; this is the defence in depth for any row that is not).
 
@@ -23,6 +27,8 @@ from sqlalchemy import and_, exists
 from app.models.documents import (
     CONTEXT_PERSON,
     CONTEXT_PROJECT,
+    SENSITIVITY_ECONOMICS,
+    SENSITIVITY_EMPLOYEE_COST,
     SENSITIVITY_FINANCIAL,
     SENSITIVITY_PEOPLE,
     SENSITIVITY_STANDARD,
@@ -71,7 +77,20 @@ def office_scope(user, organization_id) -> Optional[Scope]:
     admin = is_people_admin(user, organization_id)
     if admin:
         sensitivities.append(SENSITIVITY_PEOPLE)
+    sensitivities.extend(economics_sensitivities(user, organization_id))
     return Scope(organization_id, int(user.id), tuple(sensitivities), people_admin=admin)
+
+
+def economics_sensitivities(user, organization_id) -> list:
+    """The internal-economics levels this viewer may read (financial_access, Joel's ruling 1)."""
+    from app.services.financial_access import can_view_employee_cost, can_view_project_economics
+
+    if not can_view_project_economics(user, organization_id):
+        return []
+    levels = [SENSITIVITY_ECONOMICS]
+    if can_view_employee_cost(user, organization_id):
+        levels.append(SENSITIVITY_EMPLOYEE_COST)
+    return levels
 
 
 def field_scope(user, organization_id) -> Scope:

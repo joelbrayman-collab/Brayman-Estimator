@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ person.full_name if person else "Add an employee" }} — cost profile | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ "Employee cost profile" if person else "Add an employee" }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+{# One employee's cost profile and Loaded Labour Rate (Joel, 2 Nov 2026; layout of the approved one-page sheets).
+   Calculate shows the breakdown without saving; Save adds a new profile (the earlier ones stay in the history). #}
+{% import "partials/task_screen.html" as ts with context %}
+{% macro money(v) %}{% if v is none %}—{% else %}{{ "${:,.2f}".format(v|float) }}{% endif %}{% endmacro %}
+{% macro breakdown(result, heading) %}
+<section class="ge-card" data-llr-breakdown>
+  <h2>{{ heading }}</h2>
+  <table class="ge-table llr-table">
+    <thead><tr><th>Cost</th><th>Basis</th><th class="num">Per year</th><th class="num">Per paid hour</th><th class="num">Per working hour</th></tr></thead>
+    <tbody>
+    {% for r in result.rows %}<tr data-llr-row="{{ r.key }}"><td>{{ r.label }}</td><td>{{ r.basis }}</td><td class="num">{{ money(r.per_year) }}</td><td class="num">{{ money(r.per_paid_hour) }}</td><td class="num">{{ money(r.per_working_hour) }}</td></tr>{% endfor %}
+    <tr class="llr-total"><th>Loaded cost</th><th>{{ "%.0f"|format(result.working_hours|float) }} working hours of {{ "%.0f"|format(result.paid_hours|float) }} paid</th><th class="num" data-annual-cost>{{ money(result.annual_cost) }}</th><th class="num">{{ money(result.per_paid_hour) }}</th><th class="num" data-loaded-rate>{{ money(result.loaded_rate) }}</th></tr>
+    </tbody>
+  </table>
+  <p class="muted-copy">Working hours: {{ "%.0f"|format(result.paid_hours|float) }} paid hours less {{ "%.0f"|format(result.vacation_hours|float) }} h vacation and {{ "%.0f"|format(result.holiday_hours|float) }} h public holidays. Every cost is spread over the hours actually worked, so the wage is {{ money(result.wage_per_working_hour) }} per working hour. Rates: CPP/CPP2 and EI {{ result.statutory_year }} (Canada Revenue Agency); Ontario Employer Health Tax exempt (payroll under $1 million). Not included: liability insurance, office and phone, weather downtime, overhead or profit.</p>
+</section>
+{% endmacro %}
+<div class="task-screen" data-employee-profile>
+  {{ ts.context(person.full_name if person else "New employee", facts=([money(person.hourly_wage) ~ " an hour", "Cost profile complete" if complete else "Cost profile required"] if person else [])) }}
+  {{ ts.purpose("Employee cost profile", "What one hour actually worked costs the company: the Loaded Labour Rate.", title_in_header=True) }}
+  {% if person and not complete %}<p class="ge-warn" data-cost-profile-required>Cost profile required: {{ person.full_name }} cannot be put on an estimate crew until this profile is saved{% if profile %} with their current wage{% endif %}.</p>{% endif %}
+
+  <form method="post" class="ts-form form-panel" data-cost-profile-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if not person %}
+    <fieldset class="ts-group"><legend>Employee</legend>
+      <div class="ts-row">
+        <label>Full name<input name="full_name" value="{{ values.full_name or '' }}" maxlength="150" required></label>
+        <label>Mobile number<input name="mobile_number" value="{{ values.mobile_number or '' }}" maxlength="40" required></label>
+        <label>Email<input type="email" name="email_address" value="{{ values.email_address or '' }}" maxlength="255" required></label>
+        <label>Address<input name="address" value="{{ values.address or '' }}" required></label>
+      </div>
+    </fieldset>
+    {% endif %}
+    <fieldset class="ts-group"><legend>Pay and hours</legend>
+      <div class="ts-row">
+        <label>Hourly wage ($)<input name="hourly_wage" inputmode="decimal" value="{{ values.hourly_wage or '' }}" required data-field="hourly_wage"></label>
+        <label>Paid hours a year<input name="paid_hours_per_year" inputmode="decimal" value="{{ values.paid_hours_per_year or '' }}" placeholder="{{ '%.0f'|format(defaults.paid_hours_per_year|float) }}"></label>
+        <label>Vacation weeks<input name="vacation_weeks" inputmode="decimal" value="{{ values.vacation_weeks or '' }}" placeholder="{{ '%.0f'|format(defaults.vacation_weeks|float) }}"></label>
+        <label>Paid public holidays<input name="paid_holidays" inputmode="decimal" value="{{ values.paid_holidays or '' }}" placeholder="{{ '%.0f'|format(defaults.paid_holidays|float) }}"></label>
+      </div>
+    </fieldset>
+    <fieldset class="ts-group"><legend>Truck, tools and benefits</legend>
+      <div class="ts-row">
+        <label>Company truck a month ($)<input name="truck_monthly" inputmode="decimal" value="{{ values.truck_monthly or '' }}" placeholder="0"></label>
+        <label>Fuel a month ($)<input name="fuel_monthly" inputmode="decimal" value="{{ values.fuel_monthly or '' }}" placeholder="0"></label>
+        <label>Tool allowance a year ($, taxable)<input name="tool_allowance_annual" inputmode="decimal" value="{{ values.tool_allowance_annual or '' }}" placeholder="0"></label>
+        <label>Company RRSP (% of wages)<input name="rrsp_percent" inputmode="decimal" value="{{ values.rrsp_percent or '' }}" placeholder="0"></label>
+        <label>Health &amp; dental premium a month ($)<input name="health_premium_monthly" inputmode="decimal" value="{{ values.health_premium_monthly or '' }}" placeholder="0"></label>
+        <label>WSIB per $100 (blank: company {{ "%.2f"|format(wsib.rate|float) }})<input name="wsib_rate_per_100" inputmode="decimal" value="{{ values.wsib_rate_per_100 or '' }}"></label>
+      </div>
+    </fieldset>
+    {% if person %}<label>Reason for the change (optional)<input name="reason" maxlength="300"></label>{% endif %}
+    <div class="ts-actions">
+      <button type="submit" name="action" value="calculate" class="button-secondary" data-calculate>Calculate</button>
+      <button type="submit" name="action" value="save" class="button" data-save-cost-profile>{{ "Save the cost profile" if person else "Add the employee" }}</button>
+      <a href="{{ url_for('people_access.employees') }}">Back to Employees</a>
+    </div>
+  </form>
+
+  {% if preview %}{{ breakdown(preview, "Calculated (not saved yet)") }}{% endif %}
+  {% if current and not preview %}{{ breakdown(current, "Current cost profile") }}{% endif %}
+
+  {% if history %}
+  <div class="ts-details-grid">
+  {% call ts.details("Cost profile history", "ts-cost-history", hint=history|length ~ " saved") %}
+    <table class="ge-table" data-cost-history>
+      <tr><th>Saved</th><th>By</th><th class="num">Wage</th><th class="num">Annual cost</th><th class="num">Loaded rate</th><th>Reason</th></tr>
+      {% for h in history %}<tr><td>{{ h.created_at|local_time("%b %d, %Y") }}</td><td>{{ h.actor_name }}</td><td class="num">{{ money(h.hourly_wage) }}</td><td class="num">{{ money(h.annual_cost) }}</td><td class="num">{{ money(h.loaded_rate) }}</td><td>{{ h.reason or "" }}</td></tr>{% endfor %}
+    </table>
+  {% endcall %}
+  </div>
+  {% endif %}
+</div>
+<style>.llr-table td, .llr-table th { padding: 4px 8px; } .llr-table .num { text-align: right; white-space: nowrap; } .llr-total th { background: #FBF1D9; }</style>
+{% endblock %}

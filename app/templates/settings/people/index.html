@@ -12,6 +12,13 @@
     <a class="button-primary" href="{{ url_for('people_access.new') }}">Add a person</a>
 </section>
 
+{# Employees & labour cost (Joel, 2 Nov 2026): every employee needs a cost profile. #}
+{% set _cost = employee_cost_state() if employee_cost_state is defined else none %}
+<p class="people-employees-link" data-employees-link>
+    <a href="{{ url_for('people_access.employees') }}">Employees &amp; labour cost</a>
+    {% if _cost and _cost.missing %}<span class="status status-locked" data-cost-profile-required>{{ _cost.missing }} need{{ "s" if _cost.missing == 1 else "" }} a cost profile</span>{% endif %}
+</p>
+
 <div class="projects-workspace people-access-list">
     <div class="register-head">
         <span>Person</span>

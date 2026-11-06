@@ -24,6 +24,7 @@
         <tr><th>Method</th><td>{{ contractor_copy.pricing_method_label(policy.method) }}</td></tr>
         <tr><th>Target gross margin</th><td>{{ contractor_copy.stored_rate_percent(policy.target_gross_margin) if policy.target_gross_margin is not none else "—" }}</td></tr>
         <tr><th>Markup rate</th><td>{{ policy.markup_rate if policy.markup_rate is not none else "—" }}</td></tr>
+        {% if policy.method == "LABOUR_AT_RATE_MATERIAL_MARGIN" %}<tr><th>Subcontract markup</th><td data-subcontract-markup>{{ contractor_copy.stored_rate_percent(policy.subcontract_markup_rate or 0) }}</td></tr>{% endif %}
         <tr><th>Stack overhead %</th><td>{{ policy.stack_overhead_percent if policy.stack_overhead_percent is not none else "—" }}</td></tr>
         <tr><th>Stack profit %</th><td>{{ policy.stack_profit_percent if policy.stack_profit_percent is not none else "—" }}</td></tr>
         <tr><th>Overhead treatment</th><td>{{ contractor_copy.office_status_label(policy.overhead_treatment) }}</td></tr>

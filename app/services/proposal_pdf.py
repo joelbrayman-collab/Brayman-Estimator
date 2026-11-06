@@ -412,10 +412,13 @@ def _governed_scope_blocks(proposal, styles):
     return out
 
 
-def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
+def generate_proposal_pdf(proposal, *, valid_until=None, invariant: bool = False) -> BytesIO:
     """Build a PDF for ``proposal`` using snapshot values only.
 
     ``valid_until``: the date the client's copy shows (the link's governing date); default the proposal's.
+    ``invariant``: no creation time or random document id in the file, so the same content gives the same bytes (the
+    customer estimate frozen for Ben's approval, internal_approval.customer_estimate_pdf). Off by default: every
+    other caller gets exactly the file it always did.
     """
     brand = get_proposal_brand_render_context(proposal)
     primary = _parse_color(brand.primary_color, DEFAULT_PRIMARY_COLOR)
@@ -433,6 +436,7 @@ def generate_proposal_pdf(proposal, *, valid_until=None) -> BytesIO:
         bottomMargin=0.75 * inch,
         title=CUSTOMER_DOCUMENT_TITLE,
         author=brand.customer_facing_name or "Brayman Construction Platform",
+        **({"invariant": 1} if invariant else {}),
     )
 
     story = []

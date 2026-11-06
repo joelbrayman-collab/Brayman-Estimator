@@ -309,6 +309,11 @@ EXPECTED_PEOPLE_ACCESS_ENDPOINTS = {
     "people_access.administrator",
     "people_access.field_only",
     "people_access.check_email",  # Check delivery now (sign-in reliability, 26 Oct 2026)
+    # Employees & labour cost (Joel, 2 Nov 2026): cost profiles and the company WSIB rate, same owner wall.
+    "people_access.employees",
+    "people_access.employees_wsib",
+    "people_access.employee_new",
+    "people_access.employee",
 }
 
 
@@ -317,7 +322,8 @@ def test_people_access_pages_are_registered_and_never_public(app):
     assert endpoints == EXPECTED_PEOPLE_ACCESS_ENDPOINTS
     assert not any(_is_public(e) for e in endpoints)
     client = app.test_client()
-    for path, method in (("/settings/people", "GET"), ("/settings/people/new", "POST"), ("/settings/people/1/deactivate", "POST")):
+    for path, method in (("/settings/people", "GET"), ("/settings/people/new", "POST"), ("/settings/people/1/deactivate", "POST"),
+                         ("/settings/people/employees", "GET"), ("/settings/people/employees/1", "POST")):
         response = client.open(path, method=method)
         target, nxt = _next_of(response.headers.get("Location", ""))
         assert response.status_code == 302 and target == "/login" and nxt == [path], path

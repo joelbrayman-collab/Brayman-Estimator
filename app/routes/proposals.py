@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, session, url_for
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_file, session, url_for
 
 from app import db
 from app.models.estimate import Estimate
@@ -205,6 +205,30 @@ def _stamp_office_copy(pdf_bytes):
     return out.getvalue()
 
 
+def _customer_issue_context(proposal):
+    """Ben's approval of the customer estimate for issue (CaliSIGN internal approval, 3 Nov 2026)."""
+    from flask_login import current_user
+
+    from app.services import internal_approval as IA
+    from app.services.financial_access import can_issue_customer_estimate
+
+    org_id = get_current_organization_id()
+    if proposal.estimate is not None:  # review SF2: a signed copy whose filing failed is filed now
+        IA.file_missing_signed_copies(IA.customer_estimate_revisions(proposal.estimate))
+    status = None
+    try:
+        status = IA.customer_issue_status(proposal)
+    except Exception:  # noqa: BLE001 - the status line never breaks the proposal page
+        current_app.logger.exception("Customer issue status not available for proposal %s", proposal.id)
+    rows = []
+    if proposal.estimate is not None:
+        rows = [{"revision": r, "status": IA.status_of(r)}
+                for r in reversed(IA.customer_estimate_revisions(proposal.estimate)) if r.proposal_id == proposal.id]
+    return {"customer_issue": status, "customer_issue_revisions": rows,
+            "customer_issue_can_act": can_issue_customer_estimate(current_user, org_id),
+            "customer_issue_freezable": proposal.status in IA.CUSTOMER_ESTIMATE_FREEZABLE}
+
+
 def _flow_context(proposal):
     """Send-to-client and acceptance state for the proposal page."""
     link_url = None
@@ -218,6 +242,7 @@ def _flow_context(proposal):
         "decline": decline_for(proposal),
         "acceptance_channels": OFFICE_ACCEPTANCE_CHANNELS,
         "signed_off": bool(proposal.estimate_version and proposal.estimate_version.signed_off_at),
+        **_customer_issue_context(proposal),
     }
 
 
@@ -674,7 +699,101 @@ def send_to_client(id):
     session["proposal_link_for"] = proposal.id
     session["proposal_link_url"] = public_signing_url(sent.path)
     flash(f"Proposal sent to {sent.link.sent_to_name} ({sent.link.sent_to_email}).", "success")
+    if sent.validity_note:
+        flash(sent.validity_note, "success")
+    if sent.authorization is not None:
+        flash(f"Customer issue: {sent.authorization['label']}.",
+              "success" if sent.authorization.get("authorized") else "warning")
     return redirect(url_for("proposals.view_proposal", id=proposal.id) + "#client-acceptance")
+
+
+# ------------------------------------------------------------------ Ben's approval for customer issue (3 Nov 2026)
+def _require_customer_estimate_access():
+    from flask_login import current_user
+
+    from app.services.financial_access import can_issue_customer_estimate
+
+    if not can_issue_customer_estimate(current_user, get_current_organization_id()):
+        abort(403)
+
+
+def _customer_estimate_revision_or_404(proposal, revision_id):
+    from app.models.internal_summary import DOCUMENT_TYPE_CUSTOMER_ESTIMATE, InternalSummaryRevision
+
+    revision = InternalSummaryRevision.query.filter_by(
+        id=revision_id, organization_id=get_current_organization_id(), proposal_id=proposal.id,
+        document_type=DOCUMENT_TYPE_CUSTOMER_ESTIMATE).first()
+    if revision is None:
+        abort(404)
+    return revision
+
+
+@proposals_bp.route("/proposals/<int:id>/customer-issue/freeze", methods=["POST"])
+def freeze_customer_estimate_route(id):
+    """Freeze the exact customer estimate PDF as the estimate's next REV, for Ben's approval."""
+    from flask_login import current_user
+
+    from app.services import internal_approval as IA
+
+    _require_customer_estimate_access()
+    proposal = _get_scoped_proposal_or_404(id)
+    try:
+        revision = IA.freeze_customer_estimate(proposal, user=current_user._get_current_object())
+        flash(f"Customer estimate {revision.label} frozen. Send it for approval before it is issued to the customer.",
+              "success")
+    except IA.InternalApprovalError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id) + "#customer-issue-approval")
+
+
+@proposals_bp.route("/proposals/<int:id>/customer-issue/<int:revision_id>/send", methods=["POST"])
+def send_customer_estimate_for_approval(id, revision_id):
+    """Send customer estimate REVn to the approver by the normal CaliSIGN one-time email link."""
+    from flask_login import current_user
+
+    from app.services import internal_approval as IA
+
+    _require_customer_estimate_access()
+    proposal = _get_scoped_proposal_or_404(id)
+    revision = _customer_estimate_revision_or_404(proposal, revision_id)
+    try:
+        issue = IA.send_for_internal_approval(revision, user=current_user._get_current_object(),
+                                              approver_name=request.form.get("approver_name", ""),
+                                              approver_email=request.form.get("approver_email", ""))
+        flash(f"Customer estimate {revision.label} sent to {issue.request.participants[0].invited_email} for "
+              f"approval ({issue.request.request_number}).", "success")
+    except IA.InternalApprovalError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    except Exception as exc:  # noqa: BLE001 - a signing-engine refusal is shown, nothing half-done is kept
+        db.session.rollback()
+        flash(f"Not sent: {getattr(exc, 'code', exc)}", "error")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id) + "#customer-issue-approval")
+
+
+@proposals_bp.route("/proposals/<int:id>/customer-issue/<int:revision_id>.pdf")
+def customer_estimate_revision_pdf(id, revision_id):
+    """Customer estimate REVn's exact frozen PDF (the signed copy once approved), for the office."""
+    from flask import Response
+
+    from app.services import internal_approval as IA
+    from app.services.signing import retrieve_executed_artifact_bytes, retrieve_frozen_artifact_bytes
+
+    _require_customer_estimate_access()
+    proposal = _get_scoped_proposal_or_404(id)
+    revision = _customer_estimate_revision_or_404(proposal, revision_id)
+    state = IA.status_of(revision)
+    if state["state"] == "approved":
+        data = retrieve_executed_artifact_bytes(state["request"].id, revision.organization_id)
+    else:
+        artifact = IA.frozen_artifact(revision)
+        if artifact is None:
+            abort(404)
+        data = retrieve_frozen_artifact_bytes(artifact)
+    return Response(data, mimetype="application/pdf",
+                    headers={"Content-Disposition": f'inline; filename="Customer_Estimate_{revision.label}.pdf"',
+                             "Cache-Control": "no-store"})
 
 
 @proposals_bp.route("/proposals/<int:id>/record-acceptance", methods=["POST"])

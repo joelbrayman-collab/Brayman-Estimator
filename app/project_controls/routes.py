@@ -44,6 +44,14 @@ CHANGE_ORDER_PROJECT_MISMATCH = "That project is not the project for this change
 project_controls_bp = Blueprint("project_controls", __name__)
 
 
+@project_controls_bp.context_processor
+def _change_order_cost_kinds():
+    """The cost types a change-order line can have (ruling 4, 2 Nov 2026): the estimate engine's own."""
+    from app.services.pricing_engine import COST_KIND_LABELS, COST_KINDS
+
+    return {"cost_kind_options": [(k, COST_KIND_LABELS[k]) for k in COST_KINDS], "cost_kind_labels": COST_KIND_LABELS}
+
+
 def _signer_prefill(change_order, organization_id):
     """The customer who accepted this project's proposal, to fill in the change order signer
     (as the contract form already does). Read-only; the office can change both fields."""
@@ -549,6 +557,7 @@ def add_item(id):
             unit=request.form.get("unit") or "ea",
             unit_price=request.form.get("unit_price") or 0,
             guided_stage_id=request.form.get("guided_stage_id", type=int) or None,
+            cost_kind=request.form.get("cost_kind", ""),
         )
     except ChangeOrderServiceError as exc:
         flash(str(exc), "error")
@@ -578,6 +587,7 @@ def edit_item(id, item_id):
             quantity=request.form.get("quantity"),
             unit=request.form.get("unit"),
             unit_price=request.form.get("unit_price"),
+            cost_kind=request.form.get("cost_kind", "") if "cost_kind" in request.form else Ellipsis,
         )
     except ChangeOrderServiceError as exc:
         flash(str(exc), "error")

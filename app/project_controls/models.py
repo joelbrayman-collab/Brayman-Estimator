@@ -140,6 +140,9 @@ class ChangeOrderItem(db.Model):
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     # Change control by work package (30 Oct 2026): the package the change belongs to (plain integer).
     guided_stage_id = db.Column(db.Integer, nullable=True, index=True)
+    # The cost type (ruling 4, 2 Nov 2026): labour, material, subcontract, equipment, delivery, other or passthrough,
+    # priced by the same engine rules as the estimate. None: unclassified (the generic change-order rule).
+    cost_kind = db.Column(db.String(20), nullable=True)
 
     change_order = db.relationship("ChangeOrder", back_populates="items")
 

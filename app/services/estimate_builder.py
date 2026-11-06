@@ -576,6 +576,7 @@ def clone_sections_to_version(source_version, target_version):
                 sell_price=as_decimal(item.sell_price),
                 notes=item.notes,
                 costing_source_kind=item.costing_source_kind,
+                pricing_treatment=item.pricing_treatment,
                 library_unit_cost_reference=item.library_unit_cost_reference,
                 costing_override_reason=item.costing_override_reason,
                 costing_override_by=item.costing_override_by,

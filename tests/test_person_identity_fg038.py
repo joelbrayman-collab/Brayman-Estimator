@@ -619,13 +619,18 @@ def test_live_db_person_foundation_occupancy():
 
 
 def test_no_people_ui_routes():
+    """Changed deliberately (Joel, 2 Nov 2026: Ben enters every employee with a cost profile). The only route that
+    creates a Person is the Employees page in People & Access (app/routes/people_access.py), behind the owner /
+    System Administrator wall; no route reads the wage through get_person_hourly_wage."""
     routes_root = REPO_ROOT / "app" / "routes"
     hits = []
     for path in routes_root.rglob("*.py"):
         text = path.read_text(encoding="utf-8")
-        if "create_person(" in text or "get_person_hourly_wage(" in text:
+        if "get_person_hourly_wage(" in text or ("create_person(" in text and path.name != "people_access.py"):
             hits.append(str(path))
     assert hits == []
+    people = (routes_root / "people_access.py").read_text(encoding="utf-8")
+    assert "require_instance_owner_or_system_administrator()" in people.split("def _org", 1)[0]
 
 
 def test_migration_file_additive_no_seed():
@@ -667,7 +672,7 @@ def test_alembic_pac_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["t7a8b9c0d1e2"]
+        assert script.get_heads() == ["u8b9c0d1e2f3"]
 
         command.upgrade(alembic_cfg, "f6a7b8c9d0e1")
         engine = db.engine
@@ -713,8 +718,8 @@ def test_alembic_pac_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["t7a8b9c0d1e2"]
-            assert script.get_heads() == ["t7a8b9c0d1e2"]
+            assert [row[0] for row in heads] == ["u8b9c0d1e2f3"]
+            assert script.get_heads() == ["u8b9c0d1e2f3"]
             row_count = conn.execute(
                 sa.text("SELECT COUNT(*) FROM organization_people")
             ).scalar()

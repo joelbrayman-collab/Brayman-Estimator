@@ -7,6 +7,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import pytest
+
 from app import create_app, db
 from app.models.client import Client
 from app.models.estimate import Estimate, EstimateLineItem
@@ -35,7 +37,11 @@ PRESERVED = {
 }
 
 
-def _app():
+@pytest.fixture
+def calculator_app():
+    """A test app whose context is popped afterwards (6 Nov 2026: _app() pushed a context and never popped it, so
+    the app outlived its test and every later test in the same worker ran inside it; its temporary folders were
+    still in the temporary folder after a parallel run)."""
     application = create_app(
         {
             "TESTING": True,
@@ -47,7 +53,9 @@ def _app():
     context.push()
     db.create_all()
     ensure_default_organization()
-    return application
+    yield application
+    db.session.remove()
+    context.pop()
 
 
 def test_preserved_employment_files_match_the_recovered_archive():
@@ -78,8 +86,8 @@ def test_employment_calculator_is_in_the_calculators_section():
     ]
 
 
-def test_employment_calculator_requires_office_sign_in():
-    application = _app()
+def test_employment_calculator_requires_office_sign_in(calculator_app):
+    application = calculator_app
     client = application.test_client()
     anonymous = client.get("/calculators/employment-vs-entrepreneurship")
     assert anonymous.status_code == 302
@@ -88,8 +96,8 @@ def test_employment_calculator_requires_office_sign_in():
     db.drop_all()
 
 
-def test_signed_in_contractor_opens_the_preserved_page_without_a_project():
-    application = _app()
+def test_signed_in_contractor_opens_the_preserved_page_without_a_project(calculator_app):
+    application = calculator_app
     client = application.test_client()
     ensure_office_user()
     login_office_user(client)

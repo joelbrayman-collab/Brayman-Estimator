@@ -357,3 +357,16 @@ def test_every_page_server_removes_its_temporary_files_when_stopped():
             assert main.index("server_cleanup.install()") < main.index("main()"), server.name
         else:
             assert text.index("server_cleanup.install()") < text.index("create_app("), server.name
+
+
+def test_every_pushed_app_context_is_popped():
+    """6 Nov 2026: three calculator test files pushed an app context in a helper and never popped it, so each app
+    outlived its test, later tests in the same xdist worker ran inside it, and its eleven temporary folders were still
+    there after the run. Every test file pops what it pushes."""
+    import re
+
+    for path in sorted((ROOT / "tests").glob("test_*.py")):
+        code = "\n".join(l for l in path.read_text().splitlines() if not l.lstrip().startswith("#"))
+        pushes = len(re.findall(r"\b(context|ctx)\.push\(\)", code))
+        pops = len(re.findall(r"\b(context|ctx)\.pop\(\)", code))
+        assert pops >= pushes, f"{path.name}: {pushes} push, {pops} pop"

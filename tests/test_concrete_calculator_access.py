@@ -6,6 +6,8 @@ import hashlib
 import shutil
 from pathlib import Path
 
+import pytest
+
 from app import create_app, db
 from app.models.estimate import EstimateLineItem
 from app.services.organizations import ensure_default_organization
@@ -32,7 +34,11 @@ PRESERVED_ENGINE_SHA256 = (
 )
 
 
-def _app():
+@pytest.fixture
+def calculator_app():
+    """A test app whose context is popped afterwards (6 Nov 2026: _app() pushed a context and never popped it, so
+    the app outlived its test and every later test in the same worker ran inside it; its temporary folders were
+    still in the temporary folder after a parallel run)."""
     application = create_app(
         {
             "TESTING": True,
@@ -44,7 +50,9 @@ def _app():
     context.push()
     db.create_all()
     ensure_default_organization()
-    return application
+    yield application
+    db.session.remove()
+    context.pop()
 
 
 def test_preserved_concrete_engine_matches_the_recovered_source():
@@ -70,8 +78,8 @@ def test_office_bundle_is_the_preserved_engine_not_a_python_formula():
     assert "form.elements.length" not in adapter
 
 
-def test_concrete_calculator_requires_office_sign_in():
-    application = _app()
+def test_concrete_calculator_requires_office_sign_in(calculator_app):
+    application = calculator_app
     client = application.test_client()
     anonymous = client.get("/calculators/concrete")
     assert anonymous.status_code == 302
@@ -80,8 +88,8 @@ def test_concrete_calculator_requires_office_sign_in():
     db.drop_all()
 
 
-def test_signed_in_contractor_can_open_concrete_without_a_project():
-    application = _app()
+def test_signed_in_contractor_can_open_concrete_without_a_project(calculator_app):
+    application = calculator_app
     client = application.test_client()
     ensure_office_user()
     login_office_user(client)

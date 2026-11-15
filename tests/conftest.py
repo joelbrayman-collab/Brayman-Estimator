@@ -135,3 +135,21 @@ def _authenticate_office_http_client(request):
     with app.app_context():
         ensure_office_user()
     login_office_user(client)
+
+
+@pytest.fixture
+def morning_clock(monkeypatch):
+    """The office clock at 09:00 company time today (Joel, 15 Nov 2026).
+
+    Home turns from Today to Tomorrow at 14:00, so a test that expects today's work on Home must not depend on
+    the hour it happens to run. This freezes the one clock the date rules read, nothing else.
+    """
+    from datetime import datetime, timezone
+
+    from app.services import local_time
+
+    today = local_time.local_today()
+    stamp = (datetime(today.year, today.month, today.day, 9, 0, tzinfo=local_time.company_timezone())
+             .astimezone(timezone.utc).replace(tzinfo=None))
+    monkeypatch.setattr(local_time, "utc_now", lambda: stamp)
+    return stamp

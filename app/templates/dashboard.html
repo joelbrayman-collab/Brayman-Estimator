@@ -25,7 +25,7 @@
 <section class="hc-top" data-home-top>
     <div class="hc-hello">
         {% if view.first_name %}
-        <h2 class="home-greeting">Good morning, {{ view.first_name }}.</h2>
+        <h2 class="home-greeting" data-home-greeting>{{ view.greeting }}, {{ view.first_name }}.</h2>
         {% else %}
         <h2 class="home-greeting">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
         {% endif %}
@@ -34,22 +34,17 @@
     </div>
 </section>
 
-{# Task-First Home (31 Oct 2026): 1. What needs your attention (the top items, each with one task button) 2. Start
-   something 3. Today on site and the coming days. Failed crew texts are an attention item now, not a banner. #}
-{% if attention and not attention.hidden %}{% include "operations/_home_attention.html" %}{% endif %}
-{% include "wizards/_home_strip.html" %}
-{% include "wizards/_home_resume.html" %}
-{# One Attention list (Project Creation UX, 27 Oct 2026): the Company Attention facts this column repeated are already in
+{# Joel, 15 Nov 2026: what is going on comes first (Today, and from 14:00 Tomorrow). One Attention list (Project Creation UX, 27 Oct 2026): the Company Attention facts this column repeated are already in
    WHAT NEEDS MY ATTENTION? above for the people who may see them. #}
 <section class="home-briefing hc-briefing" aria-label="Today and coming days">
     <div>
-        <h2>{{ contractor_copy.HOME_TODAY }} <span class="home-briefing-count{% if view.briefing.today_empty %} is-zero{% endif %}">{{ view.briefing.today_work|length }}</span></h2>
-        <p class="muted-copy">{{ view.briefing.today_label }}</p>
-        {% if view.briefing.today_empty %}
-        <p class="home-briefing-empty">{{ contractor_copy.HOME_TODAY_EMPTY }}</p>
+        <h2 data-home-focus="{{ 'tomorrow' if view.briefing.focus_is_tomorrow else 'today' }}">{{ contractor_copy.HOME_TOMORROW if view.briefing.focus_is_tomorrow else contractor_copy.HOME_TODAY }} <span class="home-briefing-count{% if view.briefing.focus_empty %} is-zero{% endif %}">{{ view.briefing.focus_work|length }}</span></h2>
+        <p class="muted-copy">{{ view.briefing.focus_label }}</p>
+        {% if view.briefing.focus_empty %}
+        <p class="home-briefing-empty">{{ contractor_copy.HOME_TOMORROW_EMPTY if view.briefing.focus_is_tomorrow else contractor_copy.HOME_TODAY_EMPTY }}</p>
         {% else %}
         <ul>
-            {% for row in view.briefing.today_work %}
+            {% for row in view.briefing.focus_work %}
             <li><a href="{{ url_for('projects.view_project', id=row.project_id) }}">{{ row.label }}</a></li>
             {% endfor %}
         </ul>
@@ -71,6 +66,13 @@
         {% endif %}
     </div>
 </section>
+
+{# Task-First Home (31 Oct 2026): 1. What needs your attention (the top items, each with one task button) 2. Start
+   something 3. Today on site and the coming days. Failed crew texts are an attention item now, not a banner. #}
+{% if attention and not attention.hidden %}{% include "operations/_home_attention.html" %}{% endif %}
+{% include "wizards/_home_strip.html" %}
+{% include "wizards/_home_resume.html" %}
+
 
 {# The pulse counts are reference, not decisions: kept, closed until asked for. #}
 <details class="ts-details home-counts-details" data-home-counts>

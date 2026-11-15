@@ -2637,4 +2637,13 @@ body.login-page {
 .plan-start-options input:checked + label { border-color: #c99220; box-shadow: inset 0 -3px 0 #c99220; background: #fff9ec; }
 .plan-start-options input:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
 .plan-start-file { margin: 14px 0 0; }
-.plan-start:not(:has(#plan-start-upload:checked)) .plan-start-file { display: none; }
+.plan-start:not(:has(#plan-start-upload:checked)) .plan-start-file,
+.plan-start:not(:has(#plan-start-upload:checked)) .plan-start-details { display: none; }
+.plan-drop-hint { margin: 10px 0 0; }
+.plan-drop-status { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.plan-start-details { margin-top: 10px; }
+.su-from-plan { background: #fff9ec; box-shadow: inset 0 0 0 2px #c99220; }
+.su-form.is-dropping { outline: 3px dashed #c99220; outline-offset: 6px; }
+/* The Set Up This Project sections are numbered, like AiRIA's Open a New Case steps (15 Nov 2026). */
+.su-form { counter-reset: su-step; }
+.su-form .su-section > legend::before { counter-increment: su-step; content: counter(su-step); display: inline-block; min-width: 1.5em; height: 1.5em; line-height: 1.5em; margin-right: 8px; text-align: center; border-radius: 50%; background: #1f3a5f; color: #fff; font-size: .8em; }

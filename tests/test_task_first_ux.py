@@ -451,7 +451,8 @@ def test_home_and_the_full_list_are_one_list_including_company_facts(client, app
     for provider in shown:
         assert f'data-attention-provider="{provider}"' in full
     assert 'data-company-attention-details' in full  # the labour facts, job by job, for Company Management
-    assert home.index("data-needs-attention") < home.index("data-wizard-home") < home.index("Today and coming days")
+    # Joel, 15 Nov 2026: Today (Tomorrow after 14:00) comes first, then attention, then the guided starts.
+    assert home.index("Today and coming days") < home.index("data-needs-attention") < home.index("data-wizard-home")
     assert "Start something" in home and "Guided Wizards" not in home
 
 

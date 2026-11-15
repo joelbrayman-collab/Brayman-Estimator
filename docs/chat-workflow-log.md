@@ -14670,3 +14670,13 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | Docs only: [governance/estimate-approval-and-commercial-gates.md](governance/estimate-approval-and-commercial-gates.md). No product code, no migration, no deploy |
 | Tests | None (docs only) |
 | Commit hash | See git log |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-11-15 |
+| Branch | `fix/real-plan-observations-2026-11-15` |
+| Objective | Fix the six observations from Joel's first real plan (BC-2026-0004) |
+| Business decision | Joel 15 Nov: fix all six; no migration; deploy through the release gate |
+| Implementation result | See [ux/real-plan-observations-2026-11-15.md](ux/real-plan-observations-2026-11-15.md) |
+| Tests | See final report |
+| Commit hash | See git log |

@@ -32,7 +32,7 @@ PROJECT_TYPE_LABELS = {
     PROJECT_ADDITION: "Addition / Renovation",
     PROJECT_GARAGE: "Garage / Outbuilding",
     PROJECT_FOUNDATION: "Foundation Only",
-    PROJECT_OTHER: "Other project",
+    PROJECT_OTHER: "Custom project",
 }
 
 ROLE_GENERAL_CONTRACTOR = "GENERAL_CONTRACTOR"

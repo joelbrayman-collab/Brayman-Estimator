@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 
 from app.services.local_time import local_today
@@ -580,6 +580,10 @@ def create_project():
             "justification_reason": request.form.get("justification_reason", "").strip(),
             "change_summary": "Initial project commercial decision gate",
         }
+        if (request.form.get("guided_project_type") or "").strip() == "OTHER" and not (request.form.get("description") or "").strip():
+            # Custom project (Joel, 15 Nov 2026): a unique job has no standard type, so it is described in words.
+            flash("Describe this custom project: say what is being built.", "error")
+            return _wizard_create_failed(wizard_run) or _form_again()
         if wizard_run is None:
             # Set Up This Project (Slice C): a setting left out is filled in from the company defaults, and the
             # commercial project type from what is being built. A value that was sent is validated as before.
@@ -830,6 +834,20 @@ def _guided_after_create(project, org_id, options):
     return None
 
 
+@projects_bp.route("/plan-details", methods=["POST"])
+def plan_details():
+    """What a dropped plan PDF says about the job (Joel, 15 Nov 2026): suggestions only, nothing is saved here."""
+    from app.plan_intelligence.services import PDF_MAGIC, get_max_upload_bytes
+    from app.plan_intelligence.title_block import read_plan_details
+
+    file_storage = request.files.get("plan_file")
+    data = file_storage.read(get_max_upload_bytes() + 1) if file_storage is not None else b""
+    if not data or not data.startswith(PDF_MAGIC) or len(data) > get_max_upload_bytes():
+        return jsonify({"ok": False, "message": "Choose a PDF plan."}), 400
+    details = read_plan_details(data)
+    return jsonify({"ok": True, "details": details, "found": any(details.values())})
+
+
 def _plan_start_after_create(project, org_id):
     """New project, step two (23 Oct 2026): upload the plan PDF now, or go straight to the drawing tools.
 
@@ -862,6 +880,19 @@ def _plan_start_after_create(project, org_id):
     except PlanIntelligenceServiceError as exc:
         flash(f"The project was saved, but the plan was not uploaded: {exc}", "error")
         return redirect(url_for("plan_intelligence.upload_plan", project_id=project.id))
+    except Exception:  # the project is already saved and committed: a plan problem never reads as a failed project
+        current_app.logger.exception("Plan upload failed after project %s was created", project.id)
+        db.session.rollback()
+        flash("The project was saved, but the plan was not uploaded. Try the upload again from the project's plan page.",
+              "error")
+        return redirect(url_for("plan_intelligence.upload_plan", project_id=project.id))
+    from app.plan_intelligence.services import record_plan_details
+
+    try:
+        record_plan_details(document, designer=request.form.get("plan_designer"), version=request.form.get("plan_version"))
+    except Exception:  # the plan is saved; the two optional details can be added again from the plan page
+        current_app.logger.exception("Plan details were not recorded for project %s", project.id)
+        db.session.rollback()
     flash("Plan PDF uploaded.", "success")
     return redirect(url_for("plan_intelligence.view_plan", project_id=project.id, document_id=document.id))
 

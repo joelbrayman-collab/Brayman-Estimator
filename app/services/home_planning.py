@@ -214,6 +214,10 @@ def _selected_detail(selected: date, items: list[dict], conflicts: list[dict]) -
     }
 
 
+
+TOMORROW_FROM_HOUR = 14  # company time: from then the Home panel shows Tomorrow instead of Today
+
+
 def _home_briefing(today: date, item_rows: list[dict], attention_items: list[dict], can_attention: bool) -> dict:
     """Project Today, attention, and the next seven days from rows already read."""
 
@@ -231,8 +235,15 @@ def _home_briefing(today: date, item_rows: list[dict], attention_items: list[dic
         }
 
     today_work = [work_line(row) for row in covering(today)]
+    # Joel, 15 Nov 2026: the first thing Ben looks at is what is going on. From 14:00 (company time) the working day
+    # is over, so that panel turns to Tomorrow; the coming days then start after tomorrow.
+    from app.services.local_time import local_now
+
+    after_cutoff = local_now().hour >= TOMORROW_FROM_HOUR
+    focus_day = today + timedelta(days=1) if after_cutoff else today
+    focus_work = [work_line(row) for row in covering(focus_day)]
     coming = []
-    for offset in range(1, 8):
+    for offset in range(2 if after_cutoff else 1, 8):
         day = today + timedelta(days=offset)
         rows = covering(day)
         if not rows:
@@ -256,6 +267,10 @@ def _home_briefing(today: date, item_rows: list[dict], attention_items: list[dic
                 }
             )
     return {
+        "focus_is_tomorrow": after_cutoff,
+        "focus_label": focus_day.strftime("%A") + " " + str(focus_day.day) + " " + focus_day.strftime("%B"),
+        "focus_work": focus_work,
+        "focus_empty": not focus_work,
         "today_label": today.strftime("%A") + " " + str(today.day) + " " + today.strftime("%B"),
         "today_work": today_work,
         "today_empty": not today_work,
@@ -636,6 +651,10 @@ def assemble_home_planning(
     if getattr(user, "is_authenticated", False):
         display_name = getattr(user, "display_name", "") or ""
     first_name = display_name.split()[0] if display_name else ""
+    from app.services.local_time import local_now
+
+    hour = local_now().hour  # the greeting follows the clock in the office's time zone, never a fixed word
+    greeting = "Good morning" if hour < 12 else "Good afternoon" if hour < 17 else "Good evening"
 
     current_ids = {project.id for project in projects}
     briefing = _home_briefing(
@@ -688,6 +707,7 @@ def assemble_home_planning(
         "prev": {"year": prev_month.year, "month": prev_month.month},
         "next": {"year": next_month.year, "month": next_month.month},
         "first_name": first_name,
+        "greeting": greeting,
         "has_scheduled_work": bool(item_rows) or bool(appointments),
         "week_dates": [week_start + timedelta(days=offset) for offset in range(7)],
     }

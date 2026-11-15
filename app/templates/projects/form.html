@@ -99,9 +99,9 @@
             {% endfor %}
         </fieldset>
         <details class="ts-optional su-more" data-su-description{% if v.get('description') %} open{% endif %}>
-            <summary>Add a description <span class="muted-copy">(optional)</span></summary>
+            <summary><span data-su-description-title>Add a description</span> <span class="muted-copy" data-su-description-hint>(optional)</span></summary>
             <label class="visually-hidden" for="su-description">Description (optional)</label>
-            <textarea id="su-description" name="description" rows="2">{{ v.get('description', '') }}</textarea>
+            <textarea id="su-description" name="description" rows="3" data-su-description-box>{{ v.get('description', '') }}</textarea>
         </details>
     </fieldset>
 
@@ -133,10 +133,16 @@
             <input type="radio" id="plan-start-later" name="plan_start" value="later" {% if v.get('plan_start', 'later') == 'later' %}checked{% endif %}>
             <label for="plan-start-later" title="Add a plan from the project page."><i class="bi bi-clock" aria-hidden="true"></i><strong>Later</strong><span>Add a plan from the project page.</span></label>
         </div>
-        <label class="plan-start-file" data-plan-start-file>
+        <p class="muted-copy plan-drop-hint" data-plan-drop-hint><i class="bi bi-box-arrow-in-down" aria-hidden="true"></i> Drag the plan PDF onto this screen, or choose it below. Calibrayt reads the address, designer and plan version from it for you to check.</p>
+        <label class="plan-start-file" data-plan-start-file data-plan-drop>
             Plan PDF
             <input type="file" name="plan_file" accept="application/pdf,.pdf">
+            <span class="plan-drop-status" data-plan-drop-status role="status" aria-live="polite"></span>
         </label>
+        <div class="form-grid ts-row plan-start-details" data-plan-details>
+            <label>Designer <span class="muted-copy">(optional)</span> <input type="text" name="plan_designer" value="{{ v.get('plan_designer', '') }}" maxlength="120" data-plan-field="designer"></label>
+            <label>Plan version <span class="muted-copy">(optional)</span> <input type="text" name="plan_version" value="{{ v.get('plan_version', '') }}" maxlength="50" data-plan-field="version"></label>
+        </div>
     </fieldset>
 
     {% call ts.details("Adjust project settings", "ts-project-settings", hint="Filled in from your company defaults", open=_settings_open) %}
@@ -300,6 +306,103 @@
         box.addEventListener("change", apply);
         select.addEventListener("change", function () { if (box.checked) apply(); });
     }
+})();
+</script>
+<script>
+/* Drag the plan in (Joel, 15 Nov 2026). Dropping a PDF anywhere on this screen chooses "Upload plan", puts the file in
+   the Plan PDF box and asks the server what the title block says. The answer fills only boxes that are empty, marks
+   them "Read from the plan", and changes nothing else: the person checks and edits, and nothing is saved until
+   Create the project. Choosing the file with the button does the same. */
+(function () {
+    var form = document.querySelector("[data-set-up-form]");
+    if (!form) return;
+    var input = form.querySelector('input[name="plan_file"]');
+    var upload = form.querySelector("#plan-start-upload");
+    var status = form.querySelector("[data-plan-drop-status]");
+    var token = form.querySelector('input[name="csrf_token"]');
+    var fields = {street: "street", municipality: "municipality", province_state: "province_state",
+                  postal_zip: "postal_zip", designer: "plan_designer", version: "plan_version"};
+    if (!input || !upload) return;
+    function say(text) { if (status) status.textContent = text; }
+    function fill(details) {
+        var filled = [];
+        Object.keys(fields).forEach(function (key) {
+            var box = form.querySelector('[name="' + fields[key] + '"]');
+            var value = details && details[key];
+            if (!box || !value || box.value.trim() !== "") return;
+            if (key === "province_state") return; // "Ontario" is pre-filled; only a blank box is ever filled
+            box.value = value;
+            box.classList.add("su-from-plan");
+            box.dispatchEvent(new Event("input", {bubbles: true}));
+            filled.push(key);
+        });
+        say(filled.length ? "Read from the plan: " + filled.map(function (k) { return k.replace("_", " "); }).join(", ") +
+            ". Check these before you create the project." : "Nothing could be read from this plan. Fill the boxes in yourself.");
+    }
+    function read(file) {
+        if (!token || !window.fetch || !window.FormData) return;
+        var data = new FormData();
+        data.append("csrf_token", token.value);
+        data.append("plan_file", file);
+        fetch("/projects/plan-details", {method: "POST", body: data, credentials: "same-origin"})
+            .then(function (r) { return r.json(); })
+            .then(function (j) { if (j && j.ok) fill(j.details); else say("Fill the boxes in yourself."); })
+            .catch(function () { say("The plan could not be read here. Fill the boxes in yourself."); });
+    }
+    function chosen(file) {
+        if (!file) return;
+        upload.checked = true;
+        upload.dispatchEvent(new Event("change", {bubbles: true}));
+        say("Plan chosen: " + file.name + ". Reading it...");
+        read(file);
+    }
+    function isPdf(file) { return file && (file.type === "application/pdf" || /\.pdf$/i.test(file.name || "")); }
+    input.addEventListener("change", function () { chosen(input.files && input.files[0]); });
+    ["dragenter", "dragover"].forEach(function (name) {
+        form.addEventListener(name, function (event) {
+            if (!event.dataTransfer || Array.prototype.indexOf.call(event.dataTransfer.types || [], "Files") < 0) return;
+            event.preventDefault();
+            form.classList.add("is-dropping");
+        });
+    });
+    form.addEventListener("dragleave", function (event) { if (event.target === form) form.classList.remove("is-dropping"); });
+    form.addEventListener("drop", function (event) {
+        form.classList.remove("is-dropping");
+        var files = event.dataTransfer && event.dataTransfer.files;
+        if (!files || !files.length) return;
+        event.preventDefault();
+        var file = files[0];
+        if (!isPdf(file)) { say("Only a PDF plan can be added here."); return; }
+        try {
+            var transfer = new DataTransfer();
+            transfer.items.add(file);
+            input.files = transfer.files;
+        } catch (error) { say("Choose the plan with the button below."); return; }
+        chosen(file);
+    });
+})();
+</script>
+<script>
+/* Custom project (Joel, 15 Nov 2026): choosing "Custom project" opens the description box and asks for it, because a
+   unique job is described in words (for example "Foundation, ICF main walls and concrete work"). The server refuses a
+   custom project without a description as well. */
+(function () {
+    var select = document.querySelector("[data-guided-project-type]");
+    var details = document.querySelector("[data-su-description]");
+    var box = document.querySelector("[data-su-description-box]");
+    if (!select || !details || !box) return;
+    var title = details.querySelector("[data-su-description-title]");
+    var hint = details.querySelector("[data-su-description-hint]");
+    function apply() {
+        var custom = select.value === "OTHER";
+        box.required = custom;
+        box.placeholder = custom ? "Describe the project, e.g. Foundation, ICF main walls and concrete work" : "";
+        if (title) title.textContent = custom ? "Describe this project *" : "Add a description";
+        if (hint) hint.hidden = custom;
+        if (custom) { details.open = true; if (!box.value) box.focus(); }
+    }
+    select.addEventListener("change", apply);
+    apply();
 })();
 </script>
 {% endblock %}

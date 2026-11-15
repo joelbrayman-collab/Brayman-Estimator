@@ -6,7 +6,6 @@ from io import BytesIO
 from typing import Any, Dict, List
 
 from pypdf import PdfReader
-from pypdf.errors import PdfReadError
 
 
 EXTRACTOR_NAME = "deterministic_pdf"
@@ -31,7 +30,11 @@ def extract_deterministic_pdf(data: bytes) -> Dict[str, Any]:
     """
     try:
         reader = PdfReader(BytesIO(data))
-    except PdfReadError as exc:
+        if reader.is_encrypted and not reader.decrypt(""):
+            raise ExtractionError("This PDF needs a password to open.")
+    except ExtractionError:
+        raise
+    except Exception as exc:  # PdfReadError, or a protection this server cannot open
         raise ExtractionError("Could not read PDF for indexing.") from exc
 
     meta = reader.metadata

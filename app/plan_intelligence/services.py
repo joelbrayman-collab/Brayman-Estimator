@@ -9,7 +9,6 @@ from io import BytesIO
 from typing import Optional
 
 from pypdf import PdfReader
-from pypdf.errors import PdfReadError
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -55,12 +54,19 @@ def _detect_pdf_properties(data: bytes):
     """Return (page_count, has_text_layer) for upload-time quick detect."""
     try:
         reader = PdfReader(BytesIO(data))
-    except PdfReadError as exc:
+        if reader.is_encrypted and not reader.decrypt(""):
+            # Opens only with a password: say so plainly (a designer's lock), never a library error.
+            raise PlanIntelligenceServiceError(
+                "This PDF needs a password to open. Save an unprotected copy of the plan and upload that."
+            )
+        page_count = len(reader.pages)
+    except PlanIntelligenceServiceError:
+        raise
+    except Exception as exc:  # unreadable, damaged or protected in a way this server cannot open
         raise PlanIntelligenceServiceError(
-            "Could not read PDF. Upload a valid searchable PDF when possible."
+            "Could not read this PDF. If it is protected, save an unprotected copy of the plan and upload that."
         ) from exc
 
-    page_count = len(reader.pages)
     has_text = False
     for page in reader.pages[:5]:
         try:
@@ -71,6 +77,27 @@ def _detect_pdf_properties(data: bytes):
             has_text = True
             break
     return page_count, has_text
+
+
+def record_plan_details(document: PlanDocument, *, designer: str = "", version: str = ""):
+    """Keep the designer and plan version Joel checked on Set Up This Project (15 Nov 2026).
+
+    The plan version names the project's drawing revision; the designer goes on the plan's note. Nothing is invented:
+    a blank box records nothing."""
+    designer = (designer or "").strip()[:120]
+    version = (version or "").strip()[:50]
+    if not designer and not version:
+        return
+    parts = []
+    if version:
+        from app.plan_intelligence.packages import ensure_default_revision
+
+        ensure_default_revision(document.project).label = version
+        parts.append(f"Plan version: {version}.")
+    if designer:
+        parts.append(f"Designer: {designer}.")
+    document.notes = " ".join(filter(None, [(document.notes or "").strip(), " ".join(parts)]))
+    db.session.commit()
 
 
 def list_plan_documents(project_id: int, *, include_archived: bool = False):

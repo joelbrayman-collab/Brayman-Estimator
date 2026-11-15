@@ -22,6 +22,8 @@ from app.services.schedule import create_schedule_item
 from app.services.work_structure import add_project_element, ensure_baseline_work_catalog
 from tests.auth_fixtures import ensure_office_user
 
+pytestmark = pytest.mark.usefixtures("morning_clock")  # Home shows Tomorrow after 14:00; these read Today
+
 
 @pytest.fixture
 def app():

@@ -27,6 +27,8 @@ from tests.auth_fixtures import (
 
 TODAY = date(2026, 9, 21)
 
+pytestmark = pytest.mark.usefixtures("morning_clock")  # Home shows Tomorrow after 14:00; these read Today
+
 
 @pytest.fixture
 def app():

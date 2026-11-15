@@ -26,7 +26,8 @@ from app.services.organizations import DEFAULT_ORGANIZATION_ID as ORG
 from tests.test_guided_tasks import _project, _template
 from tests.test_internal_financial_summary import WORKER_A, WORKER_B, _add_employee, _approve_form, _pdf_text, env  # noqa: F401
 
-REF = "/tmp/claude-0/-home-claude/304e2b74-608c-5a94-9d75-322c50c26f7b/scratchpad/ipfs/paulusse_rev9.json"
+# Joel's approved REV9 figures, held in the test itself so it needs no file outside the repository.
+REV9_EXPECT = {"rev": "$40,693.52", "cost": "$28,192.12", "profit": "$12,501.40", "mat": "$14,944.60"}
 # The reference's lines (synthetic copy of the REV9 structure: quantities x prices, person-hours, equipment).
 HARDIE_MATERIALS = [("HardiePanel vertical siding", 61, "118.00"), ("HardieTrim batten", 121, "25.68"),
                     ("Siding nails", 3, "72.00"), ("Z flashing", 22, "18.00"), ("Sealant", 24, "9.00"),
@@ -132,7 +133,7 @@ def test_the_paulusse_rev9_decision_reproduces_joels_figures(env):
     text = "\n".join(_pdf_text(IFS.render_pdf(data)))
     assert "EXCLUDED / BY OTHERS" in text and "we had quoted $5,826.73" in text and "$40,693.52" in text
     # The reference file's expected figures, for the record.
-    expect = json.load(open(REF))["expect"]
+    expect = REV9_EXPECT
     assert (IFS.m(totals["revenue"]), IFS.m(totals["cost"]), IFS.m(totals["profit"]), IFS.m(totals["materials"])) == (
         expect["rev"], expect["cost"], expect["profit"], expect["mat"])
 

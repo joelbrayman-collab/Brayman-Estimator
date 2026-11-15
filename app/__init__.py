@@ -196,6 +196,10 @@ def _register_office_auth(app: Flask) -> None:
 
     csrf.init_app(app)
 
+    from app.presentation.project_type_labels import apply_project_type_labels
+
+    apply_project_type_labels()  # "Custom project" (15 Nov 2026): presentation wording, not a model change
+
     from app.cli.auth import auth_cli
     from app.cli.build import build_cli
     from app.cli.legal_content import legal_content_cli

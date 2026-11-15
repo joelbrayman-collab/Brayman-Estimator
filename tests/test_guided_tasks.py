@@ -429,5 +429,6 @@ def test_set_up_starts_the_estimate_only_when_the_work_type_and_role_are_chosen(
     assert G.get_guided(ORG, project.id) is None
     assert not any("You can start the estimate" in m for m in d.flashes())  # no error for a choice left for later
     d.post("/projects/new", data={"name": "Typed (synthetic)", "client_id": customer.id, "start_guided": "1",
-                                   "guided_project_type": "OTHER", "contractor_role": "GENERAL_CONTRACTOR"})
+                                   "guided_project_type": "OTHER", "contractor_role": "GENERAL_CONTRACTOR",
+                                   "description": "A one-off job, described (synthetic)"})  # Custom project needs it
     assert G.get_guided(ORG, Project.query.filter_by(name="Typed (synthetic)").one().id) is not None

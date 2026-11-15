@@ -92,6 +92,7 @@ async function priceOneJob() {
   await pg.selectOption("select[name=client_id]", String(facts.customer_id));
   await pg.fill("input[name=name]", "Avery rear deck (synthetic)");
   await pg.selectOption("select[name=guided_project_type]", "OTHER");
+  await pg.fill("textarea[name=description]", "A one-off deck job, described (synthetic)"); // Custom project needs a description
   await pg.check('input[name=contractor_role][value="GENERAL_CONTRACTOR"]');
   await pg.locator("[data-same-as-customer]").check();
   await pg.locator("label[for=plan-start-none]").click();

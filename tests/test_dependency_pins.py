@@ -36,15 +36,15 @@ def test_requirements_pin_every_package_exactly_and_use_the_lock():
     assert "-c requirements-lock.txt" in _lines("requirements.txt")
     top = _pins("requirements.txt")
     lock = _pins("requirements-lock.txt")
-    assert len(top) == 17
+    assert len(top) == 18  # cryptography added 15 Nov 2026 (pypdf opens AES-protected plans with it)
     for name, version in top.items():
         assert lock.get(name) == version, name
 
 
 def test_the_lock_is_complete_and_exact():
     lock = _pins("requirements-lock.txt")
-    assert len(lock) == 62
-    for name in ("flask", "werkzeug", "sqlalchemy", "jinja2", "numpy", "pypdf", "reportlab"):
+    assert len(lock) == 65  # + cryptography, cffi, pycparser
+    for name in ("flask", "werkzeug", "sqlalchemy", "jinja2", "numpy", "pypdf", "reportlab", "cryptography"):
         assert name in lock
 
 

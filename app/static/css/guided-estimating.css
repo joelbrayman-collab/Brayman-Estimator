@@ -120,7 +120,7 @@
 .sw-pick { max-width: 560px; }
 .sw-category { margin: 0 0 10px; }
 .sw-category legend { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 2px; padding: 0; }
-.sw-choice { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 4px 10px; border: 0;
+.sw-choice { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 4px 10px; border: 0;
   border-bottom: 1px solid #efe9de; border-radius: 6px; background: transparent; cursor: pointer; }
 .sw-choice:hover { background: #faf7f0; }
 .sw-choice input[type=checkbox] { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0;

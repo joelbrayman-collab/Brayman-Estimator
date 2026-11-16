@@ -1,0 +1,11 @@
+{# Where you are in this job, and the one thing to do next (Joel, 16 Nov 2026). Read only; app/services/project_steps.py. #}
+<nav class="step-bar" aria-label="Steps for {{ step_bar.project_name }}" data-step-bar>
+  <ol class="step-bar-list">
+    {% for step in step_bar.steps %}
+    <li class="step-bar-item{% if step.done %} is-done{% endif %}{% if step.current %} is-current{% endif %}" data-step="{{ step.key }}"{% if step.current %} aria-current="step"{% endif %}>
+      <a href="{{ step.url }}"><span class="step-bar-dot" aria-hidden="true">{% if step.done %}&#10003;{% else %}{{ step.number }}{% endif %}</span><span class="step-bar-label">{{ step.label }}</span>{% if step.done %}<span class="sr-only"> (done)</span>{% endif %}</a>
+    </li>
+    {% endfor %}
+  </ol>
+  {% if step_bar.next %}<a class="step-bar-next" href="{{ step_bar.next.url }}" data-step-next="{{ step_bar.next.key }}">{{ step_bar.next.label }} &rarr;</a>{% endif %}
+</nav>

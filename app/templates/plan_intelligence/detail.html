@@ -4,20 +4,35 @@
 {% block page_title %}Plan Document{% endblock %}
 
 {% block content %}
+{# Plain first (Joel, 16 Nov 2026): the plan, how many pages could be read, and what to do next. The technical record
+   (processing, file check code, page table, history, archive) is one click away under Advanced. #}
+{% set readable = pages|selectattr("has_text")|list|length %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Plans</p>
         <h1>{{ document.original_filename }}</h1>
         <p class="muted-copy">{{ project.name }}{% if document.is_archived %} · Archived{% endif %}</p>
     </div>
-    <div>
-        <a class="button" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Sheet Index</a>
-        <a class="button" href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">AI Take-off</a>
-        <a class="button" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
-        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Back to drawings</a>
-    </div>
 </div>
 
+<section class="form-panel plan-summary" data-plan-summary style="margin-bottom: 24px;">
+    <p><strong>{{ document.page_count if document.page_count is not none else pages|length }} page{{ '' if (document.page_count or pages|length) == 1 else 's' }}</strong>
+       · {% if pages %}<span data-plan-readable>{{ readable }} of {{ pages|length }} pages readable</span>{% else %}Not read yet{% endif %}
+       · Uploaded {{ document.created_at|local_time("%d %b %Y") }}</p>
+    <div class="form-actions" style="margin-top: 12px;">
+        <a class="button" href="{{ url_for('site_plans.viewer', project_id=project.id, kind='plan', file_id=document.id) }}" data-plan-view>View the plan</a>
+        <a class="button" href="{{ url_for('guided.workflow', project_id=project.id) }}" data-plan-estimate>Estimate costs</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Back to drawings</a>
+    </div>
+</section>
+
+<details class="advanced-fold" data-advanced>
+<summary>Advanced: file details, processing and history</summary>
+<div class="form-actions" style="margin: 12px 0;">
+    <a class="button" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Sheet Index</a>
+    <a class="button" href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">AI Take-off</a>
+</div>
 <section class="form-panel" style="margin-bottom: 24px;">
     <div class="form-grid">
         <div><p class="eyebrow">Processing status</p><p><span class="status">{{ document.processing_status }}</span></p></div>
@@ -129,4 +144,5 @@
     </form>
 </section>
 {% endif %}
+</details>
 {% endblock %}

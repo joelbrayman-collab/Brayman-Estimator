@@ -8,10 +8,9 @@
     <div>
         <p class="eyebrow">{{ project.name }}</p>
         <h1>Drawings</h1>
-        <p>Current drawings are the sheets on this project. Build Drawings makes a candidate first.</p>
+        <p>The plans and drawings for this job.</p>
     </div>
     <div>
-        <a class="button" href="#build-drawings">Build Drawings</a>
         <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
         <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
@@ -89,6 +88,8 @@
     {% endif %}
 </section>
 
+<details class="advanced-fold" data-advanced id="build-drawings-fold"{% if request.args.get('build') %} open{% endif %}>
+<summary>Advanced: build drawings from members</summary>
 <section id="build-drawings" class="form-panel build-drawings">
     <h2>Build Drawings</h2>
     <p class="build-drawings-note">Build Drawings creates a dimensioned-plan candidate. Generate does not add it to Current drawings. Review the candidate, then use it when it should become a project drawing.</p>
@@ -227,6 +228,14 @@
     </ul>
     {% endif %}
 </section>
+</details>
+<script>
+/* Advanced fold: opens itself when the address points inside it (after Build Drawings is used). */
+(function () {
+  var fold = document.getElementById("build-drawings-fold");
+  if (fold && /^#build-drawings|^#candidate/.test(location.hash)) fold.open = true;
+})();
+</script>
 <script>
 /* Drop a plan PDF anywhere on this page to upload it (Joel, 16 Nov 2026). Browse still works. */
 (function () {

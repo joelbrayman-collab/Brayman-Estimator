@@ -148,7 +148,7 @@ test("the contractor estimates a footing job from sign-in to an issued proposal"
     for (const work of ["Foundation", "Site work"]) {
       await page.selectOption("[name=work_element_template_id]", { label: work });
       await page.selectOption("[name=delivery]", "INTERNAL");
-      await submit(page.locator("button[data-add-work-submit]"));
+      await submit(page.getByRole("button", { name: "Add work" }));
     }
     await page.goto(`${base}/projects/${projectId}/setup`);
     const setup = await page.locator("main").innerText();

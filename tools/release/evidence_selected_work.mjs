@@ -358,7 +358,7 @@ step("Manual: project, estimate, Add work (Flooring) from the estimate, cost it,
 // ------------------------------------------------------------------ phone
 step("iPhone: the Work page, the wizard's work step and the estimate panel fit the screen with large choices", async () => {
   const { pg, errors } = await person("ben", PHONE);
-  await go(pg, `/projects/${W.guided}/guided/scope`);
+  await go(pg, `/projects/${W.guided}/guided/scope#add-work`);
   await noSideways(pg, "work page");
   const choice = await pg.locator('[data-work-choice="work_roofing"]').boundingBox();
   assert.ok(choice.height >= 44, `work choices are large enough to tap (${choice.height}px)`);

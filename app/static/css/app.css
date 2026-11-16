@@ -2678,3 +2678,25 @@ body.login-page {
 .plan-uploaded-choices { display: flex; flex-wrap: wrap; gap: 14px; }
 .plan-uploaded-choices .button { min-width: 14rem; text-align: center; padding: 16px 24px; font-size: 1.1rem; }
 .plan-uploaded-small { margin-top: 28px; font-size: 0.9rem; color: var(--muted, #666); }
+
+/* Project step bar (Joel, 16 Nov 2026): Set up, Plan, Price, Review, Quote, and one big Next. */
+.step-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  margin: 0 0 14px; padding: 10px 14px; background: #fff; border: 1px solid #e3ded4; border-radius: 12px; }
+.step-bar-list { display: flex; flex-wrap: wrap; gap: 4px 6px; list-style: none; margin: 0; padding: 0; }
+.step-bar-item a { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 4px 6px;
+  border-radius: 999px; color: #555; text-decoration: none; font-weight: 600; }
+.step-bar-item a:hover { background: #faf7f0; }
+.step-bar-dot { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border-radius: 50%; border: 2px solid #b9b2a3; font-size: .85rem; background: #fff; }
+.step-bar-item.is-done .step-bar-dot { background: #1f8f4e; border-color: #1f8f4e; color: #fff; }
+.step-bar-item.is-current a { background: #f3ead2; color: #111; }
+.step-bar-item.is-current .step-bar-dot { border-color: #c79a2b; background: #c79a2b; color: #111; }
+.step-bar-next { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 10px;
+  background: #c79a2b; color: #111; font-weight: 800; font-size: 1.05rem; text-decoration: none; }
+.step-bar-next:hover { filter: brightness(1.05); }
+@media (max-width: 700px) { .step-bar-label { font-size: .9rem; } .step-bar-next { width: 100%; justify-content: center; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Advanced fold (Joel, 16 Nov 2026): the engineering views stay one click away, never in the way. */
+.advanced-fold { margin: 18px 0; border-top: 1px solid #e3ded4; padding-top: 10px; }
+.advanced-fold > summary { cursor: pointer; color: #1f3a5f; font-weight: 600; min-height: 40px; display: flex; align-items: center; }

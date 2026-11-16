@@ -108,6 +108,8 @@
             {% endwith %}
             {% endblock %}
 
+            {% if step_bar %}{% include "partials/step_bar.html" %}{% endif %}
+
             {% block breadcrumbs %}
                 {% include "partials/breadcrumbs.html" %}
             {% endblock %}

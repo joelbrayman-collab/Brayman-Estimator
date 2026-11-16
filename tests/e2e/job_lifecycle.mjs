@@ -156,7 +156,7 @@ test("one synthetic job from estimate to a closed project, office, customer, sup
     await ben.go(`/projects/${projectId}/scope`);
     await page.selectOption("[name=work_element_template_id]", { label: "Foundation" });
     await page.selectOption("[name=delivery]", "INTERNAL");
-    await ben.submit(page.locator("button[data-add-work-submit]"));
+    await ben.submit(page.getByRole("button", { name: "Add work" }));
     await ben.go(`/projects/${projectId}/plans/upload`);
     await page.setInputFiles("[name=plan_file]", { name: "e2e-lifecycle-site-plan.pdf", mimeType: "application/pdf",
       buffer: fs.readFileSync(path.join(repoRoot, "tests/fixtures/e2e/synthetic-site-plan.pdf")) });

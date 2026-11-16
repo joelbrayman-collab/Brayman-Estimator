@@ -92,6 +92,7 @@ def register_shell_context(app):
             "contractor_copy": contractor_copy,
             "help_content": help_content,
             "cal_copy": cal_copy,
+            "step_bar": _step_bar(endpoint, authenticated),
         }
 
 
@@ -139,3 +140,29 @@ def more_sections(endpoint=None):
 
 def admin_sections(endpoint=None):
     return visible_sections(ADMIN_SECTIONS, getattr(current_user, "is_authenticated", False), endpoint)
+
+
+_STEP_BAR_PREFIXES = ("projects.", "guided.", "guided_tasks.", "plan_intelligence.")
+
+
+def _step_bar(endpoint, authenticated):
+    """The Set up / Plan / Price / Review / Quote bar for an office project page (Joel, 16 Nov 2026), or None."""
+    if not authenticated or not endpoint or request.method != "GET" or not endpoint.startswith(_STEP_BAR_PREFIXES):
+        return None
+    args = request.view_args or {}
+    project_id = args.get("project_id") if "project_id" in args else args.get("id") if endpoint.startswith("projects.") else None
+    if not isinstance(project_id, int):
+        return None
+    try:
+        from app.models import Project
+        from app.services import project_steps
+        from app.services.organizations import get_current_organization_id
+
+        project = Project.query.filter_by(id=project_id, organization_id=get_current_organization_id()).first()
+        return project_steps.build(project, endpoint) if project is not None else None
+    except Exception:  # noqa: BLE001 - the bar never breaks a page
+        from flask import current_app
+
+        if current_app.testing:
+            raise
+        return None

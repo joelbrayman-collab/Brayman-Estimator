@@ -100,7 +100,7 @@ def test_the_checked_designer_and_version_are_kept_with_the_plan(env):
     document = PlanDocument.query.filter_by(project_id=project.id).one()
     assert "Designer: Sample Designer Inc." in document.notes and "Plan version: C." in document.notes
     assert DrawingRevision.query.join(DrawingRevision.package).filter_by(project_id=project.id).one().label == "C"
-    assert response.headers["Location"].endswith(f"/plans/{document.id}")
+    assert response.headers["Location"].endswith(f"/plans/{document.id}/uploaded")
 
 
 def test_blank_boxes_record_nothing(env):
@@ -119,3 +119,34 @@ def test_the_screen_carries_the_drop_hooks_and_the_two_boxes(env):
                  '/projects/plan-details', 'addEventListener("drop"', 'name="plan_file"'):
         assert hook in html, hook
     assert 'enctype="multipart/form-data"' in html
+
+
+def test_the_drawings_page_and_the_upload_page_take_a_dropped_plan(env):
+    """Joel, 16 Nov 2026: a plan can be dropped where it is uploaded, not only on Set Up This Project."""
+    http, client_row = env
+    _new_project(http, client_row)
+    project = Project.query.filter_by(name="Synthetic Plan Job").one()
+    for url in (f"/projects/{project.id}/plans", f"/projects/{project.id}/plans/upload"):
+        html = http.get(url).get_data(as_text=True)
+        for hook in ("data-plan-drop-zone", "data-plan-drop-form", "data-plan-drop-status", "Drop the plan PDF anywhere on this page"):
+            assert hook in html, (url, hook)
+
+
+def test_after_an_upload_the_landing_says_so_and_offers_two_choices(env):
+    """Joel, 16 Nov 2026: 'Your plan uploaded successfully. What do you want to do next? Estimate costs / Add more plans.'"""
+    http, client_row = env
+    _new_project(http, client_row)
+    project = Project.query.filter_by(name="Synthetic Plan Job").one()
+    pdf = _plan(["FOUNDATION PLAN scale: 1/4\"=1'-0\""])
+    response = http.post(f"/projects/{project.id}/plans/upload",
+                         data={"plan_file": (io.BytesIO(pdf), "landing-plan.pdf"), "notes": ""},
+                         content_type="multipart/form-data")
+    assert response.status_code == 302 and response.headers["Location"].endswith("/uploaded")
+    page = http.get(response.headers["Location"]).get_data(as_text=True)
+    for text in ("Your plan uploaded successfully", "What do you want to do next?", "Estimate costs", "Add more plans",
+                 "landing-plan.pdf"):
+        assert text in page, text
+    assert 'data-plan-next="estimate"' in page and f"/projects/{project.id}/guided" in page
+    assert 'data-plan-next="more"' in page and f"/projects/{project.id}/plans/upload" in page
+    # The estimate choice goes somewhere real.
+    assert http.get(f"/projects/{project.id}/guided", follow_redirects=True).status_code == 200

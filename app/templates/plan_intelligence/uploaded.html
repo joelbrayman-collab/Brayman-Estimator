@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Plan uploaded | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Plan uploaded{% endblock %}
+
+{% block content %}
+{# Joel, 16 Nov 2026: after an upload, say it worked and ask what is next. Two plain choices. #}
+<section class="plan-uploaded" data-plan-uploaded>
+    <p class="eyebrow">{{ project.name }}</p>
+    <h1>Your plan uploaded successfully</h1>
+    <p class="muted-copy" data-plan-uploaded-file>{{ document.original_filename }}{% if document.page_count %} · {{ document.page_count }} page{{ '' if document.page_count == 1 else 's' }}{% endif %}</p>
+
+    <h2>What do you want to do next?</h2>
+    <div class="plan-uploaded-choices">
+        <a class="button plan-uploaded-primary" data-plan-next="estimate" href="{{ url_for('guided.workflow', project_id=project.id) }}">Estimate costs</a>
+        <a class="button" data-plan-next="more" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Add more plans</a>
+    </div>
+
+    <p class="plan-uploaded-small">
+        <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">See this plan's details</a>
+        ·
+        <a href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a>
+    </p>
+</section>
+{% endblock %}

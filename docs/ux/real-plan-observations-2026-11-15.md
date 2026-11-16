@@ -15,3 +15,12 @@ Merrickville). Six observations, and a seventh request, fixed together. Syntheti
 
 Tests: `tests/test_protected_plan_upload.py`, `tests/test_home_today_tomorrow.py`, `tests/test_plan_drop_details.py`, `tests/test_custom_project_type.py`. Tests that read
 "Today" on Home use the `morning_clock` fixture (`tests/conftest.py`), because Home now depends on the hour.
+
+## 16 Nov 2026, after Production use (v0.6.1)
+
+| # | Observation | Fix |
+|---|-------------|-----|
+| 5b | Drag and drop only worked on Set Up This Project | The Drawings page and the Upload PDF page take a dropped plan PDF anywhere on the page. |
+| 9, 10, 11 | After an upload Joel landed on a page of audit events, a Pages table and a coordinates form, with no next step | After an upload (both from Set Up and from the plan pages) the landing says "Your plan uploaded successfully. What do you want to do next?" with **Estimate costs** (this project's Price This Job) and **Add more plans**. The engineering pages stay one click away ("See this plan's details"). A failed index still goes to the plan's own page, which has the retry. |
+
+Still to build: the step bar on every project page and the Advanced fold (Build Drawings, Members, audit events). Joel, 16 Nov: "I should never have to click the logo top left, and I should never have to find my way back into the project."

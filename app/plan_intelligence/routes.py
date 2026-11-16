@@ -254,6 +254,16 @@ def _render_plans_page(project, *, build_issues=(), build_form=None, status_code
     return body, status_code
 
 
+@plan_intelligence_bp.route("/projects/<int:project_id>/plans/<int:document_id>/uploaded")
+def plan_uploaded(project_id, document_id):
+    """Plain landing after an upload: it worked, what next (Joel, 16 Nov 2026)."""
+    project = _get_project_or_404(project_id)
+    document = get_plan_document(project.id, document_id)
+    if document is None:
+        abort(404)
+    return render_template("plan_intelligence/uploaded.html", project=project, document=document)
+
+
 @plan_intelligence_bp.route(
     "/projects/<int:project_id>/plans/upload",
     methods=["GET", "POST"],
@@ -287,12 +297,14 @@ def upload_plan(project_id):
             )
         else:
             flash("Plan PDF uploaded and indexed.", "success")
-        return redirect(
-            url_for(
-                "plan_intelligence.view_plan",
-                project_id=project.id,
-                document_id=document.id,
+        if document.processing_status == "failed":
+            # Indexing failed: the plan's own page has the retry.
+            return redirect(
+                url_for("plan_intelligence.view_plan", project_id=project.id, document_id=document.id)
             )
+        # Joel, 16 Nov 2026: after an upload, say it worked and ask what is next.
+        return redirect(
+            url_for("plan_intelligence.plan_uploaded", project_id=project.id, document_id=document.id)
         )
 
     return render_template(

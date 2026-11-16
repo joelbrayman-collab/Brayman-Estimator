@@ -47,7 +47,7 @@ def test_aes_protected_plan_opens_and_uploads_with_the_project(env):
         response = _new_project(http, client_row, name=f"Synthetic {algorithm} Job", plan_start="upload",
                                 plan_file=(io.BytesIO(_protected(algorithm=algorithm)), "protected-plan.pdf"))
         project = Project.query.filter_by(name=f"Synthetic {algorithm} Job").one()
-        assert response.headers["Location"].endswith(f"/projects/{project.id}/plans/{PlanDocument.query.filter_by(project_id=project.id).one().id}")
+        assert response.headers["Location"].endswith(f"/projects/{project.id}/plans/{PlanDocument.query.filter_by(project_id=project.id).one().id}/uploaded")
         assert "Error creating project" not in " ".join(_flashes(http))
 
 

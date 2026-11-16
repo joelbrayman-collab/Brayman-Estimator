@@ -2647,3 +2647,34 @@ body.login-page {
 /* The Set Up This Project sections are numbered, like AiRIA's Open a New Case steps (15 Nov 2026). */
 .su-form { counter-reset: su-step; }
 .su-form .su-section > legend::before { counter-increment: su-step; content: counter(su-step); display: inline-block; min-width: 1.5em; height: 1.5em; line-height: 1.5em; margin-right: 8px; text-align: center; border-radius: 50%; background: #1f3a5f; color: #fff; font-size: .8em; }
+
+/* Drop a plan anywhere it is uploaded (Joel, 16 Nov 2026): the Drawings page and the Upload PDF page. */
+.plan-drop-zone {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 16px;
+    padding: 14px 18px;
+    border: 2px dashed var(--border-strong, #c9c5b8);
+    border-radius: var(--radius-md, 12px);
+    background: var(--white, #fff);
+}
+
+.plan-drop-zone strong { display: block; }
+
+.plan-drop-zone.is-dropping {
+    border-color: var(--gold, #c89b2b);
+    background: #fbf5e4;
+}
+
+.plan-drop-zone .plan-drop-status { color: var(--muted, #666); }
+
+/* Plan uploaded landing (Joel, 16 Nov 2026): two plain choices. */
+.plan-uploaded { max-width: 44rem; margin: 24px auto; }
+.plan-uploaded h1 { margin: 4px 0 6px; }
+.plan-uploaded h2 { margin: 28px 0 14px; font-size: 1.15rem; }
+.plan-uploaded-choices { display: flex; flex-wrap: wrap; gap: 14px; }
+.plan-uploaded-choices .button { min-width: 14rem; text-align: center; padding: 16px 24px; font-size: 1.1rem; }
+.plan-uploaded-small { margin-top: 28px; font-size: 0.9rem; color: var(--muted, #666); }

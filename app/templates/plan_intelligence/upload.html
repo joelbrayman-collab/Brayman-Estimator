@@ -15,8 +15,15 @@
     </div>
 </div>
 
+<div class="plan-drop-zone" data-plan-drop-zone>
+    <div>
+        <strong>Drop the plan PDF anywhere on this page to upload it</strong>
+        <span class="plan-drop-status" data-plan-drop-status>Or choose the file below.</span>
+    </div>
+</div>
+
 <section class="form-panel">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" data-plan-drop-form>
         <div class="form-grid">
             <label>
                 Plan PDF *
@@ -37,4 +44,37 @@
         </div>
     </form>
 </section>
+<script>
+/* Drop a plan PDF anywhere on this page to upload it (Joel, 16 Nov 2026). Browse still works. */
+(function () {
+    var zone = document.querySelector("[data-plan-drop-zone]");
+    var form = document.querySelector("[data-plan-drop-form]");
+    var input = form ? form.querySelector("input[name=plan_file]") : null;
+    if (!zone || !form || !input) return;
+    var status = zone.querySelector("[data-plan-drop-status]");
+    function say(text) { if (status) status.textContent = text; }
+    ["dragenter", "dragover"].forEach(function (name) {
+        document.addEventListener(name, function (event) {
+            if (!event.dataTransfer || Array.prototype.indexOf.call(event.dataTransfer.types || [], "Files") < 0) return;
+            event.preventDefault(); zone.classList.add("is-dropping");
+        });
+    });
+    ["dragleave", "drop"].forEach(function (name) {
+        document.addEventListener(name, function (event) {
+            if (name === "dragleave" && event.relatedTarget) return;
+            zone.classList.remove("is-dropping");
+        });
+    });
+    document.addEventListener("drop", function (event) {
+        var files = event.dataTransfer && event.dataTransfer.files;
+        if (!files || !files.length) return;
+        event.preventDefault();
+        var file = files[0];
+        if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") { say("That is not a PDF. Drop the plan as a PDF."); return; }
+        var transfer = new DataTransfer(); transfer.items.add(file); input.files = transfer.files;
+        say("Uploading " + file.name + " ...");
+        form.submit();
+    });
+})();
+</script>
 {% endblock %}

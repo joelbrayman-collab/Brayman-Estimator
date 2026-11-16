@@ -894,7 +894,7 @@ def _plan_start_after_create(project, org_id):
         current_app.logger.exception("Plan details were not recorded for project %s", project.id)
         db.session.rollback()
     flash("Plan PDF uploaded.", "success")
-    return redirect(url_for("plan_intelligence.view_plan", project_id=project.id, document_id=document.id))
+    return redirect(url_for("plan_intelligence.plan_uploaded", project_id=project.id, document_id=document.id))
 
 
 @projects_bp.route("/<int:id>/commercial-context/edit", methods=["GET", "POST"])

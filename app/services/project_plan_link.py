@@ -22,8 +22,12 @@ def office_plan_link(project):
 
     documents = (PlanDocument.query.filter_by(project_id=project.id, archived_at=None)
                  .order_by(PlanDocument.id.desc()).all())
+    # Joel, 16 Nov 2026: this button shows the plan itself. It used to open the plan's technical record (processing
+    # status, file check code, page table), which is not what anyone pressing "View project plan" wants.
     if len(documents) == 1:
-        url = url_for("plan_intelligence.view_plan", project_id=project.id, document_id=documents[0].id)
+        url = url_for("site_plans.viewer", project_id=project.id, kind="plan", file_id=documents[0].id)
+    elif documents:
+        url = url_for("site_plans.project", project_id=project.id)
     else:
         url = url_for("plan_intelligence.list_plans", project_id=project.id)
     return {

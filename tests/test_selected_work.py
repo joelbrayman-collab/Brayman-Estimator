@@ -95,7 +95,7 @@ def test_siding_only_manual_add_work_is_the_whole_scope(env):
     _app, d, _ben = env
     project = _project(d, "Siding only manual (synthetic)")
     page = d.get(f"/projects/{project.id}/guided/scope")
-    assert "What work are we doing?" in page and "Add work" in page and "Siding" in page
+    assert "What work are we doing?" in page and "data-add-work-submit" in page and "Siding" in page
     assert _scope(project) is None  # looking creates nothing
     _add(d, project, "work_siding")
     guided = _scope(project)

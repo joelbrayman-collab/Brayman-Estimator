@@ -116,7 +116,7 @@ async function priceOneJob() {
   await press(pg, "button[data-confirm-routing]");
   await press(pg, "button[data-nav-complete-next]");
   // A second job, set up but not priced: Price This Job with its next item to price.
-  await go(pg, `/projects/${facts.project_ids[0]}/guided/scope`);
+  await go(pg, `/projects/${facts.project_ids[0]}/guided/scope#add-work`);
   if (await pg.locator('[data-add-work] input[name=work][value="work_deck"]').count()) {
     await pg.locator('[data-add-work] input[name=work][value="work_deck"]').check();
     await press(pg, "button[data-add-work-submit]");

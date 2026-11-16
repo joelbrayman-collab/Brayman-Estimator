@@ -94,11 +94,10 @@
 .sw-search input { width: 100%; max-width: 420px; min-height: 44px; }
 .sw-category { border: 0; margin: 0 0 12px; padding: 0; }
 .sw-category legend { font-weight: 700; color: #1f3a5f; margin-bottom: 6px; }
-.sw-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
-.sw-choice { display: flex; gap: 8px; align-items: center; border: 1px solid #e3ded4; border-radius: 8px; padding: 8px 10px; min-height: 44px; background: #fff; }
+.sw-choices { display: flex; flex-direction: column; gap: 0; }
 .sw-other { display: block; margin-top: 8px; }
 .sw-other input { width: 100%; max-width: 420px; min-height: 44px; }
-@media (max-width: 600px) { .sw-resp button { flex: 1 1 0; min-width: 0; font-size: .95rem; } .sw-label { flex-basis: 100%; } .sw-choices { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .sw-resp button { flex: 1 1 0; min-width: 0; font-size: .95rem; } .sw-label { flex-basis: 100%; } }
 
 /* Viewport-first (2 Nov 2026; docs/ux/viewport-density-audit-2026-11-02.md): on the Price This Job and Review This
    Estimate task screens the cards are working blocks, not posters. The task screen's grid gives the spacing. */
@@ -116,3 +115,29 @@
 .task-screen [data-price-totals] dt { color: var(--muted); }
 .task-screen [data-price-totals] dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
 .task-screen .ge-warn, .task-screen .ge-ok { margin: 6px 0; }
+
+/* Choose work: one neat vertical list; a round dot turns green with a check when ticked (Joel, 16 Nov 2026). */
+.sw-pick { max-width: 560px; }
+.sw-category { margin: 0 0 10px; }
+.sw-category legend { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 2px; padding: 0; }
+.sw-choice { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 4px 10px; border: 0;
+  border-bottom: 1px solid #efe9de; border-radius: 6px; background: transparent; cursor: pointer; }
+.sw-choice:hover { background: #faf7f0; }
+.sw-choice input[type=checkbox] { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0;
+  border: 2px solid #b9b2a3; border-radius: 50%; background: #fff center / 14px no-repeat; cursor: pointer; }
+.sw-choice input[type=checkbox]:checked { border-color: #1f8f4e; background-color: #1f8f4e;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 4.8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.sw-choice input[type=checkbox]:focus-visible { outline: 3px solid #1f3a5f; outline-offset: 2px; }
+.sw-choice:has(input:checked) { background: #eef8f1; }
+.sw-choice:has(input:checked) .sw-choice-name { font-weight: 700; }
+.sw-choice-name { flex: 1; }
+.sw-choice-note { color: #1f8f4e; font-size: .85rem; font-weight: 600; }
+.sw-choice.is-added { cursor: default; }
+.sw-savebar { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 14px; padding: 10px 0; background: #fff; border-top: 1px solid #e3ded4; }
+.sw-savebar button { min-height: 44px; min-width: 140px; }
+.sw-add > summary { list-style: none; }
+.sw-add > summary::-webkit-details-marker { display: none; }
+.sw-add-button { display: inline-block; cursor: pointer; padding: 10px 18px; min-height: 44px; border: 2px solid #1f3a5f;
+  border-radius: 10px; font-weight: 700; color: #1f3a5f; background: #fff; margin: 4px 0 12px; }
+.sw-add[open] > .sw-add-button { display: none; }

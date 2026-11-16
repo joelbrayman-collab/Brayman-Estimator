@@ -48,6 +48,7 @@
         </ul>
         {% endif %}
         {% set can_decide = (not locked) and editable %}
+        {% if row.is_included %}<details class="sw-more sw-advanced"><summary>Exclude from the price, delivery, general conditions</summary>{% endif %}
         <div class="sw-package" data-work-package="{{ row.stage_key }}">
           {% if row.is_included %}
           <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" class="ge-form-row" data-exclude-form="{{ row.stage_key }}">
@@ -107,6 +108,7 @@
             </form>
           </details>
         </div>
+        {% if row.is_included %}</details>{% endif %}
         {% if not locked %}
         <details class="sw-more">
           <summary>More: split materials and installation, or remove</summary>
@@ -145,35 +147,53 @@
   {% endif %}
 
   {% if not locked %}
-  <section class="ge-card" id="add-work" data-add-work>
-    <h2>{% if items %}Add work{% else %}What work are we doing?{% endif %}</h2>
-    <p class="ge-muted">Choose one or more. The headings only help you find the work; choosing work adds that work and nothing else.</p>
-    <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="action" value="add_work">
-      {% if estimate_id %}<input type="hidden" name="estimate_id" value="{{ estimate_id }}">{% endif %}
-      <label class="sw-search">Find work <input type="search" placeholder="Siding, windows, deck…" data-work-search autocomplete="off"></label>
-      {% for category in catalogue %}
-      <fieldset class="sw-category" data-work-category="{{ category.key }}">
-        <legend>{{ category.label }}</legend>
-        <div class="sw-choices">
-          {% for spec in category.items %}
-          <label class="sw-choice" data-work-choice="{{ spec.key }}" data-search-text="{{ (spec.name ~ ' ' ~ spec.explanation)|lower }}">
-            <input type="checkbox" name="work" value="{{ spec.key }}" {% if spec.key in chosen %}checked disabled{% endif %}>
-            <span><strong>{{ spec.name }}</strong>{% if spec.key in chosen %} <span class="ge-muted">(added)</span>{% endif %}</span>
-          </label>
-          {% endfor %}
-        </div>
-      </fieldset>
-      {% endfor %}
-      <label class="sw-other">Other work, named <input type="text" name="custom_name" maxlength="120" placeholder="e.g. Septic system"></label>
-      <div class="ge-actions"><button type="submit" class="ge-primary" data-add-work-submit>Add work</button></div>
-    </form>
-  </section>
+  {# Once work is saved, the choices are tucked away: only the work to be done stays on the page. "Add work" opens them
+     again (Joel, 16 Nov 2026). Work already in the job shows a green check and cannot be added twice. #}
+  <details class="sw-add" id="add-work" data-add-work-wrap {% if not items %}open{% endif %}>
+    {% if items %}<summary class="sw-add-button" data-add-work-open>+ Add work</summary>{% endif %}
+    <section class="ge-card sw-pick" data-add-work>
+      <h2>{% if items %}Add work{% else %}What work are we doing?{% endif %}</h2>
+      <p class="ge-muted">Tick each kind of work. It turns green when chosen. Nothing is added until you save.</p>
+      <form method="post" action="{{ url_for('guided.scope', project_id=project.id) }}{{ rt }}" data-work-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="add_work">
+        {% if estimate_id %}<input type="hidden" name="estimate_id" value="{{ estimate_id }}">{% endif %}
+        <label class="sw-search">Find work <input type="search" placeholder="Siding, windows, deck…" data-work-search autocomplete="off"></label>
+        {% for category in catalogue %}
+        <fieldset class="sw-category" data-work-category="{{ category.key }}">
+          <legend>{{ category.label }}</legend>
+          <div class="sw-choices">
+            {% for spec in category.items %}
+            <label class="sw-choice{% if spec.key in chosen %} is-added{% endif %}" data-work-choice="{{ spec.key }}" data-search-text="{{ (spec.name ~ ' ' ~ spec.explanation)|lower }}">
+              <input type="checkbox" name="work" value="{{ spec.key }}" {% if spec.key in chosen %}checked disabled{% endif %}>
+              <span class="sw-choice-name">{{ spec.name }}</span>{% if spec.key in chosen %}<span class="sw-choice-note">Added</span>{% endif %}
+            </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+        {% endfor %}
+        <label class="sw-other">Other work, named <input type="text" name="custom_name" maxlength="120" placeholder="e.g. Septic system"></label>
+        <div class="sw-savebar"><span data-work-count class="ge-muted">Nothing chosen yet</span>
+          <button type="submit" class="ge-primary" data-add-work-submit>Save</button></div>
+      </form>
+    </section>
+  </details>
   {% endif %}
 </div>
 <script>
 (function () {
+  var wrap = document.querySelector("[data-add-work-wrap]");
+  if (wrap && location.hash === "#add-work") wrap.open = true;
+  var form = document.querySelector("[data-work-form]");
+  var count = document.querySelector("[data-work-count]");
+  function tally() {
+    if (!form || !count) return;
+    var n = form.querySelectorAll("input[name=work]:checked:not(:disabled)").length;
+    var other = (form.querySelector("input[name=custom_name]") || {}).value;
+    if (other && other.trim()) n += 1;
+    count.textContent = n ? n + " chosen" : "Nothing chosen yet";
+  }
+  if (form) { form.addEventListener("change", tally); form.addEventListener("input", tally); tally(); }
   var search = document.querySelector("[data-work-search]");
   if (!search) return;
   search.addEventListener("input", function () {

@@ -143,7 +143,7 @@ test("Set Up This Project: one screen, settings closed, creates the job with its
 
 test("Price This Job: the work list and ONE next item; priced, it points to Review This Estimate", async () => {
   const { ctx, pg, errors } = await person("ben");
-  await go(pg, `/projects/${W.project}/guided/scope`);
+  await go(pg, `/projects/${W.project}/guided/scope#add-work`);
   await pg.locator('[data-add-work] input[name=work][value="work_deck"]').check();
   await press(pg, "button[data-add-work-submit]");
   await go(pg, `/projects/${W.project}/guided`);

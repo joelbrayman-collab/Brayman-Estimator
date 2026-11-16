@@ -665,7 +665,13 @@ step("14 crew schedule: a work item, dates on the calendar, a crew with Kevin; K
   await Promise.all([pg.waitForNavigation(), pg.selectOption("[name=project_id]", { label: PROJECT })]);
   await pg.selectOption("[name=project_work_element_id]", { label: "Deck framing and decking (synthetic)" });
   await pg.fill("[name=scheduled_start]", day(0));
-  await pg.fill("[name=scheduled_end]", day(0));
+  // Today and tomorrow: Home shows Today before 14:00 and Tomorrow after it (Joel, 15 Nov 2026), so the job is on Home at any hour.
+  await pg.fill("[name=scheduled_end]", day(1));
+  // The work item's own dates must hold the activity's (the same form the contractor walk fills).
+  for (const [field, value] of [["element_scheduled_start", day(0)], ["element_scheduled_end", day(1)]]) {
+    if (await pg.locator(`[name=${field}]`).count()) await pg.fill(`[name=${field}]`, value);
+  }
+  if (await pg.locator("[name=confirm_element_adjustment]").count()) await pg.check("[name=confirm_element_adjustment]");
   await shot(pg, "14-crew-schedule", "set-dates");
   await submit(pg, pg.getByRole("button", { name: "Set dates" }));
   assert.match(await flash(pg), /Schedule saved/);

@@ -119,8 +119,11 @@ step("Home: one Attention list first, one band of guided starts above the fold, 
   await go(pg, "/");
   assert.equal(await pg.locator("[data-needs-attention]").count(), 1, "one Attention list");
   assert.equal(await pg.getByText("What needs attention", { exact: true }).count(), 0, "no second attention column");
+  // Joel, 15 Nov 2026: Today (Tomorrow from 14:00) is the first block on Home, then the one Attention list.
+  const briefing = await pg.locator(".home-briefing").boundingBox();
   const attention = await pg.locator("[data-needs-attention]").boundingBox();
-  assert.ok(attention.y < 260, `Attention comes first, right under the greeting (y=${Math.round(attention.y)})`);
+  assert.ok(briefing.y < attention.y, `Today / Tomorrow comes first (y=${Math.round(briefing.y)})`);
+  assert.ok(attention.y < 420, `Attention comes right under Today / Tomorrow (y=${Math.round(attention.y)})`);
   // Slice C (1 Nov 2026): the band's three starts are the Guided Tasks (the wizards are retired); same checks.
   for (const key of ["set_up", "price", "review"]) {
     const start = pg.locator(`[data-guided-task="${key}"]`);

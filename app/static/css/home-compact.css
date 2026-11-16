@@ -30,6 +30,12 @@
 .hc-resume-what { font-weight: 600; }
 .hc-resume-meta { color: var(--muted, #666); font-size: .88rem; }
 .home-briefing.hc-briefing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Joel, 15 Nov 2026: Today (Tomorrow from 14:00) is the first block on Home, so it is kept compact: the attention
+   list and the three starts must still fit on a 1280x900 screen under it. */
+.home-briefing.hc-briefing { margin: 4px 0 12px; gap: 24px; }
+.home-briefing.hc-briefing h2 { margin: 0 0 2px; }
+.home-briefing.hc-briefing p { margin: 0 0 2px; }
+.home-briefing.hc-briefing > div { padding: 10px 18px 8px; }
 @media (max-width: 760px) {
   .hc-wiz-row { flex-direction: column; align-items: stretch; }
   .hc-wiz { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }

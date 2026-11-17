@@ -243,11 +243,7 @@ def set_project_pricing(version, *, actor: str, labour_rate=None, margin_percent
         if version.target_gross_margin is None and before["target_gross_margin"] is not None:
             version.target_gross_margin = before["target_gross_margin"]
         return {"changed": False, "rerated": 0, "reapproved": False, "repriced": False}
-    needs_reason = ((rate_changed and new_rate != defaults["labour_rate"])
-                    or (margin_changed and new_margin != defaults["target_gross_margin"]))
-    if needs_reason and not reason_text:
-        raise EstimateEconomicsError(
-            "Give a reason for using a value different from the company default (it is kept with the estimate).")
+    # Joel, 16 Nov 2026: changing the rate or margin to see the impact is never blocked; the reason is optional.
 
     costing = current_costing_snapshot(version)
     costing_was_current = costing is not None and working_matches_costing_snapshot(version, costing)

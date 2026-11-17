@@ -758,7 +758,9 @@ def update_project_pricing(id, version_id):
     from app.services.return_path import from_request
 
     estimate, version = _get_estimate_version(id, version_id)
-    back = from_request() or url_for("estimates.view_version", id=estimate.id, version_id=version.id) + "#project-pricing"
+    # Always return to the Project pricing panel: a message shown at the top of a long page was never seen,
+    # so a refused save (e.g. a rate that differs from the company default with no reason) looked like a silent revert.
+    back = (from_request() or url_for("estimates.view_version", id=estimate.id, version_id=version.id)) + "#project-pricing"
     try:
         done = set_project_pricing(
             version,

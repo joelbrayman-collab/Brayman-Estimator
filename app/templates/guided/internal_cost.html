@@ -16,6 +16,15 @@
     <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}">Back to the workflow</a>
   </div>
 
+  {% if prep_run %}
+  <section class="ge-card ge-noprint" data-preparation-run>
+    <h2>How this estimate was prepared</h2>
+    <p class="ge-muted">Prepared {{ prep_run.created_at|local_time("%Y-%m-%d %H:%M") }} by {{ prep_run.interpreter }}{% if prep_run.cost_cents %} · AI cost ${{ '%.2f'|format(prep_run.cost_cents / 100) }}{% endif %}. Review and adjust anything below; nothing is approved until you approve it.</p>
+    {% if prep_assumptions %}<h3>Assumptions</h3><ul>{% for a in prep_assumptions %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
+    {% if prep_questions %}<h3>Needs your answer</h3><ul class="ge-warn">{% for q in prep_questions %}<li>{{ q }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+  {% endif %}
+
   <section class="ge-card">
     <h2>Totals</h2>
     <div class="ge-scroll"><table class="ge-table" data-cost-totals>

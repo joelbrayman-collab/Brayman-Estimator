@@ -505,7 +505,43 @@ def internal_cost(project_id):
     project, guided = _project_and_guided(project_id)
     if guided is None:  # no guided estimate yet: the page that starts one
         return redirect(url_for("guided.workflow", project_id=project.id))
-    return render_template("guided/internal_cost.html", project=project, doc=G.internal_cost_document(guided))
+    import json
+
+    from app.models.estimating_assistant import EstimatePreparationRun
+
+    run = (EstimatePreparationRun.query.filter_by(organization_id=_org(), project_id=project.id)
+           .order_by(EstimatePreparationRun.id.desc()).first())
+    return render_template("guided/internal_cost.html", project=project, doc=G.internal_cost_document(guided),
+                           prep_run=run, prep_assumptions=json.loads(run.assumptions_json or "[]") if run else [],
+                           prep_questions=json.loads(run.open_questions_json or "[]") if run else [])
+
+
+@guided_bp.route("/projects/<int:project_id>/guided/prepare-estimate", methods=["GET", "POST"])
+def prepare_my_estimate(project_id):
+    """PREPARE MY ESTIMATE: the AI reads the drawings and scope; the existing engines estimate; Ben reviews."""
+    from app.services import estimate_preparation as EP
+
+    project, guided = _project_and_guided(project_id, required=False)
+    if request.method == "GET":
+        return render_template("guided/prepare_estimate.html", project=project,
+                               enabled=__import__("os").environ.get("AI_ESTIMATING_ENABLED") == "1",
+                               spent=EP.spent_this_month_cents(_org()), cap=EP.monthly_cap_cents())
+    attachments = []
+    for f in request.files.getlist("drawings"):
+        if f and f.filename:
+            attachments.append((f.filename, f.read(), f.mimetype))
+    try:
+        interpreter = EP.ChatCompletionsInterpreter.from_env()
+        run = EP.prepare_estimate(project, user=current_user, interpreter=interpreter,
+                                  scope_text=request.form.get("scope", ""), attachments=attachments)
+    except EP.PreparationError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("guided.prepare_my_estimate", project_id=project.id))
+    flash({"COMPLETED": "The estimate was prepared. Review the internal costs next.",
+           "NEEDS_INPUT": "The estimate was prepared with questions for you. Review them with the internal costs.",
+           "FAILED": "The preparation did not finish. Nothing was changed. See the run record."}[run.status],
+          "success" if run.status != "FAILED" else "error")
+    return redirect(url_for("guided.internal_cost", project_id=project.id))
 
 
 @guided_bp.route("/projects/<int:project_id>/guided/internal-cost.pdf")

@@ -100,6 +100,8 @@ def _document_kind(request: SigningRequest) -> str:
         return "Contract"
     if request.document_family == "INTERNAL_APPROVAL":
         return "document for internal approval"
+    if request.document_family == "QUOTATION":
+        return "Quotation"
     return "document"
 
 
@@ -121,6 +123,10 @@ def _document_label(request: SigningRequest) -> str:
         from app.services.internal_approval import document_title
 
         return document_title(request)
+    if request.document_family == "QUOTATION":
+        from app.services.quotation_signing import document_title as quotation_title
+
+        return quotation_title(request)
     project = db.session.get(Project, request.project_id)
     if project is not None and (project.name or "").strip():
         return project.name

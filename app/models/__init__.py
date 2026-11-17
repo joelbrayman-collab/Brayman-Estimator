@@ -88,6 +88,7 @@ from app.models.organization import (
     OrganizationSystemAdministratorMembership,
 )
 from app.models.internal_summary import InternalSummaryRevision  # Financial Summary REVs (3 Nov 2026)
+from app.models.estimating_assistant import EstimatePreparationRun, ProjectExport  # estimating assistant (16 Nov 2026)
 from app.models.person import (
     EstimateCrewMember,
     OrganizationLabourCostSetting,

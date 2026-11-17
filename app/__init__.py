@@ -349,6 +349,10 @@ def _register_office_auth(app: Flask) -> None:
             # Sign-in reliability, 26 Oct 2026: Postmark's delivery, bounce and spam-complaint reports. No sign-in;
             # each request must carry the webhook's HTTP Basic credentials (app/services/email_delivery.py).
             "email_webhooks.postmark",
+            "project_export_api.pending",
+            "project_export_api.file",
+            "project_export_api.done",
+            "project_export_api.failed",
         ):
             return None
         if endpoint is not None and (
@@ -611,8 +615,10 @@ def create_app(config=None):
     from app.routes.calculators import calculators_bp
     from app.routes.guided_estimating import guided_bp
     from app.routes.supplier_economic_model import supplier_program_bp
+    from app.routes.project_export_api import project_export_api_bp
 
     app.register_blueprint(main_bp)
+    app.register_blueprint(project_export_api_bp)
     app.register_blueprint(help_bp)
     app.register_blueprint(cal_bp)
     app.register_blueprint(clients_bp)

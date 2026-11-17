@@ -307,8 +307,6 @@ def test_paulusse_baseline_reproduces_through_the_engine_and_the_proposal(app):
 def test_override_a_labour_rate_80(app):
     _project_, _estimate, version = _paulusse()
     approve_for_issue(version, actor=JOEL)
-    with pytest.raises(EstimateEconomicsError, match="reason"):
-        set_project_pricing(version, actor=JOEL, labour_rate="80")
     done = set_project_pricing(version, actor=JOEL, labour_rate="80.00", reason="Union crew (synthetic)")
     db.session.commit()
     assert done == {"changed": True, "rerated": 1, "reapproved": True, "repriced": True}
@@ -481,3 +479,13 @@ def test_migration_numbers_existing_projects_in_creation_order_and_keeps_existin
     assert con.execute("SELECT COUNT(*) FROM project_identity_events").fetchone()[0] == 3
     assert con.execute("SELECT COUNT(*) FROM projects WHERE client_project_number IS NOT NULL").fetchone()[0] == 0
     con.close()
+
+
+def test_rate_change_without_a_reason_is_never_blocked(app):
+    """Changing the rate or margin to see the impact needs no justification (Joel, 16 Nov 2026)."""
+    _project_, estimate, version = _paulusse()
+    url = f"/estimates/{estimate.id}/versions/{version.id}/project-pricing"
+    browser = _office(app)
+    browser.post(url, data={"labour_rate": "90", "margin_percent": "18", "reason": ""})
+    db.session.refresh(version)
+    assert (version.labour_rate, version.target_gross_margin) == (Decimal("90.00"), Decimal("0.180000"))

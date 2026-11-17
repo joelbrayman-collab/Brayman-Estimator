@@ -136,6 +136,8 @@ def assemble_executed_pdf(
     family = request.document_family or ""
     source_label = "Change Order" if family == DOCUMENT_FAMILY_CHANGE_ORDER else "Contract"
     who = "Customer"
+    if family == "QUOTATION":  # 16 Nov 2026
+        source_label = "Quotation"
     if family == DOCUMENT_FAMILY_INTERNAL_APPROVAL:  # 3 Nov 2026: the approver of an internal document
         source_label, who = "Internal approval", "Approver"
     customer_name = (customer.confirmed_signer_name if customer else "") or ""

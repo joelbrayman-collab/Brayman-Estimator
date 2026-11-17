@@ -95,6 +95,11 @@ def _ceremony_context(access):
         contract = db.session.get(GeneratedProjectContract, signing_request.source_record_id)
         if contract is not None and (contract.contract_number or "").strip():
             document_title = contract.contract_number
+    elif signing_request.document_family == "QUOTATION":
+        from app.services.quotation_signing import document_title as quotation_title
+
+        family_label = "Quotation"
+        document_title = quotation_title(signing_request)
     elif signing_request.document_family == "INTERNAL_APPROVAL":
         # Internal approval (3 Nov 2026): only the frozen document's own title; nothing else of the project.
         from app.services.internal_approval import document_title as internal_title

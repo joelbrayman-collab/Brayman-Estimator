@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "u1b2c3d4e5f6"
 NEXT = "v2c3d4e5f6a7"
-HEAD = "u8b9c0d1e2f3"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
+HEAD = "q1a2b3c4d5e6"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
 PRIOR = "t0a1b2c3d4e5"
 WATCHED = (
     "canonical_materials",

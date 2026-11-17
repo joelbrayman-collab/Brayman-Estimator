@@ -49,6 +49,7 @@ from app.models.signing import (
     EVENT_VIEWED,
     EVENT_VOIDED,
     DOCUMENT_FAMILY_INTERNAL_APPROVAL,
+    DOCUMENT_FAMILY_QUOTATION,
     LINK_SIGNER_ROLES,
     ROLE_CUSTOMER,
     ROLE_ORGANIZATION_COUNTERSIGN,
@@ -712,6 +713,15 @@ def approve_signing_request(
         revision = db.session.get(InternalSummaryRevision, request.source_record_id)
         if revision is None or revision.organization_id != organization_id:
             raise SigningServiceError(BLOCK_SOURCE_NOT_FOUND)
+    elif request.document_family == DOCUMENT_FAMILY_QUOTATION:
+        # Quotation (16 Nov 2026): the second approval. The source is the proposal; the frozen bytes must still be
+        # exactly what Ben's customer-estimate approval covers (quotation_signing.require_authorized).
+        from app.services.quotation_signing import QuotationError, require_authorized
+
+        try:
+            require_authorized(request)
+        except QuotationError as exc:
+            raise SigningServiceError(str(exc)) from exc
     else:
         raise SigningServiceError(BLOCK_DOCUMENT_FAMILY_INVALID)
     if not (request.participants or []):
@@ -878,6 +888,10 @@ def _document_reference(request: SigningRequest) -> str:
         from app.services.internal_approval import document_title
 
         return document_title(request)
+    if request.document_family == DOCUMENT_FAMILY_QUOTATION:
+        from app.services.quotation_signing import document_title as quotation_title
+
+        return quotation_title(request)
     project = db.session.get(Project, request.project_id)
     if project is not None and (project.name or "").strip():
         return project.name

@@ -40,7 +40,7 @@
       </div>
       {% if editable %}
       <div class="pp-field pp-reason">
-        <label for="pp-reason">Reason <span class="pp-note">(needed when a value differs from the company default)</span></label>
+        <label for="pp-reason">Reason <span class="pp-note">(optional, kept with the estimate)</span></label>
         <input id="pp-reason" name="reason" value="" maxlength="300" placeholder="{{ econ.labour_rate_reason or econ.margin_reason or 'e.g. union crew; tight market' }}" data-reason>
       </div>
       <button type="submit" class="button pp-save" data-save-project-pricing>Save and recalculate</button>

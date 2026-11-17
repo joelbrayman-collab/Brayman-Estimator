@@ -15,6 +15,7 @@ from decimal import Decimal, InvalidOperation
 from app.services.construction_measurement import rectangular_prism_cubic_yards
 from app.models.canonical_material import CONCRETE_CANONICAL_CODE
 from app.services.icf_manufacturer_profiles import IcfProfileError
+from app.services.icf_pour_stages import PourStageInputError, plan_wall_pours
 from app.services.icf_quantity import (
     ENGINE_VERSION as ICF_ENGINE_VERSION,
     IcfQuantityInputError,
@@ -94,6 +95,19 @@ def _element_lines(element):
 def _icf_wall(element):
     identifier = element.get("id") or "icf-wall"
     area = element.get("net_wall_area_ft2")
+    pour_plan = None
+    segments = element.get("wall_segments")
+    if segments:
+        # Wall run given as (label, length, height) segments: the area comes from them and the two-stage rule
+        # (over 10 ft: two pour stages, two pump trucks) is applied here, in the existing foundation workflow.
+        try:
+            pour_plan = plan_wall_pours(
+                [(seg.get("label") or "wall", seg.get("length_ft"), seg.get("height_ft")) for seg in segments]
+            )
+        except PourStageInputError as exc:
+            return (_open_line(element, "icf_wall", "ICF wall", (str(exc),)),)
+        if area in (None, ""):
+            area = str(pour_plan["wall_area_sf"])
     corner_90 = element.get("corner_90_count")
     corner_45 = element.get("corner_45_count")
     missing = []
@@ -128,6 +142,8 @@ def _icf_wall(element):
     payload = calculated.get("payload") or {}
     for quantity in payload.get("quantities") or ():
         lines.append(_quantity_line(element, quantity, calculated))
+    if pour_plan is not None:
+        lines.extend(_pour_stage_lines(element, pour_plan))
     lines.append(
         _open_line(
             element,
@@ -145,6 +161,32 @@ def _icf_wall(element):
         )
     )
     return tuple(lines)
+
+
+def _pour_stage_lines(element, plan):
+    """Pour stages and pump trucks from the two-stage rule. Known counts, not purchase quantities."""
+    rule = "walls over 10 ft are poured in two stages, one pump truck per stage"
+    lines = []
+    for code, amount in (("pour_stages", plan["pour_stages"]), ("concrete_pump_trucks", plan["pump_trucks"])):
+        lines.append({
+            "element": code,
+            "source_element_id": element.get("id"),
+            "kind": "pour_stage_rule",
+            "status": _KNOWN,
+            "quantity": "{0}.0".format(amount),
+            "unit": "EA",
+            "quantity_meaning": code,
+            "purchase_quantity": None,
+            "stock_length": None,
+            "waste": None,
+            "truck_count": amount if code == "concrete_pump_trucks" else None,
+            "canonical_material_code": None,
+            "missing_facts": (),
+            "item_text": "{0}. {1}. {2} lf of wall over 10 ft (second stage).".format(
+                code.replace("_", " ").capitalize(), element.get("id") or "wall", plan["two_stage_length_ft"]),
+            "provenance": _provenance(element, code, rule, None),
+        })
+    return lines
 
 
 def _quantity_line(element, quantity, calculated):

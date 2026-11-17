@@ -22,10 +22,13 @@ DOCUMENT_FAMILY_SUBCONTRACT = "SUBCONTRACT"
 # Internal approval (Joel, 3 Nov 2026): an internal document (first: the Internal Project Financial Summary, frozen as
 # REVn) signed by an approver of the contractor, with an optional countersigner. No client is a party.
 DOCUMENT_FAMILY_INTERNAL_APPROVAL = "INTERNAL_APPROVAL"
+# Quotation (Joel, 16 Nov 2026): the customer quotation (the frozen customer estimate PDF, already approved by Ben as a
+# CUSTOMER_ESTIMATE REV) signed by the customer through CaliSIGN. A customer-facing family like CONTRACT.
+DOCUMENT_FAMILY_QUOTATION = "QUOTATION"
 DOCUMENT_FAMILIES = ((DOCUMENT_FAMILY_CHANGE_ORDER, DOCUMENT_FAMILY_CONTRACT) + SUPPLIER_DOCUMENT_FAMILIES
-                     + (DOCUMENT_FAMILY_SUBCONTRACT, DOCUMENT_FAMILY_INTERNAL_APPROVAL))
+                     + (DOCUMENT_FAMILY_SUBCONTRACT, DOCUMENT_FAMILY_INTERNAL_APPROVAL, DOCUMENT_FAMILY_QUOTATION))
 DOCUMENT_FAMILY_CHECK = ("document_family IN ('CHANGE_ORDER', 'CONTRACT', 'SUPPLIER_ORDER', 'SUPPLIER_DELIVERY_CHANGE', "
-                         "'SUBCONTRACT', 'INTERNAL_APPROVAL')")
+                         "'SUBCONTRACT', 'INTERNAL_APPROVAL', 'QUOTATION')")
 # Every family but INTERNAL_APPROVAL has a client (the customer, or the project's client).
 CLIENT_REQUIRED_CHECK = "client_id IS NOT NULL OR document_family = 'INTERNAL_APPROVAL'"
 

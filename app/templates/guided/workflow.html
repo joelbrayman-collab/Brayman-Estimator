@@ -91,6 +91,7 @@
   <div class="ts-details-grid" data-price-sections>
   {% call ts.details("More for this job", "ts-price-details", hint="Add work, calculators, supplier prices, line items") %}
     <div class="ge-actions">
+      <a class="ge-secondary" href="{{ url_for('guided.prepare_my_estimate', project_id=project.id) }}" data-prepare-estimate-link>Prepare my estimate (AI)</a>
       {% if view.resume %}<a class="ge-secondary" data-resume-stage href="{{ url_for('guided.stage', project_id=project.id, stage_id=view.resume.id) }}">{% if view.done %}Resume: {{ view.resume.section_name }}{% else %}Start: {{ view.resume.section_name }}{% endif %}</a>{% endif %}
       {% if view.selected_work %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}#add-work" data-add-work-link>Add or change work</a>
       {% else %}<a class="ge-secondary" href="{{ url_for('guided.scope', project_id=project.id) }}">Construction scope</a>{% endif %}

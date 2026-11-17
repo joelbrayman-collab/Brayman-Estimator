@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Prepare my estimate — {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Prepare my estimate{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/guided-estimating.css') }}">{% endblock %}
+{% block content %}
+<div class="ge-wrap" data-prepare-estimate>
+  <p class="eyebrow">{{ project.name }}{% if project.client %} · {{ project.client.name }}{% endif %}</p>
+  <section class="ge-card">
+    <h2>Give it the drawings and the scope</h2>
+    <p class="ge-muted">The AI reads the drawings and scope and fills in the quantities with the same calculators you already use. It never prices, approves or sends anything. You review and approve the internal costs, then the customer quotation.</p>
+    {% if not enabled %}<p class="ge-warn" data-ai-off>AI preparation is switched off until the provider and its spending limit are set up. You can still estimate by hand as usual.</p>{% endif %}
+    <p class="ge-muted">AI spending this month: ${{ '%.2f'|format(spent / 100) }} of ${{ '%.2f'|format(cap / 100) }}.</p>
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Drawings (PDF or images)<br><input type="file" name="drawings" multiple accept=".pdf,image/png,image/jpeg,image/webp"></label>
+      <label>Scope notes<br><textarea name="scope" rows="6" cols="70" placeholder="What is being built, anything the drawings do not show."></textarea></label>
+      <div class="ge-actions"><button class="ge-primary" type="submit" {% if not enabled %}disabled{% endif %}>PREPARE MY ESTIMATE</button>
+      <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}">Back to the workflow</a></div>
+    </form>
+  </section>
+</div>
+{% endblock %}

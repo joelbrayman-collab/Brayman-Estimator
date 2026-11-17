@@ -72,6 +72,10 @@ EXPECTED_EXEMPT_ENDPOINT_LITERALS = {
     # and no CSRF token; 404 until POSTMARK_WEBHOOK_USERNAME / _PASSWORD are set, 401 without those HTTP Basic
     # credentials (tests/test_signin_email_reliability.py). They only add a delivery event to a sent email.
     "email_webhooks.postmark",
+    "project_export_api.pending",
+    "project_export_api.file",
+    "project_export_api.done",
+    "project_export_api.failed",
 }
 # supplier_quote_link. added 20 Oct 2026 (Supplier PRO Desk): a supplier's walk-in customer opens and answers
 # an issued quotation. The secret in the address is the only credential; a wrong, replaced or expired link
@@ -129,6 +133,10 @@ EXPECTED_PUBLIC_ENDPOINTS = {
     "sms_notifications.twilio_status",  # Twilio delivery reports, signature-checked (22 Oct 2026), see above
     "sms_notifications.twilio_inbound",  # Twilio replies (STOP / START), signature-checked (22 Oct 2026)
     "email_webhooks.postmark",  # Postmark delivery reports, HTTP Basic credentials (26 Oct 2026), see above
+    "project_export_api.pending",  # Mac Sync export puller, bearer token (16 Nov 2026)
+    "project_export_api.file",  # Mac Sync export puller, bearer token (16 Nov 2026)
+    "project_export_api.done",  # Mac Sync export puller, bearer token (16 Nov 2026)
+    "project_export_api.failed",  # Mac Sync export puller, bearer token (16 Nov 2026)
     # One CalibraytAI identity (26 Oct 2026): Production's server-to-server API for the Training Centre; 404 unless
     # IDENTITY_CLIENTS is set, 401 without that site's credentials (tests/test_one_identity.py).
     "identity_api.verify",

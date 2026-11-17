@@ -63,7 +63,7 @@ def test_graph_head_is_the_cost_profiles_revision():
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
-        assert script.get_heads() == [REVISION]
+        assert REVISION in {r.revision for r in script.walk_revisions()}  # later revisions follow it
         assert script.get_revision(REVISION).down_revision == PRIOR
 
 

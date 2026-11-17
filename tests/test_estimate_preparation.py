@@ -7,7 +7,7 @@ from app.services import estimate_preparation as EP
 from tests.test_internal_approval_calisign import env  # noqa: F401
 
 DOXEY = Interpretation = EP.Interpretation(
-    plan={"foundation_elements": [{"element_type": "icf_wall", "name": "Doxey walls",
+    plan={"foundation_elements": [{"id": "doxey-walls", "kind": "icf_wall", "manufacturer_id": "logix", "corner_90_count": 4, "corner_45_count": 0,
           "wall_segments": [{"label": "deep", "length_ft": 92, "height_ft": 13.5},
                             {"label": "shallow", "length_ft": 75.5, "height_ft": 9.5}]}], "scopes": []},
     assumptions=["West wall step length to be confirmed."])
@@ -25,6 +25,13 @@ def test_prepare_uses_existing_engines_and_never_calls_a_provider(env):
     assert run.status in ("COMPLETED", "NEEDS_INPUT"), run.steps_json
     steps = json.loads(run.steps_json)
     assert any(s["step"].startswith("quantity engines") and s["lines"] > 0 for s in steps)
+    # real engine output, not placeholders: 2 pours, 2 pump trucks, concrete and forms
+    facts = json.loads(run.facts_json)
+    from app.services.estimating_quantity import estimate_project
+
+    by = {l["element"]: l for l in estimate_project(dict(facts, project_id=project.id))["lines"]}
+    assert by["pour_stages"]["quantity"] == "2.0" and by["concrete_pump_trucks"]["quantity"] == "2.0"
+    assert by["concrete"]["status"] == "KNOWN" and by["standard_forms"]["status"] == "KNOWN"
     assert run.cost_cents == 0 and run.interpreter == "recorded"
     assert "West wall step length" in run.assumptions_json
 
@@ -87,3 +94,36 @@ def test_prepare_page_off_state_and_cost_review_shows_the_run(env, monkeypatch):
     owner.post(f"/projects/{project.id}/guided/scope", data={"action": "add_work", "work": ["work_siding"]})
     cost = owner.get(f"/projects/{project.id}/guided/internal-cost", status=200)
     assert "data-preparation-run" in cost and "West wall step length" in cost and "Confirm the slab thickness" in cost
+
+
+def test_prepared_quantities_land_on_the_existing_estimate_review_for_a_person_to_confirm():
+    """Doxey facts → existing engines → Contract V1 → the existing calculation intake (nothing added to the estimate
+    until Ben confirms each quantity there)."""
+    from app import db
+    from app.models.calculation_estimate_mapping import CalculationResultIntake
+    from app.models.estimate import EstimateLineItem as EstimateLine
+    from tests.test_guided_estimating import env as _unused  # noqa: F401
+    from tests.test_guided_estimating import create_app, Driver, BEN, ensure_default_organization, seed_company, \
+        ensure_office_user, login_office_user
+
+    app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", "SECRET_KEY": "k"})
+    with app.app_context():
+        db.create_all()
+        ensure_default_organization()
+        seed_company()
+        ensure_office_user(email=BEN[0], password=BEN[1], display_name=BEN[2])
+        db.session.commit()
+        http = app.test_client()
+        login_office_user(http, email=BEN[0], password=BEN[1])
+        d = Driver(http)
+        project, _loc = d.new_project("Doxey (synthetic)", "GARAGE_OUTBUILDING", "GENERAL_CONTRACTOR")
+        run = EP.prepare_estimate(project, user=None, interpreter=EP.RecordedInterpreter(DOXEY))
+        steps = json.loads(run.steps_json)
+        review = [s for s in steps if s["step"].startswith("estimate review")][0]
+        assert review["result"] == "quantities waiting for confirmation", steps
+        intake = db.session.get(CalculationResultIntake, review["intake_id"])
+        codes = {r.quantity_code for r in intake.reviews}
+        assert {"concrete", "standard_forms", "pour_stages", "concrete_pump_trucks"} <= codes
+        assert EstimateLine.query.count() == 0  # nothing is on the estimate until a person confirms
+        db.session.remove()
+        db.drop_all()

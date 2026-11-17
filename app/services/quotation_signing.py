@@ -183,8 +183,23 @@ def file_signed_quotation(request):
     blob = ingest.prepare_upload(f"Quotation_{proposal.proposal_number}_signed_{request.request_number}.pdf",
                                  retrieve_executed_artifact_bytes(request.id, request.organization_id))
     context = resolve_context(request.organization_id, CONTEXT_PROJECT, request.project_id)
-    return ingest.file_document(
+    document = ingest.file_document(
         request.organization_id, ingest.SYSTEM, blob=blob, context=context,
         title=f"Quotation {proposal.proposal_number} — signed by {who}", type_code="ESTIMATE",
         record_kind="SIGNING_REQUEST", record_id=request.id,
         description=f"Signed quotation {request.request_number} (CaliSIGN), with its signing record.")
+    queue_signed_export(request, proposal)
+    return document
+
+
+def queue_signed_export(request, proposal):
+    """Queue the executed quotation for the project's Sync.com archive (folder 06 - Signed Documents)."""
+    from app.models import Project
+    from app.services import project_export
+    from app.services.signing import retrieve_executed_artifact_bytes
+
+    project = db.session.get(Project, request.project_id)
+    return project_export.enqueue(
+        project, data=retrieve_executed_artifact_bytes(request.id, request.organization_id), extension=".pdf",
+        folder_code="06", document_type="Signed-Quotation", revision=str(proposal.proposal_number),
+        source_kind="SIGNING_REQUEST", source_id=request.id, on=(request.executed_at or datetime.utcnow()).date())

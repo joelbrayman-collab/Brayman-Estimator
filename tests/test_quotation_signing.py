@@ -80,6 +80,10 @@ def test_quotation_full_flow_with_audit_trail_and_signed_copy_filed(env):
     doc = Q.file_signed_quotation(request)
     assert doc is not None and doc.document_type == "ESTIMATE"
     assert Q.file_signed_quotation(request).id == doc.id  # idempotent
+    from app.models.estimating_assistant import ProjectExport
+
+    exports = ProjectExport.query.filter_by(project_id=project.id).all()  # signed copy queued for Sync.com, once
+    assert len(exports) == 1 and exports[0].folder_code == "06" and "Signed-Quotation" in exports[0].target_name
     assert (DocumentLink.query.filter_by(document_id=doc.id, record_kind="SIGNING_REQUEST", record_id=request.id,
                                          project_id=project.id).count() == 1)
 

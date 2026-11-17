@@ -114,7 +114,8 @@ class ChatCompletionsInterpreter:
                                    "Nothing was sent.")
         prompt = ("Read the drawings text and scope. Reply with JSON only: {\"foundation_elements\": [...], "
                   "\"scopes\": [...], \"assumptions\": [...], \"open_questions\": [...]}. For ICF walls give "
-                  "wall_segments [{label,length_ft,height_ft}]. Never invent a dimension: ask instead.\n\nDRAWINGS:\n"
+                  "an element {\"id\",\"kind\":\"icf_wall\",\"manufacturer_id\",\"corner_90_count\",\"corner_45_count\","
+                  "\"wall_segments\":[{label,length_ft,height_ft}]}. Never invent a dimension: ask instead.\n\nDRAWINGS:\n"
                   + drawings_text + "\n\nSCOPE:\n" + scope_text)
         parts = [{"type": "text", "text": prompt}] + self._attachment_parts(attachments)
         body = json.dumps({"model": self.model, "messages": [{"role": "user", "content": parts}],
@@ -129,6 +130,25 @@ class ChatCompletionsInterpreter:
                               assumptions=out.get("assumptions") or [], open_questions=out.get("open_questions") or [],
                               input_tokens=int(usage.get("prompt_tokens", 0)),
                               output_tokens=int(usage.get("completion_tokens", 0)), model=self.model)
+
+
+_UNIT = {"EA": "ea", "YD3": "yd3", "M3": "m3", "FT2": "ft2", "M2": "m2", "FT": "ft", "M": "m"}
+
+
+def contract_payload(project_id: int, lines, engine_id: str, engine_version: str, facts: dict) -> dict | None:
+    """The existing Calculation Result Contract V1, built from the existing engine's KNOWN quantity lines, so the
+    existing estimate review (calculation_estimate_mapping) takes it exactly like a calculator result."""
+    import hashlib
+
+    quantities = [{"code": l["element"], "quantity": str(l["quantity"]), "unit_code": _UNIT[str(l["unit"]).upper()]}
+                  for l in lines if l.get("status") == "KNOWN" and l.get("quantity") not in (None, "")
+                  and str(l.get("unit") or "").upper() in _UNIT]
+    if not quantities:
+        return None
+    digest = hashlib.sha256(json.dumps([project_id, facts, quantities], sort_keys=True, default=str).encode()).hexdigest()[:24]
+    return {"contract_version": "1", "result_id": "prep-" + digest, "engine_id": engine_id, "engine_version": engine_version,
+            "variant": None, "measurement_system": "imperial", "inputs": [], "assumptions": [],
+            "product_specification": None, "components": [], "quantities": quantities}
 
 
 def prepare_estimate(project, *, user, interpreter, drawings_text: str = "", scope_text: str = "", attachments=()) -> EstimatePreparationRun:
@@ -158,6 +178,32 @@ def prepare_estimate(project, *, user, interpreter, drawings_text: str = "", sco
         quantities = estimate_project(plan)
         lines = list(quantities.get("lines") or ())
         unresolved = [l for l in lines if l.get("status") not in (None, "KNOWN")]
+        payload = contract_payload(project.id, lines, "foundation_quantity", "1", found.plan)
+        if payload is None:
+            steps.append({"step": "estimate review (existing)", "result": "no quantities to review"})
+        else:
+            from app.services import calculator_projects as CP
+            from app.services import guided_estimating as G
+
+            guided = G.get_guided(project.organization_id, project.id)
+            if guided is not None and guided.estimate is None:  # the existing step that opens the estimate
+                G.ensure_estimate(guided, actor="AI estimating assistant", user_id=getattr(user, "id", None))
+                db.session.commit()
+                steps.append({"step": "estimate opened (existing)", "result": "ensured"})
+
+            actor = (getattr(user, "email", None) or "AI estimating assistant")[:150]
+            record, _created = CP.save_to_project(
+                organization_id=project.organization_id, project=project, calculator="icf_wall",
+                summary="Prepared by the estimating assistant from the drawings and scope",
+                result_text="\n".join(f"{q['code']}: {q['quantity']} {q['unit_code']}" for q in payload["quantities"]),
+                entered=[], payload=payload, user_id=getattr(user, "id", None), actor_display_name=actor)
+            try:
+                intake = CP.send_to_review(organization_id=project.organization_id, record=record, actor=actor,
+                                           user_id=getattr(user, "id", None))
+                steps.append({"step": "estimate review (existing)", "result": "quantities waiting for confirmation",
+                              "intake_id": intake.id})
+            except CP.CalculatorProjectError as exc:
+                steps.append({"step": "estimate review (existing)", "result": "saved on the project; " + str(exc)})
         steps.append({"step": "quantity engines (existing)", "lines": len(lines), "unresolved": len(unresolved)})
         run.assumptions_json = json.dumps(found.assumptions)
         questions = list(found.open_questions) + [l.get("description") or l.get("code") for l in unresolved]

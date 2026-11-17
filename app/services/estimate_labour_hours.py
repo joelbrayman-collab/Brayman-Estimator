@@ -2,7 +2,7 @@
 
 The estimator types the labour hours for an item. The rate is the saved company
 direct labour cost rate (``resolve_direct_labour_cost_rate``: the active approved
-standard), or an authorized project override, which needs a reason. Nothing is
+standard), or a project override (a reason is optional). Nothing is
 hard-coded here.
 
 Each item's labour is one ordinary Custom line in the item's section, coded
@@ -51,7 +51,7 @@ def resolve_rate(organization_id: str, *, override_rate="", override_reason="", 
         raise LabourHoursError(str(exc)) from exc
     if result.rate_per_man_hour is None or result.requires_review:
         raise LabourHoursError(
-            "No saved company labour rate is approved. Set it under How we price → labour, or enter a project rate with a reason."
+            "No saved company labour rate is approved. Set it under How we price → labour, or enter a project rate."
         )
     if result.source_record_type == "project_override":
         source = f"Project rate {result.rate_per_man_hour} per hour — {result.override_reason}"
@@ -80,7 +80,7 @@ def version_rate(version, *, organization_id: str, actor: str = "", override_rat
     values = project_values(version, organization_id)
     if values["labour_rate"] is None:
         raise LabourHoursError(
-            "No saved company labour rate is approved. Set it under How we price → labour, or enter a project rate with a reason."
+            "No saved company labour rate is approved. Set it under How we price → labour, or enter a project rate."
         )
     if not values["labour_rate_is_override"] and values["defaults"]["labour_standard"] is not None:
         resolve_rate(organization_id, persist_audit=True)  # the company rate's resolution stays audited

@@ -58,15 +58,16 @@ def test_changing_and_removing_hours_and_blank_leaves_alone(app):
     assert [(l.code, l.quantity) for l in remaining] == [(f"LAB-{framing.id}", Decimal("12"))]
 
 
-def test_a_project_rate_needs_a_reason_and_is_recorded(app):
+def test_a_project_rate_never_needs_a_reason_and_a_given_reason_is_recorded(app):
+    # Joel, 16 Nov 2026: changing the rate to see the impact is never blocked; the reason is optional.
     _e, version, footing, _f = _version_with_items()
-    with pytest.raises(labour.LabourHoursError, match="reason"):
-        labour.save_hours(version, organization_id=DEFAULT_ORGANIZATION_ID, hours_by_item={footing.id: "4"}, actor=ACTOR,
-                          override_rate="80")
     labour.save_hours(version, organization_id=DEFAULT_ORGANIZATION_ID, hours_by_item={footing.id: "4"}, actor=ACTOR,
-                      override_rate="80", override_reason="Union crew on this site")
+                      override_rate="80")
+    assert EstimateLineItem.query.filter_by(code=f"LAB-{footing.id}").one().unit_cost == Decimal("80")
+    labour.save_hours(version, organization_id=DEFAULT_ORGANIZATION_ID, hours_by_item={footing.id: "4"}, actor=ACTOR,
+                      override_rate="82", override_reason="Union crew on this site")  # a reason is still accepted
     line = EstimateLineItem.query.filter_by(code=f"LAB-{footing.id}").one()
-    assert line.unit_cost == Decimal("80") and "Union crew on this site" in line.notes
+    assert line.unit_cost == Decimal("82")
 
 
 @pytest.mark.parametrize("hours, message", [("-2", "negative"), ("abc", "number"), ("NaN", "number")])

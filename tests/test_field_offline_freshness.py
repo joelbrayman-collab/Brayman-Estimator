@@ -22,6 +22,7 @@ from tests.auth_fixtures import DEFAULT_OFFICE_EMAIL, DEFAULT_OFFICE_PASSWORD, e
 
 # A required test dependency (requirements-dev.txt): a missing install fails, it does not skip.
 import playwright.sync_api as playwright  # noqa: E402
+from tests.browser_process import HERMETIC_CHROME_ARGS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SW = (ROOT / "app/static/field-sw.js").read_text(encoding="utf-8")
@@ -121,7 +122,7 @@ def office(tmp_path):
 def test_offline_copy_is_labelled_and_the_current_schedule_returns_when_back_online(office):
     base = f"http://127.0.0.1:{office.port}"
     with playwright.sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=HERMETIC_CHROME_ARGS)
         context = browser.new_context(viewport={"width": 390, "height": 844})
         page = context.new_page()
         page.goto(f"{base}/login")

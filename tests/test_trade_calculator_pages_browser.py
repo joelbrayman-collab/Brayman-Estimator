@@ -19,6 +19,7 @@ from tests.auth_fixtures import DEFAULT_OFFICE_EMAIL, DEFAULT_OFFICE_PASSWORD, e
 # A required test dependency (requirements-dev.txt). If it is missing the run fails
 # here; it is not skipped (technical cleanup, 18 Oct 2026).
 import playwright.sync_api as playwright  # noqa: E402
+from tests.browser_process import HERMETIC_CHROME_ARGS  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -41,7 +42,7 @@ def server(tmp_path_factory):
 @pytest.fixture(scope="module")
 def browser():
     with playwright.sync_playwright() as p:
-        b = p.chromium.launch()
+        b = p.chromium.launch(args=HERMETIC_CHROME_ARGS)
         yield b
         b.close()
 

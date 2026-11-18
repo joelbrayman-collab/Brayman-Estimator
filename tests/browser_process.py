@@ -63,8 +63,18 @@ def stop_process_tree(root_pid):
             pass
 
 
+HERMETIC_PRELOAD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hermetic_playwright.mjs")
+# --no-proxy-server: a system proxy would resolve names itself and bypass the resolver rule.
+HERMETIC_CHROME_ARGS = ["--no-proxy-server", "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1, EXCLUDE localhost"]
+
+
 def run_node_browser_test(args, *, cwd, timeout, env=None):
-    """Run Node. On timeout, stop its whole process tree."""
+    """Run Node. On timeout, stop its whole process tree.
+
+    Every browser the test launches is hermetic: hosts other than the local one fail to resolve at once, so a slow
+    public network (Google Fonts and jsDelivr are linked from every page) cannot stall a walk (17 Nov 2026)."""
+    if os.path.basename(str(args[0])).startswith("node"):
+        args = [args[0], "--import", HERMETIC_PRELOAD, *args[1:]]
     process = subprocess.Popen(
         args,
         cwd=cwd,

@@ -11,6 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from tests.browser_process import HERMETIC_CHROME_ARGS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (ROOT / "app" / "static" / "js" / "password-reveal.js").read_text()
@@ -24,7 +25,7 @@ def page():
     from playwright.sync_api import sync_playwright  # requirements-dev.txt; never skipped
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=HERMETIC_CHROME_ARGS)
         pg = browser.new_page()
         yield pg
         browser.close()

@@ -10,7 +10,13 @@
      data-cal-find-url="{{ url_for('cal_assistant.find_it') }}"
      data-cal-searching="{{ cal_copy.CAL_SEARCHING }}"
      data-cal-error="{{ cal_copy.CAL_ERROR }}"
-     data-cal-signed-out="{{ cal_copy.CAL_SIGNED_OUT }}">
+     data-cal-signed-out="{{ cal_copy.CAL_SIGNED_OUT }}"
+     data-cal-listening="{{ cal_copy.CAL_LISTENING }}"
+     data-cal-opening="{{ cal_copy.CAL_OPENING }}"
+     data-cal-no-speech="{{ cal_copy.CAL_NO_SPEECH }}"
+     data-cal-mic-unsupported="{{ cal_copy.CAL_MIC_UNSUPPORTED }}"
+     data-cal-mic-denied="{{ cal_copy.CAL_MIC_DENIED }}"
+     data-cal-voice-error="{{ cal_copy.CAL_VOICE_ERROR }}">
     <div class="cal-panel-head">
         <img src="{{ url_for('static', filename='img/cal-assistant/cal-128.png') }}" alt="" width="40" height="38">
         <div class="cal-panel-name">
@@ -28,6 +34,9 @@
                    placeholder="{{ cal_copy.CAL_FIND_PLACEHOLDER }}" enterkeyhint="search">
             <button type="submit" class="cal-find-btn">{{ cal_copy.CAL_FIND_BUTTON }}</button>
         </div>
+        <button type="button" class="cal-mic-btn" id="cal-mic" data-cal-mic aria-label="{{ cal_copy.CAL_MIC_LABEL }}">
+            <i class="bi bi-mic-fill" aria-hidden="true"></i> <span>{{ cal_copy.CAL_MIC_LABEL }}</span>
+        </button>
         <div class="cal-examples" id="cal-examples">
             {% for example in cal_copy.CAL_EXAMPLES %}<button type="button" class="cal-example" data-cal-example="{{ example }}">{{ example }}</button>{% endfor %}
         </div>

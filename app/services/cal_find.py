@@ -35,6 +35,9 @@ DEST_QUOTES = "quotes"
 DEST_ORDERS = "orders"
 DEST_DELIVERIES = "deliveries"
 DEST_CALENDAR = "calendar"
+DEST_COSTS = "costs"
+DEST_CHANGE_ORDERS = "change_orders"
+DEST_NEW_CHANGE_ORDER = "new_change_order"
 
 DEST_TITLES = {
     DEST_PROJECTS: "Projects",
@@ -46,11 +49,17 @@ DEST_TITLES = {
     DEST_ORDERS: "Purchase orders",
     DEST_DELIVERIES: "Delivery schedule",
     DEST_CALENDAR: "Company Calendar",
+    DEST_COSTS: "Costs and profit",
+    DEST_CHANGE_ORDERS: "Change orders",
+    DEST_NEW_CHANGE_ORDER: "New change order",
 }
 
 # Longest phrases first, so "delivery schedule" is not read as the calendar and
 # "estimate request" (a supplier request) is not read as an estimate.
 _INTENT_PHRASES = (
+    ("change orders", DEST_CHANGE_ORDERS),
+    ("change order", DEST_CHANGE_ORDERS),
+    ("project costs", DEST_COSTS),
     ("supplier estimate request", DEST_QUOTES),
     ("estimate request", DEST_QUOTES),
     ("price request", DEST_QUOTES),
@@ -79,6 +88,7 @@ _INTENT_WORDS = {
     "po": DEST_ORDERS, "pos": DEST_ORDERS, "order": DEST_ORDERS, "orders": DEST_ORDERS,
     "delivery": DEST_DELIVERIES, "deliveries": DEST_DELIVERIES, "delivered": DEST_DELIVERIES,
     "calendar": DEST_CALENDAR, "schedule": DEST_CALENDAR, "scheduled": DEST_CALENDAR,
+    "costs": DEST_COSTS, "financials": DEST_COSTS, "profit": DEST_COSTS, "margin": DEST_COSTS,
     "project": DEST_PROJECTS, "projects": DEST_PROJECTS, "job": DEST_PROJECTS, "jobs": DEST_PROJECTS,
 }
 _STOPWORDS = frozenset(
@@ -90,6 +100,8 @@ _STOPWORDS = frozenset(
 )
 # Words that only steer the search and never name a project.
 _HELP_WORDS = frozenset({"help", "how", "explain", "meaning", "mean"})
+# Spoken starters ("open a NEW change order"). They only mean "blank form" next to "change order".
+_NEW_WORDS = frozenset({"new", "start", "create", "make", "add", "begin"})
 _REF_RE = re.compile(r"^(?=.*\d)[a-z0-9][a-z0-9\-_/]{1,29}$")
 
 
@@ -152,6 +164,9 @@ def parse_query(raw: str) -> Parsed:
         if _REF_RE.match(token):
             refs.append(token)
         words.append(token)
+    if DEST_CHANGE_ORDERS in intents and any(w in _NEW_WORDS for w in words):
+        words = [w for w in words if w not in _NEW_WORDS]
+        intents = [DEST_NEW_CHANGE_ORDER if d == DEST_CHANGE_ORDERS else d for d in intents]
     # "project" only steers when nothing more specific was asked for.
     if len(intents) > 1 and DEST_PROJECTS in intents:
         intents.remove(DEST_PROJECTS)
@@ -168,6 +183,38 @@ def _org_id() -> str:
 
 def _contains_all(haystack: str, words) -> bool:
     return all(w in haystack for w in words)
+
+
+def _sound(word: str) -> str:
+    """American Soundex: how a name sounds, so "Detremble" and "Dutremble" (or a mishearing) still meet."""
+    word = re.sub(r"[^a-z]", "", (word or "").lower())
+    if not word:
+        return ""
+    codes = {c: d for d, letters in {"1": "bfpv", "2": "cgjkqsxz", "3": "dt", "4": "l", "5": "mn", "6": "r"}.items() for c in letters}
+    out, last = word[0].upper(), codes.get(word[0], "")
+    for ch in word[1:]:
+        code = codes.get(ch, "")
+        if code and code != last:
+            out += code
+        if ch not in "hw":
+            last = code
+    return (out + "000")[:4]
+
+
+def _close(word: str, token: str) -> bool:
+    """Spelling or sound is close enough: a typo, a nickname's start, or a speech-recognition mishearing."""
+    from difflib import SequenceMatcher
+
+    if word in token or token.startswith(word):
+        return True
+    if len(word) < 4 or len(token) < 4:
+        return False
+    return SequenceMatcher(None, word, token).ratio() >= 0.8 or _sound(word) == _sound(token)
+
+
+def _fuzzy_all(haystack: str, words) -> bool:
+    tokens = haystack.split()
+    return all(any(_close(w, t) for t in tokens) for w in words)
 
 
 def _project_haystack(project) -> str:
@@ -191,6 +238,17 @@ def match_projects(org_id: str, words) -> list:
 
     projects = customer_projects_only(Project.query.filter(Project.organization_id == org_id)).order_by(Project.name.asc()).all()
     return [p for p in projects if _contains_all(_project_haystack(p), words)]
+
+
+def match_projects_fuzzy(org_id: str, words) -> list:
+    """Used only when no project matches the words exactly: same projects, tolerant of typos and mishearings."""
+    from app.models import Project
+    from app.services.time_entry import customer_projects_only
+
+    if not words:
+        return []
+    projects = customer_projects_only(Project.query.filter(Project.organization_id == org_id)).order_by(Project.name.asc()).all()
+    return [p for p in projects if _fuzzy_all(_project_haystack(p), words)]
 
 
 def match_scheduled_work(org_id: str, words) -> list:
@@ -264,6 +322,8 @@ def records_for_project(dest: str, project, org_id: str) -> list:
             items.append(Item(doc.original_filename,
                               url_for("plan_intelligence.view_plan", project_id=pid, document_id=doc.id),
                               f"{project.name} · Project Plans", "plan"))
+        if items:
+            items[0].detail = f"Current · {items[0].detail}"
     elif dest == DEST_ESTIMATES:
         from app.models import Estimate
 
@@ -328,7 +388,33 @@ def records_for_project(dest: str, project, org_id: str) -> list:
     elif dest == DEST_CALENDAR:
         items.append(Item(f"Company Calendar — {project.name}", url_for("schedule.company", project_id=pid),
                           "This project's scheduled work", "calendar"))
+    elif dest == DEST_COSTS:
+        from app.services import guided_estimating as G
+
+        if economics_allowed(org_id) and G.get_guided(org_id, pid) is not None:
+            items.append(Item(f"Costs and profit — {project.name}",
+                              url_for("guided.pricing", project_id=pid) + "#ts-review-financial-summary",
+                              "Internal Project Financial Summary", "costs"))
+    elif dest == DEST_CHANGE_ORDERS:
+        from app.project_controls.models import ChangeOrder
+
+        for c in (ChangeOrder.query.filter_by(organization_id=org_id, project_id=pid)
+                  .order_by(ChangeOrder.updated_at.desc()).all()):
+            items.append(Item(f"{c.number} — {c.title}", url_for("project_controls.view_change_order", id=c.id),
+                              f"{project.name} · {c.status}", "change_order"))
+    elif dest == DEST_NEW_CHANGE_ORDER:
+        # Opens the existing blank form for this project. Nothing is saved until the person presses Save there.
+        items.append(Item(f"New change order — {project.name}",
+                          url_for("project_controls.create_change_order_route", project_id=pid),
+                          "Opens the blank form. Nothing is saved until you press Save.", "new"))
     return items
+
+
+def economics_allowed(org_id: str) -> bool:
+    """Project costs, price and profit are for the Owner or a System Administrator (financial_access ruling 1)."""
+    from app.services.financial_access import can_view_project_economics
+
+    return bool(can_view_project_economics(current_user, org_id))
 
 
 def company_wide(dest: str, org_id: str) -> list:
@@ -525,6 +611,9 @@ MSG_NONE = "Cal could not find anything that matches “{q}” in records you ca
 MSG_NONE_HINT = "Try a project name, a client name, an address or a record number such as an estimate number."
 MSG_NO_PROJECT = "No project you can open matches “{words}”."
 MSG_AMBIGUOUS = "More than one project matches “{words}”. Which one do you mean?"
+MSG_COSTS_BLOCKED = "Project costs and profit are for the owner and office administrators."
+MSG_WHICH_JOB = "Which job is it for?"
+MSG_DID_YOU_MEAN = "Cal heard “{q}”. Did you mean {name}?"
 MSG_PROJECT_EMPTY = "{project} has no {what} yet."
 
 
@@ -643,6 +732,7 @@ def find(raw_query: str, here: str = "") -> dict:
     groups: list = []
     message = ""
     status = "results"
+    open_url = ""
     dest = next((d for d in parsed.intents if d != DEST_PROJECTS), parsed.intents[0] if parsed.intents else None)
 
     referenced = match_references(org_id, parsed.refs) if parsed.refs else []
@@ -651,20 +741,37 @@ def find(raw_query: str, here: str = "") -> dict:
 
     project_words = [w for w in parsed.words if w not in parsed.refs] if referenced else parsed.words
     projects = match_projects(org_id, project_words) if project_words else []
+    fuzzy = False
+    if project_words and not projects and not referenced:
+        projects = match_projects_fuzzy(org_id, project_words)  # a typo or a mishearing, e.g. "Detremble"
+        fuzzy = bool(projects)
     tools = match_tools(parsed.words)
     help_items = match_help(parsed.words if not dest else [w for w in parsed.words], parsed.wants_help)
+
+    if dest == DEST_COSTS and not economics_allowed(org_id):
+        if projects or not project_words:
+            return {"query": parsed.raw, "status": "blocked", "message": MSG_COSTS_BLOCKED, "groups": []}
+        dest = None  # e.g. "costs and pricing": a menu page, not a job's costs
 
     if dest and dest != DEST_PROJECTS:
         what = DEST_TITLES[dest].lower()
         if not project_words:
             groups.append(Group(DEST_TITLES[dest], company_wide(dest, org_id)))
+            if dest == DEST_NEW_CHANGE_ORDER:
+                status, message = "ambiguous", MSG_WHICH_JOB
         elif len(projects) == 1:
             found = records_for_project(dest, projects[0], org_id)
             if found:
                 groups.append(Group(f"{DEST_TITLES[dest]} — {projects[0].name}", found))
+                if len(found) == 1 and not fuzzy:
+                    open_url = found[0].url  # one clear answer: go straight there
             else:
                 message = MSG_PROJECT_EMPTY.format(project=projects[0].name, what=what)
                 groups.append(Group("Project", [project_item(projects[0])]))
+            if fuzzy:  # a typo or a mishearing: confirm the job before anything opens
+                status = "did_you_mean"
+                message = (MSG_DID_YOU_MEAN.format(q=" ".join(project_words), name=projects[0].name)
+                           + ("" if found else " " + MSG_PROJECT_EMPTY.format(project="It", what=what)))
         elif len(projects) > 1:
             status = "ambiguous"
             message = MSG_AMBIGUOUS.format(words=" ".join(project_words))
@@ -690,13 +797,18 @@ def find(raw_query: str, here: str = "") -> dict:
             groups.append(Group("Which project?", [project_item(p) for p in projects]))
         elif projects:
             groups.append(Group("Projects", [project_item(p) for p in projects]))
+            if fuzzy and len(projects) == 1:
+                status = "did_you_mean"
+                message = MSG_DID_YOU_MEAN.format(q=" ".join(project_words), name=projects[0].name)
             if len(projects) == 1:
                 shortcuts = []
-                for d in (DEST_DRAWINGS, DEST_ESTIMATES, DEST_PROPOSALS, DEST_CONTRACTS, DEST_QUOTES, DEST_DELIVERIES):
+                for d in (DEST_DRAWINGS, DEST_ESTIMATES, DEST_CALENDAR, DEST_COSTS, DEST_CHANGE_ORDERS, DEST_PROPOSALS,
+                          DEST_CONTRACTS, DEST_QUOTES, DEST_DELIVERIES):
                     found = records_for_project(d, projects[0], org_id)
                     if found:
                         shortcuts.append(Item(DEST_TITLES[d], found[0].url if len(found) == 1 else found[0].url,
                                               f"{len(found)} on {projects[0].name}", d))
+                shortcuts += records_for_project(DEST_NEW_CHANGE_ORDER, projects[0], org_id)
                 if shortcuts:
                     groups.append(Group("On this project", shortcuts))
         elif dest == DEST_PROJECTS and not project_words:
@@ -720,4 +832,7 @@ def find(raw_query: str, here: str = "") -> dict:
         status = "none"
         message = message or MSG_NONE.format(q=parsed.raw)
         return {"query": parsed.raw, "status": status, "message": message, "hint": MSG_NONE_HINT, "groups": []}
-    return {"query": parsed.raw, "status": status, "message": message, "groups": [g.as_dict() for g in groups]}
+    answer = {"query": parsed.raw, "status": status, "message": message, "groups": [g.as_dict() for g in groups]}
+    if open_url and status == "results":
+        answer["open"] = open_url
+    return answer

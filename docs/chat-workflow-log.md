@@ -14680,3 +14680,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | See [ux/real-plan-observations-2026-11-15.md](ux/real-plan-observations-2026-11-15.md) |
 | Tests | See final report |
 | Commit hash | See git log |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-11-18 |
+| Branch | `feature/cal-voice-commands` |
+| Objective | FG-042 Cal Voice Commands: short spoken phrases open the right screen (plans, estimate, costs, change orders, new change order), Talk to Cal on Home |
+| Business decision | Joel 18 Nov: build it, reuse what exists, prove it before Ben is onboarded; no chat owns releases, GitHub is the one source of truth |
+| Implementation result | See [feature-gates/FG-042-cal-voice-commands.md](feature-gates/FG-042-cal-voice-commands.md) |
+| Tests | 33 Cal tests pass; full non-browser run: 58 environmental failures identical on base `f47d815`, 11 skipped; Mac gate required |
+| Commit hash | See git log |
+

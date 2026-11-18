@@ -259,3 +259,105 @@ def test_cal_uses_no_external_service():
     source = (ROOT / "app/services/cal_find.py").read_text() + (ROOT / "app/static/js/cal_assistant.js").read_text()
     for marker in ("http://", "https://", "requests.", "openai", "anthropic", "urllib"):
         assert marker not in source
+
+
+# ------------------------------------------------------------------ FG-042: voice commands (Joel, 18 Nov 2026)
+# Short spoken phrases go to screens that already exist. Opening only: nothing is saved, sent, signed or ordered.
+
+def test_names_match_by_sound_as_well_as_spelling():
+    from app.services.cal_find import _close, _sound
+
+    assert _sound("Dutremble") == _sound("Detremble")
+    assert _sound("Steele") == _sound("Steel")
+    assert _close("detremble", "dutremble") and _close("steel", "steele")
+    assert not _close("harbour", "dutremble")
+
+
+def test_a_mishearing_asks_did_you_mean_and_does_not_open_by_itself(app, client, harbour):
+    _project("Serge Dutremble House")
+    db.session.commit()
+    data = _find(client, "Serge Detremble plans")
+    assert data["status"] == "did_you_mean"
+    assert "Did you mean Serge Dutremble House?" in data["message"]
+    assert "open" not in data
+    assert "Serge Dutremble House" in _titles(data)
+
+
+def test_one_clear_record_opens_straight_away(app, client, harbour):
+    data = _find(client, "show me harbour lane pool deck estimate")
+    assert data["status"] == "results"
+    assert data["open"] == f"/estimates/{harbour['estimate'].id}"
+
+
+def test_several_matches_never_auto_open(app, client, harbour):
+    assert "open" not in _find(client, "harbour lane estimate")  # two projects: asks which
+    assert "open" not in _find(client, "harbour lane pool deck")  # a name alone: big buttons, not a guess
+
+
+def test_a_job_name_alone_offers_big_buttons_including_calendar_and_new_change_order(app, client, harbour):
+    data = _find(client, "Morgan Ellis")
+    shortcuts = next(g for g in data["groups"] if g["title"] == "On this project")
+    titles = [i["title"] for i in shortcuts["items"]]
+    assert "Estimates" in titles and "Company Calendar" in titles
+    assert f"New change order — Harbour Lane Pool Deck" in titles
+
+
+def test_open_new_change_order_with_a_job_opens_the_blank_form_only(app, client, harbour):
+    data = _find(client, "open new change order harbour lane pool deck")
+    assert data["open"] == f"/project-controls/change-orders/new?project_id={harbour['deck'].id}"
+    page = client.get(data["open"])
+    assert page.status_code == 200  # the existing blank form; GET never saves
+    assert client.get("/project-controls/change-orders/").status_code == 200
+
+
+def test_open_new_change_order_without_a_job_asks_which_job(app, client, harbour):
+    data = _find(client, "Open New Change Order")
+    assert data["status"] == "ambiguous" and data["message"] == "Which job is it for?"
+    assert "open" not in data
+    urls = _urls(data)
+    assert urls and all("/project-controls/change-orders/new?project_id=" in u for u in urls)
+    assert not any(str(harbour["foreign"].id) in u.rsplit("=", 1)[-1] for u in urls)  # another company is never offered
+
+
+def test_change_orders_for_a_job_and_the_empty_answer(app, client, harbour):
+    data = _find(client, "harbour lane pool deck change orders")
+    assert "has no change orders yet" in data["message"]
+
+
+def test_costs_are_for_the_owner_and_office_administrators_only(app, client, harbour, monkeypatch):
+    monkeypatch.setattr("app.services.cal_find.economics_allowed", lambda org_id: False)
+    for phrase in ("show me harbour lane pool deck costs", "costs", "harbour lane profit"):
+        data = _find(client, phrase)
+        assert data["status"] == "blocked" and not data["groups"] and "open" not in data
+        assert data["message"] == "Project costs and profit are for the owner and office administrators."
+
+
+def test_costs_open_the_existing_financial_summary_for_the_owner(app, client, harbour, monkeypatch):
+    monkeypatch.setattr("app.services.cal_find.economics_allowed", lambda org_id: True)
+    monkeypatch.setattr("app.services.guided_estimating.get_guided", lambda org, pid: object())
+    data = _find(client, "show me harbour lane pool deck costs")
+    assert data["open"] == f"/projects/{harbour['deck'].id}/guided/pricing#ts-review-financial-summary" or \
+        data["open"].endswith("#ts-review-financial-summary")
+    monkeypatch.setattr("app.services.guided_estimating.get_guided", lambda org, pid: None)
+    assert "has no costs and profit yet" in _find(client, "harbour lane pool deck costs")["message"]
+
+
+def test_a_menu_search_with_the_word_costs_is_not_blocked_for_anyone(app, client, harbour, monkeypatch):
+    monkeypatch.setattr("app.services.cal_find.economics_allowed", lambda org_id: False)
+    data = _find(client, "costs and pricing")
+    assert data["status"] != "blocked"
+    # "what we pay" still reaches the existing Cost Library Help, exactly as before.
+    help_group = next(g for g in _find(client, "how do I use what we pay")["groups"] if g["title"] == "Help")
+    assert help_group["items"][0]["url"].startswith("/cost-library/#help-cost_library")
+
+
+def test_home_has_one_big_talk_button_and_the_panel_has_a_microphone(app, client, harbour):
+    page = client.get("/").get_data(as_text=True)
+    assert "data-cal-talk" in page and "Talk to Cal" in page
+    assert 'id="cal-mic"' in page and "data-cal-mic-unsupported" in page
+
+
+def test_voice_commands_use_no_external_service_and_change_nothing():
+    source = (ROOT / "app/services/cal_find.py").read_text() + (ROOT / "app/routes/cal_assistant.py").read_text()
+    for forbidden in ("openai", "anthropic", "requests.", "httpx", "db.session.add", "db.session.commit", "methods=[\"POST\""):
+        assert forbidden not in source

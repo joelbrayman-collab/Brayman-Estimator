@@ -880,6 +880,9 @@ def test_no_field_web_or_ai_surfaces(client, app):
         html,
         flags=re.S,
     )
+    # Cal's voice search (FG-042, Joel 18 Nov 2026) is a search box, like Help's: it listens only after a tap and only
+    # opens screens. It is not a capture surface, so it is excluded here exactly as the contextual help is.
+    hub_without_help = re.sub(r"<!-- cal-voice:begin -->.*?<!-- cal-voice:end -->", "", hub_without_help, flags=re.S)
     assert "microphone" not in hub_without_help.lower()
     assert "camera" not in hub_without_help.lower()
     assert "iPhone Capture" not in html

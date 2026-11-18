@@ -34,6 +34,7 @@ Live features added since the 16 Oct sections below (all released with Joel's au
 | 17 Oct | `098c554` | Client proposal acceptance and Supplier Hub, migrations `x1a2b3c4d5e6` + `y2b3c4d5e6f7` applied once; sign-in show/hide password |
 | 17 Oct | `fb754ed` | Supplier Hub B–D (needs attention, reporting periods, material demand) |
 | 18 Oct | `0e2c917` | Cal Assistant Phase 1 "Find It" (read-only) |
+| 18 Nov | branch `feature/cal-voice-commands` | FG-042 Cal Voice Commands (implemented and tested in the sandbox; not merged; not released) |
 | 18 Oct | `9b9acfc` | Technical cleanup (tests, environment, release scripts, documentation; no product change) |
 | 19 Oct | `b399e43` | Security closure (stored-file messages, bypass code removed, 30-minute inactivity sign-out, pinned dependencies, local backups outside iCloud) |
 | 19 Oct | `d450188` | Company Calendar (toolbar, full-width calendar, activity colours, Month/Week/Day) |

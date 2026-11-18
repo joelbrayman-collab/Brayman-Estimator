@@ -225,3 +225,42 @@
         max-height: calc(100dvh - var(--header-height) - 12px);
     }
 }
+
+/* Voice (FG-042): big targets for wet or gloved hands. */
+.cal-mic-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: calc(100% - 32px);
+    margin: 10px 16px 4px;
+    min-height: 56px;
+    font-size: 17px;
+    font-weight: 600;
+    border: 0;
+    border-radius: 12px;
+    background: #1F3A5F;
+    color: #fff;
+    cursor: pointer;
+}
+.cal-mic-btn.is-listening, .cal-talk-btn.is-listening { background: #C79A2B; color: #1F3A5F; }
+.cal-mic-btn i, .cal-talk-btn i { font-size: 22px; }
+.cal-talk-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 72px;
+    font-size: 20px;
+    font-weight: 700;
+    border: 0;
+    border-radius: 14px;
+    background: #1F3A5F;
+    color: #fff;
+    cursor: pointer;
+}
+body.cal-is-listening .cal-talk-btn { background: #C79A2B; color: #1F3A5F; }
+.hc-talk { display: grid; gap: 4px; }
+.hc-talk-hint { margin: 0; font-size: 13px; color: var(--muted); }
+.cal-result { min-height: 52px; }

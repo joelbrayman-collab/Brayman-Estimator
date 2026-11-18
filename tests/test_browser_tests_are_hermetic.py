@@ -11,6 +11,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 from pathlib import Path
 
 from tests.browser_process import HERMETIC_CHROME_ARGS, HERMETIC_PRELOAD, run_node_browser_test
@@ -69,3 +70,19 @@ def test_a_node_browser_cannot_reach_the_public_internet_and_the_page_still_load
     assert set(hosts) == {"fonts.googleapis.com", "cdn.jsdelivr.net"}, probe
     assert all("ERR_NAME_NOT_RESOLVED" in (e or "") for e in hosts.values()), probe
     assert probe["ms"] < 15000, probe
+
+
+def test_a_node_browser_timeout_reports_what_the_machine_and_playwright_were_doing(capsys):
+    """18 Nov 2026: three walks timed out with nothing to show which step hung. A timeout now reports the busiest
+    processes, the load, the process tree and the last Playwright calls."""
+    import pytest
+
+    node = shutil.which("node") or "/opt/homebrew/bin/node"
+    code = "console.error('pw:api    waiting for locator(#never)'); setInterval(() => {}, 1000);"
+    with pytest.raises(subprocess.TimeoutExpired):
+        run_node_browser_test([node, "-e", code], cwd=ROOT, timeout=4)
+    report = capsys.readouterr().err
+    assert "BROWSER TEST TIMED OUT after 4s" in report
+    assert "--- busiest processes ---" in report and "uptime:" in report
+    assert "--- last 60 Playwright/Node stderr lines ---" in report
+    assert "waiting for locator(#never)" in report

@@ -11,6 +11,8 @@ from __future__ import annotations
 import os
 import signal
 import subprocess
+import sys
+import tempfile
 import time
 
 
@@ -68,13 +70,34 @@ HERMETIC_PRELOAD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "her
 HERMETIC_CHROME_ARGS = ["--no-proxy-server", "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1, EXCLUDE localhost"]
 
 
+def _host_snapshot(root_pid):
+    """What the machine was doing: the busiest processes, the load, and the test's own process tree."""
+    def run(cmd):
+        try:
+            return subprocess.run(cmd, text=True, capture_output=True, check=False, timeout=20).stdout
+        except Exception as error:  # a diagnostic must never hide the timeout
+            return f"({cmd[0]} failed: {error})\n"
+    top = "\n".join(run(["ps", "-Ao", "pid,ppid,etime,pcpu,pmem,stat,comm", "-r"]).splitlines()[:28])
+    tree = [line for line in run(["ps", "-Ao", "pid,ppid,pgid,etime,pcpu,stat,command"]).splitlines()
+            if line.split()[:1] and (str(root_pid) in line.split()[:3] or "chrome" in line.lower()
+                                     or "playwright" in line.lower())][:40]
+    return f"uptime: {run(['uptime']).strip()}\n--- busiest processes ---\n{top}\n--- the test's process tree and any Chrome ---\n" + "\n".join(line[:220] for line in tree)
+
+
 def run_node_browser_test(args, *, cwd, timeout, env=None):
     """Run Node. On timeout, stop its whole process tree.
 
     Every browser the test launches is hermetic: hosts other than the local one fail to resolve at once, so a slow
-    public network (Google Fonts and jsDelivr are linked from every page) cannot stall a walk (17 Nov 2026)."""
-    if os.path.basename(str(args[0])).startswith("node"):
+    public network (Google Fonts and jsDelivr are linked from every page) cannot stall a walk (17 Nov 2026).
+
+    A Node run also logs every Playwright call (DEBUG=pw:api). If the run times out, the busiest processes, the load and
+    the last Playwright calls are written to the test's output and to a file, so a hung walk says what it was waiting on
+    (three walks timed out on 17-18 Nov 2026 with nothing to show which step hung)."""
+    is_node = os.path.basename(str(args[0])).startswith("node")
+    if is_node:
         args = [args[0], "--import", HERMETIC_PRELOAD, *args[1:]]
+        env = dict(os.environ if env is None else env)
+        env["DEBUG"] = ",".join(filter(None, [env.get("DEBUG", ""), "pw:api"]))
     process = subprocess.Popen(
         args,
         cwd=cwd,
@@ -87,8 +110,21 @@ def run_node_browser_test(args, *, cwd, timeout, env=None):
     try:
         stdout, stderr = process.communicate(timeout=timeout)
     except subprocess.TimeoutExpired as exc:
+        snapshot = _host_snapshot(process.pid) if is_node else ""
         stop_process_tree(process.pid)
         stdout, stderr = process.communicate()
+        if is_node:
+            report = (f"BROWSER TEST TIMED OUT after {timeout}s: {' '.join(str(a) for a in args[-1:])}\n{snapshot}\n"
+                      f"--- last 60 Playwright/Node stderr lines ---\n" + "\n".join((stderr or "").splitlines()[-60:])
+                      + "\n--- last 15 stdout lines ---\n" + "\n".join((stdout or "").splitlines()[-15:]) + "\n")
+            try:
+                path = os.path.join(tempfile.gettempdir(), f"browser-timeout-{os.getpid()}-{int(time.time())}.txt")
+                with open(path, "w", encoding="utf8") as handle:
+                    handle.write(report)
+                report += f"(also saved to {path})\n"
+            except OSError:
+                pass
+            sys.stderr.write(report)
         raise subprocess.TimeoutExpired(
             process.args,
             timeout,

@@ -92,7 +92,10 @@ def _turn_on(client):
     return match.group(1), match.group(2), html
 
 
-def test_private_feed_shows_my_appointments_and_updates(client, app):
+def test_private_feed_shows_my_appointments_and_updates(client, app, monkeypatch):
+    # The appointments sit on TODAY (21 Sep 2026) and the feed shows 60 days back from the real date, so on 21 Nov the
+    # feed went empty and gate run ai9 failed (22 Nov 2026). The test now pins the feed's "today" to the test's TODAY.
+    monkeypatch.setattr("app.services.appointments.local_today", lambda: TODAY)
     with app.app_context():
         office = _office()
         colleague, _ = _person("feed.colleague@example.invalid", "Feed Colleague")

@@ -164,4 +164,4 @@ def test_the_prepare_page_shows_what_the_last_run_read(env):
                                           open_questions_json=json.dumps(["Confirm the base depth."])))
     db.session.commit()
     page = owner.get(f"/projects/{project.id}/guided/prepare-estimate", status=200)
-    assert "data-last-run" in page and "Slab is 4 in." in page and "Confirm the base depth." in page and "$0.01" in page
+    assert "data-last-run" in page and "Slab is 4 in." in page and "Confirm the base depth." in page and "$0.01" not in page and "spending" not in page.lower()

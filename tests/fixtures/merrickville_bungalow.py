@@ -10,25 +10,21 @@ def _ft(feet, inches=0):
     return feet * 12 + inches
 
 
-# How the rooms sit against each other, read from the listing picture's layout (left column top to bottom: great room,
-# dining, kitchen, foyer, porch; right column: bedroom 2, bathroom, master, closet and ensuite; mud room and garage
-# along the bottom). Positions are CALCULATED from the sizes and the wall thickness, not typed in.
-PLACE = {"room_great": {"origin": True},
-         "room_dining": {"x_same_as": "room_great", "y_after": "room_great"},
-         "room_kitchen": {"x_same_as": "room_dining", "y_after": "room_dining"},
-         "room_foyer": {"x_same_as": "room_kitchen", "y_after": "room_kitchen"},
-         "room_porch": {"x_same_as": "room_foyer", "y_after": "room_foyer"},
-         "room_bed2": {"y_same_as": "room_great", "x_after": "room_great"},
-         "room_bath": {"x_same_as": "room_bed2", "y_after": "room_bed2"},
-         "room_master": {"x_same_as": "room_bed2", "y_after": "room_bath"},
-         "room_closet": {"x_same_as": "room_master", "y_after": "room_master"},
-         "room_ensuite": {"x_after": "room_closet", "y_same_as": "room_closet"},
-         "room_mud": {"x_after": "room_kitchen", "y_same_as": "room_kitchen"},
-         "room_garage": {"x_after": "room_porch", "y_same_as": "room_foyer"}}
+# Where each room sits, SCALED FROM THE LISTING PICTURE (23 Nov 2026): the great room's labelled 15'11" measured 360 px in
+# the picture, so 1.88 px per inch; the garage's labelled 20'0" then measures 237 in (a check, within 2%). Positions are
+# inches from the outer face of the main floor's top-left corner, read off the picture (source 'scaled').
+# 'open' rooms (great room, dining, kitchen, foyer) are one open space with no wall between them.
+AT = {"room_great": (6.5, 6.5), "room_dining": (6.5, 190.5), "room_kitchen": (6.5, 298.5), "room_foyer": (54, 450.5),
+      "room_stairs": (8, 452), "room_porch": (6.5, 606), "room_bed2": (226, 6.5), "room_bath": (231, 128),
+      "room_master": (199.5, 191.5), "room_closet": (239, 346), "room_ensuite": (300.5, 346),
+      "room_mud": (154, 346), "room_garage": (154, 452)}
+OPEN = {"room_great", "room_dining", "room_kitchen", "room_foyer"}
 
 
 def _room(rid, label, level, w, d, note=""):
-    return {"id": rid, "kind": "room", "label": label, "level": level, "place": PLACE[rid],
+    x, y = AT[rid]
+    return {"id": rid, "kind": "room", "label": label, "level": level, "open": rid in OPEN,
+            "at": {"x": fact(x, "scaled", "scaled from the picture"), "y": fact(y, "scaled", "scaled from the picture")},
             "width": fact(w, "plan", note) if w is not None else fact(None, "unknown", "no size on the picture"),
             "depth": fact(d, "plan", note) if d is not None else fact(None, "unknown", "no size on the picture")}
 
@@ -49,9 +45,12 @@ def merrickville_bungalow():
         _room("room_mud", "Mud room", lv, _ft(7, 0), _ft(9, 0), "low_resolution"),
         _room("room_closet", "Closet", lv, _ft(5, 0), _ft(9, 0), "low_resolution"),
         _room("room_ensuite", "Ensuite", lv, _ft(5, 0), _ft(9, 0), "low_resolution"),
-        dict(_room("room_bath", "Bathroom", lv, _ft(5, 0), _ft(8, 0)),
-             width=fact(_ft(5, 0), "assumed", "standard 5 x 8 bathroom; the picture shows no size"),
-             depth=fact(_ft(8, 0), "assumed", "standard 5 x 8 bathroom; the picture shows no size")),
+        dict(_room("room_bath", "Bathroom", lv, 130, 58),
+             width=fact(130, "scaled", "no size labelled; scaled from the picture (about 10'-10 in)"),
+             depth=fact(58, "scaled", "no size labelled; scaled from the picture (about 4'-10 in)")),
+        dict(_room("room_stairs", "Basement stairs", lv, 45, 122),
+             width=fact(45, "scaled", "no size labelled; scaled from the picture"),
+             depth=fact(122, "scaled", "no size labelled; scaled from the picture")),
         {"id": "basics", "kind": "level", "label": "House basics (from the input box)",
          "exterior_wall": fact("2x6", "contractor"), "roof_pitch": fact(8, "contractor"),
          "ceiling_main_ft": fact(9, "contractor"), "ceiling_lower_ft": fact(8, "contractor")},

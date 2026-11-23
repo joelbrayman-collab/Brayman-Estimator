@@ -7,7 +7,7 @@ import json
 from typing import Any, Mapping
 
 KINDS = ("room", "wall", "opening", "roof_plane", "roof_feature", "level")
-SOURCES = ("plan", "contractor", "assumed", "unknown")  # where a number came from; nothing is silently guessed
+SOURCES = ("plan", "contractor", "assumed", "scaled", "unknown")  # where a number came from (scaled = measured off a drawing against its labelled sizes); nothing is silently guessed
 
 
 class ModelError(ValueError):

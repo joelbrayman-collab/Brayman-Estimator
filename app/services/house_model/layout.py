@@ -26,6 +26,10 @@ def solve_layout(model: HouseModel, level: str = "level_main") -> dict:
         w, d = r["width"]["v"], r["depth"]["v"]
         size[rid] = (w, d) if w is not None and d is not None else None
     origin = [rid for rid, r in rooms.items() if r.get("place", {}).get("origin")]
+    for rid, r in rooms.items():             # a position scaled or measured off a drawing is used as it is
+        at = r.get("at")
+        if at and ext is not None and size[rid] is not None:
+            pos[rid] = (at["x"]["v"] - ext, at["y"]["v"] - ext)    # 'at' is from the outer wall face; the layout is from the clear space
     for rid in origin:
         pos[rid] = (0.0, 0.0)
     for _ in range(len(rooms) + 1):          # relax until nothing more can be placed
@@ -58,7 +62,8 @@ def solve_layout(model: HouseModel, level: str = "level_main") -> dict:
     for i, a in enumerate(placed):
         for b in placed[i + 1:]:
             ax, ay, bx, by = pos[a][0], pos[a][1], pos[b][0], pos[b][1]
-            if ax < bx + size[b][0] and bx < ax + size[a][0] and ay < by + size[b][1] and by < ay + size[a][1]:
+            tol = 6.5                            # a wall's thickness of reading error is not an overlap
+            if ax + tol < bx + size[b][0] and bx + tol < ax + size[a][0] and ay + tol < by + size[b][1] and by + tol < ay + size[a][1]:
                 overlaps.append((a, b))
     if not placed or ext is None:
         return {"positions": pos, "blocked": blocked, "overall": None, "exterior_thickness": ext, "overlaps": overlaps}

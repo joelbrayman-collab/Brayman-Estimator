@@ -20,12 +20,12 @@ def _assumed(model, level):
     for e in model.elements.values():
         if e["kind"] == "room" and e.get("level") == level:
             for k in ("width", "depth"):
-                if e[k]["src"] == "assumed":
-                    out.append(f'{e["label"]} {k}: {ftin(e[k]["v"])} ({e[k].get("note", "assumed")})')
+                if e[k]["src"] in ("assumed", "scaled"):
+                    out.append(f'{e["label"]} {k}: {ftin(e[k]["v"])} ({e[k].get("note", e[k]["src"])})')
     return out
 
 
-def floor_plan_svg(model: HouseModel, level: str = "level_main", scale: float = 0.30) -> str:
+def floor_plan_svg(model: HouseModel, level: str = "level_main", scale: float = 0.62) -> str:
     lay = solve_layout(model, level)
     if not lay["overall"]:
         raise ValueError("the layout cannot be calculated yet: " + "; ".join(model.questions()))
@@ -33,6 +33,7 @@ def floor_plan_svg(model: HouseModel, level: str = "level_main", scale: float = 
     rooms = {e["id"]: e for e in model.elements.values() if e["kind"] == "room" and e.get("level") == level}
     W, D = lay["overall"]["width_in"], lay["overall"]["depth_in"]
     left, top = 70, 54
+    W, D = lay["overall"]["width_in"], lay["overall"]["depth_in"]
     notes = [f"Exterior walls {ext:g} in (finished); interior partitions 4.5 in. Overall size is calculated from the room sizes."]
     b = basics(model)
     if b.get("ceiling_main_ft"):
@@ -46,30 +47,39 @@ def floor_plan_svg(model: HouseModel, level: str = "level_main", scale: float = 
          f'font-family="IBM Plex Sans, Arial, sans-serif" data-house-plan="{escape(level)}">', '<rect width="100%" height="100%" fill="#fff"/>']
     X = lambda v: left + (v + ext) * scale   # noqa: E731  (clear-space coordinate -> sheet x)
     Y = lambda v: top + (v + ext) * scale    # noqa: E731
-    # exterior wall band, then each room's wall ring, then the clear interiors on top
-    s.append(f'<rect x="{left}" y="{top}" width="{W * scale:.1f}" height="{D * scale:.1f}" fill="#eef0f4" stroke="{WALL}" stroke-width="1"/>')
-    for rid, (x, y) in pos.items():
-        r = rooms[rid]
-        if r["width"]["v"] is None or r["depth"]["v"] is None:
-            continue
-        w, d, t = r["width"]["v"], r["depth"]["v"], 4.5
-        s.append(f'<rect x="{X(x - t):.1f}" y="{Y(y - t):.1f}" width="{(w + 2 * t) * scale:.1f}" height="{(d + 2 * t) * scale:.1f}" fill="{WALL}"/>')
-    s.append(f'<rect x="{left}" y="{top}" width="{W * scale:.1f}" height="{ext * scale:.1f}" fill="{WALL}"/>'
-             f'<rect x="{left}" y="{top + (D - ext) * scale:.1f}" width="{W * scale:.1f}" height="{ext * scale:.1f}" fill="{WALL}"/>'
-             f'<rect x="{left}" y="{top}" width="{ext * scale:.1f}" height="{D * scale:.1f}" fill="{WALL}"/>'
-             f'<rect x="{left + (W - ext) * scale:.1f}" y="{top}" width="{ext * scale:.1f}" height="{D * scale:.1f}" fill="{WALL}"/>')
+    # walls: each room edge is a wall when it faces the outside (exterior thickness) or when the room is walled (partition
+    # thickness); an open-plan room has no wall on an edge that faces another room
+    sized = {rid: (pos[rid][0], pos[rid][1], rooms[rid]["width"]["v"], rooms[rid]["depth"]["v"]) for rid in pos
+             if rooms[rid]["width"]["v"] is not None and rooms[rid]["depth"]["v"] is not None}
+
+    def covered(px, py, skip):
+        return any(k != skip and bx - 1 <= px <= bx + bw + 1 and by - 1 <= py <= by + bd + 1 for k, (bx, by, bw, bd) in sized.items())
+
+    for rid, (x, y, w, d) in sized.items():
+        open_room = bool(rooms[rid].get("open"))
+        probe = 9                                                    # inches outside the edge
+        edges = {"left": (x - probe, y + d / 2), "right": (x + w + probe, y + d / 2),
+                 "top": (x + w / 2, y - probe), "bottom": (x + w / 2, y + d + probe)}
+        for edge, (px, py) in edges.items():
+            exposed = not covered(px, py, rid)
+            if not exposed and open_room:
+                continue
+            t = ext if exposed else 4.5
+            rects = {"left": (x - t, y - t, t, d + 2 * t), "right": (x + w, y - t, t, d + 2 * t),
+                     "top": (x - t, y - t, w + 2 * t, t), "bottom": (x - t, y + d, w + 2 * t, t)}[edge]
+            s.append(f'<rect x="{X(rects[0]):.1f}" y="{Y(rects[1]):.1f}" width="{rects[2] * scale:.1f}" height="{rects[3] * scale:.1f}" fill="{WALL}"/>')
     for rid, (x, y) in pos.items():
         r = rooms[rid]
         if r["width"]["v"] is None or r["depth"]["v"] is None:
             continue
         w, d = r["width"]["v"], r["depth"]["v"]
-        s.append(f'<rect x="{X(x):.1f}" y="{Y(y):.1f}" width="{w * scale:.1f}" height="{d * scale:.1f}" fill="#fff" data-room="{rid}"/>')
+        s.append(f'<rect x="{X(x):.1f}" y="{Y(y):.1f}" width="{w * scale:.1f}" height="{d * scale:.1f}" fill="{'#fbfbf6' if r.get('open') else '#fff'}" stroke="{GREY if r.get('open') else 'none'}" stroke-dasharray="{'3 3' if r.get('open') else ''}" stroke-width="0.6" data-room="{rid}"/>')
         cx, cy = X(x) + w * scale / 2, Y(y) + d * scale / 2
         fs = max(6.0, min(9.5, w * scale / max(8, len(r["label"])) * 1.7))      # the name always fits the room's width
         fz = max(5.5, min(8.5, w * scale / 11 * 1.55))
         s.append(f'<text x="{cx:.1f}" y="{cy - 2:.1f}" font-size="{fs:.1f}" text-anchor="middle" fill="{INK}">{escape(r["label"])}</text>'
                  f'<text x="{cx:.1f}" y="{cy + 9:.1f}" font-size="{fz:.1f}" text-anchor="middle" fill="{GREY}">{ftin(w)} x {ftin(d)}</text>')
-    # overall dimension strings
+    # overall dimension strings (the building's real outline is not a rectangle: the overall is its bounding size)
     yb = top + D * scale + 22
     s.append(f'<line x1="{left}" y1="{yb}" x2="{left + W * scale:.1f}" y2="{yb}" stroke="{NAVY}"/>'
              f'<line x1="{left}" y1="{yb - 5}" x2="{left}" y2="{yb + 5}" stroke="{NAVY}"/>'

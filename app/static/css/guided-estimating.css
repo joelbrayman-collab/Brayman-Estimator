@@ -141,3 +141,9 @@
 .sw-add-button { display: inline-block; cursor: pointer; padding: 10px 18px; min-height: 44px; border: 2px solid #1f3a5f;
   border-radius: 10px; font-weight: 700; color: #1f3a5f; background: #fff; margin: 4px 0 12px; }
 .sw-add[open] > .sw-add-button { display: none; }
+
+.ge-working { margin: 12px 0; padding: 10px 12px; border-left: 4px solid #c99a2a; background: #fff9e8; }
+.ge-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #c99a2a; border-top-color: transparent;
+  border-radius: 50%; vertical-align: -2px; animation: ge-spin 0.9s linear infinite; }
+@keyframes ge-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ge-spinner { animation: none; } }

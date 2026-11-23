@@ -84,6 +84,7 @@ def test_prepare_page_off_state_and_cost_review_shows_the_run(env, monkeypatch):
     project = mk(owner, "Prepare page job")
     page = owner.get(f"/projects/{project.id}/guided/prepare-estimate", status=200)
     assert "data-ai-off" in page and "PREPARE MY ESTIMATE" in page and "disabled" in page
+    assert "prepare_estimate_progress.js" in page  # the working indicator (a run can take two minutes)
     owner.post(f"/projects/{project.id}/guided/prepare-estimate", data={"scope": "x"})  # refused, nothing sent
     assert any("not enabled" in m for m in owner.flashes())
     db.session.add(EstimatePreparationRun(organization_id=project.organization_id, project_id=project.id,

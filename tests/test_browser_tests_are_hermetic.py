@@ -86,3 +86,24 @@ def test_a_node_browser_timeout_reports_what_the_machine_and_playwright_were_doi
     assert "--- busiest processes ---" in report and "uptime:" in report
     assert "--- last 60 Playwright/Node stderr lines ---" in report
     assert "waiting for locator(#never)" in report
+
+
+def test_closing_a_browser_can_never_hang_a_finished_walk():
+    """22 Nov 2026, gate run ai11: both walks finished every step, logged "browser.close started" and sat there to
+    their 600/900 s limit with Chrome already gone. Closing is now bounded; a close that never answers is given up."""
+    node = shutil.which("node") or "/opt/homebrew/bin/node"
+    probe = (
+        f'import {{ boundedClose, CLOSE_LIMIT_MS }} from {json.dumps(Path(HERMETIC_PRELOAD).as_uri())};'
+        'const t = Date.now();'
+        'const hung = await boundedClose(() => new Promise(() => {}), 300);'
+        'const ok = await boundedClose(async () => "closed", 300);'
+        'const failed = await boundedClose(async () => { throw new Error("x"); }, 300).catch((e) => e.message);'
+        'console.log("PROBE " + JSON.stringify({ hung, ok, failed, ms: Date.now() - t, limit: CLOSE_LIMIT_MS }));'
+    )
+    result = subprocess.run([node, "--input-type=module", "-e", probe], cwd=ROOT, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr
+    got = json.loads(next(line for line in result.stdout.splitlines() if line.startswith("PROBE "))[6:])
+    assert got["hung"] == "gave-up" and got["ok"] == "closed" and got["failed"] == "x", got
+    assert got["ms"] < 3000 and 0 < got["limit"] <= 60000, got
+    source = Path(HERMETIC_PRELOAD).read_text(encoding="utf8")
+    assert "browser.close = (...args) => boundedClose(" in source

@@ -8,6 +8,7 @@ Field-only wall (app/__init__.py) keeps crew out of every one of them.
 
 from __future__ import annotations
 
+import json
 from io import BytesIO
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
@@ -537,10 +538,13 @@ def prepare_my_estimate(project_id):
     except EP.PreparationError as exc:
         flash(str(exc), "error")
         return redirect(url_for("guided.prepare_my_estimate", project_id=project.id))
+    if run.status == "FAILED":  # say why, on screen: the reason is in the run's own record
+        why = next((s.get("error") for s in reversed(json.loads(run.steps_json or "[]")) if s.get("error")), "")
+        flash("The preparation did not finish. Nothing was changed." + (f" Reason: {why}" if why else ""), "error")
+        return redirect(url_for("guided.prepare_my_estimate", project_id=project.id))
     flash({"COMPLETED": "The estimate was prepared. Review the internal costs next.",
-           "NEEDS_INPUT": "The estimate was prepared with questions for you. Review them with the internal costs.",
-           "FAILED": "The preparation did not finish. Nothing was changed. See the run record."}[run.status],
-          "success" if run.status != "FAILED" else "error")
+           "NEEDS_INPUT": "The estimate was prepared with questions for you. Review them with the internal costs."}[run.status],
+          "success")
     return redirect(url_for("guided.internal_cost", project_id=project.id))
 
 

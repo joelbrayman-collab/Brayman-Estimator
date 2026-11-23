@@ -127,3 +127,21 @@ def test_prepared_quantities_land_on_the_existing_estimate_review_for_a_person_t
         assert EstimateLine.query.count() == 0  # nothing is on the estimate until a person confirms
         db.session.remove()
         db.drop_all()
+
+
+def test_a_failed_preparation_says_why_on_the_page(env, monkeypatch):
+    """Practice 23 Nov 2026: a failed run said only 'see the run record', which nothing shows. The reason is now on screen."""
+    from tests.test_guided_tasks import _project as mk
+
+    class Boom:
+        name = "boom"
+
+        def read_facts(self, **_kw):
+            raise RuntimeError("provider answered 400: unsupported_content")
+
+    monkeypatch.setenv("AI_ESTIMATING_ENABLED", "1")
+    monkeypatch.setattr(EP.ChatCompletionsInterpreter, "from_env", classmethod(lambda cls: Boom()))
+    owner = env[1]["owner"]
+    project = mk(owner, "Failed run job")
+    owner.post(f"/projects/{project.id}/guided/prepare-estimate", data={"scope": "x"})
+    assert any("did not finish" in m and "unsupported_content" in m for m in owner.flashes())

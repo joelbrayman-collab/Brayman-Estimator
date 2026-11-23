@@ -4,7 +4,7 @@
 <div class="page-heading"><div><p class="eyebrow">PRO Desk</p><h1>{{ brand_for(supplier).name }} price file</h1>
 <p class="muted-copy">Quotations use only these prices. {{ brand_for(supplier).name }} controls them; CalibraytAI never types or estimates a price.</p></div>
 <div><a class="button button-secondary" href="{{ url_for('supplier_pro_desk.index', supplier_id=supplier.id) }}">Quotations</a></div></div>
-<form method="post" enctype="multipart/form-data" class="form-panel" data-price-file-form="true">
+<form method="post" enctype="multipart/form-data" class="form-panel" data-price-file-form="true" data-working="Reading your price file…" data-working-tool="hammer">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <h2>Load a price file</h2>
     <p>A CSV file with a header row. Required columns: <code>{{ required|join(", ") }}</code>. Optional: <code>{{ (columns|reject("in", required)|list)|join(", ") }}</code>. Dates as 2026-10-20. <code>store</code> is a store code for a store-only price; blank means every store.</p>

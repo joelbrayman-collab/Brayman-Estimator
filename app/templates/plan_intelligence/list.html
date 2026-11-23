@@ -22,7 +22,7 @@
         <strong>Drop the plan PDF anywhere on this page to upload it</strong>
         <span class="plan-drop-status" data-plan-drop-status>Or use Upload PDF.</span>
     </div>
-    <form method="post" action="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}" enctype="multipart/form-data" data-plan-drop-form>
+    <form method="post" action="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}" enctype="multipart/form-data" data-plan-drop-form data-working="Uploading your plans…" data-working-tool="hammer">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="file" name="plan_file" accept=".pdf,application/pdf" class="visually-hidden" tabindex="-1" aria-hidden="true">
     </form>

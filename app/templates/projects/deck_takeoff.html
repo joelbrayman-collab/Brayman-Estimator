@@ -147,7 +147,7 @@
         {% endfor %}
         </tbody>
     </table></div>
-    <form method="post" enctype="multipart/form-data" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" class="form-grid">
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('deck_takeoff.import_response', project_id=project.id) }}" class="form-grid" data-working="Reading the response…" data-working-tool="hammer">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Returned supplier PDF <input type="file" name="response_pdf" accept="application/pdf"></label>
         <label>Imported by <input name="actor_display_name" value=""></label>

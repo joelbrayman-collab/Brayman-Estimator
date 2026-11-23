@@ -10,8 +10,18 @@ def _ft(feet, inches=0):
     return feet * 12 + inches
 
 
+# Where each room sits (x right, y down, inches from the front-left corner of the main floor), placed by eye from the
+# listing picture's layout. The picture gives no chained dimensions, so every position is 'assumed': a schematic.
+POSITION = {"room_great": (0, 0), "room_dining": (0, 184), "room_kitchen": (0, 292), "room_foyer": (0, 444),
+            "room_porch": (0, 587), "room_bed2": (197, 0), "room_bath": (197, 124), "room_master": (197, 190),
+            "room_closet": (197, 346), "room_ensuite": (260, 346), "room_mud": (100, 444), "room_garage": (197, 444)}
+
+
 def _room(rid, label, level, w, d, note=""):
+    x, y = POSITION[rid]
     return {"id": rid, "kind": "room", "label": label, "level": level,
+            "x": fact(x, "assumed", "schematic position read by eye from the picture"),
+            "y": fact(y, "assumed", "schematic position read by eye from the picture"),
             "width": fact(w, "plan", note) if w is not None else fact(None, "unknown", "no size on the picture"),
             "depth": fact(d, "plan", note) if d is not None else fact(None, "unknown", "no size on the picture")}
 

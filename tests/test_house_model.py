@@ -70,3 +70,21 @@ def test_bad_requests_are_refused_not_guessed():
         apply_change(base, _gable_request(value=dict(GABLE, refs=["roof_missing"])))
     with pytest.raises(ChangeError):
         apply_change(base, _gable_request(operation="set_fact", target="roof_main", field_name="no_such_field", value=1))
+
+
+def test_the_floor_plan_is_drawn_from_the_model_and_says_what_it_does_not_know():
+    from app.services.house_model.plan_svg import floor_plan_svg
+
+    svg = floor_plan_svg(merrickville_bungalow())
+    assert svg.count("data-room=") == 11                       # 12 rooms on the main floor; the bathroom has no size
+    assert "15'-11&quot; x 15'-4&quot;" in svg.replace('"', "&quot;") or "15'-11\" x 15'-4\"" in svg
+    assert "Not drawn - size not shown: Bathroom" in svg
+    assert "positions are assumed" in svg and "PRELIMINARY" in svg
+
+
+def test_a_front_gable_change_leaves_the_floor_plan_drawing_identical():
+    from app.services.house_model.plan_svg import floor_plan_svg
+
+    base = merrickville_bungalow()
+    new, _ = apply_change(base, _gable_request())
+    assert floor_plan_svg(new) == floor_plan_svg(base)         # a roof change does not move a single room line

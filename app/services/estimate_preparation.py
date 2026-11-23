@@ -113,7 +113,11 @@ class ChatCompletionsInterpreter:
             raise PreparationError("This job's drawings are larger than the per-estimate AI spending cap allows. "
                                    "Nothing was sent.")
         prompt = ("Read the drawings text and scope. Reply with JSON only: {\"foundation_elements\": [...], "
-                  "\"scopes\": [...], \"assumptions\": [...], \"open_questions\": [...]}. For ICF walls give "
+                  "\"scopes\": [...], \"assumptions\": [...], \"open_questions\": [...]}. Each scopes item is an object "
+                  "{\"scope\": \"<name>\", \"facts\": {...}} (names such as flatwork, excavation, siding, roofing, "
+                  "insulation, drywall, flooring, windows, exterior_doors, interior_doors; put every dimension you can "
+                  "read on the drawing in facts, e.g. length_ft, width_ft, thickness_in). Never put plain text in "
+                  "foundation_elements or scopes: anything that is not an object belongs in open_questions. For ICF walls give "
                   "an element {\"id\",\"kind\":\"icf_wall\",\"manufacturer_id\",\"corner_90_count\",\"corner_45_count\","
                   "\"wall_segments\":[{label,length_ft,height_ft}]}. Never invent a dimension: ask instead.\n\nDRAWINGS:\n"
                   + drawings_text + "\n\nSCOPE:\n" + scope_text)
@@ -125,9 +129,17 @@ class ChatCompletionsInterpreter:
         data = json.loads(urllib.request.urlopen(req, timeout=120).read())
         usage = data.get("usage") or {}
         out = json.loads(data["choices"][0]["message"]["content"])
-        return Interpretation(plan={"foundation_elements": out.get("foundation_elements") or [],
-                                    "scopes": out.get("scopes") or []},
-                              assumptions=out.get("assumptions") or [], open_questions=out.get("open_questions") or [],
+        questions = [str(q) for q in (out.get("open_questions") or [])]
+        elements, scopes = [], []
+        for item in out.get("foundation_elements") or []:  # the engines take objects only; text becomes a question
+            (elements if isinstance(item, dict) else questions).append(item if isinstance(item, dict) else str(item))
+        for item in out.get("scopes") or []:
+            if isinstance(item, dict) and item.get("scope"):
+                scopes.append({"scope": str(item["scope"]), "facts": item.get("facts") if isinstance(item.get("facts"), dict) else {}})
+            else:
+                questions.append(str(item))
+        return Interpretation(plan={"foundation_elements": elements, "scopes": scopes},
+                              assumptions=[str(a) for a in (out.get("assumptions") or [])], open_questions=questions,
                               input_tokens=int(usage.get("prompt_tokens", 0)),
                               output_tokens=int(usage.get("completion_tokens", 0)), model=self.model)
 

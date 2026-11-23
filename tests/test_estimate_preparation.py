@@ -165,3 +165,26 @@ def test_the_prepare_page_shows_what_the_last_run_read(env):
     db.session.commit()
     page = owner.get(f"/projects/{project.id}/guided/prepare-estimate", status=200)
     assert "data-last-run" in page and "Slab is 4 in." in page and "Confirm the base depth." in page and "$0.01" not in page and "spending" not in page.lower()
+
+
+def test_provider_answers_in_the_wrong_shape_become_questions_not_a_crash(monkeypatch):
+    """Practice 23 Nov 2026: Augure returned scopes as plain text and the engine crashed on 'str'.get."""
+    import json
+    import urllib.request
+
+    reply = {"foundation_elements": ["slab 20 x 10"], "scopes": ["Concrete slab 20 ft x 10 ft x 4 in",
+                                                                 {"scope": "flatwork", "facts": {"length_ft": 20}}],
+             "assumptions": ["Slab is 4 in."], "open_questions": ["Confirm base depth."]}
+
+    class Resp:
+        def read(self):
+            return json.dumps({"usage": {"prompt_tokens": 500, "completion_tokens": 100},
+                               "choices": [{"message": {"content": json.dumps(reply)}}]}).encode()
+
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **k: Resp())
+    interp = EP.ChatCompletionsInterpreter(base_url="http://x", api_key="k", model="m", rate_in_per_m=1, rate_out_per_m=1, max_cents=100)
+    got = interp.read_facts(scope_text="slab")
+    assert got.plan["foundation_elements"] == []
+    assert got.plan["scopes"] == [{"scope": "flatwork", "facts": {"length_ft": 20}}]
+    assert "slab 20 x 10" in got.open_questions and "Confirm base depth." in got.open_questions
+    assert any("Concrete slab" in q for q in got.open_questions)

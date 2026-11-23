@@ -17,15 +17,6 @@
       <a class="ge-secondary" href="{{ url_for('guided.workflow', project_id=project.id) }}">Back to the workflow</a></div>
     </form>
   </section>
-  {% if last %}
-  <section class="ge-card" data-last-run>
-    <h2>What the AI read (latest run)</h2>
-    <p class="ge-muted">{{ last.status }} · read by {{ last.interpreter }}</p>
-    {% if facts.foundation_elements or facts.scopes %}<h3>Facts it read</h3><pre class="ge-muted" style="white-space:pre-wrap">{{ facts|tojson(indent=2) }}</pre>{% endif %}
-    {% if last_assumptions %}<h3>Assumptions</h3><ul>{% for a in last_assumptions %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
-    {% if last_questions %}<h3>Needs your answer</h3><ul class="ge-warn">{% for q in last_questions %}<li>{{ q }}</li>{% endfor %}</ul>{% endif %}
-  </section>
-  {% endif %}
 </div>
 <script src="{{ url_for('static', filename='js/prepare_estimate_progress.js', v='pe-1') }}" defer></script>
 {% endblock %}

@@ -148,24 +148,13 @@ def test_a_failed_preparation_says_why_on_the_page(env, monkeypatch):
     assert any("did not finish" in m and "unsupported_content" in m for m in owner.flashes())
 
 
-def test_the_prepare_page_shows_what_the_last_run_read(env):
-    import json
-
-    from app import db
-    from app.models.estimating_assistant import EstimatePreparationRun
+def test_the_prepare_page_carries_no_report_and_no_spending(env):
     from tests.test_guided_tasks import _project as mk
 
     owner = env[1]["owner"]
-    project = mk(owner, "Last run job")
-    db.session.add(EstimatePreparationRun(organization_id=project.organization_id, project_id=project.id,
-                                          status="NEEDS_INPUT", interpreter="augure", cost_cents=1, input_tokens=900, output_tokens=200,
-                                          facts_json=json.dumps({"foundation_elements": [{"id": "slab"}], "scopes": []}),
-                                          assumptions_json=json.dumps(["Slab is 4 in."]),
-                                          open_questions_json=json.dumps(["Confirm the base depth."])))
-    db.session.commit()
+    project = mk(owner, "No report job")
     page = owner.get(f"/projects/{project.id}/guided/prepare-estimate", status=200)
-    assert "data-last-run" in page and "Slab is 4 in." in page and "Confirm the base depth." in page and "$0.01" not in page and "spending" not in page.lower()
-
+    assert "data-last-run" not in page and "What the AI read" not in page and "spending" not in page.lower()
 
 def test_provider_answers_in_the_wrong_shape_become_questions_not_a_crash(monkeypatch):
     """Practice 23 Nov 2026: Augure returned scopes as plain text and the engine crashed on 'str'.get."""

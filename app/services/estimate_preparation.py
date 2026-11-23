@@ -186,8 +186,9 @@ def prepare_estimate(project, *, user, interpreter, drawings_text: str = "", sco
         run.cost_cents = rate_cost(found.input_tokens, found.output_tokens) if rate_cost else 0
         run.facts_json = json.dumps(found.plan, default=str)
         import logging  # the cost is for the administrator's logs only, never shown to contractors or estimators
-        logging.getLogger(__name__).info("AI estimating run %s: %s in / %s out tokens, %s cents", run.id,
-                                         found.input_tokens, found.output_tokens, run.cost_cents)
+        logging.getLogger(__name__).info("AI estimating run %s: %s in / %s out tokens, %s cents; facts=%s questions=%s", run.id,
+                                         found.input_tokens, found.output_tokens, run.cost_cents,
+                                         json.dumps(found.plan, default=str)[:1500], json.dumps(found.open_questions, default=str)[:600])
         steps.append({"step": "read drawings and scope", "interpreter": run.interpreter})
         plan = dict(found.plan, project_id=project.id)
         quantities = estimate_project(plan)

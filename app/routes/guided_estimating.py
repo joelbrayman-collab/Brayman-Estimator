@@ -524,14 +524,7 @@ def prepare_my_estimate(project_id):
 
     project, guided = _project_and_guided(project_id, required=False)
     if request.method == "GET":
-        from app.models.estimating_assistant import EstimatePreparationRun
-
-        last = (EstimatePreparationRun.query.filter_by(organization_id=_org(), project_id=project.id)
-                .order_by(EstimatePreparationRun.id.desc()).first())
-        facts = json.loads(last.facts_json or "{}") if last else {}
-        return render_template("guided/prepare_estimate.html", project=project, last=last, facts=facts,
-                               last_assumptions=json.loads(last.assumptions_json or "[]") if last else [],
-                               last_questions=json.loads(last.open_questions_json or "[]") if last else [],
+        return render_template("guided/prepare_estimate.html", project=project,
                                enabled=__import__("os").environ.get("AI_ESTIMATING_ENABLED") == "1",
                                spent=EP.spent_this_month_cents(_org()), cap=EP.monthly_cap_cents())
     attachments = []
@@ -552,8 +545,8 @@ def prepare_my_estimate(project_id):
     flash({"COMPLETED": "The estimate was prepared. Review the internal costs next.",
            "NEEDS_INPUT": "The estimate was prepared with questions for you. Review them with the internal costs."}[run.status],
           "success")
-    if G.get_guided(_org(), project.id) is None:  # no estimate to review yet: show what the AI read, right here
-        return redirect(url_for("guided.prepare_my_estimate", project_id=project.id))
+    if G.get_guided(_org(), project.id) is None:  # no estimate to review yet: back to the workflow
+        return redirect(url_for("guided.workflow", project_id=project.id))
     return redirect(url_for("guided.internal_cost", project_id=project.id))
 
 

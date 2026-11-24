@@ -104,7 +104,7 @@ Commands will be reported exactly, with results, in the validation report.
 
 ## 11. Does it require an ADR?
 
-Yes. **ADR-054 (proposed): Project baseline snapshot ownership and immutability.** It records that the baseline is a Projects-owned immutable snapshot, why actuals, forecasts and calibration live outside it, and the Person-to-User and dated-rate decisions. It is drafted with the code and presented for Joel's acceptance. It does not supersede ADR-021 (MONITOR commercial baseline); it extends it.
+Yes. **ADR-059 (accepted 24 Nov 2026; numbered 059 because ADR-054 was already taken): Project baseline snapshot ownership and immutability.** It records that the baseline is a Projects-owned immutable snapshot, why actuals, forecasts and calibration live outside it, and the Person-to-User and dated-rate decisions. It is drafted with the code and presented for Joel's acceptance. It does not supersede ADR-021 (MONITOR commercial baseline); it extends it.
 
 ## 12. Does it require a database migration?
 

@@ -118,3 +118,18 @@ Org-scoped generated contracts (FG-024 Slice C; **live / synthetic-UAT proven**;
 - [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**
 - [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR V1 **CLOSED / OPERATIONAL FOR UAT**; V1 recon complete)
+- [ADR-059](../adr/ADR-059-project-baseline-snapshot-ownership-and-immutability.md) **Accepted** (project baseline: Projects owns an immutable snapshot; [FG-042](../feature-gates/FG-042-financial-foundation-immutable-baseline-employee-cost-permissions.md) implemented and tested, not yet in Practice or Production)
+
+## Project baseline (FG-042, 24 Nov 2026)
+
+Owner and System Administrator only (the page shows loaded labour rates): `Project > Project baseline`
+(`/projects/<id>/baseline`). Owns `project_baselines`, `project_baseline_labour_allocations`,
+`project_baseline_person_rates`, `project_baseline_lines`, `project_baseline_open_items`; references the estimate, its version
+and approval and changes none of them. A baseline is PROVISIONAL until reconciled to the approved figures to the cent with no
+open item and no provisional line, then FROZEN (who, when, SHA-256), and SUPERSEDED by a later frozen baseline. Database
+triggers make FROZEN and SUPERSEDED baselines immutable. Labour comes from the Labour Calculation Detail by Person (CSV:
+group, task, person, hours) matched to the employee register. Material pricing uses `app/services/markup.py`
+(selling = net x (1 + markup); PROJECT, then SUPPLIER, then company markup; quoted price only with a reason).
+Employee linkage: `organization_people.user_id` (one user per person); actual labour cost uses the person's effective-dated
+loaded rate (`app/services/employee_rates.py`); unlinked time stays at the company rate and is counted separately.
+

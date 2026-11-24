@@ -41,3 +41,19 @@
 |---|---|
 | Production packages pinned to the verified set (`requirements.txt` + `requirements-lock.txt`, Python 3.9.6) — `test_dependency_pins.py` | **Unreleased** |
 | Release gate stops at READY_FOR_PUSH; separate authorization; no skipped test allowed — `test_release_tools.py`, [../operations/release-procedure.md](../operations/release-procedure.md) | In the repository (cleanup branch) |
+
+## Financial permission map (FG-042 S2b, 24 Nov 2026)
+
+| Who | Employee pay and loaded rates (`can_view_employee_cost`) | Project cost, price, profit (`can_view_project_economics`) | Project baseline page |
+|---|---|---|---|
+| Owner, System Administrator | Yes | Yes | Yes |
+| Holder of the `PROJECT_PERFORMANCE` grant | **No** | Yes | **No** |
+| Ordinary office user | No | No | No |
+| Field-only user | No | No | No |
+
+`PROJECT_PERFORMANCE` is a membership access-domain grant, given or removed only by the owner or a System Administrator, independent of
+`COMPANY_MANAGEMENT`; it never widens employee cost. Enforced server-side on the Project page Money and labour-cost panels, package
+controls (read and write), direct cost actuals (record and supersede), the company-work labour cost, the Manage Project progress
+step, and the existing document and guided-estimating gates. Without it, labour appears as hours only. Not changed by this gate:
+estimate and proposal screens (their own existing gates) and the work-package "approved internal direct cost" input.
+

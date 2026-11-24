@@ -6,6 +6,13 @@ This block is the one authoritative "where are we" for CalibraytAI. Everything b
 status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs/chat-workflow-log.md`), are
 **historical records**: where they disagree with this block, this block wins.
 
+- **LIVING PROJECT P&L, GATE 1 (FG-042) — IMPLEMENTED AND TESTED; NOT IN PRACTICE; NOT IN PRODUCTION (24 Nov 2026).** Branch
+  `gate1/financial-foundation` at `b03c77c0` (GitHub). Three migrations after `q1a2b3c4d5e6`: M1 `b1f4a9c2d7e3` (Person-to-User link,
+  cost-profile effective date, other employment cost), M3 `c2a5b8d1e4f6` (markup overrides), M2 `d3b6c9e2f5a7` (project baseline,
+  graph head). Rehearsed up and down on a copy of `pre-ai13-20261123-1526.db`: existing rows unchanged, integrity ok. Practice
+  (Training Centre, HostPapa) needs Joel's WHM command; Production needs Joel's authorization after the validation report.
+  Brayman/Ben onboarding and QuickBooks Time stay deferred. Gate 2 (Living Project P&L S3-S7) follows Gate 1 approval.
+  ADR-059; [FG-042](feature-gates/FG-042-financial-foundation-immutable-baseline-employee-cost-permissions.md).
 - **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — RELEASED.** Live `f9ca0f1183aae6c87ea8cb489b22b89f1406aac9`, deploy
   `dep-dbhs0aoae00c739lcn8g` (29 Oct 2026 17:54 EDT), database revision `a4d5e6f7a8b9` (no migration). Mac gate:
   3,657 passed, no skips, end-to-end walk and Cal tests passed, **302** browser checks; backup

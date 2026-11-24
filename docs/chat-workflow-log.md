@@ -14692,3 +14692,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | See [ux/real-plan-observations-2026-11-15.md](ux/real-plan-observations-2026-11-15.md) |
 | Tests | See final report |
 | Commit hash | See git log |
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-11-24 |
+| Branch | `gate1/financial-foundation` |
+| Objective | Gate 1 Financial Foundation (FG-042): M1 + S2 employee link and dated loaded rate, S2b project-performance permission, shared markup and M3, S1 + M2 immutable project baseline |
+| Business decision | Joel 24 Nov: migrations M1, M2, M3 approved as described in FG-042, including the optional other-employment-cost field (must not duplicate costs already in the profile); proceed in order without interim approvals; return Gate 1 validation for Production authorization |
+| Implementation result | See FG-042 section 17 and ADR-059. Two disclosed additive columns: `other_employment_cost_note`, `reconciliation_json` |
+| Tests | Full suite 4,238 passed, 72 failed, 11 skipped; 56 of the 72 fail identically on `1167e203` (approved master templates and browser runtime absent in the cloud workspace); the other 16 were caused by this gate and were fixed. New: 25 S2b, 30+2 M1, 14 M3/markup, 29+3+4 baseline tests |
+| Commit hash | `b03c77c0` |
+

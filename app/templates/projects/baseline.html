@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{# Approved project baseline (FG-042 S1). Owner / System Administrator only: shows loaded labour rates. #}
+{% block title %}Project baseline | {{ project.name }}{% endblock %}
+{% block page_title %}Project baseline{% endblock %}
+{% macro money(v) %}${{ "{:,.2f}".format(v) }}{% endmacro %}
+{% block content %}
+<div class="page-heading"><div><h1>Project baseline — {{ project.name }}</h1>
+<p class="muted-copy">Internal: owner and System Administrator only. The baseline is the approved starting point of the living project record. It never changes the estimate or its approval.</p></div>
+<div><a class="button button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a></div></div>
+
+<section class="form-panel" data-baseline-list>
+  <h2>Baselines</h2>
+  {% if baselines %}<ul>{% for b in baselines %}<li><a href="{{ url_for('projects.project_baseline', id=project.id, baseline=b.id) }}">{{ b.option_label }}</a> — {{ b.status }}{% if b.status == 'FROZEN' %}, frozen {{ b.frozen_at.strftime('%Y-%m-%d') }}{% endif %}</li>{% endfor %}</ul>
+  {% else %}<p class="muted-copy">No baseline yet.</p>{% endif %}
+  <form method="post" action="{{ url_for('projects.create_project_baseline', id=project.id) }}" class="inline-form" data-create-baseline>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="estimate_version_id" aria-label="Estimate version">{% for v in versions %}<option value="{{ v.id }}">Estimate version {{ v.id }}</option>{% endfor %}</select>
+    <input type="text" name="option_label" placeholder="Option (for example, the accepted roof)" aria-label="Option" required>
+    <input type="text" name="labour_selling_rate" placeholder="Labour selling rate per hour" aria-label="Labour selling rate" required>
+    <button type="submit" class="button-secondary">Create provisional baseline</button>
+  </form>
+</section>
+
+{% if baseline %}
+<section class="form-panel" data-baseline-summary>
+  <h2>{{ baseline.option_label }} — {{ baseline.status }}</h2>
+  <table class="plan-table"><tbody>
+    {% for label, value in data.summary %}<tr><th>{{ label }}</th><td>{% if label == 'Profit Margin' %}{{ "—" if value is none else "{:.1f}%".format(value * 100) }}{% else %}{{ money(value) }}{% endif %}</td></tr>{% endfor %}
+  </tbody></table>
+  <p class="muted-copy">Labour at ${{ baseline.labour_selling_rate }}/h selling; {{ data.totals.hours }} h.{% if baseline.content_sha256 %} SHA-256 {{ baseline.content_sha256 }} ({{ "verified" if data.sha_verified else "DOES NOT MATCH" }}).{% endif %}</p>
+</section>
+
+<section class="form-panel" data-baseline-reconciliation>
+  <h2>Reconciliation to the approved figures</h2>
+  {% set rec = data.reconciliation %}
+  {% if rec.checks %}<table class="plan-table"><thead><tr><th>Figure</th><th>Approved</th><th>Baseline</th><th>Difference</th></tr></thead><tbody>
+    {% for c in rec.checks %}<tr><td>{{ c.label }}</td><td>{{ c.source }}</td><td>{{ c.baseline }}</td><td>{{ c.difference }}{% if not c.ok %} ✗{% endif %}</td></tr>{% endfor %}</tbody></table>{% endif %}
+  {% for p in rec.problems or [] %}<p class="ge-warn">{{ p }}</p>{% endfor %}
+  {% if baseline.status == 'PROVISIONAL' %}{% if rec.ok %}<p>Reconciles to the cent.</p>{% else %}<p class="ge-warn">Does not reconcile: a baseline cannot be frozen until it does.</p>{% endif %}{% endif %}
+</section>
+
+<section class="form-panel" data-baseline-labour>
+  <h2>Labour allocation (hours and assignments)</h2>
+  <div class="table-scroll"><table class="plan-table"><thead><tr><th>Group</th><th>Task</th><th>Assigned</th><th>Hours</th></tr></thead><tbody>
+    {% for s in data.schedule %}<tr><td>{{ s.group }}</td><td>{{ s.task }}</td><td>{% for p in s.people %}{{ p.name }} ({{ p.hours }} h){{ ", " if not loop.last }}{% endfor %}</td><td>{{ s.total }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% if baseline.status == 'PROVISIONAL' %}
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('projects.import_project_baseline_labour', id=project.id, baseline_id=baseline.id) }}" class="inline-form" data-import-labour>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="file" name="labour_csv" accept=".csv" aria-label="Labour Calculation Detail by Person (CSV: group, task, person, hours)">
+    <button type="submit" class="button-secondary">Import labour (CSV: group, task, person, hours)</button>
+  </form>{% endif %}
+  <h3>Loaded rates carried by this baseline (owner only)</h3>
+  <table class="plan-table"><tbody>{% for name, rate in data.person_rates %}<tr><td>{{ name }}</td><td>{{ money(rate) }}/h</td></tr>{% endfor %}</tbody></table>
+</section>
+
+<section class="form-panel" data-baseline-lines>
+  <h2>Cost lines</h2>
+  <div class="table-scroll"><table class="plan-table"><thead><tr><th>Category</th><th>Description</th><th>Net cost</th><th>Markup</th><th>Selling</th><th>Note</th><th></th></tr></thead><tbody>
+    {% for l in data.lines %}<tr><td>{{ l.category }}</td><td>{{ l.description }}</td><td>{{ money(l.net_cost) }}</td><td>{{ "{:.1f}%".format(l.markup_rate * 100) }}</td><td>{{ money(l.selling_price) }}</td><td>{% if l.price_override_reason %}Quoted price: {{ l.price_override_reason }}{% endif %}{% if l.is_provisional %} PROVISIONAL: {{ l.provisional_reason }}{% endif %}</td>
+      <td>{% if baseline.status == 'PROVISIONAL' %}<form method="post" action="{{ url_for('projects.remove_project_baseline_line', id=project.id, baseline_id=baseline.id, line_id=l.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button-secondary" type="submit">Remove</button></form>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% if baseline.status == 'PROVISIONAL' %}
+  <form method="post" action="{{ url_for('projects.add_project_baseline_line', id=project.id, baseline_id=baseline.id) }}" class="inline-form" data-add-line>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="category" aria-label="Category">{% for c in ['MATERIAL','SUBCONTRACT','EQUIPMENT','OPENING','ALLOWANCE','OTHER'] %}<option>{{ c }}</option>{% endfor %}</select>
+    <input type="text" name="description" placeholder="Description" required>
+    <input type="text" name="supplier_name" placeholder="Supplier (optional)">
+    <input type="text" name="net_cost" placeholder="Net cost" required>
+    <input type="text" name="markup_rate" placeholder="Markup (0.20 = 20%; blank = company)">
+    <input type="text" name="quoted_price" placeholder="Quoted price (optional)">
+    <input type="text" name="price_override_reason" placeholder="Reason for the quoted price">
+    <label><input type="checkbox" name="is_provisional"> Provisional</label>
+    <input type="text" name="provisional_reason" placeholder="Why provisional">
+    <button type="submit" class="button-secondary">Add line</button>
+  </form>{% endif %}
+</section>
+
+<section class="form-panel" data-baseline-open-items>
+  <h2>Open items</h2>
+  {% for i in data.open_items %}<p>{{ "OPEN" if i.status == "OPEN" else "Resolved" }} — {{ i.description }}{% if i.resolution_note %} ({{ i.resolution_note }}){% endif %}
+    {% if i.status == 'OPEN' and baseline.status == 'PROVISIONAL' %}<form method="post" class="inline-form" action="{{ url_for('projects.resolve_project_baseline_open_item', id=project.id, baseline_id=baseline.id, item_id=i.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="text" name="note" placeholder="How it was resolved" required><button class="button-secondary" type="submit">Resolve</button></form>{% endif %}</p>
+  {% else %}<p class="muted-copy">None.</p>{% endfor %}
+  {% if baseline.status == 'PROVISIONAL' %}
+  <form method="post" action="{{ url_for('projects.add_project_baseline_open_item', id=project.id, baseline_id=baseline.id) }}" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="text" name="description" placeholder="An outstanding commercial item" required><button class="button-secondary" type="submit">Record open item</button></form>
+  <h2>Freeze</h2>
+  <p class="muted-copy">A frozen baseline never changes; a change is a new baseline. Freezing records who, when and a SHA-256 of the content. Leave the source figures blank to use the approved figures.</p>
+  <form method="post" action="{{ url_for('projects.freeze_project_baseline', id=project.id, baseline_id=baseline.id) }}" class="inline-form" data-freeze>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="source_hours" placeholder="Source hours (optional)"><input type="text" name="source_revenue" placeholder="Source revenue (optional)"><input type="text" name="source_cost" placeholder="Source cost (optional)">
+    <button type="submit" class="button-primary">Freeze this baseline</button></form>{% endif %}
+</section>
+{% endif %}
+{% endblock %}

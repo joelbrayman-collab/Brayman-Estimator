@@ -138,6 +138,13 @@ from app.models.sms_notification import (  # SMS schedule-change notices (22 Oct
     SmsScheduleNotice,
     SmsTextMessageDetail,
 )
+from app.models.project_baseline import (
+    ProjectBaseline,
+    ProjectBaselineLabourAllocation,
+    ProjectBaselineLine,
+    ProjectBaselineOpenItem,
+    ProjectBaselinePersonRate,
+)
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
     OrganizationPricingPolicy,

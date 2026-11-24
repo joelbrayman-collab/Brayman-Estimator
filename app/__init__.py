@@ -293,7 +293,20 @@ def _register_office_auth(app: Flask) -> None:
             except OrganizationAccessError:
                 return False
 
-        return {"project_economics_visible": project_economics_visible}
+        def project_baseline_visible():
+            """The project baseline holds loaded labour rates: owner or System Administrator only."""
+            from flask_login import current_user
+
+            from app.services.financial_access import can_view_employee_cost
+            from app.services.organizations import OrganizationAccessError, get_current_organization_id
+
+            try:
+                return can_view_employee_cost(current_user, get_current_organization_id())
+            except OrganizationAccessError:
+                return False
+
+        return {"project_economics_visible": project_economics_visible,
+                "project_baseline_visible": project_baseline_visible}
 
     @app.context_processor
     def _training_site():
@@ -583,6 +596,7 @@ def create_app(config=None):
     from app.routes.projects import projects_bp
     from app.routes import project_scope as project_scope_routes  # noqa: F401
     from app.routes import package_controls as package_controls_routes  # noqa: F401
+    from app.routes import project_baseline as project_baseline_routes  # noqa: F401
     from app.routes import project_setup as project_setup_routes  # noqa: F401
     from app.routes import project_construction as project_construction_routes  # noqa: F401
     from app.routes.punch_list import punch_list_bp

@@ -53,6 +53,7 @@
         <li><a href="#ts-work">Work &amp; Time</a></li>
         <li><a href="#ts-changes">Changes</a></li>
         {% if project_economics_visible() %}<li><a href="#ts-money">Money</a></li>{% endif %}
+        {% if project_baseline_visible() %}<li><a href="{{ url_for('projects.project_baseline', id=project.id) }}" data-baseline-link>Project baseline</a></li>{% endif %}
         <li><a href="#ts-closeout">Closeout</a></li>
         <li><a href="#ts-documents">Documents</a></li>
         <li><a href="#ts-plans">Plans &amp; Permits</a></li>

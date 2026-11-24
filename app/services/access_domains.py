@@ -16,7 +16,11 @@ from app.services.organizations import (
 )
 
 ACCESS_DOMAIN_COMPANY_MANAGEMENT = "COMPANY_MANAGEMENT"
-RECOGNIZED_STORED_DOMAINS = frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT})
+# FG-042 S2b (Joel, 24 Nov 2026): the project-performance permission. Lets a person see project economics (cost,
+# price, profit, forecast) without any employee compensation. Independent of COMPANY_MANAGEMENT and of
+# financial_access.can_view_employee_cost, which it never widens.
+ACCESS_DOMAIN_PROJECT_PERFORMANCE = "PROJECT_PERFORMANCE"
+RECOGNIZED_STORED_DOMAINS = frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT, ACCESS_DOMAIN_PROJECT_PERFORMANCE})
 
 # Future separately governed direction only. Not recognized. Not stored by this slice.
 ACCESS_DOMAIN_SENSITIVE_FINANCIAL = "SENSITIVE_FINANCIAL"

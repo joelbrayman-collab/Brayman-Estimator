@@ -86,6 +86,14 @@ def client(app):
     return app.test_client()
 
 
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module tests them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 @pytest.fixture
 def org_b(app):
     org = Organization(

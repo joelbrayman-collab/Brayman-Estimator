@@ -162,6 +162,9 @@ def _handle_actual_error(exc, project, form, *, supersede_actual_id=None):
 
 @build_bp.route("/projects/<int:project_id>/direct-cost-actuals", methods=["POST"])
 def create_project_direct_cost_actual(project_id):
+    from app.services.financial_access import require_project_economics
+
+    require_project_economics()  # FG-042 S2b: recording and reading project cost needs the economics permission
     project = _project(project_id)
     form = _actuals_form()
     try:
@@ -183,6 +186,9 @@ def create_project_direct_cost_actual(project_id):
     methods=["POST"],
 )
 def supersede_project_direct_cost_actual(project_id, actual_id):
+    from app.services.financial_access import require_project_economics
+
+    require_project_economics()
     project = _project(project_id)
     form = _actuals_form()
     prior = get_direct_cost_actual(project.organization_id, project.id, actual_id)

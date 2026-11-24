@@ -36,6 +36,7 @@ from app.models.organization import Organization, OrganizationSystemAdministrato
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.services.access_domains import (
     ACCESS_DOMAIN_COMPANY_MANAGEMENT,
+    ACCESS_DOMAIN_PROJECT_PERFORMANCE,
     RECOGNIZED_STORED_DOMAINS,
     AccessDomainError,
     grant_access_domain,
@@ -55,6 +56,7 @@ audit_log = logging.getLogger("people_access")
 
 ACCESS_DOMAIN_LABELS = {
     ACCESS_DOMAIN_COMPANY_MANAGEMENT: "Company Management (Needs attention and company figures)",
+    ACCESS_DOMAIN_PROJECT_PERFORMANCE: "Project performance (project cost, price and profit; no employee pay)",
 }
 
 PEOPLE_ADMIN_REQUIRED = "Only the owner or a System Administrator may manage people and access."

@@ -432,13 +432,18 @@ def _progress(ctx):
     from app.services.project_performance import assemble_project_labour_cost
     from app.services.time_entry import project_time_summary
 
+    from flask_login import current_user
+
+    from app.services.financial_access import can_view_project_economics
+
+    economics = can_view_project_economics(current_user, ctx.organization_id)  # FG-042 S2b
     monitor = assemble_monitor_v1(ctx.project, ctx.organization_id)
     labour = assemble_project_labour_cost(ctx.organization_id, ctx.project.id)
     total = labour.get("total") or {}
     items = []
-    if monitor.get("original_estimated_direct_cost") is not None:
+    if economics and monitor.get("original_estimated_direct_cost") is not None:
         items.append(Item("Estimated direct cost", INFO, f"${Decimal(monitor['original_estimated_direct_cost']):,.2f}"))
-    if monitor.get("actual_direct_cost_to_date") is not None:
+    if economics and monitor.get("actual_direct_cost_to_date") is not None:
         items.append(Item("Actual direct cost to date", INFO, f"${Decimal(monitor['actual_direct_cost_to_date']):,.2f}"))
     items.append(Item("Labour hours (approved time)", INFO,
                       f"{Decimal(total.get('actual_hours') or 0):g} h of {Decimal(total.get('estimated_hours') or 0):g} h estimated"))

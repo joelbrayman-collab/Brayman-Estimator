@@ -52,7 +52,7 @@
         <li><a href="#ts-schedule">Schedule</a></li>
         <li><a href="#ts-work">Work &amp; Time</a></li>
         <li><a href="#ts-changes">Changes</a></li>
-        <li><a href="#ts-money">Money</a></li>
+        {% if project_economics_visible() %}<li><a href="#ts-money">Money</a></li>{% endif %}
         <li><a href="#ts-closeout">Closeout</a></li>
         <li><a href="#ts-documents">Documents</a></li>
         <li><a href="#ts-plans">Plans &amp; Permits</a></li>
@@ -640,12 +640,17 @@
         </p>
         {% endif %}
         {% set cost = hub.labour_cost %}
-        <h3 id="hub-labour-cost">Estimated and actual labour</h3>
+        {% set show_cost = project_economics_visible() %}
+        <h3 id="hub-labour-cost">{% if show_cost %}Estimated and actual labour{% else %}Estimated and actual labour hours{% endif %}</h3>
+        {% if show_cost %}
         <p class="muted-copy">
             Actual is approved time only, at the company costing rate
             {% if cost.rate %}(${{ "%.2f"|format(cost.rate.rate) }} an hour, {{ cost.rate.currency }}, version {{ cost.rate.version }} on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% else %}(none authorized yet: set one on <a href="{{ url_for('labour_engine.list_cost_rates') }}">Labour rates</a>){% endif %}.
             Wages and payroll are not used. Time waiting for approval is not in the actual.
         </p>
+        {% else %}
+        <p class="muted-copy">Approved time only. Time waiting for approval is not in the actual.</p>
+        {% endif %}
         {% if cost.rows %}
         <div class="table-wrap">
         <table class="data-table" data-labour-cost>
@@ -655,9 +660,9 @@
                     <th>Estimated hours</th>
                     <th>Actual hours</th>
                     <th>Difference</th>
-                    <th>Estimated cost</th>
+                    {% if show_cost %}<th>Estimated cost</th>
                     <th>Actual cost</th>
-                    <th>Difference</th>
+                    <th>Difference</th>{% endif %}
                     <th>Waiting for approval</th>
                 </tr>
             </thead>
@@ -668,16 +673,18 @@
                     <td>{% if row.estimated_hours is not none %}{{ "%.2f"|format(row.estimated_hours) }}{% else %}not estimated{% endif %}</td>
                     <td>{{ "%.2f"|format(row.actual_hours) }}</td>
                     <td>{% if row.hours_difference is not none %}{{ "%+.2f"|format(row.hours_difference) }}{% else %}—{% endif %}</td>
+                    {% if show_cost %}
                     <td>{% if row.estimated_cost is not none %}${{ "{:,.2f}".format(row.estimated_cost) }}{% else %}—{% endif %}</td>
                     <td>${{ "{:,.2f}".format(row.actual_cost) }}{% if row.unrated_hours > 0 %} <span class="muted-copy">({{ "%.2f"|format(row.unrated_hours) }} h with no costing rate)</span>{% endif %}</td>
                     <td>{% if row.cost_difference is not none %}{% if row.cost_difference < 0 %}-{% else %}+{% endif %}${{ "{:,.2f}".format(row.cost_difference|abs) }}{% else %}—{% endif %}</td>
+                    {% endif %}
                     <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         </div>
-        <p class="muted-copy">A plus difference is over the estimate. Extra work and company time have no estimate until they are priced.</p>
+        <p class="muted-copy">A plus difference is over the estimate.{% if show_cost %} Extra work and company time have no estimate until they are priced.{% endif %}</p>
         {% else %}
         <p class="muted-copy">No estimated hours and no approved time yet.</p>
         {% endif %}
@@ -778,6 +785,7 @@
 </section>
 {% endcall %}
 
+{% if project_economics_visible() %}
 {% call ts.details("Money", "ts-money", hint="Estimated against actual cost, and the costs recorded", open=(open_section is defined and open_section == "ts-money")) %}
 <p class="hub-section-label" id="hub-monitor">Money</p>
 {{ contextual_help(help_content.hub_topic("monitor")) }}
@@ -1001,6 +1009,7 @@
     {% endif %}
 </section>
 {% endcall %}
+{% endif %}
 
 {% call ts.details("Closeout", "ts-closeout", hint="Final walkthrough and punch list") %}
 <section class="dash-panels">

@@ -23,7 +23,7 @@
   <div class="form-panel" data-company-hours>
     <h3>Approved hours, {{ start.isoformat() }} to {{ end.isoformat() }}</h3>
     {% if by_category %}<ul class="acct-list">{% for name, hours in by_category %}<li>{{ name }}: {{ "%.2f"|format(hours) }} h</li>{% endfor %}</ul>{% else %}<p class="muted-copy">None in these dates.</p>{% endif %}
-    <p class="muted-copy">All Shop / Company Work so far: {{ "%.2f"|format(cost.total.actual_hours) }} approved hours, {{ "${:,.2f}".format(cost.total.actual_cost) }} at the company costing rate (company cost, not a job's).</p>
+    {% if cost %}<p class="muted-copy">All Shop / Company Work so far: {{ "%.2f"|format(cost.total.actual_hours) }} approved hours, {{ "${:,.2f}".format(cost.total.actual_cost) }} at the company costing rate (company cost, not a job's).</p>{% endif %}
     <form method="get" class="acct-actions"><label>From <input type="date" name="from" value="{{ start.isoformat() }}"></label><label>To <input type="date" name="to" value="{{ end.isoformat() }}"></label><button type="submit">Show</button></form>
   </div>
 </div>

@@ -15,6 +15,9 @@ def _project(project_id):
 @projects_bp.route("/<int:id>/package-controls", methods=["GET", "POST"])
 def package_controls(id):
     from app.services import package_controls as PC
+    from app.services.financial_access import require_project_economics
+
+    require_project_economics()  # FG-042 S2b: cost, price and profit by package. Economics permission only.
 
     project = _project(id)
     if request.method == "POST":

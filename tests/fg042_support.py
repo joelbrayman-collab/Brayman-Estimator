@@ -38,3 +38,18 @@ def seeded_project(name="FG042 synthetic project", quantity="800", code="LT-FG04
     activity = ProjectWorkActivity.query.join(ProjectWorkElement).filter(
         ProjectWorkElement.project_id == project.id).one()
     return project, activity, version
+
+
+def grant_default_office_user_project_performance():
+    """FG-042 S2b: the default office test user is an ordinary office user. Tests that exercise project cost, price
+    and profit surfaces give that user the PROJECT_PERFORMANCE grant (the rule is tested on its own in
+    tests/test_fg042_s2b_project_performance_permission.py)."""
+    from app.models.user import UserMembership
+    from app.services.access_domains import ACCESS_DOMAIN_PROJECT_PERFORMANCE, grant_access_domain
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID
+    from tests.auth_fixtures import ensure_office_user
+
+    user = ensure_office_user()
+    membership = UserMembership.query.filter_by(user_id=user.id, organization_id=DEFAULT_ORGANIZATION_ID).one()
+    grant_access_domain(membership_id=membership.id, domain_key=ACCESS_DOMAIN_PROJECT_PERFORMANCE)
+    return user

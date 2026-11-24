@@ -280,6 +280,22 @@ def _register_office_auth(app: Flask) -> None:
         return {"session_timeout": page_settings()}
 
     @app.context_processor
+    def _project_economics_visibility():
+        """FG-042 S2b: templates ask this before showing any project cost, price or profit figure."""
+        def project_economics_visible():
+            from flask_login import current_user
+
+            from app.services.financial_access import can_view_project_economics
+            from app.services.organizations import OrganizationAccessError, get_current_organization_id
+
+            try:
+                return can_view_project_economics(current_user, get_current_organization_id())
+            except OrganizationAccessError:
+                return False
+
+        return {"project_economics_visible": project_economics_visible}
+
+    @app.context_processor
     def _training_site():
         from app.training.service import enabled
 

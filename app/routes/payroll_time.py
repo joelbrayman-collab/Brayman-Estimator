@@ -266,10 +266,13 @@ def company_work():
     for e in entries:
         if e.status == "APPROVED":
             by_category[e.activity_display_name] = by_category.get(e.activity_display_name, 0) + e.hours
+    from app.services.financial_access import can_view_project_economics
+
+    economics = can_view_project_economics(current_user, org)
     return render_template("payroll_time/company.html", company=company,
                            categories=[a for el in company.work_elements for a in el.activities],
                            rows=[time_entry_presentation(e) for e in entries], by_category=sorted(by_category.items()),
-                           cost=assemble_project_labour_cost(org, company.id), start=start, end=end)
+                           cost=assemble_project_labour_cost(org, company.id) if economics else None, start=start, end=end)
 
 
 @payroll_time_bp.route("/time/company/categories", methods=["POST"])

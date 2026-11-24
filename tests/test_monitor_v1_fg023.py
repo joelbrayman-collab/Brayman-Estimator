@@ -99,6 +99,14 @@ def client(app):
     return app.test_client()
 
 
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module tests them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 @pytest.fixture
 def org_b(app):
     org = Organization(
@@ -1010,8 +1018,11 @@ def test_cross_project_and_cross_org_http_corrections_404(client, app, project, 
         password="apex-password",
         display_name="Apex Slice B",
     )
-    create_membership(apex_user, "ORG-002")
+    apex_membership = create_membership(apex_user, "ORG-002")
     db.session.commit()
+    from app.services.access_domains import ACCESS_DOMAIN_PROJECT_PERFORMANCE, grant_access_domain
+
+    grant_access_domain(membership_id=apex_membership.id, domain_key=ACCESS_DOMAIN_PROJECT_PERFORMANCE)  # FG-042 S2b
     logout_office_user(client)
     switched = login_office_user(
         client, email="apex.sliceb@example.com", password="apex-password"
@@ -1113,6 +1124,9 @@ def test_csrf_required_for_actuals_writes(app):
         db.create_all()
         ensure_default_organization()
         ensure_office_user()
+        from tests.fg042_support import grant_default_office_user_project_performance
+
+        grant_default_office_user_project_performance()  # FG-042 S2b
         project = _make_project("CSRF Monitor", "FG023-CSRF", DEFAULT_ORGANIZATION_ID)
         project_id = project.id
         csrf_client = csrf_app.test_client()

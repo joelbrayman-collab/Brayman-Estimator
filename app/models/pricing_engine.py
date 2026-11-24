@@ -248,3 +248,41 @@ class PricingAuditEvent(db.Model):
 
     def __repr__(self):
         return f"<PricingAuditEvent {self.id} {self.event_type}>"
+
+
+MARKUP_OVERRIDE_SCOPES = ("PROJECT", "SUPPLIER")
+
+
+class PricingMarkupOverride(db.Model):
+    """Append-only materials markup override (FG-042 M3, Joel 24 Nov 2026).
+
+    Pricing materials = net cost x (1 + markup). The company markup (OrganizationPricingPolicy.markup_rate) is the
+    default. A PROJECT row overrides it for one project; a SUPPLIER row for one supplier. Insert-only (a trigger
+    refuses UPDATE and DELETE): a change is a new row with a later effective_from, and the newest row in force wins.
+    Every override carries a reason."""
+
+    __tablename__ = "pricing_markup_overrides"
+    __table_args__ = (
+        db.CheckConstraint("scope IN ('PROJECT', 'SUPPLIER')", name="ck_pricing_markup_overrides_scope"),
+        db.CheckConstraint("markup_rate >= 0", name="ck_pricing_markup_overrides_rate_non_negative"),
+        db.CheckConstraint(
+            "(scope = 'PROJECT' AND project_id IS NOT NULL AND supplier_id IS NULL) OR "
+            "(scope = 'SUPPLIER' AND supplier_id IS NOT NULL AND project_id IS NULL)",
+            name="ck_pricing_markup_overrides_target",
+        ),
+        db.CheckConstraint("length(trim(reason)) > 0", name="ck_pricing_markup_overrides_reason"),
+        db.Index("ix_pricing_markup_overrides_project", "organization_id", "project_id", "effective_from", "id"),
+        db.Index("ix_pricing_markup_overrides_supplier", "organization_id", "supplier_id", "effective_from", "id"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.String(50), db.ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=False)
+    scope = db.Column(db.String(20), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id", ondelete="RESTRICT"), nullable=True)
+    supplier_id = db.Column(db.Integer, db.ForeignKey("suppliers.id", ondelete="RESTRICT"), nullable=True)
+    markup_rate = db.Column(db.Numeric(10, 6), nullable=False)
+    reason = db.Column(db.String(300), nullable=False)
+    effective_from = db.Column(db.Date, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    actor_user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
+    actor_name = db.Column(db.String(150), nullable=False)

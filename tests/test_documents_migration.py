@@ -63,7 +63,7 @@ def test_graph_head_is_the_documents_revision():
     with application.app_context():
         script = ScriptDirectory.from_config(_config(":memory:"))
         # Cost profiles and pricing method (u8b9c0d1e2f3, 2 Nov 2026) follow this revision.
-        assert script.get_heads() == ["q1a2b3c4d5e6"]
+        assert script.get_heads() == ["d3b6c9e2f5a7"]
         assert script.get_revision("u8b9c0d1e2f3").down_revision == REVISION
         assert script.get_revision(REVISION).down_revision == PRIOR
 

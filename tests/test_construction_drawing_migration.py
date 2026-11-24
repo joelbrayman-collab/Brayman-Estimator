@@ -20,7 +20,7 @@ from app import create_app
 
 REVISION = "v2c3d4e5f6a7"
 PRIOR = "u1b2c3d4e5f6"
-HEAD = "q1a2b3c4d5e6"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
+HEAD = "d3b6c9e2f5a7"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
 
 
 def _config(db_path):

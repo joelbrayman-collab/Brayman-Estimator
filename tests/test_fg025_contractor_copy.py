@@ -142,6 +142,15 @@ def project(app):
     return project
 
 
+
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module renders them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 def test_monitor_state_labels_are_pinned():
     assert monitor_state_label("MISSING_ACTUALS") == "No actual costs entered yet"
     assert monitor_state_label("MISSING_CUSTOMER_COMMITMENT") == "No accepted proposal yet"

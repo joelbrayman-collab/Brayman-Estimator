@@ -144,6 +144,15 @@ def _assert_topic_rendered(html, topic):
         assert _html_has_text(html, topic.next)
 
 
+
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module renders them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 def test_one_help_authority_and_voice_ready_seam():
     assert help_content.topics_for_surface(help_content.SURFACE_OFFICE)
     assert {topic.key for topic in help_content.topics_for_surface("office")} == set(

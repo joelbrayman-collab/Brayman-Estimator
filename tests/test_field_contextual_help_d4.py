@@ -153,6 +153,15 @@ def _confirm(client, project_id, next_action=""):
     )
 
 
+
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module renders them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 def test_field_help_uses_same_central_authority():
     assert help_content.topics_for_surface(help_content.SURFACE_FIELD)
     assert {topic.key for topic in help_content.topics_for_surface("field")} == set(

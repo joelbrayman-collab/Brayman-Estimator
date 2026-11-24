@@ -321,6 +321,7 @@ EXPECTED_PEOPLE_ACCESS_ENDPOINTS = {
     "people_access.employees",
     "people_access.employees_wsib",
     "people_access.employee_new",
+    "people_access.employee_user_link",
     "people_access.employee",
 }
 

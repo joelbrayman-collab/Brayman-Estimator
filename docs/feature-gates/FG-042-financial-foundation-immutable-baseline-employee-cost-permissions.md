@@ -7,9 +7,9 @@
 | Programme | Living Project P&L, five approval gates. This is **Gate 1** of 5. It is not the "Gate 1" in [estimate-approval-and-commercial-gates.md](../governance/estimate-approval-and-commercial-gates.md), which is formal contractor approval. |
 | Module | **Estimating** owns the estimate and its approval (referenced, unchanged). **Projects** owns the baseline record. **People & Access** owns employees, cost profiles and the grants store. **BUILD** owns time entries (referenced, unchanged). |
 | Date | 2026-11-24 |
-| Status | **DRAFT FOR JOEL APPROVAL. NO MIGRATION AUTHORIZED. NO CODE WRITTEN.** |
+| Status | **APPROVED 24 Nov 2026 (design and migrations M1, M2, M3). IMPLEMENTED AND TESTED IN THE REPOSITORY; NOT YET VALIDATED IN PRACTICE; NOT IN PRODUCTION. Production needs Joel's authorization after the validation report.** |
 | Governing specification | [Design approvals](../architecture/living-project-pl-design-approvals-2026-11-24.md). S0 Consolidated Package and R5 (held outside this public repository). |
-| Repository head at drafting | `1167e203`. Alembic graph head `q1a2b3c4d5e6`. |
+| Repository head at drafting | `1167e203`. Alembic graph head `q1a2b3c4d5e6`. After this gate: `d3b6c9e2f5a7` (M1 `b1f4a9c2d7e3`, M3 `c2a5b8d1e4f6`, M2 `d3b6c9e2f5a7`). |
 | Validation project | Geleynse. Its estimate is **not modified** and no unreconciled baseline is frozen. |
 
 ## 1. What problem does this solve?
@@ -177,3 +177,14 @@ Quotation roofing-line exclusion confirmation; whether installation labour is in
 ## 16. Out of scope
 
 Percent complete, remaining hours, material actuals, change orders, forecast, dashboard and report assembler (Gate 2); alerts and Sync snapshots (Gate 3); closeout and LEARN (Gate 4); QuickBooks Time activation (Gate 5); Brayman onboarding.
+
+## 17. Disclosed implementation notes (24 Nov 2026)
+
+Two additive columns beyond the tables as first described, both nullable and tied to approved fields:
+
+- `organization_person_cost_profiles.other_employment_cost_note` (M1): the plain description of the optional "other employment cost". It is required when the amount is above zero and is checked against the cost already counted elsewhere in the profile (wages, vacation, holiday pay, CPP, EI, WSIB, EHT, RRSP, truck, fuel, tools, health and other premiums); a note that names one of those is refused. A blank or zero amount changes no loaded rate.
+- `project_baselines.reconciliation_json` (M2): the source figures and result a freeze relied on.
+
+Also: the immutability triggers cover open items as well as the three tables listed in section 12, and a baseline with a provisional line cannot be frozen. The decision record is [ADR-059](../adr/ADR-059-project-baseline-snapshot-ownership-and-immutability.md).
+
+Behaviour to know: when a time entry's worker is linked to an employee, actual labour cost uses that employee's dated loaded rate; the estimated side still uses the estimate's company rate, so estimated and actual labour cost can differ in basis until Gate 2 reports them side by side. Changing or removing a person-to-user link is refused once that user has time entries, so past cost cannot be silently re-priced.

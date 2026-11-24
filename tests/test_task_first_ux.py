@@ -99,6 +99,15 @@ def _second_office_user(email="staff@example.com"):
 
 
 # ============================================================================================ A. design system
+
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module renders them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 def test_one_token_file_defines_danger_spacing_and_type_and_the_old_split_is_gone():
     tokens = (CSS / "tokens.css").read_text(encoding="utf-8")
     for token in ("--danger:", "--danger-soft:", "--warning:", "--ok:", "--focus:", "--gold:", "--space-1:",

@@ -19,6 +19,7 @@ from app.models.organization import (
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.services.access_domains import (
     ACCESS_DOMAIN_COMPANY_MANAGEMENT,
+    ACCESS_DOMAIN_PROJECT_PERFORMANCE,
     RECOGNIZED_STORED_DOMAINS,
     grant_access_domain,
     membership_has_access_domain,
@@ -591,7 +592,7 @@ def test_no_sys_admin_schema_close_uses_owner_helper():
     assert "def close_project" in lifecycle
     assert "def reopen_project" in lifecycle
     assert "COMPANY_MANAGEMENT" not in lifecycle
-    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT})
+    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT, ACCESS_DOMAIN_PROJECT_PERFORMANCE})  # FG-042 S2b added PROJECT_PERFORMANCE
     assert callable(require_access_domain)
 
 
@@ -650,7 +651,7 @@ def test_alembic_fg038_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["q1a2b3c4d5e6"]
+        assert script.get_heads() == ["d3b6c9e2f5a7"]
 
         command.upgrade(alembic_cfg, "b2c3d4e5f6a7")
         engine = db.engine
@@ -720,8 +721,8 @@ def test_alembic_fg038_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["q1a2b3c4d5e6"]
-            assert script.get_heads() == ["q1a2b3c4d5e6"]
+            assert [row[0] for row in heads] == ["d3b6c9e2f5a7"]
+            assert script.get_heads() == ["d3b6c9e2f5a7"]
             event_count = conn.execute(
                 sa.text("SELECT COUNT(*) FROM organization_instance_owner_events")
             ).scalar()

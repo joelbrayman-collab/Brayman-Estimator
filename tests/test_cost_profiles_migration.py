@@ -155,7 +155,7 @@ def test_models_match_the_migration_columns(tmp_path):
     migrated = tmp_path / "migrated.db"
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{migrated}"})
     with application.app_context():
-        command.upgrade(_config(migrated), REVISION)
+        command.upgrade(_config(migrated), "head")  # FG-042 added columns to two of these tables later
     created = tmp_path / "created.db"
     application = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": f"sqlite:///{created}"})
     with application.app_context():

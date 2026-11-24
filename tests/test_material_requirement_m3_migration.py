@@ -15,7 +15,7 @@ PRIOR = "q7d8e9f0a1b2"
 M3_REVISION = "r8e9f0a1b2c3"
 HEAD = "t0a1b2c3d4e5"
 # The migration graph moved on to the takeoff catalogue revision.
-GRAPH_HEAD = "q1a2b3c4d5e6"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
+GRAPH_HEAD = "d3b6c9e2f5a7"  # cost profiles and pricing method (2 Nov 2026) follows company documents and equipment (t7a8b9c0d1e2)
 PRESERVED = (
     "organizations",
     "projects",

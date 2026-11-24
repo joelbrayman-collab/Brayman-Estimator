@@ -58,6 +58,15 @@ def _project(name, *, address=None, status="Estimating", project_number=None, cl
     return project
 
 
+
+@pytest.fixture(autouse=True)
+def _office_user_has_project_performance(app):
+    """FG-042 S2b: project cost/price/profit surfaces need the PROJECT_PERFORMANCE grant; this module renders them."""
+    from tests.fg042_support import grant_default_office_user_project_performance
+
+    grant_default_office_user_project_performance()
+
+
 def test_projects_list_requires_login(client):
     logout_office_user(client)
     response = client.get("/projects/")

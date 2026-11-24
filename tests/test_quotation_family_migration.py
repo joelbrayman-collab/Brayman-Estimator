@@ -33,7 +33,7 @@ def _tables(engine):
 
 def test_graph_head_follows_the_cost_profiles_revision():
     script = ScriptDirectory.from_config(_config(":memory:"))
-    assert script.get_heads() == [REVISION]
+    assert script.get_heads() == ["d3b6c9e2f5a7"]  # FG-042 M2 is the head now; REVISION is still in the chain
     assert script.get_revision(REVISION).down_revision == PRIOR
 
 

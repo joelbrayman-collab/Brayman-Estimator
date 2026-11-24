@@ -23,6 +23,7 @@ from app.models.project import OPERATING_STATE_ACTIVE, OPERATING_STATE_CLOSED, P
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.services.access_domains import (
     ACCESS_DOMAIN_COMPANY_MANAGEMENT,
+    ACCESS_DOMAIN_PROJECT_PERFORMANCE,
     RECOGNIZED_STORED_DOMAINS,
     grant_access_domain,
 )
@@ -498,7 +499,7 @@ def test_r_sys_admin_does_not_create_c(app):
     _appoint_admin(owner, membership)
     keys = {row.domain_key for row in UserMembershipAccessDomainGrant.query.all()}
     assert "SENSITIVE_FINANCIAL" not in keys
-    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT})
+    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT, ACCESS_DOMAIN_PROJECT_PERFORMANCE})  # FG-042 S2b added PROJECT_PERFORMANCE
 
 
 def test_s_appointment_event_appended(app):
@@ -676,7 +677,7 @@ def test_ac_no_people_ui(app):
 def test_ad_no_sensitive_financial(app):
     from app.services.access_domains import ACCESS_DOMAIN_SENSITIVE_FINANCIAL
 
-    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT})
+    assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT, ACCESS_DOMAIN_PROJECT_PERFORMANCE})  # FG-042 S2b added PROJECT_PERFORMANCE
     assert ACCESS_DOMAIN_SENSITIVE_FINANCIAL == "SENSITIVE_FINANCIAL"
     keys = {row.domain_key for row in UserMembershipAccessDomainGrant.query.all()}
     assert "SENSITIVE_FINANCIAL" not in keys
@@ -877,7 +878,7 @@ def test_alembic_pab_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["q1a2b3c4d5e6"]
+        assert script.get_heads() == ["d3b6c9e2f5a7"]
 
         command.upgrade(alembic_cfg, "e5f6a7b8c9d0")
         engine = db.engine
@@ -934,8 +935,8 @@ def test_alembic_pab_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["q1a2b3c4d5e6"]
-            assert script.get_heads() == ["q1a2b3c4d5e6"]
+            assert [row[0] for row in heads] == ["d3b6c9e2f5a7"]
+            assert script.get_heads() == ["d3b6c9e2f5a7"]
             event_count = conn.execute(
                 sa.text(
                     "SELECT COUNT(*) FROM organization_system_administrator_events"

@@ -45,6 +45,18 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-11-24 — Living Project P&L: design approvals recorded; Gate 1 Feature Gate drafted
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-11-24 |
+| Branch | `gate1/financial-foundation` |
+| Objective | Record R5 and Project Dashboard approvals, close S0 design requirements, draft Gate 1 (S1, S2, S2b) Feature Gate FG-042 with migrations and acceptance criteria. |
+| Business decision | Joel approved R5, the dashboard visual master and the S0 Consolidated Package as the governing specification. Geleynse commercial items stay provisional; no baseline is frozen; no estimate is modified. |
+| Authorization | Documentation only. **No code, no migration, no deployment.** Migrations need Joel's approval of FG-042 section 12. |
+| Files | `docs/architecture/living-project-pl-design-approvals-2026-11-24.md`, `docs/feature-gates/FG-042-...md`, `docs/feature-gates/README.md` |
+| Note | Repository is public: no loaded rates, wages or project profit are recorded in it. |
+
 ### 2026-10-14 — V1 Master Completion Directive: reconciliation and first implementation batch
 
 | Field | Content |

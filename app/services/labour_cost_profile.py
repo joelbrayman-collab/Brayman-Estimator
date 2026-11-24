@@ -27,6 +27,7 @@ profile (the history is kept), like the wage events.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
@@ -94,6 +95,32 @@ class CostInputs:
     health_premium_monthly: Decimal = ZERO
     wsib_rate_per_100: Decimal = Decimal("3.55")
     statutory_year: int = CURRENT_YEAR
+    # FG-042 M1: employment cost not captured by any field above (a plain annual cost, no payroll tax on it).
+    other_employment_cost_annual: Decimal = ZERO
+    other_employment_cost_note: str = ""
+
+
+# What the profile already captures. "Other employment cost" must be something else, so an amount that is already
+# counted cannot be entered twice (FG-042, Joel 24 Nov 2026).
+ALREADY_CAPTURED_PATTERN = re.compile(
+    r"\b(wage|wages|salary|salaries|pay|payroll|vacation|holiday|holidays|cpp|ei|employment insurance|wsib|"
+    r"workers comp\w*|eht|employer health tax|rrsp|retirement|truck|vehicle|fuel|gas|gasoline|tool|tools|health|"
+    r"dental|benefit|benefits|premium|premiums)\b", re.IGNORECASE)
+
+
+def check_other_cost_note(amount: Decimal, note: str) -> str:
+    """A described, non-duplicate other cost. Raises CostProfileError otherwise."""
+    text = (note or "").strip()
+    if amount <= 0:
+        return ""
+    if not text:
+        raise CostProfileError("Other employment cost needs a note saying what the cost is.")
+    if ALREADY_CAPTURED_PATTERN.search(text):
+        raise CostProfileError(
+            f"“{text}” looks like a cost this profile already counts (wages, vacation and holidays, CPP, EI, "
+            "WSIB, EHT, RRSP, tool allowance, truck, fuel, or health and dental). Enter it in its own field, "
+            "not as other employment cost.")
+    return text[:200]
 
 
 def parse_inputs(form: dict, *, company_wsib: Decimal, year: int = CURRENT_YEAR) -> CostInputs:
@@ -119,6 +146,10 @@ def parse_inputs(form: dict, *, company_wsib: Decimal, year: int = CURRENT_YEAR)
         wsib_rate_per_100=_num(override, name="WSIB rate per $100", maximum=HUNDRED) if override else company_wsib,
         statutory_year=year,
     )
+    other = q(_num(form.get("other_employment_cost_annual"), name="Other employment cost a year",
+                   allow_blank_default=ZERO))
+    note = check_other_cost_note(other, form.get("other_employment_cost_note", ""))
+    inputs = CostInputs(**{**inputs.__dict__, "other_employment_cost_annual": other, "other_employment_cost_note": note})
     if working_hours(inputs) <= 0:
         raise CostProfileError("Vacation and holidays leave no working hours. Check the hours.")
     return inputs
@@ -144,6 +175,7 @@ def calculate(inputs: CostInputs) -> dict:
     truck = q(inputs.truck_monthly * 12)
     fuel = q(inputs.fuel_monthly * 12)
     premium = q(inputs.health_premium_monthly * 12)
+    other = q(inputs.other_employment_cost_annual or ZERO)
     eht = q(r["ontario_eht_rate"] * earnings)
     work = working_hours(inputs)
     paid = inputs.paid_hours_per_year
@@ -176,6 +208,10 @@ def calculate(inputs: CostInputs) -> dict:
          f"{_money(inputs.health_premium_monthly)} per month (no CPP, EI or WSIB on it)" if premium else "None",
          premium),
     ]
+    if other:
+        rows.append(("other", "Other employment cost",
+                     f"{inputs.other_employment_cost_note}: {_money(other)} per year" if inputs.other_employment_cost_note
+                     else f"{_money(other)} per year", other))
     if eht:
         rows.append(("eht", "Ontario Employer Health Tax", "", eht))
     total = sum((row[3] for row in rows), ZERO)
@@ -269,10 +305,13 @@ def inputs_of(profile) -> CostInputs:
         tool_allowance_annual=Decimal(str(profile.tool_allowance_annual)),
         rrsp_percent=Decimal(str(profile.rrsp_percent)),
         health_premium_monthly=Decimal(str(profile.health_premium_monthly)),
-        wsib_rate_per_100=Decimal(str(profile.wsib_rate_per_100)), statutory_year=int(profile.statutory_year))
+        wsib_rate_per_100=Decimal(str(profile.wsib_rate_per_100)), statutory_year=int(profile.statutory_year),
+        other_employment_cost_annual=Decimal(str(profile.other_employment_cost_annual or 0)),
+        other_employment_cost_note=profile.other_employment_cost_note or "")
 
 
-def save_profile(person, inputs: CostInputs, *, actor_user, wsib_override: bool, reason: str = ""):
+def save_profile(person, inputs: CostInputs, *, actor_user, wsib_override: bool, reason: str = "",
+                 effective_from=None):
     """Append a new cost profile (and, when the wage changed, the wage and an append-only wage event)."""
     from app import db
     from app.models.person import OrganizationPersonCostProfile, OrganizationPersonWageEvent
@@ -295,6 +334,9 @@ def save_profile(person, inputs: CostInputs, *, actor_user, wsib_override: bool,
         tool_allowance_annual=inputs.tool_allowance_annual, rrsp_percent=inputs.rrsp_percent,
         health_premium_monthly=inputs.health_premium_monthly, wsib_rate_per_100=inputs.wsib_rate_per_100,
         wsib_is_override=bool(wsib_override), statutory_year=inputs.statutory_year,
+        effective_from=effective_from,
+        other_employment_cost_annual=inputs.other_employment_cost_annual or None,
+        other_employment_cost_note=inputs.other_employment_cost_note or None,
         working_hours=result["working_hours"].quantize(CENT), annual_cost=result["annual_cost"],
         loaded_rate=result["loaded_rate"], breakdown_json=breakdown_json(result),
         reason=(reason or "").strip()[:300] or None, created_at=now, actor_user_id=actor_user.id,

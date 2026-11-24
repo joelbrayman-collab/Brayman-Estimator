@@ -18,6 +18,14 @@ class OrganizationPerson(db.Model):
             "hourly_wage >= 0",
             name="ck_organization_people_hourly_wage_non_negative",
         ),
+        db.Index(
+            "uq_organization_people_org_user",
+            "organization_id",
+            "user_id",
+            unique=True,
+            sqlite_where=db.text("user_id IS NOT NULL"),
+            postgresql_where=db.text("user_id IS NOT NULL"),
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +41,9 @@ class OrganizationPerson(db.Model):
     email_address = db.Column(db.String(255), nullable=False)
     hourly_wage = db.Column(db.Numeric(10, 2), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    # FG-042 M1: the sign-in user who enters this employee's time. Nullable until linked at onboarding. At most one
+    # user per employee and one employee per user within the organization (partial unique index in M1).
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     created_by_user_id = db.Column(
         db.Integer,
@@ -153,6 +164,7 @@ class OrganizationPersonCostProfile(db.Model):
         db.CheckConstraint("hourly_wage > 0", name="ck_person_cost_profiles_wage_positive"),
         db.CheckConstraint("working_hours > 0", name="ck_person_cost_profiles_working_hours_positive"),
         db.Index("ix_person_cost_profiles_org_person", "organization_id", "person_id", "id"),
+        db.Index("ix_person_cost_profiles_person_effective", "person_id", "effective_from", "id"),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -169,6 +181,11 @@ class OrganizationPersonCostProfile(db.Model):
     health_premium_monthly = db.Column(db.Numeric(10, 2), nullable=False)
     wsib_rate_per_100 = db.Column(db.Numeric(6, 3), nullable=False)
     wsib_is_override = db.Column(db.Boolean, nullable=False, default=False)
+    # FG-042 M1. effective_from: the first work date this profile applies to (NULL: the date it was saved).
+    # other_employment_cost_annual: employment cost NOT captured by any field above (NULL counts as 0).
+    effective_from = db.Column(db.Date, nullable=True)
+    other_employment_cost_annual = db.Column(db.Numeric(12, 2), nullable=True)
+    other_employment_cost_note = db.Column(db.String(200), nullable=True)
     statutory_year = db.Column(db.Integer, nullable=False)
     working_hours = db.Column(db.Numeric(8, 2), nullable=False)
     annual_cost = db.Column(db.Numeric(12, 2), nullable=False)

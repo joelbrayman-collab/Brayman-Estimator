@@ -300,7 +300,9 @@ def test_access_matching_email_does_not_auto_link(app):
     person = OrganizationPerson.query.one()
     assert person.email_address == owner.email
     assert not hasattr(identity, "user_id")
-    assert "user_id" not in OrganizationPerson.__table__.columns
+    # FG-042 M1 (Joel, 24 Nov 2026) adds an explicit Person-to-User link. A matching email still never creates it:
+    # the link stays empty until an owner or System Administrator sets it.
+    assert person.user_id is None
     assert User.query.filter_by(email=owner.email).one().id == owner.id
 
 

@@ -55,13 +55,39 @@
         <label>WSIB per $100 (blank: company {{ "%.2f"|format(wsib.rate|float) }})<input name="wsib_rate_per_100" inputmode="decimal" value="{{ values.wsib_rate_per_100 or '' }}"></label>
       </div>
     </fieldset>
-    {% if person %}<label>Reason for the change (optional)<input name="reason" maxlength="300"></label>{% endif %}
+    <fieldset class="ts-group"><legend>Other employment cost</legend>
+      <p class="ts-hint">Only a cost this profile does not already count. Wages, vacation and holidays, CPP, EI, WSIB, health tax, RRSP, tool allowance, truck, fuel and health &amp; dental are counted above and are refused here.</p>
+      <div class="ts-row">
+        <label>Other cost a year ($)<input name="other_employment_cost_annual" inputmode="decimal" value="{{ values.other_employment_cost_annual or '' }}" placeholder="0"></label>
+        <label>What it is<input name="other_employment_cost_note" maxlength="200" value="{{ values.other_employment_cost_note or '' }}" placeholder="Required when an amount is entered"></label>
+      </div>
+    </fieldset>
+    {% if person %}<div class="ts-row">
+      <label>Reason for the change (optional)<input name="reason" maxlength="300"></label>
+      <label>Applies to work from (optional, blank: today)<input type="date" name="effective_from" value=""></label>
+    </div>{% endif %}
     <div class="ts-actions">
       <button type="submit" name="action" value="calculate" class="button-secondary" data-calculate>Calculate</button>
       <button type="submit" name="action" value="save" class="button" data-save-cost-profile>{{ "Save the cost profile" if person else "Add the employee" }}</button>
       <a href="{{ url_for('people_access.employees') }}">Back to Employees</a>
     </div>
   </form>
+
+  {% if person %}
+  <form method="post" action="{{ url_for('people_access.employee_user_link', person_id=person.id) }}" class="ts-group" data-user-link>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset class="ts-group"><legend>Sign-in user (time entry)</legend>
+      <p class="ts-hint">{% if linked_user %}Time entered by {{ linked_user.email }} is priced at this employee's loaded rate on the day worked.{% else %}Not linked. Time entered by this person is priced at the company rate until a user is linked.{% endif %}</p>
+      <div class="ts-row">
+        <label>User<select name="user_id"><option value="">Not linked</option>
+          {% if linked_user %}<option value="{{ linked_user.id }}" selected>{{ linked_user.email }}</option>{% endif %}
+          {% for u in link_candidates if not linked_user or u.id != linked_user.id %}<option value="{{ u.id }}">{{ u.email }}</option>{% endfor %}
+        </select></label>
+        <button type="submit" class="button-secondary">Save link</button>
+      </div>
+    </fieldset>
+  </form>
+  {% endif %}
 
   {% if preview %}{{ breakdown(preview, "Calculated (not saved yet)") }}{% endif %}
   {% if current and not preview %}{{ breakdown(current, "Current cost profile") }}{% endif %}

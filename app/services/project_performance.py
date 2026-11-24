@@ -585,6 +585,9 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
         raise TimeEntryNotFoundError("Project not found.") from exc
     company = is_company_time_project(project)
     rates = _RateBook(org_id)
+    from app.services.employee_rates import UserRateBook
+
+    person_rates = UserRateBook(org_id)
     as_of = today or local_today()
     current_rate = rates.on(as_of)
 
@@ -616,6 +619,8 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
                 "actual_cost": Decimal("0"),
                 "unrated_hours": Decimal("0"),
                 "waiting_hours": Decimal("0"),
+                "person_rated_hours": Decimal("0"),  # FG-042 S2: priced at the employee's dated loaded rate
+                "company_rated_hours": Decimal("0"),  # priced at the company rate (no linked employee)
             }
         return groups[key]
 
@@ -663,11 +668,19 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
             row["waiting_hours"] += hours
             continue
         row["actual_hours"] += hours
+        # FG-042 S2: an employee linked to the entry's user is priced at that employee's loaded rate on the work
+        # date. Time with no linked employee keeps the company rate and is counted separately, never hidden.
+        dated = person_rates.on(entry.worker_user_id, entry.work_date)
+        if dated is not None:
+            row["actual_cost"] += hours * dated.loaded_rate
+            row["person_rated_hours"] += hours
+            continue
         standard = rates.on(entry.work_date)
         if standard is None:
             row["unrated_hours"] += hours
         else:
             row["actual_cost"] += hours * Decimal(str(standard.rate_per_man_hour))
+            row["company_rated_hours"] += hours
 
     def label(key):
         kind, co_id = key
@@ -694,6 +707,8 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
         "actual_cost": Decimal("0"),
         "waiting_hours": Decimal("0"),
         "unrated_hours": Decimal("0"),
+        "person_rated_hours": Decimal("0"),
+        "company_rated_hours": Decimal("0"),
     }
     any_estimate = False
     estimate_cost_known = True
@@ -718,6 +733,8 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
                 "actual_cost": actual_cost,
                 "waiting_hours": g["waiting_hours"].quantize(HOURS_QUANTUM),
                 "unrated_hours": g["unrated_hours"].quantize(HOURS_QUANTUM),
+                "person_rated_hours": g["person_rated_hours"].quantize(HOURS_QUANTUM),
+                "company_rated_hours": g["company_rated_hours"].quantize(HOURS_QUANTUM),
                 "hours_difference": (actual_hours - est_hours) if est_hours is not None else None,
                 "cost_difference": (actual_cost - est_cost) if est_cost is not None else None,
             }
@@ -729,7 +746,8 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
                 totals["estimated_cost"] += g["estimated_cost"]
             else:
                 estimate_cost_known = False
-        for name in ("actual_hours", "actual_cost", "waiting_hours", "unrated_hours"):
+        for name in ("actual_hours", "actual_cost", "waiting_hours", "unrated_hours", "person_rated_hours",
+                     "company_rated_hours"):
             totals[name] += g[name]
     total_est_hours = totals["estimated_hours"].quantize(HOURS_QUANTUM) if any_estimate else None
     total_est_cost = _money(totals["estimated_cost"]) if any_estimate and estimate_cost_known else None
@@ -755,6 +773,8 @@ def assemble_project_labour_cost(organization_id, project_id, *, today: Optional
             "actual_cost": total_actual_cost,
             "waiting_hours": totals["waiting_hours"].quantize(HOURS_QUANTUM),
             "unrated_hours": totals["unrated_hours"].quantize(HOURS_QUANTUM),
+            "person_rated_hours": totals["person_rated_hours"].quantize(HOURS_QUANTUM),
+            "company_rated_hours": totals["company_rated_hours"].quantize(HOURS_QUANTUM),
             "hours_difference": (total_actual_hours - total_est_hours) if total_est_hours is not None else None,
             "cost_difference": (total_actual_cost - total_est_cost) if total_est_cost is not None else None,
         },

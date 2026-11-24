@@ -10,6 +10,8 @@ Everyone else is refused (403) by require_instance_owner_or_system_administrator
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -530,7 +532,7 @@ def field_only(membership_id):
 # cannot be put on an estimate crew. Sign-in and time entry are not affected.
 COST_FIELDS = ("hourly_wage", "paid_hours_per_year", "vacation_weeks", "paid_holidays", "truck_monthly",
                "fuel_monthly", "tool_allowance_annual", "rrsp_percent", "health_premium_monthly",
-               "wsib_rate_per_100")
+               "wsib_rate_per_100", "other_employment_cost_annual", "other_employment_cost_note")
 IDENTITY_FIELDS = ("full_name", "address", "mobile_number", "email_address")
 
 
@@ -561,7 +563,8 @@ def _employee_or_404(person_id):
 def _profile_values(profile):
     if profile is None:
         return {}
-    values = {f: str(getattr(profile, f)) for f in COST_FIELDS if f != "wsib_rate_per_100"}
+    values = {f: ("" if getattr(profile, f) is None else str(getattr(profile, f)))
+              for f in COST_FIELDS if f != "wsib_rate_per_100"}
     values["wsib_rate_per_100"] = str(profile.wsib_rate_per_100) if profile.wsib_is_override else ""
     return values
 
@@ -598,7 +601,21 @@ def _employee_form(person=None, *, values=None, preview=None, status=200):
         values = _profile_values(profile)
         if person is not None and not values.get("hourly_wage"):
             values["hourly_wage"] = str(person.hourly_wage)
+    from app.models.person import OrganizationPerson
+    from app.models.user import User, UserMembership
+
+    candidates = []
+    linked_user = None
+    if person is not None:
+        taken = {p.user_id for p in OrganizationPerson.query.filter_by(organization_id=_org()).all()
+                 if p.user_id and p.id != person.id}
+        for m in UserMembership.query.filter_by(organization_id=_org(), is_active=True).all():
+            user = User.query.get(m.user_id)
+            if user is not None and user.id not in taken:
+                candidates.append(user)
+        linked_user = User.query.get(person.user_id) if person.user_id else None
     page = render_template("settings/people/employee.html", person=person, values=values, preview=preview,
+                           link_candidates=candidates, linked_user=linked_user,
                            profile=profile, current=current, complete=LCP.is_complete(profile, person),
                            history=LCP.profile_history(person.id) if person is not None else [],
                            wsib=LCP.company_wsib(_org()), defaults=LCP.DEFAULTS)
@@ -650,9 +667,33 @@ def employee(person_id):
         return _employee_form(person, values=values, status=400)
     if request.form.get("action") == "calculate":
         return _employee_form(person, values=values, preview=LCP.calculate(inputs))
+    effective_text = (request.form.get("effective_from") or "").strip()
+    effective_from = None
+    if effective_text:
+        try:
+            effective_from = datetime.strptime(effective_text, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Effective from must be a date (YYYY-MM-DD).", "error")
+            return _employee_form(person, values=values, status=400)
     _profile, result = LCP.save_profile(person, inputs, actor_user=current_user,
                                         wsib_override=bool(values["wsib_rate_per_100"]),
-                                        reason=request.form.get("reason", ""))
+                                        reason=request.form.get("reason", ""), effective_from=effective_from)
     flash(f"Cost profile saved for {person.full_name}: loaded labour rate {LCP._money(result['loaded_rate'])} per "
           "working hour. The earlier profile is kept in the history.", "success")
+    return redirect(url_for("people_access.employee", person_id=person.id))
+
+
+@people_access_bp.route("/employees/<int:person_id>/user-link", methods=["POST"])
+def employee_user_link(person_id):
+    """FG-042 S2: link this employee to the sign-in user who enters their time (or remove the link)."""
+    from app.services.employee_rates import EmployeeLinkError, link_person_to_user
+
+    person = _employee_or_404(person_id)
+    raw = (request.form.get("user_id") or "").strip()
+    try:
+        link_person_to_user(_org(), person.id, int(raw) if raw else None, actor=current_user)
+        flash("Time entered by that user now uses this employee's loaded labour rate." if raw
+              else "The sign-in link was removed.", "success")
+    except (EmployeeLinkError, ValueError) as exc:
+        flash(str(exc) if isinstance(exc, EmployeeLinkError) else "Choose a user from the list.", "error")
     return redirect(url_for("people_access.employee", person_id=person.id))

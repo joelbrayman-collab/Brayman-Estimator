@@ -3,6 +3,10 @@ import os
 import re
 import tempfile
 
+from app.sqlite_runtime import prefer_modern_sqlite
+
+prefer_modern_sqlite()  # before SQLAlchemy loads: the training server's system SQLite is 3.26 (see app/sqlite_runtime.py)
+
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 
 from flask import Flask, abort, g, redirect, request, send_from_directory, session, url_for

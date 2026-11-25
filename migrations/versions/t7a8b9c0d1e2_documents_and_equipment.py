@@ -55,10 +55,8 @@ def _triggers(table, message):
 
 
 def _fts5_available(bind) -> bool:
-    # Probe with the tokenizer the table declares: "remove_diacritics 2" needs SQLite 3.27 (HostPapa has 3.26.0).
     try:
-        bind.exec_driver_sql("CREATE VIRTUAL TABLE IF NOT EXISTS temp.__documents_fts_probe USING fts5(x, "
-                             "tokenize = 'unicode61 remove_diacritics 2', prefix = '2 3')")
+        bind.exec_driver_sql("CREATE VIRTUAL TABLE IF NOT EXISTS temp.__documents_fts_probe USING fts5(x)")
         bind.exec_driver_sql("DROP TABLE IF EXISTS temp.__documents_fts_probe")
         return True
     except Exception:  # noqa: BLE001

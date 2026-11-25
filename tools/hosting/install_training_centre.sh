@@ -31,6 +31,9 @@ as_app git -C $APP cat-file -e "$COMMIT^{commit}" 2>/dev/null || { echo "STOP: c
 as_app git -C $APP -c advice.detachedHead=false checkout -q --force "$COMMIT" || { echo "STOP: checkout failed"; exit 1; }
 as_app git -C $APP log --oneline -1
 as_app $APP/venv/bin/pip install -q -r $APP/requirements.txt gunicorn || { echo "STOP: pip install failed"; exit 1; }
+# This server's system SQLite is 3.26.0; the released documents migration needs 3.27+ (FTS5 remove_diacritics 2).
+# pysqlite3-binary bundles a current SQLite; app/sqlite_runtime.py uses it only when the system one is older.
+as_app $APP/venv/bin/pip install -q "pysqlite3-binary==0.5.4" || { echo "STOP: pip install of pysqlite3-binary failed"; exit 1; }
 
 echo "== 2. stop, back up the training database, migrate, add what is missing"
 systemctl stop calibrayt-training 2>/dev/null

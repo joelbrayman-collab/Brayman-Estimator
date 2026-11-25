@@ -329,8 +329,8 @@ test("People & Access on a 390 px phone: the owner adds a person (set-password e
   assert.match(await flash(o.pg), /can sign in again/);
   await signIn(p, person[1], person[2]);
   assert.doesNotMatch(p.pg.url(), /\/login/, "reactivated person signs in");
-  // Give and remove Company Management from the page.
-  await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Give" }).click()]);
+  // Give and remove Company Management from the page (the page now also has a Project performance row with its own Give button, FG-042 S2b, so the button is scoped to the Company Management row).
+  await Promise.all([o.pg.waitForLoadState(), o.pg.locator("form", { hasText: "Company Management (Needs" }).getByRole("button", { name: "Give" }).click()]);
   assert.equal((await status(p.ctx, "/company-attention")).code, 200);
   await Promise.all([o.pg.waitForLoadState(), o.pg.getByRole("button", { name: "Remove", exact: true }).click()]);
   assert.equal((await status(p.ctx, "/company-attention")).code, 403);

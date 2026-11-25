@@ -15,10 +15,17 @@ from app import db
 _PROBE_CACHE: dict = {}
 
 
+# The probe uses the same tokenizer the document_search table declares. FTS5 itself exists on older builds, but
+# "remove_diacritics 2" needs SQLite 3.27 (the HostPapa Training Centre runs 3.26.0, 25 Nov 2026): there the table
+# cannot be created, so the documented LIKE fallback is used instead of failing the migration.
+FTS_PROBE_SQL = ("CREATE VIRTUAL TABLE IF NOT EXISTS temp.__documents_fts_probe USING fts5(x, "
+                 "tokenize = 'unicode61 remove_diacritics 2', prefix = '2 3')")
+
+
 def fts5_supported_on(connection) -> bool:
-    """Probe on this connection's SQLite build. Never raises."""
+    """Probe on this connection's SQLite build for FTS5 with the tokenizer the index needs. Never raises."""
     try:
-        connection.exec_driver_sql("CREATE VIRTUAL TABLE IF NOT EXISTS temp.__documents_fts_probe USING fts5(x)")
+        connection.exec_driver_sql(FTS_PROBE_SQL)
         connection.exec_driver_sql("DROP TABLE IF EXISTS temp.__documents_fts_probe")
         return True
     except Exception:  # noqa: BLE001 - absence of FTS5 is an expected outcome

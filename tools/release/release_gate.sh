@@ -321,9 +321,12 @@ else
   ADDED=$(git diff --name-only --diff-filter=A "$LIVE_BASE" "$SHA" -- migrations/versions)
   OTHER=$(git diff --name-only --diff-filter=MDR "$LIVE_BASE" "$SHA" -- migrations)
   [ -z "$OTHER" ] || stop "an existing migration file was changed or removed: $OTHER"
-  [ "$(echo "$ADDED" | grep -c .)" = "1" ] && grep -q "^revision = \"$MIGRATION_TO\"" $ADDED \
-    || stop "the candidate must add exactly one migration, revision $MIGRATION_TO (added: $ADDED)"
-  DBCHANGE="one new migration $MIGRATION_TO ($ADDED), rehearsed below"
+  # 24 Nov 2026 (FG-042, three approved migrations M1, M3, M2): the candidate may add a LINEAR CHAIN of migrations that
+  # ends at $MIGRATION_TO, as long as the added files are exactly the revisions between the live revision and
+  # $MIGRATION_TO (checked against the migration graph below). One added migration is the same case with a chain of one.
+  [ "$(echo "$ADDED" | grep -c .)" -ge "1" ] && grep -q "^revision = \"$MIGRATION_TO\"" $ADDED \
+    || stop "the candidate must add the migration(s) ending at revision $MIGRATION_TO (added: $ADDED)"
+  DBCHANGE="$(echo "$ADDED" | grep -c .) new migration file(s) ending at $MIGRATION_TO ($(echo $ADDED)), rehearsed below"
 fi
 ALLOWED='^(app/|tests/|docs/|tools/|calculation-engines/|requirements(-dev|-lock)?\.txt$)'
 [ -n "$MIGRATION_TO" ] && ALLOWED='^(app/|tests/|docs/|tools/|calculation-engines/|migrations/versions/|requirements(-dev|-lock)?\.txt$)'
@@ -389,16 +392,23 @@ REVISION=$(val LIVE_REVISION "$OUT-preflight.txt")
 [ -n "$REVISION" ] && [ "$(val BACKUP_REVISION "$OUT-preflight.txt")" = "$REVISION" ] || stop "backup revision differs from live"
 grep -q "^revision = \"$REVISION\"" migrations/versions/*.py || stop "live revision $REVISION is not a migration in the candidate"
 if [ -n "$MIGRATION_TO" ]; then
-  HEADINFO=$(./venv/bin/python - "$MIGRATION_TO" <<'PYEOF'
+  HEADINFO=$(./venv/bin/python - "$MIGRATION_TO" "$REVISION" <<'PYEOF'
 import sys
 from alembic.config import Config
 from alembic.script import ScriptDirectory
 cfg = Config(); cfg.set_main_option("script_location", "migrations")
 s = ScriptDirectory.from_config(cfg)
-print("HEADS=" + ",".join(s.get_heads()) + " DOWN=" + str(s.get_revision(sys.argv[1]).down_revision))
+live = sys.argv[2]
+chain, rev = [], sys.argv[1]
+while rev and rev != live:
+    chain.append(rev); r = s.get_revision(rev); rev = r.down_revision if r else None
+    if isinstance(rev, tuple): rev = None
+print("HEADS=" + ",".join(s.get_heads()) + " REACHES_LIVE=" + str(rev == live) + " CHAIN=" + ",".join(sorted(chain)))
 PYEOF
 )
-  [ "$HEADINFO" = "HEADS=$MIGRATION_TO DOWN=$REVISION" ] || stop "migration graph: $HEADINFO (expected head $MIGRATION_TO following live $REVISION)"
+  ADDED_REVS=$(for f in $ADDED; do grep -h "^revision = " "$f" | sed 's/revision = "\(.*\)"/\1/'; done | sort | paste -sd, -)
+  [ "$HEADINFO" = "HEADS=$MIGRATION_TO REACHES_LIVE=True CHAIN=$ADDED_REVS" ] \
+    || stop "migration graph: $HEADINFO (expected head $MIGRATION_TO, reaching live $REVISION through exactly the added revisions: $ADDED_REVS)"
 fi
 BPATH=$(val BACKUP_PATH "$OUT-preflight.txt"); BSHA=$(val BACKUP_SHA256 "$OUT-preflight.txt")
 mkdir -p "$BACKUPS"

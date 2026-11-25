@@ -9,8 +9,7 @@ status documents (`docs/current-state.md`, `docs/project-state-report.md`, `docs
 - **LIVING PROJECT P&L, GATE 1 (FG-042) — IMPLEMENTED AND TESTED; NOT IN PRACTICE; NOT IN PRODUCTION (24 Nov 2026).** Branch
   `gate1/financial-foundation` at `b03c77c0` (GitHub). Three migrations after `q1a2b3c4d5e6`: M1 `b1f4a9c2d7e3` (Person-to-User link,
   cost-profile effective date, other employment cost), M3 `c2a5b8d1e4f6` (markup overrides), M2 `d3b6c9e2f5a7` (project baseline,
-  graph head). Rehearsed up and down on a copy of `pre-ai13-20261123-1526.db`: existing rows unchanged, integrity ok. Practice
-  (Training Centre, HostPapa) needs Joel's WHM command; Production needs Joel's authorization after the validation report.
+  graph head). Rehearsed up and down on a copy of `pre-ai13-20261123-1526.db`: existing rows unchanged, integrity ok. Practice (Training Centre, HostPapa) was updated to head `d3b6c9e2f5a7` at `ed605920` on 25 Nov (SQLite 3.26 finding: FG-042 section 17; the first attempt was restored from its backup). The Mac release gate for `ed605920` passed the full regression, 4,325 passed with no skips. Production needs Joel's authorization after the validation report.
   Brayman/Ben onboarding and QuickBooks Time stay deferred. Gate 2 (Living Project P&L S3-S7) follows Gate 1 approval.
   ADR-059; [FG-042](feature-gates/FG-042-financial-foundation-immutable-baseline-employee-cost-permissions.md).
 - **GOVERNANCE CATCH-UP `catchup1` (29 Oct 2026) — RELEASED.** Live `f9ca0f1183aae6c87ea8cb489b22b89f1406aac9`, deploy
